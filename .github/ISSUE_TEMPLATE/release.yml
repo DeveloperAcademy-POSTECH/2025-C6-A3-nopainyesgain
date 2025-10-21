@@ -1,0 +1,39 @@
+name: 🌈 Release
+description: 릴리즈 기획 및 관리
+title: "🌈 Release: v"
+labels: ["epic"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `release/v1.0.0` (버전명으로)
+        
+  - type: textarea
+    id: version
+    attributes:
+      label: 🏷️ 릴리즈 버전
+      placeholder: v1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: features
+    attributes:
+      label: 🎯 포함 기능
+      placeholder: |
+        - 키링 제작 시스템
+        - 컬렉션 화면
+        - 기본 공유 기능
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: ✅ 릴리즈 체크리스트
+      placeholder: |
+        - [ ] 기능 개발 완료
+        - [ ] QA 테스트
+        - [ ] 앱스토어 메타데이터 준비
+        - [ ] 릴리즈 노트 작성
+    validations:
+      required: false
