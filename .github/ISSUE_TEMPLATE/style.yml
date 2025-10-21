@@ -1,0 +1,17 @@
+name: 👔 Style
+description: UI/UX 스타일링
+title: "Style: "
+labels: ["style"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `style/대상-설명` (소문자, 대시로 구분)
+        
+  - type: textarea
+    id: design
+    attributes:
+      label: 디자인 작업
+      placeholder: 버튼 스타일 통일
+    validations:
+      required: true

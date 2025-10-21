@@ -1,0 +1,17 @@
+name: 🍽️ Chore
+description: 빌드, 설정 작업
+title: "Chore: "
+labels: ["chore"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `chore/작업명-설명` (소문자, 대시로 구분)
+        
+  - type: textarea
+    id: task
+    attributes:
+      label: 작업 내용
+      placeholder: 의존성 업데이트
+    validations:
+      required: true

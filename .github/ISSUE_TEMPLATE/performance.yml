@@ -1,0 +1,17 @@
+name: 🤩 Performance
+description: 성능 최적화
+title: "Perf: "
+labels: ["perf"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `perf/대상-설명` (소문자, 대시로 구분)
+        
+  - type: textarea
+    id: issue
+    attributes:
+      label: 성능 이슈
+      placeholder: 로딩 속도 개선
+    validations:
+      required: true
