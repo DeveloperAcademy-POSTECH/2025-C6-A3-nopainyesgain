@@ -1,0 +1,25 @@
+name: 👨🏻‍🔧 Bugfix
+description: 버그 수정
+title: "Bugfix: "
+labels: ["bugfix"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `bugfix/버그명-설명` (소문자, 대시로 구분)
+        
+  - type: textarea
+    id: problem
+    attributes:
+      label: 문제 설명
+      placeholder: 앱 크래시 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 해결 방법
+      placeholder: 수정 계획
+    validations:
+      required: false

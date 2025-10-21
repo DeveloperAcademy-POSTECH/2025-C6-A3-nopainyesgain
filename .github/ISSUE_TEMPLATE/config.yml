@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 자유 토론
+    url: https://github.com/your-org/keychy/discussions
+    about: 아이디어 공유, 질문

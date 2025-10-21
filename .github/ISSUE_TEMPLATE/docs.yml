@@ -1,0 +1,17 @@
+name: ✍️ Docs
+description: 문서 작업
+title: "Docs: "
+labels: ["docs"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `docs/문서명-설명` (소문자, 대시로 구분)
+        
+  - type: textarea
+    id: document
+    attributes:
+      label: 문서 작업
+      placeholder: README 업데이트
+    validations:
+      required: true

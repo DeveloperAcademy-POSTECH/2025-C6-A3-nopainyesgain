@@ -1,0 +1,17 @@
+name: ♻️ Refactor
+description: 코드 리팩토링
+title: "Refactor: "
+labels: ["refactor"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **브랜치 생성**: `refactor/대상-설명` (소문자, 대시로 구분)
+        
+  - type: textarea
+    id: target
+    attributes:
+      label: 리팩토링 대상
+      placeholder: KeyringManager 구조 개선
+    validations:
+      required: true
