@@ -15,6 +15,7 @@ struct HomeView: View {
             Button("뭉치함으로 가기") {
                 router.push(.BundleInventoryView)
             }
+            .font(.h1)
         }
         .navigationBarTitle("Home")
     }
