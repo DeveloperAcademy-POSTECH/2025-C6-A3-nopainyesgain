@@ -1,0 +1,69 @@
+//
+//  KeyringBodyComponent.swift
+//  KeytschPrototype
+//
+//  Created by 길지훈 on 10/18/25.
+//
+
+import UIKit
+import SpriteKit
+
+// MARK: - Keyring Body Component
+struct KeyringBodyComponent {
+
+    // Body 타입 받아서 SKNode로 생성
+    static func createNode(from bodyType: BodyType) -> SKNode {
+        switch bodyType {
+        case .basic:
+            return createBasicBody()
+        case .customImage(let image):
+            return createImageBody(image: image)
+        }
+    }
+
+    // MARK: - Basic Body
+    private static func createBasicBody() -> SKShapeNode {
+        let radius: CGFloat = 80
+
+        // 원형 바디
+        let path = CGPath(ellipseIn: CGRect(x: -radius, y: -radius, width: radius * 2, height: radius * 2), transform: nil)
+
+        let node = SKShapeNode(path: path)
+        node.fillColor = .white
+        node.strokeColor = UIColor(white: 0.8, alpha: 0.4)
+        node.lineWidth = 1.0
+
+        // 물리 바디 설정 (원형)
+        let physicsBody = SKPhysicsBody(circleOfRadius: radius - 2)
+        physicsBody.mass = 3.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.6
+        physicsBody.angularDamping = 0.9
+        node.physicsBody = physicsBody
+
+        return node
+    }
+
+    // MARK: - Image Body
+    private static func createImageBody(image: UIImage) -> SKNode {
+        // 원본 크기 그대로 사용
+        let displaySize = image.size
+
+        // 텍스처 생성
+        let texture = SKTexture(image: image)
+        texture.filteringMode = .linear   // 부드럽게 렌더링
+        let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+
+        // 물리 바디 설정 (원본 크기에 맞게)
+        let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        physicsBody.mass = 6.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        spriteNode.physicsBody = physicsBody
+
+        return spriteNode
+    }
+}

@@ -1,0 +1,1053 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
+		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
+		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
+		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
+		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
+		4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */; };
+		4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E02EAE08C00099ECEE /* RingType.swift */; };
+		4CEC61EB2EAE08C00099ECEE /* ParticleEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DB2EAE08C00099ECEE /* ParticleEffect.swift */; };
+		4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E22EAE08C00099ECEE /* BodyType.swift */; };
+		4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DA2EAE08C00099ECEE /* Interaction.swift */; };
+		4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */; };
+		4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */; };
+		4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F92EAE08DA0099ECEE /* KeyringScene.swift */; };
+		4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FC2EAE08DA0099ECEE /* KeyringScene+Touch.swift */; };
+		4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */; };
+		4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */; };
+		4CEC621E2EAE08DA0099ECEE /* KeyringChainComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FF2EAE08DA0099ECEE /* KeyringChainComponent.swift */; };
+		4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62002EAE08DA0099ECEE /* KeyringBodyComponent.swift */; };
+		4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62172EAE08DA0099ECEE /* View+Extension.swift */; };
+		4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */; };
+		4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */; };
+		4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FE2EAE08DA0099ECEE /* KeyringRingComponent.swift */; };
+		4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */; };
+		4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */; };
+		4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62132EAE08DA0099ECEE /* Radius.swift */; };
+		4CEC62272EAE08DA0099ECEE /* Color+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */; };
+		4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */; };
+		4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */; };
+		4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */; };
+		4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62112EAE08DA0099ECEE /* Font+Styles.swift */; };
+		4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62012EAE08DA0099ECEE /* KeyringSceneView.swift */; };
+		4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FB2EAE08DA0099ECEE /* KeyringScene+Setup.swift */; };
+		4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */; };
+		4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620C2EAE08DA0099ECEE /* NavigationRouter.swift */; };
+		4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FA2EAE08DA0099ECEE /* KeyringScene+Effects.swift */; };
+		4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FD2EAE08DA0099ECEE /* KeyringScene+Swipe.swift */; };
+		4CEC62322EAE08DA0099ECEE /* SoundEffectComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62042EAE08DA0099ECEE /* SoundEffectComponent.swift */; };
+		4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */; };
+		4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62142EAE08DA0099ECEE /* Spacing.swift */; };
+		4CEC626A2EAE08DF0099ECEE /* MKViewModel+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625E2EAE08DF0099ECEE /* MKViewModel+Effect.swift */; };
+		4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */; };
+		4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62442EAE08DF0099ECEE /* FestivalView.swift */; };
+		4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */; };
+		4CEC626E2EAE08DF0099ECEE /* MKPhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62622EAE08DF0099ECEE /* MKPhotoCropView.swift */; };
+		4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */; };
+		4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */; };
+		4CEC62722EAE08DF0099ECEE /* MKViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625A2EAE08DF0099ECEE /* MKViewModel.swift */; };
+		4CEC62732EAE08DF0099ECEE /* MKViewModel+CropBoxDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625D2EAE08DF0099ECEE /* MKViewModel+CropBoxDrag.swift */; };
+		4CEC62742EAE08DF0099ECEE /* MKViewModel+ImageLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625F2EAE08DF0099ECEE /* MKViewModel+ImageLoad.swift */; };
+		4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC624B2EAE08DF0099ECEE /* HomeView.swift */; };
+		4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62612EAE08DF0099ECEE /* MKEditedPhotoView.swift */; };
+		4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62582EAE08DF0099ECEE /* CropModels.swift */; };
+		4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */; };
+		4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62492EAE08DF0099ECEE /* HomeViewModel.swift */; };
+		4CEC627B2EAE08DF0099ECEE /* MKPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62632EAE08DF0099ECEE /* MKPreviewView.swift */; };
+		4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */; };
+		4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */; };
+		4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */; };
+		4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */; };
+		4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */; };
+		4CEC62842EAE08DF0099ECEE /* MKViewModel+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625C2EAE08DF0099ECEE /* MKViewModel+Crop.swift */; };
+		4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */; };
+		4CEC62862EAE08DF0099ECEE /* MKViewModel+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625B2EAE08DF0099ECEE /* MKViewModel+BGRemover.swift */; };
+		4CEC62922EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628F2EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf */; };
+		4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */; };
+		4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */; };
+		4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62892EAE08F70099ECEE /* Confetti.json */; };
+		4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62872EAE08F70099ECEE /* Assets.xcassets */; };
+		4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */; };
+		4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62882EAE08F70099ECEE /* Birthday.json */; };
+		4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62992EAE09990099ECEE /* BundleCreateView.swift */; };
+		4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */; };
+		4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */; };
+		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
+		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
+		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
+		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
+		4CEC61DB2EAE08C00099ECEE /* ParticleEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffect.swift; sourceTree = "<group>"; };
+		4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffect.swift; sourceTree = "<group>"; };
+		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
+		4CEC61DF2EAE08C00099ECEE /* Keyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyring.swift; sourceTree = "<group>"; };
+		4CEC61E02EAE08C00099ECEE /* RingType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingType.swift; sourceTree = "<group>"; };
+		4CEC61E12EAE08C00099ECEE /* ChainType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainType.swift; sourceTree = "<group>"; };
+		4CEC61E22EAE08C00099ECEE /* BodyType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyType.swift; sourceTree = "<group>"; };
+		4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyApp.swift; sourceTree = "<group>"; };
+		4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCellScene.swift; sourceTree = "<group>"; };
+		4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCellScene+Setup.swift"; sourceTree = "<group>"; };
+		4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundleItem.swift; sourceTree = "<group>"; };
+		4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectBackgroundGridItem.swift; sourceTree = "<group>"; };
+		4CEC61F92EAE08DA0099ECEE /* KeyringScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringScene.swift; sourceTree = "<group>"; };
+		4CEC61FA2EAE08DA0099ECEE /* KeyringScene+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Effects.swift"; sourceTree = "<group>"; };
+		4CEC61FB2EAE08DA0099ECEE /* KeyringScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Setup.swift"; sourceTree = "<group>"; };
+		4CEC61FC2EAE08DA0099ECEE /* KeyringScene+Touch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Touch.swift"; sourceTree = "<group>"; };
+		4CEC61FD2EAE08DA0099ECEE /* KeyringScene+Swipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Swipe.swift"; sourceTree = "<group>"; };
+		4CEC61FE2EAE08DA0099ECEE /* KeyringRingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringRingComponent.swift; sourceTree = "<group>"; };
+		4CEC61FF2EAE08DA0099ECEE /* KeyringChainComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringChainComponent.swift; sourceTree = "<group>"; };
+		4CEC62002EAE08DA0099ECEE /* KeyringBodyComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBodyComponent.swift; sourceTree = "<group>"; };
+		4CEC62012EAE08DA0099ECEE /* KeyringSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSceneView.swift; sourceTree = "<group>"; };
+		4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffectComponent.swift; sourceTree = "<group>"; };
+		4CEC62042EAE08DA0099ECEE /* SoundEffectComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectComponent.swift; sourceTree = "<group>"; };
+		4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRoute.swift; sourceTree = "<group>"; };
+		4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRoute.swift; sourceTree = "<group>"; };
+		4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopRoute.swift; sourceTree = "<group>"; };
+		4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalRoute.swift; sourceTree = "<group>"; };
+		4CEC620C2EAE08DA0099ECEE /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
+		4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Keychy.swift"; sourceTree = "<group>"; };
+		4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Custom.swift"; sourceTree = "<group>"; };
+		4CEC62112EAE08DA0099ECEE /* Font+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Styles.swift"; sourceTree = "<group>"; };
+		4CEC62132EAE08DA0099ECEE /* Radius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Radius.swift; sourceTree = "<group>"; };
+		4CEC62142EAE08DA0099ECEE /* Spacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacing.swift; sourceTree = "<group>"; };
+		4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
+		4CEC62172EAE08DA0099ECEE /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
+		4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CollectionViewModel.swift; path = Keychy/Features/Collection/CollectionViewModel.swift; sourceTree = SOURCE_ROOT; };
+		4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
+		4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionTab.swift; sourceTree = "<group>"; };
+		4CEC62442EAE08DF0099ECEE /* FestivalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalView.swift; sourceTree = "<group>"; };
+		4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalTab.swift; sourceTree = "<group>"; };
+		4CEC62492EAE08DF0099ECEE /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeViewModel.swift; path = Keychy/Features/Home/HomeViewModel.swift; sourceTree = SOURCE_ROOT; };
+		4CEC624B2EAE08DF0099ECEE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTab.swift; sourceTree = "<group>"; };
+		4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTab.swift; sourceTree = "<group>"; };
+		4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopView.swift; sourceTree = "<group>"; };
+		4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringViewModelProtocol.swift; sourceTree = "<group>"; };
+		4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCompleteView.swift; sourceTree = "<group>"; };
+		4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringInfoInputView.swift; sourceTree = "<group>"; };
+		4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCustomizingView.swift; sourceTree = "<group>"; };
+		4CEC62582EAE08DF0099ECEE /* CropModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropModels.swift; sourceTree = "<group>"; };
+		4CEC625A2EAE08DF0099ECEE /* MKViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKViewModel.swift; sourceTree = "<group>"; };
+		4CEC625B2EAE08DF0099ECEE /* MKViewModel+BGRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKViewModel+BGRemover.swift"; sourceTree = "<group>"; };
+		4CEC625C2EAE08DF0099ECEE /* MKViewModel+Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKViewModel+Crop.swift"; sourceTree = "<group>"; };
+		4CEC625D2EAE08DF0099ECEE /* MKViewModel+CropBoxDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKViewModel+CropBoxDrag.swift"; sourceTree = "<group>"; };
+		4CEC625E2EAE08DF0099ECEE /* MKViewModel+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKViewModel+Effect.swift"; sourceTree = "<group>"; };
+		4CEC625F2EAE08DF0099ECEE /* MKViewModel+ImageLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKViewModel+ImageLoad.swift"; sourceTree = "<group>"; };
+		4CEC62612EAE08DF0099ECEE /* MKEditedPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKEditedPhotoView.swift; sourceTree = "<group>"; };
+		4CEC62622EAE08DF0099ECEE /* MKPhotoCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKPhotoCropView.swift; sourceTree = "<group>"; };
+		4CEC62632EAE08DF0099ECEE /* MKPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKPreviewView.swift; sourceTree = "<group>"; };
+		4CEC62872EAE08F70099ECEE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4CEC62882EAE08F70099ECEE /* Birthday.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Birthday.json; sourceTree = "<group>"; };
+		4CEC62892EAE08F70099ECEE /* Confetti.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Confetti.json; sourceTree = "<group>"; };
+		4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = barkSoundFile.mp3; sourceTree = "<group>"; };
+		4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drumSoundFile.mp3; sourceTree = "<group>"; };
+		4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = shutterSoundFile.mp3; sourceTree = "<group>"; };
+		4CEC628F2EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "폴더유지용폰트(삭제바람).ttf"; sourceTree = "<group>"; };
+		4CEC62992EAE09990099ECEE /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
+		4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDetailView.swift; sourceTree = "<group>"; };
+		4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleInventoryView.swift; sourceTree = "<group>"; };
+		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
+		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
+		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4CEC61A82EAE071B0099ECEE = {
+			isa = PBXGroup;
+			children = (
+				4CEC61C22EAE079C0099ECEE /* Keychy */,
+				4CEC61B22EAE071B0099ECEE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4CEC61B22EAE071B0099ECEE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61B12EAE071B0099ECEE /* Keychy.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61F02EAE08C40099ECEE /* App */,
+				4CEC61E42EAE08C00099ECEE /* CommonModels */,
+				4CEC62192EAE08DA0099ECEE /* Core */,
+				4CEC62692EAE08DF0099ECEE /* Features */,
+				4CEC62912EAE08F70099ECEE /* Resources */,
+			);
+			path = Keychy;
+			sourceTree = "<group>";
+		};
+		4CEC61D92EAE08C00099ECEE /* KeyringBundle */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */,
+			);
+			path = KeyringBundle;
+			sourceTree = "<group>";
+		};
+		4CEC61DD2EAE08C00099ECEE /* Interaction */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61DA2EAE08C00099ECEE /* Interaction.swift */,
+				4CEC61DB2EAE08C00099ECEE /* ParticleEffect.swift */,
+				4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */,
+			);
+			path = Interaction;
+			sourceTree = "<group>";
+		};
+		4CEC61E32EAE08C00099ECEE /* Keyring */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */,
+				4CEC61DF2EAE08C00099ECEE /* Keyring.swift */,
+				4CEC61E02EAE08C00099ECEE /* RingType.swift */,
+				4CEC61E12EAE08C00099ECEE /* ChainType.swift */,
+				4CEC61E22EAE08C00099ECEE /* BodyType.swift */,
+			);
+			path = Keyring;
+			sourceTree = "<group>";
+		};
+		4CEC61E42EAE08C00099ECEE /* CommonModels */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61D92EAE08C00099ECEE /* KeyringBundle */,
+				4CEC61DD2EAE08C00099ECEE /* Interaction */,
+				4CEC61E32EAE08C00099ECEE /* Keyring */,
+			);
+			path = CommonModels;
+			sourceTree = "<group>";
+		};
+		4CEC61F02EAE08C40099ECEE /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */,
+				4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4CEC61F72EAE08DA0099ECEE /* KeyringBundle */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */,
+				4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */,
+			);
+			path = KeyringBundle;
+			sourceTree = "<group>";
+		};
+		4CEC61F82EAE08DA0099ECEE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
+				4CEC61F72EAE08DA0099ECEE /* KeyringBundle */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4CEC62022EAE08DA0099ECEE /* Keyring */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61F92EAE08DA0099ECEE /* KeyringScene.swift */,
+				4CEC61FA2EAE08DA0099ECEE /* KeyringScene+Effects.swift */,
+				4CEC61FB2EAE08DA0099ECEE /* KeyringScene+Setup.swift */,
+				4CEC61FC2EAE08DA0099ECEE /* KeyringScene+Touch.swift */,
+				4CEC61FD2EAE08DA0099ECEE /* KeyringScene+Swipe.swift */,
+				4CEC61FE2EAE08DA0099ECEE /* KeyringRingComponent.swift */,
+				4CEC61FF2EAE08DA0099ECEE /* KeyringChainComponent.swift */,
+				4CEC62002EAE08DA0099ECEE /* KeyringBodyComponent.swift */,
+				4CEC62012EAE08DA0099ECEE /* KeyringSceneView.swift */,
+			);
+			path = Keyring;
+			sourceTree = "<group>";
+		};
+		4CEC62052EAE08DA0099ECEE /* Effects */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */,
+				4CEC62042EAE08DA0099ECEE /* SoundEffectComponent.swift */,
+			);
+			path = Effects;
+			sourceTree = "<group>";
+		};
+		4CEC62062EAE08DA0099ECEE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */,
+				4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */,
+				4CEC61F82EAE08DA0099ECEE /* View */,
+				4CEC62022EAE08DA0099ECEE /* Keyring */,
+				4CEC62052EAE08DA0099ECEE /* Effects */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4CEC620B2EAE08DA0099ECEE /* Routes */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */,
+				4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */,
+				4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */,
+				4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */,
+			);
+			path = Routes;
+			sourceTree = "<group>";
+		};
+		4CEC620D2EAE08DA0099ECEE /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC620B2EAE08DA0099ECEE /* Routes */,
+				4CEC620C2EAE08DA0099ECEE /* NavigationRouter.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		4CEC620F2EAE08DA0099ECEE /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		4CEC62122EAE08DA0099ECEE /* Typography */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */,
+				4CEC62112EAE08DA0099ECEE /* Font+Styles.swift */,
+			);
+			path = Typography;
+			sourceTree = "<group>";
+		};
+		4CEC62152EAE08DA0099ECEE /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC620F2EAE08DA0099ECEE /* Colors */,
+				4CEC62122EAE08DA0099ECEE /* Typography */,
+				4CEC62132EAE08DA0099ECEE /* Radius.swift */,
+				4CEC62142EAE08DA0099ECEE /* Spacing.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		4CEC62182EAE08DA0099ECEE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */,
+				4CEC62172EAE08DA0099ECEE /* View+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		4CEC62192EAE08DA0099ECEE /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62062EAE08DA0099ECEE /* Components */,
+				4CEC620D2EAE08DA0099ECEE /* Navigation */,
+				4CEC62152EAE08DA0099ECEE /* DesignSystem */,
+				4CEC62182EAE08DA0099ECEE /* Extensions */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		4CEC62352EAE08DF0099ECEE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4CEC62382EAE08DF0099ECEE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */,
+				4CEC62A42EAE0BA30099ECEE /* Bundle */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4CEC623F2EAE08DF0099ECEE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */,
+				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
+				4CEC629D2EAE09990099ECEE /* Bundle */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CEC62412EAE08DF0099ECEE /* Collection */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62352EAE08DF0099ECEE /* Models */,
+				4CEC62382EAE08DF0099ECEE /* ViewModels */,
+				4CEC623F2EAE08DF0099ECEE /* Views */,
+			);
+			path = Collection;
+			sourceTree = "<group>";
+		};
+		4CEC62422EAE08DF0099ECEE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4CEC62432EAE08DF0099ECEE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4CEC62452EAE08DF0099ECEE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62442EAE08DF0099ECEE /* FestivalView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CEC62472EAE08DF0099ECEE /* Festival */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62422EAE08DF0099ECEE /* Models */,
+				4CEC62432EAE08DF0099ECEE /* ViewModels */,
+				4CEC62452EAE08DF0099ECEE /* Views */,
+				4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */,
+			);
+			path = Festival;
+			sourceTree = "<group>";
+		};
+		4CEC62482EAE08DF0099ECEE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4CEC624A2EAE08DF0099ECEE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62492EAE08DF0099ECEE /* HomeViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4CEC624C2EAE08DF0099ECEE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */,
+				4CEC624B2EAE08DF0099ECEE /* HomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CEC624E2EAE08DF0099ECEE /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62482EAE08DF0099ECEE /* Models */,
+				4CEC624A2EAE08DF0099ECEE /* ViewModels */,
+				4CEC624C2EAE08DF0099ECEE /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		4CEC62522EAE08DF0099ECEE /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		4CEC62562EAE08DF0099ECEE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */,
+				4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */,
+				4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CEC62572EAE08DF0099ECEE /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62522EAE08DF0099ECEE /* Protocols */,
+				4CEC62562EAE08DF0099ECEE /* Views */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		4CEC62592EAE08DF0099ECEE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62582EAE08DF0099ECEE /* CropModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4CEC62602EAE08DF0099ECEE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC625A2EAE08DF0099ECEE /* MKViewModel.swift */,
+				4CEC625B2EAE08DF0099ECEE /* MKViewModel+BGRemover.swift */,
+				4CEC625C2EAE08DF0099ECEE /* MKViewModel+Crop.swift */,
+				4CEC625D2EAE08DF0099ECEE /* MKViewModel+CropBoxDrag.swift */,
+				4CEC625E2EAE08DF0099ECEE /* MKViewModel+Effect.swift */,
+				4CEC625F2EAE08DF0099ECEE /* MKViewModel+ImageLoad.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4CEC62642EAE08DF0099ECEE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62612EAE08DF0099ECEE /* MKEditedPhotoView.swift */,
+				4CEC62622EAE08DF0099ECEE /* MKPhotoCropView.swift */,
+				4CEC62632EAE08DF0099ECEE /* MKPreviewView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CEC62652EAE08DF0099ECEE /* AcrylicPhoto */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62592EAE08DF0099ECEE /* Models */,
+				4CEC62602EAE08DF0099ECEE /* ViewModels */,
+				4CEC62642EAE08DF0099ECEE /* Views */,
+			);
+			path = AcrylicPhoto;
+			sourceTree = "<group>";
+		};
+		4CEC62662EAE08DF0099ECEE /* Templates */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62652EAE08DF0099ECEE /* AcrylicPhoto */,
+			);
+			path = Templates;
+			sourceTree = "<group>";
+		};
+		4CEC62672EAE08DF0099ECEE /* Making */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62572EAE08DF0099ECEE /* Shared */,
+				4CEC62662EAE08DF0099ECEE /* Templates */,
+			);
+			path = Making;
+			sourceTree = "<group>";
+		};
+		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
+				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
+				4CEC62672EAE08DF0099ECEE /* Making */,
+			);
+			path = Workshop;
+			sourceTree = "<group>";
+		};
+		4CEC62692EAE08DF0099ECEE /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62412EAE08DF0099ECEE /* Collection */,
+				4CEC62472EAE08DF0099ECEE /* Festival */,
+				4CEC624E2EAE08DF0099ECEE /* Home */,
+				4CEC62682EAE08DF0099ECEE /* Workshop */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		4CEC628A2EAE08F70099ECEE /* Lotties */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62882EAE08F70099ECEE /* Birthday.json */,
+				4CEC62892EAE08F70099ECEE /* Confetti.json */,
+			);
+			path = Lotties;
+			sourceTree = "<group>";
+		};
+		4CEC628E2EAE08F70099ECEE /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */,
+				4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */,
+				4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
+		4CEC62902EAE08F70099ECEE /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC628F2EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		4CEC62912EAE08F70099ECEE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62872EAE08F70099ECEE /* Assets.xcassets */,
+				4CEC628A2EAE08F70099ECEE /* Lotties */,
+				4CEC628E2EAE08F70099ECEE /* Sounds */,
+				4CEC62902EAE08F70099ECEE /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4CEC629D2EAE09990099ECEE /* Bundle */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62992EAE09990099ECEE /* BundleCreateView.swift */,
+				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
+				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
+				4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */,
+			);
+			path = Bundle;
+			sourceTree = "<group>";
+		};
+		4CEC62A42EAE0BA30099ECEE /* Bundle */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */,
+			);
+			path = Bundle;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4CEC61B02EAE071B0099ECEE /* Keychy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CEC61BC2EAE071C0099ECEE /* Build configuration list for PBXNativeTarget "Keychy" */;
+			buildPhases = (
+				4CEC61AD2EAE071B0099ECEE /* Sources */,
+				4CEC61AE2EAE071B0099ECEE /* Frameworks */,
+				4CEC61AF2EAE071B0099ECEE /* Resources */,
+				4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Keychy;
+			packageProductDependencies = (
+				4C6621DA2EAE0D93001760B5 /* Lottie */,
+			);
+			productName = Keychy;
+			productReference = 4CEC61B12EAE071B0099ECEE /* Keychy.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4CEC61A92EAE071B0099ECEE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					4CEC61B02EAE071B0099ECEE = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+				};
+			};
+			buildConfigurationList = 4CEC61AC2EAE071B0099ECEE /* Build configuration list for PBXProject "Keychy" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4CEC61A82EAE071B0099ECEE;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4CEC61B22EAE071B0099ECEE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4CEC61B02EAE071B0099ECEE /* Keychy */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4CEC61AF2EAE071B0099ECEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CEC62922EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf in Resources */,
+				4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */,
+				4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */,
+				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,
+				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
+				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
+				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4CEC61AD2EAE071B0099ECEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
+				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
+				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
+				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
+				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
+				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
+				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
+				4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */,
+				4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */,
+				4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */,
+				4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */,
+				4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */,
+				4CEC621E2EAE08DA0099ECEE /* KeyringChainComponent.swift in Sources */,
+				4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */,
+				4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */,
+				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
+				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
+				4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */,
+				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
+				4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */,
+				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
+				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
+				4CEC62272EAE08DA0099ECEE /* Color+Keychy.swift in Sources */,
+				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
+				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
+				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
+				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
+				4CEC626A2EAE08DF0099ECEE /* MKViewModel+Effect.swift in Sources */,
+				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
+				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
+				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
+				4CEC626E2EAE08DF0099ECEE /* MKPhotoCropView.swift in Sources */,
+				4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */,
+				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
+				4CEC62722EAE08DF0099ECEE /* MKViewModel.swift in Sources */,
+				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
+				4CEC62732EAE08DF0099ECEE /* MKViewModel+CropBoxDrag.swift in Sources */,
+				4CEC62742EAE08DF0099ECEE /* MKViewModel+ImageLoad.swift in Sources */,
+				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
+				4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */,
+				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
+				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
+				4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */,
+				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
+				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
+				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
+				4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */,
+				4CEC627B2EAE08DF0099ECEE /* MKPreviewView.swift in Sources */,
+				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
+				4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */,
+				4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */,
+				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
+				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
+				4CEC62842EAE08DF0099ECEE /* MKViewModel+Crop.swift in Sources */,
+				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
+				4CEC62862EAE08DF0099ECEE /* MKViewModel+BGRemover.swift in Sources */,
+				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
+				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
+				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
+				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
+				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
+				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
+				4CEC62322EAE08DA0099ECEE /* SoundEffectComponent.swift in Sources */,
+				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
+				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
+				4CEC61EB2EAE08C00099ECEE /* ParticleEffect.swift in Sources */,
+				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
+				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4CEC61BA2EAE071C0099ECEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5M5VM39FM9;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4CEC61BB2EAE071C0099ECEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5M5VM39FM9;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4CEC61BD2EAE071C0099ECEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5M5VM39FM9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keychy.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Keychy_Profile;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4CEC61BE2EAE071C0099ECEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5M5VM39FM9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.keychy.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Keychy_Profile;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4CEC61AC2EAE071B0099ECEE /* Build configuration list for PBXProject "Keychy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CEC61BA2EAE071C0099ECEE /* Debug */,
+				4CEC61BB2EAE071C0099ECEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CEC61BC2EAE071C0099ECEE /* Build configuration list for PBXNativeTarget "Keychy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CEC61BD2EAE071C0099ECEE /* Debug */,
+				4CEC61BE2EAE071C0099ECEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4C6621DA2EAE0D93001760B5 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4CEC61A92EAE071B0099ECEE /* Project object */;
+}
