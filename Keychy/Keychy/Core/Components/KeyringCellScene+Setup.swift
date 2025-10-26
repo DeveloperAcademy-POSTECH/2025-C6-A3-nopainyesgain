@@ -74,7 +74,7 @@ extension KeyringCellScene {
     }
     
     // 키링 구성 요소들을 Joint로 연결
-    func connectComponents(ring: SKShapeNode, chains: [SKShapeNode], body: SKNode) {
+    func connectComponents(ring: SKSpriteNode, chains: [SKShapeNode], body: SKNode) {
         var previousNode: SKNode = ring
         
         // Ring과 첫 번째 Chain 연결
