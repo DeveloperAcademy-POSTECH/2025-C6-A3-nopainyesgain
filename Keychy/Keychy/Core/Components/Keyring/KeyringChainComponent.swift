@@ -17,7 +17,7 @@ struct KeyringChainComponent {
         count: Int,
         startPosition: CGPoint,
         spacing: CGFloat
-    ) -> [SKShapeNode] {
+    ) -> [SKSpriteNode] {
         switch chainType {
         case .basic:
             return createBasicChainLinks(count: count, startPosition: startPosition, spacing: spacing)
@@ -29,18 +29,21 @@ struct KeyringChainComponent {
         count: Int,
         startPosition: CGPoint,
         spacing: CGFloat
-    ) -> [SKShapeNode] {
-        var links: [SKShapeNode] = []
+    ) -> [SKSpriteNode] {
+        var links: [SKSpriteNode] = []
 
         for i in 0..<count {
-            let width = (i % 2 == 0) ? 20.0 : 10.0
-            let height = (i % 2 == 0) ? 28.0 : 16.0
+            let width = (i % 2 == 0) ? 5.0 : 18.0
+            let height = (i % 2 == 0) ? 22.0 : 26.0
+            let imageName = (i % 2 == 0) ? "basicChain1" : "basicChain2"
 
-            let node = createChainLink(width: width, height: height)
+            let node = SKSpriteNode(imageNamed: imageName)
+            node.size = CGSize(width: width, height: height)
             node.position = CGPoint(
                 x: startPosition.x,
                 y: startPosition.y - CGFloat(i) * spacing
             )
+            node.zPosition = (i % 2 == 0) ? 1 : 0 // 짝수번째 노드가 위에 보이도록 처리
 
             let physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: width - 4, height: height - 4))
             physicsBody.mass = 2.0
