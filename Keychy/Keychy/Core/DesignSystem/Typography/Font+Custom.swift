@@ -21,28 +21,34 @@ import SwiftUI
 // MARK: - Font Family
 enum FontFamily: String, CaseIterable, Identifiable {
 
-    // TODO: - 예시임, 실제로 추가하고 수정
-    case pretendard = "Pretendard-Regular"
-    case pretendardBold = "Pretendard-Bold"
-    case pretendardSemiBold = "Pretendard-SemiBold"
-    case roboto = "Roboto-Regular"
-    case robotoBold = "Roboto-Bold"
-    case nanumPen = "NanumPen-Regular"
-
     var id: String { rawValue }
+    var fontName: String { rawValue }
+    
+    /// SUIT 폰트
+    case suitThin = "SUIT-Thin"
+    case suitExtraLight = "SUIT-ExtraLight"
+    case suitLight = "SUIT-Light"
+    case suitRegular = "SUIT-Regular"
+    case suitMedium = "SUIT-Medium"
+    case suitSemiBold = "SUIT-SemiBold"
+    case suitBold = "SUIT-Bold"
+    case suitExtraBold = "SUIT-ExtraBold"
+    case suitHeavy = "SUIT-Heavy"
 
+    /// 화면 표시용
     var displayName: String {
         switch self {
-        case .pretendard: return "프리텐다드"
-        case .pretendardBold: return "프리텐다드 Bold"
-        case .pretendardSemiBold: return "프리텐다드 SemiBold"
-        case .roboto: return "로보토"
-        case .robotoBold: return "로보토 Bold"
-        case .nanumPen: return "나눔손글씨"
+        case .suitThin: return "SUIT Thin"
+        case .suitExtraLight: return "SUIT ExtraLight"
+        case .suitLight: return "SUIT Light"
+        case .suitRegular: return "SUIT Regular"
+        case .suitMedium: return "SUIT Medium"
+        case .suitSemiBold: return "SUIT SemiBold"
+        case .suitBold: return "SUIT Bold"
+        case .suitExtraBold: return "SUIT ExtraBold"
+        case .suitHeavy: return "SUIT Heavy"
         }
     }
-
-    var fontName: String { rawValue }
 }
 
 extension Font {
