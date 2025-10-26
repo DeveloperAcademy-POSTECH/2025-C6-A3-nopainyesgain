@@ -16,6 +16,18 @@
 		38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594472EAE4EE20003D712 /* FirebaseStorage */; };
 		38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A594492EAE50120003D712 /* GoogleService-Info.plist */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
+		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
+		4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */; };
+		4C6622072EAE5FC3001760B5 /* SUIT-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */; };
+		4C6622082EAE5FC3001760B5 /* SUIT-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FE2EAE5FC3001760B5 /* SUIT-Heavy.otf */; };
+		4C6622092EAE5FC3001760B5 /* SUIT-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FF2EAE5FC3001760B5 /* SUIT-Light.otf */; };
+		4C66220A2EAE5FC3001760B5 /* SUIT-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622002EAE5FC3001760B5 /* SUIT-Medium.otf */; };
+		4C66220B2EAE5FC3001760B5 /* SUIT-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622012EAE5FC3001760B5 /* SUIT-Regular.otf */; };
+		4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622022EAE5FC3001760B5 /* SUIT-SemiBold.otf */; };
+		4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */; };
+		4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */; };
+		4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622112EAE6825001760B5 /* HomeViewModel.swift */; };
+		4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -40,7 +52,6 @@
 		4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */; };
 		4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */; };
 		4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62132EAE08DA0099ECEE /* Radius.swift */; };
-		4CEC62272EAE08DA0099ECEE /* Color+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */; };
 		4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */; };
 		4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */; };
 		4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */; };
@@ -68,7 +79,6 @@
 		4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62612EAE08DF0099ECEE /* MKEditedPhotoView.swift */; };
 		4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62582EAE08DF0099ECEE /* CropModels.swift */; };
 		4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */; };
-		4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62492EAE08DF0099ECEE /* HomeViewModel.swift */; };
 		4CEC627B2EAE08DF0099ECEE /* MKPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62632EAE08DF0099ECEE /* MKPreviewView.swift */; };
 		4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */; };
 		4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */; };
@@ -78,7 +88,6 @@
 		4CEC62842EAE08DF0099ECEE /* MKViewModel+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625C2EAE08DF0099ECEE /* MKViewModel+Crop.swift */; };
 		4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */; };
 		4CEC62862EAE08DF0099ECEE /* MKViewModel+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625B2EAE08DF0099ECEE /* MKViewModel+BGRemover.swift */; };
-		4CEC62922EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628F2EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf */; };
 		4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */; };
 		4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */; };
 		4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62892EAE08F70099ECEE /* Confetti.json */; };
@@ -107,7 +116,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		38A594492EAE50120003D712 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
+		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
+		4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraLight.otf"; sourceTree = "<group>"; };
+		4C6621FE2EAE5FC3001760B5 /* SUIT-Heavy.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Heavy.otf"; sourceTree = "<group>"; };
+		4C6621FF2EAE5FC3001760B5 /* SUIT-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Light.otf"; sourceTree = "<group>"; };
+		4C6622002EAE5FC3001760B5 /* SUIT-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Medium.otf"; sourceTree = "<group>"; };
+		4C6622012EAE5FC3001760B5 /* SUIT-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Regular.otf"; sourceTree = "<group>"; };
+		4C6622022EAE5FC3001760B5 /* SUIT-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-SemiBold.otf"; sourceTree = "<group>"; };
+		4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Thin.otf"; sourceTree = "<group>"; };
+		4C66220E2EAE6109001760B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeViewModel+Bundle.swift"; sourceTree = "<group>"; };
+		4C6622112EAE6825001760B5 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Gradient+Keychy.swift"; sourceTree = "<group>"; };
+    38A594492EAE50120003D712 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
@@ -141,7 +163,6 @@
 		4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopRoute.swift; sourceTree = "<group>"; };
 		4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalRoute.swift; sourceTree = "<group>"; };
 		4CEC620C2EAE08DA0099ECEE /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
-		4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Keychy.swift"; sourceTree = "<group>"; };
 		4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Custom.swift"; sourceTree = "<group>"; };
 		4CEC62112EAE08DA0099ECEE /* Font+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Styles.swift"; sourceTree = "<group>"; };
 		4CEC62132EAE08DA0099ECEE /* Radius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Radius.swift; sourceTree = "<group>"; };
@@ -153,7 +174,6 @@
 		4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionTab.swift; sourceTree = "<group>"; };
 		4CEC62442EAE08DF0099ECEE /* FestivalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalView.swift; sourceTree = "<group>"; };
 		4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalTab.swift; sourceTree = "<group>"; };
-		4CEC62492EAE08DF0099ECEE /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeViewModel.swift; path = Keychy/Features/Home/HomeViewModel.swift; sourceTree = SOURCE_ROOT; };
 		4CEC624B2EAE08DF0099ECEE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTab.swift; sourceTree = "<group>"; };
 		4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTab.swift; sourceTree = "<group>"; };
@@ -178,7 +198,6 @@
 		4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = barkSoundFile.mp3; sourceTree = "<group>"; };
 		4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drumSoundFile.mp3; sourceTree = "<group>"; };
 		4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = shutterSoundFile.mp3; sourceTree = "<group>"; };
-		4CEC628F2EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "폴더유지용폰트(삭제바람).ttf"; sourceTree = "<group>"; };
 		4CEC62992EAE09990099ECEE /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
 		4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDetailView.swift; sourceTree = "<group>"; };
 		4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleInventoryView.swift; sourceTree = "<group>"; };
@@ -206,6 +225,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C6622042EAE5FC3001760B5 /* SUIT */ = {
+			isa = PBXGroup;
+			children = (
+				4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */,
+				4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */,
+				4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */,
+				4C6621FE2EAE5FC3001760B5 /* SUIT-Heavy.otf */,
+				4C6621FF2EAE5FC3001760B5 /* SUIT-Light.otf */,
+				4C6622002EAE5FC3001760B5 /* SUIT-Medium.otf */,
+				4C6622012EAE5FC3001760B5 /* SUIT-Regular.otf */,
+				4C6622022EAE5FC3001760B5 /* SUIT-SemiBold.otf */,
+				4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */,
+			);
+			path = SUIT;
+			sourceTree = "<group>";
+		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
@@ -225,7 +260,8 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
-				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
+				4C66220E2EAE6109001760B5 /* Info.plist */,
+        38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
 				4CEC61E42EAE08C00099ECEE /* CommonModels */,
 				4CEC62192EAE08DA0099ECEE /* Core */,
@@ -363,7 +399,7 @@
 		4CEC620F2EAE08DA0099ECEE /* Colors */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */,
+				4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */,
 			);
 			path = Colors;
 			sourceTree = "<group>";
@@ -487,7 +523,8 @@
 		4CEC624A2EAE08DF0099ECEE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62492EAE08DF0099ECEE /* HomeViewModel.swift */,
+				4C6622112EAE6825001760B5 /* HomeViewModel.swift */,
+				4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -639,7 +676,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC628F2EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf */,
+				4C6622042EAE5FC3001760B5 /* SUIT */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -748,12 +785,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CEC62922EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf in Resources */,
-				38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */,
+        38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */,
 				4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */,
 				4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */,
 				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,
 				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
+				4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */,
+				4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */,
+				4C6622072EAE5FC3001760B5 /* SUIT-ExtraLight.otf in Resources */,
+				4C6622082EAE5FC3001760B5 /* SUIT-Heavy.otf in Resources */,
+				4C6622092EAE5FC3001760B5 /* SUIT-Light.otf in Resources */,
+				4C66220A2EAE5FC3001760B5 /* SUIT-Medium.otf in Resources */,
+				4C66220B2EAE5FC3001760B5 /* SUIT-Regular.otf in Resources */,
+				4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */,
+				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
 				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
 			);
@@ -770,6 +815,7 @@
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
+				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
 				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
 				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
@@ -788,12 +834,12 @@
 				4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
-				4CEC62272EAE08DA0099ECEE /* Color+Keychy.swift in Sources */,
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* MKViewModel+Effect.swift in Sources */,
+				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
@@ -808,7 +854,6 @@
 				4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
-				4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */,
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
@@ -825,6 +870,7 @@
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
+				4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */,
 				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
@@ -974,6 +1020,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5M5VM39FM9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1012,6 +1059,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5M5VM39FM9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
