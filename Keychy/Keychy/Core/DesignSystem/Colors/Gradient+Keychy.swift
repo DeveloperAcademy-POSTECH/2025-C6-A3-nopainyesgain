@@ -20,9 +20,9 @@ extension GradientStyle {
         switch self {
         case .primary:
             return LinearGradient(
-                colors: [.red, .orange],
-                startPoint: .top,
-                endPoint: .bottom
+                colors: [.gradient1, .gradient2],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
         }
     }
