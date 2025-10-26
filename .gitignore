@@ -38,6 +38,13 @@ DerivedData/
 timeline.xctimeline
 playground.xcworkspace
 
+## Font
+Keychy/Resources/Fonts/*.otf
+
+## Info.plist
+Keychy/Info.plist
+Keychy/GoogleService-Info.plist
+
 # Swift Package Manager
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
 # Packages/
@@ -99,5 +106,6 @@ iOSInjectionProject/
 **/xcshareddata/WorkspaceSettings.xcsettings
 *.xcuserstate
 
+*.DS_Store
+
 # End of https://www.toptal.com/developers/gitignore/api/swift,xcode
-.DS_Store
