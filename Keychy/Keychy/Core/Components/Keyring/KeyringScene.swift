@@ -26,7 +26,7 @@ class KeyringScene: SKScene {
 
     // MARK: - 구성 요소들
     var ringNode: SKSpriteNode?
-    var chainNodes: [SKShapeNode] = []
+    var chainNodes: [SKSpriteNode] = []
     var bodyNode: SKNode?
 
     // MARK: - 스와이프 제스처 관련
