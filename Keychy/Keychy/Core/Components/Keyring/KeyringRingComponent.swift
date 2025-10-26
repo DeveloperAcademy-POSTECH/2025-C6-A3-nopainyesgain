@@ -11,8 +11,8 @@ import SpriteKit
 // MARK: - Keyring Ring Component
 struct KeyringRingComponent {
 
-    // Ring 타입 받아서 SKShapeNode로 생성
-    static func createNode(from ringType: RingType) -> SKShapeNode {
+    // Ring 타입 받아서 SKSpriteNode로 생성
+    static func createNode(from ringType: RingType) -> SKSpriteNode {
         switch ringType {
         case .basic:
             return createBasicRing()
@@ -20,21 +20,15 @@ struct KeyringRingComponent {
     }
 
     // MARK: - Basic Ring
-    private static func createBasicRing() -> SKShapeNode {
+    private static func createBasicRing() -> SKSpriteNode {
         let outerRadius: CGFloat = 50
         let innerRadius: CGFloat = 42
         let thickness = outerRadius - innerRadius
+        let ringSize = outerRadius * 2 // 지름
 
-        // 도넛 형태 패스 생성
-        let path = UIBezierPath()
-        path.append(UIBezierPath(arcCenter: .zero, radius: outerRadius, startAngle: 0, endAngle: .pi * 2, clockwise: true))
-        path.append(UIBezierPath(arcCenter: .zero, radius: innerRadius, startAngle: 0, endAngle: .pi * 2, clockwise: false))
-        path.usesEvenOddFillRule = true
-
-        let node = SKShapeNode(path: path.cgPath)
-        node.fillColor = UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
-        node.strokeColor = UIColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 1.0)
-        node.lineWidth = 1.0
+        // 이미지로 스프라이트 노드 생성
+        let node = SKSpriteNode(imageNamed: "basicRing")
+        node.size = CGSize(width: ringSize, height: ringSize)
 
         // 물리 바디를 도넛 형태로 근사
         // 여러 개의 작은 원으로 도넛 형태를 만듦

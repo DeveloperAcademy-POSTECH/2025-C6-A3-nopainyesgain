@@ -25,12 +25,12 @@ extension KeyringScene {
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        // ringBottomY 그대로가 아니라 -2로 아주 얇은 간격을 줌으로써 음수 오프셋을 피하고 보기에 자연스럽게 만드려고 함
-        let chainStartY = ringBottomY - 2
+        // ringBottomY 그대로가 아니라 +0.5로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
+        let chainStartY = ringBottomY + 0.5
         let chainSpacing: CGFloat = 16
         let chains = KeyringChainComponent.createLinks(
             from: currentChainType,
-            count: 5,
+            count: 6,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing
         )
@@ -81,7 +81,7 @@ extension KeyringScene {
     }
 
     // 키링 구성 요소들을 Joint로 연결
-    private func connectComponents(ring: SKShapeNode, chains: [SKShapeNode], body: SKNode) {
+    private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
         var previousNode: SKNode = ring
 
         // Ring과 첫 번째 Chain 연결
