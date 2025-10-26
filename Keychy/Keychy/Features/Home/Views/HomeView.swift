@@ -16,6 +16,7 @@ struct HomeView: View {
                 router.push(.BundleInventoryView)
             }
             .font(.h1)
+            .foregroundStyle(.main500)
         }
         .navigationBarTitle("Home")
     }
