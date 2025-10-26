@@ -19,6 +19,7 @@
 		4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */; };
 		4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */; };
 		4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622112EAE6825001760B5 /* HomeViewModel.swift */; };
+		4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -43,7 +44,6 @@
 		4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */; };
 		4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */; };
 		4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62132EAE08DA0099ECEE /* Radius.swift */; };
-		4CEC62272EAE08DA0099ECEE /* Color+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */; };
 		4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */; };
 		4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */; };
 		4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */; };
@@ -120,6 +120,7 @@
 		4C66220E2EAE6109001760B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4C6622112EAE6825001760B5 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Gradient+Keychy.swift"; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -152,7 +153,6 @@
 		4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopRoute.swift; sourceTree = "<group>"; };
 		4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalRoute.swift; sourceTree = "<group>"; };
 		4CEC620C2EAE08DA0099ECEE /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
-		4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Keychy.swift"; sourceTree = "<group>"; };
 		4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Custom.swift"; sourceTree = "<group>"; };
 		4CEC62112EAE08DA0099ECEE /* Font+Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Styles.swift"; sourceTree = "<group>"; };
 		4CEC62132EAE08DA0099ECEE /* Radius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Radius.swift; sourceTree = "<group>"; };
@@ -380,7 +380,7 @@
 		4CEC620F2EAE08DA0099ECEE /* Colors */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC620E2EAE08DA0099ECEE /* Color+Keychy.swift */,
+				4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */,
 			);
 			path = Colors;
 			sourceTree = "<group>";
@@ -787,6 +787,7 @@
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
+				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
 				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
 				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
@@ -805,7 +806,6 @@
 				4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
-				4CEC62272EAE08DA0099ECEE /* Color+Keychy.swift in Sources */,
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
