@@ -31,15 +31,24 @@ struct WorkshopView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                topBannerSection
                 
-                myCollectionSection
+                VStack {
+                    topBannerSection
+                    
+                    myCollectionSection
+                }
+                .padding(12)
                 
-                stickyHeaderSection
-                
-                mainContentSection
+                VStack() {
+                    stickyHeaderSection
+                    
+                    mainContentSection
+                }
+                .background(Color(UIColor.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+
             }
-            .padding(.horizontal, 12)
+            .background(Color.black10)
         }
         .sheet(isPresented: $showFilterSheet) {
             sortSheet
@@ -101,7 +110,7 @@ extension WorkshopView {
             
             filterBar
         }
-        .background(Color(UIColor.systemBackground))
+        .padding(12)
     }
     
     /// 카테고리 탭바 - KEYCHY!, 키링, 카라비너 등
@@ -153,19 +162,6 @@ extension WorkshopView {
 
 // MARK: - 메인 콘텐츠
 extension WorkshopView {
-    /// 메인 그리드 - 아이템 목록 2열 그리드
-    private var mainContentSection: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-            ForEach(0..<10) { index in
-                KeychainItem(
-                    hasSticker: index % 3 == 0,
-                    tabType: selectedTab
-                )
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
-    }
     
     /// 내 창고 섹션 - 보유한 템플릿 카드 표시
     private var myCollectionSection: some View {
@@ -188,6 +184,20 @@ extension WorkshopView {
                 }
             }
         }
+    }
+    
+    /// 메인 그리드 - 아이템 목록 2열 그리드
+    private var mainContentSection: some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+            ForEach(0..<10) { index in
+                KeychainItem(
+                    hasSticker: index % 3 == 0,
+                    tabType: selectedTab
+                )
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 16)
     }
     
     /// 정렬 선택 시트 - 최신순/인기순 선택
@@ -336,8 +346,6 @@ struct KeychainItem: View {
             ZStack() {
                 VStack {
                     HStack {
-                        
-                        
                         if hasSticker {
                             Image(systemName: "leaf.fill")
                                 .foregroundStyle(.pink)
@@ -356,24 +364,9 @@ struct KeychainItem: View {
             .frame(maxWidth: .infinity)
             .padding(8)
             .background(Color.gray)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             
             Text("Lable")
-        }
-    }
-    
-    /// 탭 타입에 따른 아이콘 반환
-    private var iconForTab: String {
-        switch tabType {
-        case .keychy:
-            return "link"
-        case .keyring:
-            return "circle"
-        case .carabiner:
-            return "paperclip"
-        case .effect:
-            return "sparkles"
-        case .background:
-            return "square.fill"
         }
     }
 }
