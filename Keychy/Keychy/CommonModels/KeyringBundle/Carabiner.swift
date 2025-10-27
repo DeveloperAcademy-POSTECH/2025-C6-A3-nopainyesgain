@@ -22,4 +22,7 @@ struct Carabiner: Identifiable, Equatable, Hashable {
     var downloadCount: Int
     var useCount: Int
     var createdAt: Date
+    
+    var keyringXPosition: [CGFloat]
+    var keyringYPosition: [CGFloat]
 }
