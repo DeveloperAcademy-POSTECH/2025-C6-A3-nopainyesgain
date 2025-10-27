@@ -10,21 +10,27 @@ import SwiftUI
 struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State private var viewModel = HomeViewModel()
+    @State private var collectionViewModel = CollectionViewModel()
     
     var body: some View {
         NavigationStack(path: $router.path) {
             HomeView(router: router)
                 .navigationDestination(for: HomeRoute.self) {route in
                     switch route {
-                    case .BundleInventoryView:
-                        //TODO: 라우터 논의 후 뷰모델 수정
-                        BundleInventoryView(router: router, viewModel: CollectionViewModel())
-                    case .BundleDetailView:
-                        BundleDetailView(router: router)
-                    case .BundleCreateView:
-                        BundleCreateView(router: router, viewModel: CollectionViewModel())
-                    case .BundleSelectBackgroundView:
-                        BundleSelectBackgroundView(router: router, viewModel: CollectionViewModel())
+                        //키링 뭉치함
+                    case .bundleInventoryView:
+                        BundleInventoryView(router: router, viewModel: collectionViewModel)
+                    case .bundleDetailView:
+                        BundleDetailView(router: router, viewModel: collectionViewModel)
+                    case .bundleSelectBackgroundView:
+                        BundleSelectBackgroundView(router: router, viewModel: collectionViewModel)
+                    case .bundleSelectCarabinerView:
+                        BundleSelectCarabinerView(router: router, viewModel: collectionViewModel)
+                    case .bundleAddKeyringView:
+                        BundleAddKeyringView(router: router, viewModel: collectionViewModel)
+                    case .bundleNameInputView:
+                        BundleNameInputView(router: router, viewModel: collectionViewModel)
+                        // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)
                     }
