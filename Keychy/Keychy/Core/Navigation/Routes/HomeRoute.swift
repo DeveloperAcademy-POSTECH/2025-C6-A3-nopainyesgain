@@ -11,8 +11,6 @@ enum HomeRoute: Hashable {
     case bundleInventoryView
     case bundleDetailView
     case bundleSelectBackgroundView
-    case bundleSelectCarabinerView
-    case bundleNameInputView
-    case bundleAddKeyringView
+
     case coinCharge
 }
