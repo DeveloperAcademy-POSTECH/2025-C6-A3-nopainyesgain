@@ -73,7 +73,7 @@ extension BundleInventoryView {
         ScrollView {
             //LazyVGrid의 spacing은 vertical 간격
             LazyVGrid(columns: columns, spacing: 18) {
-                ForEach(viewModel.keyringBundle, id: \.self) { bundle in
+                ForEach(viewModel.sortedBundles, id: \.self) { bundle in
                     Button {
                         router.push(.bundleDetailView)
                     } label: {
