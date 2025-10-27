@@ -14,7 +14,6 @@
 		38A594442EAE4EE20003D712 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594432EAE4EE20003D712 /* FirebaseFirestore */; };
 		38A594462EAE4EE20003D712 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594452EAE4EE20003D712 /* FirebaseMessaging */; };
 		38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594472EAE4EE20003D712 /* FirebaseStorage */; };
-		38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A594492EAE50120003D712 /* GoogleService-Info.plist */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
 		4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */; };
@@ -28,6 +27,7 @@
 		4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */; };
 		4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622112EAE6825001760B5 /* HomeViewModel.swift */; };
 		4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */; };
+		4C6622172EAE8422001760B5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622162EAE8422001760B5 /* GoogleService-Info.plist */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -116,6 +116,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
 		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
 		4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -129,8 +130,7 @@
 		4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4C6622112EAE6825001760B5 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Gradient+Keychy.swift"; sourceTree = "<group>"; };
-    38A594492EAE50120003D712 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
+		4C6622162EAE8422001760B5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -260,14 +260,14 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
+				4C6622162EAE8422001760B5 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
-        38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
+				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
 				4CEC61E42EAE08C00099ECEE /* CommonModels */,
 				4CEC62192EAE08DA0099ECEE /* Core */,
 				4CEC62692EAE08DF0099ECEE /* Features */,
 				4CEC62912EAE08F70099ECEE /* Resources */,
-				38A594492EAE50120003D712 /* GoogleService-Info.plist */,
 			);
 			path = Keychy;
 			sourceTree = "<group>";
@@ -785,7 +785,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-        38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */,
 				4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */,
 				4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */,
 				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,
@@ -795,6 +794,7 @@
 				4C6622072EAE5FC3001760B5 /* SUIT-ExtraLight.otf in Resources */,
 				4C6622082EAE5FC3001760B5 /* SUIT-Heavy.otf in Resources */,
 				4C6622092EAE5FC3001760B5 /* SUIT-Light.otf in Resources */,
+				4C6622172EAE8422001760B5 /* GoogleService-Info.plist in Resources */,
 				4C66220A2EAE5FC3001760B5 /* SUIT-Medium.otf in Resources */,
 				4C66220B2EAE5FC3001760B5 /* SUIT-Regular.otf in Resources */,
 				4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */,
