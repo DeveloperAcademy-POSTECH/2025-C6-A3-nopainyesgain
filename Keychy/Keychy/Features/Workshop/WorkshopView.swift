@@ -27,31 +27,42 @@ struct WorkshopView: View {
     @State private var selectedFilter: FilterType? = nil
     @State private var sortOrder: String = "최신순"
     @State private var showFilterSheet: Bool = false
+    @State private var scrollOffset: CGFloat = 0
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                
-                VStack {
-                    topBannerSection
+        GeometryReader { outerGeo in
+            ScrollView {
+                VStack(spacing: 0) {
                     
-                    myCollectionSection
-                }
-                .padding(12)
-                
-                VStack() {
-                    stickyHeaderSection
+                    VStack {
+                        topBannerSection
+                            .background(
+                                GeometryReader { innerGeo in
+                                    Color.clear
+                                        .onChange(of: innerGeo.frame(in: .global).minY) { oldValue, newValue in
+                                            scrollOffset = newValue - outerGeo.frame(in: .global).minY
+                                        }
+                                }
+                            )
+                        
+                        myCollectionSection
+                    }
+                    .padding(12)
                     
-                    mainContentSection
+                    VStack() {
+                        stickyHeaderSection
+                        
+                        mainContentSection
+                    }
+                    .background(Color(UIColor.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    
                 }
-                .background(Color(UIColor.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-
+                .background(Color.black10)
             }
-            .background(Color.black10)
-        }
-        .sheet(isPresented: $showFilterSheet) {
-            sortSheet
+            .sheet(isPresented: $showFilterSheet) {
+                sortSheet
+            }
         }
     }
 }
@@ -60,26 +71,34 @@ struct WorkshopView: View {
 extension WorkshopView {
     /// 상단 배너 영역 - 코인 버튼과 제목 표시
     private var topBannerSection: some View {
+        let progress = min(max(-scrollOffset / 100, 0), 1) // 0~1 사이 값
+        let height = 200 - (140 * progress) // 200 -> 60으로 부드럽게
         
-        VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                coinButton
-            }
-            
-            Spacer()
-            
-            HStack {
+        return VStack(spacing: 0) {
+            HStack(alignment: .top) {
+                if progress < 0.5 {
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                }
+                
                 Text("공방")
                     .font(.largeTitle)
                     .bold()
-                    .padding(.bottom, 24)
+                    .padding(.bottom, progress < 0.5 ? 24 * (1 - progress * 2) : 0)
+                    .frame(maxWidth: progress >= 0.5 ? .infinity : nil, alignment: .leading)
                 
+                Spacer()
+                
+                coinButton
+                    .offset(y: progress < 0.5 ? 0 : -8 * progress)
+            }
+            
+            if progress < 0.5 {
                 Spacer()
             }
         }
-        .frame(height: 200)
-        
+        .frame(height: height)
+        .animation(.easeInOut(duration: 0.25), value: scrollOffset)
     }
     
     /// 코인 충전 버튼 - 현재 보유 코인과 충전 화면으로 이동
