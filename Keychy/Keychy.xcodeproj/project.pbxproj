@@ -14,7 +14,6 @@
 		38A594442EAE4EE20003D712 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594432EAE4EE20003D712 /* FirebaseFirestore */; };
 		38A594462EAE4EE20003D712 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594452EAE4EE20003D712 /* FirebaseMessaging */; };
 		38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 38A594472EAE4EE20003D712 /* FirebaseStorage */; };
-		38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A594492EAE50120003D712 /* GoogleService-Info.plist */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
@@ -91,6 +90,7 @@
 		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
+		C665DDE12EAEF87400CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -107,7 +107,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		38A594492EAE50120003D712 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
@@ -185,7 +184,16 @@
 		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
+		C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C665DDE22EAEF8EF00CE4495 /* Coin */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Coin;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
@@ -231,7 +239,6 @@
 				4CEC62192EAE08DA0099ECEE /* Core */,
 				4CEC62692EAE08DF0099ECEE /* Features */,
 				4CEC62912EAE08F70099ECEE /* Resources */,
-				38A594492EAE50120003D712 /* GoogleService-Info.plist */,
 			);
 			path = Keychy;
 			sourceTree = "<group>";
@@ -599,6 +606,7 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
+				C665DDE22EAEF8EF00CE4495 /* Coin */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
@@ -651,6 +659,7 @@
 				4CEC628A2EAE08F70099ECEE /* Lotties */,
 				4CEC628E2EAE08F70099ECEE /* Sounds */,
 				4CEC62902EAE08F70099ECEE /* Fonts */,
+				C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -689,6 +698,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C665DDE22EAEF8EF00CE4495 /* Coin */,
 			);
 			name = Keychy;
 			packageProductDependencies = (
@@ -749,7 +761,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CEC62922EAE08F70099ECEE /* 폴더유지용폰트(삭제바람).ttf in Resources */,
-				38A5944A2EAE50120003D712 /* GoogleService-Info.plist in Resources */,
+				C665DDE12EAEF87400CE4495 /* GoogleService-Info.plist in Resources */,
 				4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */,
 				4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */,
 				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,

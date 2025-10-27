@@ -15,7 +15,10 @@ struct HomeView: View {
             Button("뭉치함으로 가기") {
                 router.push(.BundleInventoryView)
             }
+            Button("재화 충전하기") {
+                router.push(.coinCharge)
+            }
         }
-        .navigationBarTitle("Home")
+        .navigationTitle("Home")
     }
 }
