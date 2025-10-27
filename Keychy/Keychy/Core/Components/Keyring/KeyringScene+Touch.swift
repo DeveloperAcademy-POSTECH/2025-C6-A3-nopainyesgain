@@ -18,6 +18,9 @@ extension KeyringScene {
         lastTouchLocation = location
         lastTouchTime = touch.timestamp
         swipeStartLocation = location
+        
+        /// 탭 임팩트
+        Haptic.impact(style: .medium)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

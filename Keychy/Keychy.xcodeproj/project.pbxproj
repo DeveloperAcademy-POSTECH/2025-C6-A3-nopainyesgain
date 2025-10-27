@@ -595,9 +595,9 @@
 		4CEC62562EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */,
-				4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */,
 				4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */,
+				4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */,
+				4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -672,10 +672,10 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
-				C665DDE92EAEFAA800CE4495 /* Coin */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
+				C665DDE92EAEFAA800CE4495 /* Coin */,
 			);
 			path = Workshop;
 			sourceTree = "<group>";
