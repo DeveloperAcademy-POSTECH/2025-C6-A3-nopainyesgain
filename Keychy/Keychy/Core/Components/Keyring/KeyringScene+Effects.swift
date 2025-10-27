@@ -31,25 +31,30 @@ class SoundEffectComponent {
     private let audioQueue = DispatchQueue(label: "com.keychy.audioQueue", qos: .userInteractive)
 
     /// 앱 시작 시 사운드 파일 미리 로드 (백그라운드에서 실행)
-    func preloadSound(named soundName: String, type: String = "mp3") {
-        audioQueue.async { [weak self] in
-            // TODO: Firebase 연동 시 변경 필요
-            // 현재: 로컬 Bundle에서 가져오기
-            // 변경 후: Firebase Storage에서 다운로드
-            //   1. Firebase Storage에서 mp3 파일 다운로드 (URL: "sounds/{soundName}.mp3")
-            //   2. 로컬 캐시 디렉토리에 저장
-            //   3. 캐시된 파일 URL로 AVAudioPlayer 생성
-            //   4. 다음번엔 캐시부터 확인 → 있으면 캐시 사용, 없으면 다운로드
-            guard let url = Bundle.main.url(forResource: soundName, withExtension: type) else {
-                return
-            }
+    func preloadSound(named soundName: String, type: String = "mp3") async {
+        await withCheckedContinuation { continuation in
+            audioQueue.async { [weak self] in
+                // TODO: Firebase 연동 시 변경 필요
+                // 현재: 로컬 Bundle에서 가져오기
+                // 변경 후: Firebase Storage에서 다운로드
+                //   1. Firebase Storage에서 mp3 파일 다운로드 (URL: "sounds/{soundName}.mp3")
+                //   2. 로컬 캐시 디렉토리에 저장
+                //   3. 캐시된 파일 URL로 AVAudioPlayer 생성
+                //   4. 다음번엔 캐시부터 확인 → 있으면 캐시 사용, 없으면 다운로드
+                guard let url = Bundle.main.url(forResource: soundName, withExtension: type) else {
+                    continuation.resume()  // 실패해도 계속 진행
+                    return
+                }
 
-            do {
-                let player = try AVAudioPlayer(contentsOf: url)
-                player.prepareToPlay()  // 미리 준비
-                self?.audioPlayers[soundName] = player
-            } catch {
-                print("Error preloading sound: \(error.localizedDescription)")
+                do {
+                    let player = try AVAudioPlayer(contentsOf: url)
+                    player.prepareToPlay()  // 미리 준비
+                    self?.audioPlayers[soundName] = player
+                    continuation.resume()  // 완료!
+                } catch {
+                    print("Error preloading sound: \(error.localizedDescription)")
+                    continuation.resume()  // 에러나도 계속 진행
+                }
             }
         }
     }
