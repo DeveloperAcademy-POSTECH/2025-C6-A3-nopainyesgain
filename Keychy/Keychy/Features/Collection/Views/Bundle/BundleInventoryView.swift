@@ -35,6 +35,17 @@ struct BundleInventoryView: View {
 extension BundleInventoryView {
     private var headerSection: some View {
         HStack {
+            Button {
+                router.pop()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .padding(10.25)
+                    .background(
+                        Circle()
+                            .glassEffect(.clear)
+                    )
+            }
+            .buttonStyle(PlainButtonStyle())
             Spacer()
             Button {
                 router.push(.bundleSelectBackgroundView)
