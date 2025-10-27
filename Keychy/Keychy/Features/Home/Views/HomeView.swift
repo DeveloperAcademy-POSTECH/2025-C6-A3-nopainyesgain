@@ -13,7 +13,7 @@ struct HomeView: View {
     var body: some View {
         VStack {
             Button("다람쥐 헌 쳇바퀴에 타고파") {
-                router.push(.BundleInventoryView)
+                router.push(.bundleInventoryView)
             }
             .typography(.suit15R)
             
