@@ -91,6 +91,7 @@
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
 		C665DDE12EAEF87400CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */; };
+		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -185,15 +186,8 @@
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C665DDE22EAEF8EF00CE4495 /* Coin */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Coin;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
@@ -606,7 +600,7 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
-				C665DDE22EAEF8EF00CE4495 /* Coin */,
+				C665DDE92EAEFAA800CE4495 /* Coin */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
@@ -683,6 +677,14 @@
 			path = Bundle;
 			sourceTree = "<group>";
 		};
+		C665DDE92EAEFAA800CE4495 /* Coin */ = {
+			isa = PBXGroup;
+			children = (
+				C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */,
+			);
+			path = Coin;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -698,9 +700,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				C665DDE22EAEF8EF00CE4495 /* Coin */,
 			);
 			name = Keychy;
 			packageProductDependencies = (
@@ -821,6 +820,7 @@
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
 				4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */,
+				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
