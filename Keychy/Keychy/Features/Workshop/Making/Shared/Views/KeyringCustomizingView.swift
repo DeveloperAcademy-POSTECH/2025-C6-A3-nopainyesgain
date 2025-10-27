@@ -67,21 +67,18 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .task {
             // 커스터마이징 화면 진입 시 모든 사운드 리소스 프리로드
             // TODO: Firebase 연동 후에는 유저 소유 사운드만 프리로드하도록 변경
-            await preloadAllSoundEffects()
-            isLoadingResources = false
+            await preloadAllSoundEffects()  // 모든 사운드 로딩 완료까지 기다림
+            isLoadingResources = false      // 로딩 완료 후 인디케이터 닫기
         }
     }
 
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
-        // 백그라운드 스레드에서 사운드 파일 프리로드
-        // 함수 호출만 메인에서 함.
-        await Task(priority: .userInitiated) {
-            SoundEffect.allCases.forEach { effect in
-                guard effect != .none else { return }
-                SoundEffectComponent.shared.preloadSound(named: effect.soundFileName)
-            }
-        }.value
+        // 모든 사운드를 순차적으로 로드 (각각 완료될 때까지 기다림)
+        for effect in SoundEffect.allCases {
+            guard effect != .none else { continue }
+            await SoundEffectComponent.shared.preloadSound(named: effect.soundFileName)
+        }
     }
 }
 
