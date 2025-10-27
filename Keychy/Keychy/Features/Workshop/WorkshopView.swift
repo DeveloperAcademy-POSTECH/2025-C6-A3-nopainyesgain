@@ -34,7 +34,7 @@ struct WorkshopView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     
-                    VStack {
+                    ZStack {
                         topBannerSection
                             .background(
                                 GeometryReader { innerGeo in
@@ -47,6 +47,7 @@ struct WorkshopView: View {
                         
                         myCollectionSection
                     }
+                    .frame(height: 300)
                     .padding(12)
                     
                     VStack() {
@@ -71,34 +72,27 @@ struct WorkshopView: View {
 extension WorkshopView {
     /// 상단 배너 영역 - 코인 버튼과 제목 표시
     private var topBannerSection: some View {
-        let progress = min(max(-scrollOffset / 100, 0), 1) // 0~1 사이 값
-        let height = 200 - (140 * progress) // 200 -> 60으로 부드럽게
+        let progress = min(max(-scrollOffset / 100, 0), 1)
+        let height = 200 - (140 * progress)
         
-        return VStack(spacing: 0) {
-            HStack(alignment: .top) {
-                if progress < 0.5 {
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                }
-                
-                Text("공방")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.bottom, progress < 0.5 ? 24 * (1 - progress * 2) : 0)
-                    .frame(maxWidth: progress >= 0.5 ? .infinity : nil, alignment: .leading)
-                
-                Spacer()
-                
-                coinButton
-                    .offset(y: progress < 0.5 ? 0 : -8 * progress)
-            }
+        return ZStack {
+            // 공방 텍스트
+            Text("공방")
+                .font(.largeTitle.bold())
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(y: progress < 0.5 ? 30 : 0) // 위치 조정
+                .animation(.easeInOut(duration: 0.3), value: progress)
             
-            if progress < 0.5 {
-                Spacer()
-            }
+            // 코인 버튼
+            coinButton
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .offset(y: progress < 0.5 ? -60 : 0) // 위치 조정
+                .animation(.easeInOut(duration: 0.2), value: progress)
         }
+        .frame(maxWidth: .infinity)
         .frame(height: height)
-        .animation(.easeInOut(duration: 0.25), value: scrollOffset)
+        .offset(y: progress < 0.5 ? -60 : 120) // 위치 조정
+        .animation(.easeInOut(duration: 0.3), value: progress)
     }
     
     /// 코인 충전 버튼 - 현재 보유 코인과 충전 화면으로 이동
@@ -203,6 +197,9 @@ extension WorkshopView {
                 }
             }
         }
+        .offset(y: 80) // 위치 조정
+        .opacity(1 - min(max(-scrollOffset / 100, 0), 1))
+        .animation(.easeInOut(duration: 0.2), value: scrollOffset)
     }
     
     /// 메인 그리드 - 아이템 목록 2열 그리드
