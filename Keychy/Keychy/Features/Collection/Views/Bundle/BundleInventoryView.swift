@@ -37,7 +37,7 @@ extension BundleInventoryView {
         HStack {
             Spacer()
             Button {
-                router.push(.BundleCreateView)
+                router.push(.bundleSelectBackgroundView)
             } label: {
                 Image(systemName: "plus")
                     .padding(10.25)
@@ -64,7 +64,7 @@ extension BundleInventoryView {
             LazyVGrid(columns: columns, spacing: 18) {
                 ForEach(viewModel.keyringBundle, id: \.self) { bundle in
                     Button {
-                        router.push(.BundleDetailView)
+                        router.push(.bundleDetailView)
                     } label: {
                         KeyringBundleItem(bundle: bundle)
                     }
