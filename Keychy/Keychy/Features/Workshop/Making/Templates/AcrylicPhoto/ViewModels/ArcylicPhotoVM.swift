@@ -17,7 +17,7 @@ enum KeyringUpdateType {
 }
 
 @Observable
-class MKViewModel: KeyringViewModelProtocol {
+class ArcylicPhotoVM: KeyringViewModelProtocol {
     // 임시 키링 모델 - 아크릴 플로우에서 이펙트 저장용
     var keyring = Keyring() {
         // Combine 브리지로 Scene에 업데이트 전송

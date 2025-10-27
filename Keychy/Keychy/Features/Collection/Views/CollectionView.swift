@@ -10,7 +10,6 @@ import SpriteKit
 
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
-    @Bindable var viewModel: MKViewModel
     @State private var selectedChip: String = "전체"
     
     let chips: [String] = ["전체", "또치", "폴더", "❤️", "강아지", "여행", "냠냠", "콩순이"]
@@ -225,5 +224,5 @@ extension CollectionView {
 
 // MARK: - Preview
 #Preview {
-    CollectionView(router: NavigationRouter<CollectionRoute>(), viewModel: MKViewModel())
+    CollectionView(router: NavigationRouter<CollectionRoute>())
 }
