@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct MKEditedPhotoView: View {
+struct ArcylicPhotoEditedView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @Bindable var viewModel: MKViewModel
+    @Bindable var viewModel: ArcylicPhotoVM
 
     var body: some View {
         ZStack {
@@ -24,12 +24,12 @@ struct MKEditedPhotoView: View {
                 Button {
                     viewModel.isProcessing = true
                     
-                    MKViewModel.removeBackgroundAndCrop(from: image) { croppedImage in
+                    ArcylicPhotoVM.removeBackgroundAndCrop(from: image) { croppedImage in
                         viewModel.isProcessing = false
                         
                         if let croppedImage = croppedImage {
                             viewModel.bodyImage = croppedImage
-                            router.push(.mkCustomizing)
+                            router.push(.arcylicPhotoCustomizing)
                         } else {
                             viewModel.errorMessage = "이미지 처리에 실패했습니다."
                         }

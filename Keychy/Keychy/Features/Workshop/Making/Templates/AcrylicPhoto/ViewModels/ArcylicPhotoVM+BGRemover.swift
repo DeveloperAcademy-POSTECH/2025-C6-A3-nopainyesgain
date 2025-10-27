@@ -9,7 +9,7 @@ import SwiftUI
 import Vision
 
 // MARK: - 배경 제거 (누끼)
-extension MKViewModel {
+extension ArcylicPhotoVM {
 
     /// 1. 배경만 제거 (크롭 없음, 아크릴 효과 없음)
     static func removeBackground(

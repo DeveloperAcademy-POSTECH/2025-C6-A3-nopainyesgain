@@ -12,7 +12,7 @@ struct CollectionTab: View {
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            CollectionView(router: router, viewModel: MKViewModel())
+            CollectionView(router: router)
                 .navigationDestination(for: CollectionRoute.self) { route in
                     // 나중에 추가
                 }
