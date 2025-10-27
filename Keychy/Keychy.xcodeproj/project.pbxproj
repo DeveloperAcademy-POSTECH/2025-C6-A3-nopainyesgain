@@ -100,6 +100,11 @@
 		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
+		C665DDE12EAEF87400CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */; };
+		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
+		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
+		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
+		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -204,6 +209,11 @@
 		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
+		C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
+		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
+		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +221,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */,
 				38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */,
 				38A5943E2EAE4EE20003D712 /* FirebaseAuth in Frameworks */,
 				38A594462EAE4EE20003D712 /* FirebaseMessaging in Frameworks */,
@@ -245,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
+				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -268,6 +280,7 @@
 				4CEC62192EAE08DA0099ECEE /* Core */,
 				4CEC62692EAE08DF0099ECEE /* Features */,
 				4CEC62912EAE08F70099ECEE /* Resources */,
+				C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */,
 			);
 			path = Keychy;
 			sourceTree = "<group>";
@@ -636,6 +649,7 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
+				C665DDE92EAEFAA800CE4495 /* Coin */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
@@ -688,6 +702,7 @@
 				4CEC628A2EAE08F70099ECEE /* Lotties */,
 				4CEC628E2EAE08F70099ECEE /* Sounds */,
 				4CEC62902EAE08F70099ECEE /* Fonts */,
+				C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -709,6 +724,23 @@
 				4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */,
 			);
 			path = Bundle;
+			sourceTree = "<group>";
+		};
+		C665DDE92EAEFAA800CE4495 /* Coin */ = {
+			isa = PBXGroup;
+			children = (
+				C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */,
+			);
+			path = Coin;
+			sourceTree = "<group>";
+		};
+		C665DDEA2EAF064500CE4495 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
+				C665DDED2EAF077900CE4495 /* Product.storekit */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -801,6 +833,7 @@
 				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
 				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
+				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -854,6 +887,8 @@
 				4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
+				4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */,
+				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
@@ -875,6 +910,7 @@
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
 				4CEC62322EAE08DA0099ECEE /* SoundEffectComponent.swift in Sources */,
+				C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
 				4CEC61EB2EAE08C00099ECEE /* ParticleEffect.swift in Sources */,

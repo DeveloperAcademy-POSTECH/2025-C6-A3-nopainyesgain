@@ -25,6 +25,8 @@ struct HomeTab: View {
                         BundleCreateView(router: router, viewModel: CollectionViewModel())
                     case .BundleSelectBackgroundView:
                         BundleSelectBackgroundView(router: router, viewModel: CollectionViewModel())
+                    case .coinCharge:
+                        CoinChargeView(router: router)
                     }
                 }
         }

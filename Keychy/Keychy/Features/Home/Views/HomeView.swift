@@ -15,9 +15,10 @@ struct HomeView: View {
             Button("다람쥐 헌 쳇바퀴에 타고파") {
                 router.push(.BundleInventoryView)
             }
-            .font(.h1)
-            .foregroundStyle(.gradient(.primary))
+            Button("재화 충전하기") {
+                router.push(.coinCharge)
+            }
         }
-        .navigationBarTitle("Home")
+        .navigationTitle("Home")
     }
 }
