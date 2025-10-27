@@ -40,22 +40,31 @@ extension CoinChargeView {
     private var cherrySection: some View {
         Section("체리") {
             ForEach(store.products, id: \.id) { product in
-                cherryRow(amount: product.displayName, price: product.displayPrice)
+                cherryRow(product: product)
             }
         }
     }
-    
-    private func cherryRow(amount: String, price: String) -> some View {
+
+    private func cherryRow(product: Product) -> some View {
         HStack {
             Image(systemName: "leaf.fill")
                 .foregroundColor(.red)
-            Text("\(amount)개")
+            Text("\(product.displayName)개")
                 .foregroundColor(.red)
-            
+
             Spacer()
             
-            Button(action: {}) {
-                Text("₩ \(price)")
+            // 구매 버튼
+            Button(action: {
+                Task {
+                    do {
+                        _ = try await store.purchase(product)
+                    } catch {
+                        print("구매 실패: \(error.localizedDescription)")
+                    }
+                }
+            }) {
+                Text(product.displayPrice)
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)

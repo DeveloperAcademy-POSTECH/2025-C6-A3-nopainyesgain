@@ -14,7 +14,21 @@
 
   ],
   "products" : [
-
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "AFABFDA9",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "체리100",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "coin",
+      "referenceName" : "Coin",
+      "type" : "Consumable"
+    }
   ],
   "settings" : {
     "_askToBuyEnabled" : false,
