@@ -33,6 +33,7 @@
 		4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */; };
 		4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */; };
 		4C6622462EAF7D63001760B5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622452EAF7D63001760B5 /* LICENSE */; };
+		4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622472EAF9B3A001760B5 /* Haptic.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -54,7 +55,6 @@
 		4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */; };
 		4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */; };
 		4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FE2EAE08DA0099ECEE /* KeyringRingComponent.swift */; };
-		4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */; };
 		4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */; };
 		4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62132EAE08DA0099ECEE /* Radius.swift */; };
 		4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620A2EAE08DA0099ECEE /* FestivalRoute.swift */; };
@@ -67,7 +67,6 @@
 		4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC620C2EAE08DA0099ECEE /* NavigationRouter.swift */; };
 		4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FA2EAE08DA0099ECEE /* KeyringScene+Effects.swift */; };
 		4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FD2EAE08DA0099ECEE /* KeyringScene+Swipe.swift */; };
-		4CEC62322EAE08DA0099ECEE /* SoundEffectComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62042EAE08DA0099ECEE /* SoundEffectComponent.swift */; };
 		4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */; };
 		4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62142EAE08DA0099ECEE /* Spacing.swift */; };
 		4CEC626A2EAE08DF0099ECEE /* MKViewModel+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625E2EAE08DF0099ECEE /* MKViewModel+Effect.swift */; };
@@ -146,6 +145,7 @@
 		4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFL.otf; sourceTree = "<group>"; };
 		4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFR.otf; sourceTree = "<group>"; };
 		4C6622452EAF7D63001760B5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		4C6622472EAF9B3A001760B5 /* Haptic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptic.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -171,8 +171,6 @@
 		4CEC61FF2EAE08DA0099ECEE /* KeyringChainComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringChainComponent.swift; sourceTree = "<group>"; };
 		4CEC62002EAE08DA0099ECEE /* KeyringBodyComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBodyComponent.swift; sourceTree = "<group>"; };
 		4CEC62012EAE08DA0099ECEE /* KeyringSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSceneView.swift; sourceTree = "<group>"; };
-		4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffectComponent.swift; sourceTree = "<group>"; };
-		4CEC62042EAE08DA0099ECEE /* SoundEffectComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectComponent.swift; sourceTree = "<group>"; };
 		4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRoute.swift; sourceTree = "<group>"; };
 		4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRoute.swift; sourceTree = "<group>"; };
 		4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopRoute.swift; sourceTree = "<group>"; };
@@ -393,8 +391,7 @@
 		4CEC62052EAE08DA0099ECEE /* Effects */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62032EAE08DA0099ECEE /* ParticleEffectComponent.swift */,
-				4CEC62042EAE08DA0099ECEE /* SoundEffectComponent.swift */,
+				4C6622472EAF9B3A001760B5 /* Haptic.swift */,
 			);
 			path = Effects;
 			sourceTree = "<group>";
@@ -892,7 +889,6 @@
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
 				4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
-				4CEC62242EAE08DA0099ECEE /* ParticleEffectComponent.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
@@ -913,6 +909,7 @@
 				4CEC62732EAE08DF0099ECEE /* MKViewModel+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* MKViewModel+ImageLoad.swift in Sources */,
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
+				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
@@ -937,7 +934,6 @@
 				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
-				4CEC62322EAE08DA0099ECEE /* SoundEffectComponent.swift in Sources */,
 				C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
