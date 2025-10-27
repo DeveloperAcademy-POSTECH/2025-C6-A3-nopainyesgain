@@ -28,6 +28,11 @@
 		4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622112EAE6825001760B5 /* HomeViewModel.swift */; };
 		4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */; };
 		4C6622172EAE8422001760B5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622162EAE8422001760B5 /* GoogleService-Info.plist */; };
+		4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622312EAF6AF7001760B5 /* Typography.swift */; };
+		4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */; };
+		4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */; };
+		4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */; };
+		4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -100,7 +105,6 @@
 		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
-		C665DDE12EAEF87400CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
@@ -136,6 +140,11 @@
 		4C6622112EAE6825001760B5 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Gradient+Keychy.swift"; sourceTree = "<group>"; };
 		4C6622162EAE8422001760B5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4C6622312EAF6AF7001760B5 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFB.otf; sourceTree = "<group>"; };
+		4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFEB.otf; sourceTree = "<group>"; };
+		4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFL.otf; sourceTree = "<group>"; };
+		4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFR.otf; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -209,7 +218,6 @@
 		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
-		C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
@@ -250,6 +258,17 @@
 				4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */,
 			);
 			path = SUIT;
+			sourceTree = "<group>";
+		};
+		4C6622402EAF77AB001760B5 /* nanum-square-round */ = {
+			isa = PBXGroup;
+			children = (
+				4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */,
+				4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */,
+				4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */,
+				4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */,
+			);
+			path = "nanum-square-round";
 			sourceTree = "<group>";
 		};
 		4CEC61A82EAE071B0099ECEE = {
@@ -420,6 +439,7 @@
 		4CEC62122EAE08DA0099ECEE /* Typography */ = {
 			isa = PBXGroup;
 			children = (
+				4C6622312EAF6AF7001760B5 /* Typography.swift */,
 				4CEC62102EAE08DA0099ECEE /* Font+Custom.swift */,
 				4CEC62112EAE08DA0099ECEE /* Font+Styles.swift */,
 			);
@@ -690,6 +710,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4C6622402EAF77AB001760B5 /* nanum-square-round */,
 				4C6622042EAE5FC3001760B5 /* SUIT */,
 			);
 			path = Fonts;
@@ -702,7 +723,6 @@
 				4CEC628A2EAE08F70099ECEE /* Lotties */,
 				4CEC628E2EAE08F70099ECEE /* Sounds */,
 				4CEC62902EAE08F70099ECEE /* Fonts */,
-				C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -833,6 +853,10 @@
 				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
 				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
+				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
+				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
+				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
+				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
 				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -878,6 +902,7 @@
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* MKPhotoCropView.swift in Sources */,
 				4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */,
+				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* MKViewModel.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
@@ -887,7 +912,6 @@
 				4CEC62762EAE08DF0099ECEE /* MKEditedPhotoView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
-				4CEC627A2EAE08DF0099ECEE /* HomeViewModel.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
