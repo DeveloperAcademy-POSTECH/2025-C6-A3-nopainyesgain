@@ -12,7 +12,7 @@ struct HomeView: View {
     
     var body: some View {
         VStack {
-            Button("뭉치함으로 가기") {
+            Button("다람쥐 헌 쳇바퀴에 타고파") {
                 router.push(.BundleInventoryView)
             }
             Button("재화 충전하기") {

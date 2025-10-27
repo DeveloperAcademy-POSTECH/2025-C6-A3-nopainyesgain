@@ -5,34 +5,42 @@
 //  앱 전체에서 사용하는 타이포그래피 스타일
 //
 //  사용법:
-//  Text("Title").font(.heading1)
-//  Text("Body").font(.body1)
+//  Text("Title")
+//    .font(.heading1)
+//  Text("Body")
+//    .font(.body1)
 //
 //  수정법:
 //  - 새 스타일 추가: static let 새이름 = Font.custom(.pretendard, size: 20)
 //
 
-//  TODO: - 실제 디자인시스템이 추가되면 아래 내용에서 바꿔주세요!
-//                                  - 길3
-
 import SwiftUI
 
 extension Font {
-    // MARK: - Heading Styles (제목)
-    static let heading1 = Font.custom(.pretendardBold, size: 28)
-    static let heading2 = Font.custom(.pretendardBold, size: 24)
-    static let heading3 = Font.custom(.pretendardSemiBold, size: 20)
+    // MARK: - Head
+    static let h1 = Font.custom(.suitBold, size: 32)
+    static let h2 = Font.custom(.suitBold, size: 20)
+    static let h3BD = Font.custom(.suitBold, size: 16)
+    static let h3MD = Font.custom(.suitMedium, size: 16)
+    static let h4BD = Font.custom(.suitBold, size: 17)
+    static let h4SB = Font.custom(.suitSemiBold, size: 17)
 
-    // MARK: - Body Styles (본문)
-    static let body1 = Font.custom(.pretendard, size: 16)
-    static let body2 = Font.custom(.pretendard, size: 14)
-    static let body3 = Font.custom(.pretendard, size: 12)
+    // MARK: - Body
+    static let body = Font.custom(.suitMedium, size: 16)
 
-    // MARK: - Button Styles (버튼)
-    static let buttonLarge = Font.custom(.pretendardBold, size: 18)
-    static let buttonMedium = Font.custom(.pretendardSemiBold, size: 16)
-    static let buttonSmall = Font.custom(.pretendardSemiBold, size: 14)
+    // MARK: - Caption
+    static let caption1 = Font.custom(.suitRegular, size: 14)
+    static let caption2SB = Font.custom(.suitSemiBold, size: 13)
+    static let caption2MD = Font.custom(.suitMedium, size: 13)
 
-    // MARK: - Caption (캡션)
-    static let caption = Font.custom(.pretendard, size: 12)
+    // MARK: - Label
+    static let label1MD = Font.custom(.suitMedium, size: 15)
+    static let label1SB = Font.custom(.suitSemiBold, size: 15)
+
+    static let label2M = Font.custom(.suitMedium, size: 14)
+    static let label2SB = Font.custom(.suitSemiBold, size: 14)
+    static let label2EB = Font.custom(.suitExtraBold, size: 14)
+    
+    static let label3RG = Font.custom(.suitRegular, size: 12)
+    static let label3MD = Font.custom(.suitMedium, size: 12)
 }
