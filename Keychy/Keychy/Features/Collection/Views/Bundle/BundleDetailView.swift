@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BundleDetailView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
+    @State var viewModel: CollectionViewModel
     
     var body: some View {
         Text("뭉치 상세보기 화면입니다")
@@ -16,5 +17,5 @@ struct BundleDetailView: View {
 }
 
 #Preview {
-    BundleDetailView(router: NavigationRouter())
+    BundleDetailView(router: NavigationRouter(), viewModel: CollectionViewModel())
 }
