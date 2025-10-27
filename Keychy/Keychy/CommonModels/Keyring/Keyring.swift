@@ -9,13 +9,24 @@ import SwiftUI
 import Foundation
 
 // TODO: - 바디, 체인, 링타입 추가 필요함
-@Observable
-class Keyring {
-    var name = "새 키링"
-    var bodyImage = Image(systemName: "photo")
-    var soundId = "none"
-    var particleId = "none"
-    var memo = ""
-    var tags: [String] = []
-    var createAt = Date()
+struct Keyring: Identifiable, Equatable, Hashable {
+    let id = UUID()
+    
+    var name: String
+    var bodyImage: String
+    var soundId: String
+    var particleId: String
+    var memo: String?
+    var tags: [String]
+    var createdAt: Date
+    var authorId: String
+    var copyCount: Int
+    var history: [String]?
+    var selectedTemplate: String
+    var selectedRing: String
+    var selectedChain: String
+    var isEditable: Bool
+    var isPackaged: Bool
+    var originalId: String?
+    var chainLength: Int
 }

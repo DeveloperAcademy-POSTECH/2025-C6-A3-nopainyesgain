@@ -35,9 +35,20 @@ struct BundleInventoryView: View {
 extension BundleInventoryView {
     private var headerSection: some View {
         HStack {
+            Button {
+                router.pop()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .padding(10.25)
+                    .background(
+                        Circle()
+                            .glassEffect(.clear)
+                    )
+            }
+            .buttonStyle(PlainButtonStyle())
             Spacer()
             Button {
-                router.push(.BundleCreateView)
+                router.push(.bundleSelectBackgroundView)
             } label: {
                 Image(systemName: "plus")
                     .padding(10.25)
@@ -62,9 +73,9 @@ extension BundleInventoryView {
         ScrollView {
             //LazyVGrid의 spacing은 vertical 간격
             LazyVGrid(columns: columns, spacing: 18) {
-                ForEach(viewModel.keyringBundle, id: \.self) { bundle in
+                ForEach(viewModel.sortedBundles, id: \.self) { bundle in
                     Button {
-                        router.push(.BundleDetailView)
+                        router.push(.bundleDetailView)
                     } label: {
                         KeyringBundleItem(bundle: bundle)
                     }
