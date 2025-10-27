@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @State private var mkViewModel: MKViewModel?
+    @State private var arcylicPhotoVM: ArcylicPhotoVM?
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -18,30 +18,30 @@ struct WorkshopTab: View {
                     switch route {
 
                     // MARK: - AcrylicPhoto
-                    case .mkPreview:
-                        MKPreviewView(router: router, viewModel: getMKViewModel())
-                    case .mkPhotoCrop:
-                        MKPhotoCropView(router: router, viewModel: getMKViewModel())
-                    case .mkEditedPhoto:
-                        MKEditedPhotoView(router: router, viewModel: getMKViewModel())
-                    case .mkCustomizing:
+                    case .arcylicPhotoPreview:
+                        ArcylicPhotoPreView(router: router, viewModel: getArcylicPhotoVM())
+                    case .arcylicPhotoCrop:
+                        ArcylicPhotoCropView(router: router, viewModel: getArcylicPhotoVM())
+                    case .arcylicPhotoEdited:
+                        ArcylicPhotoEditedView(router: router, viewModel: getArcylicPhotoVM())
+                    case .arcylicPhotoCustomizing:
                         KeyringCustomizingView(
                             router: router,
-                            viewModel: getMKViewModel(),
+                            viewModel: getArcylicPhotoVM(),
                             navigationTitle: "아크릴 키링",
-                            nextRoute: .mkInfoInput
+                            nextRoute: .arcylicPhotoInfoInput
                         )
-                    case .mkInfoInput:
+                    case .arcylicPhotoInfoInput:
                         KeyringInfoInputView(
                             router: router,
-                            viewModel: getMKViewModel(),
+                            viewModel: getArcylicPhotoVM(),
                             navigationTitle: "정보 입력",
-                            nextRoute: .mkComplete
+                            nextRoute: .arcylicPhotoComplete
                         )
-                    case .mkComplete:
+                    case .arcylicPhotoComplete:
                         KeyringCompleteView(
                             router: router,
-                            viewModel: getMKViewModel(),
+                            viewModel: getArcylicPhotoVM(),
                             navigationTitle: "키링이 완성되었어요!"
                         )
 
@@ -53,10 +53,10 @@ struct WorkshopTab: View {
     }
 
     // MARK: - ViewModel Lazy Getters
-    private func getMKViewModel() -> MKViewModel {
-        guard let viewModel = mkViewModel else {
-            let newViewModel = MKViewModel()
-            mkViewModel = newViewModel
+    private func getArcylicPhotoVM() -> ArcylicPhotoVM {
+        guard let viewModel = arcylicPhotoVM else {
+            let newViewModel = ArcylicPhotoVM()
+            arcylicPhotoVM = newViewModel
             return newViewModel
         }
         return viewModel

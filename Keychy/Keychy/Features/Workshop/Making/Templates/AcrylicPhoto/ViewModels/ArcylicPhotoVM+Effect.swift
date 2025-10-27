@@ -7,7 +7,7 @@
 
 import Combine
 
-extension MKViewModel {
+extension ArcylicPhotoVM {
     /// 사운드 이펙트 업데이트
     func updateSoundEffect(_ effect: SoundEffect) {
         keyring.soundId = effect.soundFileName
