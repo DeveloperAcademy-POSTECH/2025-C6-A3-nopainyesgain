@@ -12,99 +12,107 @@ struct CoinChargeView<Route: Hashable>: View {
     @Bindable var router: NavigationRouter<Route>
     @Bindable var store = StoreKitManager()
     
+    @State private var currentCherry: Int = 6000
+    
     var body: some View {
         List {
             currentCherrySection
             cherrySection
             otherItemsSection
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("재화 구매")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
+// MARK: - Sections
 extension CoinChargeView {
     private var currentCherrySection: some View {
         Section {
-            HStack {
+            Label {
+                HStack {
+                    Text("현재 보유한 체리")
+                    Spacer()
+                    Text("\(currentCherry)")
+                        .foregroundStyle(.red)
+                        .fontWeight(.semibold)
+                }
+            } icon: {
                 Image(systemName: "leaf.fill")
-                    .foregroundColor(.red)
-                Text("현재 보유한 체리")
-                Text("6000")
-                    .foregroundColor(.red)
-                    .fontWeight(.bold)
+                    .foregroundStyle(.red)
             }
+            .font(.callout)
         }
     }
     
     private var cherrySection: some View {
         Section("체리") {
             ForEach(store.products, id: \.id) { product in
-                cherryRow(product: product)
+                cherryRow(for: product)
             }
         }
     }
-
-    private func cherryRow(product: Product) -> some View {
+    
+    private func cherryRow(for product: Product) -> some View {
         HStack {
-            Image(systemName: "leaf.fill")
-                .foregroundColor(.red)
-            Text("\(product.displayName)개")
-                .foregroundColor(.red)
-
+            Label("\(product.displayName)개", systemImage: "leaf.fill")
+                .foregroundStyle(.red)
+            
             Spacer()
             
-            // 구매 버튼
-            Button(action: {
+            Button(product.displayPrice) {
                 Task {
                     do {
                         _ = try await store.purchase(product)
+                        // TODO: 구매 성공 시 처리 (ex. 체리 증가)
                     } catch {
                         print("구매 실패: \(error.localizedDescription)")
                     }
                 }
-            }) {
-                Text(product.displayPrice)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.black)
-                    .cornerRadius(8)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderedProminent)
+            .tint(.black)
+            .foregroundStyle(.white)
         }
+        .listRowSeparator(.visible)
     }
     
     private var otherItemsSection: some View {
         Section("기타 아이템") {
-            itemRow(title: "인벤토리 확장")
-            itemRow(title: "내 키링 복제권")
-            itemRow(title: "수집하기 티켓")
+            ForEach(otherItems, id: \.title) { item in
+                itemRow(item)
+            }
         }
     }
     
-    private func itemRow(title: String) -> some View {
+    private var otherItems: [(title: String, cost: Int)] {
+        [
+            ("인벤토리 확장", 100),
+            ("내 키링 복제권", 100),
+            ("수집하기 티켓", 100)
+        ]
+    }
+    
+    private func itemRow(_ item: (title: String, cost: Int)) -> some View {
         HStack {
-            Text(title)
+            Text(item.title)
             Spacer()
-            Button(action: {}) {
-                HStack(spacing: 4) {
-                    Image(systemName: "leaf.fill")
-                        .foregroundColor(.red)
-                        .font(.caption)
-                    Text("100개")
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.black)
-                .cornerRadius(8)
+            Button {
+                // TODO: 아이템 구매 로직
+            } label: {
+                Label("\(item.cost)개", systemImage: "leaf.fill")
+                    .labelStyle(.titleAndIcon)
+                    .font(.caption)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderedProminent)
+            .tint(.black)
+            .foregroundStyle(.white)
         }
     }
 }
 
+// MARK: - Preview
 #Preview {
     NavigationStack {
         CoinChargeView(router: NavigationRouter<HomeRoute>())
