@@ -39,11 +39,11 @@ timeline.xctimeline
 playground.xcworkspace
 
 ## Font
-Keychy/Resources/Fonts/**/*.otf
+Keychy/Keychy/Resources/Fonts/**/*.otf
 
 ## Info.plist
-Keychy/Info.plist
-Keychy/GoogleService-Info.plist
+Keychy/Keychy/Info.plist
+Keychy/Keychy/GoogleService-Info.plist
 
 # Swift Package Manager
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.

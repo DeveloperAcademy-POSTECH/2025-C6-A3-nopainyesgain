@@ -14,33 +14,53 @@
 //  - 새 스타일 추가: static let 새이름 = Font.custom(.pretendard, size: 20)
 //
 
+// weight 뒤 숫자는 "행간크기"를 의미함.
+
 import SwiftUI
 
 extension Font {
-    // MARK: - Head
-    static let h1 = Font.custom(.suitBold, size: 32)
-    static let h2 = Font.custom(.suitBold, size: 20)
-    static let h3BD = Font.custom(.suitBold, size: 16)
-    static let h3MD = Font.custom(.suitMedium, size: 16)
-    static let h4BD = Font.custom(.suitBold, size: 17)
-    static let h4SB = Font.custom(.suitSemiBold, size: 17)
-
-    // MARK: - Body
-    static let body = Font.custom(.suitMedium, size: 16)
-
-    // MARK: - Caption
-    static let caption1 = Font.custom(.suitRegular, size: 14)
-    static let caption2SB = Font.custom(.suitSemiBold, size: 13)
-    static let caption2MD = Font.custom(.suitMedium, size: 13)
-
-    // MARK: - Label
-    static let label1MD = Font.custom(.suitMedium, size: 15)
-    static let label1SB = Font.custom(.suitSemiBold, size: 15)
-
-    static let label2M = Font.custom(.suitMedium, size: 14)
-    static let label2SB = Font.custom(.suitSemiBold, size: 14)
-    static let label2EB = Font.custom(.suitExtraBold, size: 14)
     
-    static let label3RG = Font.custom(.suitRegular, size: 12)
-    static let label3MD = Font.custom(.suitMedium, size: 12)
+    // MARK: - SUIT
+    static let suit32B = Font.custom(.suitBold, size: 32)
+    static let suit24B = Font.custom(.suitBold, size: 24)
+    static let suit20B = Font.custom(.suitBold, size: 20)
+    
+    /// 17
+    static let suit17B = Font.custom(.suitBold, size: 17)
+    static let suit17SB = Font.custom(.suitSemiBold, size: 17)
+    static let suit17M = Font.custom(.suitMedium, size: 17)
+    
+    /// 16
+    static let suit16B = Font.custom(.suitBold, size: 16)
+    static let suit16M = Font.custom(.suitMedium, size: 16)
+    static let suit16M25 = Font.custom(.suitMedium, size: 16)
+    
+    /// 15
+    static let suit15B25 = Font.custom(.suitBold, size: 15)
+    static let suit15SB25 = Font.custom(.suitSemiBold, size: 15)
+    static let suit15M25 = Font.custom(.suitMedium, size: 15)
+    static let suit15R = Font.custom(.suitRegular, size: 15)
+    
+    /// 14
+    static let suit14EB25 = Font.custom(.suitExtraBold, size: 14)
+    static let suit14SB18 = Font.custom(.suitSemiBold, size: 14)
+    static let suit14M = Font.custom(.suitMedium, size: 14)
+    static let suit14R18 = Font.custom(.suitRegular, size: 14)
+    
+    /// 13
+    static let suit13SB = Font.custom(.suitSemiBold, size: 13)
+    static let suit13M = Font.custom(.suitMedium, size: 13)
+    
+    /// 12
+    static let suit12M = Font.custom(.suitMedium, size: 12)
+    static let suit12R25 = Font.custom(.suitRegular, size: 12)
+    
+    // MARK: - Nanum
+    static let nanum18B = Font.custom(.nanumBold, size: 18)
+    static let nanum16EB = Font.custom(.nanumExtraBold, size: 16)
+    
+    static let nanum15EB25 = Font.custom(.nanumExtraBold, size: 15)
+    static let nanum15B25 = Font.custom(.nanumBold, size: 15)
+    
+    static let nanum14EB18 = Font.custom(.nanumExtraBold, size: 14)
 }

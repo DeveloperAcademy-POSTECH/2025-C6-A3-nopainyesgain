@@ -34,6 +34,12 @@ enum FontFamily: String, CaseIterable, Identifiable {
     case suitBold = "SUIT-Bold"
     case suitExtraBold = "SUIT-ExtraBold"
     case suitHeavy = "SUIT-Heavy"
+    
+    /// Nanum 폰트
+    case nanumBold = "NanumSquareRoundOTFB"
+    case nanumExtraBold = "NanumSquareRoundOTFEB"
+    case nanumLight = "NanumSquareRoundOTFL"
+    case nanumRegular = "NanumSquareRoundOTFR"
 
     /// 화면 표시용
     var displayName: String {
@@ -47,6 +53,10 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .suitBold: return "SUIT Bold"
         case .suitExtraBold: return "SUIT ExtraBold"
         case .suitHeavy: return "SUIT Heavy"
+        case .nanumBold: return "나눔 볼드"
+        case .nanumExtraBold: return "나눔 엑스트라볼드"
+        case .nanumLight: return "나눔 라이트"
+        case .nanumRegular: return "나눔 레귤러"
         }
     }
 }
