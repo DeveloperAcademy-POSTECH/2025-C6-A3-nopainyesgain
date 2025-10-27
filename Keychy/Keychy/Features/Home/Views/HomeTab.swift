@@ -24,12 +24,7 @@ struct HomeTab: View {
                         BundleDetailView(router: router, viewModel: collectionViewModel)
                     case .bundleSelectBackgroundView:
                         BundleSelectBackgroundView(router: router, viewModel: collectionViewModel)
-                    case .bundleSelectCarabinerView:
-                        BundleSelectCarabinerView(router: router, viewModel: collectionViewModel)
-                    case .bundleAddKeyringView:
-                        BundleAddKeyringView(router: router, viewModel: collectionViewModel)
-                    case .bundleNameInputView:
-                        BundleNameInputView(router: router, viewModel: collectionViewModel)
+                    
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)
