@@ -9,7 +9,7 @@ import SpriteKit
 
 // MARK: - Touch & Swipe Handling
 extension KeyringScene {
-
+    
     // MARK: - Touch Handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
@@ -18,6 +18,9 @@ extension KeyringScene {
         lastTouchLocation = location
         lastTouchTime = touch.timestamp
         swipeStartLocation = location
+        
+        /// 탭 임팩트
+        Haptic.impact(style: .medium)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -41,11 +44,12 @@ extension KeyringScene {
                     at: location,
                     velocity: velocity
                 )
-                
-                // 일정 스피드 이상 스와이프 시 이펙트 발사
+
+                // 일정 스피드 이상 스와이프 시 이펙트 발사 (쓰로틀링 적용 - 0.3초 간격)
                 let speed = hypot(velocity.dx, velocity.dy)
-                if speed > 2500 {
+                if speed > 2500 && (touch.timestamp - lastParticleTime) > 0.3 {
                     applyParticleEffect(for: currentKeyring)
+                    lastParticleTime = touch.timestamp
                 }
             }
         }
@@ -79,3 +83,5 @@ extension KeyringScene {
         lastTouchLocation = nil
     }
 }
+
+
