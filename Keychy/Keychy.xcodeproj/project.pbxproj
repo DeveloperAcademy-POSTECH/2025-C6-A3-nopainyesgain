@@ -92,6 +92,9 @@
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
 		C665DDE12EAEF87400CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
+		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
+		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
+		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -187,6 +190,9 @@
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		C665DDE02EAEF87400CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
+		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
+		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +200,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */,
 				38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */,
 				38A5943E2EAE4EE20003D712 /* FirebaseAuth in Frameworks */,
 				38A594462EAE4EE20003D712 /* FirebaseMessaging in Frameworks */,
@@ -212,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
+				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -233,6 +241,7 @@
 				4CEC62192EAE08DA0099ECEE /* Core */,
 				4CEC62692EAE08DF0099ECEE /* Features */,
 				4CEC62912EAE08F70099ECEE /* Resources */,
+				C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */,
 			);
 			path = Keychy;
 			sourceTree = "<group>";
@@ -685,6 +694,15 @@
 			path = Coin;
 			sourceTree = "<group>";
 		};
+		C665DDEA2EAF064500CE4495 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
+				C665DDED2EAF077900CE4495 /* Product.storekit */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -767,6 +785,7 @@
 				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
 				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
+				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -841,6 +860,7 @@
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
 				4CEC62322EAE08DA0099ECEE /* SoundEffectComponent.swift in Sources */,
+				C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
 				4CEC61EB2EAE08C00099ECEE /* ParticleEffect.swift in Sources */,

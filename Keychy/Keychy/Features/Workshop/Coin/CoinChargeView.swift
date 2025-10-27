@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct CoinChargeView<Route: Hashable>: View {
     @Bindable var router: NavigationRouter<Route>
+    @Bindable var store = StoreKitManager()
     
     var body: some View {
         List {
@@ -37,13 +39,13 @@ extension CoinChargeView {
     
     private var cherrySection: some View {
         Section("체리") {
-            ForEach([100, 200, 300, 400, 500], id: \.self) { amount in
-                cherryRow(amount: amount)
+            ForEach(store.products, id: \.id) { product in
+                cherryRow(amount: product.displayName, price: product.displayPrice)
             }
         }
     }
     
-    private func cherryRow(amount: Int) -> some View {
+    private func cherryRow(amount: String, price: String) -> some View {
         HStack {
             Image(systemName: "leaf.fill")
                 .foregroundColor(.red)
@@ -53,7 +55,7 @@ extension CoinChargeView {
             Spacer()
             
             Button(action: {}) {
-                Text("₩ \(amount * 12)")
+                Text("₩ \(price)")
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
