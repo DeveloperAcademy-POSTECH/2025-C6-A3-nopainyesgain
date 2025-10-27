@@ -9,11 +9,12 @@ import SwiftUI
 
 struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
+    @Bindable var userManager: UserManager
     @State private var viewModel = HomeViewModel()
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            HomeView(router: router)
+            HomeView(router: router, userManager: userManager)
                 .navigationDestination(for: HomeRoute.self) {route in
                     switch route {
                     case .BundleInventoryView:

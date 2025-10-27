@@ -21,11 +21,34 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct KeychyApp: App {
     // 파이어베이스 setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-      //@StateObject var viewModel = MKViewModel()
     
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            RootView()
+        }
+    }
+}
+
+// MARK: - RootView
+// WindowGroup에 바로 .onAppear를 못 붙이는 관계로 따로 빼서 Group으로 묶음
+struct RootView: View {
+    @State private var introViewModel = IntroViewModel()
+    @State private var userManager = UserManager.shared
+    
+    var body: some View {
+        Group {
+            if introViewModel.needsProfileSetup {
+                ProfileSetupView(viewModel: introViewModel)
+            } else if introViewModel.isLoggedIn {
+                MainTabView()
+                    .environment(userManager)
+            } else {
+                IntroView(viewModel: introViewModel)
+            }
+        }
+        .onAppear {
+            // RootView onAppear시 Auth 확인 (Firebase 초기화된 상태)
+            introViewModel.checkAuthStatus()
         }
     }
 }
