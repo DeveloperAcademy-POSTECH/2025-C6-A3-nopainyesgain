@@ -8,7 +8,7 @@
 import SwiftUI
 import PhotosUI
 
-extension MKViewModel {
+extension ArcylicPhotoVM {
     
     // MARK: - 드래그 시작 시 코너 감지
     func onDragChanged(_ startLocation: CGPoint, _ translation: CGSize) {
