@@ -33,14 +33,14 @@ struct WorkshopView: View {
         GeometryReader { outerGeo in
             ScrollView {
                 VStack(spacing: 0) {
-                    
                     ZStack {
                         topBannerSection
                             .background(
                                 GeometryReader { innerGeo in
                                     Color.clear
                                         .onChange(of: innerGeo.frame(in: .global).minY) { oldValue, newValue in
-                                            scrollOffset = newValue - outerGeo.frame(in: .global).minY
+                                            let offset = newValue - outerGeo.frame(in: .global).minY
+                                            scrollOffset = offset
                                         }
                                 }
                             )
@@ -57,7 +57,7 @@ struct WorkshopView: View {
                     }
                     .background(Color(UIColor.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 20))
-                    
+                    .offset(y: scrollOffset < -100 ? -100 - scrollOffset : 0) // 핵심!
                 }
                 .background(Color.black10)
             }
@@ -92,6 +92,7 @@ extension WorkshopView {
         .frame(maxWidth: .infinity)
         .frame(height: height)
         .offset(y: progress < 0.5 ? -60 : 120) // 위치 조정
+        .offset(y: scrollOffset < -100 ? -100 - scrollOffset : 0) // 핵심!
         .animation(.easeInOut(duration: 0.3), value: progress)
     }
     
