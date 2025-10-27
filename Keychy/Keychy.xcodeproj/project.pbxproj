@@ -27,7 +27,6 @@
 		4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */; };
 		4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622112EAE6825001760B5 /* HomeViewModel.swift */; };
 		4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */; };
-		4C6622172EAE8422001760B5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622162EAE8422001760B5 /* GoogleService-Info.plist */; };
 		4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622312EAF6AF7001760B5 /* Typography.swift */; };
 		4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */; };
 		4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */; };
@@ -140,7 +139,6 @@
 		4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4C6622112EAE6825001760B5 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Gradient+Keychy.swift"; sourceTree = "<group>"; };
-		4C6622162EAE8422001760B5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4C6622312EAF6AF7001760B5 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFB.otf; sourceTree = "<group>"; };
 		4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFEB.otf; sourceTree = "<group>"; };
@@ -294,7 +292,6 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
-				4C6622162EAE8422001760B5 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
 				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
@@ -849,7 +846,6 @@
 				4C6622072EAE5FC3001760B5 /* SUIT-ExtraLight.otf in Resources */,
 				4C6622082EAE5FC3001760B5 /* SUIT-Heavy.otf in Resources */,
 				4C6622092EAE5FC3001760B5 /* SUIT-Light.otf in Resources */,
-				4C6622172EAE8422001760B5 /* GoogleService-Info.plist in Resources */,
 				4C66220A2EAE5FC3001760B5 /* SUIT-Medium.otf in Resources */,
 				4C66220B2EAE5FC3001760B5 /* SUIT-Regular.otf in Resources */,
 				4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */,
