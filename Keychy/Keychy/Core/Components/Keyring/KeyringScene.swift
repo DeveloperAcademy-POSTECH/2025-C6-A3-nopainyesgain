@@ -17,7 +17,7 @@ class KeyringScene: SKScene {
     // MARK: - Properties
     var bodyImage: UIImage?
     var cancellables = Set<AnyCancellable>()
-    var currentKeyring: Keyring = Keyring()
+    var currentKeyring: Keyring = Keyring(name: "키링 이름", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tag1"], createdAt: Date(), authorId: "123", copyCount: 0, selectedTemplate: "acrylic", selectedRing: "basic", selectedChain: "basic", isEditable: true, isPackaged: false, chainLength: 5)
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
