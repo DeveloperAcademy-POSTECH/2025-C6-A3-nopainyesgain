@@ -33,6 +33,7 @@
 		4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */; };
 		4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */; };
 		4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */; };
+		4C6622462EAF7D63001760B5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622452EAF7D63001760B5 /* LICENSE */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -145,6 +146,7 @@
 		4C66223D2EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFEB.otf; sourceTree = "<group>"; };
 		4C66223E2EAF77AB001760B5 /* NanumSquareRoundOTFL.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFL.otf; sourceTree = "<group>"; };
 		4C66223F2EAF77AB001760B5 /* NanumSquareRoundOTFR.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFR.otf; sourceTree = "<group>"; };
+		4C6622452EAF7D63001760B5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 		4C6622042EAE5FC3001760B5 /* SUIT */ = {
 			isa = PBXGroup;
 			children = (
+				4C6622452EAF7D63001760B5 /* LICENSE */,
 				4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */,
 				4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */,
 				4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */,
@@ -853,6 +856,7 @@
 				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
 				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
+				4C6622462EAF7D63001760B5 /* LICENSE in Resources */,
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
 				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
