@@ -8,54 +8,76 @@
 import SwiftUI
 
 struct PreviewInfoSection: View {
+    let template: KeyringTemplate
+
     var body: some View {
-        templateInfo
-    }
-    
-    private var templateInfo: some View {
         VStack(alignment: .leading, spacing: 0) {
-            templateTag
-                .padding(.bottom, 4)
+            
+            /// 태그들
+            HStack(spacing: 8) {
+                /// 유료 태그 표시
+                if !template.isFree {
+                    templatePaidTag
+                }
+                templateTags
+            }
+            .padding(.bottom, 4)
+
+            /// 템플릿 이름
             templateName
                 .padding(.bottom, 12)
+            
+            /// 템플릿 설명
             templateDescription
         }
     }
-    
-    // TODO: - 유료키링 표시 -> 로직 필요
-    private var templatePrice: some View {
-        Text("")
+
+    private var templateTags: some View {
+        HStack(spacing: 8) {
+            if template.tags.isEmpty {
+                Text("지정된 태그가 없습니다.")
+                    .typography(.suit14M)
+                    .foregroundStyle(.gray500)
+                    .multilineTextAlignment(.center)
+                    .padding(.vertical, 5)
+                    .padding(.horizontal, 8)
+                    .background(.gray50)
+                    .clipShape(.rect)
+                    .cornerRadius(10)
+            } else {
+                ForEach(template.tags, id: \.self) { tag in
+                    Text(tag)
+                        .typography(.suit14M)
+                        .foregroundStyle(.gray500)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 8)
+                        .background(.gray50)
+                        .clipShape(.rect)
+                        .cornerRadius(10)
+                }
+            }
+        }
     }
-    
-    // TODO: - 키링 분류 태그 -> 로직 필요
-    private var templateTag: some View {
-        Text("카테고리")
-            .typography(.suit14M)
-            .foregroundStyle(.gray500)
-            .multilineTextAlignment(.center)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 8)
-            .background(.gray50)
-            .clipShape(.rect)
-            .cornerRadius(10)
-        
+
+    private var templatePaidTag: some View {
+        Image("PaidTestIcon")
     }
-    
+
     private var templateName: some View {
-        Text("아이템 이름")
+        Text(template.templateName)
             .typography(.suit24B)
     }
-    
-    // TODO: - 키링 설명 태그 -> 로직 필요
+
     private var templateDescription: some View {
-        Text("유료 아이콘 표시(유료 아이템만), 카테고리 표시, 보유중 표시, 사운드는 버튼 활성화")
+        Text(template.description)
             .typography(.suit15R)
             .foregroundStyle(.gray500)
     }
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    PreviewInfoSection()
+    PreviewInfoSection(template: .acrylicPhoto)
 }
 
 

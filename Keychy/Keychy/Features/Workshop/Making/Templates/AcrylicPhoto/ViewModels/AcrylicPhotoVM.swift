@@ -86,22 +86,19 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     // MARK: - Firebase Template 가져오기
     func fetchTemplate() async {
         isLoadingTemplate = true
-        
+
         /// defer 키워드 -> 함수가 끝날 때 무조건 실행되는 코드
         defer { isLoadingTemplate = false }
 
         do {
             let document = try await Firestore.firestore()
-                .collection("templates")
+                .collection("Template")
                 .document("AcrylicPhoto")
                 .getDocument()
 
             template = try document.data(as: KeyringTemplate.self)
-            
-            print(template?.id)
-            
+
         } catch {
-            print("❌ Error fetching template: \(error.localizedDescription)")
             errorMessage = "템플릿을 불러오는데 실패했습니다."
         }
     }

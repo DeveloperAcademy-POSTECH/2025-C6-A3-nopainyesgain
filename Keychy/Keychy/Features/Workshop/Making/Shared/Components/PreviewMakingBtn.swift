@@ -18,7 +18,7 @@ struct PreviewMakingBtn: View {
             Text(title)
                 .typography(.suit17B)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
+                .padding(.vertical, 7.5)
         }
         .buttonStyle(.glassProminent)
         .tint(.main500)

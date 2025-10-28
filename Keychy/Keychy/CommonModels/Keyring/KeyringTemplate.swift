@@ -26,10 +26,10 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     let interactions: [String]
 
     /// 썸네일 이미지 URL -----> 공방 카탈로그용
-    let thumbnail: String
+    let thumbnailURL: String
 
     /// 프리뷰 URL -----> 만들기 preview에 띄울 이미지
-    let preview: String
+    let previewURL: String
 
     /// 템플릿 분류 태그 (ex. ["이미지형", "텍스트형", "귀여움"])
     let tags: [String]
@@ -52,6 +52,28 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     /// 무료 템플릿 여부
     var isFree: Bool {
         return price == nil || price == 0
+    }
+}
+
+// MARK: - Preview용 Mock Data
+extension KeyringTemplate {
+    /// Firestore의 AcrylicPhoto 템플릿 데이터
+    static var acrylicPhoto: KeyringTemplate {
+        var template = KeyringTemplate(
+            templateName: "아크릴 포토 키링",
+            description: "투명한 아크릴에 사진을 담아 만드는 키링",
+            interactions: ["tap", "swing"],
+            thumbnailURL: "",
+            previewURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            tags: ["이미지형"],
+            price: 0,
+            downloadCount: 0,
+            useCount: 0,
+            createdAt: Date(),
+            isActive: true
+        )
+        template.id = "AcrylicPhoto"
+        return template
     }
 }
 
