@@ -8,7 +8,7 @@
 import SwiftUI
 
 // MARK: - 크롭 관련
-extension ArcylicPhotoVM {
+extension AcrylicPhotoVM {
 
     /// 크롭 영역을 이미지 중앙으로 리셋
     func resetToCenter() {

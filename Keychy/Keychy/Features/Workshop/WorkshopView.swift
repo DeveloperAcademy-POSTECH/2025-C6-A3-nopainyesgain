@@ -81,7 +81,7 @@ extension WorkshopView {
     
     private var templateButton: some View {
         Button(action: {
-            router.push(.arcylicPhotoPreview)
+            router.push(.acrylicPhotoPreview)
         }) {
             ZStack {
                 RoundedRectangle(cornerRadius: 7)
