@@ -62,7 +62,7 @@ private struct CategoryTabButton: View {
         Button(action: action) {
             VStack(spacing: Spacing.sm) {
                 Text(title)
-                    .typography(isSelected ? .suit14EB25 : .suit15SB25)
+                    .typography(isSelected ? .suit15B25 : .suit15SB25)
                     .foregroundStyle(isSelected ? Color.main500 : Color.black100)
                 
                 Rectangle()
