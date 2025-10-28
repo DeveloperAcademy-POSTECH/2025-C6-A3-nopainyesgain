@@ -13,11 +13,12 @@ struct MainTabView: View {
     @State private var collectionRouter = NavigationRouter<CollectionRoute>()
     @State private var workshopRouter = NavigationRouter<WorkshopRoute>()
     @State private var festivalRouter = NavigationRouter<FestivalRoute>()
+    @State private var userManager = UserManager.shared
     
     var body: some View {
         TabView(selection: $selectedTab) {
             // 홈
-            HomeTab(router: homeRouter)
+            HomeTab(router: homeRouter, userManager: userManager)
                 .tabItem {
                     Label("홈", systemImage: "house")
                 }
