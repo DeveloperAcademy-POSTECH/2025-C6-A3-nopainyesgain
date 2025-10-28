@@ -116,6 +116,7 @@
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
+		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
@@ -241,6 +242,7 @@
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
+		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
+				AA9B2E902EB081750004D31C /* ItemDetailView.swift */,
 				4CEC61F72EAE08DA0099ECEE /* KeyringBundle */,
 			);
 			path = View;
@@ -997,6 +1000,7 @@
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* ArcylicPhotoEditedView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
+				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
