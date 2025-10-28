@@ -14,16 +14,23 @@ struct AcrylicPhotoPreView: View {
     @State private var selectedItem: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var hasAppearedBefore = false
-
+    
     var body: some View {
-        VStack(alignment: .leading) {
-            Spacer()
-            keyringScene
-            keyringInfo
-            Spacer()
+        ZStack(alignment: .bottom) {
+            
+            /// 프리뷰 & 인포 섹션
+            VStack(alignment: .leading, spacing: 0) {
+                Spacer()
+                keyringPreivew
+                Spacer()
+                keyringInfo
+            }
+            .padding(.bottom, 120)
+            
+            // 버튼 (포토피커 오픈)
             makeBtn
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 35)
         .toolbar(.hidden, for: .tabBar)
         .photosPicker(
             isPresented: $showPhotoPicker,
@@ -55,8 +62,8 @@ struct AcrylicPhotoPreView: View {
 
 // MARK: - KeyringScene Section
 extension AcrylicPhotoPreView {
-    private var keyringScene: some View {
-        Image("ddochi")
+    private var keyringPreivew: some View {
+        PreviewImage(previewURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24")
             .scaledToFit()
             .frame(maxWidth: .infinity)
     }
@@ -65,63 +72,16 @@ extension AcrylicPhotoPreView {
 // MARK: - Info Section
 extension AcrylicPhotoPreView {
     private var keyringInfo: some View {
-        VStack(alignment: .leading) {
-            keyringFilterTag
-                .padding(.bottom, 10)
-            keyringDescription
-        }
-    }
-    
-    // TODO: - 유료키링 표시 -> 로직 필요
-    private var keyringPrice: some View {
-        Text("")
-    }
-    
-    // TODO: - 키링 분류 태그 -> 로직 필요
-    private var keyringFilterTag: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 4)
-                .foregroundStyle(Color(#colorLiteral(red: 0.9096680284, green: 0.9096679091, blue: 0.9096680284, alpha: 1)))
-                .frame(width: 65, height: 23)
-            
-            Text("#이미지형")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(Color(#colorLiteral(red: 0.4626464844, green: 0.4626464844, blue: 0.4626464844, alpha: 1)))
-                .multilineTextAlignment(.center)
-        }
-    }
-    
-    // TODO: - 키링 설명 태그 -> 로직 필요
-    private var keyringDescription: some View {
-        VStack(alignment: .leading) {
-            Text("기본 아크릴 키링")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.black)
-                .padding(.bottom, 1)
-            Text("어떤 키링인지에 대한 설명")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(Color(#colorLiteral(red: 0.4626464844, green: 0.4626464844, blue: 0.4626464844, alpha: 1)))
-        }
+        PreviewInfoSection()
     }
 }
 
-
-// TODO: - 컴포넌트화 필요
-// Next Step Btn
 extension AcrylicPhotoPreView {
     private var makeBtn: some View {
-        Button {
+        PreviewMakingBtn(title: "만들기") {
             showPhotoPicker = true
             selectedItem = nil
-        } label: {
-            Text("만들기")
-                .font(.system(size: 20, weight: .bold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
         }
-        .buttonStyle(.glassProminent)
-        .tint(Color(#colorLiteral(red: 0.9998622537, green: 0.1881143153, blue: 0.3372095823, alpha: 1)))
-
     }
 }
 
