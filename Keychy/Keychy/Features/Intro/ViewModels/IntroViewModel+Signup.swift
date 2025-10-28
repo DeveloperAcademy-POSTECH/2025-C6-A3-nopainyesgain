@@ -33,21 +33,24 @@ extension IntroViewModel {
             errorMessage = "사용자 정보를 찾을 수 없음"
             return
         }
-        
+
         print("사용자 입력 닉네임 저장: \(nickname)")
         isLoading = true
         errorMessage = nil
-        
-        UserManager.shared.saveProfile(
-            uid: tempUserUID,
+
+        // KeychyUser 객체 생성
+        let newUser = KeychyUser(
+            id: tempUserUID,
             nickname: nickname,
             email: tempUserEmail
-        ) { [weak self] success in
+        )
+
+        UserManager.shared.saveProfile(user: newUser) { [weak self] success in
             guard let self = self else { return }
-            
+
             DispatchQueue.main.async {
                 self.isLoading = false
-                
+
                 if success {
                     self.needsProfileSetup = false
                     self.isLoggedIn = true
