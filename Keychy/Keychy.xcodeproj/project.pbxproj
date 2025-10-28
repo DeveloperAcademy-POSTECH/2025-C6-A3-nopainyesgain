@@ -390,6 +390,8 @@
 		4CEC61D92EAE08C00099ECEE /* KeyringBundle */ = {
 			isa = PBXGroup;
 			children = (
+				AA5801952EB0B8D700F7E379 /* Background.swift */,
+				AA5801962EB0B8D700F7E379 /* Carabiner.swift */,
 				4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */,
 				AA9B2E882EB001AA0004D31C /* Background.swift */,
 				AA9B2E8A2EB001B70004D31C /* Carabiner.swift */,
@@ -961,6 +963,8 @@
 			files = (
 				AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
+				AA5801972EB0B8D700F7E379 /* Background.swift in Sources */,
+				AA5801982EB0B8D700F7E379 /* Carabiner.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
