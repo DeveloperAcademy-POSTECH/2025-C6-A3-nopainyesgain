@@ -61,7 +61,7 @@ extension BundleSelectBackgroundView {
                 .overlay(
                     VStack {
                         HStack {
-                            //TODO: 유저가 보유한 background에 해당 bg가 포함되어 있는지 상태 확인하고 분기 처리 필요
+                            //TODO: 유저가 보유한 background에 해당 bg가 포함되어 있는지 상태 확인하고 분기 처리 필요!
                             Image(.cherries)
                                 .resizable()
                                 .scaledToFit()
