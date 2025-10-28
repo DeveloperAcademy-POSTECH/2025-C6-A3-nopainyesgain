@@ -47,10 +47,10 @@ struct ItemDetailView: View {
                 Text("만들기")
                     .typography(.suit17B)
                     .padding(.vertical, 7.5)
-                    .foregroundStyle(Color.white100)
+                    .foregroundStyle(.white100)
                     .background(
                         RoundedRectangle(cornerRadius: 1000)
-                            .fill(Color.main500)
+                            .fill(.main500)
                             .frame(maxWidth: .infinity)
                     )
             }
@@ -67,7 +67,7 @@ extension ItemDetailView {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(imageAspectRatio, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 20))
-            .background(Color.gray300)
+            .background(.gray300)
     }
 }
 
@@ -94,7 +94,7 @@ extension ItemDetailView {
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.gray50)
+                                    .fill(.gray50)
                             )
                     }
                 }
@@ -112,14 +112,14 @@ extension ItemDetailView {
                 Text(itemDescription)
                     .multilineTextAlignment(.leading)
                     .typography(.suit15R)
-                    .foregroundStyle(Color.gray500)
+                    .foregroundStyle(.gray500)
                 Spacer()
                 if itemType == .sound {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.black100)
                         .overlay(
                             Image(systemName: "play.fill")
-                                .foregroundStyle(Color.white100)
+                                .foregroundStyle(.white100)
                                 .padding(10.65)
                         )
                 }
