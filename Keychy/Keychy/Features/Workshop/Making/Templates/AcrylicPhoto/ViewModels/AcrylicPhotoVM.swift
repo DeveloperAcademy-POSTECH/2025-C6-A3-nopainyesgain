@@ -1,15 +1,16 @@
 //
-//  MKViewModel.swift
+//  AcrylicPhotoVM.swift
 //  KeytschPrototype
 //
 //  Created by 김서현 on 10/17/25.
-// 설명: 이미지 처리 관련 뷰모델(크롭 + 누끼)
-// 키링 만들기에 쓰이는 모든 프로퍼티들을 넣어둠.
+// 설명: 아크릴 포토 템플릿 뷰모델
+// 이미지 처리(크롭 + 누끼) + 템플릿 데이터 관리
 
 import SwiftUI
 import PhotosUI
 import Vision
 import Combine
+import FirebaseFirestore
 
 enum KeyringUpdateType {
     case sound
@@ -18,15 +19,18 @@ enum KeyringUpdateType {
 
 @Observable
 class AcrylicPhotoVM: KeyringViewModelProtocol {
-    // 임시 키링 모델 - 아크릴 플로우에서 이펙트 저장용
-    var keyring = Keyring(name: "키링 이름", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tag1"], createdAt: Date(), authorId: "123", copyCount: 0, selectedTemplate: "acrylic", selectedRing: "basic", selectedChain: "basic", isEditable: true, isPackaged: false, chainLength: 5) {
-        // Combine 브리지로 Scene에 업데이트 전송
-        didSet { keyringSubject.send((keyring, .sound)) }
-    }
-    
+    // MARK: - Template Data (Firebase)
+    var template: KeyringTemplate?
+    var isLoadingTemplate = false
+
+    // MARK: - Effect Data
+    var soundId: String = "none"
+    var particleId: String = "none"
+
     // MARK: - Combine Bridge
-    /// @Observable 을 Comebine에 사용하기 위한 브릿지
-    let keyringSubject = PassthroughSubject<(Keyring, KeyringUpdateType), Never>()
+    /// @Observable을 Combine에 사용하기 위한 브릿지
+    /// KeyringScene에 soundId, particleId만 전달
+    let effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
     // MARK: - 이미지 선택 관련
     var selectedImage: UIImage?
@@ -47,17 +51,15 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var bodyImage: UIImage? = nil
 
     let minimumCropSize: CGSize = CGSize(width: 100, height: 100)
-    
-    //MARK: - 정보 입력
-    //TODO: 모델과 연결 필요
+
+    // MARK: - 정보 입력
     var nameText: String = ""
     var maxTextCount: Int = 30
     var memoText: String = ""
     var maxMemoCount: Int = 100
-    var tags: [String] = ["또치", "싱싱", "고양이", "멍멍", "돌고래", "런도", "길", "리엘", "헤븐", "세오쨩"]
     var selectedTags: [String] = []
-    
     var createdAt: Date = Date()
+
     // MARK: - 초기화
     init() {}
 
@@ -73,11 +75,34 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
         errorMessage = nil
     }
     
-    //MARK: - 생성일 Date formatter
+    // MARK: - 생성일 Date formatter
     func formattedDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "yyyy년 MM월 dd일"
         return formatter.string(from: createdAt)
+    }
+
+    // MARK: - Firebase Template 가져오기
+    func fetchTemplate() async {
+        isLoadingTemplate = true
+        
+        /// defer 키워드 -> 함수가 끝날 때 무조건 실행되는 코드
+        defer { isLoadingTemplate = false }
+
+        do {
+            let document = try await Firestore.firestore()
+                .collection("templates")
+                .document("AcrylicPhoto")
+                .getDocument()
+
+            template = try document.data(as: KeyringTemplate.self)
+            
+            print(template?.id)
+            
+        } catch {
+            print("❌ Error fetching template: \(error.localizedDescription)")
+            errorMessage = "템플릿을 불러오는데 실패했습니다."
+        }
     }
 }
