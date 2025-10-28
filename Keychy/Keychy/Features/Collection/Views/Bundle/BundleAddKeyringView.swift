@@ -17,5 +17,5 @@ struct BundleAddKeyringView: View {
 }
 
 #Preview {
-    BundleAddKeyringView()
+    BundleAddKeyringView(router: NavigationRouter(), viewModel: CollectionViewModel())
 }
