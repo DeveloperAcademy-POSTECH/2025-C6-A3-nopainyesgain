@@ -48,7 +48,7 @@ extension KeyringScene {
                 // 일정 스피드 이상 스와이프 시 이펙트 발사 (쓰로틀링 적용 - 0.3초 간격)
                 let speed = hypot(velocity.dx, velocity.dy)
                 if speed > 2500 && (touch.timestamp - lastParticleTime) > 0.3 {
-                    applyParticleEffect(for: currentKeyring)
+                    applyParticleEffect(particleId: currentParticleId)
                     lastParticleTime = touch.timestamp
                 }
             }
@@ -69,7 +69,7 @@ extension KeyringScene {
             // 탭 감지: 거리가 짧으면 사운드 효과 실행
             if distance < 30 {
                 if let body = bodyNode, body.contains(end) {
-                    applySoundEffect(for: currentKeyring)
+                    applySoundEffect(soundId: currentSoundId)
                 }
             }
         }

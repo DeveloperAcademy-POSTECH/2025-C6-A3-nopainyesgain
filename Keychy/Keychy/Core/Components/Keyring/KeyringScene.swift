@@ -17,7 +17,8 @@ class KeyringScene: SKScene {
     // MARK: - Properties
     var bodyImage: UIImage?
     var cancellables = Set<AnyCancellable>()
-    var currentKeyring: Keyring = Keyring(name: "키링 이름", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tag1"], createdAt: Date(), authorId: "123", copyCount: 0, selectedTemplate: "acrylic", selectedRing: "basic", selectedChain: "basic", isEditable: true, isPackaged: false, chainLength: 5)
+    var currentSoundId: String = "none"
+    var currentParticleId: String = "none"
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
@@ -63,16 +64,17 @@ class KeyringScene: SKScene {
     
     // MARK: - ViewModel 바인딩 (Generic)
     func bind<VM: KeyringViewModelProtocol>(to viewModel: VM) {
-        viewModel.keyringSubject
-            .sink { [weak self] (keyring, type) in
+        viewModel.effectSubject
+            .sink { [weak self] (soundId, particleId, type) in
                 guard let self = self else { return }
-                self.currentKeyring = keyring
+                self.currentSoundId = soundId
+                self.currentParticleId = particleId
 
                 switch type {
                 case .sound:
-                    self.applySoundEffect(for: keyring)
+                    self.applySoundEffect(soundId: soundId)
                 case .particle:
-                    self.applyParticleEffect(for: keyring)
+                    self.applyParticleEffect(particleId: particleId)
                 }
             }
             .store(in: &cancellables)

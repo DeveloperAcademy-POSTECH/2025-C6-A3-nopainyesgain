@@ -8,14 +8,14 @@
 import AVFoundation
 
 extension KeyringScene {
-    func applySoundEffect(for keyring: Keyring) {
-        guard keyring.soundId != "none" else { return }
-        SoundEffectComponent.shared.playSound(named: keyring.soundId)
+    func applySoundEffect(soundId: String) {
+        guard soundId != "none" else { return }
+        SoundEffectComponent.shared.playSound(named: soundId)
     }
 
-    func applyParticleEffect(for keyring: Keyring) {
-        guard keyring.particleId != "none" else { return }
-        onPlayParticleEffect?(keyring.particleId)
+    func applyParticleEffect(particleId: String) {
+        guard particleId != "none" else { return }
+        onPlayParticleEffect?(particleId)
     }
 }
 

@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 // MARK: - 이미지 로드
-extension ArcylicPhotoVM {
+extension AcrylicPhotoVM {
 
     /// 이미지 로드 - PhotosPicker
     /// - PhotosPickerItem은 **실제 이미지 데이터가 아니라 참조(reference)**.
