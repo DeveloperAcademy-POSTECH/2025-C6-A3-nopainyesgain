@@ -48,7 +48,7 @@ class CollectionViewModel {
             return a.createdAt > b.createdAt
         }
     }
-    // MARK: - 임시 키링 모델
+    // MARK: - 임시 키링 모델 - 실제로는 유저가 보유한 keyring으로 수정 되어야 함
     var keyring: [Keyring] = [
         Keyring(name: "키링 A", bodyImage: "ddochi", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
         Keyring(name: "키링 B", bodyImage: "Cherries", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
@@ -62,7 +62,6 @@ class CollectionViewModel {
             backgroundId: "1234",
             backgroundImage: "ddochi",
             tags: ["tag1"],
-            state: 0,
             price: 0,
             downloadCount: 0,
             useCount: 0,
@@ -73,7 +72,6 @@ class CollectionViewModel {
             backgroundId: "1234",
             backgroundImage: "Cherries",
             tags: ["tag1"],
-            state: 0,
             price: 0,
             downloadCount: 0,
             useCount: 0,
@@ -84,7 +82,6 @@ class CollectionViewModel {
             backgroundId: "1234",
             backgroundImage: "fireworks",
             tags: ["tag1"],
-            state: 1,
             price: 100,
             downloadCount: 0,
             useCount: 0,
@@ -96,7 +93,6 @@ class CollectionViewModel {
             backgroundId: "1234",
             backgroundImage: "ddochi",
             tags: ["tag1"],
-            state: 2,
             price: 100,
             downloadCount: 0,
             useCount: 0,
@@ -113,7 +109,6 @@ class CollectionViewModel {
             description: "",
             maxKeyringCount: 4,
             tags: ["tags"],
-            state: 0,
             price: 0,
             downloadCount: 0,
             useCount: 0,
@@ -128,7 +123,6 @@ class CollectionViewModel {
             description: "",
             maxKeyringCount: 4,
             tags: ["tags"],
-            state: 0,
             price: 0,
             downloadCount: 0,
             useCount: 0,
@@ -143,7 +137,6 @@ class CollectionViewModel {
             description: "",
             maxKeyringCount: 4,
             tags: ["tags"],
-            state: 0,
             price: 0,
             downloadCount: 0,
             useCount: 0,
