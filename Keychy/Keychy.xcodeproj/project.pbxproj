@@ -632,9 +632,9 @@
 		4CEC62642EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62612EAE08DF0099ECEE /* ArcylicPhotoEditedView.swift */,
-				4CEC62622EAE08DF0099ECEE /* ArcylicPhotoCropView.swift */,
 				4CEC62632EAE08DF0099ECEE /* ArcylicPhotoPreView.swift */,
+				4CEC62622EAE08DF0099ECEE /* ArcylicPhotoCropView.swift */,
+				4CEC62612EAE08DF0099ECEE /* ArcylicPhotoEditedView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
