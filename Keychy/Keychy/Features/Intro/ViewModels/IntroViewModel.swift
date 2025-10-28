@@ -43,30 +43,13 @@ class IntroViewModel {
     
     // MARK: - 프로필 완성 여부 확인
     func checkProfileCompletion(uid: String) {
-        let db = Firestore.firestore()
-        
-        db.collection("User").document(uid).getDocument { [weak self] snapshot, error in
+        UserManager.shared.loadUserInfo(uid: uid) { [weak self] hasProfile in
             guard let self = self else { return }
-            
+
             DispatchQueue.main.async {
-                if let error = error {
-                    print("Firestore 로드 실패: \(error)")
-                    self.handleIncompleteProfile(uid: uid)
-                    return
-                }
-                
-                if let data = snapshot?.data(),
-                   let nickname = data["nickname"] as? String,
-                   !nickname.isEmpty {
+                if hasProfile {
                     // 프로필 완성 → 메인 진입
-                    print("프로필 완성됨 (닉네임: \(nickname)) → 메인 진입")
-                    
-                    UserManager.shared.userUID = uid
-                    UserManager.shared.userNickname = nickname
-                    UserManager.shared.userEmail = data["email"] as? String ?? Auth.auth().currentUser?.email ?? ""
-                    UserManager.shared.isLoaded = true
-                    UserManager.shared.saveToCache()
-                    
+                    print("프로필 완성됨 → 메인 진입")
                     self.isLoggedIn = true
                     self.needsProfileSetup = false
                 } else {
