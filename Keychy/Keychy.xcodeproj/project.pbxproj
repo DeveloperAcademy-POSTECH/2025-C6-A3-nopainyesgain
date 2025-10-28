@@ -115,6 +115,7 @@
 		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
+		AA9115062EB11F5A0026E9BC /* BundleAddKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115052EB11F5A0026E9BC /* BundleAddKeyringView.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
@@ -245,6 +246,7 @@
 		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
+		AA9115052EB11F5A0026E9BC /* BundleAddKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleAddKeyringView.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
@@ -390,8 +392,6 @@
 		4CEC61D92EAE08C00099ECEE /* KeyringBundle */ = {
 			isa = PBXGroup;
 			children = (
-				AA5801952EB0B8D700F7E379 /* Background.swift */,
-				AA5801962EB0B8D700F7E379 /* Carabiner.swift */,
 				4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */,
 				AA9B2E882EB001AA0004D31C /* Background.swift */,
 				AA9B2E8A2EB001B70004D31C /* Carabiner.swift */,
@@ -826,6 +826,7 @@
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
 				4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */,
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
+				AA9115052EB11F5A0026E9BC /* BundleAddKeyringView.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -963,8 +964,6 @@
 			files = (
 				AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
-				AA5801972EB0B8D700F7E379 /* Background.swift in Sources */,
-				AA5801982EB0B8D700F7E379 /* Carabiner.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
@@ -1043,6 +1042,7 @@
 				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
+				AA9115062EB11F5A0026E9BC /* BundleAddKeyringView.swift in Sources */,
 				C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
