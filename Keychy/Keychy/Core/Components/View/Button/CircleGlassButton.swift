@@ -30,5 +30,5 @@ struct CircleGlassButton: View {
 
 // MARK: - Preview
 #Preview {
-    CollectionView(router: NavigationRouter<CollectionRoute>())
+    CollectionView(router: NavigationRouter<CollectionRoute>(), collectionViewModel: CollectionViewModel())
 }

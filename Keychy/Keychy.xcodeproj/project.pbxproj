@@ -23,6 +23,8 @@
 		38C147B72EB13A2E00A8E511 /* IntroViewModel+NicknameSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */; };
 		38C147B82EB13A5700A8E511 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */; };
+		38C147BD2EB14DFF00A8E511 /* CollectionViewModel+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */; };
+		38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
 		4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */; };
@@ -153,6 +155,8 @@
 		38A596832EAFEAA20003D712 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
 		38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleGlassButton.swift; sourceTree = "<group>"; };
+		38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Status.swift"; sourceTree = "<group>"; };
+		38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringDetailView.swift; sourceTree = "<group>"; };
 		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
 		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
 		4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -594,6 +598,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */,
+				38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */,
 				4CEC62A42EAE0BA30099ECEE /* Bundle */,
 			);
 			path = ViewModels;
@@ -604,6 +609,7 @@
 			children = (
 				4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */,
 				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
+				38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */,
 				4CEC629D2EAE09990099ECEE /* Bundle */,
 			);
 			path = Views;
@@ -988,6 +994,7 @@
 				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
 				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
 				4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */,
+				38C147BD2EB14DFF00A8E511 /* CollectionViewModel+Status.swift in Sources */,
 				38A596802EAFCF5F0003D712 /* UserManager.swift in Sources */,
 				4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */,
 				38C147B62EB13A2900A8E511 /* IntroViewModel.swift in Sources */,
@@ -1024,6 +1031,7 @@
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
+				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
 				38C147B82EB13A5700A8E511 /* ProfileSetupView.swift in Sources */,
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */,

@@ -10,12 +10,11 @@ import SpriteKit
 
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
+    @Bindable var collectionViewModel: CollectionViewModel
     @State private var selectedCategory = "전체"
     @State private var selectedSort: String = "최신순"
     
-    let categories: [String] = ["전체", "또치", "폴더", "❤️", "강아지", "여행", "냠냠", "콩순이"]
-    
-    let bodys: [String] = ["Cherries", "fireworks", "HandSwing", "HandTap", "Cherries", "fireworks", "HandSwing", "HandTap"]
+    let categories: [String] = ["전체", "또치", "tags", "❤️", "강아지", "여행", "냠냠", "콩순이"]
     
     // 정렬 옵션 (최신(생성) / 오래된 / 복사된 숫자순(인기순) / 이름 ㄱㄴㄷ순
     let sortOptions = ["최신순", "오래된순", "이름순"]
@@ -24,6 +23,18 @@ struct CollectionView: View {
         GridItem(.flexible(), spacing: Spacing.gap),
         GridItem(.flexible(), spacing: Spacing.gap)
     ]
+    
+    // TODO: 파이어베이스 연결해서 내 키링 불러오기
+    private var myKeyrings: [Keyring] {
+        var keyrings = collectionViewModel.keyring
+        
+        // 카테고리 필터링
+        if selectedCategory != "전체" {
+            keyrings = keyrings.filter { $0.tags.contains(selectedCategory) }
+        }
+        
+        return keyrings
+    }
     
     var body: some View {
         VStack {
@@ -78,14 +89,13 @@ extension CollectionView {
         .padding(.horizontal, Spacing.xs)
     }
     
-    // TODO: - 디자인 변경 필요
     private var collectionHeader: some View {
         HStack(spacing: 0) {
             sortButton
             
             Spacer()
             
-            Text("36 / 100")
+            Text("\(myKeyrings.count) / 100")
                 .typography(.suit14SB18)
                 .foregroundColor(.black100)
                 .padding(.trailing, 8)
@@ -125,28 +135,52 @@ extension CollectionView {
     private var collectionGridView: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 11) {
-                ForEach(bodys.indices, id: \.self) { index in
-                    collectionCell(bodyImageName: bodys[index])
+                ForEach(myKeyrings, id: \.name) { keyring in
+                    collectionCell(keyring: keyring)
                 }
             }
         }
-        .padding(.horizontal, 4)
         .padding(.top, 14)
         .scrollIndicators(.hidden)
     }
     
-    private func collectionCell(bodyImageName: String) -> some View {
+    private func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
-            //router.push(.)
+            router.push(.collectionKeyringDetailView)
         }) {
             VStack {
                 ZStack {
-                    SpriteView(scene: createMiniScene(body: bodyImageName))
+                    SpriteView(scene: createMiniScene(body: keyring.bodyImage))
                         .cornerRadius(10)
+                    
+                    // 포장 or 출품 상태에 따라 비활성 뷰 오버레이
+                    if let info = keyring.status.overlayInfo {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.black20)
+                            .overlay {
+                                VStack() {
+                                    ZStack {
+                                        UnevenRoundedRectangle(
+                                            topLeadingRadius: 10,
+                                            topTrailingRadius: 10
+                                        )
+                                        .fill(Color.black60)
+                                        .frame(height: 26)
+                                        
+                                        Text(info)
+                                            .typography(.suit13M)
+                                            .foregroundColor(.white100)
+                                            .frame(height: 26)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                    }
+                
                 }
                 .padding(.bottom, 10)
                 
-                Text("\(bodyImageName) 키링")
+                Text("\(keyring.name) 키링")
                     .typography(.suit14SB18)
                     .foregroundColor(.black100)
             }
@@ -168,5 +202,5 @@ extension CollectionView {
 
 // MARK: - Preview
 #Preview {
-    CollectionView(router: NavigationRouter<CollectionRoute>())
+    CollectionView(router: NavigationRouter<CollectionRoute>(), collectionViewModel: CollectionViewModel())
 }
