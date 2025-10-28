@@ -9,12 +9,13 @@ import SwiftUI
 
 struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
+    @Bindable var userManager: UserManager
     @State private var viewModel = HomeViewModel()
     @State private var collectionViewModel = CollectionViewModel()
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            HomeView(router: router)
+            HomeView(router: router, userManager: userManager)
                 .navigationDestination(for: HomeRoute.self) {route in
                     switch route {
                         //키링 뭉치함
@@ -24,7 +25,8 @@ struct HomeTab: View {
                         BundleDetailView(router: router, viewModel: collectionViewModel)
                     case .bundleSelectBackgroundView:
                         BundleSelectBackgroundView(router: router, viewModel: collectionViewModel)
-                    
+                    case .bundleSelectCarabinerView:
+                        BundleSelectCarabinerView(router: router, viewModel: collectionViewModel)
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)
