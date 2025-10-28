@@ -17,17 +17,14 @@ struct AcrylicPhotoPreView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            
-            /// 프리뷰 & 인포 섹션
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
                 keyringPreivew
                 Spacer()
-                keyringInfo
+                keyringInfo(template: viewModel.template)
             }
             .padding(.bottom, 120)
-            
-            // 버튼 (포토피커 오픈)
+
             makeBtn
         }
         .padding(.horizontal, 35)
@@ -40,13 +37,17 @@ struct AcrylicPhotoPreView: View {
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)
-                
+
                 // 시트가 닫히고 나서 화면 전환
                 showPhotoPicker = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     router.push(.acrylicPhotoCrop)
                 }
             }
+        }
+        .task {
+            // 템플릿 데이터 가져오기
+            await viewModel.fetchTemplate()
         }
         .onAppear {
             // 처음이 아니고 뒤로 왔을 때만 PhotosPicker 자동으로 띄우기
@@ -63,7 +64,8 @@ struct AcrylicPhotoPreView: View {
 // MARK: - KeyringScene Section
 extension AcrylicPhotoPreView {
     private var keyringPreivew: some View {
-        PreviewImage(previewURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24")
+        PreviewImage(
+            previewURL: viewModel.template?.previewURL ?? "")
             .scaledToFit()
             .frame(maxWidth: .infinity)
     }
@@ -71,8 +73,13 @@ extension AcrylicPhotoPreView {
 
 // MARK: - Info Section
 extension AcrylicPhotoPreView {
-    private var keyringInfo: some View {
-        PreviewInfoSection()
+    @ViewBuilder
+    private func keyringInfo(template: KeyringTemplate?) -> some View {
+        if let template {
+            PreviewInfoSection(template: template)
+        } else {
+            Text("템플릿 정보 없음")
+        }
     }
 }
 
