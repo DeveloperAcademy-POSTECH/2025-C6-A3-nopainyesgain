@@ -17,7 +17,7 @@ class KeyringScene: SKScene {
     // MARK: - Properties
     var bodyImage: UIImage?
     var cancellables = Set<AnyCancellable>()
-    var currentKeyring: Keyring = Keyring()
+    var currentKeyring: Keyring = Keyring(name: "키링 이름", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tag1"], createdAt: Date(), authorId: "123", copyCount: 0, selectedTemplate: "acrylic", selectedRing: "basic", selectedChain: "basic", isEditable: true, isPackaged: false, chainLength: 5)
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
@@ -33,6 +33,13 @@ class KeyringScene: SKScene {
     var lastTouchLocation: CGPoint?
     var lastTouchTime: TimeInterval = 0
     var swipeStartLocation: CGPoint?
+
+    // MARK: - 이펙트 쓰로틀링
+    /// 쓰로틀링(Throttling)은 일정 시간 간격으로 실행 횟수를 제한하는 기법. 이라고 합니다.
+    /// 마지막 실행 시간을 기록해두고, 일정 시간이 지나야만 다시 실행할 수 있게!
+    /// 과도한 함수 호출을 방지합니다.
+    /// ---> 흔들기를 과도하게 했을때, 파티클이 중앙에서 안퍼지고 모여있는게 매우 부자연스러워보여서 추가함.
+    var lastParticleTime: TimeInterval = 0
     
     // MARK: - Init / Deinit
     init(bodyImage: UIImage? = nil) {

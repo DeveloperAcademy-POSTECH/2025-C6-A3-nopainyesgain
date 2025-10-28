@@ -19,25 +19,43 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var selectedInteractionType: Interaction = .tap
     @State private var selectedSoundEffect: SoundEffect = .none
     @State private var selectedParticleEffect: ParticleEffect = .none
+    @State private var isLoadingResources = true
 
     var body: some View {
-        VStack(spacing: 0) {
-            // SpriteKit Scene (키링 프리뷰) - Generic KeyringSceneView 사용
-            ZStack(alignment: .bottomTrailing) {
-                KeyringSceneView(viewModel: viewModel)
+        ZStack {
+            VStack(spacing: 0) {
+                // SpriteKit Scene (키링 프리뷰) - Generic KeyringSceneView 사용
+                ZStack(alignment: .bottomTrailing) {
+                    KeyringSceneView(viewModel: viewModel)
 
-                // Interaction 선택 버튼 (탭 / 스윙)
-                HStack(alignment: .bottom) {
-                    ForEach(Interaction.allCases) { Interaction in
-                        effectSelectorBtn(for: Interaction)
+                    // Interaction 선택 버튼 (탭 / 스윙)
+                    HStack(alignment: .bottom) {
+                        ForEach(Interaction.allCases) { Interaction in
+                            effectSelectorBtn(for: Interaction)
+                        }
+                        Spacer()
                     }
-                    Spacer()
+                    .padding(10)
                 }
-                .padding(10)
-            }
 
-            // MARK: - 효과 선택 영역 (사운드 / 파티클)
-            effectSelectorView
+                // MARK: - 효과 선택 영역 (사운드 / 파티클)
+                effectSelectorView
+            }
+            .blur(radius: isLoadingResources ? 3 : 0)
+            .disabled(isLoadingResources)
+
+            // 로딩 인디케이터
+            if isLoadingResources {
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                    Text("리소스를 가져오고 있어요")
+                        .font(.headline)
+                }
+                .padding(32)
+                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
         }
         .navigationTitle(navigationTitle)
         .navigationBarBackButtonHidden(true)
@@ -45,6 +63,21 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .toolbar {
             backToolbarItem
             nextToolbarItem
+        }
+        .task {
+            // 커스터마이징 화면 진입 시 모든 사운드 리소스 프리로드
+            // TODO: Firebase 연동 후에는 유저 소유 사운드만 프리로드하도록 변경
+            await preloadAllSoundEffects()  // 모든 사운드 로딩 완료까지 기다림
+            isLoadingResources = false      // 로딩 완료 후 인디케이터 닫기
+        }
+    }
+
+    // MARK: - Preload Sound Resources
+    private func preloadAllSoundEffects() async {
+        // 모든 사운드를 순차적으로 로드 (각각 완료될 때까지 기다림)
+        for effect in SoundEffect.allCases {
+            guard effect != .none else { continue }
+            await SoundEffectComponent.shared.preloadSound(named: effect.soundFileName)
         }
     }
 }
