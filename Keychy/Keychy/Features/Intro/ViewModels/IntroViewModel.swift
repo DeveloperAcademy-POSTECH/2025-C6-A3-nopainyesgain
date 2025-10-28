@@ -1,0 +1,134 @@
+//
+//  IntroViewModel.swift
+//  Keychy
+//
+//  Created by Jini on 10/27/25.
+//
+
+import SwiftUI
+import AuthenticationServices
+import FirebaseAuth
+import FirebaseFirestore
+import CryptoKit
+
+@Observable
+class IntroViewModel {
+    // 로그인 관련
+    var isLoggedIn = false
+    var isLoading = false
+    var errorMessage: String?
+    var currentNonce: String?
+    
+    // 프로필 설정 관련
+    var needsProfileSetup = false
+    var tempUserUID: String = ""
+    var tempUserEmail: String = ""
+    
+    // MARK: - 초기화
+    init() { }
+    
+    // MARK: - Auth 상태 확인
+    func checkAuthStatus() {
+        guard let user = Auth.auth().currentUser else {
+            print("로그인 안 됨")
+            isLoggedIn = false
+            needsProfileSetup = false
+            return
+        }
+        
+        print("Auth 상태 확인: \(user.uid)")
+        // Firestore에서 프로필 완성 여부 확인 (닉네임 비어있는지 체크)
+        checkProfileCompletion(uid: user.uid)
+    }
+    
+    // MARK: - 프로필 완성 여부 확인
+    func checkProfileCompletion(uid: String) {
+        let db = Firestore.firestore()
+        
+        db.collection("User").document(uid).getDocument { [weak self] snapshot, error in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Firestore 로드 실패: \(error)")
+                    self.handleIncompleteProfile(uid: uid)
+                    return
+                }
+                
+                if let data = snapshot?.data(),
+                   let nickname = data["nickname"] as? String,
+                   !nickname.isEmpty {
+                    // 프로필 완성 → 메인 진입
+                    print("프로필 완성됨 (닉네임: \(nickname)) → 메인 진입")
+                    
+                    UserManager.shared.userUID = uid
+                    UserManager.shared.userNickname = nickname
+                    UserManager.shared.userEmail = data["email"] as? String ?? Auth.auth().currentUser?.email ?? ""
+                    UserManager.shared.isLoaded = true
+                    UserManager.shared.saveToCache()
+                    
+                    self.isLoggedIn = true
+                    self.needsProfileSetup = false
+                } else {
+                    // 프로필 미완성 → 닉네임 입력
+                    print("프로필 미완성 (닉네임 없음) → 닉네임 입력 화면")
+                    self.handleIncompleteProfile(uid: uid)
+                }
+            }
+        }
+    }
+    
+    // MARK: - 미완성 프로필 처리
+    func handleIncompleteProfile(uid: String) {
+        self.needsProfileSetup = true
+        self.isLoggedIn = false
+        self.tempUserUID = uid
+        
+        // 이메일은 Auth에서 가져오기
+        if let email = Auth.auth().currentUser?.email {
+            self.tempUserEmail = email
+        }
+    }
+
+    // MARK: - Apple 로그인 요청 설정
+    func configureRequest(_ request: ASAuthorizationAppleIDRequest) {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        request.requestedScopes = [.email]
+        request.nonce = sha256(nonce)
+    }
+    
+    // MARK: - 로그인 실패 처리
+    func handleSignInFailure(_ error: Error) {
+        // TODO: 이후 로그인 화면 나오면 UI & 로직 수정 필요
+        errorMessage = "로그인 실패: \(error.localizedDescription)"
+        isLoading = false
+    }
+    
+    // MARK: - 보안용 Nonce 생성
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+        }
+        
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let nonce = randomBytes.map { byte in
+            charset[Int(byte) % charset.count]
+        }
+        
+        return String(nonce)
+    }
+
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+        
+        return hashString
+    }
+}
