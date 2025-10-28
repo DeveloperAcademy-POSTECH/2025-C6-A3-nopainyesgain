@@ -11,6 +11,7 @@ struct BundleSelectBackgroundView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     
     @State var viewModel: CollectionViewModel
+    @State var isShowingDetailView: Bool = false
     
     let columns: [GridItem] = [
         // GridItem의 Spacing은 horizontal 간격
@@ -20,11 +21,10 @@ struct BundleSelectBackgroundView: View {
     
     var body: some View {
         selectBackgroundGrid
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
             .toolbar(.hidden, for: .tabBar)
-        //TODO: 내일 싱싱이한테 기본 네비게이션바 쓰는거 어떤지 물어보기
-            //.navigationBarHidden(true)
             .scrollIndicators(.hidden)
+            .navigationTitle("배경")
     }
 }
 
@@ -36,13 +36,8 @@ extension BundleSelectBackgroundView {
             LazyVGrid(columns: columns, spacing: 18) {
                 ForEach(viewModel.background, id: \.self) { bg in
                     Button {
-                        if bg.state == 1 {
-                            //유료 결제 화면으로 이동
-                        }
-                        else {
-                            viewModel.selectedBackground = bg
-                            router.push(.bundleSelectCarabinerView)
-                        }
+                        viewModel.selectedBackground = bg
+                        router.push(.bundleSelectCarabinerView)
                     } label: {
                         VStack(spacing: 10) {
                             selectBackgroundGridItem(background: bg)
@@ -66,25 +61,22 @@ extension BundleSelectBackgroundView {
                 .overlay(
                     VStack {
                         HStack {
-                            if background.state == 1 || background.state == 2 {
-                                Image(.cherries)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 20, height: 20)
-                                    .padding(EdgeInsets(top: 7, leading: 10, bottom: 0, trailing: 0))
-                            }
+                            //TODO: 유저가 보유한 background에 해당 bg가 포함되어 있는지 상태 확인하고 분기 처리 필요
+                            Image(.cherries)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
+                                .padding(EdgeInsets(top: 7, leading: 10, bottom: 0, trailing: 0))
                             Spacer()
-                            if background.state == 2 {
-                                Text("보유")
-                                    .typography(.suit13SB)
-                                    .foregroundStyle(Color.white100)
-                                    .padding(.vertical, 4)
-                                    .padding(.horizontal, 12)
-                                    .background(
-                                        UnevenRoundedRectangle(bottomLeadingRadius: 5, topTrailingRadius: 10)
-                                            .fill(Color.black60)
-                                    )
-                            }
+                            Text("보유")
+                                .typography(.suit13SB)
+                                .foregroundStyle(Color.white100)
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 12)
+                                .background(
+                                    UnevenRoundedRectangle(bottomLeadingRadius: 5, topTrailingRadius: 10)
+                                        .fill(Color.black60)
+                                )
                         }
                         Spacer()
                     }
