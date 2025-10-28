@@ -8,9 +8,9 @@
 import SwiftUI
 import PhotosUI
 
-struct ArcylicPhotoPreView: View {
+struct AcrylicPhotoPreView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @State var viewModel: ArcylicPhotoVM
+    @State var viewModel: AcrylicPhotoVM
     @State private var selectedItem: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var hasAppearedBefore = false
@@ -37,7 +37,7 @@ struct ArcylicPhotoPreView: View {
                 // 시트가 닫히고 나서 화면 전환
                 showPhotoPicker = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    router.push(.arcylicPhotoCrop)
+                    router.push(.acrylicPhotoCrop)
                 }
             }
         }
@@ -54,7 +54,7 @@ struct ArcylicPhotoPreView: View {
 }
 
 // MARK: - KeyringScene Section
-extension ArcylicPhotoPreView {
+extension AcrylicPhotoPreView {
     private var keyringScene: some View {
         Image("ddochi")
             .scaledToFit()
@@ -63,7 +63,7 @@ extension ArcylicPhotoPreView {
 }
 
 // MARK: - Info Section
-extension ArcylicPhotoPreView {
+extension AcrylicPhotoPreView {
     private var keyringInfo: some View {
         VStack(alignment: .leading) {
             keyringFilterTag
@@ -108,7 +108,7 @@ extension ArcylicPhotoPreView {
 
 // TODO: - 컴포넌트화 필요
 // Next Step Btn
-extension ArcylicPhotoPreView {
+extension AcrylicPhotoPreView {
     private var makeBtn: some View {
         Button {
             showPhotoPicker = true
@@ -126,8 +126,8 @@ extension ArcylicPhotoPreView {
 }
 
 #Preview {
-    ArcylicPhotoPreView(
+    AcrylicPhotoPreView(
         router: NavigationRouter<WorkshopRoute>(),
-        viewModel: ArcylicPhotoVM()
+        viewModel: AcrylicPhotoVM()
     )
 }

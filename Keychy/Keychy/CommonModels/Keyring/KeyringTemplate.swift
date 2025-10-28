@@ -46,45 +46,12 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     /// 생성일
     let createdAt: Date
 
+    /// 앱 노출 여부 (관리자용이라고 보면됨. -> false면 앱에서 숨김)
+    let isActive: Bool
+
     /// 무료 템플릿 여부
     var isFree: Bool {
         return price == nil || price == 0
     }
 }
 
-// MARK: - Mock Data
-extension KeyringTemplate {
-    static var mock: KeyringTemplate {
-        var template = KeyringTemplate(
-            templateName: "아크릴 키링",
-            description: "투명한 아크릴에 사진을 담아 만드는 키링",
-            interactions: ["drum", "shutter", "fire"],
-            thumbnail: "acrylic_thumbnail",
-            preview: "acrylic_preview",
-            tags: ["이미지형", "귀여움"],
-            price: 500,
-            downloadCount: 1234,
-            useCount: 5678,
-            createdAt: Date()
-        )
-        template.id = "acrylic_photo"
-        return template
-    }
-
-    static var mockFree: KeyringTemplate {
-        var template = KeyringTemplate(
-            templateName: "기본 키링",
-            description: "무료로 제공되는 기본 키링",
-            interactions: ["bell"],
-            thumbnail: "basic_thumbnail",
-            preview: "basic_preview",
-            tags: ["무료", "기본"],
-            price: nil,
-            downloadCount: 9999,
-            useCount: 12345,
-            createdAt: Date()
-        )
-        template.id = "basic_keyring"
-        return template
-    }
-}
