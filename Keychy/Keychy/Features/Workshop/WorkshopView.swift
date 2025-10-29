@@ -212,17 +212,17 @@ struct WorkshopView: View {
     private func applySorting() {
         switch sortOrder {
         case "최신순":
-            templates.sort { $0.createdAt < $1.createdAt }
-            backgrounds.sort { $0.createdAt < $1.createdAt }
-            carabiners.sort { $0.createdAt < $1.createdAt }
-            particles.sort { $0.createdAt < $1.createdAt }
-            sounds.sort { $0.createdAt < $1.createdAt }
+            templates.sort { $0.createdAt > $1.createdAt }
+            backgrounds.sort { $0.createdAt > $1.createdAt }
+            carabiners.sort { $0.createdAt > $1.createdAt }
+            particles.sort { $0.createdAt > $1.createdAt }
+            sounds.sort { $0.createdAt > $1.createdAt }
         case "인기순":
-            templates.sort { $0.downloadCount < $1.downloadCount }
-            backgrounds.sort { $0.downloadCount < $1.downloadCount }
-            carabiners.sort { $0.downloadCount < $1.downloadCount }
-            particles.sort { $0.downloadCount < $1.downloadCount }
-            sounds.sort { $0.downloadCount < $1.downloadCount }
+            templates.sort { $0.downloadCount > $1.downloadCount }
+            backgrounds.sort { $0.downloadCount > $1.downloadCount }
+            carabiners.sort { $0.downloadCount > $1.downloadCount }
+            particles.sort { $0.downloadCount > $1.downloadCount }
+            sounds.sort { $0.downloadCount > $1.downloadCount }
         default:
             break
         }
@@ -458,7 +458,7 @@ extension WorkshopView {
             HStack(spacing: 4) {
                 Image(systemName: "leaf.fill")
                     .foregroundStyle(.pink)
-                Text("1,800")
+                Text("\(userManager.currentUser?.coin ?? 0)")
                     .foregroundStyle(.primary)
             }
             .padding(.horizontal, 12)
@@ -883,15 +883,14 @@ struct OwnedBackgroundCard: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            AsyncImage(url: URL(string: background.backgroundImage)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().aspectRatio(contentMode: .fill)
-                case .empty:
+            LazyImage(url: URL(string: background.backgroundImage)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
                     ProgressView()
-                case .failure:
-                    Color.gray.opacity(0.1)
-                @unknown default:
+                } else {
                     Color.gray.opacity(0.1)
                 }
             }
@@ -911,15 +910,14 @@ struct OwnedCarabinerCard: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            AsyncImage(url: URL(string: carabiner.carabinerImage)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().aspectRatio(contentMode: .fill)
-                case .empty:
+            LazyImage(url: URL(string: carabiner.carabinerImage)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
                     ProgressView()
-                case .failure:
-                    Color.gray.opacity(0.1)
-                @unknown default:
+                } else {
                     Color.gray.opacity(0.1)
                 }
             }
@@ -939,15 +937,14 @@ struct OwnedParticleCard: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            AsyncImage(url: URL(string: particle.thumbnail)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().aspectRatio(contentMode: .fill)
-                case .empty:
+            LazyImage(url: URL(string: particle.thumbnail)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
                     ProgressView()
-                case .failure:
-                    Color.gray.opacity(0.1)
-                @unknown default:
+                } else {
                     Color.gray.opacity(0.1)
                 }
             }
@@ -967,15 +964,14 @@ struct OwnedSoundCard: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            AsyncImage(url: URL(string: sound.thumbnail)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().aspectRatio(contentMode: .fill)
-                case .empty:
+            LazyImage(url: URL(string: sound.thumbnail)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
                     ProgressView()
-                case .failure:
-                    Color.gray.opacity(0.1)
-                @unknown default:
+                } else {
                     Color.gray.opacity(0.1)
                 }
             }
@@ -1006,18 +1002,20 @@ struct TemplateItemView: View {
         } label: {
             VStack(spacing: 8) {
                 ZStack(alignment: .topLeading) {
-                    AsyncImage(url: URL(string: template.thumbnailURL)) { phase in
-                        switch phase {
-                        case .empty:
-                            Color.gray.opacity(0.3).overlay { ProgressView() }
-                        case .success(let image):
-                            image.resizable().aspectRatio(contentMode: .fill)
-                        case .failure:
-                            Color.gray.opacity(0.3).overlay {
-                                Image(systemName: "photo").foregroundStyle(.secondary)
-                            }
-                        @unknown default:
+                    LazyImage(url: URL(string: template.thumbnailURL)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else if state.isLoading {
                             Color.gray.opacity(0.3)
+                                .overlay { ProgressView() }
+                        } else {
+                            Color.gray.opacity(0.3)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.secondary)
+                                }
                         }
                     }
                     .frame(height: 200)
@@ -1044,18 +1042,20 @@ struct BackgroundItemView: View {
     var body: some View {
         VStack(spacing: 8) {
             ZStack(alignment: .topLeading) {
-                AsyncImage(url: URL(string: background.backgroundImage)) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.gray.opacity(0.3).overlay { ProgressView() }
-                    case .success(let image):
-                        image.resizable().aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.gray.opacity(0.3).overlay {
-                            Image(systemName: "photo").foregroundStyle(.secondary)
-                        }
-                    @unknown default:
+                LazyImage(url: URL(string: background.backgroundImage)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.isLoading {
                         Color.gray.opacity(0.3)
+                            .overlay { ProgressView() }
+                    } else {
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
                     }
                 }
                 .frame(height: 200)
@@ -1081,18 +1081,20 @@ struct CarabinerItemView: View {
     var body: some View {
         VStack(spacing: 8) {
             ZStack(alignment: .topLeading) {
-                AsyncImage(url: URL(string: carabiner.carabinerImage)) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.gray.opacity(0.3).overlay { ProgressView() }
-                    case .success(let image):
-                        image.resizable().aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.gray.opacity(0.3).overlay {
-                            Image(systemName: "photo").foregroundStyle(.secondary)
-                        }
-                    @unknown default:
+                LazyImage(url: URL(string: carabiner.carabinerImage)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.isLoading {
                         Color.gray.opacity(0.3)
+                            .overlay { ProgressView() }
+                    } else {
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
                     }
                 }
                 .frame(height: 200)
@@ -1118,18 +1120,20 @@ struct ParticleItemView: View {
     var body: some View {
         VStack(spacing: 8) {
             ZStack(alignment: .topLeading) {
-                AsyncImage(url: URL(string: particle.thumbnail)) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.gray.opacity(0.3).overlay { ProgressView() }
-                    case .success(let image):
-                        image.resizable().aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.gray.opacity(0.3).overlay {
-                            Image(systemName: "photo").foregroundStyle(.secondary)
-                        }
-                    @unknown default:
+                LazyImage(url: URL(string: particle.thumbnail)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.isLoading {
                         Color.gray.opacity(0.3)
+                            .overlay { ProgressView() }
+                    } else {
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
                     }
                 }
                 .frame(height: 200)
@@ -1155,18 +1159,20 @@ struct SoundItemView: View {
     var body: some View {
         VStack(spacing: 8) {
             ZStack(alignment: .topLeading) {
-                AsyncImage(url: URL(string: sound.thumbnail)) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.gray.opacity(0.3).overlay { ProgressView() }
-                    case .success(let image):
-                        image.resizable().aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.gray.opacity(0.3).overlay {
-                            Image(systemName: "photo").foregroundStyle(.secondary)
-                        }
-                    @unknown default:
+                LazyImage(url: URL(string: sound.thumbnail)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.isLoading {
                         Color.gray.opacity(0.3)
+                            .overlay { ProgressView() }
+                    } else {
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
                     }
                 }
                 .frame(height: 200)
