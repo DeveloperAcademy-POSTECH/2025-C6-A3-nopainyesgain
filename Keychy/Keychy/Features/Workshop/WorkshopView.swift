@@ -171,8 +171,6 @@ struct WorkshopView: View {
             ownedTemplates = try snapshot.documents.compactMap { document in
                 try document.data(as: KeyringTemplate.self)
             }
-            
-            print("✅ Loaded \(ownedTemplates.count) owned templates")
         } catch {
             print("❌ Failed to load owned templates: \(error)")
         }
@@ -529,10 +527,10 @@ struct KeychainItem: View {
     var body: some View {
         Button {
             // previewRoute에 따라 적절한 라우트로 이동
-            if let route = WorkshopRoute.from(string: template.previewRoute) {
+            if let route = WorkshopRoute.from(string: template.id!) {
                 router.push(route)
             } else {
-                print("⚠️ 알 수 없는 라우트: \(template.previewRoute)")
+                print("⚠️ 알 수 없는 라우트: \(template.id ?? "document id도 없음")")
             }
         } label: {
             VStack(spacing: 8) {
