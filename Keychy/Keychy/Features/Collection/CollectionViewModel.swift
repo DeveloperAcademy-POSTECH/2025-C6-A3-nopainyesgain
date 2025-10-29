@@ -7,6 +7,7 @@
 
 import Foundation
 
+@Observable
 class CollectionViewModel {
     // 키링 뭉치 관련
     // MARK: - 임시 키링 뭉치
