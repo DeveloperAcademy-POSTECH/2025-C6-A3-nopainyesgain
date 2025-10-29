@@ -15,7 +15,10 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @Bindable var viewModel: VM
     let navigationTitle: String
     let nextRoute: WorkshopRoute
-
+    
+    // TODO: - User 모델 및 파이어베이스 연동 시 삭제
+    @State private var availableTags = ["또치", "싱싱", "고양이"]
+    
     @State private var textCount: Int = 0
     @State private var memoTextCount: Int = 0
     @State private var showAddTagAlert: Bool = false
@@ -183,7 +186,7 @@ extension KeyringInfoInputView {
                                 .shadow(radius: 1)
                         )
                 }
-                ForEach(viewModel.tags, id: \.self) { tag in
+                ForEach(availableTags, id: \.self) { tag in
                     ChipView(
                         title: tag,
                         isSelected: viewModel.selectedTags.contains(tag),
@@ -258,11 +261,11 @@ extension KeyringInfoInputView {
                     if newTagName.isEmpty {
                         showTagNameEmptyToast = true
                     } else {
-                        if viewModel.tags.contains(newTagName) {
+                        if availableTags.contains(newTagName) {
                             showTagNameEmptyToast = false
                             showTagNameAlreadyExistsToast = true
                         } else {
-                            viewModel.tags.append(newTagName)
+                            availableTags.append(newTagName)
                             newTagName = ""
                             showAddTagAlert = false
                             showTagNameAlreadyExistsToast = false

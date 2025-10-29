@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct ArcylicPhotoCropView: View {
+struct AcrylicPhotoCropView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @Bindable var viewModel: ArcylicPhotoVM
+    @Bindable var viewModel: AcrylicPhotoVM
     
     var body: some View {
         ZStack {
@@ -68,7 +68,7 @@ struct ArcylicPhotoCropView: View {
 }
 
 // MARK: - Toolbar
-extension ArcylicPhotoCropView {
+extension AcrylicPhotoCropView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
@@ -93,7 +93,7 @@ extension ArcylicPhotoCropView {
                 viewModel.croppedImage = cropped
                 viewModel.isProcessing = true
                 
-                ArcylicPhotoVM.removeBackground(from: viewModel.croppedImage) { result in
+                AcrylicPhotoVM.removeBackground(from: viewModel.croppedImage) { result in
                     if let result = result {
                         viewModel.removedBackgroundImage = result
                     } else {
@@ -101,7 +101,7 @@ extension ArcylicPhotoCropView {
                     }
                     
                     viewModel.isProcessing = false
-                    router.push(.arcylicPhotoEdited)
+                    router.push(.acrylicPhotoEdited)
                 }
             }
         }
