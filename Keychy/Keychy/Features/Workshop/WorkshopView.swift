@@ -16,6 +16,7 @@ enum FilterType: String, CaseIterable {
 
 struct WorkshopView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Environment(UserManager.self) private var userManager  // UserManager 추가
     
     private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
     @State private var selectedCategory: String = "KEYCHY!"
@@ -28,6 +29,9 @@ struct WorkshopView: View {
     @State private var templates: [KeyringTemplate] = []
     @State private var isLoadingTemplates: Bool = false
     @State private var errorMessage: String? = nil
+    
+    // 보유한 템플릿 목록
+    @State private var ownedTemplates: [KeyringTemplate] = []
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -78,6 +82,7 @@ struct WorkshopView: View {
         .task {
             // View가 나타날 때 템플릿 목록 가져오기
             await fetchTemplates()
+            await loadOwnedTemplates()
         }
     }
     
@@ -138,6 +143,45 @@ struct WorkshopView: View {
         }
         
         return result
+    }
+    
+    /// 사용자가 보유한 템플릿 목록 로드
+    private func loadOwnedTemplates() async {
+        guard let user = userManager.currentUser else {
+            print("⚠️ User not logged in")
+            return
+        }
+        
+        // 사용자의 templates 배열에서 ID 가져오기
+        let ownedTemplateIds = user.templates
+        
+        guard !ownedTemplateIds.isEmpty else {
+            print("📦 No owned templates")
+            ownedTemplates = []
+            return
+        }
+        
+        do {
+            // Firestore에서 보유한 템플릿 정보 가져오기
+            let snapshot = try await Firestore.firestore()
+                .collection("Template")
+                .whereField(FieldPath.documentID(), in: ownedTemplateIds)
+                .getDocuments()
+            
+            ownedTemplates = try snapshot.documents.compactMap { document in
+                try document.data(as: KeyringTemplate.self)
+            }
+            
+            print("✅ Loaded \(ownedTemplates.count) owned templates")
+        } catch {
+            print("❌ Failed to load owned templates: \(error)")
+        }
+    }
+    
+    /// 특정 템플릿을 보유하고 있는지 확인
+    private func isTemplateOwned(_ template: KeyringTemplate) -> Bool {
+        guard let templateId = template.id else { return false }
+        return userManager.currentUser?.templates.contains(templateId) ?? false
     }
 }
 
@@ -263,8 +307,22 @@ extension WorkshopView {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(0..<3) { _ in
-                        TemplateCard()
+                    if ownedTemplates.isEmpty {
+                        // 보유한 템플릿이 없을 때
+                        VStack(spacing: 8) {
+                            Image(systemName: "tray")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            Text("보유한 템플릿이 없습니다")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(width: 120, height: 100)
+                    } else {
+                        // 보유한 템플릿 표시
+                        ForEach(ownedTemplates) { template in
+                            OwnedTemplateCard(template: template)
+                        }
                     }
                 }
             }
@@ -315,7 +373,8 @@ extension WorkshopView {
                     ForEach(filteredTemplates) { template in
                         KeychainItem(
                             template: template,
-                            category: selectedCategory
+                            category: selectedCategory,
+                            isOwned: isTemplateOwned(template)
                         )
                     }
                 }
@@ -431,30 +490,85 @@ struct TemplateCard: View {
     }
 }
 
+/// 보유한 템플릿 카드 - 실제 템플릿 데이터를 표시
+struct OwnedTemplateCard: View {
+    let template: KeyringTemplate
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            // 썸네일 이미지
+            AsyncImage(url: URL(string: template.thumbnailURL)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Color.gray.opacity(0.3)
+                    .overlay {
+                        ProgressView()
+                    }
+            }
+            .frame(width: 80, height: 80)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // 템플릿 이름
+            Text(template.templateName)
+                .font(.caption)
+                .lineLimit(1)
+        }
+        .padding(8)
+    }
+}
+
 /// 키체인 아이템 - 공방의 메인 그리드에 표시되는 상품 카드
 struct KeychainItem: View {
     let template: KeyringTemplate
     let category: String
+    var isOwned: Bool = false  // 보유 여부
     
     var body: some View {
         VStack(spacing: 8) {
             ZStack(alignment: .topLeading) {
                 // 썸네일 이미지
-                AsyncImage(url: URL(string: template.thumbnailURL)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    ProgressView()
+                AsyncImage(url: URL(string: template.thumbnailURL)) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                ProgressView()
+                            }
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .failure:
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
+                    @unknown default:
+                        Color.gray.opacity(0.3)
+                    }
                 }
                 .frame(height: 200)
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 
-                // 오버레이: 무료/가격 표시
+                // 오버레이: 무료/가격 또는 보유 표시
                 VStack {
                     HStack {
-                        if !template.isFree {
+                        if isOwned {
+                            // 보유 표시
+                            Text("보유")
+                                .font(.caption)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.green)
+                                .clipShape(Capsule())
+                                .padding(8)
+                        } else if !template.isFree {
+                            // 가격 표시
                             HStack(spacing: 4) {
                                 Image(systemName: "leaf.fill")
                                     .foregroundStyle(.pink)
