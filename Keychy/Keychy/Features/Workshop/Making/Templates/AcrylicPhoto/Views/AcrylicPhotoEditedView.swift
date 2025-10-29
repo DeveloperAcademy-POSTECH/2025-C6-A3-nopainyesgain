@@ -24,6 +24,11 @@ struct AcrylicPhotoEditedView: View {
     @State private var afterImageScale: CGFloat = 2.2
     @State private var afterImageOpacity: Double = 0.0
 
+    // 완료 체크마크 애니메이션
+    @State private var showCheckmark = false
+    @State private var checkmarkScale: CGFloat = 0.3
+    @State private var checkmarkOpacity: Double = 0.0
+
     // MARK: - Constants
     private let imageMaxWidth: CGFloat = 300
     private let initialAppearDuration: Double = 1.6
@@ -34,19 +39,19 @@ struct AcrylicPhotoEditedView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            VStack {
-                imageTransitionView
-                nextStepButton
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            imageTransitionView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            if viewModel.isProcessing {
-                loadingOverlay
+            if showCheckmark {
+                checkmarkView
             }
         }
-        .navigationTitle("편집 완료!")
+        .navigationTitle("누끼를 제거합니다!")
         .onAppear {
             startBackgroundRemoval()
+        }
+        .onDisappear {
+            resetCheckmarkState()
         }
     }
 
@@ -88,53 +93,26 @@ struct AcrylicPhotoEditedView: View {
             .opacity(afterImageOpacity)
     }
 
-    /// 다음 단계 버튼
-    private var nextStepButton: some View {
-        Button {
-            proceedToNextStep()
-        } label: {
-            Text("편집하러 가기")
-                .foregroundStyle(Color.primary)
-                .padding(.vertical, 16)
-                .padding(.horizontal, 50)
-        }
-        .disabled(viewModel.isProcessing)
-        .padding(.bottom, 60)
-        .opacity(beforeImageOpacity)
-    }
-
-    /// 로딩 오버레이
-    private var loadingOverlay: some View {
+    /// 완료 체크마크
+    private var checkmarkView: some View {
         ZStack {
-            Color.black.opacity(0.5)
-                .ignoresSafeArea()
+            Circle()
+                .fill(Color.green)
+                .frame(width: 60, height: 60)
 
-            VStack(spacing: 20) {
-                ProgressView()
-                    .scaleEffect(1.5)
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-
-                Text("키링 생성중...")
-                    .foregroundColor(.white)
-                    .font(.headline)
-            }
-            .padding(40)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.black.opacity(0.8))
-            )
+            Image(systemName: "checkmark")
+                .typography(.nanum18B)
+                .foregroundColor(.white)
         }
+        .scaleEffect(checkmarkScale)
+        .opacity(checkmarkOpacity)
     }
 
     // MARK: - Actions
 
     /// 다음 단계로 진행
     private func proceedToNextStep() {
-        viewModel.isProcessing = true
-
         AcrylicPhotoVM.removeBackgroundAndCrop(from: viewModel.removedBackgroundImage) { croppedImage in
-            viewModel.isProcessing = false
-
             if let croppedImage = croppedImage {
                 viewModel.bodyImage = croppedImage
                 router.push(.acrylicPhotoCustomizing)
@@ -144,11 +122,16 @@ struct AcrylicPhotoEditedView: View {
         }
     }
 
-    // MARK: - Animation Sequence
+    /// 체크마크 상태 리셋 (뒤로가기 시)
+    private func resetCheckmarkState() {
+        showCheckmark = false
+        checkmarkScale = 0.3
+        checkmarkOpacity = 0.0
+    }
 
+    // MARK: - Animation Sequence
     /// 배경 제거 및 애니메이션 시퀀스 시작
     private func startBackgroundRemoval() {
-        viewModel.isProcessing = true
         animateImageAppearance()
         performBackgroundRemoval()
     }
@@ -165,7 +148,6 @@ struct AcrylicPhotoEditedView: View {
     private func performBackgroundRemoval() {
         AcrylicPhotoVM.removeBackground(from: viewModel.croppedImage) { [self] result in
             viewModel.removedBackgroundImage = result ?? viewModel.croppedImage
-            viewModel.isProcessing = false
 
             // 3단계로 진행
             DispatchQueue.main.asyncAfter(deadline: .now() + transitionDelay) {
@@ -186,6 +168,32 @@ struct AcrylicPhotoEditedView: View {
             afterImageScale = 1.0
 
             showRemovedBackground = true
+        }
+
+        // 4단계: 전환 완료 후 햅틱 + 체크마크
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            triggerCompletionFeedback()
+        }
+    }
+
+    /// 4단계: 완료 피드백 (햅틱 + 체크마크 + 자동 진행)
+    private func triggerCompletionFeedback() {
+        // 햅틱 두둑두둑ㅋㅋ일단넣어
+        Haptic.impact()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            Haptic.impact()
+        }
+
+        // 체크마크 애니메이션
+        showCheckmark = true
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+            checkmarkScale = 1.0
+            checkmarkOpacity = 1.0
+        }
+
+        // 2.5초 후 자동으로 다음 화면
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            proceedToNextStep()
         }
     }
 }
