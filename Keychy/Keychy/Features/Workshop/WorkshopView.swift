@@ -531,6 +531,8 @@ struct KeychainItem: View {
             // previewRoute에 따라 적절한 라우트로 이동
             if let route = WorkshopRoute.from(string: template.previewRoute) {
                 router.push(route)
+            } else {
+                print("⚠️ 알 수 없는 라우트: \(template.previewRoute)")
             }
         } label: {
             VStack(spacing: 8) {
