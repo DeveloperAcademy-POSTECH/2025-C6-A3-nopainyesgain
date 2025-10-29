@@ -528,7 +528,10 @@ struct KeychainItem: View {
     
     var body: some View {
         Button {
-            router.push(.acrylicPhotoPreview)
+            // previewRoute에 따라 적절한 라우트로 이동
+            if let route = WorkshopRoute.from(string: template.previewRoute) {
+                router.push(route)
+            }
         } label: {
             VStack(spacing: 8) {
                 ZStack(alignment: .topLeading) {

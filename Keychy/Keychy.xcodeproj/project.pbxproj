@@ -132,6 +132,7 @@
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
 		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
 		C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */; };
+		C6C4027C2EB1FC19006B58DF /* TextPhotoPreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4027B2EB1FC19006B58DF /* TextPhotoPreView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -270,6 +271,7 @@
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
 		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C6C4027B2EB1FC19006B58DF /* TextPhotoPreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextPhotoPreView.swift; path = Keychy/Features/Workshop/Making/Templates/AcrylicPhoto/Views/TextPhotoPreView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -778,6 +780,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC62652EAE08DF0099ECEE /* AcrylicPhoto */,
+				C6C402792EB1FBE2006B58DF /* TextPhoto */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -890,6 +893,22 @@
 				C665DDED2EAF077900CE4495 /* Product.storekit */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C6C402792EB1FBE2006B58DF /* TextPhoto */ = {
+			isa = PBXGroup;
+			children = (
+				C6C4027A2EB1FC04006B58DF /* Views */,
+			);
+			path = TextPhoto;
+			sourceTree = "<group>";
+		};
+		C6C4027A2EB1FC04006B58DF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C6C4027B2EB1FC19006B58DF /* TextPhotoPreView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1052,6 +1071,7 @@
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
+				C6C4027C2EB1FC19006B58DF /* TextPhotoPreView.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* AcrylicPhotoEditedView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
