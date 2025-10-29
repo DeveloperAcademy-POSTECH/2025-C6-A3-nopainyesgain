@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-enum ShopTab: String, CaseIterable {
-    case keychy = "KEYCHY!"
-    case keyring = "키링"
-    case carabiner = "카라비너"
-    case effect = "이펙트"
-    case background = "배경"
-}
-
 enum FilterType: String, CaseIterable {
     case image = "이미지"
     case text = "텍스트"
@@ -23,47 +15,59 @@ enum FilterType: String, CaseIterable {
 
 struct WorkshopView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @State private var selectedTab: ShopTab = .keychy
+    
+    private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
+    @State private var selectedCategory: String = "KEYCHY!"
     @State private var selectedFilter: FilterType? = nil
     @State private var sortOrder: String = "최신순"
     @State private var showFilterSheet: Bool = false
-    @State private var scrollOffset: CGFloat = 0
+    @State private var mainContentOffset: CGFloat = 0
     
     var body: some View {
-        GeometryReader { outerGeo in
+        ZStack(alignment: .top) {
             ScrollView {
                 VStack(spacing: 0) {
-                    ZStack {
-                        topBannerSection
+                    topBannerSection
+                        .frame(height: 150)
+                    
+                    Spacer()
+                        .frame(height:20)
+                    
+                    myCollectionSection
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 16)
+                    
+                    VStack {
+                        mainContentSection
                             .background(
-                                GeometryReader { innerGeo in
+                                GeometryReader { geo in
                                     Color.clear
-                                        .onChange(of: innerGeo.frame(in: .global).minY) { oldValue, newValue in
-                                            let offset = newValue - outerGeo.frame(in: .global).minY
-                                            scrollOffset = offset
+                                        .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
+                                            mainContentOffset = newValue
                                         }
                                 }
                             )
-                        
-                        myCollectionSection
-                    }
-                    .frame(height: 300)
-                    .padding(12)
-                    
-                    VStack() {
-                        stickyHeaderSection
-                        
-                        mainContentSection
                     }
                     .background(Color(UIColor.systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .offset(y: scrollOffset < -100 ? -100 - scrollOffset : 0) // 핵심!
                 }
-                .background(Color.black10)
+                .padding(.top, 80)
             }
-            .sheet(isPresented: $showFilterSheet) {
-                sortSheet
-            }
+            
+            topTitleBar
+            
+            stickyHeaderSection
+                .background(Color(UIColor.systemBackground))
+                .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
+                .offset(y: max(120, min(730, mainContentOffset - 20)))
+        }
+        .background(alignment: .top){
+            Image("WorkshopBack")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        }
+        .ignoresSafeArea()
+        .sheet(isPresented: $showFilterSheet) {
+            sortSheet
         }
     }
 }
@@ -72,28 +76,40 @@ struct WorkshopView: View {
 extension WorkshopView {
     /// 상단 배너 영역 - 코인 버튼과 제목 표시
     private var topBannerSection: some View {
-        let progress = min(max(-scrollOffset / 100, 0), 1)
-        let height = 200 - (140 * progress)
-        
-        return ZStack {
-            // 공방 텍스트
-            Text("공방")
-                .font(.largeTitle.bold())
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .offset(y: progress < 0.5 ? 30 : 0) // 위치 조정
-                .animation(.easeInOut(duration: 0.3), value: progress)
+        VStack {
+            HStack {
+                Spacer()
+                coinButton
+            }
             
-            // 코인 버튼
-            coinButton
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .offset(y: progress < 0.5 ? -60 : 0) // 위치 조정
-                .animation(.easeInOut(duration: 0.2), value: progress)
+            Spacer()
+            
+            titleView
         }
+        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
-        .frame(height: height)
-        .offset(y: progress < 0.5 ? -60 : 120) // 위치 조정
-        .offset(y: scrollOffset < -100 ? -100 - scrollOffset : 0) // 핵심!
-        .animation(.easeInOut(duration: 0.3), value: progress)
+    }
+    
+    /// 상단 고정 타이틀바 - 스크롤 시 나타남
+    private var topTitleBar: some View {
+        HStack {
+            titleView
+            Spacer()
+            coinButton
+        }
+        .padding(.top, 70)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 24)
+        .background(Color(UIColor.systemBackground))
+        .opacity(mainContentOffset - 80 < 70 ? 1 : 0)
+        .animation(.easeInOut(duration: 0.25), value: mainContentOffset)
+    }
+    
+    /// 공방 타이틀 뷰
+    private var titleView: some View {
+        Text("공방")
+            .font(.largeTitle.bold())
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     /// 코인 충전 버튼 - 현재 보유 코인과 충전 화면으로 이동
@@ -120,28 +136,15 @@ extension WorkshopView {
     /// 상단 고정 헤더 - 탭바와 필터바 포함
     private var stickyHeaderSection: some View {
         VStack(spacing: 0) {
-            tabBar
+            CategoryTabBar(
+                categories: categories,
+                selectedCategory: $selectedCategory
+            )
+            .padding(.top, 12)
             
             filterBar
         }
-        .padding(12)
-    }
-    
-    /// 카테고리 탭바 - KEYCHY!, 키링, 카라비너 등
-    private var tabBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 24) {
-                ForEach(ShopTab.allCases, id: \.self) { tab in
-                    TabButton(
-                        title: tab.rawValue,
-                        isSelected: selectedTab == tab
-                    ) {
-                        selectedTab = tab
-                    }
-                }
-            }
-        }
-        .padding(.top, 12)
+        .padding(.horizontal, 20)
     }
     
     /// 필터바 - 정렬 및 타입 필터 (이미지, 텍스트, 드로잉)
@@ -176,7 +179,6 @@ extension WorkshopView {
 
 // MARK: - 메인 콘텐츠
 extension WorkshopView {
-    
     /// 내 창고 섹션 - 보유한 템플릿 카드 표시
     private var myCollectionSection: some View {
         VStack(spacing: 12) {
@@ -198,9 +200,7 @@ extension WorkshopView {
                 }
             }
         }
-        .offset(y: 80) // 위치 조정
-        .opacity(1 - min(max(-scrollOffset / 100, 0), 1))
-        .animation(.easeInOut(duration: 0.2), value: scrollOffset)
+        .padding(.bottom, 12)
     }
     
     /// 메인 그리드 - 아이템 목록 2열 그리드
@@ -209,12 +209,12 @@ extension WorkshopView {
             ForEach(0..<10) { index in
                 KeychainItem(
                     hasSticker: index % 3 == 0,
-                    tabType: selectedTab
+                    category: selectedCategory
                 )
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.top, 100)
     }
     
     /// 정렬 선택 시트 - 최신순/인기순 선택
@@ -243,14 +243,11 @@ extension WorkshopView {
             Divider()
             
             VStack(spacing: 0) {
-                SortOption(title: "최신순", isSelected: sortOrder == "최신순") {
-                    sortOrder = "최신순"
-                    showFilterSheet = false
-                }
-                
-                SortOption(title: "인기순", isSelected: sortOrder == "인기순") {
-                    sortOrder = "인기순"
-                    showFilterSheet = false
+                ForEach(["최신순", "인기순"], id: \.self) { sort in
+                    SortOption(title: sort, isSelected: sortOrder == sort) {
+                        sortOrder = sort
+                        showFilterSheet = false
+                    }
                 }
             }
             
@@ -261,34 +258,6 @@ extension WorkshopView {
 }
 
 // MARK: - 보조 뷰
-
-/// 탭 버튼 - 카테고리 선택용 버튼 (선택 시 밑줄 표시)
-struct TabButton: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 4) {
-                Text(title)
-                    .font(.subheadline)
-                    .fontWeight(isSelected ? .bold : .regular)
-                    .foregroundStyle(isSelected ? .pink : .primary)
-                
-                if isSelected {
-                    Rectangle()
-                        .fill(.pink)
-                        .frame(height: 2)
-                } else {
-                    Rectangle()
-                        .fill(.clear)
-                        .frame(height: 2)
-                }
-            }
-        }
-    }
-}
 
 /// 필터 칩 - 정렬 및 필터 옵션 선택용 캡슐 버튼
 struct FilterChip: View {
@@ -356,7 +325,7 @@ struct TemplateCard: View {
 /// 키체인 아이템 - 공방의 메인 그리드에 표시되는 상품 카드
 struct KeychainItem: View {
     let hasSticker: Bool
-    let tabType: ShopTab
+    let category: String
     
     var body: some View {
         VStack(spacing: 8) {
