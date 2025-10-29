@@ -443,7 +443,7 @@ struct KeychainItem: View {
                 AsyncImage(url: URL(string: template.thumbnailURL)) { image in
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: .fit)
                 } placeholder: {
                     ProgressView()
                 }
