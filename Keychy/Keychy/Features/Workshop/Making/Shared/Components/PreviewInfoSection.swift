@@ -32,6 +32,11 @@ struct PreviewInfoSection: View {
         }
     }
 
+    
+}
+
+// MARK: - Components
+extension PreviewInfoSection {
     private var templateTags: some View {
         HStack(spacing: 8) {
             if template.tags.isEmpty {

@@ -13,6 +13,8 @@ struct AcrylicPhotoPreView: View {
     @State var viewModel: AcrylicPhotoVM
     @State private var selectedItem: PhotosPickerItem?
     @State private var showPhotoPicker = false
+    @State private var showCamera = false
+    @State private var showGuide = false
     @State private var hasAppearedBefore = false
     
     var body: some View {
@@ -29,11 +31,10 @@ struct AcrylicPhotoPreView: View {
         }
         .padding(.horizontal, 35)
         .toolbar(.hidden, for: .tabBar)
-        .photosPicker(
-            isPresented: $showPhotoPicker,
-            selection: $selectedItem,
-            matching: .images
-        )
+        .task {
+            // 템플릿 데이터 가져오기
+            await viewModel.fetchTemplate()
+        }
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)
@@ -45,12 +46,7 @@ struct AcrylicPhotoPreView: View {
                 }
             }
         }
-        .task {
-            // 템플릿 데이터 가져오기
-            await viewModel.fetchTemplate()
-        }
-        .onAppear {
-            // 처음이 아니고 뒤로 왔을 때만 PhotosPicker 자동으로 띄우기
+        .onAppear { // 처음이 아니고 뒤로 왔을 때만 PhotosPicker 자동으로 띄우기
             if hasAppearedBefore {
                 viewModel.resetImageData()
                 selectedItem = nil
@@ -58,6 +54,21 @@ struct AcrylicPhotoPreView: View {
             }
             hasAppearedBefore = true
         }
+        .sheet(isPresented: $showGuide) {
+            if let template = viewModel.template {
+                AcrylicPhotoGuiding(
+                    showPhotoPicker: $showPhotoPicker,
+                    showCamera: $showCamera,
+                    guidingText: template.guidingText,
+                    guidingImageURL: template.guidingImageURL
+                )
+            }
+        }
+        .photosPicker(
+            isPresented: $showPhotoPicker,
+            selection: $selectedItem,
+            matching: .images
+        )
     }
 }
 
@@ -86,7 +97,7 @@ extension AcrylicPhotoPreView {
 extension AcrylicPhotoPreView {
     private var makeBtn: some View {
         PreviewMakingBtn(title: "만들기") {
-            showPhotoPicker = true
+            showGuide = true
             selectedItem = nil
         }
     }
