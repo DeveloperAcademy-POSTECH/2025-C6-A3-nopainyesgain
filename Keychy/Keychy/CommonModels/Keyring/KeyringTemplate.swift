@@ -17,6 +17,9 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
 
     /// 템플릿 이름 (ex. "아크릴 키링")
     let templateName: String
+    
+    /// 프리뷰 라우팅 경로 (ex: "acrylicPhotoPreview")
+    let previewRoute: String
 
     /// 템플릿 설명
     let description: String
