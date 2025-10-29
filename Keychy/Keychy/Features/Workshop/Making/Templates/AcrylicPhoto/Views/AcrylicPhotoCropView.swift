@@ -45,27 +45,6 @@ struct AcrylicPhotoCropView: View {
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 70)
-            
-            // MARK: - 로딩 오버레이
-            if viewModel.isProcessing {
-                Color.black.opacity(0.5)
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 20) {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    
-                    Text("이미지 처리 중...")
-                        .foregroundColor(.white)
-                        .font(.headline)
-                }
-                .padding(40)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.black.opacity(0.8))
-                )
-            }
         }
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
@@ -98,20 +77,10 @@ extension AcrylicPhotoCropView {
                 ) else {
                     return
                 }
-                
+
                 viewModel.croppedImage = cropped
-                viewModel.isProcessing = true
-                
-                AcrylicPhotoVM.removeBackground(from: viewModel.croppedImage) { result in
-                    if let result = result {
-                        viewModel.removedBackgroundImage = result
-                    } else {
-                        viewModel.removedBackgroundImage = viewModel.croppedImage
-                    }
-                    
-                    viewModel.isProcessing = false
-                    router.push(.acrylicPhotoEdited)
-                }
+                // 크롭만 하고 바로 다음 화면으로 이동 (배경 제거는 EditedView에서)
+                router.push(.acrylicPhotoEdited)
             }
         }
     }
