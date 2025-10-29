@@ -26,12 +26,34 @@ enum WorkshopRoute: Hashable {
     // case hkInfoInput
     // case hkComplete
     
-    /// previewRoute 문자열을 WorkshopRoute로 변환
+    /// template.id 문자열을 WorkshopRoute로 변환
     static func from(string: String) -> WorkshopRoute? {
         switch string {
-        case "acrylicPhotoPreview":
+        case "AcrylicPhoto":
             return .acrylicPhotoPreview
-        case "TextPhotoPreView":
+        case "CirclePhoto":
+            return .acrylicPhotoPreview
+        case "CloudDream":
+            return .acrylicPhotoPreview
+        case "FlowerGarden":
+            return .acrylicPhotoPreview
+        case "Heartkeyring":
+            return .acrylicPhotoPreview
+        case "MessageCard":
+            return .acrylicPhotoPreview
+        case "MinimalSquare":
+            return .acrylicPhotoPreview
+        case "NeonSign":
+            return .acrylicPhotoPreview
+        case "PolaroidStyle":
+            return .acrylicPhotoPreview
+        case "RainbowDoodle":
+            return .acrylicPhotoPreview
+        case "SimpleText":
+            return .acrylicPhotoPreview
+        case "Starkeyring":
+            return .acrylicPhotoPreview
+        case "VintageFilm":
             return .TextPhotoPreView
             // 필요한 프리뷰 케이스들 추가
         default:
