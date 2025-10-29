@@ -61,6 +61,11 @@ struct WorkshopView: View {
                     .background(Color(UIColor.systemBackground))
                 }
                 .padding(.top, 80)
+                .background(alignment: .top){
+                    Image("WorkshopBack")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
             }
             
             topTitleBar
@@ -69,11 +74,6 @@ struct WorkshopView: View {
                 .background(Color(UIColor.systemBackground))
                 .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
                 .offset(y: max(120, min(730, mainContentOffset - 20)))
-        }
-        .background(alignment: .top){
-            Image("WorkshopBack")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
         }
         .ignoresSafeArea()
         .sheet(isPresented: $showFilterSheet) {
