@@ -14,7 +14,12 @@ struct CollectionView: View {
     @State private var selectedCategory = "전체"
     @State private var selectedSort: String = "최신순"
     
-    let categories: [String] = ["전체", "또치", "tags", "❤️", "강아지", "여행", "냠냠", "콩순이"]
+    private var categories: [String] {
+        var allCategories = ["전체"]
+        allCategories.append(contentsOf: collectionViewModel.tags)
+        
+        return allCategories
+    }
     
     // 정렬 옵션 (최신(생성) / 오래된 / 복사된 숫자순(인기순) / 이름 ㄱㄴㄷ순
     let sortOptions = ["최신순", "오래된순", "이름순"]
@@ -44,24 +49,42 @@ struct CollectionView: View {
         }
         .padding(Spacing.padding)
         .onAppear {
-            fetchUserKeyrings()
+            fetchUserData()
         }
     }
     
-    // MARK: - 키링 로드 함수
-    private func fetchUserKeyrings() {
-        // UserDefaults에서 uid 가져오기
+    // MARK: - 사용자 데이터 로드
+    private func fetchUserData() {
         guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
             print("UID를 찾을 수 없습니다")
             return
         }
         
+        fetchUserCategories(uid: uid) {
+            fetchUserKeyrings(uid: uid)
+        }
+    }
+    
+    // 키링 로드
+    private func fetchUserKeyrings(uid: String) {
         collectionViewModel.fetchUserKeyrings(uid: uid) { success in
             if success {
-                print("CollectionView - 키링 로드 완료: \(collectionViewModel.keyring.count)개")
+                print("키링 로드 완료: \(collectionViewModel.keyring.count)개")
             } else {
-                print("CollectionView - 키링 로드 실패")
+                print("키링 로드 실패")
             }
+        }
+    }
+    
+    // 태그 로드
+    private func fetchUserCategories(uid: String, completion: @escaping () -> Void) {
+        collectionViewModel.fetchUserCategories(uid: uid) { success in
+            if success {
+                print("태그 로드 완료: \(collectionViewModel.tags.count)개")
+            } else {
+                print("태그 로드 실패")
+            }
+            completion()
         }
     }
 }

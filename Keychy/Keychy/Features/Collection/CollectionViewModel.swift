@@ -11,10 +11,10 @@ import FirebaseStorage
 @Observable
 class CollectionViewModel {
     
+    // MARK: - 프로퍼티
     var isLoading = false
-    
-    // MARK: - 키링 관련 프로퍼티
-    var keyring: [Keyring] = []
+    var keyring: [Keyring] = [] // 키링
+    var tags: [String] = [] // 태그
     
     // MARK: - 초기화
     init() { }

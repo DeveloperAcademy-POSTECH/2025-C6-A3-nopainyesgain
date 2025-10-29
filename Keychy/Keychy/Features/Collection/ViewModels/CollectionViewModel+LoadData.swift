@@ -127,7 +127,50 @@ extension CollectionViewModel {
         }
     }
 
-    
+    // MARK: - Firebase에서 사용자의 태그 로드
+    func fetchUserCategories(uid: String, completion: @escaping (Bool) -> Void) {
+        print("사용자 태그 로드 시작 - UID: \(uid)")
+        isLoading = true
+        
+        // User 문서에서 태그 가져오기
+        db.collection("User")
+            .document(uid)
+            .getDocument { [weak self] snapshot, error in
+                guard let self = self else {
+                    completion(false)
+                    return
+                }
+                
+                if let error = error {
+                    print("User 문서 로드 에러: \(error.localizedDescription)")
+                    self.isLoading = false
+                    completion(false)
+                    return
+                }
+                
+                guard let data = snapshot?.data() else {
+                    print("User 문서 데이터가 없습니다")
+                    self.keyring = []
+                    self.isLoading = false
+                    completion(true)
+                    return
+                }
+                
+                guard let categories = data["tags"] as? [String] else {
+                    print("등록된 태그 없음")
+                    self.tags = []
+                    completion(true)
+                    return
+                }
+                
+                self.tags = categories
+                print("태그 로드 완료: \(categories.count)개")
+                print("태그 목록: \(categories)")
+                
+                completion(true)
+
+            }
+    }
     
     
     // MARK: - 새 키링 생성 및 User에 추가
