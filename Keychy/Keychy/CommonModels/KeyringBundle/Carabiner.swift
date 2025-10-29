@@ -42,11 +42,11 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     /// 생성일
     let createdAt: Date
     
-    /// 키링 x위치
-    let keyringXPosition: CGFloat
+    /// 키링 x위치 배열
+    let keyringXPosition: [CGFloat]
     
-    /// 키링 y위치
-    let keyringYPosition: CGFloat
+    /// 키링 y위치 배열
+    let keyringYPosition: [CGFloat]
     
     /// 무료 카라비너 여부
     var isFree: Bool {

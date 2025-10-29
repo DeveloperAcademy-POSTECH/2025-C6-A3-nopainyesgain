@@ -40,6 +40,7 @@ class CollectionViewModel {
             createdAt: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date()
         )
     ]
+    
     var sortedBundles: [KeyringBundle] {
         bundles.sorted { a, b in
             // 메인 뭉치는 항상 첫 번째
@@ -49,6 +50,7 @@ class CollectionViewModel {
             return a.createdAt > b.createdAt
         }
     }
+    
     // MARK: - 임시 키링 모델 - 실제로는 유저가 보유한 keyring으로 수정 되어야 함
     var keyring: [Keyring] = [
         Keyring(name: "키링 A", bodyImage: "Bundle", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
@@ -64,11 +66,11 @@ class CollectionViewModel {
         Keyring(name: "키링 D", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: true, chainLength: 5)
     ]
     
-    //MARK: - 임시 배경 모델
-    var background: [Background] = [
+    // MARK: - 배경 모델 (실제로는 Firestore에서 가져온 데이터)
+    var backgrounds: [Background] = [
         Background(
+            id: "1234",
             backgroundName: "기본 배경 A",
-            backgroundId: "1234",
             backgroundImage: "ddochi",
             tags: ["tag1"],
             price: 0,
@@ -77,8 +79,8 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
+            id: "1234",
             backgroundName: "기본 배경 B",
-            backgroundId: "1234",
             backgroundImage: "Cherries",
             tags: ["tag1"],
             price: 0,
@@ -87,33 +89,33 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
+            id: "1234",
             backgroundName: "유료 배경 A",
-            backgroundId: "1234",
             backgroundImage: "fireworks",
             tags: ["tag1"],
             price: 100,
             downloadCount: 0,
             useCount: 0,
             createdAt: Date()
-        )
-        ,
+        ),
         Background(
+            id: "1234",
             backgroundName: "유료 배경 B",
-            backgroundId: "1234",
             backgroundImage: "ddochi",
             tags: ["tag1"],
             price: 100,
             downloadCount: 0,
             useCount: 0,
             createdAt: Date()
-        )]
-    var selectedBackground: Background!
+        )
+    ]
+    var selectedBackground: Background?
     
-    //MARK: - 임시 카라비너 모델
-    var carabiner: [Carabiner] = [
+    // MARK: - 카라비너 모델 (실제로는 Firestore에서 가져온 데이터)
+    var carabiners: [Carabiner] = [
         Carabiner(
+            id: "1234",
             carabinerName: "카라비너 이름",
-            carabinerId: "1234",
             carabinerImage: "ddochi",
             description: "",
             maxKeyringCount: 4,
@@ -126,8 +128,8 @@ class CollectionViewModel {
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
         ),
         Carabiner(
+            id: "1234",
             carabinerName: "카라비너 이름",
-            carabinerId: "1234",
             carabinerImage: "ddochi",
             description: "",
             maxKeyringCount: 4,
@@ -140,8 +142,8 @@ class CollectionViewModel {
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
         ),
         Carabiner(
+            id: "1234",
             carabinerName: "카라비너 이름",
-            carabinerId: "1234",
             carabinerImage: "ddochi",
             description: "",
             maxKeyringCount: 4,
@@ -152,6 +154,7 @@ class CollectionViewModel {
             createdAt: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(),
             keyringXPosition: [0.1, 0.8, 0.2, 0.8],
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
-        )]
+        )
+    ]
     var selectedCarabiner: Carabiner?
 }
