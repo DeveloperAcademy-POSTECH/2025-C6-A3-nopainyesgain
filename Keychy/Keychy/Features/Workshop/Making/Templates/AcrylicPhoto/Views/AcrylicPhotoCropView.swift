@@ -6,34 +6,43 @@ struct AcrylicPhotoCropView: View {
     
     var body: some View {
         ZStack {
+            // 배경색
+            Color.black
+                .ignoresSafeArea()
+            
             // MARK: - 이미지 & 크롭 박스
             GeometryReader { geo in
-                if let image = viewModel.selectedImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onAppear {
-                            viewModel.imageViewSize = geo.size
-                            viewModel.fixedImage = viewModel.selectedImage?.fixedOrientation()
-                            if !viewModel.hasCropAreaBeenSet {
-                                                    viewModel.resetToCenter()
-                                                }
-                        }
-                        .onChange(of: geo.size) { _, newSize in
-                            viewModel.imageViewSize = newSize
-                            // 무조건 다시 계산 (처음 설정이 잘못된 거 보정)
-                            viewModel.resetToCenter()
-                        }
+                ZStack {
+                    if let image = viewModel.selectedImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .onAppear {
+                                viewModel.imageViewSize = geo.size
+                                viewModel.fixedImage = viewModel.selectedImage?.fixedOrientation()
+                                if !viewModel.hasCropAreaBeenSet {
+                                    viewModel.resetToCenter()
+                                }
+                            }
+                            .onChange(of: geo.size) { _, newSize in
+                                viewModel.imageViewSize = newSize
+                                // 무조건 다시 계산 (처음 설정이 잘못된 거 보정)
+                                viewModel.resetToCenter()
+                            }
+                    }
+                    
+                    // 크롭박스 바깥 영역 어둡게
+                    DimmingOverlay(cropRect: viewModel.cropArea)
+                    
+                    // 크롭박스
+                    CropBoxView(
+                        rect: $viewModel.cropArea,
+                        onDragChanged: viewModel.onDragChanged,
+                        onDragEnd: viewModel.onDragEnd
+                    )
                 }
             }
-            .overlay(
-                CropBoxView(
-                    rect: $viewModel.cropArea,
-                    onDragChanged: viewModel.onDragChanged,
-                    onDragEnd: viewModel.onDragEnd
-                )
-            )
             .padding(.horizontal, 16)
             .padding(.bottom, 70)
             
@@ -108,6 +117,36 @@ extension AcrylicPhotoCropView {
     }
 }
 
+// MARK: - DimmingOverlay (크롭박스 바깥 어둡게)
+struct DimmingOverlay: View {
+    let cropRect: CGRect
+    
+    var body: some View {
+        GeometryReader { geo in
+            Color.black.opacity(0.6)
+                .reverseMask {
+                    Rectangle()
+                        .frame(width: cropRect.width, height: cropRect.height)
+                        .position(x: cropRect.midX, y: cropRect.midY)
+                }
+        }
+        .allowsHitTesting(false)
+    }
+}
+
+// MARK: - ReverseMask Extension
+extension View {
+    func reverseMask<Mask: View>(@ViewBuilder _ mask: () -> Mask) -> some View {
+        self.mask {
+            Rectangle()
+                .overlay(alignment: .center) {
+                    mask()
+                        .blendMode(.destinationOut)
+                }
+        }
+    }
+}
+
 // MARK: - CropBoxView
 struct CropBoxView: View {
     @Binding var rect: CGRect
@@ -123,7 +162,11 @@ struct CropBoxView: View {
                 grid
                 pins
             }
-            .border(.white, width: 2)
+            .overlay(
+                Rectangle()
+                    .strokeBorder(.white, lineWidth: 3)
+                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 0)
+            )
             .background(Color.white.opacity(0.001))
             .frame(width: rect.width, height: rect.height)
             .position(x: rect.midX, y: rect.midY)
@@ -149,7 +192,7 @@ struct CropBoxView: View {
                 onDragEnd()
             }
     }
-
+    
     private var pins: some View {
         VStack {
             HStack {
@@ -164,67 +207,20 @@ struct CropBoxView: View {
                 pin(corner: .bottomRight)
             }
         }
-        .padding(8)
+        .padding(-6)
     }
-
+    
     private func pin(corner: UIRectCorner) -> some View {
-        let cornerLength: CGFloat = 10
-        let lineWidth: CGFloat = 3
-        
-        switch corner {
-        case .topLeft:
-            return AnyView(
-                ZStack(alignment: .topLeading) {
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: cornerLength, height: lineWidth)
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: lineWidth, height: cornerLength)
-                }
-                .offset(x: -cornerLength, y: -cornerLength)
+        Circle()
+            .fill(.white)
+            .frame(width: 12, height: 12)
+            .overlay(
+                Circle()
+                    .stroke(Color.black.opacity(0.3), lineWidth: 1)
             )
-        case .topRight:
-            return AnyView(
-                ZStack(alignment: .topTrailing) {
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: cornerLength, height: lineWidth)
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: lineWidth, height: cornerLength)
-                }
-                .offset(x: cornerLength, y: -cornerLength)
-            )
-        case .bottomLeft:
-            return AnyView(
-                ZStack(alignment: .bottomLeading) {
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: cornerLength, height: lineWidth)
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: lineWidth, height: cornerLength)
-                }
-                .offset(x: -cornerLength, y: cornerLength)
-            )
-        case .bottomRight:
-            return AnyView(
-                ZStack(alignment: .bottomTrailing) {
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: cornerLength, height: lineWidth)
-                    Rectangle()
-                        .stroke(.white, lineWidth: lineWidth)
-                        .frame(width: lineWidth, height: cornerLength)
-                }
-                .offset(x: cornerLength, y: cornerLength)
-            )
-        default:
-            return AnyView(EmptyView())
-        }
+            .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 0)
     }
-
+    
     private var grid: some View {
         ZStack {
             HStack {
@@ -250,7 +246,7 @@ struct CropBoxView: View {
                 Spacer()
             }
         }
-        .foregroundColor(.white.opacity(0.4))
+        .foregroundColor(.white.opacity(0.6))
     }
     
     private func closestCorner(point: CGPoint, rect: CGRect, distance: CGFloat = 44) -> UIRectCorner? {
@@ -258,9 +254,9 @@ struct CropBoxView: View {
         let rdX = abs(rect.maxX.distance(to: point.x)) < distance
         let tdY = abs(rect.minY.distance(to: point.y)) < distance
         let bdY = abs(rect.maxY.distance(to: point.y)) < distance
-
+        
         guard (ldX || rdX) && (tdY || bdY) else { return nil }
-
+        
         return if ldX && tdY { .topLeft }
         else if rdX && tdY { .topRight }
         else if ldX && bdY { .bottomLeft }
