@@ -130,12 +130,10 @@ extension CollectionViewModel {
         }
     }
 
-    // MARK: - Firebase에서 사용자의 태그 로드
-    func fetchUserCategories(uid: String, completion: @escaping (Bool) -> Void) {
-        print("사용자 태그 로드 시작 - UID: \(uid)")
+    // MARK: - Firebase에서 컬렉션에 사용되는 사용자의 정보 로드
+    func fetchUserCollectionData(uid: String, completion: @escaping (Bool) -> Void) {
         isLoading = true
         
-        // User 문서에서 태그 가져오기
         db.collection("User")
             .document(uid)
             .getDocument { [weak self] snapshot, error in
@@ -159,16 +157,18 @@ extension CollectionViewModel {
                     return
                 }
                 
-                guard let categories = data["tags"] as? [String] else {
+                // 태그 가져오기
+                if let categories = data["tags"] as? [String] {
+                    self.tags = categories
+                } else {
                     print("등록된 태그 없음")
                     self.tags = []
-                    completion(true)
-                    return
                 }
                 
-                self.tags = categories
-                print("태그 로드 완료: \(categories.count)개")
-                print("태그 목록: \(categories)")
+                // 보관함 한계 수치 가져오기
+                if let maxCount = data["maxKeyringCount"] as? Int {
+                    self.maxKeyringCount = maxCount
+                }
                 
                 completion(true)
 

@@ -79,13 +79,13 @@ struct CollectionView: View {
         }
     }
     
-    // 태그 로드
+    // 사용자 기반 데이터 로드
     private func fetchUserCategories(uid: String, completion: @escaping () -> Void) {
-        collectionViewModel.fetchUserCategories(uid: uid) { success in
+        collectionViewModel.fetchUserCollectionData(uid: uid) { success in
             if success {
-                print("태그 로드 완료: \(collectionViewModel.tags.count)개")
+                print("정보 로드 완료")
             } else {
-                print("태그 로드 실패")
+                print("정보 로드 실패")
             }
             completion()
         }
@@ -187,7 +187,8 @@ extension CollectionView {
             
             Spacer()
             
-            Text("\(myKeyrings.count) / 100")
+            // 보유한 키링 개수
+            Text("\(collectionViewModel.keyring.count) / \(collectionViewModel.maxKeyringCount)")
                 .typography(.suit14SB18)
                 .foregroundColor(.black100)
                 .padding(.trailing, 8)

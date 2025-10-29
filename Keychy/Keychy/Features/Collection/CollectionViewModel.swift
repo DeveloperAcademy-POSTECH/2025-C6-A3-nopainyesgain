@@ -15,7 +15,8 @@ class CollectionViewModel {
     var isLoading = false
     var keyring: [Keyring] = [] // 키링
     var tags: [String] = [] // 태그
-    var selectedSort: String = "최신순"
+    var selectedSort: String = "최신순" // 기본값
+    var maxKeyringCount: Int = 100 // 기본값
     
     // MARK: - 초기화
     init() { }
