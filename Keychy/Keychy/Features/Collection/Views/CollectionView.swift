@@ -56,8 +56,6 @@ struct CollectionView: View {
             return
         }
         
-        print("CollectionView - 키링 로드 시작")
-        
         collectionViewModel.fetchUserKeyrings(uid: uid) { success in
             if success {
                 print("CollectionView - 키링 로드 완료: \(collectionViewModel.keyring.count)개")
@@ -79,10 +77,7 @@ extension CollectionView {
             
             Spacer()
             
-            CircleGlassButton(imageName: "Widget", action: {
-                //print("테스트 키링 생성")
-                //createTestKeyring()
-            })
+            CircleGlassButton(imageName: "Widget", action: {})
                 .padding(.trailing, 10)
             
             CircleGlassButton(imageName: "Bundle", action: {})
@@ -165,8 +160,9 @@ extension CollectionView {
                     collectionCell(keyring: keyring)
                 }
             }
+            .padding(.vertical, 4)
         }
-        .padding(.top, 14)
+        .padding(.top, 10)
         .scrollIndicators(.hidden)
     }
     
@@ -175,36 +171,10 @@ extension CollectionView {
             router.push(.collectionKeyringDetailView)
         }) {
             VStack {
-                ZStack {
-                    SpriteView(scene: createMiniScene(keyring: keyring))
-                        .cornerRadius(10)
-                    
-                    // 포장 or 출품 상태에 따라 비활성 뷰 오버레이
-                    if let info = keyring.status.overlayInfo {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.black20)
-                            .overlay {
-                                VStack() {
-                                    ZStack {
-                                        UnevenRoundedRectangle(
-                                            topLeadingRadius: 10,
-                                            topTrailingRadius: 10
-                                        )
-                                        .fill(Color.black60)
-                                        .frame(height: 26)
-                                        
-                                        Text(info)
-                                            .typography(.suit13M)
-                                            .foregroundColor(.white100)
-                                            .frame(height: 26)
-                                    }
-                                    Spacer()
-                                }
-                            }
-                    }
-                
-                }
-                .padding(.bottom, 10)
+                CollectionCellView(keyring: keyring)
+                    .frame(width: 175, height: 233)
+                    .cornerRadius(10)
+                    .padding(.bottom, 10)
                 
                 Text("\(keyring.name) 키링")
                     .typography(.suit14SB18)
@@ -213,21 +183,6 @@ extension CollectionView {
         }
         .buttonStyle(PlainButtonStyle())
         .frame(width: 175, height: 261)
-    }
-    
-    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        let scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 175, height: 233),
-            zoomScale: 2.0
-        )
-        scene.scaleMode = .aspectFill
-        return scene
     }
 }
 

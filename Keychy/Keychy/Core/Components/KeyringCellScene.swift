@@ -12,6 +12,7 @@ class KeyringCellScene: SKScene {
     
     // MARK: - Properties
     var bodyImage: String?
+    var onLoadingComplete: (() -> Void)?
     
     // MARK: - 선택된 타입들
     var currentRingType: RingType
@@ -30,11 +31,13 @@ class KeyringCellScene: SKScene {
         chainType: ChainType,
         bodyImage: String? = nil,
         targetSize: CGSize,
-        zoomScale: CGFloat = 1.5
+        zoomScale: CGFloat = 1.5,
+        onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
+        self.onLoadingComplete = onLoadingComplete
         
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height

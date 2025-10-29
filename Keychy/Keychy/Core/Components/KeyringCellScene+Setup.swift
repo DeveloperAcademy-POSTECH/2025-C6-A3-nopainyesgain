@@ -3,6 +3,7 @@
 //  KeytschPrototype
 //
 
+import SwiftUI
 import SpriteKit
 
 // MARK: - Setup & Assembly
@@ -10,7 +11,6 @@ extension KeyringCellScene {
     
     // MARK: - 키링 전체 조립
     func setupKeyring() {
-        
         // 모든 이미지를 먼저 다운로드
         downloadAllImages { [weak self] result in
             guard let self = self else {
@@ -141,6 +141,8 @@ extension KeyringCellScene {
         
         // 4. 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
+        
+        self.onLoadingComplete?()
     }
     
     // MARK: - Fallback 키링 조립 (다운로드 실패 시)
@@ -166,6 +168,8 @@ extension KeyringCellScene {
         let body = createBasicBody()
         body.position = CGPoint(x: centerX, y: topY - 200)
         containerNode.addChild(body)
+        
+        self.onLoadingComplete?()
     }
     
     // MARK: - Ring 노드 생성

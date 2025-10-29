@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943B2EAE4EE20003D712 /* FirebaseAnalytics */; };
 		38A5943E2EAE4EE20003D712 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943D2EAE4EE20003D712 /* FirebaseAuth */; };
 		38A594402EAE4EE20003D712 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943F2EAE4EE20003D712 /* FirebaseCore */; };
@@ -150,6 +151,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		38A596722EAFA8D20003D712 /* KeychyUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyUser.swift; sourceTree = "<group>"; };
 		38A596772EAFA9430003D712 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -627,6 +629,7 @@
 			children = (
 				4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */,
 				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
+				385425BD2EB2989400A06C02 /* CollectionCellView.swift */,
 				38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */,
 				4CEC629D2EAE09990099ECEE /* Bundle */,
 			);
@@ -1028,6 +1031,7 @@
 				4CEC621E2EAE08DA0099ECEE /* KeyringChainComponent.swift in Sources */,
 				4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */,
 				4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */,
+				385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */,
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
 				4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */,
