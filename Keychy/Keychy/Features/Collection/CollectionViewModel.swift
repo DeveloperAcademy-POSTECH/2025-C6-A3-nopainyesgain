@@ -69,7 +69,7 @@ class CollectionViewModel {
     // MARK: - 배경 모델 (실제로는 Firestore에서 가져온 데이터)
     var backgrounds: [Background] = [
         Background(
-            id: "1234",
+            id: "12347",
             backgroundName: "기본 배경 A",
             backgroundImage: "ddochi",
             tags: ["tag1"],
@@ -79,7 +79,7 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
-            id: "1234",
+            id: "12346",
             backgroundName: "기본 배경 B",
             backgroundImage: "Cherries",
             tags: ["tag1"],
@@ -89,7 +89,7 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
-            id: "1234",
+            id: "12341",
             backgroundName: "유료 배경 A",
             backgroundImage: "fireworks",
             tags: ["tag1"],
@@ -99,7 +99,7 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
-            id: "1234",
+            id: "12342",
             backgroundName: "유료 배경 B",
             backgroundImage: "ddochi",
             tags: ["tag1"],
@@ -114,7 +114,7 @@ class CollectionViewModel {
     // MARK: - 카라비너 모델 (실제로는 Firestore에서 가져온 데이터)
     var carabiners: [Carabiner] = [
         Carabiner(
-            id: "1234",
+            id: "12343",
             carabinerName: "카라비너 이름",
             carabinerImage: "ddochi",
             description: "",
@@ -128,7 +128,7 @@ class CollectionViewModel {
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
         ),
         Carabiner(
-            id: "1234",
+            id: "12344",
             carabinerName: "카라비너 이름",
             carabinerImage: "ddochi",
             description: "",
@@ -142,7 +142,7 @@ class CollectionViewModel {
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
         ),
         Carabiner(
-            id: "1234",
+            id: "12345",
             carabinerName: "카라비너 이름",
             carabinerImage: "ddochi",
             description: "",
