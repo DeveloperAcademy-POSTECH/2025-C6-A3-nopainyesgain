@@ -15,8 +15,8 @@ class KeyringScene: SKScene {
     var onPlayParticleEffect: ((String) -> Void)?
     
     // MARK: - Properties
-    var bodyImage: UIImage? // ✅ UIImage 유지
-    var bodyImageURL: String? // ✅ Firebase URL 추가
+    var bodyImage: UIImage? // UIImage용
+    var bodyImageURL: String? // Firebase URL용
     var cancellables = Set<AnyCancellable>()
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"

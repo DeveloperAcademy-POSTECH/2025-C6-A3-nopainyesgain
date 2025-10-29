@@ -16,8 +16,12 @@ struct CollectionTab: View {
                 .navigationDestination(for: CollectionRoute.self) { route in
                     switch route {
                         
-                    case .collectionKeyringDetailView:
-                        CollectionKeyringDetailView()
+                    case .collectionKeyringDetailView(let keyring):
+                        CollectionKeyringDetailView(keyring: keyring)
+                    case .bundleInventoryView:
+                        EmptyView()
+                    case .widgetSettingView:
+                        WidgetSettingView()
                     }
                 }
         }

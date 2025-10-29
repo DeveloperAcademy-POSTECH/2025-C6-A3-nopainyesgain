@@ -10,7 +10,7 @@ import SpriteKit
 
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
-    @Bindable var collectionViewModel: CollectionViewModel
+    @State var collectionViewModel: CollectionViewModel
     @State private var selectedCategory = "전체"
     @State private var showSortSheet: Bool = false
     
@@ -91,7 +91,7 @@ struct CollectionView: View {
         }
     }
     
-    // MARK: - 사용자 데이터 정렬
+    // MARK: - 사용자 데이터 정렬 시트
     // TODO: 디자인 확정되면 반영
     private var sortSheet: some View {
         VStack(spacing: 0) {
@@ -148,10 +148,12 @@ extension CollectionView {
             
             Spacer()
             
-            CircleGlassButton(imageName: "Widget", action: {})
-                .padding(.trailing, 10)
+            CircleGlassButton(imageName: "Widget",
+                              action: { router.push(.widgetSettingView) })
+            .padding(.trailing, 10)
             
-            CircleGlassButton(imageName: "Bundle", action: {})
+            CircleGlassButton(imageName: "Bundle",
+                              action: { router.push(.bundleInventoryView) })
         }
     }
 }
@@ -240,7 +242,7 @@ extension CollectionView {
     
     private func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
-            router.push(.collectionKeyringDetailView)
+            router.push(.collectionKeyringDetailView(keyring))
         }) {
             VStack {
                 CollectionCellView(keyring: keyring)
