@@ -80,6 +80,7 @@ struct WorkshopView: View {
             sortSheet
         }
         .task {
+            await initializeTemplates()
             // View가 나타날 때 템플릿 목록 가져오기
             await fetchTemplates()
             await loadOwnedTemplates()

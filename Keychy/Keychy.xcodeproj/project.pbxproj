@@ -49,6 +49,11 @@
 		4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */; };
+		4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */; };
+		4CBBEF172EB24DEC00252590 /* AcrylicPhotoGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF162EB24DEC00252590 /* AcrylicPhotoGuiding.swift */; };
+		4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF192EB2565900252590 /* Nuke */; };
+		4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF1B2EB2565900252590 /* NukeUI */; };
+		4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -187,6 +192,9 @@
 		4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
 		4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
 		4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AcrylicPhotoVM+BGRemover.swift"; sourceTree = "<group>"; };
+		4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGuiding.swift; sourceTree = "<group>"; };
+		4CBBEF162EB24DEC00252590 /* AcrylicPhotoGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcrylicPhotoGuiding.swift; sourceTree = "<group>"; };
+		4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -287,7 +295,9 @@
 				38A594402EAE4EE20003D712 /* FirebaseCore in Frameworks */,
 				38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */,
 				4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */,
+				4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */,
 				38A594442EAE4EE20003D712 /* FirebaseFirestore in Frameworks */,
+				4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,9 +370,11 @@
 		4C7775302EB0ED0800981C3E /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */,
 				4C7775312EB0EEF100981C3E /* PreviewImage.swift */,
 				4C7775332EB0EF8800981C3E /* PreviewInfoSection.swift */,
 				4C7775372EB0EFD800981C3E /* PreviewMakingBtn.swift */,
+				4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -759,6 +771,7 @@
 		4CEC62642EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4CBBEF162EB24DEC00252590 /* AcrylicPhotoGuiding.swift */,
 				4CEC62632EAE08DF0099ECEE /* AcrylicPhotoPreView.swift */,
 				4CEC62622EAE08DF0099ECEE /* AcrylicPhotoCropView.swift */,
 				4CEC62612EAE08DF0099ECEE /* AcrylicPhotoEditedView.swift */,
@@ -937,6 +950,8 @@
 				38A594432EAE4EE20003D712 /* FirebaseFirestore */,
 				38A594452EAE4EE20003D712 /* FirebaseMessaging */,
 				38A594472EAE4EE20003D712 /* FirebaseStorage */,
+				4CBBEF192EB2565900252590 /* Nuke */,
+				4CBBEF1B2EB2565900252590 /* NukeUI */,
 			);
 			productName = Keychy;
 			productReference = 4CEC61B12EAE071B0099ECEE /* Keychy.app */;
@@ -958,17 +973,19 @@
 				};
 			};
 			buildConfigurationList = 4CEC61AC2EAE071B0099ECEE /* Build configuration list for PBXProject "Keychy" */;
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 4CEC61A82EAE071B0099ECEE;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				38A5943A2EAE4EE20003D712 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4CEC61B22EAE071B0099ECEE /* Products */;
@@ -1059,6 +1076,7 @@
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
 				4C7775382EB0EFD800981C3E /* PreviewMakingBtn.swift in Sources */,
+				4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */,
 				4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */,
 				4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */,
@@ -1094,10 +1112,12 @@
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
+				4CBBEF172EB24DEC00252590 /* AcrylicPhotoGuiding.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
+				4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
 				4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */,
 				C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */,
@@ -1254,6 +1274,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSCameraUsageDescription = "키링에 사용할 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "키링에 사용할 사진을 선택하기 위해 사진첩 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1293,6 +1315,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSCameraUsageDescription = "키링에 사용할 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "키링에 사용할 사진을 선택하기 위해 사진첩 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1357,6 +1381,14 @@
 				minimumVersion = 4.5.2;
 			};
 		};
+		4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1399,6 +1431,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		4CBBEF192EB2565900252590 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		4CBBEF1B2EB2565900252590 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

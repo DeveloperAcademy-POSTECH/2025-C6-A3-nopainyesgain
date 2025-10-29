@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct PreviewImage: View {
     
@@ -13,10 +14,16 @@ struct PreviewImage: View {
     let previewURL: String
     
     var body: some View {
-        AsyncImage(url: URL(string: previewURL)) { image in
-            image
-        } placeholder: {
-            ProgressView()
+        LazyImage(url: URL(string: previewURL)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            } else if state.isLoading {
+                ProgressView()
+            } else {
+                Color.gray.opacity(0.1)
+            }
         }
     }
 }
