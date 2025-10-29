@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct AcrylicPhotoGuiding: View {
     @Environment(\.dismiss) var dismiss
@@ -13,7 +14,7 @@ struct AcrylicPhotoGuiding: View {
     @Binding var showCamera: Bool
     let guidingText: String
     let guidingImageURL: String
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
@@ -24,16 +25,16 @@ struct AcrylicPhotoGuiding: View {
                 Spacer()
             }
             .padding(.bottom, 19.5)
-
+            
             guidingIcon
                 .padding(.bottom, 8)
-
+            
             guidingTextLabel
                 .padding(.bottom, 22)
-
+            
             guidingImage
                 .padding(.bottom, 23)
-
+            
             // 카메라/사진선택 버튼
             HStack(spacing: 12) {
                 cameraBtn
@@ -56,7 +57,7 @@ extension AcrylicPhotoGuiding {
                 .foregroundStyle(.primary)
         }
     }
-
+    
     private var cameraBtn: some View {
         Button {
             dismiss()
@@ -72,7 +73,7 @@ extension AcrylicPhotoGuiding {
         .buttonStyle(.glass)
         .clipShape(Circle())
     }
-
+    
     private var photoPickBtn: some View {
         Button {
             dismiss()
@@ -93,30 +94,31 @@ extension AcrylicPhotoGuiding {
             .clipShape(Capsule())
         }
     }
-
+    
     private var guidingIcon: some View {
         Image(.fireworks)
             .resizable()
             .frame(width: 32, height: 32)
     }
-
+    
     private var guidingTextLabel: some View {
         Text(guidingText)
             .typography(.suit20B)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
     }
-
+    
     private var guidingImage: some View {
-        AsyncImage(url: URL(string: guidingImageURL)) { image in
-            image
-                .resizable()
-                .scaledToFit()
-        } placeholder: {
-            ProgressView()
+        LazyImage(url: URL(string: guidingImageURL)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Color.gray.opacity(0.1)
+            }
         }
         .frame(maxWidth: .infinity)
-        //.clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
