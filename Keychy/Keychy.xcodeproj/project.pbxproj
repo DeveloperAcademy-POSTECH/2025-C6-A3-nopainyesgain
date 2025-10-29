@@ -48,6 +48,11 @@
 		4C7775322EB0EEF100981C3E /* PreviewImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7775312EB0EEF100981C3E /* PreviewImage.swift */; };
 		4C7775342EB0EF8800981C3E /* PreviewInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7775332EB0EF8800981C3E /* PreviewInfoSection.swift */; };
 		4C7775382EB0EFD800981C3E /* PreviewMakingBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7775372EB0EFD800981C3E /* PreviewMakingBtn.swift */; };
+		4C77753E2EB1343600981C3E /* IntroViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7775392EB1343600981C3E /* IntroViewModel.swift */; };
+		4C77753F2EB1343600981C3E /* IntroViewModel+Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */; };
+		4C7775402EB1343600981C3E /* IntroViewModel+Signup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */; };
+		4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */; };
+		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -148,10 +153,7 @@
 		38A596722EAFA8D20003D712 /* KeychyUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyUser.swift; sourceTree = "<group>"; };
 		38A596772EAFA9430003D712 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		38A596792EAFA94E0003D712 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
-		38A5967B2EAFA95C0003D712 /* IntroViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewModel.swift; sourceTree = "<group>"; };
-		38A5967D2EAFBB740003D712 /* IntroViewModel+Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Login.swift"; sourceTree = "<group>"; };
 		38A5967F2EAFCF5F0003D712 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
-		38A596812EAFE7DB0003D712 /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
 		38A596832EAFEAA20003D712 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
 		38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleGlassButton.swift; sourceTree = "<group>"; };
@@ -180,6 +182,10 @@
 		4C7775312EB0EEF100981C3E /* PreviewImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImage.swift; sourceTree = "<group>"; };
 		4C7775332EB0EF8800981C3E /* PreviewInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewInfoSection.swift; sourceTree = "<group>"; };
 		4C7775372EB0EFD800981C3E /* PreviewMakingBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewMakingBtn.swift; sourceTree = "<group>"; };
+		4C7775392EB1343600981C3E /* IntroViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewModel.swift; sourceTree = "<group>"; };
+		4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Login.swift"; sourceTree = "<group>"; };
+		4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
+		4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -286,8 +292,7 @@
 		38A596702EAFA8880003D712 /* Intro */ = {
 			isa = PBXGroup;
 			children = (
-				38A596742EAFA91C0003D712 /* Models */,
-				38A596752EAFA9200003D712 /* ViewModels */,
+				4C77753D2EB1343600981C3E /* ViewModels */,
 				38A596762EAFA9340003D712 /* Views */,
 			);
 			path = Intro;
@@ -299,24 +304,6 @@
 				38A596722EAFA8D20003D712 /* KeychyUser.swift */,
 			);
 			path = User;
-			sourceTree = "<group>";
-		};
-		38A596742EAFA91C0003D712 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		38A596752EAFA9200003D712 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				38A5967B2EAFA95C0003D712 /* IntroViewModel.swift */,
-				38A596812EAFE7DB0003D712 /* IntroViewModel+Signup.swift */,
-				38A5967D2EAFBB740003D712 /* IntroViewModel+Login.swift */,
-				38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		38A596762EAFA9340003D712 /* Views */ = {
@@ -373,6 +360,17 @@
 				4C7775372EB0EFD800981C3E /* PreviewMakingBtn.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4C77753D2EB1343600981C3E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4C7775392EB1343600981C3E /* IntroViewModel.swift */,
+				4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */,
+				4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */,
+				4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		4CEC61A82EAE071B0099ECEE = {
@@ -992,6 +990,10 @@
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
 				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
+				4C77753E2EB1343600981C3E /* IntroViewModel.swift in Sources */,
+				4C77753F2EB1343600981C3E /* IntroViewModel+Login.swift in Sources */,
+				4C7775402EB1343600981C3E /* IntroViewModel+Signup.swift in Sources */,
+				4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */,
 				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
 				4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */,
 				38C147BD2EB14DFF00A8E511 /* CollectionViewModel+Status.swift in Sources */,
@@ -1030,6 +1032,7 @@
 				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
+				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
 				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
 				38C147B82EB13A5700A8E511 /* ProfileSetupView.swift in Sources */,
@@ -1058,7 +1061,6 @@
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
 				4CEC62862EAE08DF0099ECEE /* AcrylicPhotoVM+BGRemover.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
-				38A5967E2EAFBB740003D712 /* IntroViewModel+Login.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
