@@ -15,7 +15,8 @@ class KeyringScene: SKScene {
     var onPlayParticleEffect: ((String) -> Void)?
     
     // MARK: - Properties
-    var bodyImage: UIImage?
+    var bodyImage: UIImage? // ✅ UIImage 유지
+    var bodyImageURL: String? // ✅ Firebase URL 추가
     var cancellables = Set<AnyCancellable>()
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"
@@ -43,7 +44,17 @@ class KeyringScene: SKScene {
     var lastParticleTime: TimeInterval = 0
     
     // MARK: - Init / Deinit
-    init(bodyImage: UIImage? = nil) {
+    init(
+        ringType: RingType,
+        chainType: ChainType,
+        bodyImage: UIImage? = nil,
+        bodyImageURL: String? = nil
+    ) {
+        
+        self.currentRingType = ringType
+        self.currentChainType = chainType
+        self.bodyImageURL = bodyImageURL
+        
         if let image = bodyImage {
             self.bodyImage = image.fixedOrientation()
         } else {

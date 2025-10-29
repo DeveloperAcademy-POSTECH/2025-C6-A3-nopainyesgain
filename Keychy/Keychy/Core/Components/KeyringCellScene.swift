@@ -11,12 +11,11 @@ import SpriteKit
 class KeyringCellScene: SKScene {
     
     // MARK: - Properties
-    var bodyImage: UIImage?
+    var bodyImage: String?
     
     // MARK: - 선택된 타입들
-    var currentRingType: RingType = .basic
-    var currentChainType: ChainType = .basic
-    var currentBodyType: BodyType = .basic
+    var currentRingType: RingType
+    var currentChainType: ChainType
     
     // MARK: - 크기 조절용 컨테이너 노드
     var containerNode: SKNode!
@@ -26,10 +25,16 @@ class KeyringCellScene: SKScene {
     
     // MARK: - Init / Deinit
     // zoomScale : 확대 비율
-    init(bodyImage: UIImage?, targetSize: CGSize, zoomScale: CGFloat = 1.5) {
-        if let image = bodyImage {
-            self.bodyImage = image.fixedOrientation()
-        }
+    init(
+        ringType: RingType,
+        chainType: ChainType,
+        bodyImage: String? = nil,
+        targetSize: CGSize,
+        zoomScale: CGFloat = 1.5
+    ) {
+        self.currentRingType = ringType
+        self.currentChainType = chainType
+        self.bodyImage = bodyImage
         
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height

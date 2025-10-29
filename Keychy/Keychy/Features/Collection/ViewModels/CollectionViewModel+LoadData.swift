@@ -16,7 +16,7 @@ extension CollectionViewModel {
     }
     
     // MARK: - Firebase에서 사용자의 모든 키링 로드
-    func loadUserKeyrings(uid: String, completion: @escaping (Bool) -> Void) {
+    func fetchUserKeyrings(uid: String, completion: @escaping (Bool) -> Void) {
         print("사용자 키링 로드 시작 - UID: \(uid)")
         isLoading = true
         
@@ -103,45 +103,7 @@ extension CollectionViewModel {
                     let keyrings = snapshot?.documents.compactMap { document -> Keyring? in
                         let documentData = document.data()
                         
-                        print("\n┌─────────────────────────────────────")
-                        print("│ 문서 ID: \(document.documentID)")
-                        print("├─────────────────────────────────────")
-                        print("│ Firestore 원본 데이터:")
-                        for (key, value) in documentData.sorted(by: { $0.key < $1.key }) {
-                            print("│   - \(key): \(value)")
-                        }
-                        print("└─────────────────────────────────────")
-                        
                         let keyring = Keyring(documentId: document.documentID, data: documentData)
-                        
-                        if keyring == nil {
-                            print("키링 변환 실패 - ID: \(document.documentID)")
-                            print("변환 실패 원인: 필수 필드 누락 확인 필요")
-                        } else {
-                            print("\n키링 변환 성공!")
-                            print("┌─────────────────────────────────────")
-                            print("│ 변환된 Keyring 객체 정보:")
-                            print("├─────────────────────────────────────")
-                            print("│ ID: \(keyring!.id)")
-                            print("│ 이름: \(keyring!.name)")
-                            print("│ bodyImage: \(keyring!.bodyImage)")
-                            print("│ soundId: \(keyring!.soundId)")
-                            print("│ particleId: \(keyring!.particleId)")
-                            print("│ memo: \(keyring!.memo ?? "없음")")
-                            print("│ tags: \(keyring!.tags)")
-                            print("│ createdAt: \(keyring!.createdAt)")
-                            print("│ authorId: \(keyring!.authorId)")
-                            print("│ copyCount: \(keyring!.copyCount)")
-                            print("│ selectedTemplate: \(keyring!.selectedTemplate)")
-                            print("│ selectedRing: \(keyring!.selectedRing)")
-                            print("│ selectedChain: \(keyring!.selectedChain)")
-                            print("│ isEditable: \(keyring!.isEditable)")
-                            print("│ isPackaged: \(keyring!.isPackaged)")
-                            print("│ chainLength: \(keyring!.chainLength)")
-                            print("│ originalId: \(keyring!.originalId ?? "없음")")
-                            print("│ history: \(keyring!.history ?? [])")
-                            print("└─────────────────────────────────────\n")
-                        }
                         
                         return keyring
                     } ?? []
@@ -164,44 +126,9 @@ extension CollectionViewModel {
             completion(true)
         }
     }
+
     
-    private func preloadImages(for keyrings: [Keyring]) async {
-        let imageURLs = keyrings.flatMap { keyring in
-            [keyring.bodyImage, keyring.selectedRing, keyring.selectedChain]
-        }
-        
-        print("\(imageURLs.count)개 이미지 미리 로드 시작")
-        
-        do {
-            _ = try await StorageManager.shared.getMultipleImages(paths: imageURLs)
-            print("이미지 미리 로드 완료")
-        } catch {
-            print("이미지 미리 로드 중 일부 실패: \(error)")
-        }
-    }
     
-    // firestorage에서 다운url 가져오기
-    func getDownloadURL(storagePath: String, completion: @escaping (URL?) -> Void) {
-        let storage = Storage.storage()
-        let storageRef = storage.reference().child(storagePath)
-        
-        storageRef.downloadURL { url, error in
-            if let error = error {
-                print("URL 가져오기 실패: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            
-            guard let url = url else {
-                print("URL이 nil입니다")
-                completion(nil)
-                return
-            }
-            
-            print("Download URL: \(url.absoluteString)")
-            completion(url)
-        }
-    }
     
     // MARK: - 새 키링 생성 및 User에 추가
     func createKeyring(
