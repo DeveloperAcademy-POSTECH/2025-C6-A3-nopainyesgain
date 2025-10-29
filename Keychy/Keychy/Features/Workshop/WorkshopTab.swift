@@ -44,6 +44,10 @@ struct WorkshopTab: View {
                             viewModel: getAcrylicPhotoVM(),
                             navigationTitle: "키링이 완성되었어요!"
                         )
+                    case .coinCharge:
+                        CoinChargeView(
+                            router: router
+                        )
 
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
                     }

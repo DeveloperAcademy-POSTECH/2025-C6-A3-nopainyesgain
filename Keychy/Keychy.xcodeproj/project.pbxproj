@@ -131,6 +131,7 @@
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
+		C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
@@ -268,6 +269,7 @@
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
+		C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateInitializer.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
@@ -788,6 +790,7 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
+				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
@@ -1074,6 +1077,7 @@
 				38A596842EAFEAA20003D712 /* ProfileSetupView.swift in Sources */,
 				4CEC62862EAE08DF0099ECEE /* ArcylicPhotoVM+BGRemover.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
+				C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
