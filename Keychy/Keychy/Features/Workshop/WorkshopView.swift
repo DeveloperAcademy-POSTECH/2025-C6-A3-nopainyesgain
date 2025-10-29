@@ -25,7 +25,7 @@ struct WorkshopView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     
-    private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
+    private let categories = ["KEYCHY!", "키링", "카라비너", "파티클", "사운드", "배경"]
     @State private var selectedCategory: String = "KEYCHY!"
     @State private var selectedTemplateFilter: TemplateFilterType? = nil
     @State private var selectedCommonFilter: CommonFilterType? = nil
@@ -136,7 +136,7 @@ struct WorkshopView: View {
             templates = try snapshot.documents.compactMap { document in
                 try document.data(as: KeyringTemplate.self)
             }
-            applyTemplateSorting()
+            applySorting()
         } catch {
             errorMessage = "템플릿 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
         }
@@ -152,7 +152,7 @@ struct WorkshopView: View {
             backgrounds = try snapshot.documents.compactMap { document in
                 try document.data(as: Background.self)
             }
-            applyBackgroundSorting()
+            applySorting()
         } catch {
             errorMessage = "배경 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
         }
@@ -168,7 +168,7 @@ struct WorkshopView: View {
             carabiners = try snapshot.documents.compactMap { document in
                 try document.data(as: Carabiner.self)
             }
-            applyCarabinerSorting()
+            applySorting()
         } catch {
             errorMessage = "카라비너 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
         }
@@ -184,9 +184,9 @@ struct WorkshopView: View {
             particles = try snapshot.documents.compactMap { document in
                 try document.data(as: Particle.self)
             }
-            applyParticleSorting()
+            applySorting()
         } catch {
-            errorMessage = "이펙트 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
+            errorMessage = "파티클 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
         }
     }
     
@@ -200,7 +200,7 @@ struct WorkshopView: View {
             sounds = try snapshot.documents.compactMap { document in
                 try document.data(as: Sound.self)
             }
-            applySoundSorting()
+            applySorting()
         } catch {
             errorMessage = "사운드 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
         }
@@ -208,56 +208,21 @@ struct WorkshopView: View {
     
     // MARK: - Sorting Methods
     
-    private func applyTemplateSorting() {
+    /// 통합 정렬 함수 - 모든 카테고리에 적용
+    private func applySorting() {
         switch sortOrder {
         case "최신순":
-            templates.sort { $0.createdAt > $1.createdAt }
+            templates.sort { $0.createdAt < $1.createdAt }
+            backgrounds.sort { $0.createdAt < $1.createdAt }
+            carabiners.sort { $0.createdAt < $1.createdAt }
+            particles.sort { $0.createdAt < $1.createdAt }
+            sounds.sort { $0.createdAt < $1.createdAt }
         case "인기순":
-            templates.sort { $0.downloadCount > $1.downloadCount }
-        default:
-            break
-        }
-    }
-    
-    private func applyBackgroundSorting() {
-        switch sortOrder {
-        case "최신순":
-            backgrounds.sort { $0.createdAt > $1.createdAt }
-        case "인기순":
-            backgrounds.sort { $0.downloadCount > $1.downloadCount }
-        default:
-            break
-        }
-    }
-    
-    private func applyCarabinerSorting() {
-        switch sortOrder {
-        case "최신순":
-            carabiners.sort { $0.createdAt > $1.createdAt }
-        case "인기순":
-            carabiners.sort { $0.downloadCount > $1.downloadCount }
-        default:
-            break
-        }
-    }
-    
-    private func applyParticleSorting() {
-        switch sortOrder {
-        case "최신순":
-            particles.sort { $0.createdAt > $1.createdAt }
-        case "인기순":
-            particles.sort { $0.downloadCount > $1.downloadCount }
-        default:
-            break
-        }
-    }
-    
-    private func applySoundSorting() {
-        switch sortOrder {
-        case "최신순":
-            sounds.sort { $0.createdAt > $1.createdAt }
-        case "인기순":
-            sounds.sort { $0.downloadCount > $1.downloadCount }
+            templates.sort { $0.downloadCount < $1.downloadCount }
+            backgrounds.sort { $0.downloadCount < $1.downloadCount }
+            carabiners.sort { $0.downloadCount < $1.downloadCount }
+            particles.sort { $0.downloadCount < $1.downloadCount }
+            sounds.sort { $0.downloadCount < $1.downloadCount }
         default:
             break
         }
@@ -549,7 +514,7 @@ extension WorkshopView {
                         }
                     }
                     
-                case "카라비너", "이펙트", "배경":
+                case "카라비너", "파티클", "사운드", "배경":
                     // 공통 필터 (귀여움, 심플, 자연)
                     ForEach(CommonFilterType.allCases, id: \.self) { filter in
                         FilterChip(
@@ -575,7 +540,7 @@ extension WorkshopView {
 
 // MARK: - 메인 콘텐츠
 extension WorkshopView {
-    /// 내 창고 섹션
+    /// 내 창고 섹션 - 사용자 보유 키링만 표시 (카테고리 무관)
     private var myCollectionSection: some View {
         VStack(spacing: 12) {
             HStack {
@@ -590,45 +555,12 @@ extension WorkshopView {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    switch selectedCategory {
-                    case "키링":
-                        if ownedTemplates.isEmpty {
-                            emptyOwnedView
-                        } else {
-                            ForEach(ownedTemplates) { template in
-                                OwnedTemplateCard(template: template)
-                            }
-                        }
-                        
-                    case "배경":
-                        if ownedBackgrounds.isEmpty {
-                            emptyOwnedView
-                        } else {
-                            ForEach(ownedBackgrounds, id: \.id) { background in
-                                OwnedBackgroundCard(background: background)
-                            }
-                        }
-                        
-                    case "카라비너":
-                        if ownedCarabiners.isEmpty {
-                            emptyOwnedView
-                        } else {
-                            ForEach(ownedCarabiners, id: \.id) { carabiner in
-                                OwnedCarabinerCard(carabiner: carabiner)
-                            }
-                        }
-                        
-                    case "이펙트":
-                        if ownedParticles.isEmpty {
-                            emptyOwnedView
-                        } else {
-                            ForEach(ownedParticles, id: \.id) { particle in
-                                OwnedParticleCard(particle: particle)
-                            }
-                        }
-                        
-                    default:
+                    if ownedTemplates.isEmpty {
                         emptyOwnedView
+                    } else {
+                        ForEach(ownedTemplates) { template in
+                            OwnedTemplateCard(template: template)
+                        }
                     }
                 }
             }
@@ -658,19 +590,41 @@ extension WorkshopView {
                 errorView(message: errorMessage)
             } else {
                 switch selectedCategory {
+                case "KEYCHY!":
+                    keychyContentView
                 case "키링":
                     templateGridView
                 case "배경":
                     backgroundGridView
                 case "카라비너":
                     carabinerGridView
-                case "이펙트":
+                case "파티클":
                     particleGridView
+                case "사운드":
+                    soundGridView
                 default:
                     emptyContentView
                 }
             }
         }
+    }
+    
+    /// KEYCHY! 전용 콘텐츠 (빈 화면 또는 추후 추가될 콘텐츠)
+    private var keychyContentView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "star.fill")
+                .font(.system(size: 50))
+                .foregroundStyle(.yellow)
+            
+            Text("KEYCHY! 콘텐츠 준비 중")
+                .font(.headline)
+                .foregroundStyle(.primary)
+            
+            Text("곧 만나요!")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.top, 100)
     }
     
     /// 템플릿 그리드
@@ -754,6 +708,26 @@ extension WorkshopView {
         }
     }
     
+    /// 사운드 그리드
+    private var soundGridView: some View {
+        Group {
+            if filteredSounds.isEmpty {
+                emptyContentView
+            } else {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(filteredSounds, id: \.id) { sound in
+                        SoundItemView(
+                            sound: sound,
+                            isOwned: isSoundOwned(sound)
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 100)
+            }
+        }
+    }
+    
     private var emptyContentView: some View {
         VStack(spacing: 16) {
             Image(systemName: "tray")
@@ -815,21 +789,7 @@ extension WorkshopView {
                 ForEach(["최신순", "인기순"], id: \.self) { sort in
                     SortOption(title: sort, isSelected: sortOrder == sort) {
                         sortOrder = sort
-                        
-                        // 선택된 카테고리에 따라 적절한 정렬 적용
-                        switch selectedCategory {
-                        case "키링":
-                            applyTemplateSorting()
-                        case "배경":
-                            applyBackgroundSorting()
-                        case "카라비너":
-                            applyCarabinerSorting()
-                        case "이펙트":
-                            applyParticleSorting()
-                        default:
-                            break
-                        }
-                        
+                        applySorting()
                         showFilterSheet = false
                     }
                 }
@@ -927,7 +887,11 @@ struct OwnedBackgroundCard: View {
                 switch phase {
                 case .success(let image):
                     image.resizable().aspectRatio(contentMode: .fill)
-                default:
+                case .empty:
+                    ProgressView()
+                case .failure:
+                    Color.gray.opacity(0.1)
+                @unknown default:
                     Color.gray.opacity(0.1)
                 }
             }
@@ -951,7 +915,11 @@ struct OwnedCarabinerCard: View {
                 switch phase {
                 case .success(let image):
                     image.resizable().aspectRatio(contentMode: .fill)
-                default:
+                case .empty:
+                    ProgressView()
+                case .failure:
+                    Color.gray.opacity(0.1)
+                @unknown default:
                     Color.gray.opacity(0.1)
                 }
             }
@@ -975,7 +943,11 @@ struct OwnedParticleCard: View {
                 switch phase {
                 case .success(let image):
                     image.resizable().aspectRatio(contentMode: .fill)
-                default:
+                case .empty:
+                    ProgressView()
+                case .failure:
+                    Color.gray.opacity(0.1)
+                @unknown default:
                     Color.gray.opacity(0.1)
                 }
             }
@@ -983,6 +955,34 @@ struct OwnedParticleCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             
             Text(particle.particleName)
+                .font(.caption)
+                .lineLimit(1)
+        }
+        .padding(8)
+    }
+}
+
+struct OwnedSoundCard: View {
+    let sound: Sound
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            AsyncImage(url: URL(string: sound.thumbnail)) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().aspectRatio(contentMode: .fill)
+                case .empty:
+                    ProgressView()
+                case .failure:
+                    Color.gray.opacity(0.1)
+                @unknown default:
+                    Color.gray.opacity(0.1)
+                }
+            }
+            .frame(width: 80, height: 80)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            Text(sound.soundName)
                 .font(.caption)
                 .lineLimit(1)
         }
@@ -1140,6 +1140,43 @@ struct ParticleItemView: View {
             }
             
             Text(particle.particleName)
+                .font(.subheadline)
+                .lineLimit(1)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// 사운드 아이템
+struct SoundItemView: View {
+    let sound: Sound
+    var isOwned: Bool = false
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack(alignment: .topLeading) {
+                AsyncImage(url: URL(string: sound.thumbnail)) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.gray.opacity(0.3).overlay { ProgressView() }
+                    case .success(let image):
+                        image.resizable().aspectRatio(contentMode: .fill)
+                    case .failure:
+                        Color.gray.opacity(0.3).overlay {
+                            Image(systemName: "photo").foregroundStyle(.secondary)
+                        }
+                    @unknown default:
+                        Color.gray.opacity(0.3)
+                    }
+                }
+                .frame(height: 200)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                priceOverlay(isFree: sound.isFree, price: sound.price, isOwned: isOwned)
+            }
+            
+            Text(sound.soundName)
                 .font(.subheadline)
                 .lineLimit(1)
         }
