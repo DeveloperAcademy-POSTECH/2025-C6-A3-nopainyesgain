@@ -14,10 +14,10 @@ struct BundleSelectCarabinerView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(alignment: .center) {
-                CarabinerImageView
+                carabinerImageView
                     .frame(width: geo.size.width * 0.5)
                 Spacer()
-                SelectCarabinerbottomSection
+                selectCarabinerbottomSection
             }
             .navigationBarBackButtonHidden(true)
             .ignoresSafeArea(edges: .bottom)
@@ -59,7 +59,7 @@ extension BundleSelectCarabinerView {
 
 //MARK: - 카라비너 뷰
 extension BundleSelectCarabinerView {
-    private var CarabinerImageView: some View {
+    private var carabinerImageView: some View {
         VStack {
             // 카라비너 이미지
             Image(.basicRing)
@@ -84,7 +84,7 @@ extension BundleSelectCarabinerView {
 
 //MARK: - 하단 카라비너 선택 뷰
 extension BundleSelectCarabinerView {
-    private var SelectCarabinerbottomSection: some View {
+    private var selectCarabinerbottomSection: some View {
         VStack(alignment: .leading) {
             HStack {
                 Text("카라비너")
