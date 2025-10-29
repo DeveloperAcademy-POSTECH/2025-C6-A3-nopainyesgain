@@ -16,6 +16,7 @@ struct AcrylicPhotoPreView: View {
     @State private var showCamera = false
     @State private var showGuide = false
     @State private var hasAppearedBefore = false
+    @State private var capturedImage: UIImage?
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -50,7 +51,7 @@ struct AcrylicPhotoPreView: View {
             if hasAppearedBefore {
                 viewModel.resetImageData()
                 selectedItem = nil
-                showPhotoPicker = true
+                capturedImage = nil
             }
             hasAppearedBefore = true
         }
@@ -69,6 +70,23 @@ struct AcrylicPhotoPreView: View {
             selection: $selectedItem,
             matching: .images
         )
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraPicker(image: $capturedImage, isPresented: $showCamera)
+                .background(Color.black)
+                .ignoresSafeArea()
+        }
+        .onChange(of: capturedImage) { _, newImage in
+            if let newImage {
+                // 카메라로 찍은 이미지를 ViewModel에 직접 할당
+                viewModel.selectedImage = newImage
+
+                // Crop 화면으로 전환
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    viewModel.resetToCenter()
+                    router.push(.acrylicPhotoCrop)
+                }
+            }
+        }
     }
 }
 
