@@ -13,7 +13,7 @@ extension KeyringCellScene {
     // 키링 전체 조립
     func setupKeyring() {
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.68 - (originalSize.height / 2) // 소수로 높이 위치 조정
+        let topY = originalSize.height * 0.65 - (originalSize.height / 2) // 소수로 높이 위치 조정
         
         // 1. Ring 생성
         let ring = KeyringRingComponent.createNode(from: currentRingType)
@@ -24,7 +24,7 @@ extension KeyringCellScene {
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY - 2
+        let chainStartY = ringBottomY + 0.5
         let chainSpacing: CGFloat = 16
         let chains = KeyringChainComponent.createLinks(
             from: currentChainType,
