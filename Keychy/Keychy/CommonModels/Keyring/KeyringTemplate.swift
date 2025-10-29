@@ -31,6 +31,12 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     /// 프리뷰 URL -----> 만들기 preview에 띄울 이미지
     let previewURL: String
 
+    /// 가이드 이미지 URL -----> 만들기 시작 전 가이드 화면에 띄울 이미지
+    let guidingImageURL: String
+
+    /// 가이드 텍스트 -----> 만들기 시작 전 가이드 화면에 띄울 안내 문구
+    let guidingText: String
+
     /// 템플릿 분류 태그 (ex. ["이미지형", "텍스트형", "귀여움"])
     let tags: [String]
 
@@ -65,6 +71,8 @@ extension KeyringTemplate {
             interactions: ["tap", "swing"],
             thumbnailURL: "",
             previewURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            guidingImageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FguidingImage.png?alt=media&token=example",
+            guidingText: "인물 사진을 선택해주세요\n배경이 제거된 키링을 만들 수 있습니다",
             tags: ["이미지형"],
             price: 0,
             downloadCount: 0,
