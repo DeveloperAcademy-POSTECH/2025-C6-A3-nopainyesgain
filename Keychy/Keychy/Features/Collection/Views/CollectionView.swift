@@ -12,7 +12,7 @@ struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @Bindable var collectionViewModel: CollectionViewModel
     @State private var selectedCategory = "전체"
-    @State private var selectedSort: String = "최신순"
+    @State private var showSortSheet: Bool = false
     
     private var categories: [String] {
         var allCategories = ["전체"]
@@ -22,7 +22,7 @@ struct CollectionView: View {
     }
     
     // 정렬 옵션 (최신(생성) / 오래된 / 복사된 숫자순(인기순) / 이름 ㄱㄴㄷ순
-    let sortOptions = ["최신순", "오래된순", "이름순"]
+    let sortOptions = ["최신순", "오래된순", "이름순", "인기순"]
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: Spacing.gap),
@@ -48,6 +48,9 @@ struct CollectionView: View {
             collectionSection
         }
         .padding(Spacing.padding)
+        .sheet(isPresented: $showSortSheet) {
+            sortSheet
+        }
         .onAppear {
             fetchUserData()
         }
@@ -86,6 +89,51 @@ struct CollectionView: View {
             }
             completion()
         }
+    }
+    
+    // MARK: - 사용자 데이터 정렬
+    // TODO: 디자인 확정되면 반영
+    private var sortSheet: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    showSortSheet = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(.primary)
+                }
+                
+                Spacer()
+                
+                Text("정렬 기준")
+                    .font(.headline)
+                
+                Spacer()
+                
+                Color.clear
+                    .frame(width: 24)
+            }
+            .padding()
+            
+            Divider()
+            
+            VStack(spacing: 0) {
+                ForEach(sortOptions, id: \.self) { sort in
+                    SortOption(
+                        title: sort,
+                        isSelected: collectionViewModel.selectedSort == sort
+                    ) {
+                        collectionViewModel.selectedSort = sort
+                        collectionViewModel.applySorting()
+                        
+                        showSortSheet = false
+                    }
+                }
+            }
+            
+            Spacer()
+        }
+        .presentationDetents([.height(250)])
     }
 }
 
@@ -154,10 +202,10 @@ extension CollectionView {
     // 정렬 버튼
     private var sortButton: some View {
         Button(action: {
-            // TODO: - 정렬 로직 추가
+            showSortSheet = true
         }) {
             HStack(spacing: 2) {
-                Text(selectedSort)
+                Text(collectionViewModel.selectedSort)
                     .typography(.suit14SB18)
                     .foregroundColor(.white100)
                 

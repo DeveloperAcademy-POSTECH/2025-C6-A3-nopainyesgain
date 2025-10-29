@@ -66,6 +66,9 @@ extension CollectionViewModel {
                 // Keyring 컬렉션에서 해당 ID들의 키링 데이터 가져오기
                 self.loadKeyringsByIds(keyringIds: keyringIds) { success in
                     self.isLoading = false
+                    if success {
+                        self.applySorting() // 자동 최신순 정렬 적용
+                    }
                     completion(success)
                 }
             }
