@@ -11,25 +11,14 @@ import FirebaseFirestore
 func initializeTemplates() async {
     let templates: [[String: Any]] = [
         [
-            "id": "AcrylicPhoto",
-            "templateName": "아크릴 포토 키링",
-            "description": "투명한 아크릴에 사진을 담아 만드는 키링",
-            "interactions": ["tap", "swing"],
-            "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["이미지형"],
-            "price": 0,
-            "downloadCount": 152,
-            "useCount": 89,
-            "isActive": true
-        ],
-        [
             "id": "HeartKeyring",
             "templateName": "하트 키링",
             "description": "사랑스러운 하트 모양 키링",
             "interactions": ["tap"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["드로잉형"],
             "price": 100,
             "downloadCount": 234,
@@ -43,6 +32,8 @@ func initializeTemplates() async {
             "interactions": ["tap"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["텍스트형"],
             "price": 0,
             "downloadCount": 456,
@@ -56,6 +47,8 @@ func initializeTemplates() async {
             "interactions": ["tap", "swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["드로잉형", "이미지형"],
             "price": 150,
             "downloadCount": 189,
@@ -69,6 +62,8 @@ func initializeTemplates() async {
             "interactions": ["swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["이미지형"],
             "price": 50,
             "downloadCount": 321,
@@ -82,6 +77,8 @@ func initializeTemplates() async {
             "interactions": ["tap"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["텍스트형", "이미지형"],
             "price": 200,
             "downloadCount": 98,
@@ -95,6 +92,8 @@ func initializeTemplates() async {
             "interactions": ["swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["드로잉형"],
             "price": 80,
             "downloadCount": 412,
@@ -108,6 +107,8 @@ func initializeTemplates() async {
             "interactions": ["tap", "swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["이미지형", "텍스트형"],
             "price": 0,
             "downloadCount": 567,
@@ -121,6 +122,8 @@ func initializeTemplates() async {
             "interactions": ["tap"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["드로잉형", "이미지형"],
             "price": 120,
             "downloadCount": 278,
@@ -134,6 +137,8 @@ func initializeTemplates() async {
             "interactions": ["swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["텍스트형"],
             "price": 180,
             "downloadCount": 145,
@@ -147,6 +152,8 @@ func initializeTemplates() async {
             "interactions": ["tap", "swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["이미지형", "텍스트형"],
             "price": 0,
             "downloadCount": 623,
@@ -160,6 +167,8 @@ func initializeTemplates() async {
             "interactions": ["tap"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["드로잉형"],
             "price": 90,
             "downloadCount": 334,
@@ -173,6 +182,8 @@ func initializeTemplates() async {
             "interactions": ["swing"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "guidingImageURL": "",
+            "guidingText": "",
             "tags": ["이미지형"],
             "price": 130,
             "downloadCount": 289,
@@ -181,28 +192,28 @@ func initializeTemplates() async {
         ]
     ]
     
-    let db = Firestore.firestore()
     
+    // 문서 생성 및 추가 로직
+    let db = Firestore.firestore()
+
     for template in templates {
         guard let id = template["id"] as? String else { continue }
-        
-        let ref = db.collection("Template").document(id)
-        
+
+        var data = template
+        data.removeValue(forKey: "id")
+
         do {
-            let doc = try await ref.getDocument()
-            if doc.exists {
-                print("⏭️  \(id) 이미 존재")
-                continue
+            let doc = try await db.collection("Template").document(id).getDocument()
+
+            // 신규 문서인 경우에만 createdAt 추가
+            if !doc.exists {
+                data["createdAt"] = Timestamp(date: Date())
             }
-            
-            var data = template
-            data.removeValue(forKey: "id")
-            data["createdAt"] = Timestamp(date: Date())
-            
-            try await ref.setData(data)
-            print("✅ \(id) 업로드 완료")
+
+            // merge: true로 기존 필드 유지 + 새 필드 추가
+            try await db.collection("Template").document(id).setData(data, merge: true)
         } catch {
-            print("❌ \(id) 실패: \(error)")
+            print("Template \(id) 오류: \(error)")
         }
     }
 }
