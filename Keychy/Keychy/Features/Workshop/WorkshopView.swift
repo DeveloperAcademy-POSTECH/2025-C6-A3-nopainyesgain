@@ -374,7 +374,7 @@ extension WorkshopView {
                         KeychainItem(
                             template: template,
                             category: selectedCategory,
-                            isOwned: isTemplateOwned(template)
+                            isOwned: isTemplateOwned(template), router: router
                         )
                     }
                 }
@@ -524,74 +524,80 @@ struct KeychainItem: View {
     let template: KeyringTemplate
     let category: String
     var isOwned: Bool = false  // 보유 여부
+    @Bindable var router: NavigationRouter<WorkshopRoute>  // 🆕 추가
     
     var body: some View {
-        VStack(spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                // 썸네일 이미지
-                AsyncImage(url: URL(string: template.thumbnailURL)) { phase in
-                    switch phase {
-                    case .empty:
-                        Color.gray.opacity(0.3)
-                            .overlay {
-                                ProgressView()
-                            }
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Color.gray.opacity(0.3)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    @unknown default:
-                        Color.gray.opacity(0.3)
+        Button {
+            router.push(.acrylicPhotoPreview)
+        } label: {
+            VStack(spacing: 8) {
+                ZStack(alignment: .topLeading) {
+                    // 썸네일 이미지
+                    AsyncImage(url: URL(string: template.thumbnailURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            Color.gray.opacity(0.3)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .failure:
+                            Color.gray.opacity(0.3)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.secondary)
+                                }
+                        @unknown default:
+                            Color.gray.opacity(0.3)
+                        }
                     }
-                }
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                // 오버레이: 무료/가격 또는 보유 표시
-                VStack {
-                    HStack {
-                        if isOwned {
-                            // 보유 표시
-                            Text("보유")
-                                .font(.caption)
-                                .foregroundStyle(.white)
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    
+                    // 오버레이: 무료/가격 또는 보유 표시
+                    VStack {
+                        HStack {
+                            if isOwned {
+                                // 보유 표시
+                                Text("보유")
+                                    .font(.caption)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.green)
+                                    .clipShape(Capsule())
+                                    .padding(8)
+                            } else if !template.isFree {
+                                // 가격 표시
+                                HStack(spacing: 4) {
+                                    Image(systemName: "leaf.fill")
+                                        .foregroundStyle(.pink)
+                                    Text("\(template.price ?? 0)")
+                                        .foregroundStyle(.primary)
+                                }
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.green)
+                                .background(.ultraThinMaterial)
                                 .clipShape(Capsule())
                                 .padding(8)
-                        } else if !template.isFree {
-                            // 가격 표시
-                            HStack(spacing: 4) {
-                                Image(systemName: "leaf.fill")
-                                    .foregroundStyle(.pink)
-                                Text("\(template.price ?? 0)")
-                                    .foregroundStyle(.primary)
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(.ultraThinMaterial)
-                            .clipShape(Capsule())
-                            .padding(8)
+                            Spacer()
                         }
                         Spacer()
                     }
-                    Spacer()
                 }
+                
+                // 템플릿 이름
+                Text(template.templateName)
+                    .font(.subheadline)
+                    .lineLimit(1)
             }
-            
-            // 템플릿 이름
-            Text(template.templateName)
-                .font(.subheadline)
-                .lineLimit(1)
         }
+        .buttonStyle(.plain)
     }
 }
 
