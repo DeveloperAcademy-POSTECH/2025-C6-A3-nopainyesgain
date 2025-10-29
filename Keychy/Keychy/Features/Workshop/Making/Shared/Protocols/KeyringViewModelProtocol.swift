@@ -15,17 +15,17 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     var memoText: String { get set }
     var maxMemoCount: Int { get }
     var createdAt: Date { get set }
-    
+
     /// 태그 관련
-    var tags: [String] { get set }
     var selectedTags: [String] { get set }
-    
+
     /// 키링 바디 이미지 (혹시나 특이한 템플릿이 있다면 안쓸수도 있어서 Optional)
     var bodyImage: UIImage? { get }
-    
+
     /// 이펙트 관련
-    var keyring: Keyring { get set }
-    var keyringSubject: PassthroughSubject<(Keyring, KeyringUpdateType), Never> { get }
+    var soundId: String { get set }
+    var particleId: String { get set }
+    var effectSubject: PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never> { get }
 
     // MARK: - Methods
     func updateSoundEffect(_ effect: SoundEffect)
