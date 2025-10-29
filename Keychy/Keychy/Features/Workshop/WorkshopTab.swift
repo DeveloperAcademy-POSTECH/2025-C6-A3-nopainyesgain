@@ -49,6 +49,10 @@ struct WorkshopTab: View {
                             router: router
                         )
 
+                    // MARK: - TextPhoto
+                    case .TextPhotoPreView:
+                        TextPhotoPreView()
+                    
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
                     }
                 }
