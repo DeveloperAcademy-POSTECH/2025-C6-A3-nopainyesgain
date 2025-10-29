@@ -310,6 +310,23 @@
 			path = Widget;
 			sourceTree = "<group>";
 		};
+		385425C42EB2C49700A06C02 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				38A5967F2EAFCF5F0003D712 /* UserManager.swift */,
+				38C147C62EB1F57F00A8E511 /* StorageManager.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		385425C52EB2C49D00A06C02 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
 		38A596702EAFA8880003D712 /* Intro */ = {
 			isa = PBXGroup;
 			children = (
@@ -431,9 +448,6 @@
 				4CEC62192EAE08DA0099ECEE /* Core */,
 				4CEC62692EAE08DF0099ECEE /* Features */,
 				4CEC62912EAE08F70099ECEE /* Resources */,
-				C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */,
-				38A5967F2EAFCF5F0003D712 /* UserManager.swift */,
-				38C147C62EB1F57F00A8E511 /* StorageManager.swift */,
 			);
 			path = Keychy;
 			sourceTree = "<group>";
@@ -614,6 +628,8 @@
 				4CEC620D2EAE08DA0099ECEE /* Navigation */,
 				4CEC62152EAE08DA0099ECEE /* DesignSystem */,
 				4CEC62182EAE08DA0099ECEE /* Extensions */,
+				385425C42EB2C49700A06C02 /* Firebase */,
+				385425C52EB2C49D00A06C02 /* Store */,
 			);
 			path = Core;
 			sourceTree = "<group>";
