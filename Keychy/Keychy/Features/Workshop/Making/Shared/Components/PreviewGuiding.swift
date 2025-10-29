@@ -10,6 +10,7 @@
 // MARK: - 하지만 사진첩으로 연결 이런 기능이 필요없는 뷰라면 충분히 이걸로 사용해도 될듯.
 
 import SwiftUI
+import NukeUI
 
 struct PreviewGuiding: View {
     @Environment(\.dismiss) var dismiss
@@ -87,12 +88,16 @@ extension PreviewGuiding {
     }
 
     private var guidingImage: some View {
-        AsyncImage(url: URL(string: guidingImageURL)) { image in
-            image
-                .resizable()
-                .scaledToFit()
-        } placeholder: {
-            ProgressView()
+        LazyImage(url: URL(string: guidingImageURL)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            } else if state.isLoading {
+                ProgressView()
+            } else {
+                Color.gray.opacity(0.1)
+            }
         }
         .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 12))

@@ -51,6 +51,8 @@
 		4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */; };
 		4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */; };
 		4CBBEF172EB24DEC00252590 /* AcrylicPhotoGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF162EB24DEC00252590 /* AcrylicPhotoGuiding.swift */; };
+		4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF192EB2565900252590 /* Nuke */; };
+		4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF1B2EB2565900252590 /* NukeUI */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
@@ -289,7 +291,9 @@
 				38A594402EAE4EE20003D712 /* FirebaseCore in Frameworks */,
 				38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */,
 				4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */,
+				4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */,
 				38A594442EAE4EE20003D712 /* FirebaseFirestore in Frameworks */,
+				4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -924,6 +928,8 @@
 				38A594432EAE4EE20003D712 /* FirebaseFirestore */,
 				38A594452EAE4EE20003D712 /* FirebaseMessaging */,
 				38A594472EAE4EE20003D712 /* FirebaseStorage */,
+				4CBBEF192EB2565900252590 /* Nuke */,
+				4CBBEF1B2EB2565900252590 /* NukeUI */,
 			);
 			productName = Keychy;
 			productReference = 4CEC61B12EAE071B0099ECEE /* Keychy.app */;
@@ -956,6 +962,7 @@
 			packageReferences = (
 				4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				38A5943A2EAE4EE20003D712 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4CEC61B22EAE071B0099ECEE /* Products */;
@@ -1345,6 +1352,14 @@
 				minimumVersion = 4.5.2;
 			};
 		};
+		4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1387,6 +1402,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C6621D92EAE0D93001760B5 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		4CBBEF192EB2565900252590 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		4CBBEF1B2EB2565900252590 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CBBEF182EB2565900252590 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
