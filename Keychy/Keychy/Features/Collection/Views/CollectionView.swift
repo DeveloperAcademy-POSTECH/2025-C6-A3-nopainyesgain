@@ -43,8 +43,81 @@ struct CollectionView: View {
             collectionSection
         }
         .padding(Spacing.padding)
+        .onAppear {
+            loadUserKeyrings()
+        }
     }
+    
+    // MARK: - 키링 로드 함수
+    private func loadUserKeyrings() {
+        // UserDefaults에서 uid 가져오기
+        guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+            print("UID를 찾을 수 없습니다")
+            return
+        }
+        
+        print("CollectionView - 키링 로드 시작")
+        
+        collectionViewModel.loadUserKeyrings(uid: uid) { success in
+            if success {
+                print("CollectionView - 키링 로드 완료: \(collectionViewModel.keyring.count)개")
+            } else {
+                print("CollectionView - 키링 로드 실패")
+            }
+        }
+    }
+    
+//    // MARK: - 테스트 키링 생성 함수
+//    private func createTestKeyring() {
+//        guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+//            print("UID를 찾을 수 없습니다")
+//            return
+//        }
+//        
+//        print("테스트 키링 생성 시작")
+//        
+//        // 랜덤 데이터 생성
+//        let randomNames = ["또치", "콩순이", "체리", "파이어워크", "강아지", "고양이", "토끼", "곰돌이"]
+//        let randomTags = ["또치", "tags", "❤️", "강아지", "여행", "냠냠", "콩순이"]
+//        let randomEmojis = ["🎨", "🌟", "💖", "🎵", "🍀", "🌈", "⭐️", "💫"]
+//        let randomImage = ["Cherries", "Bundle", "Widget", "InvenPlus"]
+//        
+//        let randomName = randomNames.randomElement() ?? "테스트"
+//        let randomNumber = Int.random(in: 1...1000)
+//        
+//        let keyringName = "\(randomName) \(randomEmojis.randomElement() ?? "✨") #\(randomNumber)"
+//        
+//        // 임의의 태그 1-3개 선택
+//        let shuffledTags = randomTags.shuffled()
+//        let selectedTags = Array(shuffledTags.prefix(Int.random(in: 1...3)))
+//        let randomBodies = randomImage[Int.random(in: 0...3)]
+//        
+//        collectionViewModel.createKeyring(
+//            uid: uid,
+//            name: keyringName,
+//            bodyImage: randomBodies,
+//            soundId: "fsdlkanv;",
+//            particleId: "ewflkdflkvl",
+//            memo: "테스트로 생성된 키링입니다. \n생성 시간: \(Date().formatted())",
+//            tags: selectedTags,
+//            selectedTemplate: "cnvkla",
+//            selectedRing: "fsdflkdnvls",
+//            selectedChain: "sdfmlksdvlksd",
+//            chainLength: 5
+//        ) { success, keyringId in
+//            
+//            if success {
+//                print("테스트 키링 생성 완료 - ID: \(keyringId ?? "unknown")")
+//                
+//                // 키링 목록 새로고침
+//                loadUserKeyrings()
+//            } else {
+//                print("테스트 키링 생성 실패")
+//            }
+//        }
+//    }
 }
+
 
 // MARK: - Header Section
 extension CollectionView {
@@ -56,7 +129,10 @@ extension CollectionView {
             
             Spacer()
             
-            CircleGlassButton(imageName: "Widget", action: {})
+            CircleGlassButton(imageName: "Widget", action: {
+                //print("테스트 키링 생성")
+                //createTestKeyring()
+            })
                 .padding(.trailing, 10)
             
             CircleGlassButton(imageName: "Bundle", action: {})

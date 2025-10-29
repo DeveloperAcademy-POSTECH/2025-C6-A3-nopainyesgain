@@ -20,6 +20,8 @@
 		38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */; };
 		38C147BD2EB14DFF00A8E511 /* CollectionViewModel+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */; };
 		38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */; };
+		38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */; };
+		38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C62EB1F57F00A8E511 /* StorageManager.swift */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
 		4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */; };
@@ -158,6 +160,8 @@
 		38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleGlassButton.swift; sourceTree = "<group>"; };
 		38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Status.swift"; sourceTree = "<group>"; };
 		38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringDetailView.swift; sourceTree = "<group>"; };
+		38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+LoadData.swift"; sourceTree = "<group>"; };
+		38C147C62EB1F57F00A8E511 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
 		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
 		4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -415,6 +419,7 @@
 				4CEC62912EAE08F70099ECEE /* Resources */,
 				C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */,
 				38A5967F2EAFCF5F0003D712 /* UserManager.swift */,
+				38C147C62EB1F57F00A8E511 /* StorageManager.swift */,
 			);
 			path = Keychy;
 			sourceTree = "<group>";
@@ -611,6 +616,7 @@
 			children = (
 				4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */,
 				38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */,
+				38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */,
 				4CEC62A42EAE0BA30099ECEE /* Bundle */,
 			);
 			path = ViewModels;
@@ -1061,6 +1067,7 @@
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* PreviewImage.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
+				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */,
@@ -1076,6 +1083,7 @@
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */,
+				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import FirebaseFirestore
 
 // TODO: - 바디, 체인, 링타입 추가 필요함
 struct Keyring: Identifiable, Equatable, Hashable {
@@ -29,4 +30,110 @@ struct Keyring: Identifiable, Equatable, Hashable {
     var isPackaged: Bool
     var originalId: String?
     var chainLength: Int
+    
+    // MARK: - Firestore 변환
+    func toDictionary() -> [String: Any] {
+        var dict: [String: Any] = [
+            "name": name,
+            "bodyImage": bodyImage,
+            "soundId": soundId,
+            "particleId": particleId,
+            "tags": tags,
+            "createdAt": Timestamp(date: createdAt),
+            "authorId": authorId,
+            "copyCount": copyCount,
+            "selectedTemplate": selectedTemplate,
+            "selectedRing": selectedRing,
+            "selectedChain": selectedChain,
+            "isEditable": isEditable,
+            "isPackaged": isPackaged,
+            "chainLength": chainLength
+        ]
+        
+        // Optional 필드 처리
+        if let memo = memo {
+            dict["memo"] = memo
+        }
+        if let history = history {
+            dict["history"] = history
+        }
+        if let originalId = originalId {
+            dict["originalId"] = originalId
+        }
+        
+        return dict
+    }
+    
+    // MARK: - Firestore DocumentSnapshot에서 초기화
+    init?(documentId: String, data: [String: Any]) {
+        guard let name = data["name"] as? String,
+              let bodyImage = data["bodyImage"] as? String,
+              let soundId = data["soundId"] as? String,
+              let particleId = data["particleId"] as? String,
+              let tags = data["tags"] as? [String],
+              let timestamp = data["createdAt"] as? Timestamp,
+              let authorId = data["authorId"] as? String,
+              let selectedTemplate = data["selectedTemplate"] as? String,
+              let selectedRing = data["selectedRing"] as? String,
+              let selectedChain = data["selectedChain"] as? String else {
+            return nil
+        }
+        
+        // 기본값이 있는 필드들
+        self.name = name
+        self.bodyImage = bodyImage
+        self.soundId = soundId
+        self.particleId = particleId
+        self.tags = tags
+        self.createdAt = timestamp.dateValue()
+        self.authorId = authorId
+        self.selectedTemplate = selectedTemplate
+        self.selectedRing = selectedRing
+        self.selectedChain = selectedChain
+        
+        // 기본값 제공 필드
+        self.copyCount = data["copyCount"] as? Int ?? 0
+        self.isEditable = data["isEditable"] as? Bool ?? true
+        self.isPackaged = data["isPackaged"] as? Bool ?? false
+        self.chainLength = data["chainLength"] as? Int ?? 5
+        
+        // Optional 필드
+        self.memo = data["memo"] as? String
+        self.history = data["history"] as? [String]
+        self.originalId = data["originalId"] as? String
+    }
+    
+    // MARK: - 일반 초기화 (새 키링 생성용)
+    init(name: String,
+         bodyImage: String,
+         soundId: String,
+         particleId: String,
+         memo: String? = nil,
+         tags: [String],
+         createdAt: Date,
+         authorId: String,
+         selectedTemplate: String,
+         selectedRing: String,
+         selectedChain: String,
+         originalId: String? = nil,
+         chainLength: Int
+    ) {
+        self.name = name
+        self.bodyImage = bodyImage
+        self.soundId = soundId
+        self.particleId = particleId
+        self.memo = memo
+        self.tags = tags
+        self.createdAt = createdAt
+        self.authorId = authorId
+        self.copyCount = 0
+        self.history = []
+        self.selectedTemplate = selectedTemplate
+        self.selectedRing = selectedRing
+        self.selectedChain = selectedChain
+        self.isEditable = true
+        self.isPackaged = false
+        self.originalId = originalId
+        self.chainLength = chainLength
+    }
 }
