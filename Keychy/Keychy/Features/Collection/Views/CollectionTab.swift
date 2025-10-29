@@ -12,9 +12,13 @@ struct CollectionTab: View {
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            CollectionView(router: router)
+            CollectionView(router: router, collectionViewModel: CollectionViewModel())
                 .navigationDestination(for: CollectionRoute.self) { route in
-                    // 나중에 추가
+                    switch route {
+                        
+                    case .collectionKeyringDetailView:
+                        CollectionKeyringDetailView()
+                    }
                 }
         }
     }

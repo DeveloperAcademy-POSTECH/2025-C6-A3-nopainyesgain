@@ -7,5 +7,8 @@
 
 /// 보관함 탭
 enum CollectionRoute: Hashable {
-    // 나중에 추가
+
+    // 키링 상세보기
+    case collectionKeyringDetailView
+    //case bundleInventoryView
 }
