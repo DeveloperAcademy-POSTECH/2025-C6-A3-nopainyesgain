@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestore
+import NukeUI
 
 enum FilterType: String, CaseIterable {
     case image = "이미지"
@@ -496,16 +497,27 @@ struct OwnedTemplateCard: View {
     var body: some View {
         VStack(spacing: 8) {
             // 썸네일 이미지
-            AsyncImage(url: URL(string: template.thumbnailURL)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Color.gray.opacity(0.3)
-                    .overlay {
-                        ProgressView()
-                    }
+            LazyImage(url: URL(string: template.thumbnailURL)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
+                    ProgressView()
+                } else {
+                    Color.gray.opacity(0.1)
+                }
             }
+//            AsyncImage(url: URL(string: template.thumbnailURL)) { image in
+//                image
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fill)
+//            } placeholder: {
+//                Color.gray.opacity(0.3)
+//                    .overlay {
+//                        ProgressView()
+//                    }
+//            }
             .frame(width: 80, height: 80)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             
