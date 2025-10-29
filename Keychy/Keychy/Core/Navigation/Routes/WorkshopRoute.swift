@@ -15,6 +15,7 @@ enum WorkshopRoute: Hashable {
     case acrylicPhotoCustomizing
     case acrylicPhotoInfoInput
     case acrylicPhotoComplete
+    case coinCharge
 
     // MARK: - 새로운 템플릿의 루트는 이렇게 추가해주면 됩니다. (예정)
     // case hkPreview

@@ -6,96 +6,598 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
+
+enum FilterType: String, CaseIterable {
+    case image = "이미지"
+    case text = "텍스트"
+    case drawing = "드로잉"
+}
 
 struct WorkshopView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Environment(UserManager.self) private var userManager  // UserManager 추가
+    
+    private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
+    @State private var selectedCategory: String = "KEYCHY!"
+    @State private var selectedFilter: FilterType? = nil
+    @State private var sortOrder: String = "최신순"
+    @State private var showFilterSheet: Bool = false
+    @State private var mainContentOffset: CGFloat = 0
+    
+    // Firebase 데이터 관련 상태 변수
+    @State private var templates: [KeyringTemplate] = []
+    @State private var isLoadingTemplates: Bool = false
+    @State private var errorMessage: String? = nil
+    
+    // 보유한 템플릿 목록
+    @State private var ownedTemplates: [KeyringTemplate] = []
     
     var body: some View {
-        VStack {
-            headerSection
-            templateSection
-            Spacer()
-        }
-        .padding(12)
-    }
-}
-
-// MARK: - Header Section
-extension WorkshopView {
-    private var headerSection: some View {
-        HStack(spacing: 0) {
-            Text("키링 공방")
-                .font(.title2)
-                .bold()
-            Spacer()
-            
-            Image("Cherries")
-                .padding(.trailing, 7)
-            
-            Text("300")
-                .foregroundStyle(Color(#colorLiteral(red: 0.9998622537, green: 0.1881143153, blue: 0.3372095823, alpha: 1)))
-                .bold()
-        }
-    }
-}
-
-// MARK: - Template Section
-extension WorkshopView {
-    private var templateSection: some View {
-        VStack(spacing: 0) {
-            templateHeader
-            templateScrollView
-        }
-        .padding(.top, 18)
-    }
-    
-    private var templateHeader: some View {
-        HStack(spacing: 0) {
-            Text("내 보유 키링")
-                .font(.headline)
-                .bold()
-            Spacer()
-            
-            viewAllButton
-        }
-    }
-    
-    private var viewAllButton: some View {
-        Button("모두 보기") {
-                
-        }
-        .font(.subheadline)
-        .tint(.black)
-    }
-    
-    private var templateScrollView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(0..<1, id: \.self) { index in
-                    templateButton
+        ZStack(alignment: .top) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    topBannerSection
+                        .frame(height: 150)
+                    
+                    Spacer()
+                        .frame(height:20)
+                    
+                    myCollectionSection
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 16)
+                    
+                    VStack {
+                        mainContentSection
+                            .background(
+                                GeometryReader { geo in
+                                    Color.clear
+                                        .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
+                                            mainContentOffset = newValue
+                                        }
+                                }
+                            )
+                    }
+                    .background(Color(UIColor.systemBackground))
+                }
+                .padding(.top, 80)
+                .background(alignment: .top){
+                    Image("WorkshopBack")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                 }
             }
-            .padding(12)
+            
+            topTitleBar
+            
+            stickyHeaderSection
+                .background(Color(UIColor.systemBackground))
+                .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
+                .offset(y: max(120, min(730, mainContentOffset - 20)))
+        }
+        .ignoresSafeArea()
+        .sheet(isPresented: $showFilterSheet) {
+            sortSheet
+        }
+        .task {
+            // View가 나타날 때 템플릿 목록 가져오기
+            await fetchTemplates()
+            await loadOwnedTemplates()
         }
     }
     
-    private var templateButton: some View {
-        Button(action: {
-            router.push(.acrylicPhotoPreview)
-        }) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 7)
-                    .fill(.white)
-                    .stroke(.gray, lineWidth: 1)
-                    .frame(width: 91, height: 123)
-                
-                Image("ddochi")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight:100)
+    // MARK: - Firebase Methods
+    
+    /// Firestore에서 템플릿 목록 가져오기
+    private func fetchTemplates() async {
+        isLoadingTemplates = true
+        errorMessage = nil
+        
+        defer { isLoadingTemplates = false }
+        
+        do {
+            let snapshot = try await Firestore.firestore()
+                .collection("Template")
+                .whereField("isActive", isEqualTo: true)  // 활성화된 템플릿만
+                .getDocuments()
+            
+            templates = try snapshot.documents.compactMap { document in
+                try document.data(as: KeyringTemplate.self)
+            }
+            
+            // 정렬 적용
+            applySorting()
+            
+        } catch {
+            errorMessage = "템플릿 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
+            print("Error fetching templates: \(error)")
+        }
+    }
+    
+    /// 현재 선택된 정렬 기준 적용
+    private func applySorting() {
+        switch sortOrder {
+        case "최신순":
+            templates.sort { $0.createdAt > $1.createdAt }
+        case "인기순":
+            templates.sort { $0.downloadCount > $1.downloadCount }
+        default:
+            break
+        }
+    }
+    
+    /// 필터링된 템플릿 목록 반환
+    private var filteredTemplates: [KeyringTemplate] {
+        var result = templates
+        
+        // 필터 타입 적용
+        if let filter = selectedFilter {
+            switch filter {
+            case .image:
+                result = result.filter { $0.tags.contains("이미지형") }
+            case .text:
+                result = result.filter { $0.tags.contains("텍스트형") }
+            case .drawing:
+                result = result.filter { $0.tags.contains("드로잉형") }
             }
         }
-        .buttonStyle(PlainButtonStyle())
+        
+        return result
+    }
+    
+    /// 사용자가 보유한 템플릿 목록 로드
+    private func loadOwnedTemplates() async {
+        guard let user = userManager.currentUser else {
+            print("⚠️ User not logged in")
+            return
+        }
+        
+        // 사용자의 templates 배열에서 ID 가져오기
+        let ownedTemplateIds = user.templates
+        
+        guard !ownedTemplateIds.isEmpty else {
+            print("📦 No owned templates")
+            ownedTemplates = []
+            return
+        }
+        
+        do {
+            // Firestore에서 보유한 템플릿 정보 가져오기
+            let snapshot = try await Firestore.firestore()
+                .collection("Template")
+                .whereField(FieldPath.documentID(), in: ownedTemplateIds)
+                .getDocuments()
+            
+            ownedTemplates = try snapshot.documents.compactMap { document in
+                try document.data(as: KeyringTemplate.self)
+            }
+            
+            print("✅ Loaded \(ownedTemplates.count) owned templates")
+        } catch {
+            print("❌ Failed to load owned templates: \(error)")
+        }
+    }
+    
+    /// 특정 템플릿을 보유하고 있는지 확인
+    private func isTemplateOwned(_ template: KeyringTemplate) -> Bool {
+        guard let templateId = template.id else { return false }
+        return userManager.currentUser?.templates.contains(templateId) ?? false
+    }
+}
+
+// MARK: - 상단 배너
+extension WorkshopView {
+    /// 상단 배너 영역 - 코인 버튼과 제목 표시
+    private var topBannerSection: some View {
+        VStack {
+            HStack {
+                Spacer()
+                coinButton
+            }
+            
+            Spacer()
+            
+            titleView
+        }
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+    }
+    
+    /// 상단 고정 타이틀바 - 스크롤 시 나타남
+    private var topTitleBar: some View {
+        HStack {
+            titleView
+            Spacer()
+            coinButton
+        }
+        .padding(.top, 70)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 24)
+        .background(Color(UIColor.systemBackground))
+        .opacity(mainContentOffset - 80 < 70 ? 1 : 0)
+        .animation(.easeInOut(duration: 0.25), value: mainContentOffset)
+    }
+    
+    /// 공방 타이틀 뷰
+    private var titleView: some View {
+        Text("공방")
+            .font(.largeTitle.bold())
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    /// 코인 충전 버튼 - 현재 보유 코인과 충전 화면으로 이동
+    private var coinButton: some View {
+        Button {
+            router.push(.coinCharge)
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "leaf.fill")
+                    .foregroundStyle(.pink)
+                Text("1,800")
+                    .foregroundStyle(.primary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color.secondary.opacity(0.1))
+            .clipShape(Capsule())
+        }
+    }
+}
+
+// MARK: - 고정 헤더
+extension WorkshopView {
+    /// 상단 고정 헤더 - 탭바와 필터바 포함
+    private var stickyHeaderSection: some View {
+        VStack(spacing: 0) {
+            CategoryTabBar(
+                categories: categories,
+                selectedCategory: $selectedCategory
+            )
+            .padding(.top, 12)
+            
+            filterBar
+        }
+        .padding(.horizontal, 20)
+    }
+    
+    /// 필터바 - 정렬 및 타입 필터 (이미지, 텍스트, 드로잉)
+    private var filterBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                FilterChip(
+                    title: sortOrder,
+                    isSelected: true,
+                    hasDropdown: true
+                ) {
+                    showFilterSheet = true
+                }
+                
+                ForEach(FilterType.allCases, id: \.self) { filter in
+                    FilterChip(
+                        title: filter.rawValue,
+                        isSelected: selectedFilter == filter
+                    ) {
+                        if selectedFilter == filter {
+                            selectedFilter = nil
+                        } else {
+                            selectedFilter = filter
+                        }
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 12)
+    }
+}
+
+// MARK: - 메인 콘텐츠
+extension WorkshopView {
+    /// 내 창고 섹션 - 보유한 템플릿 카드 표시
+    private var myCollectionSection: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Button("내 창고 >") {
+                    // Action
+                }
+                .font(.subheadline)
+                .foregroundStyle(.black)
+                
+                Spacer()
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    if ownedTemplates.isEmpty {
+                        // 보유한 템플릿이 없을 때
+                        VStack(spacing: 8) {
+                            Image(systemName: "tray")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            Text("보유한 템플릿이 없습니다")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(width: 120, height: 100)
+                    } else {
+                        // 보유한 템플릿 표시
+                        ForEach(ownedTemplates) { template in
+                            OwnedTemplateCard(template: template)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(.bottom, 12)
+    }
+    
+    /// 메인 그리드 - Firestore에서 가져온 템플릿 목록 표시
+    private var mainContentSection: some View {
+        VStack {
+            if isLoadingTemplates {
+                // 로딩 중
+                ProgressView("템플릿을 불러오는 중...")
+                    .padding(.top, 100)
+            } else if let errorMessage = errorMessage {
+                // 에러 발생
+                VStack(spacing: 16) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 50))
+                        .foregroundStyle(.secondary)
+                    
+                    Text(errorMessage)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    
+                    Button("다시 시도") {
+                        Task {
+                            await fetchTemplates()
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .padding(.top, 100)
+            } else if filteredTemplates.isEmpty {
+                // 템플릿이 없을 때
+                VStack(spacing: 16) {
+                    Image(systemName: "tray")
+                        .font(.system(size: 50))
+                        .foregroundStyle(.secondary)
+                    
+                    Text("표시할 템플릿이 없습니다")
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.top, 100)
+            } else {
+                // 템플릿 그리드
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(filteredTemplates) { template in
+                        KeychainItem(
+                            template: template,
+                            category: selectedCategory,
+                            isOwned: isTemplateOwned(template), router: router
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 100)
+            }
+        }
+    }
+    
+    /// 정렬 선택 시트 - 최신순/인기순 선택
+    private var sortSheet: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    showFilterSheet = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(.primary)
+                }
+                
+                Spacer()
+                
+                Text("정렬 기준")
+                    .font(.headline)
+                
+                Spacer()
+                
+                Color.clear
+                    .frame(width: 24)
+            }
+            .padding()
+            
+            Divider()
+            
+            VStack(spacing: 0) {
+                ForEach(["최신순", "인기순"], id: \.self) { sort in
+                    SortOption(title: sort, isSelected: sortOrder == sort) {
+                        sortOrder = sort
+                        applySorting()
+                        showFilterSheet = false
+                    }
+                }
+            }
+            
+            Spacer()
+        }
+        .presentationDetents([.height(200)])
+    }
+}
+
+// MARK: - 보조 뷰
+
+/// 필터 칩 - 정렬 및 필터 옵션 선택용 캡슐 버튼
+struct FilterChip: View {
+    let title: String
+    let isSelected: Bool
+    var hasDropdown: Bool = false
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                if hasDropdown {
+                    Image(systemName: "chevron.down")
+                        .font(.caption)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(isSelected ? Color.primary : Color.secondary.opacity(0.2))
+            .foregroundStyle(isSelected ? Color(UIColor.systemBackground) : .primary)
+            .clipShape(Capsule())
+        }
+    }
+}
+
+/// 정렬 옵션 - 시트 내부의 정렬 선택 항목
+struct SortOption: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .foregroundStyle(.primary)
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(.pink)
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+/// 템플릿 카드 - 내 창고에 표시되는 보유 아이템 카드
+struct TemplateCard: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.secondary.opacity(0.1))
+                .frame(width: 80, height: 80)
+            
+            Text("Lable")
+                .font(.caption)
+        }
+        .padding(8)
+    }
+}
+
+/// 보유한 템플릿 카드 - 실제 템플릿 데이터를 표시
+struct OwnedTemplateCard: View {
+    let template: KeyringTemplate
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            // 썸네일 이미지
+            AsyncImage(url: URL(string: template.thumbnailURL)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Color.gray.opacity(0.3)
+                    .overlay {
+                        ProgressView()
+                    }
+            }
+            .frame(width: 80, height: 80)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // 템플릿 이름
+            Text(template.templateName)
+                .font(.caption)
+                .lineLimit(1)
+        }
+        .padding(8)
+    }
+}
+
+/// 키체인 아이템 - 공방의 메인 그리드에 표시되는 상품 카드
+struct KeychainItem: View {
+    let template: KeyringTemplate
+    let category: String
+    var isOwned: Bool = false  // 보유 여부
+    @Bindable var router: NavigationRouter<WorkshopRoute>  // 🆕 추가
+    
+    var body: some View {
+        Button {
+            router.push(.acrylicPhotoPreview)
+        } label: {
+            VStack(spacing: 8) {
+                ZStack(alignment: .topLeading) {
+                    // 썸네일 이미지
+                    AsyncImage(url: URL(string: template.thumbnailURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            Color.gray.opacity(0.3)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .failure:
+                            Color.gray.opacity(0.3)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.secondary)
+                                }
+                        @unknown default:
+                            Color.gray.opacity(0.3)
+                        }
+                    }
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    
+                    // 오버레이: 무료/가격 또는 보유 표시
+                    VStack {
+                        HStack {
+                            if isOwned {
+                                // 보유 표시
+                                Text("보유")
+                                    .font(.caption)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.green)
+                                    .clipShape(Capsule())
+                                    .padding(8)
+                            } else if !template.isFree {
+                                // 가격 표시
+                                HStack(spacing: 4) {
+                                    Image(systemName: "leaf.fill")
+                                        .foregroundStyle(.pink)
+                                    Text("\(template.price ?? 0)")
+                                        .foregroundStyle(.primary)
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Capsule())
+                                .padding(8)
+                            }
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                }
+                
+                // 템플릿 이름
+                Text(template.templateName)
+                    .font(.subheadline)
+                    .lineLimit(1)
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 
