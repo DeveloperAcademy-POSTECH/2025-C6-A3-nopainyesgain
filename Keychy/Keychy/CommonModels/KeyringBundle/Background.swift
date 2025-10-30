@@ -16,7 +16,10 @@ struct Background: Identifiable, Codable, Equatable, Hashable {
     
     /// 배경 이름
     let backgroundName: String
-    
+
+    /// 배경 설명
+    let description: String
+
     /// 배경 이미지 URL (썸네일 공통)
     let backgroundImage: String
     
