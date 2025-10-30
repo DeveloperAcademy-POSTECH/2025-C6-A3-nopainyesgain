@@ -29,7 +29,6 @@ struct WorkshopView: View {
         ZStack(alignment: .top) {
             // 메인 스크롤 콘텐츠
             mainScrollContent
-                .scrollBounceBehavior(.basedOnSize)
             
             // 스크롤 시 나타나는 상단 타이틀 바
             topTitleBar
@@ -93,7 +92,6 @@ struct WorkshopView: View {
                     .aspectRatio(contentMode: .fit)
             }
         }
-        .scrollBounceBehavior(.basedOnSize)
     }
 }
 
@@ -128,7 +126,7 @@ extension WorkshopView {
         .padding(.bottom, 24)
         .background(Color(UIColor.systemBackground))
         .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
-        .animation(.easeInOut(duration: 0.25), value: viewModel.mainContentOffset)
+//        .animation(.easeInOut(duration: 0.2), value: viewModel.mainContentOffset)
     }
     
     /// 타이틀 텍스트
