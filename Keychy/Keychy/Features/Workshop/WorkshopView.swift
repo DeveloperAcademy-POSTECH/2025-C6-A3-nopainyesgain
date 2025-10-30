@@ -34,7 +34,7 @@ struct WorkshopView: View {
             topTitleBar
             
             // 스티키 헤더 (카테고리 탭 + 필터)
-            stickyHeader
+            stickyHeaderSection
         }
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.showFilterSheet) {
@@ -88,14 +88,6 @@ struct WorkshopView: View {
                     .aspectRatio(contentMode: .fit)
             }
         }
-    }
-    
-    /// 스티키 헤더 (카테고리 + 필터)
-    private var stickyHeader: some View {
-        stickyHeaderSection
-            .background(Color(UIColor.systemBackground))
-            .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
-            .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
 }
 
@@ -174,33 +166,52 @@ extension WorkshopView {
                 categories: categories,
                 selectedCategory: $viewModel.selectedCategory
             )
-            .padding(.top, 12)
+            .padding(.top, 16)
             
             // 필터바
             filterBar
         }
         .padding(.horizontal, 20)
+        .background(Color(UIColor.systemBackground))
+        .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
+        .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
+
     
+    /// 카테고리에 따라 다른 필터바 표시
     /// 카테고리에 따라 다른 필터바 표시
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                // 정렬 필터 (공통)
-                FilterChip(
-                    title: viewModel.sortOrder,
-                    isSelected: true,
-                    hasDropdown: true
-                ) {
+                // 정렬 버튼
+                Button(action: {
                     viewModel.showFilterSheet = true
+                }) {
+                    HStack(spacing: 4) {
+                        Text(viewModel.sortOrder)
+                            .typography(.suit14SB18)
+                            .foregroundColor(.white100)
+                        
+                        Image("ChevronDown")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(.black70)
+                    )
                 }
+                .buttonStyle(.plain)
                 
                 // 카테고리별 필터
                 categorySpecificFilters
             }
+            .padding(.top, 12)
         }
-        .padding(.vertical, 12)
     }
+
     
     /// 카테고리별 필터 옵션
     private var categorySpecificFilters: some View {
@@ -246,7 +257,7 @@ extension WorkshopView {
             // 헤더
             HStack {
                 Button("내 창고 >") {
-                    router.push(.myTemplate)
+                    router.push(.myItems)
                 }
                 .typography(.suit16B)
                 .foregroundColor(.black.opacity(0.7))
@@ -475,23 +486,18 @@ extension WorkshopView {
 struct FilterChip: View {
     let title: String
     let isSelected: Bool
-    var hasDropdown: Bool = false
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: 4) {
                 Text(title)
-                    .font(.subheadline)
-                if hasDropdown {
-                    Image(systemName: "chevron.down")
-                        .font(.caption)
-                }
+                    .typography(.suit14M)
+                    .foregroundColor(isSelected ? Color(.systemBackground) : .gray500)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(isSelected ? Color.primary : Color.secondary.opacity(0.2))
-            .foregroundStyle(isSelected ? Color(UIColor.systemBackground) : .primary)
+            .background(isSelected ? Color.primary : Color.gray50)
             .clipShape(Capsule())
         }
     }
