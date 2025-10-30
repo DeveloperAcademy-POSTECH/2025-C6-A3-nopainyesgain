@@ -21,11 +21,7 @@ enum EffectFilterType: String, CaseIterable {
     case particle = "파티클"
 }
 
-enum CommonFilterType: String, CaseIterable {
-    case cute = "귀여움"
-    case simple = "심플"
-    case nature = "자연"
-}
+// CommonFilterType은 더 이상 사용하지 않음 - 동적 태그로 대체
 
 // MARK: - WorkshopItem Protocol
 
@@ -86,11 +82,15 @@ class WorkshopViewModel {
     // MARK: - Published Properties
     var selectedCategory: String = "키링"
     var selectedTemplateFilter: TemplateFilterType? = nil
-    var selectedCommonFilter: CommonFilterType? = nil
+    var selectedCommonFilter: String? = nil
     var selectedEffectFilter: EffectFilterType? = nil
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
     var mainContentOffset: CGFloat = 0
+
+    // 동적으로 추출된 태그 목록
+    var availableBackgroundTags: [String] = []
+    var availableCarabinerTags: [String] = []
     
     // Firebase 데이터 관련 상태 변수
     var templates: [KeyringTemplate] = []
@@ -121,14 +121,28 @@ class WorkshopViewModel {
     func fetchAllData() async {
         isLoading = true
         errorMessage = nil
-        
+
         defer { isLoading = false }
-        
+
         templates = await fetchItems(collection: "Template")
         backgrounds = await fetchItems(collection: "Background")
         carabiners = await fetchItems(collection: "Carabiner")
         particles = await fetchItems(collection: "Particle")
         sounds = await fetchItems(collection: "Sound")
+
+        // 데이터를 가져온 후 사용 가능한 태그 추출
+        extractAvailableTags()
+    }
+
+    /// 배경과 카라비너에서 사용 가능한 태그를 추출
+    private func extractAvailableTags() {
+        // 배경 태그 추출
+        let backgroundTagSet = Set(backgrounds.flatMap { $0.tags })
+        availableBackgroundTags = Array(backgroundTagSet).sorted()
+
+        // 카라비너 태그 추출
+        let carabinerTagSet = Set(carabiners.flatMap { $0.tags })
+        availableCarabinerTags = Array(carabinerTagSet).sorted()
     }
     
     /// 통합된 아이템 가져오기 함수
@@ -184,13 +198,13 @@ class WorkshopViewModel {
     // MARK: - Filtering Methods (통합)
     
     /// 통합 필터링 함수
-    private func filterItems<T: WorkshopItem>(_ items: [T], commonFilter: CommonFilterType?) -> [T] {
+    private func filterItems<T: WorkshopItem>(_ items: [T], commonFilter: String?) -> [T] {
         var result = items
-        
+
         if let filter = commonFilter {
-            result = result.filter { $0.tags.contains(filter.rawValue) }
+            result = result.filter { $0.tags.contains(filter) }
         }
-        
+
         return result
     }
     

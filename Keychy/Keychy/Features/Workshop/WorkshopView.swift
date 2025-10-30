@@ -240,15 +240,27 @@ extension WorkshopView {
                     }
                 }
                 
-            case "카라비너", "배경":
-                // 공통 필터 (귀여움, 심플, 자연)
-                ForEach(CommonFilterType.allCases, id: \.self) { filter in
+            case "카라비너":
+                // 카라비너 태그 (동적으로 로드)
+                ForEach(viewModel.availableCarabinerTags, id: \.self) { tag in
                     FilterChip(
-                        title: filter.rawValue,
-                        isSelected: viewModel.selectedCommonFilter == filter
+                        title: tag,
+                        isSelected: viewModel.selectedCommonFilter == tag
                     ) {
                         viewModel.selectedCommonFilter =
-                            viewModel.selectedCommonFilter == filter ? nil : filter
+                            viewModel.selectedCommonFilter == tag ? nil : tag
+                    }
+                }
+
+            case "배경":
+                // 배경 태그 (동적으로 로드)
+                ForEach(viewModel.availableBackgroundTags, id: \.self) { tag in
+                    FilterChip(
+                        title: tag,
+                        isSelected: viewModel.selectedCommonFilter == tag
+                    ) {
+                        viewModel.selectedCommonFilter =
+                            viewModel.selectedCommonFilter == tag ? nil : tag
                     }
                 }
                 
