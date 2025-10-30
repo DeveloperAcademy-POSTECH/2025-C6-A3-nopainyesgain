@@ -38,5 +38,21 @@ struct CarabinerItemTile: View {
 }
 
 #Preview {
-    CarabinerItemTile(isSelected: true, carabiner: Carabiner(carabinerName: "카라비너", carabinerId: "123", carabinerImage: "ddochi", description: "des", maxKeyringCount: 1, tags: ["tags"], price: 1, downloadCount: 1, useCount: 1, createdAt: Date(), keyringXPosition: [], keyringYPosition: []))
+    CarabinerItemTile(
+        isSelected: true,
+        carabiner: Carabiner(
+            id: "PreviewCarabiner",
+            carabinerName: "카라비너",
+            carabinerImage: "ddochi",
+            description: "des",
+            maxKeyringCount: 1,
+            tags: ["tags"],
+            price: 1,
+            downloadCount: 1,
+            useCount: 1,
+            createdAt: Date(),
+            keyringXPosition: [0.5],
+            keyringYPosition: [0.3]
+        )
+    )
 }
