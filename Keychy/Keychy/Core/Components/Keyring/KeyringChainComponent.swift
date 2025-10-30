@@ -79,8 +79,10 @@ struct KeyringChainComponent {
         node.position = position
         node.zPosition = (index % 2 == 0) ? 1 : 0 // 짝수번째 노드가 위에 보이도록
         
-        // 물리 바디 추가
+        // 물리 바디 추가 (기본값으로 설정, 씬에서 조정됨)
         let physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: link.width - 4, height: link.height - 4))
+        physicsBody.isDynamic = true  // 기본값은 움직이게 설정, 나중에 씬에서 조정
+        physicsBody.affectedByGravity = true  // 기본값은 중력 적용, 나중에 씬에서 조정
         physicsBody.mass = 2.0
         physicsBody.friction = 0.4
         physicsBody.restitution = 0.3
