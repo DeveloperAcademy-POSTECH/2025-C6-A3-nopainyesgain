@@ -31,19 +31,19 @@ struct Typography {
     /// 16
     static let suit16B = Typography(font: .custom(.suitBold, size: 16), lineSpacing: 0)
     static let suit16M = Typography(font: .custom(.suitMedium, size: 16), lineSpacing: 0)
-    static let suit16M25 = Typography(font: .custom(.suitMedium, size: 16), lineSpacing: 2.5)
+    static let suit16M25 = Typography(font: .custom(.suitMedium, size: 16), lineSpacing: 9)
 
     /// 15
-    static let suit15B25 = Typography(font: .custom(.suitBold, size: 15), lineSpacing: 2.5)
-    static let suit15SB25 = Typography(font: .custom(.suitSemiBold, size: 15), lineSpacing: 2.5)
-    static let suit15M25 = Typography(font: .custom(.suitMedium, size: 15), lineSpacing: 2.5)
+    static let suit15B25 = Typography(font: .custom(.suitBold, size: 15), lineSpacing: 10)
+    static let suit15SB25 = Typography(font: .custom(.suitSemiBold, size: 15), lineSpacing: 10)
+    static let suit15M25 = Typography(font: .custom(.suitMedium, size: 15), lineSpacing: 10)
     static let suit15R = Typography(font: .custom(.suitRegular, size: 15), lineSpacing: 0)
 
     /// 14
-    static let suit14EB25 = Typography(font: .custom(.suitExtraBold, size: 14), lineSpacing: 2.5)
-    static let suit14SB18 = Typography(font: .custom(.suitSemiBold, size: 14), lineSpacing: 1.8)
+    static let suit14EB25 = Typography(font: .custom(.suitExtraBold, size: 14), lineSpacing: 11)
+    static let suit14SB18 = Typography(font: .custom(.suitSemiBold, size: 14), lineSpacing: 4)
     static let suit14M = Typography(font: .custom(.suitMedium, size: 14), lineSpacing: 0)
-    static let suit14R18 = Typography(font: .custom(.suitRegular, size: 14), lineSpacing: 1.8)
+    static let suit14R18 = Typography(font: .custom(.suitRegular, size: 14), lineSpacing: 4)
 
     /// 13
     static let suit13SB = Typography(font: .custom(.suitSemiBold, size: 13), lineSpacing: 0)
@@ -51,16 +51,16 @@ struct Typography {
 
     /// 12
     static let suit12M = Typography(font: .custom(.suitMedium, size: 12), lineSpacing: 0)
-    static let suit12R25 = Typography(font: .custom(.suitRegular, size: 12), lineSpacing: 2.5)
+    static let suit12R25 = Typography(font: .custom(.suitRegular, size: 12), lineSpacing: 13)
 
     // MARK: - Nanum
     static let nanum18B = Typography(font: .custom(.nanumExtraBold, size: 18), lineSpacing: 0)
     static let nanum16EB = Typography(font: .custom(.nanumExtraBold, size: 16), lineSpacing: 0)
 
-    static let nanum15EB25 = Typography(font: .custom(.nanumExtraBold, size: 15), lineSpacing: 2.5)
-    static let nanum15B25 = Typography(font: .custom(.nanumBold, size: 15), lineSpacing: 2.5)
+    static let nanum15EB25 = Typography(font: .custom(.nanumExtraBold, size: 15), lineSpacing: 10)
+    static let nanum15B25 = Typography(font: .custom(.nanumBold, size: 15), lineSpacing: 10)
 
-    static let nanum14EB18 = Typography(font: .custom(.nanumExtraBold, size: 14), lineSpacing: 1.8)
+    static let nanum14EB18 = Typography(font: .custom(.nanumExtraBold, size: 14), lineSpacing: 4)
 }
 
 // MARK: - View Extension
