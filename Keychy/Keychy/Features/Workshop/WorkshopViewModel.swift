@@ -28,6 +28,7 @@ enum CommonFilterType: String, CaseIterable {
 protocol WorkshopItem: Identifiable, Decodable {
     var id: String? { get }
     var name: String { get }
+    var itemDescription: String { get }
     var thumbnailURL: String { get }
     var isFree: Bool { get }
     var workshopPrice: Int { get }
@@ -40,29 +41,34 @@ protocol WorkshopItem: Identifiable, Decodable {
 
 extension KeyringTemplate: WorkshopItem {
     var name: String { templateName }
+    var itemDescription: String { description }
     var workshopPrice: Int { price ?? 0 }
 }
 
 extension Background: WorkshopItem {
     var name: String { backgroundName }
+    var itemDescription: String { description }
     var thumbnailURL: String { backgroundImage }
     var workshopPrice: Int { price }
 }
 
 extension Carabiner: WorkshopItem {
     var name: String { carabinerName }
+    var itemDescription: String { description }
     var thumbnailURL: String { carabinerImage }
     var workshopPrice: Int { price }
 }
 
 extension Particle: WorkshopItem {
     var name: String { particleName }
+    var itemDescription: String { description }
     var thumbnailURL: String { thumbnail }
     var workshopPrice: Int { price }
 }
 
 extension Sound: WorkshopItem {
     var name: String { soundName }
+    var itemDescription: String { description }
     var thumbnailURL: String { thumbnail }
     var workshopPrice: Int { price }
 }

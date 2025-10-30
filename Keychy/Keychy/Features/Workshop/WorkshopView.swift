@@ -41,7 +41,6 @@ struct WorkshopView: View {
             sortSheet
         }
         .task {
-            // Environment의 실제 UserManager로 ViewModel 교체
             viewModel = WorkshopViewModel(userManager: userManager)
             await viewModel.fetchAllData()
             await viewModel.loadOwnedItems()

@@ -68,6 +68,7 @@ class CollectionViewModel {
         Background(
             id: "12347",
             backgroundName: "기본 배경 A",
+            description: "무료로 제공되는 기본 배경화면",
             backgroundImage: "ddochi",
             tags: ["tag1"],
             price: 0,
@@ -78,6 +79,7 @@ class CollectionViewModel {
         Background(
             id: "12346",
             backgroundName: "기본 배경 B",
+            description: "심플하고 깔끔한 기본 배경",
             backgroundImage: "Cherries",
             tags: ["tag1"],
             price: 0,
@@ -88,6 +90,7 @@ class CollectionViewModel {
         Background(
             id: "12341",
             backgroundName: "유료 배경 A",
+            description: "화려한 프리미엄 배경화면",
             backgroundImage: "fireworks",
             tags: ["tag1"],
             price: 100,
@@ -98,6 +101,7 @@ class CollectionViewModel {
         Background(
             id: "12342",
             backgroundName: "유료 배경 B",
+            description: "특별한 프리미엄 테마 배경",
             backgroundImage: "ddochi",
             tags: ["tag1"],
             price: 100,
@@ -112,9 +116,9 @@ class CollectionViewModel {
     var carabiners: [Carabiner] = [
         Carabiner(
             id: "12343",
-            carabinerName: "카라비너 이름",
+            carabinerName: "카라비너 A",
             carabinerImage: "ddochi",
-            description: "",
+            description: "기본 스타일의 실버 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
             price: 0,
@@ -126,9 +130,9 @@ class CollectionViewModel {
         ),
         Carabiner(
             id: "12344",
-            carabinerName: "카라비너 이름",
+            carabinerName: "카라비너 B",
             carabinerImage: "ddochi",
-            description: "",
+            description: "세련된 골드 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
             price: 0,
@@ -140,9 +144,9 @@ class CollectionViewModel {
         ),
         Carabiner(
             id: "12345",
-            carabinerName: "카라비너 이름",
+            carabinerName: "카라비너 C",
             carabinerImage: "ddochi",
-            description: "",
+            description: "모던한 블랙 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
             price: 0,
