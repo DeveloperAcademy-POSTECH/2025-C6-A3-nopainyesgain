@@ -93,7 +93,7 @@ class KeyringScene: SKScene {
 
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
-        backgroundColor = .lightGray
+        backgroundColor = .gray50
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
         setupKeyring()

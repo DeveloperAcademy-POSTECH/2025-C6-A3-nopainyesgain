@@ -23,7 +23,18 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var template: KeyringTemplate?
     var isLoadingTemplate = false
 
-    // MARK: - Effect Data
+    // MARK: - Effect Data (Firebase)
+    var availableSounds: [Sound] = []
+    var availableParticles: [Particle] = []
+
+    var selectedSound: Sound? = nil
+    var selectedParticle: Particle? = nil
+
+    // MARK: - Download State
+    var downloadingItemIds: Set<String> = []
+    var downloadProgress: [String: Double] = [:]
+
+    // MARK: - Scene 전달용 ID
     var soundId: String = "none"
     var particleId: String = "none"
 
@@ -31,6 +42,9 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     /// @Observable을 Combine에 사용하기 위한 브릿지
     /// KeyringScene에 soundId, particleId만 전달
     let effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
+
+    // MARK: - UserManager
+    var userManager: UserManager
 
     // MARK: - 이미지 선택 관련
     var selectedImage: UIImage?
@@ -61,7 +75,9 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var createdAt: Date = Date()
 
     // MARK: - 초기화
-    init() {}
+    init(userManager: UserManager = UserManager.shared) {
+        self.userManager = userManager
+    }
 
     // MARK: - 이미지 데이터 초기화
     func resetImageData() {
@@ -100,6 +116,63 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
 
         } catch {
             errorMessage = "템플릿을 불러오는데 실패했습니다."
+        }
+    }
+
+    // MARK: - Firebase Effects 가져오기 (전체 - 소유/미소유 분리)
+    func fetchEffects() async {
+        guard let user = userManager.currentUser else {
+            errorMessage = "유저 정보를 불러올 수 없습니다."
+            return
+        }
+
+        do {
+            // Sound 전체 가져오기
+            let soundsSnapshot = try await Firestore.firestore()
+                .collection("Sound")
+                .getDocuments()
+
+            let allSounds = try soundsSnapshot.documents.compactMap {
+                try $0.data(as: Sound.self)
+            }
+
+            // 소유/미소유 분리 및 정렬
+            let ownedSounds = allSounds.filter { sound in
+                guard let id = sound.id else { return false }
+                return user.soundEffects.contains(id)
+            }
+            let notOwnedSounds = allSounds.filter { sound in
+                guard let id = sound.id else { return false }
+                return !user.soundEffects.contains(id)
+            }
+
+            // 소유한 것 먼저, 그 다음 미소유
+            availableSounds = ownedSounds + notOwnedSounds
+
+            // Particle 전체 가져오기
+            let particlesSnapshot = try await Firestore.firestore()
+                .collection("Particle")
+                .getDocuments()
+
+            let allParticles = try particlesSnapshot.documents.compactMap {
+                try $0.data(as: Particle.self)
+            }
+
+            // 소유/미소유 분리 및 정렬
+            let ownedParticles = allParticles.filter { particle in
+                guard let id = particle.id else { return false }
+                return user.particleEffects.contains(id)
+            }
+            let notOwnedParticles = allParticles.filter { particle in
+                guard let id = particle.id else { return false }
+                return !user.particleEffects.contains(id)
+            }
+
+            // 소유한 것 먼저, 그 다음 미소유
+            availableParticles = ownedParticles + notOwnedParticles
+
+        } catch {
+            errorMessage = "이펙트 목록을 불러오는데 실패했습니다."
         }
     }
 }
