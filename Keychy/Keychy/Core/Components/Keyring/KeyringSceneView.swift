@@ -24,7 +24,7 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         }
         .onAppear {
             if scene == nil {
-                let newScene = KeyringScene(bodyImage: viewModel.bodyImage)
+                let newScene = KeyringScene(ringType: .basic, chainType: .basic, bodyImage: viewModel.bodyImage)
                 newScene.scaleMode = .resizeFill
                 newScene.bind(to: viewModel)
                 scene = newScene

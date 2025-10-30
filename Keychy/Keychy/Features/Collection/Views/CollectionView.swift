@@ -10,14 +10,19 @@ import SpriteKit
 
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
-    @Bindable var collectionViewModel: CollectionViewModel
+    @State var collectionViewModel: CollectionViewModel
     @State private var selectedCategory = "전체"
-    @State private var selectedSort: String = "최신순"
+    @State private var showSortSheet: Bool = false
     
-    let categories: [String] = ["전체", "또치", "tags", "❤️", "강아지", "여행", "냠냠", "콩순이"]
+    private var categories: [String] {
+        var allCategories = ["전체"]
+        allCategories.append(contentsOf: collectionViewModel.tags)
+        
+        return allCategories
+    }
     
     // 정렬 옵션 (최신(생성) / 오래된 / 복사된 숫자순(인기순) / 이름 ㄱㄴㄷ순
-    let sortOptions = ["최신순", "오래된순", "이름순"]
+    let sortOptions = ["최신순", "오래된순", "이름순", "인기순"]
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: Spacing.gap),
@@ -43,8 +48,95 @@ struct CollectionView: View {
             collectionSection
         }
         .padding(Spacing.padding)
+        .sheet(isPresented: $showSortSheet) {
+            sortSheet
+        }
+        .onAppear {
+            fetchUserData()
+        }
+    }
+    
+    // MARK: - 사용자 데이터 로드
+    private func fetchUserData() {
+        guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+            print("UID를 찾을 수 없습니다")
+            return
+        }
+        
+        fetchUserCategories(uid: uid) {
+            fetchUserKeyrings(uid: uid)
+        }
+    }
+    
+    // 키링 로드
+    private func fetchUserKeyrings(uid: String) {
+        collectionViewModel.fetchUserKeyrings(uid: uid) { success in
+            if success {
+                print("키링 로드 완료: \(collectionViewModel.keyring.count)개")
+            } else {
+                print("키링 로드 실패")
+            }
+        }
+    }
+    
+    // 사용자 기반 데이터 로드
+    private func fetchUserCategories(uid: String, completion: @escaping () -> Void) {
+        collectionViewModel.fetchUserCollectionData(uid: uid) { success in
+            if success {
+                print("정보 로드 완료")
+            } else {
+                print("정보 로드 실패")
+            }
+            completion()
+        }
+    }
+    
+    // MARK: - 사용자 데이터 정렬 시트
+    // TODO: 디자인 확정되면 반영
+    private var sortSheet: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    showSortSheet = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(.primary)
+                }
+                
+                Spacer()
+                
+                Text("정렬 기준")
+                    .font(.headline)
+                
+                Spacer()
+                
+                Color.clear
+                    .frame(width: 24)
+            }
+            .padding()
+            
+            Divider()
+            
+            VStack(spacing: 0) {
+                ForEach(sortOptions, id: \.self) { sort in
+                    SortOption(
+                        title: sort,
+                        isSelected: collectionViewModel.selectedSort == sort
+                    ) {
+                        collectionViewModel.selectedSort = sort
+                        collectionViewModel.applySorting()
+                        
+                        showSortSheet = false
+                    }
+                }
+            }
+            
+            Spacer()
+        }
+        .presentationDetents([.height(250)])
     }
 }
+
 
 // MARK: - Header Section
 extension CollectionView {
@@ -56,10 +148,12 @@ extension CollectionView {
             
             Spacer()
             
-            CircleGlassButton(imageName: "Widget", action: {})
-                .padding(.trailing, 10)
+            CircleGlassButton(imageName: "Widget",
+                              action: { router.push(.widgetSettingView) })
+            .padding(.trailing, 10)
             
-            CircleGlassButton(imageName: "Bundle", action: {})
+            CircleGlassButton(imageName: "Bundle",
+                              action: { router.push(.bundleInventoryView) })
         }
     }
 }
@@ -95,7 +189,8 @@ extension CollectionView {
             
             Spacer()
             
-            Text("\(myKeyrings.count) / 100")
+            // 보유한 키링 개수
+            Text("\(collectionViewModel.keyring.count) / \(collectionViewModel.maxKeyringCount)")
                 .typography(.suit14SB18)
                 .foregroundColor(.black100)
                 .padding(.trailing, 8)
@@ -110,10 +205,10 @@ extension CollectionView {
     // 정렬 버튼
     private var sortButton: some View {
         Button(action: {
-            // TODO: - 정렬 로직 추가
+            showSortSheet = true
         }) {
             HStack(spacing: 2) {
-                Text(selectedSort)
+                Text(collectionViewModel.selectedSort)
                     .typography(.suit14SB18)
                     .foregroundColor(.white100)
                 
@@ -139,46 +234,21 @@ extension CollectionView {
                     collectionCell(keyring: keyring)
                 }
             }
+            .padding(.vertical, 4)
         }
-        .padding(.top, 14)
+        .padding(.top, 10)
         .scrollIndicators(.hidden)
     }
     
     private func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
-            router.push(.collectionKeyringDetailView)
+            router.push(.collectionKeyringDetailView(keyring))
         }) {
             VStack {
-                ZStack {
-                    SpriteView(scene: createMiniScene(body: keyring.bodyImage))
-                        .cornerRadius(10)
-                    
-                    // 포장 or 출품 상태에 따라 비활성 뷰 오버레이
-                    if let info = keyring.status.overlayInfo {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.black20)
-                            .overlay {
-                                VStack() {
-                                    ZStack {
-                                        UnevenRoundedRectangle(
-                                            topLeadingRadius: 10,
-                                            topTrailingRadius: 10
-                                        )
-                                        .fill(Color.black60)
-                                        .frame(height: 26)
-                                        
-                                        Text(info)
-                                            .typography(.suit13M)
-                                            .foregroundColor(.white100)
-                                            .frame(height: 26)
-                                    }
-                                    Spacer()
-                                }
-                            }
-                    }
-                
-                }
-                .padding(.bottom, 10)
+                CollectionCellView(keyring: keyring)
+                    .frame(width: 175, height: 233)
+                    .cornerRadius(10)
+                    .padding(.bottom, 10)
                 
                 Text("\(keyring.name) 키링")
                     .typography(.suit14SB18)
@@ -187,16 +257,6 @@ extension CollectionView {
         }
         .buttonStyle(PlainButtonStyle())
         .frame(width: 175, height: 261)
-    }
-    
-    private func createMiniScene(body: String) -> KeyringCellScene {
-        let scene = KeyringCellScene(
-            bodyImage: UIImage(named: body),
-            targetSize: CGSize(width: 175, height: 233),
-            zoomScale: 2.0
-        )
-        scene.scaleMode = .aspectFill
-        return scene
     }
 }
 

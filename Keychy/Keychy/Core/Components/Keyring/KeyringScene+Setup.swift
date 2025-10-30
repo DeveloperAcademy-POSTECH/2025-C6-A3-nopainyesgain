@@ -14,43 +14,114 @@ extension KeyringScene {
     func setupKeyring() {
         let centerX = size.width / 2
         let topY = size.height * 0.75
-
+        
         // 1. Ring 생성
-        let ring = KeyringRingComponent.createNode(from: currentRingType)
-        ring.position = CGPoint(x: centerX, y: topY)
-        ring.physicsBody?.isDynamic = false
-        addChild(ring)
-        ringNode = ring
-
-        // 2. Chain 생성
+        KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
+            guard let self = self, let ring = ring else {
+                print("Ring 생성 실패")
+                return
+            }
+            
+            print("Ring 생성 완료")
+            
+            ring.position = CGPoint(x: centerX, y: topY)
+            ring.physicsBody?.isDynamic = false
+            self.addChild(ring)
+            self.ringNode = ring
+            
+            // 2. Chain 생성 (Ring 생성 후)
+            self.setupChain(ring: ring, centerX: centerX)
+        }
+    }
+        // Chain 생성 (Ring 생성 후 호출)
+        private func setupChain(ring: SKSpriteNode, centerX: CGFloat) {
+            
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         // ringBottomY 그대로가 아니라 +0.5로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
         let chainStartY = ringBottomY + 0.5
         let chainSpacing: CGFloat = 16
-        let chains = KeyringChainComponent.createLinks(
+        
+        
+        KeyringChainComponent.createLinks(
             from: currentChainType,
-            count: 6,
+            count: 5,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing
-        )
-
-        for chain in chains {
-            addChild(chain)
-            chainNodes.append(chain)
+        ) { [weak self] chains in
+            guard let self = self else { return }
+            
+            print("체인 생성 완료: \(chains.count)개")
+            
+            // 체인 노드를 씬에 추가
+            for chain in chains {
+                self.addChild(chain)
+                self.chainNodes.append(chain)
+            }
+            
+            // 3. Body 생성 (체인 생성 후)
+            self.setupBody(ring: ring, chains: chains, centerX: centerX, chainStartY: chainStartY, chainSpacing: chainSpacing)
         }
 
-        // 3. Body 생성
-        let body: SKNode
-        if let image = bodyImage {
-            currentBodyType = .customImage(image)
-            body = KeyringBodyComponent.createNode(from: currentBodyType)
+    }
+    
+    // Body 생성 및 연결 (Chain 생성 후 호출)
+    private func setupBody(ring: SKSpriteNode, chains: [SKSpriteNode], centerX: CGFloat, chainStartY: CGFloat, chainSpacing: CGFloat) {
+        print("Body 생성 시작.")
+        
+        if let bodyImage = bodyImage {
+            // UIImage인 경우
+            KeyringBodyComponent.createNode(
+                from: bodyImage
+            ) { [weak self] body in
+                guard let self = self, let body = body else {
+                    print("Body 생성 실패")
+                    return
+                }
+                
+                self.positionAndConnectBody(
+                    body: body,
+                    ring: ring,
+                    chains: chains,
+                    centerX: centerX,
+                    chainStartY: chainStartY,
+                    chainSpacing: chainSpacing
+                )
+            }
+        } else if let bodyImageURL = bodyImageURL {
+            // URL만 있는 경우
+            KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
+                guard let self = self, let body = body else {
+                    print("Body 생성 실패")
+                    return
+                }
+                
+                self.positionAndConnectBody(
+                    body: body,
+                    ring: ring,
+                    chains: chains,
+                    centerX: centerX,
+                    chainStartY: chainStartY,
+                    chainSpacing: chainSpacing
+                )
+            }
         } else {
-            body = KeyringBodyComponent.createNode(from: currentBodyType)
+            let body = KeyringBodyComponent.createNode(from: .basic)
+            positionAndConnectBody(
+                body: body,
+                ring: ring,
+                chains: chains,
+                centerX: centerX,
+                chainStartY: chainStartY,
+                chainSpacing: chainSpacing
+            )
         }
-
-        // Body의 실제 누적 프레임(회전/스케일/하위노드 포함)에 기반
-        // 중앙선 기준으로 top을 맞추기 위해 halfHeight를 사용
+    }
+    
+    // Body 위치 설정 및 연결
+    private func positionAndConnectBody(body: SKNode, ring: SKSpriteNode, chains: [SKSpriteNode], centerX: CGFloat, chainStartY: CGFloat, chainSpacing: CGFloat) {
+        
+        // Body의 실제 누적 프레임
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
 
@@ -75,8 +146,8 @@ extension KeyringScene {
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         addChild(body)
         bodyNode = body
-
-        // 4. 조인트 연결
+        
+        // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
     }
 
