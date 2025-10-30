@@ -55,7 +55,6 @@
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */; };
 		4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */; };
-		4CBBEF172EB24DEC00252590 /* AcrylicPhotoGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF162EB24DEC00252590 /* AcrylicPhotoGuiding.swift */; };
 		4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF192EB2565900252590 /* Nuke */; };
 		4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF1B2EB2565900252590 /* NukeUI */; };
 		4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */; };
@@ -136,6 +135,11 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
+		AAA9326E2EB362DC00751C18 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA9326D2EB362DC00751C18 /* ImageLoader.swift */; };
+		AADD2AB12EB3A4E50051478E /* CarabinerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */; };
+		AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */; };
+		AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */; };
+		AADD2AB42EB3A4E50051478E /* CarabinerSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AB02EB3A4E50051478E /* CarabinerSceneView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
 		C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
@@ -287,6 +291,11 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		AAA9326D2EB362DC00751C18 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerScene.swift; sourceTree = "<group>"; };
+		AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+Interaction.swift"; sourceTree = "<group>"; };
+		AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+SetUp.swift"; sourceTree = "<group>"; };
+		AADD2AB02EB3A4E50051478E /* CarabinerSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerSceneView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
 		C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateInitializer.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
@@ -534,6 +543,7 @@
 				4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */,
 				AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */,
 				AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */,
+				AAA9326D2EB362DC00751C18 /* ImageLoader.swift */,
 			);
 			path = KeyringBundle;
 			sourceTree = "<group>";
@@ -577,6 +587,7 @@
 		4CEC62062EAE08DA0099ECEE /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				AADD2AB52EB3AF520051478E /* KeyringBundle */,
 				4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */,
 				4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */,
 				C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */,
@@ -943,6 +954,25 @@
 			path = Bundle;
 			sourceTree = "<group>";
 		};
+		AA4B07192EB1EE6A005F9227 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		AADD2AB52EB3AF520051478E /* KeyringBundle */ = {
+			isa = PBXGroup;
+			children = (
+				AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */,
+				AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */,
+				AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */,
+				AADD2AB02EB3A4E50051478E /* CarabinerSceneView.swift */,
+			);
+			path = KeyringBundle;
+			sourceTree = "<group>";
+		};
 		C665DDE92EAEFAA800CE4495 /* Coin */ = {
 			isa = PBXGroup;
 			children = (
@@ -1128,6 +1158,10 @@
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */,
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
+				AADD2AB12EB3A4E50051478E /* CarabinerScene.swift in Sources */,
+				AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */,
+				AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */,
+				AADD2AB42EB3A4E50051478E /* CarabinerSceneView.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
 				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
@@ -1148,6 +1182,7 @@
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
+				AAA9326E2EB362DC00751C18 /* ImageLoader.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* AcrylicPhotoEditedView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
@@ -1172,7 +1207,6 @@
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
-				4CBBEF172EB24DEC00252590 /* AcrylicPhotoGuiding.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
