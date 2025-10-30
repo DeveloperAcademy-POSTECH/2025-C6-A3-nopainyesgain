@@ -1,421 +1,115 @@
 //
 //  WorkshopView.swift
-//  KeytschPrototype
+//  Keychy
 //
-//  Created by 길지훈 on 10/16/25.
+//  Created by rundo on 10/16/25.
 //
 
 import SwiftUI
-import FirebaseFirestore
 import NukeUI
 
-enum TemplateFilterType: String, CaseIterable {
-    case image = "이미지"
-    case text = "텍스트"
-    case drawing = "드로잉"
-}
-
-enum CommonFilterType: String, CaseIterable {
-    case cute = "귀여움"
-    case simple = "심플"
-    case nature = "자연"
-}
+// MARK: - Main View
 
 struct WorkshopView: View {
+    // MARK: Properties
+    
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
+    @State private var viewModel: WorkshopViewModel
     
     private let categories = ["KEYCHY!", "키링", "카라비너", "파티클", "사운드", "배경"]
-    @State private var selectedCategory: String = "KEYCHY!"
-    @State private var selectedTemplateFilter: TemplateFilterType? = nil
-    @State private var selectedCommonFilter: CommonFilterType? = nil
-    @State private var sortOrder: String = "최신순"
-    @State private var showFilterSheet: Bool = false
-    @State private var mainContentOffset: CGFloat = 0
     
-    // Firebase 데이터 관련 상태 변수
-    @State private var templates: [KeyringTemplate] = []
-    @State private var backgrounds: [Background] = []
-    @State private var carabiners: [Carabiner] = []
-    @State private var particles: [Particle] = []
-    @State private var sounds: [Sound] = []
+    // MARK: Initialization
     
-    @State private var isLoading: Bool = false
-    @State private var errorMessage: String? = nil
+    /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
+    /// 실제 userManager는 .task에서 교체됨
+    init(router: NavigationRouter<WorkshopRoute>) {
+        self.router = router
+        _viewModel = State(initialValue: WorkshopViewModel(userManager: UserManager.shared))
+    }
     
-    // 보유한 아이템 목록
-    @State private var ownedTemplates: [KeyringTemplate] = []
-    @State private var ownedBackgrounds: [Background] = []
-    @State private var ownedCarabiners: [Carabiner] = []
-    @State private var ownedParticles: [Particle] = []
-    @State private var ownedSounds: [Sound] = []
+    // MARK: Body
     
     var body: some View {
         ZStack(alignment: .top) {
-            ScrollView {
-                VStack(spacing: 0) {
-                    topBannerSection
-                        .frame(height: 150)
-                    
-                    Spacer()
-                        .frame(height:20)
-                    
-                    myCollectionSection
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 16)
-                    
-                    VStack {
-                        mainContentSection
-                            .background(
-                                GeometryReader { geo in
-                                    Color.clear
-                                        .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
-                                            mainContentOffset = newValue
-                                        }
-                                }
-                            )
-                    }
-                    .background(Color(UIColor.systemBackground))
-                }
-                .padding(.top, 80)
-                .background(alignment: .top){
-                    Image("WorkshopBack")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                }
-            }
+            // 메인 스크롤 콘텐츠
+            mainScrollContent
             
+            // 스크롤 시 나타나는 상단 타이틀 바
             topTitleBar
             
-            stickyHeaderSection
-                .background(Color(UIColor.systemBackground))
-                .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
-                .offset(y: max(120, min(730, mainContentOffset - 20)))
+            // 스티키 헤더 (카테고리 탭 + 필터)
+            stickyHeader
         }
         .ignoresSafeArea()
-        .sheet(isPresented: $showFilterSheet) {
+        .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
         }
         .task {
-            await fetchAllData()
-            await loadOwnedItems()
+            // Environment의 실제 UserManager로 ViewModel 교체
+            viewModel = WorkshopViewModel(userManager: userManager)
+            await viewModel.fetchAllData()
+            await viewModel.loadOwnedItems()
         }
-        .onChange(of: selectedCategory) { oldValue, newValue in
-            // 카테고리 변경 시 필터 초기화
-            selectedTemplateFilter = nil
-            selectedCommonFilter = nil
-        }
-    }
-    
-    // MARK: - Firebase Methods
-    
-    /// 모든 데이터 가져오기
-    private func fetchAllData() async {
-        isLoading = true
-        errorMessage = nil
-        
-        defer { isLoading = false }
-        
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { await fetchTemplates() }
-            group.addTask { await fetchBackgrounds() }
-            group.addTask { await fetchCarabiners() }
-            group.addTask { await fetchParticles() }
-            group.addTask { await fetchSounds() }
+        .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
+            viewModel.resetFilters()
         }
     }
     
-    /// 템플릿 가져오기
-    private func fetchTemplates() async {
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Template")
-                .whereField("isActive", isEqualTo: true)
-                .getDocuments()
-            
-            templates = try snapshot.documents.compactMap { document in
-                try document.data(as: KeyringTemplate.self)
+    // MARK: Main Content
+    
+    /// 메인 스크롤 콘텐츠
+    private var mainScrollContent: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                // 상단 배너 (코인 버튼 + 타이틀)
+                topBannerSection
+                    .frame(height: 150)
+                
+                Spacer()
+                    .frame(height: 20)
+                
+                // 내 창고 섹션
+                myCollectionSection
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 16)
+                
+                // 메인 콘텐츠 (그리드)
+                VStack {
+                    mainContentSection
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear
+                                    .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
+                                        viewModel.mainContentOffset = newValue
+                                    }
+                            }
+                        )
+                }
+                .background(Color(UIColor.systemBackground))
             }
-            applySorting()
-        } catch {
-            errorMessage = "템플릿 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-        }
-    }
-    
-    /// 배경 가져오기
-    private func fetchBackgrounds() async {
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Background")
-                .getDocuments()
-            
-            backgrounds = try snapshot.documents.compactMap { document in
-                try document.data(as: Background.self)
-            }
-            applySorting()
-        } catch {
-            errorMessage = "배경 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-        }
-    }
-    
-    /// 카라비너 가져오기
-    private func fetchCarabiners() async {
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Carabiner")
-                .getDocuments()
-            
-            carabiners = try snapshot.documents.compactMap { document in
-                try document.data(as: Carabiner.self)
-            }
-            applySorting()
-        } catch {
-            errorMessage = "카라비너 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-        }
-    }
-    
-    /// 파티클 가져오기
-    private func fetchParticles() async {
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Particle")
-                .getDocuments()
-            
-            particles = try snapshot.documents.compactMap { document in
-                try document.data(as: Particle.self)
-            }
-            applySorting()
-        } catch {
-            errorMessage = "파티클 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-        }
-    }
-    
-    /// 사운드 가져오기
-    private func fetchSounds() async {
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Sound")
-                .getDocuments()
-            
-            sounds = try snapshot.documents.compactMap { document in
-                try document.data(as: Sound.self)
-            }
-            applySorting()
-        } catch {
-            errorMessage = "사운드 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-        }
-    }
-    
-    // MARK: - Sorting Methods
-    
-    /// 통합 정렬 함수 - 모든 카테고리에 적용
-    private func applySorting() {
-        switch sortOrder {
-        case "최신순":
-            templates.sort { $0.createdAt > $1.createdAt }
-            backgrounds.sort { $0.createdAt > $1.createdAt }
-            carabiners.sort { $0.createdAt > $1.createdAt }
-            particles.sort { $0.createdAt > $1.createdAt }
-            sounds.sort { $0.createdAt > $1.createdAt }
-        case "인기순":
-            templates.sort { $0.downloadCount > $1.downloadCount }
-            backgrounds.sort { $0.downloadCount > $1.downloadCount }
-            carabiners.sort { $0.downloadCount > $1.downloadCount }
-            particles.sort { $0.downloadCount > $1.downloadCount }
-            sounds.sort { $0.downloadCount > $1.downloadCount }
-        default:
-            break
-        }
-    }
-    
-    // MARK: - Filtering Methods
-    
-    /// 필터링된 템플릿 목록
-    private var filteredTemplates: [KeyringTemplate] {
-        var result = templates
-        
-        if let filter = selectedTemplateFilter {
-            switch filter {
-            case .image:
-                result = result.filter { $0.tags.contains("이미지형") }
-            case .text:
-                result = result.filter { $0.tags.contains("텍스트형") }
-            case .drawing:
-                result = result.filter { $0.tags.contains("드로잉형") }
+            .padding(.top, 80)
+            .background(alignment: .top) {
+                Image("WorkshopBack")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
             }
         }
-        
-        return result
     }
     
-    /// 필터링된 배경 목록
-    private var filteredBackgrounds: [Background] {
-        var result = backgrounds
-        
-        if let filter = selectedCommonFilter {
-            result = result.filter { $0.tags.contains(filter.rawValue) }
-        }
-        
-        return result
-    }
-    
-    /// 필터링된 카라비너 목록
-    private var filteredCarabiners: [Carabiner] {
-        var result = carabiners
-        
-        if let filter = selectedCommonFilter {
-            result = result.filter { $0.tags.contains(filter.rawValue) }
-        }
-        
-        return result
-    }
-    
-    /// 필터링된 파티클 목록
-    private var filteredParticles: [Particle] {
-        var result = particles
-        
-        if let filter = selectedCommonFilter {
-            result = result.filter { $0.tags.contains(filter.rawValue) }
-        }
-        
-        return result
-    }
-    
-    /// 필터링된 사운드 목록
-    private var filteredSounds: [Sound] {
-        var result = sounds
-        
-        if let filter = selectedCommonFilter {
-            result = result.filter { $0.tags.contains(filter.rawValue) }
-        }
-        
-        return result
-    }
-    
-    // MARK: - Owned Items Methods
-    
-    /// 사용자가 보유한 아이템 목록 로드
-    private func loadOwnedItems() async {
-        guard let user = userManager.currentUser else { return }
-        
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { await loadOwnedTemplates(user: user) }
-            group.addTask { await loadOwnedBackgrounds(user: user) }
-            group.addTask { await loadOwnedCarabiners(user: user) }
-            group.addTask { await loadOwnedParticles(user: user) }
-            group.addTask { await loadOwnedSounds(user: user) }
-        }
-    }
-    
-    private func loadOwnedTemplates(user: KeychyUser) async {
-        let ownedIds = user.templates
-        guard !ownedIds.isEmpty else { return }
-        
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Template")
-                .whereField(FieldPath.documentID(), in: ownedIds)
-                .getDocuments()
-            
-            ownedTemplates = try snapshot.documents.compactMap { try $0.data(as: KeyringTemplate.self) }
-        } catch {
-            print("❌ Failed to load owned templates: \(error)")
-        }
-    }
-    
-    private func loadOwnedBackgrounds(user: KeychyUser) async {
-        let ownedIds = user.backgrounds
-        guard !ownedIds.isEmpty else { return }
-        
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Background")
-                .whereField(FieldPath.documentID(), in: ownedIds)
-                .getDocuments()
-            
-            ownedBackgrounds = try snapshot.documents.compactMap { try $0.data(as: Background.self) }
-        } catch {
-            print("❌ Failed to load owned backgrounds: \(error)")
-        }
-    }
-    
-    private func loadOwnedCarabiners(user: KeychyUser) async {
-        let ownedIds = user.carabiners
-        guard !ownedIds.isEmpty else { return }
-        
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Carabiner")
-                .whereField(FieldPath.documentID(), in: ownedIds)
-                .getDocuments()
-            
-            ownedCarabiners = try snapshot.documents.compactMap { try $0.data(as: Carabiner.self) }
-        } catch {
-            print("❌ Failed to load owned carabiners: \(error)")
-        }
-    }
-    
-    private func loadOwnedParticles(user: KeychyUser) async {
-        let ownedIds = user.particleEffects
-        guard !ownedIds.isEmpty else { return }
-        
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Particle")
-                .whereField(FieldPath.documentID(), in: ownedIds)
-                .getDocuments()
-            
-            ownedParticles = try snapshot.documents.compactMap { try $0.data(as: Particle.self) }
-        } catch {
-            print("❌ Failed to load owned particles: \(error)")
-        }
-    }
-    
-    private func loadOwnedSounds(user: KeychyUser) async {
-        let ownedIds = user.soundEffects
-        guard !ownedIds.isEmpty else { return }
-        
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection("Sound")
-                .whereField(FieldPath.documentID(), in: ownedIds)
-                .getDocuments()
-            
-            ownedSounds = try snapshot.documents.compactMap { try $0.data(as: Sound.self) }
-        } catch {
-            print("❌ Failed to load owned sounds: \(error)")
-        }
-    }
-    
-    /// 특정 아이템을 보유하고 있는지 확인
-    private func isTemplateOwned(_ template: KeyringTemplate) -> Bool {
-        guard let templateId = template.id else { return false }
-        return userManager.currentUser?.templates.contains(templateId) ?? false
-    }
-    
-    private func isBackgroundOwned(_ background: Background) -> Bool {
-        guard let backgroundId = background.id else { return false }
-        return userManager.currentUser?.backgrounds.contains(backgroundId) ?? false
-    }
-    
-    private func isCarabinerOwned(_ carabiner: Carabiner) -> Bool {
-        guard let carabinerId = carabiner.id else { return false }
-        return userManager.currentUser?.carabiners.contains(carabinerId) ?? false
-    }
-    
-    private func isParticleOwned(_ particle: Particle) -> Bool {
-        guard let particleId = particle.id else { return false }
-        return userManager.currentUser?.particleEffects.contains(particleId) ?? false
-    }
-    
-    private func isSoundOwned(_ sound: Sound) -> Bool {
-        guard let soundId = sound.id else { return false }
-        return userManager.currentUser?.soundEffects.contains(soundId) ?? false
+    /// 스티키 헤더 (카테고리 + 필터)
+    private var stickyHeader: some View {
+        stickyHeaderSection
+            .background(Color(UIColor.systemBackground))
+            .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
+            .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
 }
 
-// MARK: - 상단 배너
+// MARK: - Top Banner Section
+
 extension WorkshopView {
+    /// 상단 배너 영역 (초기 화면)
     private var topBannerSection: some View {
         VStack {
             HStack {
@@ -431,6 +125,7 @@ extension WorkshopView {
         .frame(maxWidth: .infinity)
     }
     
+    /// 스크롤 시 나타나는 상단 타이틀 바
     private var topTitleBar: some View {
         HStack {
             titleView
@@ -441,16 +136,18 @@ extension WorkshopView {
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
         .background(Color(UIColor.systemBackground))
-        .opacity(mainContentOffset - 80 < 70 ? 1 : 0)
-        .animation(.easeInOut(duration: 0.25), value: mainContentOffset)
+        .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.mainContentOffset)
     }
     
+    /// 타이틀 텍스트
     private var titleView: some View {
         Text("공방")
             .font(.largeTitle.bold())
             .frame(maxWidth: .infinity, alignment: .leading)
     }
     
+    /// 코인 버튼
     private var coinButton: some View {
         Button {
             router.push(.coinCharge)
@@ -469,16 +166,20 @@ extension WorkshopView {
     }
 }
 
-// MARK: - 고정 헤더
+// MARK: - Sticky Header Section
+
 extension WorkshopView {
+    /// 스티키 헤더 (카테고리 + 필터)
     private var stickyHeaderSection: some View {
         VStack(spacing: 0) {
+            // 카테고리 탭바
             CategoryTabBar(
                 categories: categories,
-                selectedCategory: $selectedCategory
+                selectedCategory: $viewModel.selectedCategory
             )
             .padding(.top, 12)
             
+            // 필터바
             filterBar
         }
         .padding(.horizontal, 20)
@@ -490,59 +191,62 @@ extension WorkshopView {
             HStack(spacing: 8) {
                 // 정렬 필터 (공통)
                 FilterChip(
-                    title: sortOrder,
+                    title: viewModel.sortOrder,
                     isSelected: true,
                     hasDropdown: true
                 ) {
-                    showFilterSheet = true
+                    viewModel.showFilterSheet = true
                 }
                 
                 // 카테고리별 필터
-                switch selectedCategory {
-                case "키링":
-                    // 템플릿 필터 (이미지형, 텍스트형, 드로잉형)
-                    ForEach(TemplateFilterType.allCases, id: \.self) { filter in
-                        FilterChip(
-                            title: filter.rawValue,
-                            isSelected: selectedTemplateFilter == filter
-                        ) {
-                            if selectedTemplateFilter == filter {
-                                selectedTemplateFilter = nil
-                            } else {
-                                selectedTemplateFilter = filter
-                            }
-                        }
-                    }
-                    
-                case "카라비너", "파티클", "사운드", "배경":
-                    // 공통 필터 (귀여움, 심플, 자연)
-                    ForEach(CommonFilterType.allCases, id: \.self) { filter in
-                        FilterChip(
-                            title: filter.rawValue,
-                            isSelected: selectedCommonFilter == filter
-                        ) {
-                            if selectedCommonFilter == filter {
-                                selectedCommonFilter = nil
-                            } else {
-                                selectedCommonFilter = filter
-                            }
-                        }
-                    }
-                    
-                default:
-                    EmptyView()
-                }
+                categorySpecificFilters
             }
         }
         .padding(.vertical, 12)
     }
+    
+    /// 카테고리별 필터 옵션
+    private var categorySpecificFilters: some View {
+        Group {
+            switch viewModel.selectedCategory {
+            case "키링":
+                // 템플릿 필터 (이미지형, 텍스트형, 드로잉형)
+                ForEach(TemplateFilterType.allCases, id: \.self) { filter in
+                    FilterChip(
+                        title: filter.rawValue,
+                        isSelected: viewModel.selectedTemplateFilter == filter
+                    ) {
+                        viewModel.selectedTemplateFilter =
+                            viewModel.selectedTemplateFilter == filter ? nil : filter
+                    }
+                }
+                
+            case "카라비너", "파티클", "사운드", "배경":
+                // 공통 필터 (귀여움, 심플, 자연)
+                ForEach(CommonFilterType.allCases, id: \.self) { filter in
+                    FilterChip(
+                        title: filter.rawValue,
+                        isSelected: viewModel.selectedCommonFilter == filter
+                    ) {
+                        viewModel.selectedCommonFilter =
+                            viewModel.selectedCommonFilter == filter ? nil : filter
+                    }
+                }
+                
+            default:
+                EmptyView()
+            }
+        }
+    }
 }
 
-// MARK: - 메인 콘텐츠
+// MARK: - My Collection Section
+
 extension WorkshopView {
-    /// 내 창고 섹션 - 사용자 보유 키링만 표시 (카테고리 무관)
+    /// 내 창고 섹션 (보유한 템플릿)
     private var myCollectionSection: some View {
         VStack(spacing: 12) {
+            // 헤더
             HStack {
                 Button("내 창고 >") {
                     router.push(.myTemplate)
@@ -553,13 +257,14 @@ extension WorkshopView {
                 Spacer()
             }
             
+            // 보유 아이템 리스트
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    if ownedTemplates.isEmpty {
+                    if viewModel.ownedTemplates.isEmpty {
                         emptyOwnedView
                     } else {
-                        ForEach(ownedTemplates) { template in
-                            OwnedTemplateCard(template: template, router: router)
+                        ForEach(viewModel.ownedTemplates) { template in
+                            OwnedItemCard(item: template, router: router)
                         }
                     }
                 }
@@ -568,6 +273,7 @@ extension WorkshopView {
         .padding(.bottom, 12)
     }
     
+    /// 빈 창고 뷰
     private var emptyOwnedView: some View {
         VStack(spacing: 8) {
             Image(systemName: "tray")
@@ -579,37 +285,85 @@ extension WorkshopView {
         }
         .frame(width: 120, height: 100)
     }
-    
-    /// 메인 그리드 - 카테고리별 다른 콘텐츠 표시
+}
+
+// MARK: - Main Content Section
+
+extension WorkshopView {
+    /// 메인 콘텐츠 영역 (카테고리별 그리드)
     private var mainContentSection: some View {
         VStack {
-            if isLoading {
-                ProgressView("불러오는 중...")
-                    .padding(.top, 100)
-            } else if let errorMessage = errorMessage {
+            if viewModel.isLoading {
+                loadingView
+            } else if let errorMessage = viewModel.errorMessage {
                 errorView(message: errorMessage)
             } else {
-                switch selectedCategory {
-                case "KEYCHY!":
-                    keychyContentView
-                case "키링":
-                    templateGridView
-                case "배경":
-                    backgroundGridView
-                case "카라비너":
-                    carabinerGridView
-                case "파티클":
-                    particleGridView
-                case "사운드":
-                    soundGridView
-                default:
-                    emptyContentView
-                }
+                categoryContent
             }
         }
     }
     
-    /// KEYCHY! 전용 콘텐츠 (빈 화면 또는 추후 추가될 콘텐츠)
+    /// 로딩 뷰
+    private var loadingView: some View {
+        ProgressView("불러오는 중...")
+            .padding(.top, 100)
+    }
+    
+    /// 카테고리별 콘텐츠
+    private var categoryContent: some View {
+        Group {
+            switch viewModel.selectedCategory {
+            case "KEYCHY!":
+                keychyContentView
+            case "키링":
+                itemGridView(items: viewModel.filteredTemplates,
+                           isOwnedCheck: viewModel.isTemplateOwned)
+            case "배경":
+                itemGridView(items: viewModel.filteredBackgrounds,
+                           isOwnedCheck: viewModel.isBackgroundOwned)
+            case "카라비너":
+                itemGridView(items: viewModel.filteredCarabiners,
+                           isOwnedCheck: viewModel.isCarabinerOwned)
+            case "파티클":
+                itemGridView(items: viewModel.filteredParticles,
+                           isOwnedCheck: viewModel.isParticleOwned)
+            case "사운드":
+                itemGridView(items: viewModel.filteredSounds,
+                           isOwnedCheck: viewModel.isSoundOwned)
+            default:
+                emptyContentView
+            }
+        }
+    }
+    
+    /// 통합 아이템 그리드 뷰
+    private func itemGridView<T: WorkshopItem>(
+        items: [T],
+        isOwnedCheck: @escaping (T) -> Bool
+    ) -> some View {
+        Group {
+            if items.isEmpty {
+                emptyContentView
+            } else {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 16) {
+                    ForEach(items) { item in
+                        WorkshopItemView(
+                            item: item,
+                            isOwned: isOwnedCheck(item),
+                            router: router
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 100)
+            }
+        }
+    }
+    
+    /// KEYCHY! 전용 콘텐츠 (준비 중)
     private var keychyContentView: some View {
         VStack(spacing: 16) {
             Image(systemName: "star.fill")
@@ -627,107 +381,7 @@ extension WorkshopView {
         .padding(.top, 100)
     }
     
-    /// 템플릿 그리드
-    private var templateGridView: some View {
-        Group {
-            if filteredTemplates.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(filteredTemplates) { template in
-                        TemplateItemView(
-                            template: template,
-                            isOwned: isTemplateOwned(template),
-                            router: router
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 100)
-            }
-        }
-    }
-    
-    /// 배경 그리드
-    private var backgroundGridView: some View {
-        Group {
-            if filteredBackgrounds.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(filteredBackgrounds, id: \.id) { background in
-                        BackgroundItemView(
-                            background: background,
-                            isOwned: isBackgroundOwned(background)
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 100)
-            }
-        }
-    }
-    
-    /// 카라비너 그리드
-    private var carabinerGridView: some View {
-        Group {
-            if filteredCarabiners.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(filteredCarabiners, id: \.id) { carabiner in
-                        CarabinerItemView(
-                            carabiner: carabiner,
-                            isOwned: isCarabinerOwned(carabiner)
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 100)
-            }
-        }
-    }
-    
-    /// 파티클 그리드
-    private var particleGridView: some View {
-        Group {
-            if filteredParticles.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(filteredParticles, id: \.id) { particle in
-                        ParticleItemView(
-                            particle: particle,
-                            isOwned: isParticleOwned(particle)
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 100)
-            }
-        }
-    }
-    
-    /// 사운드 그리드
-    private var soundGridView: some View {
-        Group {
-            if filteredSounds.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(filteredSounds, id: \.id) { sound in
-                        SoundItemView(
-                            sound: sound,
-                            isOwned: isSoundOwned(sound)
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 100)
-            }
-        }
-    }
-    
+    /// 빈 콘텐츠 뷰
     private var emptyContentView: some View {
         VStack(spacing: 16) {
             Image(systemName: "tray")
@@ -740,6 +394,7 @@ extension WorkshopView {
         .padding(.top, 100)
     }
     
+    /// 에러 뷰
     private func errorView(message: String) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
@@ -752,57 +407,77 @@ extension WorkshopView {
             
             Button("다시 시도") {
                 Task {
-                    await fetchAllData()
+                    await viewModel.fetchAllData()
                 }
             }
             .buttonStyle(.borderedProminent)
         }
         .padding(.top, 100)
     }
-    
+}
+
+// MARK: - Sort Sheet
+
+extension WorkshopView {
     /// 정렬 선택 시트
     private var sortSheet: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    showFilterSheet = false
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.primary)
-                }
-                
-                Spacer()
-                
-                Text("정렬 기준")
-                    .font(.headline)
-                
-                Spacer()
-                
-                Color.clear
-                    .frame(width: 24)
-            }
-            .padding()
+            // 헤더
+            sheetHeader
             
             Divider()
             
-            VStack(spacing: 0) {
-                ForEach(["최신순", "인기순"], id: \.self) { sort in
-                    SortOption(title: sort, isSelected: sortOrder == sort) {
-                        sortOrder = sort
-                        applySorting()
-                        showFilterSheet = false
-                    }
-                }
-            }
+            // 정렬 옵션
+            sortOptions
             
             Spacer()
         }
         .presentationDetents([.height(200)])
     }
+    
+    /// 시트 헤더
+    private var sheetHeader: some View {
+        HStack {
+            Button {
+                viewModel.showFilterSheet = false
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundStyle(.primary)
+            }
+            
+            Spacer()
+            
+            Text("정렬 기준")
+                .font(.headline)
+            
+            Spacer()
+            
+            Color.clear
+                .frame(width: 24)
+        }
+        .padding()
+    }
+    
+    /// 정렬 옵션 리스트
+    private var sortOptions: some View {
+        VStack(spacing: 0) {
+            ForEach(["최신순", "인기순"], id: \.self) { sort in
+                SortOption(
+                    title: sort,
+                    isSelected: viewModel.sortOrder == sort
+                ) {
+                    viewModel.sortOrder = sort
+                    viewModel.applySorting()
+                    viewModel.showFilterSheet = false
+                }
+            }
+        }
+    }
 }
 
-// MARK: - 보조 뷰
+// MARK: - Reusable Components
 
+/// 필터 칩 버튼
 struct FilterChip: View {
     let title: String
     let isSelected: Bool
@@ -828,6 +503,7 @@ struct FilterChip: View {
     }
 }
 
+/// 정렬 옵션 행
 struct SortOption: View {
     let title: String
     let isSelected: Bool
@@ -849,20 +525,85 @@ struct SortOption: View {
     }
 }
 
-// MARK: - 보유 아이템 카드들
+// MARK: - Workshop Item Views
 
-struct OwnedTemplateCard: View {
-    let template: KeyringTemplate
-    @Bindable var router: NavigationRouter<WorkshopRoute>
+/// 모든 워크샵 아이템을 표시하는 통합 그리드 아이템 뷰
+struct WorkshopItemView<Item: WorkshopItem>: View {
+    let item: Item
+    var isOwned: Bool = false
+    var router: NavigationRouter<WorkshopRoute>? = nil
     
     var body: some View {
         Button {
-            if let route = WorkshopRoute.from(string: template.id!) {
-                router.push(route)
-            }
+            handleTap()
         } label: {
             VStack(spacing: 8) {
-                LazyImage(url: URL(string: template.thumbnailURL)) { state in
+                // 썸네일 이미지
+                thumbnailImage
+                
+                // 아이템 이름
+                Text(item.name)
+                    .font(.subheadline)
+                    .lineLimit(1)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    /// 썸네일 이미지 + 가격 오버레이
+    private var thumbnailImage: some View {
+        ZStack(alignment: .topLeading) {
+            LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
+                    Color.gray.opacity(0.3)
+                        .overlay { ProgressView() }
+                } else {
+                    Color.gray.opacity(0.3)
+                        .overlay {
+                            Image(systemName: "photo")
+                                .foregroundStyle(.secondary)
+                        }
+                }
+            }
+            .frame(height: 200)
+            .frame(maxWidth: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // 가격 오버레이
+            priceOverlay(
+                isFree: item.isFree,
+                price: item.workshopPrice,
+                isOwned: isOwned
+            )
+        }
+    }
+    
+    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
+    private func handleTap() {
+        if let template = item as? KeyringTemplate,
+           let router = router,
+           let route = WorkshopRoute.from(string: template.id!) {
+            router.push(route)
+        }
+    }
+}
+
+/// 보유한 아이템을 표시하는 작은 카드 뷰
+struct OwnedItemCard<Item: WorkshopItem>: View {
+    let item: Item
+    var router: NavigationRouter<WorkshopRoute>? = nil
+    
+    var body: some View {
+        Button {
+            handleTap()
+        } label: {
+            VStack(spacing: 8) {
+                // 썸네일 이미지
+                LazyImage(url: URL(string: item.thumbnailURL)) { state in
                     if let image = state.image {
                         image
                             .resizable()
@@ -876,7 +617,8 @@ struct OwnedTemplateCard: View {
                 .frame(width: 80, height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 
-                Text(template.templateName)
+                // 아이템 이름
+                Text(item.name)
                     .font(.caption)
                     .lineLimit(1)
             }
@@ -884,325 +626,23 @@ struct OwnedTemplateCard: View {
         }
         .buttonStyle(.plain)
     }
-}
-
-struct OwnedBackgroundCard: View {
-    let background: Background
     
-    var body: some View {
-        VStack(spacing: 8) {
-            LazyImage(url: URL(string: background.backgroundImage)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    ProgressView()
-                } else {
-                    Color.gray.opacity(0.1)
-                }
-            }
-            .frame(width: 80, height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            Text(background.backgroundName)
-                .font(.caption)
-                .lineLimit(1)
+    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
+    private func handleTap() {
+        if let template = item as? KeyringTemplate,
+           let router = router,
+           let route = WorkshopRoute.from(string: template.id!) {
+            router.push(route)
         }
-        .padding(8)
     }
 }
 
-struct OwnedCarabinerCard: View {
-    let carabiner: Carabiner
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            LazyImage(url: URL(string: carabiner.carabinerImage)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    ProgressView()
-                } else {
-                    Color.gray.opacity(0.1)
-                }
-            }
-            .frame(width: 80, height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            Text(carabiner.carabinerName)
-                .font(.caption)
-                .lineLimit(1)
-        }
-        .padding(8)
-    }
-}
-
-struct OwnedParticleCard: View {
-    let particle: Particle
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            LazyImage(url: URL(string: particle.thumbnail)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    ProgressView()
-                } else {
-                    Color.gray.opacity(0.1)
-                }
-            }
-            .frame(width: 80, height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            Text(particle.particleName)
-                .font(.caption)
-                .lineLimit(1)
-        }
-        .padding(8)
-    }
-}
-
-struct OwnedSoundCard: View {
-    let sound: Sound
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            LazyImage(url: URL(string: sound.thumbnail)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    ProgressView()
-                } else {
-                    Color.gray.opacity(0.1)
-                }
-            }
-            .frame(width: 80, height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            Text(sound.soundName)
-                .font(.caption)
-                .lineLimit(1)
-        }
-        .padding(8)
-    }
-}
-
-// MARK: - 그리드 아이템 뷰들
-
-/// 템플릿 아이템
-struct TemplateItemView: View {
-    let template: KeyringTemplate
-    var isOwned: Bool = false
-    @Bindable var router: NavigationRouter<WorkshopRoute>
-    
-    var body: some View {
-        Button {
-            if let route = WorkshopRoute.from(string: template.id!) {
-                router.push(route)
-            }
-        } label: {
-            VStack(spacing: 8) {
-                ZStack(alignment: .topLeading) {
-                    LazyImage(url: URL(string: template.thumbnailURL)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } else if state.isLoading {
-                            Color.gray.opacity(0.3)
-                                .overlay { ProgressView() }
-                        } else {
-                            Color.gray.opacity(0.3)
-                                .overlay {
-                                    Image(systemName: "photo")
-                                        .foregroundStyle(.secondary)
-                                }
-                        }
-                    }
-                    .frame(height: 200)
-                    .frame(maxWidth: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    priceOverlay(isFree: template.isFree, price: template.price, isOwned: isOwned)
-                }
-                
-                Text(template.templateName)
-                    .font(.subheadline)
-                    .lineLimit(1)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// 배경 아이템
-struct BackgroundItemView: View {
-    let background: Background
-    var isOwned: Bool = false
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                LazyImage(url: URL(string: background.backgroundImage)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        Color.gray.opacity(0.3)
-                            .overlay { ProgressView() }
-                    } else {
-                        Color.gray.opacity(0.3)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    }
-                }
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                priceOverlay(isFree: background.isFree, price: background.price, isOwned: isOwned)
-            }
-            
-            Text(background.backgroundName)
-                .font(.subheadline)
-                .lineLimit(1)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// 카라비너 아이템
-struct CarabinerItemView: View {
-    let carabiner: Carabiner
-    var isOwned: Bool = false
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                LazyImage(url: URL(string: carabiner.carabinerImage)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        Color.gray.opacity(0.3)
-                            .overlay { ProgressView() }
-                    } else {
-                        Color.gray.opacity(0.3)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    }
-                }
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                priceOverlay(isFree: carabiner.isFree, price: carabiner.price, isOwned: isOwned)
-            }
-            
-            Text(carabiner.carabinerName)
-                .font(.subheadline)
-                .lineLimit(1)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// 파티클 아이템
-struct ParticleItemView: View {
-    let particle: Particle
-    var isOwned: Bool = false
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                LazyImage(url: URL(string: particle.thumbnail)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        Color.gray.opacity(0.3)
-                            .overlay { ProgressView() }
-                    } else {
-                        Color.gray.opacity(0.3)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    }
-                }
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                priceOverlay(isFree: particle.isFree, price: particle.price, isOwned: isOwned)
-            }
-            
-            Text(particle.particleName)
-                .font(.subheadline)
-                .lineLimit(1)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// 사운드 아이템
-struct SoundItemView: View {
-    let sound: Sound
-    var isOwned: Bool = false
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                LazyImage(url: URL(string: sound.thumbnail)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        Color.gray.opacity(0.3)
-                            .overlay { ProgressView() }
-                    } else {
-                        Color.gray.opacity(0.3)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    }
-                }
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                priceOverlay(isFree: sound.isFree, price: sound.price, isOwned: isOwned)
-            }
-            
-            Text(sound.soundName)
-                .font(.subheadline)
-                .lineLimit(1)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// 공통 가격 오버레이
-private func priceOverlay(isFree: Bool, price: Int?, isOwned: Bool) -> some View {
+/// 공통 가격 오버레이 (보유/무료/유료 표시)
+func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
     VStack {
         HStack {
             if isOwned {
+                // 보유 배지
                 Text("보유")
                     .font(.caption)
                     .foregroundStyle(.white)
@@ -1212,10 +652,11 @@ private func priceOverlay(isFree: Bool, price: Int?, isOwned: Bool) -> some View
                     .clipShape(Capsule())
                     .padding(8)
             } else if !isFree {
+                // 가격 배지
                 HStack(spacing: 4) {
                     Image(systemName: "leaf.fill")
                         .foregroundStyle(.pink)
-                    Text("\(price ?? 0)")
+                    Text("\(price)")
                         .foregroundStyle(.primary)
                 }
                 .padding(.horizontal, 8)
@@ -1231,6 +672,8 @@ private func priceOverlay(isFree: Bool, price: Int?, isOwned: Bool) -> some View
 }
 
 // MARK: - Preview
+
 #Preview {
     WorkshopView(router: NavigationRouter<WorkshopRoute>())
+        .environment(UserManager.shared)
 }
