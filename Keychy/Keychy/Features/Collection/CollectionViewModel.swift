@@ -17,7 +17,7 @@ class CollectionViewModel {
     var tags: [String] = [] // 태그
     var selectedSort: String = "최신순" // 기본값
     var maxKeyringCount: Int = 100 // 기본값
-    
+    var selectedKeyrings: [Keyring] = []
     // MARK: - 초기화
     init() { }
 
@@ -117,7 +117,7 @@ class CollectionViewModel {
         Carabiner(
             id: "12343",
             carabinerName: "카라비너 A",
-            carabinerImage: "ddochi",
+            carabinerImage: "basicRing",
             description: "기본 스타일의 실버 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
@@ -131,7 +131,7 @@ class CollectionViewModel {
         Carabiner(
             id: "12344",
             carabinerName: "카라비너 B",
-            carabinerImage: "ddochi",
+            carabinerImage: "basicRing",
             description: "세련된 골드 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],

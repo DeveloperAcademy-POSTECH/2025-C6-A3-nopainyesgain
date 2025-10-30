@@ -65,8 +65,10 @@ struct KeyringBodyComponent {
         node.strokeColor = UIColor(white: 0.8, alpha: 0.4)
         node.lineWidth = 1.0
 
-        // 물리 바디 설정 (원형)
+        // 물리 바디 설정 (원형 - 기본값으로 설정, 씬에서 조정됨)
         let physicsBody = SKPhysicsBody(circleOfRadius: radius - 2)
+        physicsBody.isDynamic = true  // 기본값은 움직이게 설정, 나중에 씬에서 조정
+        physicsBody.affectedByGravity = true  // 기본값은 중력 적용, 나중에 씬에서 조정
         physicsBody.mass = 3.0
         physicsBody.friction = 0.5
         physicsBody.restitution = 0.2
@@ -79,16 +81,32 @@ struct KeyringBodyComponent {
 
     // MARK: - Image Body
     private static func createImageBody(image: UIImage) -> SKNode {
-        // 원본 크기 그대로 사용
-        let displaySize = image.size
+        // 키링 바디 크기를 적절히 조절
+        //⭐️TODO: 키링 바디 사이즈 싱싱이랑 같이 조절하기!
+        let maxSize: CGFloat = 80
+        let originalSize = image.size
+        // 바디 이미지 비율 유지
+        let aspectRatio = originalSize.height / originalSize.width
+        
+        let displaySize: CGSize
+        if originalSize.width > originalSize.height {
+            // 가로가 더 긴 경우
+            displaySize = CGSize(width: maxSize, height: maxSize * aspectRatio)
+        } else {
+            // 세로가 더 길거나 정사각형인 경우
+            displaySize = CGSize(width: maxSize / aspectRatio, height: maxSize)
+        }
 
         // 텍스처 생성
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear   // 부드럽게 렌더링
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
-        // 물리 바디 설정 (원본 크기에 맞게)
+        // 물리 바디 설정 (조절된 크기에 맞게 - 기본값으로 설정, 씬에서 조정됨)
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        // 기본값은 움직이게+중력 적용 설정, 나중에 씬에서 조정 가능.
+        physicsBody.isDynamic = true
+        physicsBody.affectedByGravity = true
         physicsBody.mass = 6.0
         physicsBody.friction = 0.5
         physicsBody.restitution = 0.2
@@ -101,15 +119,29 @@ struct KeyringBodyComponent {
     
     // 셀용
     private static func createMiniImageBody(image: UIImage) -> SKNode {
-        let displaySize = CGSize(width: 150, height: 150)
+        // 셀용도 크기 조절
+        let maxSize: CGFloat = 50  // 셀용은 더 작게
+        let originalSize = image.size
+        let aspectRatio = originalSize.height / originalSize.width
+        
+        let displaySize: CGSize
+        if originalSize.width > originalSize.height {
+            // 가로가 더 긴 경우
+            displaySize = CGSize(width: maxSize, height: maxSize * aspectRatio)
+        } else {
+            // 세로가 더 길거나 정사각형인 경우
+            displaySize = CGSize(width: maxSize / aspectRatio, height: maxSize)
+        }
 
         // 텍스처 생성
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear   // 부드럽게 렌더링
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
-        // 물리 바디 설정 (원본 크기에 맞게)
+        // 물리 바디 설정
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        physicsBody.isDynamic = true  // 기본값은 움직이게 설정, 나중에 씬에서 조정
+        physicsBody.affectedByGravity = true  // 기본값은 중력 적용, 나중에 씬에서 조정
         physicsBody.mass = 6.0
         physicsBody.friction = 0.5
         physicsBody.restitution = 0.2
