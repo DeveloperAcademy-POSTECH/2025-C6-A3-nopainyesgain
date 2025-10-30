@@ -9,6 +9,6 @@ import SwiftUI
 
 struct AlarmView: View {
     var body: some View {
-        Text("Hello, World!")
+        Text("알람창뷰 입니다.")
     }
 }
