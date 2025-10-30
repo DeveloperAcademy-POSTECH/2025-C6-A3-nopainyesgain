@@ -140,6 +140,7 @@
 		C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
+		C6C402912EB2F8A1006B58DF /* MyTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402902EB2F8A1006B58DF /* MyTemplateView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -284,6 +285,7 @@
 		C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPhotoPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
+		C6C402902EB2F8A1006B58DF /* MyTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTemplateView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -820,6 +822,7 @@
 				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
+				C6C402902EB2F8A1006B58DF /* MyTemplateView.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
 				C665DDE92EAEFAA800CE4495 /* Coin */,
 			);
@@ -1052,6 +1055,7 @@
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
+				C6C402912EB2F8A1006B58DF /* MyTemplateView.swift in Sources */,
 				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,

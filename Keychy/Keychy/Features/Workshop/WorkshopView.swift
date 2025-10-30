@@ -545,7 +545,7 @@ extension WorkshopView {
         VStack(spacing: 12) {
             HStack {
                 Button("내 창고 >") {
-                    // Action
+                    router.push(.myTemplate)
                 }
                 .font(.subheadline)
                 .foregroundStyle(.black)
