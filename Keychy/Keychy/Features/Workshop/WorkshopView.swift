@@ -559,7 +559,7 @@ extension WorkshopView {
                         emptyOwnedView
                     } else {
                         ForEach(ownedTemplates) { template in
-                            OwnedTemplateCard(template: template)
+                            OwnedTemplateCard(template: template, router: router)
                         }
                     }
                 }
@@ -853,28 +853,36 @@ struct SortOption: View {
 
 struct OwnedTemplateCard: View {
     let template: KeyringTemplate
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     
     var body: some View {
-        VStack(spacing: 8) {
-            LazyImage(url: URL(string: template.thumbnailURL)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    ProgressView()
-                } else {
-                    Color.gray.opacity(0.1)
-                }
+        Button {
+            if let route = WorkshopRoute.from(string: template.id!) {
+                router.push(route)
             }
-            .frame(width: 80, height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            Text(template.templateName)
-                .font(.caption)
-                .lineLimit(1)
+        } label: {
+            VStack(spacing: 8) {
+                LazyImage(url: URL(string: template.thumbnailURL)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.isLoading {
+                        ProgressView()
+                    } else {
+                        Color.gray.opacity(0.1)
+                    }
+                }
+                .frame(width: 80, height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                Text(template.templateName)
+                    .font(.caption)
+                    .lineLimit(1)
+            }
+            .padding(8)
         }
-        .padding(8)
+        .buttonStyle(.plain)
     }
 }
 
