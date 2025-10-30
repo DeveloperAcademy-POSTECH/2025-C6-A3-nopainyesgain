@@ -9,12 +9,42 @@ import SwiftUI
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        // TabBar 외형 설정
+        configureTabBarAppearance()
+        
+        return true
+    }
+    
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithDefaultBackground()
 
-    return true
-  }
+        // 폰트 설정
+        let selectedFont = UIFont(name: "NanumSquareRoundOTFEB", size: 10) ?? UIFont.systemFont(ofSize: 10)
+        let deselectedFont = UIFont(name: "NanumSquareRoundOTFB", size: 10) ?? UIFont.systemFont(ofSize: 10)
+        
+        
+        let selectedAttributes: [NSAttributedString.Key: Any] = [.font: selectedFont]
+        let deselectedAttributes: [NSAttributedString.Key: Any] = [.font: deselectedFont]
+        
+        
+
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
+        appearance.inlineLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
+        appearance.inlineLayoutAppearance.selected.titleTextAttributes = selectedAttributes
+        appearance.compactInlineLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
+        appearance.compactInlineLayoutAppearance.selected.titleTextAttributes = selectedAttributes
+
+        UITabBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+    }
 }
 
 @main

@@ -17,7 +17,7 @@ class CollectionViewModel {
     var tags: [String] = [] // 태그
     var selectedSort: String = "최신순" // 기본값
     var maxKeyringCount: Int = 100 // 기본값
-    
+    var selectedKeyrings: [Keyring] = []
     // MARK: - 초기화
     init() { }
 
@@ -52,6 +52,7 @@ class CollectionViewModel {
             createdAt: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date()
         )
     ]
+    
     var sortedBundles: [KeyringBundle] {
         bundles.sorted { a, b in
             // 메인 뭉치는 항상 첫 번째
@@ -62,11 +63,12 @@ class CollectionViewModel {
         }
     }
     
-    //MARK: - 임시 배경 모델
-    var background: [Background] = [
+    // MARK: - 배경 모델 (실제로는 Firestore에서 가져온 데이터)
+    var backgrounds: [Background] = [
         Background(
+            id: "12347",
             backgroundName: "기본 배경 A",
-            backgroundId: "1234",
+            description: "무료로 제공되는 기본 배경화면",
             backgroundImage: "ddochi",
             tags: ["tag1"],
             price: 0,
@@ -75,8 +77,9 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
+            id: "12346",
             backgroundName: "기본 배경 B",
-            backgroundId: "1234",
+            description: "심플하고 깔끔한 기본 배경",
             backgroundImage: "Cherries",
             tags: ["tag1"],
             price: 0,
@@ -85,35 +88,37 @@ class CollectionViewModel {
             createdAt: Date()
         ),
         Background(
+            id: "12341",
             backgroundName: "유료 배경 A",
-            backgroundId: "1234",
+            description: "화려한 프리미엄 배경화면",
             backgroundImage: "fireworks",
             tags: ["tag1"],
             price: 100,
             downloadCount: 0,
             useCount: 0,
             createdAt: Date()
-        )
-        ,
+        ),
         Background(
+            id: "12342",
             backgroundName: "유료 배경 B",
-            backgroundId: "1234",
+            description: "특별한 프리미엄 테마 배경",
             backgroundImage: "ddochi",
             tags: ["tag1"],
             price: 100,
             downloadCount: 0,
             useCount: 0,
             createdAt: Date()
-        )]
-    var selectedBackground: Background!
+        )
+    ]
+    var selectedBackground: Background?
     
-    //MARK: - 임시 카라비너 모델
-    var carabiner: [Carabiner] = [
+    // MARK: - 카라비너 모델 (실제로는 Firestore에서 가져온 데이터)
+    var carabiners: [Carabiner] = [
         Carabiner(
-            carabinerName: "카라비너 이름",
-            carabinerId: "1234",
-            carabinerImage: "ddochi",
-            description: "",
+            id: "12343",
+            carabinerName: "카라비너 A",
+            carabinerImage: "basicRing",
+            description: "기본 스타일의 실버 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
             price: 0,
@@ -124,10 +129,10 @@ class CollectionViewModel {
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
         ),
         Carabiner(
-            carabinerName: "카라비너 이름",
-            carabinerId: "1234",
-            carabinerImage: "ddochi",
-            description: "",
+            id: "12344",
+            carabinerName: "카라비너 B",
+            carabinerImage: "basicRing",
+            description: "세련된 골드 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
             price: 0,
@@ -138,10 +143,10 @@ class CollectionViewModel {
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
         ),
         Carabiner(
-            carabinerName: "카라비너 이름",
-            carabinerId: "1234",
+            id: "12345",
+            carabinerName: "카라비너 C",
             carabinerImage: "ddochi",
-            description: "",
+            description: "모던한 블랙 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
             price: 0,
@@ -150,6 +155,7 @@ class CollectionViewModel {
             createdAt: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(),
             keyringXPosition: [0.1, 0.8, 0.2, 0.8],
             keyringYPosition: [0.35, 0.2, 0.8, 0.8]
-        )]
+        )
+    ]
     var selectedCarabiner: Carabiner?
 }

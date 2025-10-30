@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PreviewMakingBtn: View {
+struct ItemDetailMakingBtn: View {
     let title: String
     
     // 클로저로 액션 전달 받기
@@ -26,5 +26,5 @@ struct PreviewMakingBtn: View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    PreviewMakingBtn(title: "예시버튼", action: { print("예시동작") })
+    ItemDetailMakingBtn(title: "예시버튼", action: { print("예시동작") })
 }

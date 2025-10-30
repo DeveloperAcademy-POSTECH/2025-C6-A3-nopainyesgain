@@ -69,7 +69,12 @@ extension BundleSelectCarabinerView {
                     if let carabiner = viewModel.selectedCarabiner {
                         GeometryReader { geo in
                             ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-                                CarabinerAddKeyringButton()
+                                CarabinerAddKeyringButton(
+                                    isSelected: false,
+                                    hasKeyring: false,
+                                    action: {},
+                                    secondAction: {}
+                                )
                                     .position(
                                         x: geo.size.width * carabiner.keyringXPosition[index],
                                         y: geo.size.height * carabiner.keyringYPosition[index]
@@ -92,7 +97,7 @@ extension BundleSelectCarabinerView {
             }
             ScrollView(.horizontal) {
                 HStack(spacing: 10) {
-                    ForEach(viewModel.carabiner, id: \.self) { cb in
+                    ForEach(viewModel.carabiners, id: \.id) { cb in
                         Button {
                             viewModel.selectedCarabiner = cb
                         } label: {

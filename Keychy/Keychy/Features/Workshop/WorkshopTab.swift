@@ -16,6 +16,9 @@ struct WorkshopTab: View {
             WorkshopView(router: router)
                 .navigationDestination(for: WorkshopRoute.self) { route in
                     switch route {
+                        
+                    case .myItems:
+                        MyItemsView()
 
                     // MARK: - AcrylicPhoto
                     case .acrylicPhotoPreview:
@@ -28,7 +31,7 @@ struct WorkshopTab: View {
                         KeyringCustomizingView(
                             router: router,
                             viewModel: getAcrylicPhotoVM(),
-                            navigationTitle: "아크릴 키링",
+                            navigationTitle: "",
                             nextRoute: .acrylicPhotoInfoInput
                         )
                     case .acrylicPhotoInfoInput:

@@ -33,9 +33,8 @@ extension KeyringScene {
             self.setupChain(ring: ring, centerX: centerX)
         }
     }
-        // Chain 생성 (Ring 생성 후 호출)
-        private func setupChain(ring: SKSpriteNode, centerX: CGFloat) {
-            
+    // Chain 생성 (Ring 생성 후 호출)
+    private func setupChain(ring: SKSpriteNode, centerX: CGFloat) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         // ringBottomY 그대로가 아니라 +0.5로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
@@ -134,14 +133,15 @@ extension KeyringScene {
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
         // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
-        let gapByScreen = size.height * 0.01
-        let gapByBody = bodyFrame.height * 0.03
-        let gap = max(gapByScreen, gapByBody)
+//        let gapByScreen = size.height * 0.01
+//        let gapByBody = bodyFrame.height * 0.03
+//        let gap = max(gapByScreen, gapByBody)
+        let connectGap = 30.0
         //let gap = gapByScreen
 
         // 바디 중심 Y를 계산:
         // 중앙선 기준 top(= bodyCenterY + bodyHalfHeight)이 lastChainBottomY - gap에 오도록 배치
-        let bodyCenterY = lastChainBottomY - gap - bodyHalfHeight
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         addChild(body)
