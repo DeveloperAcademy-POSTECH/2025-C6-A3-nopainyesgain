@@ -16,6 +16,9 @@ struct WorkshopTab: View {
             WorkshopView(router: router)
                 .navigationDestination(for: WorkshopRoute.self) { route in
                     switch route {
+                        
+                    case .myTemplate:
+                        MyTemplateView()
 
                     // MARK: - AcrylicPhoto
                     case .acrylicPhotoPreview:

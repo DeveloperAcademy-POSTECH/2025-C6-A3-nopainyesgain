@@ -16,6 +16,7 @@ enum WorkshopRoute: Hashable {
     case acrylicPhotoInfoInput
     case acrylicPhotoComplete
     case coinCharge
+    case myTemplate
     
     // MARK: - 텍스트 포토 템플릿
     case TextPhotoPreView
