@@ -62,5 +62,7 @@ extension Font {
     static let nanum15EB25 = Font.custom(.nanumExtraBold, size: 15)
     static let nanum15B25 = Font.custom(.nanumBold, size: 15)
     
+    static let nanum10EB12 = Font.custom(.nanumExtraBold, size: 10)
+    
     static let nanum14EB18 = Font.custom(.nanumExtraBold, size: 14)
 }

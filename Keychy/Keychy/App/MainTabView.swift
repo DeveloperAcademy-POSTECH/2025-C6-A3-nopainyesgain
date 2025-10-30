@@ -14,37 +14,45 @@ struct MainTabView: View {
     @State private var workshopRouter = NavigationRouter<WorkshopRoute>()
     @State private var festivalRouter = NavigationRouter<FestivalRoute>()
     @State private var userManager = UserManager.shared
-    
+
     var body: some View {
         TabView(selection: $selectedTab) {
             // 홈
             HomeTab(router: homeRouter, userManager: userManager)
                 .tabItem {
-                    Label("홈", systemImage: "house")
+                    Image("home")
+                        .renderingMode(.template)
+                    Text("홈")
                 }
                 .tag(0)
-            
+
             // 보관함
             CollectionTab(router: collectionRouter)
                 .tabItem {
-                    Label("보관함", systemImage: "folder")
+                    Image("collection")
+                        .renderingMode(.template)
+                    Text("보관함")
                 }
                 .tag(1)
-            
+
             // 공방
             WorkshopTab(router: workshopRouter)
                 .tabItem {
-                    Label("공방", systemImage: "hammer")
+                    Image("workshop")
+                        .renderingMode(.template)
+                    Text("공방")
                 }
                 .tag(2)
-            
+
             // 페스티벌
             FestivalTab(router: festivalRouter)
                 .tabItem {
-                    Label("페스티벌", systemImage: "flag")
+                    Image("festival")
+                        .renderingMode(.template)
+                    Text("페스티벌")
                 }
                 .tag(3)
         }
-        .tint(Color(#colorLiteral(red: 0.9999999404, green: 0.1882483959, blue: 0.3371632099, alpha: 1)))
+        .tint(.main500)  // 선택된 아이템 색상
     }
 }
