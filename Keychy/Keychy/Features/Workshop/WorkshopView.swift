@@ -54,7 +54,7 @@ struct WorkshopView: View {
     
     /// 메인 스크롤 콘텐츠
     private var mainScrollContent: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false){
             VStack(spacing: 0) {
                 // 상단 배너 (코인 버튼 + 타이틀)
                 topBannerSection
@@ -297,14 +297,9 @@ extension WorkshopView {
     
     /// 내 창고 로딩 중 뷰
     private var loadingOwnedView: some View {
-        VStack(spacing: 8) {
+        HStack(spacing: 0) {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-            Text("불러오는 중...")
-                .typography(.suit14SB18)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-
         }
         .frame(height: 137)
     }
@@ -333,12 +328,9 @@ extension WorkshopView {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
                 .scaleEffect(1.5)
-
-            Text("불러오는 중...")
-                .font(.system(.subheadline, weight: .semibold))
-                .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 50)
     }
 
     
@@ -403,25 +395,28 @@ extension WorkshopView {
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(.purple).opacity(0.6)
 
-            Text("KEYCHY! \n콘텐츠 준비중")
+            Text("KEYCHY! 디자이너 열일중..")
                 .typography(.suit14SB18)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 50)
     }
     
     /// 빈 콘텐츠 뷰
     private var emptyContentView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             Image(systemName: "tray")
-                .font(.system(size: 50))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.purple).opacity(0.6)
             
-            Text("표시할 아이템이 없습니다")
-                .foregroundStyle(.secondary)
+            Text("Comming Soon~")
+                .typography(.suit14SB18)
+                .foregroundColor(.secondary)
         }
-        .padding(.top, 100)
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 50)
     }
     
     /// 에러 뷰
@@ -578,6 +573,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                     .font(.subheadline)
                     .lineLimit(1)
             }
+            .cornerRadius(10)
+
         }
         .buttonStyle(.plain)
     }
