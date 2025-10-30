@@ -176,16 +176,14 @@ extension WorkshopView {
         .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
 
-    
-    /// 카테고리에 따라 다른 필터바 표시
     /// 카테고리에 따라 다른 필터바 표시
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 // 정렬 버튼
-                Button(action: {
+                Button {
                     viewModel.showFilterSheet = true
-                }) {
+                } label: {
                     HStack(spacing: 4) {
                         Text(viewModel.sortOrder)
                             .typography(.suit14SB18)
@@ -193,16 +191,16 @@ extension WorkshopView {
                         
                         Image("ChevronDown")
                             .resizable()
-                            .frame(width: 20, height: 20)
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Spacing.gap)
+                    .padding(.vertical, Spacing.sm)
+                    .frame(height: 34)
                     .background(
                         RoundedRectangle(cornerRadius: 15)
                             .fill(.black70)
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PlainButtonStyle())
                 
                 // 카테고리별 필터
                 categorySpecificFilters
@@ -313,9 +311,18 @@ extension WorkshopView {
     
     /// 로딩 뷰
     private var loadingView: some View {
-        ProgressView("불러오는 중...")
-            .padding(.top, 100)
+        VStack(spacing: 12) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                .scaleEffect(1.5)
+
+            Text("불러오는 중...")
+                .font(.system(.subheadline, weight: .semibold))
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, minHeight: 300)
     }
+
     
     /// 카테고리별 콘텐츠
     private var categoryContent: some View {
@@ -373,16 +380,17 @@ extension WorkshopView {
     
     /// KEYCHY! 전용 콘텐츠 (준비 중)
     private var keychyContentView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "star.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(.yellow)
-            
-            Text("KEYCHY! 콘텐츠 준비 중")
-                .font(.headline)
-                .foregroundStyle(.primary)
+        VStack(spacing: 12) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.purple)
+
+            Text("KEYCHY! \n콘텐츠 준비중")
+                .typography(.suit13SB)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
-        .padding(.top, 100)
+        .frame(maxWidth: .infinity, minHeight: 300)
     }
     
     /// 빈 콘텐츠 뷰
@@ -481,6 +489,7 @@ extension WorkshopView {
 
 // MARK: - Reusable Components
 
+
 /// 필터 칩 버튼
 struct FilterChip: View {
     let title: String
@@ -488,17 +497,23 @@ struct FilterChip: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button {
+            action()
+        } label: {
             HStack(spacing: 4) {
                 Text(title)
-                    .typography(.suit14M)
+                    .typography(.suit14SB18)
                     .foregroundColor(isSelected ? Color(.systemBackground) : .gray500)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(isSelected ? Color.primary : Color.gray50)
-            .clipShape(Capsule())
+            .padding(.horizontal, Spacing.gap)
+            .padding(.vertical, Spacing.sm)
+            .frame(height: 34)
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(isSelected ? Color.black70 : Color.gray50)
+            )
         }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
