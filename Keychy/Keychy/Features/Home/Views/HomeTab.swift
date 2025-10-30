@@ -35,12 +35,11 @@ struct HomeTab: View {
                     case .coinCharge:
                         CoinChargeView(router: router)
                     case .myPageView:
-                        MyPageView(router: router)
+                        MyPageView()
                     case .alarmView:
-                        AlarmView(router: router)
-                        
-                    }
+                        AlarmView()
                 }
+            }
         }
     }
 }
