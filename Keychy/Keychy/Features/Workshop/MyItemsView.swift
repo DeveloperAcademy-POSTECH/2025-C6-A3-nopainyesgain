@@ -353,56 +353,10 @@ struct MyItemsView: View {
 
     /// 정렬 선택 시트
     private var sortSheet: some View {
-        VStack(spacing: 0) {
-            // 헤더
-            sheetHeader
-
-            Divider()
-
-            // 정렬 옵션
-            sortOptions
-
-            Spacer()
-        }
-        .presentationDetents([.height(200)])
-    }
-
-    /// 시트 헤더
-    private var sheetHeader: some View {
-        HStack {
-            Button {
-                viewModel.showFilterSheet = false
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundStyle(.primary)
-            }
-
-            Spacer()
-
-            Text("정렬 기준")
-                .font(.headline)
-
-            Spacer()
-
-            Color.clear
-                .frame(width: 24)
-        }
-        .padding()
-    }
-
-    /// 정렬 옵션 리스트
-    private var sortOptions: some View {
-        VStack(spacing: 0) {
-            ForEach(["최신순", "인기순"], id: \.self) { sort in
-                SortOption(
-                    title: sort,
-                    isSelected: viewModel.sortOrder == sort
-                ) {
-                    viewModel.sortOrder = sort
-                    viewModel.showFilterSheet = false
-                }
-            }
-        }
+        WorkshopSortSheet(
+            showSheet: $viewModel.showFilterSheet,
+            sortOrder: $viewModel.sortOrder
+        )
     }
 }
 
