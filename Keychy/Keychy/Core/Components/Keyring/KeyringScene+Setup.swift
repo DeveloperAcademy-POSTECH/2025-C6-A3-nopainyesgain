@@ -33,9 +33,8 @@ extension KeyringScene {
             self.setupChain(ring: ring, centerX: centerX)
         }
     }
-        // Chain 생성 (Ring 생성 후 호출)
-        private func setupChain(ring: SKSpriteNode, centerX: CGFloat) {
-            
+    // Chain 생성 (Ring 생성 후 호출)
+    private func setupChain(ring: SKSpriteNode, centerX: CGFloat) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         // ringBottomY 그대로가 아니라 +0.5로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
