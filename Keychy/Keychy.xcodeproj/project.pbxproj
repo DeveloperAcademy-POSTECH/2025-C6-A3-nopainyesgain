@@ -135,6 +135,7 @@
 		AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */; };
 		AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
+		AA91B6532EB3D2DD00D87CA0 /* AcrylicPhotoGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA91B6522EB3D2DD00D87CA0 /* AcrylicPhotoGuiding.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
@@ -155,6 +156,7 @@
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
 		C6C402912EB2F8A1006B58DF /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402902EB2F8A1006B58DF /* MyItemsView.swift */; };
 		C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */; };
+		C6C402A12EB3F3A9006B58DF /* WorkshopComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -293,6 +295,7 @@
 		AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleAddKeyringView.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerItemTile.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
+		AA91B6522EB3D2DD00D87CA0 /* AcrylicPhotoGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcrylicPhotoGuiding.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
@@ -313,6 +316,7 @@
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		C6C402902EB2F8A1006B58DF /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
+		C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopComponents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -877,6 +881,7 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
+				C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
@@ -1182,6 +1187,7 @@
 				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
+				C6C402A12EB3F3A9006B58DF /* WorkshopComponents.swift in Sources */,
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* AcrylicPhotoEditedView.swift in Sources */,

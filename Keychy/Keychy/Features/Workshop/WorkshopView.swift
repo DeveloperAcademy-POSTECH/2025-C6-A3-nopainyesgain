@@ -16,7 +16,7 @@ struct WorkshopView: View {
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
     
-    private let categories = ["KEYCHY!", "키링", "카라비너", "파티클", "사운드", "배경"]
+    private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
         
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
@@ -36,6 +36,11 @@ struct WorkshopView: View {
             // 스티키 헤더 (카테고리 탭 + 필터)
             stickyHeaderSection
         }
+        .background(
+            Image(.back)
+                .resizable()
+                .scaledToFill()
+        )
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
@@ -54,7 +59,7 @@ struct WorkshopView: View {
     
     /// 메인 스크롤 콘텐츠
     private var mainScrollContent: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false){
             VStack(spacing: 0) {
                 // 상단 배너 (코인 버튼 + 타이틀)
                 topBannerSection
@@ -121,7 +126,7 @@ extension WorkshopView {
         .padding(.bottom, 24)
         .background(Color(UIColor.systemBackground))
         .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
-        .animation(.easeInOut(duration: 0.25), value: viewModel.mainContentOffset)
+//        .animation(.easeInOut(duration: 0.2), value: viewModel.mainContentOffset)
     }
     
     /// 타이틀 텍스트
@@ -136,20 +141,21 @@ extension WorkshopView {
         Button {
             router.push(.coinCharge)
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: "leaf.fill")
-                    .foregroundStyle(.pink)
+            HStack(spacing: 0) {
+                Image(.keyCoin)
+                    .resizable()
+                    .scaledToFit()
                 
                 Spacer()
 
                 Text("\(userManager.currentUser?.coin ?? 0)")
-                    .typography(.suit15R)
+                    .typography(.nanum16EB)
                     .foregroundColor(.black)
             }
-            .padding(.vertical, 3)
         }
-        .frame(minWidth: 80, maxWidth: .infinity, alignment: .leading)
-        .fixedSize(horizontal: true, vertical: false)
+        .frame(minWidth: 80)
+        .frame(height: 40)
+        .fixedSize(horizontal: true, vertical: true)
         .buttonStyle(.glass)
     }
 }
@@ -171,38 +177,38 @@ extension WorkshopView {
             filterBar
         }
         .padding(.horizontal, 20)
-        .background(Color(UIColor.systemBackground))
+        .padding(.bottom, 20)
+        .background(.white)
         .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
         .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
 
-    
-    /// 카테고리에 따라 다른 필터바 표시
     /// 카테고리에 따라 다른 필터바 표시
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 // 정렬 버튼
-                Button(action: {
+                Button {
                     viewModel.showFilterSheet = true
-                }) {
+                } label: {
                     HStack(spacing: 4) {
                         Text(viewModel.sortOrder)
                             .typography(.suit14SB18)
-                            .foregroundColor(.white100)
+                            .foregroundColor(.gray500)
                         
-                        Image("ChevronDown")
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.gray500)
+
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Spacing.gap)
+                    .padding(.vertical, Spacing.sm)
+                    .frame(height: 34)
                     .background(
                         RoundedRectangle(cornerRadius: 15)
-                            .fill(.black70)
+                            .fill(.gray50)
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PlainButtonStyle())
                 
                 // 카테고리별 필터
                 categorySpecificFilters
@@ -228,15 +234,39 @@ extension WorkshopView {
                     }
                 }
                 
-            case "카라비너", "파티클", "사운드", "배경":
-                // 공통 필터 (귀여움, 심플, 자연)
-                ForEach(CommonFilterType.allCases, id: \.self) { filter in
+            case "이펙트":
+                // 이펙트 타입 필터 (사운드, 파티클)
+                ForEach(EffectFilterType.allCases, id: \.self) { filter in
                     FilterChip(
                         title: filter.rawValue,
-                        isSelected: viewModel.selectedCommonFilter == filter
+                        isSelected: viewModel.selectedEffectFilter == filter
+                    ) {
+                        viewModel.selectedEffectFilter =
+                            viewModel.selectedEffectFilter == filter ? nil : filter
+                    }
+                }
+                
+            case "카라비너":
+                // 카라비너 태그 (동적으로 로드)
+                ForEach(viewModel.availableCarabinerTags, id: \.self) { tag in
+                    FilterChip(
+                        title: tag,
+                        isSelected: viewModel.selectedCommonFilter == tag
                     ) {
                         viewModel.selectedCommonFilter =
-                            viewModel.selectedCommonFilter == filter ? nil : filter
+                            viewModel.selectedCommonFilter == tag ? nil : tag
+                    }
+                }
+
+            case "배경":
+                // 배경 태그 (동적으로 로드)
+                ForEach(viewModel.availableBackgroundTags, id: \.self) { tag in
+                    FilterChip(
+                        title: tag,
+                        isSelected: viewModel.selectedCommonFilter == tag
+                    ) {
+                        viewModel.selectedCommonFilter =
+                            viewModel.selectedCommonFilter == tag ? nil : tag
                     }
                 }
                 
@@ -267,7 +297,9 @@ extension WorkshopView {
             // 보유 아이템 리스트
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 7) {
-                    if viewModel.ownedTemplates.isEmpty {
+                    if viewModel.isLoading {
+                        loadingOwnedView
+                    } else if viewModel.ownedTemplates.isEmpty {
                         emptyOwnedView
                     } else {
                         ForEach(viewModel.ownedTemplates) { template in
@@ -276,23 +308,32 @@ extension WorkshopView {
                     }
                 }
             }
+            .padding(.bottom, 12)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 30)
+        .padding(.horizontal, 25)
+        .padding(.bottom, 20)
     }
     
     /// 빈 창고 뷰
     private var emptyOwnedView: some View {
         VStack(spacing: 8) {
-            Image(systemName: "tray")
-                .font(.largeTitle)
-                .foregroundStyle(.secondary)
-            Text("보유한 아이템이 없습니다")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            Text("보유한 아이템이 없습니다.")
+                .typography(.suit14SB18)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
-        .frame(width: 120, height: 100)
+        .frame(height: 137)
     }
+    
+    /// 내 창고 로딩 중 뷰
+    private var loadingOwnedView: some View {
+        HStack(spacing: 0) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+        }
+        .frame(height: 137)
+    }
+
 }
 
 // MARK: - Main Content Section
@@ -313,9 +354,15 @@ extension WorkshopView {
     
     /// 로딩 뷰
     private var loadingView: some View {
-        ProgressView("불러오는 중...")
-            .padding(.top, 100)
+        VStack(spacing: 12) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                .scaleEffect(1.5)
+        }
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 50)
     }
+
     
     /// 카테고리별 콘텐츠
     private var categoryContent: some View {
@@ -332,14 +379,44 @@ extension WorkshopView {
             case "카라비너":
                 itemGridView(items: viewModel.filteredCarabiners,
                            isOwnedCheck: viewModel.isCarabinerOwned)
-            case "파티클":
-                itemGridView(items: viewModel.filteredParticles,
-                           isOwnedCheck: viewModel.isParticleOwned)
-            case "사운드":
-                itemGridView(items: viewModel.filteredSounds,
-                           isOwnedCheck: viewModel.isSoundOwned)
+            case "이펙트":
+                effectContentView
             default:
                 emptyContentView
+            }
+        }
+    }
+    
+    /// 이펙트 전용 콘텐츠 (사운드 + 파티클)
+    private var effectContentView: some View {
+        Group {
+            let items = viewModel.filteredEffects
+            
+            if items.isEmpty {
+                emptyContentView
+            } else {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 16) {
+                    ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                        if let sound = item as? Sound {
+                            WorkshopItemView(
+                                item: sound,
+                                isOwned: viewModel.isSoundOwned(sound),
+                                router: router
+                            )
+                        } else if let particle = item as? Particle {
+                            WorkshopItemView(
+                                item: particle,
+                                isOwned: viewModel.isParticleOwned(particle),
+                                router: router
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 50)
             }
         }
     }
@@ -356,7 +433,7 @@ extension WorkshopView {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 16) {
+                ], spacing: 11) {
                     ForEach(items) { item in
                         WorkshopItemView(
                             item: item,
@@ -366,36 +443,40 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 100)
+                .padding(.vertical, 92)
             }
         }
     }
     
     /// KEYCHY! 전용 콘텐츠 (준비 중)
     private var keychyContentView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "star.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(.yellow)
-            
-            Text("KEYCHY! 콘텐츠 준비 중")
-                .font(.headline)
-                .foregroundStyle(.primary)
+        VStack(spacing: 12) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.purple).opacity(0.6)
+
+            Text("KEYCHY! 디자이너 열일중..")
+                .typography(.suit14SB18)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
-        .padding(.top, 100)
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 50)
     }
     
     /// 빈 콘텐츠 뷰
     private var emptyContentView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             Image(systemName: "tray")
-                .font(.system(size: 50))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.purple).opacity(0.6)
             
-            Text("표시할 아이템이 없습니다")
-                .foregroundStyle(.secondary)
+            Text("Comming Soon~")
+                .typography(.suit14SB18)
+                .foregroundColor(.secondary)
         }
-        .padding(.top, 100)
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 50)
     }
     
     /// 에러 뷰
@@ -425,248 +506,13 @@ extension WorkshopView {
 extension WorkshopView {
     /// 정렬 선택 시트
     private var sortSheet: some View {
-        VStack(spacing: 0) {
-            // 헤더
-            sheetHeader
-            
-            Divider()
-            
-            // 정렬 옵션
-            sortOptions
-            
-            Spacer()
+        WorkshopSortSheet(
+            showSheet: $viewModel.showFilterSheet,
+            sortOrder: $viewModel.sortOrder
+        )
+        .onChange(of: viewModel.sortOrder) { oldValue, newValue in
+            viewModel.applySorting()
         }
-        .presentationDetents([.height(200)])
-    }
-    
-    /// 시트 헤더
-    private var sheetHeader: some View {
-        HStack {
-            Button {
-                viewModel.showFilterSheet = false
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundStyle(.primary)
-            }
-            
-            Spacer()
-            
-            Text("정렬 기준")
-                .font(.headline)
-            
-            Spacer()
-            
-            Color.clear
-                .frame(width: 24)
-        }
-        .padding()
-    }
-    
-    /// 정렬 옵션 리스트
-    private var sortOptions: some View {
-        VStack(spacing: 0) {
-            ForEach(["최신순", "인기순"], id: \.self) { sort in
-                SortOption(
-                    title: sort,
-                    isSelected: viewModel.sortOrder == sort
-                ) {
-                    viewModel.sortOrder = sort
-                    viewModel.applySorting()
-                    viewModel.showFilterSheet = false
-                }
-            }
-        }
-    }
-}
-
-// MARK: - Reusable Components
-
-/// 필터 칩 버튼
-struct FilterChip: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 4) {
-                Text(title)
-                    .typography(.suit14M)
-                    .foregroundColor(isSelected ? Color(.systemBackground) : .gray500)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(isSelected ? Color.primary : Color.gray50)
-            .clipShape(Capsule())
-        }
-    }
-}
-
-/// 정렬 옵션 행
-struct SortOption: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Text(title)
-                    .foregroundStyle(.primary)
-                Spacer()
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.pink)
-                }
-            }
-            .padding()
-        }
-    }
-}
-
-// MARK: - Workshop Item Views
-
-/// 모든 워크샵 아이템을 표시하는 통합 그리드 아이템 뷰
-struct WorkshopItemView<Item: WorkshopItem>: View {
-    let item: Item
-    var isOwned: Bool = false
-    var router: NavigationRouter<WorkshopRoute>? = nil
-    
-    var body: some View {
-        Button {
-            handleTap()
-        } label: {
-            VStack(spacing: 8) {
-                // 썸네일 이미지
-                thumbnailImage
-                
-                // 아이템 이름
-                Text(item.name)
-                    .font(.subheadline)
-                    .lineLimit(1)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-    
-    /// 썸네일 이미지 + 가격 오버레이
-    private var thumbnailImage: some View {
-        ZStack(alignment: .topLeading) {
-            LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    Color.gray.opacity(0.3)
-                        .overlay { ProgressView() }
-                } else {
-                    Color.gray.opacity(0.3)
-                        .overlay {
-                            Image(systemName: "photo")
-                                .foregroundStyle(.secondary)
-                        }
-                }
-            }
-            .frame(height: 200)
-            .frame(maxWidth: .infinity)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            // 가격 오버레이
-            priceOverlay(
-                isFree: item.isFree,
-                price: item.workshopPrice,
-                isOwned: isOwned
-            )
-        }
-    }
-    
-    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
-    private func handleTap() {
-        if let template = item as? KeyringTemplate,
-           let router = router,
-           let route = WorkshopRoute.from(string: template.id!) {
-            router.push(route)
-        }
-    }
-}
-
-/// 보유한 아이템을 표시하는 작은 카드 뷰
-struct OwnedItemCard<Item: WorkshopItem>: View {
-    let item: Item
-    var router: NavigationRouter<WorkshopRoute>? = nil
-    
-    var body: some View {
-        Button {
-            handleTap()
-        } label: {
-            VStack(spacing: 8) {
-                LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        ProgressView()
-                    } else {
-                        Color.gray.opacity(0.1)
-                    }
-                }
-                .frame(width: 80, height: 80)
-                .padding(8)
-                .frame(width:112, height:112)
-                .background(Color.white)
-                .cornerRadius(10)
-                
-                // 아이템 이름
-                Text(item.name)
-                    .typography(.suit14SB18)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-    
-    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
-    private func handleTap() {
-        if let template = item as? KeyringTemplate,
-           let router = router,
-           let route = WorkshopRoute.from(string: template.id!) {
-            router.push(route)
-        }
-    }
-}
-
-/// 공통 가격 오버레이 (보유/무료/유료 표시)
-func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
-    VStack {
-        HStack {
-            if isOwned {
-                // 보유 배지
-                Text("보유")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.green)
-                    .clipShape(Capsule())
-                    .padding(8)
-            } else if !isFree {
-                // 가격 배지
-                HStack(spacing: 4) {
-                    Image(systemName: "leaf.fill")
-                        .foregroundStyle(.pink)
-                    Text("\(price)")
-                        .foregroundStyle(.primary)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.ultraThinMaterial)
-                .clipShape(Capsule())
-                .padding(8)
-            }
-            Spacer()
-        }
-        Spacer()
     }
 }
 
