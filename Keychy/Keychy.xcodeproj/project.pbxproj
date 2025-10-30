@@ -141,6 +141,7 @@
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
 		C6C402912EB2F8A1006B58DF /* MyTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402902EB2F8A1006B58DF /* MyTemplateView.swift */; };
+		C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -286,6 +287,7 @@
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		C6C402902EB2F8A1006B58DF /* MyTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTemplateView.swift; sourceTree = "<group>"; };
+		C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -819,10 +821,11 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
-				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
+				C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */,
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				C6C402902EB2F8A1006B58DF /* MyTemplateView.swift */,
+				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
 				C665DDE92EAEFAA800CE4495 /* Coin */,
 			);
@@ -1116,6 +1119,7 @@
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
 				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
+				C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* PreviewImage.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
