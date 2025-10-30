@@ -217,7 +217,6 @@ extension CarabinerScene {
         let bodyCenterY = lastChainBottomY - gap - bodyHalfHeight
         
         body.position = CGPoint(x: centerX, y: bodyCenterY)
-        body.setScale(0.5)
         container.addChild(body)
         
         // 조인트 연결

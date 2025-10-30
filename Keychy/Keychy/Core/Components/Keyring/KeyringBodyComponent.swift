@@ -89,7 +89,7 @@ struct KeyringBodyComponent {
         texture.filteringMode = .linear   // 부드럽게 렌더링
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
-        // 물리 바디 설정 (조절된 크기에 맞게 - 기본값으로 설정, 씬에서 조정됨)
+        // 물리 바디 설정 (원본 크기에 맞게)
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
         // 기본값은 움직이게+중력 적용 설정, 나중에 씬에서 조정 가능.
         physicsBody.isDynamic = true
@@ -113,7 +113,7 @@ struct KeyringBodyComponent {
         texture.filteringMode = .linear   // 부드럽게 렌더링
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
-        // 물리 바디 설정
+        // 물리 바디 설정 (원본 크기에 맞게)
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
         physicsBody.isDynamic = true  // 기본값은 움직이게 설정, 나중에 씬에서 조정
         physicsBody.affectedByGravity = true  // 기본값은 중력 적용, 나중에 씬에서 조정
