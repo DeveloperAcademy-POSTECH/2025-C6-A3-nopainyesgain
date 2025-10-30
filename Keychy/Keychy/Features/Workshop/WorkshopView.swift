@@ -632,24 +632,27 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     
     /// 썸네일 이미지 + 가격 오버레이
     private var thumbnailImage: some View {
-        ZStack(alignment: .topTrailing) {
-            LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else if state.isLoading {
-                    Color.gray.opacity(0.3)
-                        .overlay { ProgressView() }
-                } else {
-                    Color.gray.opacity(0.3)
-                        .overlay {
-                            Image(systemName: "photo")
-                                .foregroundStyle(.secondary)
-                        }
+        ZStack(alignment: .top) {
+            VStack {
+                LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.isLoading {
+                        Color.gray.opacity(0.3)
+                            .overlay { ProgressView() }
+                    } else {
+                        Color.gray.opacity(0.3)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
+                    }
                 }
+                .scaledToFit()
             }
-            .frame(maxWidth: .infinity, maxHeight: 233)
+            .padding(.vertical,10)
             
             // 가격 오버레이
             priceOverlay(
@@ -658,6 +661,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 isOwned: isOwned
             )
         }
+        .frame(height: 233)
         .background(Color.gray50)
         .cornerRadius(10)
     }
@@ -682,18 +686,20 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
             handleTap()
         } label: {
             VStack(spacing: 8) {
-                LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        ProgressView()
-                    } else {
-                        Color.gray.opacity(0.1)
+                VStack {
+                    LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else if state.isLoading {
+                            ProgressView()
+                        } else {
+                            Color.gray.opacity(0.1)
+                        }
                     }
+                    .scaledToFit()
                 }
-                .padding(8)
                 .frame(width:112, height:112)
                 .background(Color.white)
                 .cornerRadius(10)
@@ -701,6 +707,7 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
                 // 아이템 이름
                 Text(item.name)
                     .typography(.suit14SB18)
+                    .foregroundColor(.black100)
             }
         }
         .buttonStyle(.plain)
