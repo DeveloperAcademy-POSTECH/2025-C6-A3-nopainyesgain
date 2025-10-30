@@ -29,6 +29,7 @@ struct WorkshopView: View {
         ZStack(alignment: .top) {
             // 메인 스크롤 콘텐츠
             mainScrollContent
+                .scrollBounceBehavior(.basedOnSize)
             
             // 스크롤 시 나타나는 상단 타이틀 바
             topTitleBar
@@ -36,6 +37,11 @@ struct WorkshopView: View {
             // 스티키 헤더 (카테고리 탭 + 필터)
             stickyHeaderSection
         }
+        .background(
+            Image(.back)
+                .resizable()
+                .scaledToFit()
+        )
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
@@ -87,6 +93,7 @@ struct WorkshopView: View {
                     .aspectRatio(contentMode: .fit)
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
     }
 }
 
@@ -172,7 +179,7 @@ extension WorkshopView {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
-        .background(Color.white)
+        .background(.white)
         .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
         .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
@@ -301,11 +308,11 @@ extension WorkshopView {
                         }
                     }
                 }
-                .foregroundColor(Color(.secondaryGray))
             }
+            .padding(.bottom, 12)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 30)
+        .padding(.horizontal, 25)
+        .padding(.bottom, 20)
     }
     
     /// 빈 창고 뷰
@@ -661,7 +668,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 isOwned: isOwned
             )
         }
-        .frame(height: 233)
+        .frame(width: 175, height: 233)
         .background(Color.gray50)
         .cornerRadius(10)
     }
