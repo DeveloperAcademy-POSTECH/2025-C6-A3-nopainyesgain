@@ -21,51 +21,41 @@ struct BundleInventoryView: View {
     
     var body: some View {
         VStack {
-            headerSection
             bundleGrid
         }
         .padding(.horizontal, 16)
         .toolbar(.hidden, for: .tabBar)
-        .navigationBarHidden(true)
+        .toolbar {
+            backToolbarItem
+            nextToolbarItem
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationTitle("뭉치함")
         .scrollIndicators(.hidden)
     }
 }
 
-//MARK: - 헤더뷰
+//MARK: - 툴바
 extension BundleInventoryView {
-    private var headerSection: some View {
-        HStack {
-            Button {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button(action: {
                 router.pop()
-            } label: {
+            }) {
                 Image(systemName: "chevron.left")
-                    .padding(10.25)
-                    .background(
-                        Circle()
-                            .glassEffect(.clear)
-                    )
             }
-            .buttonStyle(PlainButtonStyle())
-            Spacer()
-            Button {
-                router.push(.bundleSelectBackgroundView)
-            } label: {
-                Image(systemName: "plus")
-                    .padding(10.25)
-                    .background(
-                        Circle()
-                            .glassEffect(.clear)
-                    )
-            }
-            .buttonStyle(PlainButtonStyle())
         }
-        .overlay(
-            Text("뭉치 보관함")
-                .font(.title2)
-                .bold()
-        )
+    }
+    
+    private var nextToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("+") {
+                router.push(.bundleSelectBackgroundView)
+            }
+        }
     }
 }
+
 
 //MARK: - 그리드 뷰
 extension BundleInventoryView {
