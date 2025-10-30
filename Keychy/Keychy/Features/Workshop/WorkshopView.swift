@@ -11,25 +11,20 @@ import NukeUI
 // MARK: - Main View
 
 struct WorkshopView: View {
-    // MARK: Properties
     
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
     
     private let categories = ["KEYCHY!", "키링", "카라비너", "파티클", "사운드", "배경"]
-    
-    // MARK: Initialization
-    
+        
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
     init(router: NavigationRouter<WorkshopRoute>) {
         self.router = router
         _viewModel = State(initialValue: WorkshopViewModel(userManager: UserManager.shared))
     }
-    
-    // MARK: Body
-    
+        
     var body: some View {
         ZStack(alignment: .top) {
             // 메인 스크롤 콘텐츠
@@ -71,8 +66,6 @@ struct WorkshopView: View {
                 
                 // 내 창고 섹션
                 myCollectionSection
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 16)
                 
                 // 메인 콘텐츠 (그리드)
                 VStack {
@@ -88,7 +81,7 @@ struct WorkshopView: View {
                 }
                 .background(Color(UIColor.systemBackground))
             }
-            .padding(.top, 80)
+            .padding(.top, 60)
             .background(alignment: .top) {
                 Image("WorkshopBack")
                     .resizable()
@@ -143,7 +136,7 @@ extension WorkshopView {
     /// 타이틀 텍스트
     private var titleView: some View {
         Text("공방")
-            .font(.largeTitle.bold())
+            .typography(.suit32B)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
     
@@ -155,14 +148,18 @@ extension WorkshopView {
             HStack(spacing: 4) {
                 Image(systemName: "leaf.fill")
                     .foregroundStyle(.pink)
+                
+                Spacer()
+
                 Text("\(userManager.currentUser?.coin ?? 0)")
-                    .foregroundStyle(.primary)
+                    .typography(.suit15R)
+                    .foregroundColor(.black)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color.secondary.opacity(0.1))
-            .clipShape(Capsule())
+            .padding(.vertical, 3)
         }
+        .frame(minWidth: 80, maxWidth: .infinity, alignment: .leading)
+        .fixedSize(horizontal: true, vertical: false)
+        .buttonStyle(.glass)
     }
 }
 
@@ -251,15 +248,15 @@ extension WorkshopView {
                 Button("내 창고 >") {
                     router.push(.myTemplate)
                 }
-                .font(.subheadline)
-                .foregroundStyle(.black)
-                
+                .typography(.suit16B)
+                .foregroundColor(.black.opacity(0.7))
+
                 Spacer()
             }
             
             // 보유 아이템 리스트
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
+                HStack(spacing: 7) {
                     if viewModel.ownedTemplates.isEmpty {
                         emptyOwnedView
                     } else {
@@ -270,7 +267,8 @@ extension WorkshopView {
                 }
             }
         }
-        .padding(.bottom, 12)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 30)
     }
     
     /// 빈 창고 뷰
@@ -373,10 +371,6 @@ extension WorkshopView {
             Text("KEYCHY! 콘텐츠 준비 중")
                 .font(.headline)
                 .foregroundStyle(.primary)
-            
-            Text("곧 만나요!")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
         }
         .padding(.top, 100)
     }
@@ -602,7 +596,6 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
             handleTap()
         } label: {
             VStack(spacing: 8) {
-                // 썸네일 이미지
                 LazyImage(url: URL(string: item.thumbnailURL)) { state in
                     if let image = state.image {
                         image
@@ -615,14 +608,15 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
                     }
                 }
                 .frame(width: 80, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(8)
+                .frame(width:112, height:112)
+                .background(Color.white)
+                .cornerRadius(10)
                 
                 // 아이템 이름
                 Text(item.name)
-                    .font(.caption)
-                    .lineLimit(1)
+                    .typography(.suit14SB18)
             }
-            .padding(8)
         }
         .buttonStyle(.plain)
     }
@@ -674,6 +668,16 @@ func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
 // MARK: - Preview
 
 #Preview {
-    WorkshopView(router: NavigationRouter<WorkshopRoute>())
-        .environment(UserManager.shared)
+    let userManager = UserManager.shared
+    
+    // 프리뷰용 더미 유저 생성
+    userManager.currentUser = KeychyUser(
+        id: "preview-user-id",
+        nickname: "프리뷰유저",
+        email: "preview@example.com"
+    )
+    userManager.currentUser?.templates = ["AcrylicPhoto", "CirclePhoto", "CloudDream", "MinimalSquare"] // 보유 템플릿 ID 추가
+        
+    return WorkshopView(router: NavigationRouter<WorkshopRoute>())
+        .environment(userManager)
 }
