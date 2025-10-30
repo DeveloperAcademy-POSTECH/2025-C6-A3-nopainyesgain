@@ -275,13 +275,22 @@ extension KeyringCustomizingView {
                         await viewModel.downloadSound(sound)
                     }
                 }
-                // 케이스 4: 미구매 + 무료 → 다운로드
-                else if !isOwned && sound.isFree {
+                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                else if !isOwned && sound.isFree && isInCache {
+                    viewModel.updateSound(sound)
+                }
+                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                else if !isOwned && sound.isFree && !isInCache {
                     Task {
                         await viewModel.downloadSound(sound)
                     }
                 }
-                // 케이스 5: 미구매 + 유료 → 다운로드 후 체험 가능
+                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
+                else if !isOwned && !sound.isFree && isInCache {
+                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
+                    viewModel.updateSound(sound)
+                }
+                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
                 else {
                     // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
                     Task {
@@ -407,13 +416,22 @@ extension KeyringCustomizingView {
                         await viewModel.downloadParticle(particle)
                     }
                 }
-                // 케이스 4: 미구매 + 무료 → 다운로드
-                else if !isOwned && particle.isFree {
+                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                else if !isOwned && particle.isFree && isInCache {
+                    viewModel.updateParticle(particle)
+                }
+                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                else if !isOwned && particle.isFree && !isInCache {
                     Task {
                         await viewModel.downloadParticle(particle)
                     }
                 }
-                // 케이스 5: 미구매 + 유료 → 다운로드 후 체험 가능
+                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
+                else if !isOwned && !particle.isFree && isInCache {
+                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
+                    viewModel.updateParticle(particle)
+                }
+                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
                 else {
                     // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
                     Task {

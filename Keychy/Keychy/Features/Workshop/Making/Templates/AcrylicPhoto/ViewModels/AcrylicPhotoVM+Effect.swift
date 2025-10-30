@@ -81,76 +81,77 @@ extension AcrylicPhotoVM {
         downloadingItemIds.insert(soundId)
         downloadProgress[soundId] = 0.0
 
-        do {
-            // Firebase Storage에서 다운로드
-            let storageRef = Storage.storage().reference(forURL: sound.soundData)
+        // Firebase Storage에서 다운로드
+        let storageRef = Storage.storage().reference(forURL: sound.soundData)
 
-            // 로컬 캐시 경로
-            let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            let localURL = cacheDirectory.appendingPathComponent("sounds/\(soundId).mp3")
+        // 로컬 캐시 경로
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let localURL = cacheDirectory.appendingPathComponent("sounds/\(soundId).mp3")
 
-            // sounds 디렉토리 생성
-            let soundsDir = cacheDirectory.appendingPathComponent("sounds")
-            try? FileManager.default.createDirectory(at: soundsDir, withIntermediateDirectories: true)
+        // sounds 디렉토리 생성
+        try? FileManager.default.createDirectory(at: cacheDirectory.appendingPathComponent("sounds"), withIntermediateDirectories: true)
 
-            // 다운로드 진행
-            let downloadTask = storageRef.write(toFile: localURL)
+        // 다운로드 진행
+        let downloadTask = storageRef.write(toFile: localURL)
 
-            // 진행률 관찰
-            downloadTask.observe(.progress) { [weak self] snapshot in
-                guard let progress = snapshot.progress else { return }
-                guard progress.totalUnitCount > 0 else { return }
+        // 진행률 관찰
+        _ = downloadTask.observe(.progress) { [weak self] snapshot in
+            guard let progress = snapshot.progress else { return }
+            guard progress.totalUnitCount > 0 else { return }
 
-                let percentComplete = Double(progress.completedUnitCount) / Double(progress.totalUnitCount)
+            let percentComplete = Double(progress.completedUnitCount) / Double(progress.totalUnitCount)
 
-                // NaN, Infinite 체크
-                guard percentComplete.isFinite else { return }
+            // NaN, Infinite 체크
+            guard percentComplete.isFinite else { return }
 
-                Task { @MainActor in
-                    self?.downloadProgress[soundId] = percentComplete
-                }
+            Task { @MainActor in
+                self?.downloadProgress[soundId] = percentComplete
             }
+        }
 
-            // 다운로드 완료 대기
-            _ = try await downloadTask
+        // 다운로드 완료 대기
+        await withCheckedContinuation { continuation in
+            downloadTask.observe(.success) { _ in
+                continuation.resume()
+            }
+            downloadTask.observe(.failure) { _ in
+                continuation.resume()
+            }
+        }
 
-            // 파일 쓰기 완료 확인 (짧은 대기)
+        // 파일 쓰기 완료 확인 (짧은 대기)
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
+
+        // 파일 존재 확인
+        var attempts = 0
+        while !FileManager.default.fileExists(atPath: localURL.path) && attempts < 5 {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
+            attempts += 1
+        }
 
-            // 파일 존재 확인
-            var attempts = 0
-            while !FileManager.default.fileExists(atPath: localURL.path) && attempts < 5 {
-                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
-                attempts += 1
+        // 사운드 프리로드 (재생 준비)
+        await SoundEffectComponent.shared.preloadSound(named: soundId)
+
+        // 다운로드 완료 후 자동 선택
+        await MainActor.run {
+            updateSound(sound)
+        }
+
+        // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
+        if sound.isFree {
+            Task {
+                guard let userId = userManager.currentUser?.id else { return }
+
+                try? await Firestore.firestore()
+                    .collection("User")
+                    .document(userId)
+                    .updateData([
+                        "soundEffects": FieldValue.arrayUnion([soundId])
+                    ])
+
+                // UserManager 업데이트
+                await refreshUserData()
             }
-
-            // 사운드 프리로드 (재생 준비)
-            await SoundEffectComponent.shared.preloadSound(named: soundId)
-
-            // 다운로드 완료 후 자동 선택
-            await MainActor.run {
-                updateSound(sound)
-            }
-
-            // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
-            if sound.isFree {
-                Task {
-                    guard let userId = userManager.currentUser?.id else { return }
-
-                    try? await Firestore.firestore()
-                        .collection("User")
-                        .document(userId)
-                        .updateData([
-                            "soundEffects": FieldValue.arrayUnion([soundId])
-                        ])
-
-                    // UserManager 업데이트
-                    await refreshUserData()
-                }
-            }
-
-        } catch {
-            errorMessage = "사운드 다운로드에 실패했습니다: \(error.localizedDescription)"
         }
 
         // 다운로드 상태 초기화
@@ -169,73 +170,74 @@ extension AcrylicPhotoVM {
         downloadingItemIds.insert(particleId)
         downloadProgress[particleId] = 0.0
 
-        do {
-            // Firebase Storage에서 다운로드
-            let storageRef = Storage.storage().reference(forURL: particle.particleData)
+        // Firebase Storage에서 다운로드
+        let storageRef = Storage.storage().reference(forURL: particle.particleData)
 
-            // 로컬 캐시 경로
-            let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            let localURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
+        // 로컬 캐시 경로
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let localURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
 
-            // particles 디렉토리 생성
-            let particlesDir = cacheDirectory.appendingPathComponent("particles")
-            try? FileManager.default.createDirectory(at: particlesDir, withIntermediateDirectories: true)
+        // particles 디렉토리 생성
+        try? FileManager.default.createDirectory(at: cacheDirectory.appendingPathComponent("particles"), withIntermediateDirectories: true)
 
-            // 다운로드 진행
-            let downloadTask = storageRef.write(toFile: localURL)
+        // 다운로드 진행
+        let downloadTask = storageRef.write(toFile: localURL)
 
-            // 진행률 관찰
-            downloadTask.observe(.progress) { [weak self] snapshot in
-                guard let progress = snapshot.progress else { return }
-                guard progress.totalUnitCount > 0 else { return }
+        // 진행률 관찰
+        _ = downloadTask.observe(.progress) { [weak self] snapshot in
+            guard let progress = snapshot.progress else { return }
+            guard progress.totalUnitCount > 0 else { return }
 
-                let percentComplete = Double(progress.completedUnitCount) / Double(progress.totalUnitCount)
+            let percentComplete = Double(progress.completedUnitCount) / Double(progress.totalUnitCount)
 
-                // NaN, Infinite 체크
-                guard percentComplete.isFinite else { return }
+            // NaN, Infinite 체크
+            guard percentComplete.isFinite else { return }
 
-                Task { @MainActor in
-                    self?.downloadProgress[particleId] = percentComplete
-                }
+            Task { @MainActor in
+                self?.downloadProgress[particleId] = percentComplete
             }
+        }
 
-            // 다운로드 완료 대기
-            _ = try await downloadTask
+        // 다운로드 완료 대기
+        await withCheckedContinuation { continuation in
+            downloadTask.observe(.success) { _ in
+                continuation.resume()
+            }
+            downloadTask.observe(.failure) { _ in
+                continuation.resume()
+            }
+        }
 
-            // 파일 쓰기 완료 확인 (짧은 대기)
+        // 파일 쓰기 완료 확인 (짧은 대기)
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
+
+        // 파일 존재 확인
+        var attempts = 0
+        while !FileManager.default.fileExists(atPath: localURL.path) && attempts < 5 {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
+            attempts += 1
+        }
 
-            // 파일 존재 확인
-            var attempts = 0
-            while !FileManager.default.fileExists(atPath: localURL.path) && attempts < 5 {
-                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
-                attempts += 1
+        // 다운로드 완료 후 자동 선택
+        await MainActor.run {
+            updateParticle(particle)
+        }
+
+        // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
+        if particle.isFree {
+            Task {
+                guard let userId = userManager.currentUser?.id else { return }
+
+                try? await Firestore.firestore()
+                    .collection("User")
+                    .document(userId)
+                    .updateData([
+                        "particleEffects": FieldValue.arrayUnion([particleId])
+                    ])
+
+                // UserManager 업데이트
+                await refreshUserData()
             }
-
-            // 다운로드 완료 후 자동 선택
-            await MainActor.run {
-                updateParticle(particle)
-            }
-
-            // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
-            if particle.isFree {
-                Task {
-                    guard let userId = userManager.currentUser?.id else { return }
-
-                    try? await Firestore.firestore()
-                        .collection("User")
-                        .document(userId)
-                        .updateData([
-                            "particleEffects": FieldValue.arrayUnion([particleId])
-                        ])
-
-                    // UserManager 업데이트
-                    await refreshUserData()
-                }
-            }
-
-        } catch {
-            errorMessage = "파티클 다운로드에 실패했습니다: \(error.localizedDescription)"
         }
 
         // 다운로드 상태 초기화
