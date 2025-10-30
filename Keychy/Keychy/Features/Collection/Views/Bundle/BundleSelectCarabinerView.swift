@@ -69,7 +69,12 @@ extension BundleSelectCarabinerView {
                     if let carabiner = viewModel.selectedCarabiner {
                         GeometryReader { geo in
                             ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-                                CarabinerAddKeyringButton(action: {})
+                                CarabinerAddKeyringButton(
+                                    isSelected: false,
+                                    hasKeyring: false,
+                                    action: {},
+                                    secondAction: {}
+                                )
                                     .position(
                                         x: geo.size.width * carabiner.keyringXPosition[index],
                                         y: geo.size.height * carabiner.keyringYPosition[index]
