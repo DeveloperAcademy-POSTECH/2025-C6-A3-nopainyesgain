@@ -89,8 +89,6 @@ struct WorkshopSortSheet: View {
             }
             .padding()
 
-            Divider()
-
             // 정렬 옵션
             VStack(spacing: 0) {
                 ForEach(["최신순", "인기순"], id: \.self) { sort in
