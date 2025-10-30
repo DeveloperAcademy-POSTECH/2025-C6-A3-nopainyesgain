@@ -172,7 +172,6 @@
 		38A596792EAFA94E0003D712 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		38A5967F2EAFCF5F0003D712 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		38A596832EAFEAA20003D712 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
-		38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
 		38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleGlassButton.swift; sourceTree = "<group>"; };
 		38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Status.swift"; sourceTree = "<group>"; };
 		38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringDetailView.swift; sourceTree = "<group>"; };
@@ -433,21 +432,12 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		4CB82EC72EB1EB5100B7458B /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				38A596852EAFF8200003D712 /* IntroViewModel+NicknameSetup.swift */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
-				4CB82EC72EB1EB5100B7458B /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -515,7 +505,6 @@
 				4CEC61D92EAE08C00099ECEE /* KeyringBundle */,
 				4CEC61DD2EAE08C00099ECEE /* Interaction */,
 				4CEC61E32EAE08C00099ECEE /* Keyring */,
-				C6C402872EB27025006B58DF /* Elements */,
 			);
 			path = CommonModels;
 			sourceTree = "<group>";
@@ -974,13 +963,6 @@
 				C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		C6C402872EB27025006B58DF /* Elements */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Elements;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
