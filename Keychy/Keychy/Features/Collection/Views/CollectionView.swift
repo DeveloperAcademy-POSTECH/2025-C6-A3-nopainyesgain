@@ -22,7 +22,7 @@ struct CollectionView: View {
     }
     
     // 정렬 옵션 (최신(생성) / 오래된 / 복사된 숫자순(인기순) / 이름 ㄱㄴㄷ순
-    let sortOptions = ["최신순", "오래된순", "이름순", "인기순"]
+    let sortOptions = ["최신순", "오래된순", "이름순"]
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: Spacing.gap),
@@ -48,6 +48,7 @@ struct CollectionView: View {
             collectionSection
         }
         .padding(Spacing.padding)
+        .ignoresSafeArea()
         .sheet(isPresented: $showSortSheet) {
             sortSheet
         }
@@ -155,6 +156,7 @@ extension CollectionView {
             CircleGlassButton(imageName: "Bundle",
                               action: { router.push(.bundleInventoryView) })
         }
+        .padding(.top, 60)
     }
 }
 
@@ -210,9 +212,9 @@ extension CollectionView {
             HStack(spacing: 2) {
                 Text(collectionViewModel.selectedSort)
                     .typography(.suit14SB18)
-                    .foregroundColor(.white100)
+                    .foregroundColor(.gray500)
                 
-                Image("ChevronDown")
+                Image("ChevronDown_gray500")
                     .resizable()
                     .frame(width: 20, height: 20)
             }
@@ -220,7 +222,7 @@ extension CollectionView {
             .padding(.vertical, Spacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(.black70)
+                    .fill(.gray50)
             )
             
         }
