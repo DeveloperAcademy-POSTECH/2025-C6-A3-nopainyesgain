@@ -11,72 +11,83 @@ import SpriteKit
 // MARK: - Keyring Chain Component
 struct KeyringChainComponent {
 
-    // Chain 타입 받아서 링크들을 생성
     static func createLinks(
         from chainType: ChainType,
         count: Int,
         startPosition: CGPoint,
-        spacing: CGFloat
-    ) -> [SKSpriteNode] {
-        switch chainType {
-        case .basic:
-            return createBasicChainLinks(count: count, startPosition: startPosition, spacing: spacing)
+        spacing: CGFloat,
+        completion: @escaping ([SKSpriteNode]) -> Void
+    ) {
+        
+        let chainLinks = chainType.createChainLinks(length: count)
+        var nodesDictionary: [Int: SKSpriteNode] = [:]
+        let group = DispatchGroup()
+        
+        for (index, link) in chainLinks.enumerated() {
+            group.enter()
+            
+            // StorageManager로 이미지 다운
+            Task {
+                do {
+                    let image = try await StorageManager.shared.getImage(path: link.imageURL)
+                    
+                    await MainActor.run {
+                        let yPosition = startPosition.y - CGFloat(index) * spacing
+                        
+                        let node = createChainLinkNode(
+                            image: image,
+                            link: link,
+                            position: CGPoint(x: startPosition.x, y: yPosition),
+                            index: index
+                        )
+                        
+                        nodesDictionary[index] = node
+                        
+                        group.leave()
+                    }
+                } catch {
+                    await MainActor.run {
+                        group.leave()
+                    }
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            let nodes = (0..<count).compactMap { nodesDictionary[$0] }
+            
+            for (index, node) in nodes.enumerated() {
+                print("   링크 \(index): position = (\(node.position.x), \(node.position.y))")
+            }
+            
+            completion(nodes)
         }
     }
 
-    // MARK: - Basic Chain Links
-    private static func createBasicChainLinks(
-        count: Int,
-        startPosition: CGPoint,
-        spacing: CGFloat
-    ) -> [SKSpriteNode] {
-        var links: [SKSpriteNode] = []
-
-        for i in 0..<count {
-            let width = (i % 2 == 0) ? 5.0 : 18.0
-            let height = (i % 2 == 0) ? 22.0 : 26.0
-            let imageName = (i % 2 == 0) ? "basicChain1" : "basicChain2"
-
-            let node = SKSpriteNode(imageNamed: imageName)
-            node.size = CGSize(width: width, height: height)
-            node.position = CGPoint(
-                x: startPosition.x,
-                y: startPosition.y - CGFloat(i) * spacing
-            )
-            node.zPosition = (i % 2 == 0) ? 1 : 0 // 짝수번째 노드가 위에 보이도록 처리
-
-            let physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: width - 4, height: height - 4))
-            physicsBody.mass = 2.0
-            physicsBody.friction = 0.4
-            physicsBody.restitution = 0.3
-            physicsBody.linearDamping = 0.5
-            physicsBody.angularDamping = 0.8
-            node.physicsBody = physicsBody
-
-            links.append(node)
-        }
-
-        return links
-    }
-
-    // MARK: - Chain Link Shape
-    private static func createChainLink(width: CGFloat, height: CGFloat) -> SKShapeNode {
-        let path = CGMutablePath()
-        let radius = width / 2
-        let innerWidth = width - 6
-        let innerHeight = height - 8
-
-        let outerRect = CGRect(x: -width / 2, y: -height / 2, width: width, height: height)
-        path.addRoundedRect(in: outerRect, cornerWidth: radius, cornerHeight: radius)
-
-        let innerRect = CGRect(x: -innerWidth / 2, y: -innerHeight / 2, width: innerWidth, height: innerHeight)
-        path.addRoundedRect(in: innerRect, cornerWidth: innerWidth / 2, cornerHeight: innerWidth / 2)
-
-        let node = SKShapeNode(path: path, centered: true)
-        node.fillColor = UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
-        node.strokeColor = UIColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 1.0)
-        node.lineWidth = 0.5
-
+    // MARK: - 단일 체인 링크 노드 생성
+    // UIImage와 링크 정보로 SKSpriteNode 생성
+    private static func createChainLinkNode(
+        image: UIImage,
+        link: ChainType.ChainLink,
+        position: CGPoint,
+        index: Int
+    ) -> SKSpriteNode {
+        let texture = SKTexture(image: image)
+        
+        let node = SKSpriteNode(texture: texture)
+        node.size = link.size
+        node.position = position
+        node.zPosition = (index % 2 == 0) ? 1 : 0 // 짝수번째 노드가 위에 보이도록
+        
+        // 물리 바디 추가
+        let physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: link.width - 4, height: link.height - 4))
+        physicsBody.mass = 2.0
+        physicsBody.friction = 0.4
+        physicsBody.restitution = 0.3
+        physicsBody.linearDamping = 0.5
+        physicsBody.angularDamping = 0.8
+        node.physicsBody = physicsBody
+        
         return node
     }
 }

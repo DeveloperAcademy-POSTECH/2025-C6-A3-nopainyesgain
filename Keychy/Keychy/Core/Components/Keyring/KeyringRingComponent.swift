@@ -12,22 +12,47 @@ import SpriteKit
 struct KeyringRingComponent {
 
     // Ring 타입 받아서 SKSpriteNode로 생성
-    static func createNode(from ringType: RingType) -> SKSpriteNode {
-        switch ringType {
-        case .basic:
-            return createBasicRing()
+    static func createNode(
+        from ringType: RingType,
+        completion: @escaping (SKSpriteNode?) -> Void
+    ) {
+        // StorageManager로 이미지 다운
+        Task {
+            do {
+                let image = try await StorageManager.shared.getImage(path: ringType.imageURL)
+                
+                await MainActor.run {
+                    let node = createRingNode(
+                        image: image,
+                        ringType: ringType
+                    )
+                    
+                    completion(node)
+                }
+            } catch {
+                print("링 이미지 로드 실패: \(error)")
+                
+                await MainActor.run {
+                    completion(nil)
+                }
+            }
         }
     }
 
-    // MARK: - Basic Ring
-    private static func createBasicRing() -> SKSpriteNode {
-        let outerRadius: CGFloat = 50
-        let innerRadius: CGFloat = 42
+    // MARK: - Ring 노드 생성
+    // UIImage와 RingType으로 SKSpriteNode 생성
+    private static func createRingNode(
+        image: UIImage,
+        ringType: RingType
+    ) -> SKSpriteNode {
+        let ringSize = ringType.size
+        let outerRadius = ringSize / 2
+        let innerRadius = outerRadius * 0.84 // 비율은 추후 고리가 더 추가되면 따로 설정할 가능성 높음
         let thickness = outerRadius - innerRadius
-        let ringSize = outerRadius * 2 // 지름
-
+        
         // 이미지로 스프라이트 노드 생성
-        let node = SKSpriteNode(imageNamed: "basicRing")
+        let texture = SKTexture(image: image)
+        let node = SKSpriteNode(texture: texture)
         node.size = CGSize(width: ringSize, height: ringSize)
 
         // 물리 바디를 도넛 형태로 근사

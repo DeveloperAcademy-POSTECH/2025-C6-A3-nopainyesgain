@@ -11,6 +11,38 @@ import SpriteKit
 // MARK: - Keyring Body Component
 struct KeyringBodyComponent {
 
+    static func createNode(
+        from bodyImage: UIImage,
+        completion: @escaping (SKNode?) -> Void
+    ) {
+        let node = createImageBody(image: bodyImage)
+        completion(node)
+    }
+    
+    // MARK: - String URL로 노드 생성 (비동기)
+    static func createNode(
+        from bodyImageURL: String,
+        completion: @escaping (SKNode?) -> Void
+    ) {
+        Task {
+            do {
+                let image = try await StorageManager.shared.getImage(path: bodyImageURL)
+                
+                await MainActor.run {
+                    let node = createMiniImageBody(image: image)
+                    completion(node)
+                }
+            } catch {
+                print("Body 이미지 로드 실패: \(error)")
+            
+                await MainActor.run {
+                    let node = createBasicBody()
+                    completion(node)
+                }
+            }
+        }
+    }
+    
     // Body 타입 받아서 SKNode로 생성
     static func createNode(from bodyType: BodyType) -> SKNode {
         switch bodyType {
@@ -49,6 +81,27 @@ struct KeyringBodyComponent {
     private static func createImageBody(image: UIImage) -> SKNode {
         // 원본 크기 그대로 사용
         let displaySize = image.size
+
+        // 텍스처 생성
+        let texture = SKTexture(image: image)
+        texture.filteringMode = .linear   // 부드럽게 렌더링
+        let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+
+        // 물리 바디 설정 (원본 크기에 맞게)
+        let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        physicsBody.mass = 6.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        spriteNode.physicsBody = physicsBody
+
+        return spriteNode
+    }
+    
+    // 셀용
+    private static func createMiniImageBody(image: UIImage) -> SKNode {
+        let displaySize = CGSize(width: 150, height: 150)
 
         // 텍스처 생성
         let texture = SKTexture(image: image)

@@ -6,9 +6,21 @@
 //
 
 import Foundation
+import FirebaseStorage
 
 @Observable
 class CollectionViewModel {
+    
+    // MARK: - 프로퍼티
+    var isLoading = false
+    var keyring: [Keyring] = [] // 키링
+    var tags: [String] = [] // 태그
+    var selectedSort: String = "최신순" // 기본값
+    var maxKeyringCount: Int = 100 // 기본값
+    
+    // MARK: - 초기화
+    init() { }
+
     // 키링 뭉치 관련
     // MARK: - 임시 키링 뭉치
     var bundles: [KeyringBundle] = [
@@ -49,20 +61,6 @@ class CollectionViewModel {
             return a.createdAt > b.createdAt
         }
     }
-    // MARK: - 임시 키링 모델 - 실제로는 유저가 보유한 keyring으로 수정 되어야 함
-    var keyring: [Keyring] = [
-        Keyring(name: "키링 A", bodyImage: "Bundle", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
-        Keyring(name: "키링 B", bodyImage: "Cherries", soundId: "123", particleId: "123", tags: ["tags", "또치"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
-        Keyring(name: "키링 C", bodyImage: "InvenPlus", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: true, chainLength: 5),
-        Keyring(name: "키링 D", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: true, chainLength: 5),
-        Keyring(name: "키링 A", bodyImage: "Widget", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
-        Keyring(name: "키링 E", bodyImage: "Cherries", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: true, chainLength: 5),
-        Keyring(name: "키링 C", bodyImage: "InvenPlus", soundId: "123", particleId: "123", tags: ["tags", "강아지"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
-        Keyring(name: "키링 D", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tags", "여행"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: true, chainLength: 5),
-        Keyring(name: "키링 A", bodyImage: "Bundle", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
-        Keyring(name: "키링 C", bodyImage: "InvenPlus", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: false, chainLength: 5),
-        Keyring(name: "키링 D", bodyImage: "fireworks", soundId: "123", particleId: "123", tags: ["tags"], createdAt: Date(), authorId: "123", copyCount: 1, selectedTemplate: "123", selectedRing: "123", selectedChain: "123", isEditable: true, isPackaged: true, chainLength: 5)
-    ]
     
     //MARK: - 임시 배경 모델
     var background: [Background] = [
