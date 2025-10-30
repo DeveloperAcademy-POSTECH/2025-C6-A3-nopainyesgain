@@ -143,7 +143,7 @@ extension WorkshopView {
                 Spacer()
 
                 Text("\(userManager.currentUser?.coin ?? 0)")
-                    .typography(.suit15R)
+                    .typography(.nanum16EB)
                     .foregroundColor(.black)
             }
             .padding(.vertical, 3)
@@ -188,17 +188,18 @@ extension WorkshopView {
                     HStack(spacing: 4) {
                         Text(viewModel.sortOrder)
                             .typography(.suit14SB18)
-                            .foregroundColor(.white100)
+                            .foregroundColor(.gray500)
                         
-                        Image("ChevronDown")
-                            .resizable()
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.gray500)
+
                     }
                     .padding(.horizontal, Spacing.gap)
                     .padding(.vertical, Spacing.sm)
                     .frame(height: 34)
                     .background(
                         RoundedRectangle(cornerRadius: 15)
-                            .fill(.black70)
+                            .fill(.gray50)
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
