@@ -25,7 +25,7 @@ class StorageManager {
         
         print("데이터 다운로드 시작: \(url.lastPathComponent)")
         
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, _) = try await URLSession.shared.data(from: url)
         
         print("데이터 다운로드 완료: \(data.count) bytes")
         return data

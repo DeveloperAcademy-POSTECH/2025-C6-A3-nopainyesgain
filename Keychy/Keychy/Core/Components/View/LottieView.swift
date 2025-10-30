@@ -17,7 +17,12 @@ struct LottieView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: .zero)
-        animationView.animation = LottieAnimation.named(name)
+
+        // particleId로 캐시 → Bundle 순서로 파일 찾기
+        if let animation = findParticleAnimation(particleId: name) {
+            animationView.animation = animation
+        }
+
         animationView.contentMode = .scaleAspectFit
         animationView.loopMode = loopMode
         animationView.animationSpeed = speed
@@ -32,4 +37,22 @@ struct LottieView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {}
+
+    /// 파티클 애니메이션 파일 찾기 (캐시 → Bundle 순서)
+    private func findParticleAnimation(particleId: String) -> LottieAnimation? {
+        // 1. 로컬 캐시에서 찾기
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
+
+        if FileManager.default.fileExists(atPath: cachedURL.path) {
+            return LottieAnimation.filepath(cachedURL.path)
+        }
+
+        // 2. Bundle에서 찾기 (기본 무료 파티클)
+        if let animation = LottieAnimation.named(particleId) {
+            return animation
+        }
+
+        return nil
+    }
 }

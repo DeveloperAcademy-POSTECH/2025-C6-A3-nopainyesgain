@@ -15,35 +15,33 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State var viewModel: VM
     let navigationTitle: String
     let nextRoute: WorkshopRoute
-
-    @State private var selectedInteractionType: Interaction = .tap
-    @State private var selectedSoundEffect: SoundEffect = .none
-    @State private var selectedParticleEffect: ParticleEffect = .none
+    
+    @State private var selectedMode: CustomizingMode = .effect
     @State private var isLoadingResources = true
-
+    
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                // SpriteKit Scene (키링 프리뷰) - Generic KeyringSceneView 사용
                 ZStack(alignment: .bottomTrailing) {
                     KeyringSceneView(viewModel: viewModel)
-
-                    // Interaction 선택 버튼 (탭 / 스윙)
-                    HStack(alignment: .bottom) {
-                        ForEach(Interaction.allCases) { Interaction in
-                            effectSelectorBtn(for: Interaction)
+                    
+                    // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
+                    HStack(alignment: .bottom, spacing: 8) {
+                        ForEach(viewModel.availableCustomizingModes) { mode in
+                            modeButton(for: mode)
                         }
                         Spacer()
                     }
-                    .padding(10)
+                    .padding(18)
                 }
-
-                // MARK: - 효과 선택 영역 (사운드 / 파티클)
-                effectSelectorView
+                
+                // MARK: - 하단 영역 (선택된 모드에 따라 변경)
+                bottomContentView
             }
+            .background(.gray50)
             .blur(radius: isLoadingResources ? 3 : 0)
             .disabled(isLoadingResources)
-
+            
             // 로딩 인디케이터
             if isLoadingResources {
                 VStack(spacing: 16) {
@@ -65,19 +63,22 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             nextToolbarItem
         }
         .task {
+            // Firebase에서 이펙트 데이터 가져오기
+            await viewModel.fetchEffects()
+
             // 커스터마이징 화면 진입 시 모든 사운드 리소스 프리로드
-            // TODO: Firebase 연동 후에는 유저 소유 사운드만 프리로드하도록 변경
-            await preloadAllSoundEffects()  // 모든 사운드 로딩 완료까지 기다림
-            isLoadingResources = false      // 로딩 완료 후 인디케이터 닫기
+            await preloadAllSoundEffects()
+
+            isLoadingResources = false
         }
     }
 
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
-        // 모든 사운드를 순차적으로 로드 (각각 완료될 때까지 기다림)
-        for effect in SoundEffect.allCases {
-            guard effect != .none else { continue }
-            await SoundEffectComponent.shared.preloadSound(named: effect.soundFileName)
+        // Firebase에서 가져온 사운드를 순차적으로 로드
+        for sound in viewModel.availableSounds {
+            guard let soundId = sound.id else { continue }
+            await SoundEffectComponent.shared.preloadSound(named: soundId)
         }
     }
 }
@@ -93,7 +94,6 @@ extension KeyringCustomizingView {
             }
         }
     }
-
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("다음") {
@@ -103,122 +103,428 @@ extension KeyringCustomizingView {
     }
 }
 
-// MARK: - Effects Selector Section
+// MARK: - Mode Selection & Bottom Content Section
 extension KeyringCustomizingView {
-
-    /// Interaction 타입(탭 / 스윙) 선택 버튼
-    private func effectSelectorBtn(for InteractionType: Interaction) -> some View {
+    /// 모드 선택 버튼
+    private func modeButton(for mode: CustomizingMode) -> some View {
         Button {
-            selectedInteractionType = InteractionType
+            selectedMode = mode
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 13)
-                    .fill(hasEffectApplied(for: InteractionType) ? Color.red.opacity(0.2) : .clear)
-                    .stroke(selectedInteractionType == InteractionType ? Color.red : .gray, lineWidth: 1.5)
-                    .frame(width: 44, height: 44)
-
-                Image(InteractionType.systemImage)
+                    .fill(selectedMode == mode ? .main500 : .white100)
+                    .frame(width: 48, height: 48)
+                    .shadow(color: .black.opacity(0.25), radius: 4)
+                
+                Image(mode.btnImage)
+                    .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
+                
             }
         }
-        // 선택 시 크기 애니메이션
-        .scaleEffect(selectedInteractionType == InteractionType ? 1.1 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: selectedInteractionType)
+        .scaleEffect(selectedMode == mode ? 1.1 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: selectedMode)
     }
-
-    /// 선택된 Interaction에 따른 효과 선택 화면 (사운드 / 파티클)
+    
+    /// 선택된 모드에 따라 하단 영역 변경
+    @ViewBuilder
+    private var bottomContentView: some View {
+        switch selectedMode {
+        case .effect:
+            effectSelectorView
+            // 나중에 추가: case .drawing: drawingView
+        }
+    }
+    
+    /// 효과 선택 화면 (사운드 + 파티클 통합)
     private var effectSelectorView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(selectedInteractionType.title)
-                .font(.title2)
-                .fontWeight(.bold)
-
-            switch selectedInteractionType {
-            case .tap:
-                tapEffectView
-            case .swing:
-                swingEffectView
-            }
-
+        VStack(alignment: .leading, spacing: 24) {
+            // 탭 사운드 섹션
+            soundEffectSelector
+            
+            // 흔들기 효과 섹션
+            particleEffectSelector
+            
             Spacer()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding()
-        .background(.bar)
+        .frame(maxWidth: .infinity, maxHeight: 310, alignment: .topLeading)
+        .background(
+            UnevenRoundedRectangle(
+                topLeadingRadius: 24,
+                topTrailingRadius: 24
+            )
+            .fill(.white100)
+            .shadow(color: .black.opacity(0.15), radius: 9)
+            .ignoresSafeArea(edges: .bottom)
+        )
     }
-
-    // MARK: - Tap Interaction → 사운드 이펙트 뷰
-    private var tapEffectView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            soundEffectSelector
-        }
-    }
-
-    // MARK: - Swing Interaction → 파티클 이펙트 뷰
-    private var swingEffectView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            particleEffectSelector
-        }
-    }
-
+    
     /// 사운드 이펙트 선택 버튼 그룹
     private var soundEffectSelector: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("사운드")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            Text("탭 사운드")
+                .typography(.suit16B)
+                .foregroundStyle(.black100)
+                .padding(.leading, 20)
+                .padding(.top, 30)
+            
+            HStack(spacing: 0) {
+                // 마이크 아이콘 (고정)
+                ZStack {
+                    Image("record")
+                        .frame(width: 32, height: 32)
+                }
+                .padding(.leading, 20)
+                .padding(.trailing, 8)
 
-            HStack(spacing: 8) {
-                ForEach(SoundEffect.allCases, id: \.self) { effect in
-                    Button {
-                        // 선택 상태 업데이트 및 ViewModel 반영
-                        selectedSoundEffect = effect
-                        viewModel.updateSoundEffect(effect)
-                    } label: {
-                        Text(effect.title)
-                            .font(.system(size: 13, weight: .regular))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
+                // 버튼들만 스크롤
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        // "없음" 버튼
+                        Button {
+                            viewModel.updateSound(nil)
+                        } label: {
+                            Text("없음")
+                                .typography(viewModel.selectedSound == nil ? .suit15SB25 : .suit15M25)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 9)
+                                .foregroundStyle(viewModel.selectedSound == nil ? .white100 : .gray500)
+                                .background(viewModel.selectedSound == nil ? .main500 : .gray50)
+                                .clipShape(.rect(cornerRadius: 15))
+                        }
 
-                            .foregroundStyle(selectedSoundEffect == effect ? .white : .primary)
+                        // Firebase 사운드 목록
+                        ForEach(viewModel.availableSounds) { sound in
+                            soundItemButton(sound: sound)
+                        }
                     }
-                    .buttonStyle(.glassProminent)
-                    .tint(selectedSoundEffect == effect ? Color.red : .gray.opacity(0.2))
+                    .padding(.leading, 8)
+                    .padding(.trailing, 20)
+                }
+                .overlay(alignment: .leading) {
+                    // Rectangle을 위에 겹쳐서 자연스럽게 가림
+                    Rectangle()
+                        .fill(.gray50)
+                        .frame(width: 3, height: 40)
+                        .clipShape(.rect(cornerRadius: 10))
                 }
             }
         }
     }
-
+    
     /// 파티클 이펙트 선택 버튼 그룹
     private var particleEffectSelector: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("파티클")
-                .font(.headline)
-
-            HStack(spacing: 8) {
-                ForEach(ParticleEffect.allCases, id: \.self) { effect in
+        VStack(alignment: .leading, spacing: 12) {
+            Text("흔들기 효과")
+                .typography(.suit16B)
+                .foregroundStyle(.black100)
+                .padding(.leading, 20)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    // "없음" 버튼
                     Button {
-                        selectedParticleEffect = effect
-                        viewModel.updateParticleEffect(effect)
+                        viewModel.updateParticle(nil)
                     } label: {
-                        Text(effect.title)
-                            .font(.system(size: 13, weight: .regular))
+                        Text("없음")
+                            .typography(viewModel.selectedParticle == nil ? .suit15SB25 : .suit15M25)
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .foregroundStyle(selectedParticleEffect == effect ? .white : .primary)
+                            .padding(.vertical, 9)
+                            .foregroundStyle(viewModel.selectedParticle == nil ? .white100 : .gray500)
+                            .background(viewModel.selectedParticle == nil ? .main500 : .gray50)
+                            .clipShape(.rect(cornerRadius: 15))
                     }
-                    .buttonStyle(.glassProminent)
-                    .tint(selectedParticleEffect == effect ? Color.red : .gray.opacity(0.2))
+
+                    // Firebase 파티클 목록
+                    ForEach(viewModel.availableParticles) { particle in
+                        particleItemButton(particle: particle)
+                    }
                 }
+                .padding(.horizontal, 20)
             }
         }
     }
 
-    /// Interaction 타입별 효과 적용 여부
-    private func hasEffectApplied(for interactionType: Interaction) -> Bool {
-        switch interactionType {
-        case .tap:
-            return selectedSoundEffect != .none
-        case .swing:
-            return selectedParticleEffect != .none
+    // MARK: - Item Button Helpers
+
+    /// 사운드 아이템 버튼
+    @ViewBuilder
+    private func soundItemButton(sound: Sound) -> some View {
+        if let soundId = sound.id {
+            let isInBundle = viewModel.isInBundle(soundId: soundId)
+            let isInCache = viewModel.isInCache(soundId: soundId)
+            let isOwned = viewModel.isOwned(soundId: soundId)
+            let isDownloading = viewModel.downloadingItemIds.contains(soundId)
+            let isSelected = viewModel.selectedSound?.id == soundId
+
+            // UI 스타일 계산
+            let isPaidUnownedUnselected = !sound.isFree && !isOwned && !isSelected
+            let isPaidOwnedSelected = !sound.isFree && isOwned && isSelected
+
+            Button {
+                // 케이스 1: Bundle 무료 → 바로 사용
+                if isInBundle {
+                    viewModel.updateSound(sound)
+                }
+                // 케이스 2: 구매 + 캐시 있음 → 바로 사용
+                else if isOwned && isInCache {
+                    viewModel.updateSound(sound)
+                }
+                // 케이스 3: 구매 + 캐시 없음 → 재다운로드
+                else if isOwned && !isInCache {
+                    Task {
+                        await viewModel.downloadSound(sound)
+                    }
+                }
+                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                else if !isOwned && sound.isFree && isInCache {
+                    viewModel.updateSound(sound)
+                }
+                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                else if !isOwned && sound.isFree && !isInCache {
+                    Task {
+                        await viewModel.downloadSound(sound)
+                    }
+                }
+                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
+                else if !isOwned && !sound.isFree && isInCache {
+                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
+                    viewModel.updateSound(sound)
+                }
+                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
+                else {
+                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
+                    Task {
+                        await viewModel.downloadSound(sound)
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    // 유료 아이콘
+                    if !sound.isFree {
+                        if isOwned {
+                            // 유료 + 보유
+                            Image("ownPaid")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
+                        } else {
+                            // 유료 + 미보유
+                            if isSelected {
+                                Image("selectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            } else {
+                                Image("deselectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            }
+                        }
+                    }
+
+                    Text(sound.soundName)
+                        .typography(isSelected ? .suit15SB25 : .suit15M25)
+
+                    // 다운로드 안됨: download 아이콘
+                    if !isInCache && !isInBundle {
+                        Image("download")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 18, height: 18)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 9)
+                .background(
+                    Group {
+                        if isPaidOwnedSelected {
+                            // 유료 + 보유 + 선택 → 백그라운드 gradient
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gradient(.primary))
+                        } else if isSelected {
+                            // 나머지 선택 → 백그라운드 .main500
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.main500)
+                        } else {
+                            // 미선택 → 백그라운드 .gray50
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gray50)
+                        }
+                    }
+                )
+                .foregroundStyle(
+                    isPaidUnownedUnselected ?
+                        AnyShapeStyle(.gradient(.primary)) :
+                    isSelected ?
+                        AnyShapeStyle(.white100) :
+                        AnyShapeStyle(.gray500)
+                )
+                .overlay(
+                    // 다운로드 중 프로그레스
+                    Group {
+                        if isDownloading {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(Color.black.opacity(0.3))
+
+                                if let progress = viewModel.downloadProgress[soundId], progress.isFinite {
+                                    VStack(spacing: 2) {
+                                        ProgressView()
+                                            .tint(.white)
+                                            .scaleEffect(0.7)
+                                        Text("\(Int(min(max(progress * 100, 0), 100)))%")
+                                            .font(.system(size: 10, weight: .semibold))
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+            .disabled(isDownloading)
+        }
+    }
+
+    /// 파티클 아이템 버튼
+    @ViewBuilder
+    private func particleItemButton(particle: Particle) -> some View {
+        if let particleId = particle.id {
+            let isInBundle = viewModel.isInBundle(particleId: particleId)
+            let isInCache = viewModel.isInCache(particleId: particleId)
+            let isOwned = viewModel.isOwned(particleId: particleId)
+            let isDownloading = viewModel.downloadingItemIds.contains(particleId)
+            let isSelected = viewModel.selectedParticle?.id == particleId
+
+            // UI 스타일 계산
+            let isPaidUnownedUnselected = !particle.isFree && !isOwned && !isSelected
+            let isPaidOwnedSelected = !particle.isFree && isOwned && isSelected
+
+            Button {
+                // 케이스 1: Bundle 무료 → 바로 사용
+                if isInBundle {
+                    viewModel.updateParticle(particle)
+                }
+                // 케이스 2: 구매 + 캐시 있음 → 바로 사용
+                else if isOwned && isInCache {
+                    viewModel.updateParticle(particle)
+                }
+                // 케이스 3: 구매 + 캐시 없음 → 재다운로드
+                else if isOwned && !isInCache {
+                    Task {
+                        await viewModel.downloadParticle(particle)
+                    }
+                }
+                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                else if !isOwned && particle.isFree && isInCache {
+                    viewModel.updateParticle(particle)
+                }
+                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                else if !isOwned && particle.isFree && !isInCache {
+                    Task {
+                        await viewModel.downloadParticle(particle)
+                    }
+                }
+                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
+                else if !isOwned && !particle.isFree && isInCache {
+                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
+                    viewModel.updateParticle(particle)
+                }
+                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
+                else {
+                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
+                    Task {
+                        await viewModel.downloadParticle(particle)
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    // 유료 아이콘
+                    if !particle.isFree {
+                        if isOwned {
+                            // 유료 + 보유
+                            Image("ownPaid")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
+                        } else {
+                            // 유료 + 미보유
+                            if isSelected {
+                                Image("selectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            } else {
+                                Image("deselectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            }
+                        }
+                    }
+
+                    Text(particle.particleName)
+                        .typography(isSelected ? .suit15SB25 : .suit15M25)
+
+                    // 다운로드 안됨: download 아이콘
+                    if !isInCache && !isInBundle {
+                        Image("download")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 18, height: 18)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 9)
+                .background(
+                    Group {
+                        if isPaidOwnedSelected {
+                            // 유료 + 보유 + 선택 → 백그라운드 gradient
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gradient(.primary))
+                        } else if isSelected {
+                            // 나머지 선택 → 백그라운드 .main500
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.main500)
+                        } else {
+                            // 미선택 → 백그라운드 .gray50
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gray50)
+                        }
+                    }
+                )
+                .foregroundStyle(
+                    isPaidUnownedUnselected ?
+                        AnyShapeStyle(.gradient(.primary)) :
+                    isSelected ?
+                        AnyShapeStyle(.white100) :
+                        AnyShapeStyle(.gray500)
+                )
+                .overlay(
+                    // 다운로드 중 프로그레스
+                    Group {
+                        if isDownloading {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(Color.black.opacity(0.3))
+
+                                if let progress = viewModel.downloadProgress[particleId], progress.isFinite {
+                                    VStack(spacing: 2) {
+                                        ProgressView()
+                                            .tint(.white)
+                                            .scaleEffect(0.7)
+                                        Text("\(Int(min(max(progress * 100, 0), 100)))%")
+                                            .font(.system(size: 10, weight: .semibold))
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+            .disabled(isDownloading)
         }
     }
 }

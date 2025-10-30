@@ -231,7 +231,7 @@ extension CollectionViewModel {
                     print("키링 생성 및 User에 추가 완료: \(name)")
                     
                     // 로컬 배열에도 추가
-                    var mutableKeyring = newKeyring
+                    let mutableKeyring = newKeyring
                     self?.keyring.append(mutableKeyring)
                     
                     completion(true, keyringId)
