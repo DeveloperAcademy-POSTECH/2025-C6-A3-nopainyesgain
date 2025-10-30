@@ -34,7 +34,7 @@ extension BundleSelectBackgroundView {
         ScrollView {
             //LazyVGrid의 spacing은 vertical 간격
             LazyVGrid(columns: columns, spacing: 18) {
-                ForEach(viewModel.background, id: \.self) { bg in
+                ForEach(viewModel.backgrounds, id: \.id) { bg in
                     Button {
                         viewModel.selectedBackground = bg
                         router.push(.bundleSelectCarabinerView)

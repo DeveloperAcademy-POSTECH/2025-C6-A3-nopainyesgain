@@ -92,7 +92,7 @@ extension BundleSelectCarabinerView {
             }
             ScrollView(.horizontal) {
                 HStack(spacing: 10) {
-                    ForEach(viewModel.carabiner, id: \.self) { cb in
+                    ForEach(viewModel.carabiners, id: \.id) { cb in
                         Button {
                             viewModel.selectedCarabiner = cb
                         } label: {
