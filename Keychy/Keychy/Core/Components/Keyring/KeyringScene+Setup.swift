@@ -134,14 +134,15 @@ extension KeyringScene {
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
         // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
-        let gapByScreen = size.height * 0.01
-        let gapByBody = bodyFrame.height * 0.03
-        let gap = max(gapByScreen, gapByBody)
+//        let gapByScreen = size.height * 0.01
+//        let gapByBody = bodyFrame.height * 0.03
+//        let gap = max(gapByScreen, gapByBody)
+        let connectGap = 30.0
         //let gap = gapByScreen
 
         // 바디 중심 Y를 계산:
         // 중앙선 기준 top(= bodyCenterY + bodyHalfHeight)이 lastChainBottomY - gap에 오도록 배치
-        let bodyCenterY = lastChainBottomY - gap - bodyHalfHeight
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         addChild(body)
