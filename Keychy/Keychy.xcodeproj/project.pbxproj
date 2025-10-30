@@ -155,6 +155,8 @@
 		C6C402912EB2F8A1006B58DF /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402902EB2F8A1006B58DF /* MyItemsView.swift */; };
 		C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */; };
 		C6C402A12EB3F3A9006B58DF /* WorkshopComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */; };
+		C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A22EB40ACA006B58DF /* AlarmView.swift */; };
+		C6C402A52EB40AEC006B58DF /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A42EB40AEC006B58DF /* MyPageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -313,6 +315,8 @@
 		C6C402902EB2F8A1006B58DF /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
 		C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopComponents.swift; sourceTree = "<group>"; };
+		C6C402A22EB40ACA006B58DF /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
+		C6C402A42EB40AEC006B58DF /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -770,6 +774,8 @@
 			children = (
 				4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */,
 				4CEC624B2EAE08DF0099ECEE /* HomeView.swift */,
+				C6C402A22EB40ACA006B58DF /* AlarmView.swift */,
+				C6C402A42EB40AEC006B58DF /* MyPageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1227,6 +1233,7 @@
 				385425CA2EB3C79A00A06C02 /* KeyringDetailScene.swift in Sources */,
 				C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
+				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

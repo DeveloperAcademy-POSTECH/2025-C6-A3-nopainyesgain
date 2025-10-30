@@ -34,6 +34,11 @@ struct HomeTab: View {
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)
+                    case .myPageView:
+                        MyPageView(router: router)
+                    case .alarmView:
+                        AlarmView(router: router)
+                        
                     }
                 }
         }
