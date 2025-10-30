@@ -79,7 +79,7 @@ extension Sound: WorkshopItem {
 @Observable
 class WorkshopViewModel {
     // MARK: - Published Properties
-    var selectedCategory: String = "KEYCHY!"
+    var selectedCategory: String = "키링"
     var selectedTemplateFilter: TemplateFilterType? = nil
     var selectedCommonFilter: CommonFilterType? = nil
     var sortOrder: String = "최신순"
