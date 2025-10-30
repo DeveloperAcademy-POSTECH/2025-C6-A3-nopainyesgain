@@ -143,9 +143,10 @@ extension WorkshopView {
         Button {
             router.push(.coinCharge)
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: "leaf.fill")
-                    .foregroundStyle(.pink)
+            HStack(spacing: 0) {
+                Image(.keyCoin)
+                    .resizable()
+                    .scaledToFit()
                 
                 Spacer()
 
@@ -153,10 +154,10 @@ extension WorkshopView {
                     .typography(.nanum16EB)
                     .foregroundColor(.black)
             }
-            .padding(.vertical, 3)
         }
-        .frame(minWidth: 80, maxWidth: .infinity, alignment: .leading)
-        .fixedSize(horizontal: true, vertical: false)
+        .frame(minWidth: 80)
+        .frame(height: 40)
+        .fixedSize(horizontal: true, vertical: true)
         .buttonStyle(.glass)
     }
 }
@@ -444,7 +445,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 92)
+                .padding(.vertical, 92)
             }
         }
     }
