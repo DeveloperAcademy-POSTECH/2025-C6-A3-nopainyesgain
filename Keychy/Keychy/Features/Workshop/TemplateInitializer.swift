@@ -227,44 +227,9 @@ func initializeTemplates() async {
 func initializeBackgrounds() async {
     let backgrounds: [[String: Any]] = [
         [
-            "id": "SkyBlue",
-            "backgroundName": "하늘 파랑",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 534,
-            "useCount": 412
-        ],
-        [
-            "id": "SunsetOrange",
-            "backgroundName": "석양 오렌지",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 50,
-            "downloadCount": 421,
-            "useCount": 356
-        ],
-        [
-            "id": "ForestGreen",
-            "backgroundName": "숲속 초록",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 389,
-            "useCount": 298
-        ],
-        [
-            "id": "StarryNight",
-            "backgroundName": "별이 빛나는 밤",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 100,
-            "downloadCount": 612,
-            "useCount": 534
-        ],
-        [
             "id": "PastelPink",
             "backgroundName": "파스텔 핑크",
+            "description": "부드럽고 따뜻한 핑크 배경",
             "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "tags": ["귀여움"],
             "price": 80,
@@ -272,26 +237,9 @@ func initializeBackgrounds() async {
             "useCount": 645
         ],
         [
-            "id": "OceanWave",
-            "backgroundName": "파도 물결",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 456,
-            "useCount": 378
-        ],
-        [
-            "id": "AutumnLeaves",
-            "backgroundName": "가을 낙엽",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 120,
-            "downloadCount": 334,
-            "useCount": 267
-        ],
-        [
             "id": "NeonCity",
             "backgroundName": "네온 도시",
+            "description": "화려한 도시의 네온 불빛",
             "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "tags": ["심플"],
             "price": 150,
@@ -301,6 +249,7 @@ func initializeBackgrounds() async {
         [
             "id": "MinimalWhite",
             "backgroundName": "미니멀 화이트",
+            "description": "깔끔하고 심플한 화이트",
             "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "tags": ["심플"],
             "price": 0,
@@ -308,26 +257,9 @@ func initializeBackgrounds() async {
             "useCount": 756
         ],
         [
-            "id": "GalaxyPurple",
-            "backgroundName": "은하수 퍼플",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 180,
-            "downloadCount": 445,
-            "useCount": 378
-        ],
-        [
-            "id": "CherryBlossom",
-            "backgroundName": "벚꽃 봄날",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연", "귀여움"],
-            "price": 90,
-            "downloadCount": 678,
-            "useCount": 589
-        ],
-        [
             "id": "DarkMoon",
             "backgroundName": "다크 문",
+            "description": "신비로운 달빛의 어둠",
             "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
             "tags": ["심플"],
             "price": 0,
@@ -490,32 +422,6 @@ func initializeCarabiners() async {
             "useCount": 612,
             "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
             "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5]
-        ],
-        [
-            "id": "FlowerPattern",
-            "carabinerName": "플라워 패턴",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "description": "꽃무늬가 새겨진 카라비너",
-            "maxKeyringCount": 5,
-            "tags": ["귀여움", "자연"],
-            "price": 110,
-            "downloadCount": 556,
-            "useCount": 467,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.31, 0.41, 0.41, 0.51, 0.51]
-        ],
-        [
-            "id": "AnimalShape",
-            "carabinerName": "동물 모양",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "description": "귀여운 동물 모양 카라비너",
-            "maxKeyringCount": 4,
-            "tags": ["귀여움", "자연"],
-            "price": 160,
-            "downloadCount": 678,
-            "useCount": 589,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.5],
-            "keyringYPosition": [0.29, 0.39, 0.39, 0.49]
         ]
     ]
     
@@ -578,17 +484,6 @@ func initializeParticles() async {
             "useCount": 978
         ],
         [
-            "id": "Snowfall",
-            "particleName": "눈 내리는",
-            "description": "하얀 눈이 내리는 효과",
-            "particleData": "snowfall_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 1689,
-            "useCount": 1456
-        ],
-        [
             "id": "Fireworks",
             "particleName": "불꽃놀이",
             "description": "화려한 불꽃 효과",
@@ -611,17 +506,6 @@ func initializeParticles() async {
             "useCount": 1067
         ],
         [
-            "id": "Rainbow",
-            "particleName": "무지개",
-            "description": "알록달록 무지개 파티클",
-            "particleData": "rainbow_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움", "자연"],
-            "price": 120,
-            "downloadCount": 978,
-            "useCount": 834
-        ],
-        [
             "id": "MagicDust",
             "particleName": "마법 가루",
             "description": "신비로운 마법 가루 효과",
@@ -631,39 +515,6 @@ func initializeParticles() async {
             "price": 0,
             "downloadCount": 1478,
             "useCount": 1289
-        ],
-        [
-            "id": "Sakura",
-            "particleName": "벚꽃잎",
-            "description": "흩날리는 벚꽃잎",
-            "particleData": "sakura_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 90,
-            "downloadCount": 1156,
-            "useCount": 989
-        ],
-        [
-            "id": "Lightning",
-            "particleName": "번개",
-            "description": "번쩍이는 번개 효과",
-            "particleData": "lightning_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 130,
-            "downloadCount": 756,
-            "useCount": 634
-        ],
-        [
-            "id": "Butterfly",
-            "particleName": "나비",
-            "description": "날아다니는 나비",
-            "particleData": "butterfly_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 110,
-            "downloadCount": 889,
-            "useCount": 767
         ],
         [
             "id": "Galaxy",
@@ -726,28 +577,6 @@ func initializeSounds() async {
             "useCount": 1456
         ],
         [
-            "id": "WaterDrop",
-            "soundName": "물방울",
-            "description": "똑똑 떨어지는 물방울 소리",
-            "soundData": "water_drop_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 1923,
-            "useCount": 1712
-        ],
-        [
-            "id": "BirdChirp",
-            "soundName": "새소리",
-            "description": "상쾌한 새 지저귐",
-            "soundData": "bird_chirp_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 60,
-            "downloadCount": 1567,
-            "useCount": 1389
-        ],
-        [
             "id": "Chime",
             "soundName": "차임벨",
             "description": "영롱한 차임벨 소리",
@@ -770,17 +599,6 @@ func initializeSounds() async {
             "useCount": 967
         ],
         [
-            "id": "WindChime",
-            "soundName": "풍경소리",
-            "description": "바람에 흔들리는 풍경",
-            "soundData": "wind_chime_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 1890,
-            "useCount": 1634
-        ],
-        [
             "id": "Xylophone",
             "soundName": "실로폰",
             "description": "톡톡 실로폰 소리",
@@ -790,28 +608,6 @@ func initializeSounds() async {
             "price": 70,
             "downloadCount": 1456,
             "useCount": 1267
-        ],
-        [
-            "id": "OceanWave",
-            "soundName": "파도소리",
-            "description": "잔잔한 파도 소리",
-            "soundData": "ocean_wave_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 120,
-            "downloadCount": 1234,
-            "useCount": 1089
-        ],
-        [
-            "id": "RainDrop",
-            "soundName": "빗소리",
-            "description": "촉촉한 빗소리",
-            "soundData": "rain_drop_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["자연"],
-            "price": 0,
-            "downloadCount": 2056,
-            "useCount": 1823
         ],
         [
             "id": "MusicBox",
