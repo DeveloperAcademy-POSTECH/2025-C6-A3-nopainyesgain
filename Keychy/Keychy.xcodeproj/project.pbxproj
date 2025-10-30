@@ -61,11 +61,9 @@
 		4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
-		4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
 		4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */; };
 		4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E02EAE08C00099ECEE /* RingType.swift */; };
-		4CEC61EB2EAE08C00099ECEE /* ParticleEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DB2EAE08C00099ECEE /* ParticleEffect.swift */; };
 		4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E22EAE08C00099ECEE /* BodyType.swift */; };
 		4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DA2EAE08C00099ECEE /* Interaction.swift */; };
 		4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */; };
@@ -116,11 +114,11 @@
 		4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */; };
 		4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625C2EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift */; };
 		4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62362EAE08DF0099ECEE /* CollectionViewModel.swift */; };
-		4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */; };
-		4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */; };
+		4CEC62932EAE08F70099ECEE /* Bark.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628B2EAE08F70099ECEE /* Bark.mp3 */; };
+		4CEC62942EAE08F70099ECEE /* Drum.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628C2EAE08F70099ECEE /* Drum.mp3 */; };
 		4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62892EAE08F70099ECEE /* Confetti.json */; };
 		4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62872EAE08F70099ECEE /* Assets.xcassets */; };
-		4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */; };
+		4CEC62972EAE08F70099ECEE /* Shutter.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC628D2EAE08F70099ECEE /* Shutter.mp3 */; };
 		4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62882EAE08F70099ECEE /* Birthday.json */; };
 		4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62992EAE09990099ECEE /* BundleCreateView.swift */; };
 		4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */; };
@@ -211,8 +209,6 @@
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
-		4CEC61DB2EAE08C00099ECEE /* ParticleEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffect.swift; sourceTree = "<group>"; };
-		4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffect.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
 		4CEC61DF2EAE08C00099ECEE /* Keyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyring.swift; sourceTree = "<group>"; };
 		4CEC61E02EAE08C00099ECEE /* RingType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingType.swift; sourceTree = "<group>"; };
@@ -269,9 +265,9 @@
 		4CEC62872EAE08F70099ECEE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4CEC62882EAE08F70099ECEE /* Birthday.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Birthday.json; sourceTree = "<group>"; };
 		4CEC62892EAE08F70099ECEE /* Confetti.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Confetti.json; sourceTree = "<group>"; };
-		4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = barkSoundFile.mp3; sourceTree = "<group>"; };
-		4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drumSoundFile.mp3; sourceTree = "<group>"; };
-		4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = shutterSoundFile.mp3; sourceTree = "<group>"; };
+		4CEC628B2EAE08F70099ECEE /* Bark.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Bark.mp3; sourceTree = "<group>"; };
+		4CEC628C2EAE08F70099ECEE /* Drum.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Drum.mp3; sourceTree = "<group>"; };
+		4CEC628D2EAE08F70099ECEE /* Shutter.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Shutter.mp3; sourceTree = "<group>"; };
 		4CEC62992EAE09990099ECEE /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
 		4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDetailView.swift; sourceTree = "<group>"; };
 		4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleInventoryView.swift; sourceTree = "<group>"; };
@@ -487,8 +483,6 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61DA2EAE08C00099ECEE /* Interaction.swift */,
-				4CEC61DB2EAE08C00099ECEE /* ParticleEffect.swift */,
-				4CEC61DC2EAE08C00099ECEE /* SoundEffect.swift */,
 			);
 			path = Interaction;
 			sourceTree = "<group>";
@@ -892,9 +886,9 @@
 		4CEC628E2EAE08F70099ECEE /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC628B2EAE08F70099ECEE /* barkSoundFile.mp3 */,
-				4CEC628C2EAE08F70099ECEE /* drumSoundFile.mp3 */,
-				4CEC628D2EAE08F70099ECEE /* shutterSoundFile.mp3 */,
+				4CEC628B2EAE08F70099ECEE /* Bark.mp3 */,
+				4CEC628C2EAE08F70099ECEE /* Drum.mp3 */,
+				4CEC628D2EAE08F70099ECEE /* Shutter.mp3 */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -1051,8 +1045,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CEC62932EAE08F70099ECEE /* barkSoundFile.mp3 in Resources */,
-				4CEC62942EAE08F70099ECEE /* drumSoundFile.mp3 in Resources */,
+				4CEC62932EAE08F70099ECEE /* Bark.mp3 in Resources */,
+				4CEC62942EAE08F70099ECEE /* Drum.mp3 in Resources */,
 				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,
 				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
 				4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */,
@@ -1064,7 +1058,7 @@
 				4C66220B2EAE5FC3001760B5 /* SUIT-Regular.otf in Resources */,
 				4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */,
 				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
-				4CEC62972EAE08F70099ECEE /* shutterSoundFile.mp3 in Resources */,
+				4CEC62972EAE08F70099ECEE /* Shutter.mp3 in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
 				4C6622462EAF7D63001760B5 /* LICENSE in Resources */,
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
@@ -1088,7 +1082,6 @@
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				C6C402912EB2F8A1006B58DF /* MyItemsView.swift in Sources */,
-				4CEC61E72EAE08C00099ECEE /* SoundEffect.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
@@ -1187,7 +1180,6 @@
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
 				38A596732EAFA8D20003D712 /* KeychyUser.swift in Sources */,
 				C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */,
-				4CEC61EB2EAE08C00099ECEE /* ParticleEffect.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
 			);
