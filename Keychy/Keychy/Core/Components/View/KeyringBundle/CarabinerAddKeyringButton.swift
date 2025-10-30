@@ -8,18 +8,21 @@
 import SwiftUI
 
 struct CarabinerAddKeyringButton: View {
+    var action: () -> Void
+    
     var body: some View {
-        RoundedRectangle(cornerRadius: 8.73)
-            .fill(.black100)
-            .stroke(.white, lineWidth: 1.5)
-            .frame(width: 24, height: 24)
-            .overlay {
-                Image(systemName: "plus")
-                    .foregroundStyle(.white)
-            }
-    }
-}
+        Button {
+            action()
+        } label: {
+            RoundedRectangle(cornerRadius: 8.73)
+                .fill(.black100)
+                .stroke(.white, lineWidth: 1.5)
+                .frame(width: 24, height: 24)
+                .overlay {
+                    Image(systemName: "plus")
+                        .foregroundStyle(.white)
+                }
+        }
 
-#Preview {
-    CarabinerAddKeyringButton()
+    }
 }
