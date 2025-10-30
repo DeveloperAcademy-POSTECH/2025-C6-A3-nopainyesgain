@@ -171,6 +171,7 @@ extension WorkshopView {
             filterBar
         }
         .padding(.horizontal, 20)
+        .padding(.bottom, 20)
         .background(Color(UIColor.systemBackground))
         .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
         .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
@@ -265,7 +266,9 @@ extension WorkshopView {
             // 보유 아이템 리스트
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 7) {
-                    if viewModel.ownedTemplates.isEmpty {
+                    if viewModel.isLoading {
+                        loadingOwnedView
+                    } else if viewModel.ownedTemplates.isEmpty {
                         emptyOwnedView
                     } else {
                         ForEach(viewModel.ownedTemplates) { template in
@@ -273,6 +276,7 @@ extension WorkshopView {
                         }
                     }
                 }
+                .foregroundColor(Color(.secondaryGray))
             }
         }
         .padding(.horizontal, 20)
@@ -282,15 +286,28 @@ extension WorkshopView {
     /// 빈 창고 뷰
     private var emptyOwnedView: some View {
         VStack(spacing: 8) {
-            Image(systemName: "tray")
-                .font(.largeTitle)
-                .foregroundStyle(.secondary)
-            Text("보유한 아이템이 없습니다")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            Text("보유한 아이템이 없습니다.")
+                .typography(.suit14SB18)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
-        .frame(width: 120, height: 100)
+        .frame(height: 137)
     }
+    
+    /// 내 창고 로딩 중 뷰
+    private var loadingOwnedView: some View {
+        VStack(spacing: 8) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+            Text("불러오는 중...")
+                .typography(.suit14SB18)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+        }
+        .frame(height: 137)
+    }
+
 }
 
 // MARK: - Main Content Section
@@ -373,7 +390,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 100)
+                .padding(.top, 50)
             }
         }
     }
@@ -383,10 +400,10 @@ extension WorkshopView {
         VStack(spacing: 12) {
             Image(systemName: "sparkles")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.purple)
+                .foregroundStyle(.purple).opacity(0.6)
 
             Text("KEYCHY! \n콘텐츠 준비중")
-                .typography(.suit13SB)
+                .typography(.suit14SB18)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
         }
@@ -627,7 +644,6 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
                         Color.gray.opacity(0.1)
                     }
                 }
-                .frame(width: 80, height: 80)
                 .padding(8)
                 .frame(width:112, height:112)
                 .background(Color.white)
