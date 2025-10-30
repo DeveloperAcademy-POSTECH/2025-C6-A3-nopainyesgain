@@ -109,16 +109,19 @@ extension AcrylicPhotoGuiding {
     }
     
     private var guidingImage: some View {
-        LazyImage(url: URL(string: guidingImageURL)) { state in
-            if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Color.gray.opacity(0.1)
-            }
-        }
-        .frame(maxWidth: .infinity)
+//        LazyImage(url: URL(string: guidingImageURL)) { state in
+//            if let image = state.image {
+//                image
+//                    .resizable()
+//                    .scaledToFit()
+//            } else {
+//                ProgressView()
+//            }
+//        }
+        Image("acrylicGudingImage")
+            .resizable()
+            .scaledToFit()
+            //.frame(maxWidth: .infinity)
     }
 }
 

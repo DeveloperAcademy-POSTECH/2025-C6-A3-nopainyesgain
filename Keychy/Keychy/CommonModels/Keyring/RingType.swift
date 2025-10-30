@@ -30,7 +30,7 @@ enum RingType {
     var imageURL: String {
         switch self {
         case .basic:
-            return "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Rings%2FbasicRing.png?alt=media&token=73c8ac59-544a-45f8-a1d6-119d034c716e"
+            return "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Rings%2FbasicRing.png?alt=media&token=f9b096c5-9b21-47be-8aad-98a24ccae386"
         }
     }
     
