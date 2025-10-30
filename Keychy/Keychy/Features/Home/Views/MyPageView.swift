@@ -9,6 +9,6 @@ import SwiftUI
 
 struct MyPageView: View {
     var body: some View {
-        Text("Hello, World!")
+        Text("마이페이지 뷰 입니다.")
     }
 }

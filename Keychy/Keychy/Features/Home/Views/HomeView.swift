@@ -10,35 +10,38 @@ import SwiftUI
 struct HomeView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var userManager: UserManager
+    @Namespace private var unionNamespace
     
     var body: some View {
-        VStack {
-            if userManager.isLoaded {
-                VStack(spacing: 8) {
-                    Text("환영합니다 \(userManager.userNickname)님")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
-                    Text("UID: \(userManager.userUID)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                }
-                .padding(.vertical)
-            } else {
-                ProgressView("사용자 정보 로딩 중...")
-            }
-            
-            Button("다람쥐 헌 쳇바퀴에 타고파") {
+        HStack {
+            Button {
                 router.push(.bundleInventoryView)
+            } label: {
+                Image(.bundleIcon)
             }
-            .typography(.suit15R)
+            .buttonStyle(.glassProminent)
             
-            
-            Button("재화 충전하기") {
-                router.push(.coinCharge)
+            GlassEffectContainer {
+                HStack(spacing: 0) {
+                    Button {
+                        router.push(.alarmView)
+                    } label: {
+                        Image(.alarmIcon)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+
+
+                    Button {
+                        router.push(.coinCharge)
+                    } label: {
+                        Image(.myPageIcon)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                }
             }
         }
-        .navigationTitle("Home")
+        .tint(.white.opacity(0.8))
     }
 }
