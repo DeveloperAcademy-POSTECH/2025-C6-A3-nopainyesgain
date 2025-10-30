@@ -81,22 +81,9 @@ struct KeyringBodyComponent {
 
     // MARK: - Image Body
     private static func createImageBody(image: UIImage) -> SKNode {
-        // 키링 바디 크기를 적절히 조절
-        //⭐️TODO: 키링 바디 사이즈 싱싱이랑 같이 조절하기!
-        let maxSize: CGFloat = 80
-        let originalSize = image.size
-        // 바디 이미지 비율 유지
-        let aspectRatio = originalSize.height / originalSize.width
+        // 원본 크기 그대로 사용
+        let displaySize = image.size
         
-        let displaySize: CGSize
-        if originalSize.width > originalSize.height {
-            // 가로가 더 긴 경우
-            displaySize = CGSize(width: maxSize, height: maxSize * aspectRatio)
-        } else {
-            // 세로가 더 길거나 정사각형인 경우
-            displaySize = CGSize(width: maxSize / aspectRatio, height: maxSize)
-        }
-
         // 텍스처 생성
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear   // 부드럽게 렌더링
@@ -119,19 +106,7 @@ struct KeyringBodyComponent {
     
     // 셀용
     private static func createMiniImageBody(image: UIImage) -> SKNode {
-        // 셀용도 크기 조절
-        let maxSize: CGFloat = 50  // 셀용은 더 작게
-        let originalSize = image.size
-        let aspectRatio = originalSize.height / originalSize.width
-        
-        let displaySize: CGSize
-        if originalSize.width > originalSize.height {
-            // 가로가 더 긴 경우
-            displaySize = CGSize(width: maxSize, height: maxSize * aspectRatio)
-        } else {
-            // 세로가 더 길거나 정사각형인 경우
-            displaySize = CGSize(width: maxSize / aspectRatio, height: maxSize)
-        }
+        let displaySize = CGSize(width: 150, height: 150)
 
         // 텍스처 생성
         let texture = SKTexture(image: image)

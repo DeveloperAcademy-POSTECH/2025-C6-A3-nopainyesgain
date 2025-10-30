@@ -1,20 +1,22 @@
 //
-//  KeyringCellScene+Setup.swift
-//  KeytschPrototype
+//  KeyringDetailScene+Setup.swift
+//  Keychy
+//
+//  Created by Jini on 10/31/25.
 //
 
 import SwiftUI
 import SpriteKit
 
 // MARK: - Setup & Assembly
-extension KeyringCellScene {
+extension KeyringDetailScene {
     
     // MARK: - 키링 전체 조립
     func setupKeyring() {
         // 모든 이미지를 먼저 다운로드
         downloadAllImages { [weak self] result in
             guard let self = self else {
-                print("⚠️ KeyringCellScene - self가 해제됨")
+                print("⚠️ KeyringDetailScene - self가 해제됨")
                 return
             }
             
@@ -106,6 +108,7 @@ extension KeyringCellScene {
         ring.position = CGPoint(x: centerX, y: topY)
         ring.physicsBody?.isDynamic = false
         containerNode.addChild(ring)
+        self.ringNode = ring
         
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
@@ -128,6 +131,7 @@ extension KeyringCellScene {
             containerNode.addChild(chainNode)
             chains.append(chainNode)
         }
+        self.chainNodes = chains
         
         // 3. Body 생성
         var body: SKNode
@@ -150,6 +154,7 @@ extension KeyringCellScene {
         
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         containerNode.addChild(body)
+        self.bodyNode = body
         
         // 4. 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
@@ -412,12 +417,4 @@ extension KeyringCellScene {
             bodyPhysics.angularDamping = 0.7
         }
     }
-}
-
-// MARK: - Keyring 완전체 구조체
-struct KeyringImages {
-    let ring: UIImage
-    let chains: [Int: UIImage]
-    let chainLinks: [ChainType.ChainLink]
-    let body: UIImage?
 }

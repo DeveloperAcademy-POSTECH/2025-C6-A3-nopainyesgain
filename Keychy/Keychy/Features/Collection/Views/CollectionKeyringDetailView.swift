@@ -11,16 +11,36 @@ import SpriteKit
 struct CollectionKeyringDetailView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State private var sheetDetent: PresentationDetent = .height(76)
+    @State private var scene: KeyringDetailScene?
+    @State private var isLoading: Bool = true
     
     let keyring: Keyring
     
     var body: some View {
-        VStack {
-            SpriteView(scene: createScene(keyring: keyring))
+        GeometryReader { geometry in
+            ZStack {
+                if let scene = scene {
+                    SpriteView(scene: scene, options: [.allowsTransparency])
+                        .ignoresSafeArea()
+                        .allowsHitTesting(true) // ⭐️ 터치 허용
+                } else {
+                    Color.gray.opacity(0.1)
+                }
+//                // Scene 표시
+//                //KeyringDetailSceneView(keyring: keyring)
+//                SpriteView(scene: createDetailScene(size: size))
+            }
             
+            .onAppear {
+                if scene == nil {
+                    createDetailScene(size: geometry.size)
+                }
+            }
         }
         .ignoresSafeArea()
         .navigationTitle(keyring.name)
+        .navigationBarBackButtonHidden(true)
+        .interactiveDismissDisabled(true)
         .sheet(isPresented: .constant(true)) {
             infoSheet
                 .presentationDetents([.height(76), .height(395)], selection: $sheetDetent)
@@ -52,28 +72,69 @@ struct CollectionKeyringDetailView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    // 액션 추가
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(.primary)
+            backToolbarItem
+            menuToolbarItem
+        }
+    }
+    
+    private func createDetailScene(size: CGSize) {
+        let ringType = RingType.fromID(keyring.selectedRing)
+        let chainType = ChainType.fromID(keyring.selectedChain)
+        
+        print("🎬 Creating detail scene with ring: \(ringType), chain: \(chainType), size: \(size)")
+        
+        let newScene = KeyringDetailScene(
+            ringType: ringType,
+            chainType: chainType,
+            bodyImage: keyring.bodyImage,
+            targetSize: size, // 전체 화면 크기 사용
+            onLoadingComplete: {
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        self.isLoading = false
+                    }
                 }
+            }
+        )
+        newScene.size = size
+        newScene.scaleMode = .aspectFill
+        newScene.backgroundColor = .clear
+        
+        // 저장된 사운드/파티클 효과 적용
+        if keyring.soundId != "none" {
+            newScene.currentSoundId = keyring.soundId
+        }
+        if keyring.particleId != "none" {
+            newScene.currentParticleId = keyring.particleId
+        }
+        
+        scene = newScene
+        print("✅ Detail scene created with size: \(size)")
+    }
+}
+
+// MARK: - 툴바
+extension CollectionKeyringDetailView {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(.primary)
             }
         }
     }
     
-    private func createScene(keyring: Keyring) -> KeyringScene {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        let scene = KeyringScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImageURL: keyring.bodyImage
-        )
-        scene.scaleMode = .aspectFill
-        return scene
+    private var menuToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+                // 액션 추가
+            }) {
+                Image(systemName: "ellipsis")
+                    .foregroundColor(.primary)
+            }
+        }
     }
 }
 
@@ -112,33 +173,6 @@ extension CollectionKeyringDetailView {
                 .frame(minHeight: geometry.size.height)
             }
             .scrollDisabled(sheetDetent == .height(76))
-            
-//            if sheetDetent == .height(76) {
-//                topSection
-//                    .padding(.bottom, 12)
-//            }
-//            
-//            // 확장된 상태일 때만 보여주기
-//            if sheetDetent == .height(395) {
-//                
-//                topSection
-//                    .padding(.top, 30)
-//                
-//                basicInfo
-//                
-//                // 메모 있으면
-//                if let memo = keyring.memo, !memo.isEmpty {
-//                    memoSection
-//                }
-//                
-//                // 태그 있으면
-//                if !keyring.tags.isEmpty {
-//                    tagSection
-//                }
-//                
-//                Spacer()
-//            }
-
         }
         .toolbar(.hidden, for: .tabBar)
         .padding(.horizontal, 16)
