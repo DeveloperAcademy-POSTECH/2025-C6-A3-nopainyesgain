@@ -93,8 +93,8 @@ struct AcrylicPhotoPreView: View {
 // MARK: - KeyringScene Section
 extension AcrylicPhotoPreView {
     private var keyringPreivew: some View {
-        PreviewImage(
-            previewURL: viewModel.template?.previewURL ?? "")
+        ItemDetailImage(
+            itemURL: viewModel.template?.previewURL ?? "")
             .scaledToFit()
             .frame(maxWidth: .infinity)
     }
@@ -105,7 +105,7 @@ extension AcrylicPhotoPreView {
     @ViewBuilder
     private func keyringInfo(template: KeyringTemplate?) -> some View {
         if let template {
-            PreviewInfoSection(template: template)
+            ItemDetailInfoSection(item: template)
         } else {
             Text("템플릿 정보 없음")
         }
@@ -114,7 +114,7 @@ extension AcrylicPhotoPreView {
 
 extension AcrylicPhotoPreView {
     private var makeBtn: some View {
-        PreviewMakingBtn(title: "만들기") {
+        ItemDetailMakingBtn(title: "만들기") {
             showGuide = true
             selectedItem = nil
         }

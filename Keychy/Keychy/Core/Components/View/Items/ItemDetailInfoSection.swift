@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct PreviewInfoSection: View {
-    let template: KeyringTemplate
+struct ItemDetailInfoSection: View {
+    let item: any WorkshopItem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -16,19 +16,19 @@ struct PreviewInfoSection: View {
             /// 태그들
             HStack(spacing: 8) {
                 /// 유료 태그 표시
-                if !template.isFree {
-                    templatePaidTag
+                if !item.isFree {
+                    itemPaidTag
                 }
-                templateTags
+                itemTags
             }
             .padding(.bottom, 4)
 
-            /// 템플릿 이름
-            templateName
+            /// item 이름
+            itemName
                 .padding(.bottom, 12)
             
-            /// 템플릿 설명
-            templateDescription
+            /// item 설명
+            itemDescription
         }
     }
 
@@ -36,10 +36,10 @@ struct PreviewInfoSection: View {
 }
 
 // MARK: - Components
-extension PreviewInfoSection {
-    private var templateTags: some View {
+extension ItemDetailInfoSection {
+    private var itemTags: some View {
         HStack(spacing: 8) {
-            if template.tags.isEmpty {
+            if item.tags.isEmpty {
                 Text("지정된 태그가 없습니다.")
                     .typography(.suit14M)
                     .foregroundStyle(.gray500)
@@ -50,7 +50,7 @@ extension PreviewInfoSection {
                     .clipShape(.rect)
                     .cornerRadius(10)
             } else {
-                ForEach(template.tags, id: \.self) { tag in
+                ForEach(item.tags, id: \.self) { tag in
                     Text(tag)
                         .typography(.suit14M)
                         .foregroundStyle(.gray500)
@@ -65,24 +65,24 @@ extension PreviewInfoSection {
         }
     }
 
-    private var templatePaidTag: some View {
+    private var itemPaidTag: some View {
         Image("PaidTestIcon")
     }
 
-    private var templateName: some View {
-        Text(template.templateName)
+    private var itemName: some View {
+        Text(item.name)
             .typography(.suit24B)
     }
 
-    private var templateDescription: some View {
-        Text(template.description)
+    private var itemDescription: some View {
+        Text(item.itemDescription)
             .typography(.suit15R)
             .foregroundStyle(.gray500)
     }
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    PreviewInfoSection(template: .acrylicPhoto)
+    ItemDetailInfoSection(item: KeyringTemplate.acrylicPhoto)
 }
 
 
