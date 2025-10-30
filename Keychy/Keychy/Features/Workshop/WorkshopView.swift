@@ -172,7 +172,7 @@ extension WorkshopView {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.white)
         .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
         .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
     }
@@ -427,7 +427,7 @@ extension WorkshopView {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 16) {
+                ], spacing: 11) {
                     ForEach(items) { item in
                         WorkshopItemView(
                             item: item,
@@ -437,7 +437,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 50)
+                .padding(.top, 92)
             }
         }
     }
@@ -624,18 +624,15 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 
                 // 아이템 이름
                 Text(item.name)
-                    .font(.subheadline)
-                    .lineLimit(1)
+                    .typography(.suit14SB18)
             }
-            .cornerRadius(10)
-
         }
         .buttonStyle(.plain)
     }
     
     /// 썸네일 이미지 + 가격 오버레이
     private var thumbnailImage: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack(alignment: .topTrailing) {
             LazyImage(url: URL(string: item.thumbnailURL)) { state in
                 if let image = state.image {
                     image
@@ -652,9 +649,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                         }
                 }
             }
-            .frame(height: 200)
-            .frame(maxWidth: .infinity)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .frame(maxWidth: .infinity, maxHeight: 233)
             
             // 가격 오버레이
             priceOverlay(
@@ -663,6 +658,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 isOwned: isOwned
             )
         }
+        .background(Color.gray50)
+        .cornerRadius(10)
     }
     
     /// 탭 핸들러 (KeyringTemplate만 네비게이션)
@@ -721,36 +718,32 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
 
 /// 공통 가격 오버레이 (보유/무료/유료 표시)
 func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
-    VStack {
-        HStack {
-            if isOwned {
-                // 보유 배지
-                Text("보유")
-                    .font(.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.green)
-                    .clipShape(Capsule())
-                    .padding(8)
-            } else if !isFree {
-                // 가격 배지
-                HStack(spacing: 4) {
-                    Image(systemName: "leaf.fill")
-                        .foregroundStyle(.pink)
-                    Text("\(price)")
-                        .foregroundStyle(.primary)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.ultraThinMaterial)
-                .clipShape(Capsule())
-                .padding(8)
+    HStack {
+        if isOwned {
+            VStack {
+                Image(.keyHole)
             }
+            .padding(.leading, 10)
+            .padding(.top, 7)
+            
+            Spacer()
+            
+            VStack {
+                Image(.owned)
+                Spacer()
+            }
+        } else if !isFree {
+            // 가격 배지
+            VStack {
+                Image(.keyHole)
+            }
+            .padding(.leading, 10)
+            .padding(.top, 7)
+            
             Spacer()
         }
-        Spacer()
     }
+    .frame(height: 43)
 }
 
 // MARK: - Preview
