@@ -16,7 +16,7 @@ struct WorkshopView: View {
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
     
-    private let categories = ["KEYCHY!", "키링", "카라비너", "파티클", "사운드", "배경"]
+    private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
         
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
@@ -228,7 +228,19 @@ extension WorkshopView {
                     }
                 }
                 
-            case "카라비너", "파티클", "사운드", "배경":
+            case "이펙트":
+                // 이펙트 타입 필터 (사운드, 파티클)
+                ForEach(EffectFilterType.allCases, id: \.self) { filter in
+                    FilterChip(
+                        title: filter.rawValue,
+                        isSelected: viewModel.selectedEffectFilter == filter
+                    ) {
+                        viewModel.selectedEffectFilter =
+                            viewModel.selectedEffectFilter == filter ? nil : filter
+                    }
+                }
+                
+            case "카라비너", "배경":
                 // 공통 필터 (귀여움, 심플, 자연)
                 ForEach(CommonFilterType.allCases, id: \.self) { filter in
                     FilterChip(
@@ -349,14 +361,44 @@ extension WorkshopView {
             case "카라비너":
                 itemGridView(items: viewModel.filteredCarabiners,
                            isOwnedCheck: viewModel.isCarabinerOwned)
-            case "파티클":
-                itemGridView(items: viewModel.filteredParticles,
-                           isOwnedCheck: viewModel.isParticleOwned)
-            case "사운드":
-                itemGridView(items: viewModel.filteredSounds,
-                           isOwnedCheck: viewModel.isSoundOwned)
+            case "이펙트":
+                effectContentView
             default:
                 emptyContentView
+            }
+        }
+    }
+    
+    /// 이펙트 전용 콘텐츠 (사운드 + 파티클)
+    private var effectContentView: some View {
+        Group {
+            let items = viewModel.filteredEffects
+            
+            if items.isEmpty {
+                emptyContentView
+            } else {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 16) {
+                    ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                        if let sound = item as? Sound {
+                            WorkshopItemView(
+                                item: sound,
+                                isOwned: viewModel.isSoundOwned(sound),
+                                router: router
+                            )
+                        } else if let particle = item as? Particle {
+                            WorkshopItemView(
+                                item: particle,
+                                isOwned: viewModel.isParticleOwned(particle),
+                                router: router
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 50)
             }
         }
     }
