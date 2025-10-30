@@ -16,6 +16,11 @@ enum TemplateFilterType: String, CaseIterable {
     case drawing = "드로잉"
 }
 
+enum EffectFilterType: String, CaseIterable {
+    case sound = "사운드"
+    case particle = "파티클"
+}
+
 enum CommonFilterType: String, CaseIterable {
     case cute = "귀여움"
     case simple = "심플"
@@ -82,6 +87,7 @@ class WorkshopViewModel {
     var selectedCategory: String = "키링"
     var selectedTemplateFilter: TemplateFilterType? = nil
     var selectedCommonFilter: CommonFilterType? = nil
+    var selectedEffectFilter: EffectFilterType? = nil
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
     var mainContentOffset: CGFloat = 0
@@ -188,6 +194,23 @@ class WorkshopViewModel {
         return result
     }
     
+    /// 이펙트 필터링 (사운드 + 파티클 통합)
+    var filteredEffects: [any WorkshopItem] {
+        var result: [any WorkshopItem] = []
+        
+        switch selectedEffectFilter {
+        case .sound:
+            result = sounds
+        case .particle:
+            result = particles
+        case nil:
+            // 필터가 없으면 사운드와 파티클 모두 표시
+            result = (sounds as [any WorkshopItem]) + (particles as [any WorkshopItem])
+        }
+        
+        return result
+    }
+    
     /// 필터링된 템플릿 목록
     var filteredTemplates: [KeyringTemplate] {
         var result = templates
@@ -212,14 +235,6 @@ class WorkshopViewModel {
     
     var filteredCarabiners: [Carabiner] {
         filterItems(carabiners, commonFilter: selectedCommonFilter)
-    }
-    
-    var filteredParticles: [Particle] {
-        filterItems(particles, commonFilter: selectedCommonFilter)
-    }
-    
-    var filteredSounds: [Sound] {
-        filterItems(sounds, commonFilter: selectedCommonFilter)
     }
     
     // MARK: - Owned Items Methods (통합)
@@ -282,5 +297,6 @@ class WorkshopViewModel {
     func resetFilters() {
         selectedTemplateFilter = nil
         selectedCommonFilter = nil
+        selectedEffectFilter = nil
     }
 }
