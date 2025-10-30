@@ -40,7 +40,7 @@ struct WorkshopView: View {
         .background(
             Image(.back)
                 .resizable()
-                .scaledToFit()
+                .scaledToFill()
         )
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.showFilterSheet) {
