@@ -8,20 +8,22 @@
 import SwiftUI
 
 struct CarabinerAddKeyringButton: View {
+    var isSelected: Bool
+    var hasKeyring: Bool
     var action: () -> Void
+    var secondAction: () -> Void
     
     var body: some View {
         Button {
-            action()
+            if hasKeyring {
+                // 이미 키링이 있는 버튼은 캡슐 버튼 띄움
+                secondAction()
+            } else {
+                // 키링 없는 버튼은 바로 시트 띄움
+                action()
+            }
         } label: {
-            RoundedRectangle(cornerRadius: 8.73)
-                .fill(.black100)
-                .stroke(.white, lineWidth: 1.5)
-                .frame(width: 24, height: 24)
-                .overlay {
-                    Image(systemName: "plus")
-                        .foregroundStyle(.white)
-                }
+            hasKeyring ? Image(.deleteAddedKeyringButton) : Image(.addKeyringButton)
         }
 
     }
