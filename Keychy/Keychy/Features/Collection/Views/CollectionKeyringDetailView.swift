@@ -7,37 +7,31 @@
 
 import SwiftUI
 import SpriteKit
+import FirebaseFirestore
 
 struct CollectionKeyringDetailView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State private var sheetDetent: PresentationDetent = .height(76)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
+    @State private var authorName: String = ""
     
     let keyring: Keyring
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                if let scene = scene {
-                    SpriteView(scene: scene, options: [.allowsTransparency])
-                        .ignoresSafeArea()
-                        .allowsHitTesting(true) // ⭐️ 터치 허용
-                } else {
-                    Color.gray.opacity(0.1)
-                }
-//                // Scene 표시
-//                //KeyringDetailSceneView(keyring: keyring)
-//                SpriteView(scene: createDetailScene(size: size))
-            }
-            
-            .onAppear {
-                if scene == nil {
-                    createDetailScene(size: geometry.size)
-                }
+                Color.gray50
+                    .ignoresSafeArea()
+                
+                KeyringDetailSceneView(
+                    keyring: keyring,
+                    availableHeight: availableSceneHeight)
+                .animation(.easeInOut(duration: 0.3), value: sheetDetent)
+                .padding(.top, 8)
             }
         }
-        .ignoresSafeArea()
+        //.ignoresSafeArea()
         .navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
@@ -47,7 +41,6 @@ struct CollectionKeyringDetailView: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled(upThrough: .height(395)))
                 .interactiveDismissDisabled()
-                
         }
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
@@ -60,6 +53,7 @@ struct CollectionKeyringDetailView: View {
                     tabBarController.tabBar.isHidden = true
                 }
             }
+            fetchAuthorName()
         }
         .onDisappear { // 일단 여기서 더 딥하게 들어가지는 않으니까 이렇게 해두겠음
             // 화면 나갈 때 탭바 다시 보이기
@@ -75,6 +69,33 @@ struct CollectionKeyringDetailView: View {
             backToolbarItem
             menuToolbarItem
         }
+    }
+    
+    // Firebase에서 작성자 이름 가져오기 (나중에 viewModel로 이동 예정)
+    private func fetchAuthorName() {
+        let db = Firestore.firestore()
+        
+        db.collection("User")
+            .document(keyring.authorId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    self.authorName = "알 수 없음"
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let name = data["nickname"] as? String else {
+                    self.authorName = "알 수 없음"
+                    return
+                }
+                
+                self.authorName = name
+            }
+    }
+    
+    // 바텀시트 높이 제외한 사용 가능한 높이 계산
+    private var availableSceneHeight: CGFloat {
+        sheetDetent == .height(76) ? 633 : 267
     }
     
     private func createDetailScene(size: CGSize) {
@@ -109,7 +130,6 @@ struct CollectionKeyringDetailView: View {
         }
         
         scene = newScene
-        print("✅ Detail scene created with size: \(size)")
     }
 }
 
@@ -150,7 +170,7 @@ extension CollectionKeyringDetailView {
             ScrollView {
                 VStack(spacing: 0) {
                     topSection
-                        .padding(.top, sheetDetent == .height(395) ? 30 : 10)
+                        .padding(.top, sheetDetent == .height(395) ? 10 : 10)
                         .padding(.bottom, sheetDetent == .height(76) ? 14 : 0)
                         .animation(.easeInOut(duration: 0.35), value: sheetDetent)
                     
@@ -172,13 +192,20 @@ extension CollectionKeyringDetailView {
                 .padding(.horizontal, 16)
                 .frame(minHeight: geometry.size.height)
             }
-            .scrollDisabled(sheetDetent == .height(76))
+            .scrollDisabled(true)
         }
         .toolbar(.hidden, for: .tabBar)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(sheetDetent == .height(395) ? Color.white : Color.clear)
+        .background(sheetDetent == .height(395) ? .white100 : Color.clear)
+        .shadow(
+            color: Color.black.opacity(0.18),
+            radius: 37.5,
+            x: 0,
+            y: -15
+        )
         .animation(.easeInOut(duration: 0.3), value: sheetDetent)
+
     }
     
     private func formattedDate(date: Date) -> String {
@@ -193,7 +220,7 @@ extension CollectionKeyringDetailView {
             Button(action: {
                 // 이미지 다운로드 로직
             }) {
-                Image("Download")
+                Image("Save")
                     .resizable()
                     .frame(width: 28, height: 28)
             }
@@ -225,7 +252,7 @@ extension CollectionKeyringDetailView {
             Text(formattedDate(date: keyring.createdAt))
                 .typography(.suit14M)
             
-            Text("@\(keyring.authorId)") // 얘 닉네임으로 바꿔야함
+            Text("@\(authorName)")
                 .typography(.suit15M25)
                 .foregroundColor(.gray300)
                 .padding(.top, 15)
@@ -306,7 +333,7 @@ extension CollectionKeyringDetailView {
         @State private var containerWidth: CGFloat = 0
         
         // 가로 스크롤 여부 검사
-        /// 화면을 삐져나가면 스크롤 적용 후 왼쪽정렬, 아니면 스크롤 없이 가운데정렬
+        // 화면을 삐져나가면 스크롤 적용 후 왼쪽정렬, 아니면 스크롤 없이 가운데정렬
         private var needsScroll: Bool {
             contentWidth > containerWidth
         }

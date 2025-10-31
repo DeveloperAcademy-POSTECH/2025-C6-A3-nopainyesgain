@@ -23,11 +23,8 @@ class StorageManager {
             throw URLError(.badURL)
         }
         
-        print("데이터 다운로드 시작: \(url.lastPathComponent)")
-        
         let (data, _) = try await URLSession.shared.data(from: url)
         
-        print("데이터 다운로드 완료: \(data.count) bytes")
         return data
     }
     
@@ -35,7 +32,6 @@ class StorageManager {
     func getImage(path: String) async throws -> UIImage {
         // 캐시 확인
         if let cachedImage = getCachedImage(for: path) {
-            print("캐시에서 이미지 로드: \(path)")
             return cachedImage
         }
         
@@ -48,13 +44,11 @@ class StorageManager {
         
         // 캐시에 저장
         setCachedImage(image, for: path)
-        print("이미지 다운로드 및 캐싱 완료")
         
         return image
     }
     
     func getMultipleImages(paths: [String]) async throws -> [String: UIImage] {
-        print("\(paths.count)개 이미지 일괄 다운로드 시작")
         
         return try await withThrowingTaskGroup(of: (String, UIImage).self) { group in
             var images: [String: UIImage] = [:]
@@ -70,7 +64,6 @@ class StorageManager {
                 images[path] = image
             }
             
-            print("일괄 다운로드 완료: \(images.count)/\(paths.count)개")
             return images
         }
     }

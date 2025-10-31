@@ -14,24 +14,23 @@ extension KeyringDetailScene {
     // MARK: - 키링 전체 조립
     func setupKeyring() {
         // 모든 이미지를 먼저 다운로드
-        downloadAllImages { [weak self] result in
-            guard let self = self else {
-                print("⚠️ KeyringDetailScene - self가 해제됨")
-                return
-            }
-            
-            switch result {
-            case .success(let images):
+        if let cached = cachedImages {
+            // 캐시된 이미지로 즉시 조립
+            assembleKeyring(with: cached)
+        } else {
+            // 처음에만 다운로드
+            downloadAllImages { [weak self] result in
+                guard let self = self else { return }
                 
-                // 다운로드된 이미지로 키링 조립
-                self.assembleKeyring(with: images)
-                
-            case .failure(let error):
-                print("이미지 다운로드 실패: \(error)")
-                
-                // 실패해도 가능한 것만 조립 (fallback)
-                // 필요없으면 빼도 됨... 얜 어떻게 처리할지...
-                self.assembleFallbackKeyring()
+                switch result {
+                case .success(let images):
+                    self.cachedImages = images // ⭐️ 캐시 저장
+                    self.assembleKeyring(with: images)
+                    
+                case .failure(let error):
+                    print("이미지 다운로드 실패: \(error)")
+                    self.assembleFallbackKeyring()
+                }
             }
         }
     }
@@ -44,7 +43,7 @@ extension KeyringDetailScene {
                 let ringImage = try await StorageManager.shared.getImage(path: currentRingType.imageURL)
                 
                 // Chain 이미지들 다운로드 (병렬)
-                let chainLinks = currentChainType.createChainLinks(length: 5)
+                let chainLinks = currentChainType.createChainLinks(length: 7)
                 let chainImages = try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
                     var images: [Int: UIImage] = [:]
                     
@@ -101,7 +100,7 @@ extension KeyringDetailScene {
     // MARK: - 키링 조립 (이미지 다운로드 완료 후)
     private func assembleKeyring(with images: KeyringImages) {
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.65 - (originalSize.height / 2)
+        let topY = originalSize.height * 0.68 - (originalSize.height / 2)
 
         // 1. Ring 생성
         let ring = createRingNode(image: images.ring)
@@ -113,8 +112,8 @@ extension KeyringDetailScene {
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 16
+        let chainStartY = ringBottomY
+        let chainSpacing: CGFloat = 17
         
         var chains: [SKSpriteNode] = []
         for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {
@@ -149,8 +148,14 @@ extension KeyringDetailScene {
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
         
-        let gap = max(originalSize.height * 0.01, bodyFrame.height * 0.03)
-        let bodyCenterY = lastChainBottomY - gap - bodyHalfHeight
+        // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
+//        let gapByScreen = size.height * 0.01
+//        let gapByBody = bodyFrame.height * 0.03
+//        let gap = max(gapByScreen, gapByBody)
+        let connectGap = 20.0
+        //let gap = gapByScreen
+        
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
         
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         containerNode.addChild(body)
@@ -158,6 +163,8 @@ extension KeyringDetailScene {
         
         // 4. 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
+        
+        self.isReady = true
         
         self.onLoadingComplete?()
     }
@@ -167,7 +174,7 @@ extension KeyringDetailScene {
         // Fallback시 기본 키링 생성
         
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.65 - (originalSize.height / 2)
+        let topY = originalSize.height * 0.68 - (originalSize.height / 2)
         
         // 기본 Ring (회색 원)
         let ring = SKShapeNode(circleOfRadius: 40)
@@ -185,6 +192,8 @@ extension KeyringDetailScene {
         let body = createBasicBody()
         body.position = CGPoint(x: centerX, y: topY - 200)
         containerNode.addChild(body)
+        
+        self.isReady = true
         
         self.onLoadingComplete?()
     }
@@ -244,11 +253,11 @@ extension KeyringDetailScene {
         let physicsBody = SKPhysicsBody(
             rectangleOf: CGSize(width: link.width - 4, height: link.height - 4)
         )
-        physicsBody.mass = 2.0
-        physicsBody.friction = 0.4
-        physicsBody.restitution = 0.3
-        physicsBody.linearDamping = 0.5
-        physicsBody.angularDamping = 0.8
+        physicsBody.mass = 1.5  // ⭐️ 2.0 → 1.5 (가볍게)
+        physicsBody.friction = 0.3  // ⭐️ 0.4 → 0.3 (마찰 감소)
+        physicsBody.restitution = 0.4  // ⭐️ 0.3 → 0.4 (탄성 증가)
+        physicsBody.linearDamping = 0.3  // ⭐️ 0.5 → 0.3 (감쇠 감소)
+        physicsBody.angularDamping = 0.5  // ⭐️ 0.8 → 0.5 (회전 감쇠 감소)
         node.physicsBody = physicsBody
         
         return node
@@ -257,7 +266,7 @@ extension KeyringDetailScene {
     // MARK: - Mini Body 생성
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
         // 크기 제한 (비율 유지)
-        let maxSize: CGFloat = 120
+        let maxSize: CGFloat = 200.0
         let originalSize = image.size
         var displaySize = originalSize
         
@@ -309,7 +318,6 @@ extension KeyringDetailScene {
         return node
     }
     
-    // MARK: - 조인트 연결 (기존과 동일)
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
         
         var previousNode: SKNode = ring
@@ -328,7 +336,7 @@ extension KeyringDetailScene {
                 )
             )
             joint.shouldEnableLimits = false
-            joint.frictionTorque = 0.2
+            joint.frictionTorque = 0.05
             physicsWorld.add(joint)
             
             let distance = hypot(
@@ -345,8 +353,8 @@ extension KeyringDetailScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            firstChain.physicsBody?.linearDamping = 0.7
-            firstChain.physicsBody?.angularDamping = 0.7
+            firstChain.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
+            firstChain.physicsBody?.angularDamping = 0.4
             previousNode = firstChain
         }
         
@@ -366,7 +374,7 @@ extension KeyringDetailScene {
                     y: (previousWorldPos.y + currentWorldPos.y) / 2
                 )
             )
-            joint.frictionTorque = 0.2
+            joint.frictionTorque = 0.05
             physicsWorld.add(joint)
             
             let distance = hypot(
@@ -383,8 +391,8 @@ extension KeyringDetailScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            current.physicsBody?.linearDamping = 0.7
-            current.physicsBody?.angularDamping = 0.7
+            current.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
+            current.physicsBody?.angularDamping = 0.4
             previousNode = current
         }
         
@@ -413,8 +421,8 @@ extension KeyringDetailScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            bodyPhysics.linearDamping = 0.7
-            bodyPhysics.angularDamping = 0.7
+            bodyPhysics.linearDamping = 0.5
+            bodyPhysics.angularDamping = 0.5
         }
     }
 }

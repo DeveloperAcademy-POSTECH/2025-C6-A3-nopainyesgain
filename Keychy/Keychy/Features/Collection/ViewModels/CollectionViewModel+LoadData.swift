@@ -17,7 +17,6 @@ extension CollectionViewModel {
     
     // MARK: - Firebase에서 사용자의 모든 키링 로드
     func fetchUserKeyrings(uid: String, completion: @escaping (Bool) -> Void) {
-        print("사용자 키링 로드 시작 - UID: \(uid)")
         isLoading = true
         
         // User 문서에서 보유한 키링 ID 목록 가져오기
@@ -61,8 +60,6 @@ extension CollectionViewModel {
                     return
                 }
                 
-                print("User 문서에서 \(keyringIds.count)개의 키링 ID 발견")
-                
                 // Keyring 컬렉션에서 해당 ID들의 키링 데이터 가져오기
                 self.loadKeyringsByIds(keyringIds: keyringIds) { success in
                     self.isLoading = false
@@ -83,15 +80,11 @@ extension CollectionViewModel {
             Array(keyringIds[$0..<min($0 + batchSize, keyringIds.count)])
         }
         
-        print("\(batches.count)개의 배치로 나눠서 처리")
-        
         var allKeyrings: [Keyring] = []
         let dispatchGroup = DispatchGroup()
         
         for (index, batch) in batches.enumerated() {
             dispatchGroup.enter()
-            
-            print("배치 \(index + 1)/\(batches.count) 로드 중... (\(batch.count)개)")
             
             db.collection("Keyring")
                 .whereField(FieldPath.documentID(), in: batch)
@@ -111,7 +104,6 @@ extension CollectionViewModel {
                         return keyring
                     } ?? []
                     
-                    print("배치 \(index + 1) 로드 완료: \(keyrings.count)개")
                     allKeyrings.append(contentsOf: keyrings)
                 }
         }
@@ -120,11 +112,6 @@ extension CollectionViewModel {
             guard let self = self else { return }
             
             self.keyring = allKeyrings
-            print("전체 키링 로드 완료: \(allKeyrings.count)개")
-            print("로드된 키링 목록:")
-            for (index, keyring) in allKeyrings.enumerated() {
-                print("   \(index + 1). \(keyring.name)")
-            }
             
             completion(true)
         }
@@ -212,8 +199,6 @@ extension CollectionViewModel {
         
         // Keyring 컬렉션에 새 키링 추가
         let docRef = db.collection("Keyring").document()
-        
-        print("Firestore에 키링 저장 중... - ID: \(docRef.documentID)")
         
         docRef.setData(keyringData) { [weak self] error in
             if let error = error {

@@ -14,7 +14,7 @@ extension KeyringCellScene {
         // 모든 이미지를 먼저 다운로드
         downloadAllImages { [weak self] result in
             guard let self = self else {
-                print("⚠️ KeyringCellScene - self가 해제됨")
+                print("KeyringCellScene - self가 해제됨")
                 return
             }
             
@@ -42,7 +42,7 @@ extension KeyringCellScene {
                 let ringImage = try await StorageManager.shared.getImage(path: currentRingType.imageURL)
                 
                 // Chain 이미지들 다운로드 (병렬)
-                let chainLinks = currentChainType.createChainLinks(length: 5)
+                let chainLinks = currentChainType.createChainLinks(length: 7)
                 let chainImages = try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
                     var images: [Int: UIImage] = [:]
                     
@@ -99,7 +99,7 @@ extension KeyringCellScene {
     // MARK: - 키링 조립 (이미지 다운로드 완료 후)
     private func assembleKeyring(with images: KeyringImages) {
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.65 - (originalSize.height / 2)
+        let topY = originalSize.height * 0.67 - (originalSize.height / 2)
 
         // 1. Ring 생성
         let ring = createRingNode(image: images.ring)
@@ -110,8 +110,8 @@ extension KeyringCellScene {
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 16
+        let chainStartY = ringBottomY
+        let chainSpacing: CGFloat = 17
         
         var chains: [SKSpriteNode] = []
         for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {
@@ -142,11 +142,18 @@ extension KeyringCellScene {
         let bodyHalfHeight = bodyFrame.height / 2
         
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
+        
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
         
-        let gap = max(originalSize.height * 0.01, bodyFrame.height * 0.03)
-        let bodyCenterY = lastChainBottomY - gap - bodyHalfHeight
+        // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
+//        let gapByScreen = size.height * 0.01
+//        let gapByBody = bodyFrame.height * 0.03
+//        let gap = max(gapByScreen, gapByBody)
+        let connectGap = 20.0
+        //let gap = gapByScreen
+        
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
         
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         containerNode.addChild(body)
@@ -162,7 +169,7 @@ extension KeyringCellScene {
         // Fallback시 기본 키링 생성
         
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.65 - (originalSize.height / 2)
+        let topY = originalSize.height * 0.67 - (originalSize.height / 2)
         
         // 기본 Ring (회색 원)
         let ring = SKShapeNode(circleOfRadius: 40)
@@ -252,7 +259,7 @@ extension KeyringCellScene {
     // MARK: - Mini Body 생성
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
         // 크기 제한 (비율 유지)
-        let maxSize: CGFloat = 120
+        let maxSize: CGFloat = 200
         let originalSize = image.size
         var displaySize = originalSize
         
@@ -304,7 +311,7 @@ extension KeyringCellScene {
         return node
     }
     
-    // MARK: - 조인트 연결 (기존과 동일)
+    // MARK: - 조인트 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
         
         var previousNode: SKNode = ring

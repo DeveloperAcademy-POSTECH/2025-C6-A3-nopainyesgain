@@ -22,8 +22,6 @@ extension KeyringScene {
                 return
             }
             
-            print("Ring 생성 완료")
-            
             ring.position = CGPoint(x: centerX, y: topY)
             ring.physicsBody?.isDynamic = false
             self.addChild(ring)
@@ -50,8 +48,6 @@ extension KeyringScene {
         ) { [weak self] chains in
             guard let self = self else { return }
             
-            print("체인 생성 완료: \(chains.count)개")
-            
             // 체인 노드를 씬에 추가
             for chain in chains {
                 self.addChild(chain)
@@ -66,7 +62,6 @@ extension KeyringScene {
     
     // Body 생성 및 연결 (Chain 생성 후 호출)
     private func setupBody(ring: SKSpriteNode, chains: [SKSpriteNode], centerX: CGFloat, chainStartY: CGFloat, chainSpacing: CGFloat) {
-        print("Body 생성 시작.")
         
         if let bodyImage = bodyImage {
             // UIImage인 경우

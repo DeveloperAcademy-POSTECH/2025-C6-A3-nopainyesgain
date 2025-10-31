@@ -13,6 +13,8 @@ class KeyringDetailScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var onLoadingComplete: (() -> Void)?
+    var cachedImages: KeyringImages?
+    var isReady: Bool = false
     
     // MARK: - 효과 ID 저장용
     var currentSoundId: String = "none"
@@ -78,7 +80,7 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
-        backgroundColor = .white100
+        backgroundColor = .gray50
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
         
         containerNode = SKNode()
@@ -87,6 +89,85 @@ class KeyringDetailScene: SKScene {
         addChild(containerNode)
 
         setupKeyring()
+    }
+    
+
+    func updateForNewSize(_ newSize: CGSize, zoomScale: CGFloat) {
+        // 1. 물리 세계 일시 정지
+        physicsWorld.speed = 0
+        self.isReady = false
+        
+        // 2. 현재 상태 확인
+        let scaleX = newSize.width / originalSize.width
+        let scaleY = newSize.height / originalSize.height
+        let newScaleFactor = min(scaleX, scaleY) * zoomScale
+        
+        let currentScale = containerNode.xScale
+        let isScalingUp = newScaleFactor > currentScale
+        
+        // 3. ⭐️ 확대/축소에 따른 전략 분기
+        if isScalingUp {
+            // ===== 확대 시: 위에서 아래로 부드럽게 =====
+            
+            // 3-1. 현재 containerNode를 fade out
+            let fadeOut = SKAction.fadeAlpha(to: 0, duration: 0.15)
+            containerNode.run(fadeOut) { [weak self] in
+                guard let self = self else { return }
+                
+                // 3-2. 투명한 상태에서 노드 재조립
+                self.containerNode.removeAllChildren()
+                self.containerNode.removeAllActions()
+                
+                self.size = newSize
+                
+                // 3-3. 위쪽 시작 위치 설정
+                let finalPosition = CGPoint(x: newSize.width / 2, y: newSize.height / 2)
+                let startOffset: CGFloat = 60
+                let startPosition = CGPoint(x: finalPosition.x, y: finalPosition.y - startOffset)
+                
+                self.containerNode.position = startPosition
+                self.containerNode.setScale(newScaleFactor)
+                self.containerNode.alpha = 0 // 투명 상태 유지
+                
+                // 3-4. 키링 재조립 (이미지는 캐시됨)
+                self.setupKeyring()
+                
+                // 3-5. 재조립 완료 후 애니메이션으로 등장
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    // 위치 이동
+                    let moveDown = SKAction.move(to: finalPosition, duration: 0.4)
+                    moveDown.timingMode = .easeOut
+                    
+                    // 페이드 인
+                    let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.4)
+                    fadeIn.timingMode = .easeOut
+                    
+                    let appear = SKAction.group([moveDown, fadeIn])
+                    
+                    self.containerNode.run(appear) {
+                        self.physicsWorld.speed = 1.0
+                    }
+                }
+            }
+            
+        } else {
+            // ===== 축소 시: 위쪽으로 축소 (기존 방식) =====
+            
+            containerNode.removeAllChildren()
+            containerNode.removeAllActions()
+            
+            size = newSize
+            containerNode.position = CGPoint(x: newSize.width / 2, y: newSize.height / 2)
+            containerNode.setScale(newScaleFactor)
+            
+            // 키링 재조립
+            setupKeyring()
+            
+            // 물리 재개
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.physicsWorld.speed = 1.0
+            }
+        }
     }
     
     // MARK: - 사운드 효과 적용
@@ -113,46 +194,55 @@ class KeyringDetailScene: SKScene {
     private func applySwipeForceToNearbyChains(at location: CGPoint, velocity: CGVector) {
         guard let body = bodyNode else { return }
         
-        let forceMagnitude: CGFloat = 0.3
+        // ⭐️ 기본 감도 설정 (KeyringScene과 동일하게)
+        let baseForceMagnitude: CGFloat = 0.3
+        
+        // ⭐️ scaleFactor에 따른 보정
+        // containerNode가 확대되어 있으면 힘을 줄이고, 축소되어 있으면 힘을 늘림
+        let scaledForceMagnitude = baseForceMagnitude / scaleFactor
         
         // 체인에 힘 적용
         for chainNode in chainNodes {
             let force = CGVector(
-                dx: velocity.dx * forceMagnitude * 0.3,
-                dy: velocity.dy * forceMagnitude * 0.3
+                dx: velocity.dx * scaledForceMagnitude * 0.3,
+                dy: velocity.dy * scaledForceMagnitude * 0.3
             )
             chainNode.physicsBody?.applyImpulse(force)
         }
         
         // Body에도 힘 적용
         let bodyForce = CGVector(
-            dx: velocity.dx * forceMagnitude * 0.5,
-            dy: velocity.dy * forceMagnitude * 0.5
+            dx: velocity.dx * scaledForceMagnitude * 0.5,
+            dy: velocity.dy * scaledForceMagnitude * 0.5
         )
         body.physicsBody?.applyImpulse(bodyForce)
     }
     
     // MARK: - 터치 인터랙션
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard isReady else { return } // ⭐️ 로딩 완료 전에는 터치 무시
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
-        lastTouchLocation = location
-        lastTouchTime = touch.timestamp
-        swipeStartLocation = location
+        let localLocation = containerNode.convert(location, from: self)
         
-        // 탭 햅틱
+        lastTouchLocation = localLocation
+        lastTouchTime = touch.timestamp
+        swipeStartLocation = localLocation
+        
         Haptic.impact(style: .medium)
     }
-    
+
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard isReady else { return } // ⭐️ 로딩 완료 전에는 터치 무시
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
+        let localLocation = containerNode.convert(location, from: self)
+        
         if let lastLocation = lastTouchLocation {
-            // 스와이프 방향과 속도 계산
-            let deltaX = location.x - lastLocation.x
-            let deltaY = location.y - lastLocation.y
+            let deltaX = localLocation.x - lastLocation.x
+            let deltaY = localLocation.y - lastLocation.y
             let deltaTime = touch.timestamp - lastTouchTime
             
             if deltaTime > 0 {
@@ -160,10 +250,8 @@ class KeyringDetailScene: SKScene {
                 let velocityY = deltaY / CGFloat(deltaTime)
                 let velocity = CGVector(dx: velocityX, dy: velocityY)
                 
-                // 스와이프 힘 적용
-                applySwipeForceToNearbyChains(at: location, velocity: velocity)
+                applySwipeForceToNearbyChains(at: localLocation, velocity: velocity)
                 
-                // 일정 속도 이상 스와이프 시 파티클 효과 (쓰로틀링 0.3초)
                 let speed = hypot(velocity.dx, velocity.dy)
                 if speed > 2500 && (touch.timestamp - lastParticleTime) > 0.3 {
                     applyParticleEffect(particleId: currentParticleId)
@@ -172,21 +260,26 @@ class KeyringDetailScene: SKScene {
             }
         }
         
-        lastTouchLocation = location
+        lastTouchLocation = localLocation
         lastTouchTime = touch.timestamp
     }
-    
+
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard isReady else { return } // ⭐️ 로딩 완료 전에는 터치 무시
         guard let touch = touches.first else { return }
-        let end = touch.location(in: self)
+        let location = touch.location(in: self)
         
-        // 탭 감지: 거리가 짧으면 사운드 효과
+        let localLocation = containerNode.convert(location, from: self)
+        
         if let start = swipeStartLocation {
-            let distance = hypot(end.x - start.x, end.y - start.y)
+            let distance = hypot(localLocation.x - start.x, localLocation.y - start.y)
             
             if distance < 30 {
-                if let body = bodyNode, body.contains(end) {
-                    applySoundEffect(soundId: currentSoundId)
+                if let body = bodyNode {
+                    let bodyFrame = body.frame
+                    if bodyFrame.contains(localLocation) {
+                        applySoundEffect(soundId: currentSoundId)
+                    }
                 }
             }
         }
@@ -194,7 +287,6 @@ class KeyringDetailScene: SKScene {
         swipeStartLocation = nil
         lastTouchLocation = nil
     }
-    
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         swipeStartLocation = nil
         lastTouchLocation = nil
