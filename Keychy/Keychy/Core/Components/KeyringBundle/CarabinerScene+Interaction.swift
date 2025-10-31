@@ -15,6 +15,9 @@ extension CarabinerScene {
     
     /// 스와이프 제스처 감지 및 처리
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // 물리엔진이 비활성화된 경우 터치 이벤트 무시
+        guard isPhysicsEnabled else { return }
+        
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
@@ -29,6 +32,9 @@ extension CarabinerScene {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // 물리엔진이 비활성화된 경우 터치 이벤트 무시
+        guard isPhysicsEnabled else { return }
+        
         guard let touch = touches.first,
               let lastLocation = lastTouchLocation else { return }
         
@@ -45,6 +51,9 @@ extension CarabinerScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // 물리엔진이 비활성화된 경우 터치 이벤트 무시
+        guard isPhysicsEnabled else { return }
+        
         guard let touch = touches.first,
               let startLocation = swipeStartLocation else { return }
         

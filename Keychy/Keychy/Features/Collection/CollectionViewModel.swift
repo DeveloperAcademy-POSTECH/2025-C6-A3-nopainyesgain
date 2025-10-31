@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseStorage
+import SpriteKit
 
 @Observable
 class CollectionViewModel {
@@ -22,6 +23,9 @@ class CollectionViewModel {
     init() { }
 
     // 키링 뭉치 관련
+    var maxBundleNameCount: Int = 9
+    var selectedKeyringsForBundle: [Int: Keyring] = [:] // 번들 생성용 선택된 키링들
+    var bundlePreviewScene: CarabinerScene?
     // MARK: - 임시 키링 뭉치
     var bundles: [KeyringBundle] = [
         KeyringBundle(
