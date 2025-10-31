@@ -46,7 +46,7 @@ struct HomeView: View {
 
 
                         Button {
-                            router.push(.coinCharge)
+                            router.push(.myPageView)
                         } label: {
                             Image(.myPageIcon)
                                 .resizable()
