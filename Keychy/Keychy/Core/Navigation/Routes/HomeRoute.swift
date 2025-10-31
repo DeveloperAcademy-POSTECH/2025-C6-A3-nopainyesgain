@@ -17,4 +17,5 @@ enum HomeRoute: Hashable {
     case coinCharge
     case myPageView
     case alarmView
+    case introView
 }
