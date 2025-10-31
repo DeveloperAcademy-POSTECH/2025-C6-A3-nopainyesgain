@@ -10,6 +10,21 @@ import SwiftUI
 // 스플래쉬 뷰
 struct SplashView: View {
     var body: some View {
-        Text("SplashView")
+        
+        ZStack() {
+            VStack(spacing: 20) {
+                Image("appIcon")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                
+                Image("logoType")
+                    .resizable()
+                    .frame(width: 98, height: 20)
+            }
+        }
     }
+}
+
+#Preview {
+    SplashView()
 }
