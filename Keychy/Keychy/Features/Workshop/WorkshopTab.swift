@@ -38,7 +38,7 @@ struct WorkshopTab: View {
                         KeyringInfoInputView(
                             router: router,
                             viewModel: getAcrylicPhotoVM(),
-                            navigationTitle: "정보 입력",
+                            navigationTitle: "",
                             nextRoute: .acrylicPhotoComplete
                         )
                     case .acrylicPhotoComplete:
