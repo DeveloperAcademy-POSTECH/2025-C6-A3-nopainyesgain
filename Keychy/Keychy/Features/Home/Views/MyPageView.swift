@@ -13,53 +13,58 @@ struct MyPageView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
 
     var body: some View {
-        VStack(spacing: 20) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("이름")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+        VStack(alignment: .center, spacing: 30) {
+            VStack(alignment: .center, spacing: 8) {
                 Text(userManager.currentUser?.nickname ?? "알 수 없음")
-                    .font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("이메일")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .typography(.suit20B)
                 Text(userManager.currentUser?.email ?? "알 수 없음")
-                    .font(.body)
+                    .typography(.suit15R)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity)
 
             HStack {
-                VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 7) {
                     Text("현재 보유한 체리")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .typography(.suit16M25)
+                        .foregroundStyle(.black)
+                    
                     Text("\(userManager.currentUser?.coin ?? 0)")
-                        .font(.title2)
-                        .fontWeight(.bold)
+                        .typography(.nanum16EB)
+                        .foregroundStyle(.main500)
                 }
 
                 Spacer()
 
-                Button("충전하기") {
+                Button {
                     router.push(.coinCharge)
+                } label: {
+                    Text("충전하기")
+                        .typography(.suit15M25)
+                        .foregroundStyle(.gray500)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 25)
+            .padding(.vertical, 27)
+            .frame(maxWidth: .infinity, minHeight: 55, maxHeight: 55, alignment: .center)
+            .background(.gray50)
+            .cornerRadius(15)
 
             Spacer()
 
-            Button("로그아웃") {
+            Button {
                 logout()
-                router.push(.introView)
+                router.push(.introView) // TODO: 로그인 처리 더 해야됨.
+            } label: {
+                Text("로그아웃")
+                    .typography(.suit17M)
+                    .foregroundStyle(.black100)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(.red)
+            .padding(.bottom, 30)
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 20)
+        .padding(.top, 25)
         .navigationTitle("마이페이지")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -71,5 +76,11 @@ struct MyPageView: View {
         } catch {
             print("로그아웃 실패: \(error.localizedDescription)")
         }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        MyPageView(router: NavigationRouter<HomeRoute>())
     }
 }
