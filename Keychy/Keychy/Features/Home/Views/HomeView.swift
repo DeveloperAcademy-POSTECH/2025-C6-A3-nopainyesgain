@@ -13,35 +13,55 @@ struct HomeView: View {
     @Namespace private var unionNamespace
     
     var body: some View {
-        HStack {
-            Button {
-                router.push(.bundleInventoryView)
-            } label: {
-                Image(.bundleIcon)
-            }
-            .buttonStyle(.glassProminent)
+        ZStack(alignment: .top) {
+            // TODO: 뭉치 Scene넣기
+            Color.clear // 📏 ZStack의 높이 확보용
+                .frame(maxHeight: .infinity)
             
-            GlassEffectContainer {
-                HStack(spacing: 0) {
-                    Button {
-                        router.push(.alarmView)
-                    } label: {
-                        Image(.alarmIcon)
-                    }
-                    .buttonStyle(.glassProminent)
-                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+            HStack(spacing: 10) {
+                Spacer()
+                
+                Button {
+                    router.push(.bundleInventoryView)
+                } label: {
+                    Image(.bundleIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                }
+                .buttonStyle(.glassProminent)
+                
+                GlassEffectContainer {
+                    HStack(spacing: 0) {
+                        Button {
+                            router.push(.alarmView)
+                        } label: {
+                            Image(.alarmIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 36, height: 36)
+                        }
+                        .buttonStyle(.glassProminent)
+                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
 
 
-                    Button {
-                        router.push(.coinCharge)
-                    } label: {
-                        Image(.myPageIcon)
+                        Button {
+                            router.push(.coinCharge)
+                        } label: {
+                            Image(.myPageIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 36, height: 36)
+                        }
+                        
+                        .buttonStyle(.glassProminent)
+                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                     }
-                    .buttonStyle(.glassProminent)
-                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 }
             }
+            .padding(.horizontal, 16)
+            .tint(.white.opacity(0.8))
         }
-        .tint(.white.opacity(0.8))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
