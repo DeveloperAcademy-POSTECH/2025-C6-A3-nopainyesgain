@@ -142,13 +142,13 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     } else if state.isLoading {
-                        Color.gray.opacity(0.3)
+                        Color.gray50
                             .overlay { ProgressView() }
                     } else {
-                        Color.gray.opacity(0.3)
+                        Color.gray50
                             .overlay {
                                 Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(.gray50)
                             }
                     }
                 }

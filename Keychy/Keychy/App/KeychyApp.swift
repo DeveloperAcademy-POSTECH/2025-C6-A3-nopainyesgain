@@ -55,6 +55,7 @@ struct KeychyApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .preferredColorScheme(.light)
         }
     }
 }
