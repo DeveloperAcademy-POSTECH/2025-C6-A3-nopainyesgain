@@ -323,7 +323,7 @@ extension WorkshopView {
                 .foregroundColor(.secondary)
             Spacer()
         }
-        .frame(width: 345, height: 112)
+        .frame(width: 343, height: 112)
         .background(Color.white.opacity(0.4))
         .cornerRadius(10)
     }
@@ -336,7 +336,7 @@ extension WorkshopView {
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
             Spacer()
         }
-        .frame(width: 345, height: 113)
+        .frame(width: 343, height: 113)
     }
 
 }
