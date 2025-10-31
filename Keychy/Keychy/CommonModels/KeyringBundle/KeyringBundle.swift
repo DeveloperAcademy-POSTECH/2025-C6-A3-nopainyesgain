@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftUI
+import FirebaseFirestore
 
 struct KeyringBundle: Identifiable, Equatable, Hashable {
     let id = UUID()
@@ -16,4 +18,57 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
     var maxKeyrings: Int
     var isMain: Bool
     var createdAt: Date
+    
+    //MARK: - Firestore 변환
+    func toDictionary() -> [String: Any] {
+        var dict: [String: Any] = [
+            "name": name,
+            "selectedBackground": selectedBackground,
+            "selectedCarabiner": selectedCarabiner,
+            "keyrings": keyrings,
+            "maxKeyrings": maxKeyrings,
+            "isMain": isMain,
+            "createdAt": Timestamp(date: createdAt)
+        ]
+        return dict
+    }
+    
+    //MARK: - Firestore DocumentSnapshot에서 초기화
+    init?(documentId: String, data: [String: Any]) {
+        guard let name = data["name"] as? String,
+              let selectedBackground = data["selectedBackground"] as? String,
+              let selectedCarabiner = data["selectedCarabiner"] as? String,
+              let keyrings = data["keyrings"] as? [String],
+              let maxKeyrings = data["maxKeyrings"] as? Int,
+              let isMain = data["isMain"] as? Bool,
+              let createdAtTimestamp = data["createdAt"] as? Timestamp else {
+            return nil
+        }
+        
+        self.name = name
+        self.selectedBackground = selectedBackground
+        self.selectedCarabiner = selectedCarabiner
+        self.keyrings = keyrings
+        self.maxKeyrings = maxKeyrings
+        self.isMain = isMain
+        self.createdAt = createdAtTimestamp.dateValue()
+    }
+    
+    //MARK: - 일반 초기화 (새 번들 생성용)
+    init(name: String,
+         selectedBackground: String,
+         selectedCarabiner: String,
+         keyrings: [String],
+         maxKeyrings: Int,
+         isMain: Bool,
+         createdAt: Date
+    ) {
+        self.name = name
+        self.selectedBackground = selectedBackground
+        self.selectedCarabiner = selectedCarabiner
+        self.keyrings = keyrings
+        self.maxKeyrings = maxKeyrings
+        self.isMain = isMain
+        self.createdAt = createdAt
+    }
 }
