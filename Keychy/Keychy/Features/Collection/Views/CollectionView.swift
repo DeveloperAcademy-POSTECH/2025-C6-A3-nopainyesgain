@@ -179,10 +179,33 @@ extension CollectionView {
     private var collectionSection: some View {
         VStack(spacing: 0) {
             collectionHeader
-            collectionGridView
+            
+            if collectionViewModel.keyring.isEmpty {
+                emptyview
+            }
+            else {
+                collectionGridView
+            }
         }
         .padding(.top, Spacing.xs)
         .padding(.horizontal, Spacing.xs)
+    }
+    
+    private var emptyview: some View {
+        VStack {
+            Spacer().frame(height: 200)
+            
+            Text("비었음")
+                .typography(.suit14M)
+            
+            Image("fireworks")
+                .resizable()
+                .frame(width: 94, height: 94)
+            
+            Spacer()
+        }
+        .padding(.top, 10)
+        .scrollIndicators(.hidden)
     }
     
     private var collectionHeader: some View {
