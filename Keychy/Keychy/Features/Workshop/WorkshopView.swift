@@ -316,22 +316,27 @@ extension WorkshopView {
     
     /// 빈 창고 뷰
     private var emptyOwnedView: some View {
-        VStack(spacing: 8) {
-            Text("보유한 아이템이 없습니다.")
+        HStack(spacing: 0) {
+            Spacer()
+            Text("내 창고가 비었어요")
                 .typography(.suit14SB18)
                 .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+            Spacer()
         }
-        .frame(height: 137)
+        .frame(width: 345, height: 112)
+        .background(Color.white.opacity(0.4))
+        .cornerRadius(10)
     }
     
     /// 내 창고 로딩 중 뷰
     private var loadingOwnedView: some View {
         HStack(spacing: 0) {
+            Spacer()
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+            Spacer()
         }
-        .frame(height: 137)
+        .frame(width: 345, height: 113)
     }
 
 }
@@ -354,7 +359,7 @@ extension WorkshopView {
     
     /// 로딩 뷰
     private var loadingView: some View {
-        VStack(spacing: 12) {
+        HStack(spacing: 0) {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
                 .scaleEffect(1.5)
