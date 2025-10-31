@@ -29,12 +29,15 @@ extension IntroViewModel {
     
     // 프로필 저장
     func saveProfile(nickname: String) {
-        guard !tempUserUID.isEmpty else {
-            errorMessage = "사용자 정보를 찾을 수 없음"
-            return
+        if tempUserUID.isEmpty {
+            if let currentUser = Auth.auth().currentUser {
+                tempUserUID = currentUser.uid
+                tempUserEmail = currentUser.email ?? ""
+            } else {
+                errorMessage = "사용자 정보를 찾을 수 없음"
+                return
+            }
         }
-
-        print("사용자 입력 닉네임 저장: \(nickname)")
         isLoading = true
         errorMessage = nil
 
