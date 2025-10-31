@@ -17,6 +17,10 @@ struct BundleNameInputView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
     
+    // 업로드 상태
+    @State private var isUploading: Bool = false
+    @State private var uploadError: String?
+    
     // 선택된 키링들을 ViewModel에서 가져옴
     private var selectedKeyrings: [Int: Keyring] {
         viewModel.selectedKeyringsForBundle
@@ -35,6 +39,17 @@ struct BundleNameInputView: View {
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
                     .padding(.horizontal, 20)
+                
+                if isUploading {
+                    ProgressView("업로드 중...")
+                        .padding(.top, 8)
+                }
+                if let uploadError {
+                    Text(uploadError)
+                        .foregroundStyle(.red)
+                        .font(.footnote)
+                }
+                
                 Spacer()
             }
             .padding(.bottom, max(380 - keyboardHeight, 20))
@@ -160,10 +175,48 @@ extension BundleNameInputView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("완료") {
-                createNewBundle()
-                router.reset()
+                // 필수 값 안전 확인
+                guard
+                    let backgroundId = viewModel.selectedBackground?.id,
+                    let carabinerId = viewModel.selectedCarabiner?.id,
+                    let carabiner = viewModel.selectedCarabiner
+                else {
+                    // 값이 없으면 조용히 리턴하거나 에러 상태 표시
+                    return
+                }
+                
+                // 선택된 키링들을 인덱스 순서대로 [String]으로 변환 (UUID 문자열 사용)
+                let keyringIds: [String] = (0..<carabiner.maxKeyringCount).compactMap { idx in
+                    if let kr = viewModel.selectedKeyringsForBundle[idx] {
+                        return kr.id.uuidString
+                    }
+                    return nil
+                }
+                
+                let maxKeyrings = carabiner.maxKeyringCount
+                let isMain = viewModel.bundles.isEmpty
+                
+                viewModel.createBundle(
+                    name: bundleName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    selectedBackground: backgroundId,
+                    selectedCarabiner: carabinerId,
+                    keyrings: keyringIds,
+                    maxKeyrings: maxKeyrings,
+                    isMain: isMain
+                ) { success, bundleId in
+                    if success {
+                        // 성공 후 초기화/네비게이션은 프로젝트 정책에 맞게 처리
+                        print("저장한 background: \(viewModel.selectedBackground?.backgroundName ?? "babo")")
+                        print("저장한 carabiner: \(viewModel.selectedCarabiner?.carabinerName ?? "merong")")
+                        router.reset()
+                    } else {
+                        // 실패 처리 (필요 시 상태값 사용)
+                        uploadError = "뭉치 저장에 실패했어요. 잠시 후 다시 시도해 주세요."
+                    }
+                }
             }
             .disabled(
+                isUploading ||
                 bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             )
         }
@@ -172,8 +225,8 @@ extension BundleNameInputView {
 
 // MARK: - 번들 저장 로직
 extension BundleNameInputView {
-    private func createNewBundle() {
-        guard let carabiner = viewModel.selectedCarabiner else { return }
+    private func createNewBundleModel() -> KeyringBundle? {
+        guard let carabiner = viewModel.selectedCarabiner else { return nil }
         
         // 선택된 키링들을 인덱스 순서대로 배열로 변환 (딕셔너리 키 순서 보장)
         var keyringArray: [Keyring] = []
@@ -195,13 +248,14 @@ extension BundleNameInputView {
             isMain: viewModel.bundles.isEmpty, // 첫 번째 번들이면 메인으로 설정
             createdAt: Date()
         )
-        
-        // ViewModel의 bundles에 추가
-        viewModel.bundles.append(newBundle)
-        
+        return newBundle
+    }
+    
+    private func resetAfterSuccess() {
         // 저장 완료 후 씬 정리
         viewModel.bundlePreviewScene = nil
         viewModel.selectedKeyringsForBundle = [:]
+        router.reset()
     }
 }
 
