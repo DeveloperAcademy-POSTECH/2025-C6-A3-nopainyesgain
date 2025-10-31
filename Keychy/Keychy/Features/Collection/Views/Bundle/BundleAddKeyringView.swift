@@ -202,9 +202,76 @@ extension BundleAddKeyringView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("다음") {
+                // 선택된 키링들을 ViewModel에 저장
+                viewModel.selectedKeyringsForBundle = selectedKeyrings
+                
+                // 씬을 미리보기용으로 안정화 후 저장
+                prepareSceneForPreview()
+                
                 router.push(.bundleNameInputView)
             }
         }
+    }
+    
+    // 씬을 미리보기용으로 안정화하는 메서드
+    private func prepareSceneForPreview() {
+        guard let scene = carabinerScene else {
+            return
+        }
+        
+        // 중복된 키링 노드 제거 (혹시나 하는 안전 장치)
+        cleanupDuplicateKeyrings(in: scene)
+        
+        // 물리 시뮬레이션 완전 비활성화
+        scene.physicsWorld.speed = 0
+        scene.physicsWorld.gravity = CGVector.zero
+        
+        // 모든 키링의 물리 속성을 고정
+        for keyring in scene.keyrings {
+            keyring.enumerateChildNodes(withName: "//*") { node, _ in
+                node.physicsBody?.isDynamic = false
+                node.physicsBody?.affectedByGravity = false
+                node.removeAllActions() // 모든 애니메이션 제거
+            }
+        }
+        
+        // 카라비너도 완전히 고정
+        scene.carabinerNode?.physicsBody?.isDynamic = false
+        scene.carabinerNode?.physicsBody?.affectedByGravity = false
+        scene.carabinerNode?.removeAllActions()
+        
+        // ViewModel에 안정화된 씬 저장
+        viewModel.bundlePreviewScene = scene
+    }
+    
+    // 중복된 키링 노드 정리
+    private func cleanupDuplicateKeyrings(in scene: CarabinerScene) {
+        guard let carabinerNode = scene.carabinerNode else { return }
+        
+        // 카라비너의 모든 자식 중에서 keyring_으로 시작하는 노드들 찾기
+        var keyringNodes: [String: [SKNode]] = [:]
+        
+        carabinerNode.enumerateChildNodes(withName: "keyring_*") { node, _ in
+            if let name = node.name {
+                if keyringNodes[name] == nil {
+                    keyringNodes[name] = []
+                }
+                keyringNodes[name]?.append(node)
+            }
+        }
+        
+        // 중복된 노드 제거 (첫 번째만 남기고 나머지 제거)
+        for (name, nodes) in keyringNodes {
+            if nodes.count > 1 {
+                // 첫 번째 노드를 제외한 나머지 제거
+                for i in 1..<nodes.count {
+                    nodes[i].removeFromParent()
+                }
+            }
+        }
+        
+        // scene.keyrings 배열도 정리
+        scene.keyrings = scene.keyrings.filter { $0.parent != nil }
     }
 }
 
@@ -386,15 +453,20 @@ extension BundleAddKeyringView {
             return
         }
         
-        // URL에서 이미지들을 비동기로 로드
-        loadKeyringImagesFromURLs(keyringData: keyringData) { loadedImages in
-            guard let scene = self.carabinerScene else { return }
-            
+        // URL 또는 번들에서 이미지들을 로드
+        loadKeyringImages(keyringData: keyringData) { loadedImages in
+            guard let scene = self.carabinerScene else {
+                return 
+            }
             DispatchQueue.main.async {
                 // 새 키링들을 개별적으로 위치에 맞게 생성
                 if let carabinerNode = scene.carabinerNode {
+                    
+                    var completedKeyrings = 0
+                    let totalKeyrings = keyringData.count
+                    
                     // 각 키링을 올바른 위치에 개별적으로 생성
-                    for (arrayIndex, (keyringIndex, keyring)) in keyringData.enumerated() {
+                    for (arrayIndex, (keyringIndex, _)) in keyringData.enumerated() {
                         if arrayIndex < loadedImages.count {
                             let bodyImage = loadedImages[arrayIndex]
                             
@@ -413,24 +485,51 @@ extension BundleAddKeyringView {
                                 index: keyringIndex
                             ) { createdKeyring in
                                 scene.keyrings.append(createdKeyring)
+                                completedKeyrings += 1
                             }
                         }
                     }
+                } else {
+                    print("카라비너 노드를 찾을 수 없음")
                 }
             }
         }
     }
     
-    // 번들에서 이미지들을 로드하는 메서드
-    private func loadKeyringImagesFromURLs(
+    // URL 또는 번들에서 이미지들을 로드하는 메서드
+    private func loadKeyringImages(
         keyringData: [(index: Int, keyring: Keyring)],
         completion: @escaping ([UIImage]) -> Void
     ) {
-        let imageNames = keyringData.map { $0.keyring.bodyImage }
-        let images = imageNames.compactMap { UIImage(named: $0) }
+        let imageIdentifiers = keyringData.map { $0.keyring.bodyImage }
         
-        DispatchQueue.main.async {
-            completion(images)
+        Task {
+            var loadedImages: [UIImage] = []
+            
+            for imageIdentifier in imageIdentifiers {
+                do {
+                    let image: UIImage
+                    
+                    if imageIdentifier.hasPrefix("http") {
+                        // URL에서 이미지 로드 (StorageManager 사용)
+                        image = try await StorageManager.shared.getImage(path: imageIdentifier)
+                    } else {
+                        // 번들에서 이미지 로드
+                        guard let bundleImage = UIImage(named: imageIdentifier) else {
+                            print("번들 이미지 로드 실패: \(imageIdentifier)")
+                            continue
+                        }
+                        image = bundleImage
+                    }
+                    
+                    loadedImages.append(image)
+                } catch {
+                }
+            }
+            
+            await MainActor.run {
+                completion(loadedImages)
+            }
         }
     }
 }
