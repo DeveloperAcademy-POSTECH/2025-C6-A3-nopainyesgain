@@ -32,7 +32,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State private var showTagNameEmptyToast: Bool = false
     @State private var newTagName: String = ""
     @State private var keyboardHandler = KeyboardResponder()
-    @State private var sheetDetent: PresentationDetent = .height(76)
+    @State private var sheetDetent: PresentationDetent = .height(395)
     @State private var showSheet: Bool = true
     @FocusState private var isFocused: Bool
     
