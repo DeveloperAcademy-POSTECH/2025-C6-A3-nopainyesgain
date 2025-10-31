@@ -12,6 +12,7 @@ struct HomeTab: View {
     @Bindable var userManager: UserManager
     @State private var viewModel = HomeViewModel()
     @State private var collectionViewModel = CollectionViewModel()
+    @Bindable private var introViewModel = IntroViewModel()
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -34,8 +35,14 @@ struct HomeTab: View {
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)
-                    }
+                    case .myPageView:
+                        MyPageView(router: router)
+                    case .alarmView:
+                        AlarmView()
+                    case .introView:
+                        IntroView(viewModel: introViewModel)
                 }
+            }
         }
     }
 }
