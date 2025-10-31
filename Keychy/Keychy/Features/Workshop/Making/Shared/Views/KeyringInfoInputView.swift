@@ -9,16 +9,22 @@
 import SwiftUI
 import SpriteKit
 import Combine
+import FirebaseFirestore
 
 struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: VM
     let navigationTitle: String
     let nextRoute: WorkshopRoute
-    
-    // TODO: - User 모델 및 파이어베이스 연동 시 삭제
-    @State private var availableTags = ["또치", "싱싱", "고양이"]
-    
+
+    // UserManager 주입
+    var userManager: UserManager = UserManager.shared
+
+    // Firebase User의 tags 사용
+    private var availableTags: [String] {
+        userManager.currentUser?.tags ?? []
+    }
+
     @State private var textCount: Int = 0
     @State private var memoTextCount: Int = 0
     @State private var showAddTagAlert: Bool = false
@@ -265,7 +271,8 @@ extension KeyringInfoInputView {
                             showTagNameEmptyToast = false
                             showTagNameAlreadyExistsToast = true
                         } else {
-                            availableTags.append(newTagName)
+                            // Firebase에 태그 추가
+                            addTagToFirebase(tagName: newTagName)
                             newTagName = ""
                             showAddTagAlert = false
                             showTagNameAlreadyExistsToast = false
@@ -302,6 +309,41 @@ extension KeyringInfoInputView {
                 .fill(Color.white)
                 .shadow(radius: 1)
         )
+    }
+}
+
+// MARK: - Firebase Tag 추가
+extension KeyringInfoInputView {
+    /// Firebase에 태그 추가
+    private func addTagToFirebase(tagName: String) {
+        guard let userId = userManager.currentUser?.id else { return }
+
+        Task {
+            do {
+                try await Firestore.firestore()
+                    .collection("User")
+                    .document(userId)
+                    .updateData([
+                        "tags": FieldValue.arrayUnion([tagName])
+                    ])
+
+                // UserManager 업데이트
+                await refreshUserData()
+            } catch {
+                print("태그 추가 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// UserManager의 유저 데이터 새로고침
+    private func refreshUserData() async {
+        guard let userId = userManager.currentUser?.id else { return }
+
+        await withCheckedContinuation { continuation in
+            userManager.loadUserInfo(uid: userId) { _ in
+                continuation.resume()
+            }
+        }
     }
 }
 
