@@ -12,6 +12,8 @@ import Lottie
 /// 키링 SpriteKit Scene + 로티재생 ZStack뷰 (Generic)
 struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
     @Bindable var viewModel: VM
+    var backgroundColor: UIColor = .gray50
+
     @State private var scene: KeyringScene? = nil
     @State private var showEffect: Bool = false
     @State private var currentEffect: String = ""
@@ -24,7 +26,12 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         }
         .onAppear {
             if scene == nil {
-                let newScene = KeyringScene(ringType: .basic, chainType: .basic, bodyImage: viewModel.bodyImage)
+                let newScene = KeyringScene(
+                    ringType: .basic,
+                    chainType: .basic,
+                    bodyImage: viewModel.bodyImage,
+                    backgroundColor: backgroundColor
+                )
                 newScene.scaleMode = .resizeFill
                 newScene.bind(to: viewModel)
                 scene = newScene

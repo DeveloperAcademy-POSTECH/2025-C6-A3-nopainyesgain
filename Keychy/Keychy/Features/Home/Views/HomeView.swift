@@ -10,35 +10,58 @@ import SwiftUI
 struct HomeView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var userManager: UserManager
+    @Namespace private var unionNamespace
     
     var body: some View {
-        VStack {
-            if userManager.isLoaded {
-                VStack(spacing: 8) {
-                    Text("환영합니다 \(userManager.userNickname)님")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
-                    Text("UID: \(userManager.userUID)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+        ZStack(alignment: .top) {
+            // TODO: 뭉치 Scene넣기
+            Color.clear // 📏 ZStack의 높이 확보용
+                .frame(maxHeight: .infinity)
+            
+            HStack(spacing: 10) {
+                Spacer()
+                
+                Button {
+                    router.push(.bundleInventoryView)
+                } label: {
+                    Image(.bundleIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
                 }
-                .padding(.vertical)
-            } else {
-                ProgressView("사용자 정보 로딩 중...")
+                .buttonStyle(.glassProminent)
+                
+                GlassEffectContainer {
+                    HStack(spacing: 0) {
+                        Button {
+                            router.push(.alarmView)
+                        } label: {
+                            Image(.alarmIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 36, height: 36)
+                        }
+                        .buttonStyle(.glassProminent)
+                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+
+
+                        Button {
+                            router.push(.myPageView)
+                        } label: {
+                            Image(.myPageIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 36, height: 36)
+                        }
+                        
+                        .buttonStyle(.glassProminent)
+                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                    }
+                }
             }
-            
-            Button("다람쥐 헌 쳇바퀴에 타고파") {
-                router.push(.bundleInventoryView)
-            }
-            .typography(.suit15R)
-            
-            
-            Button("재화 충전하기") {
-                router.push(.coinCharge)
-            }
+            .padding(.horizontal, 16)
+            .tint(.white.opacity(0.8))
         }
-        .navigationTitle("Home")
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
