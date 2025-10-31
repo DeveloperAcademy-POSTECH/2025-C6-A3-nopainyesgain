@@ -8,13 +8,10 @@
 import SwiftUI
 
 struct BundleInventoryView: View {
-    //TODO: 라우터 어떻게 하는지 물어봐야 함!
     @Bindable var router: NavigationRouter<HomeRoute>
-    
     @State var viewModel: CollectionViewModel
 
     let columns: [GridItem] = [
-        // GridItem의 Spacing은 horizontal 간격
         GridItem(.flexible(), spacing: 13),
         GridItem(.flexible(), spacing: 13)
     ]
@@ -32,10 +29,20 @@ struct BundleInventoryView: View {
         .navigationBarBackButtonHidden(true)
         .navigationTitle("뭉치함")
         .scrollIndicators(.hidden)
+        .onAppear {
+            // 현재 로그인된 유저의 뭉치 로드
+            let uid = UserManager.shared.userUID
+            guard !uid.isEmpty else { return }
+            viewModel.fetchAllBundles(uid: uid) { success in
+                if !success {
+                    print("뭉치 로드 실패")
+                }
+            }
+        }
     }
 }
 
-//MARK: - 툴바
+// MARK: - 툴바
 extension BundleInventoryView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
@@ -56,22 +63,19 @@ extension BundleInventoryView {
     }
 }
 
-
-//MARK: - 그리드 뷰
+// MARK: - 그리드 뷰
 extension BundleInventoryView {
     private var bundleGrid: some View {
         ScrollView {
-            //LazyVGrid의 spacing은 vertical 간격
             LazyVGrid(columns: columns, spacing: 18) {
                 ForEach(viewModel.sortedBundles, id: \.self) { bundle in
                     Button {
+                        viewModel.selectedBundle = bundle
                         router.push(.bundleDetailView)
                     } label: {
                         KeyringBundleItem(bundle: bundle)
                     }
-
                 }
-
             }
         }
     }
