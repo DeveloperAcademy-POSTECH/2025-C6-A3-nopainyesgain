@@ -71,9 +71,6 @@ struct KeyringRingComponent {
         }
 
         let physicsBody = SKPhysicsBody(bodies: bodies)
-        // 물리 시뮬레이션 설정 분기 처리
-        physicsBody.isDynamic = true  // 기본값은 움직이게 설정
-        physicsBody.affectedByGravity = true  // 기본값은 중력 적용
         physicsBody.mass = 0.5
         physicsBody.friction = 0.4
         physicsBody.restitution = 0.3
