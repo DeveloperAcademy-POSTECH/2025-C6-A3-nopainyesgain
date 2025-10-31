@@ -69,16 +69,18 @@ extension BundleSelectCarabinerView {
                     if let carabiner = viewModel.selectedCarabiner {
                         GeometryReader { geo in
                             ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
+                                let x = geo.size.width * carabiner.keyringXPosition[index]
+                                // Y 좌표: SpriteKit 비율(0=아래, 1=위)을 SwiftUI 비율(0=위, 1=아래)로 변환
+                                let yRatio = 1.0 - carabiner.keyringYPosition[index] // 비율 뒤집기
+                                let y = geo.size.height * yRatio
+                                
                                 CarabinerAddKeyringButton(
                                     isSelected: false,
                                     hasKeyring: false,
                                     action: {},
                                     secondAction: {}
                                 )
-                                    .position(
-                                        x: geo.size.width * carabiner.keyringXPosition[index],
-                                        y: geo.size.height * carabiner.keyringYPosition[index]
-                                    )
+                                .position(x: x, y: y)
                             }
                         }
                     }
