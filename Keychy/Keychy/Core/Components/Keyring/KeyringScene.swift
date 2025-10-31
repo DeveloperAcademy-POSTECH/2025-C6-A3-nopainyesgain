@@ -42,19 +42,24 @@ class KeyringScene: SKScene {
     /// 과도한 함수 호출을 방지합니다.
     /// ---> 흔들기를 과도하게 했을때, 파티클이 중앙에서 안퍼지고 모여있는게 매우 부자연스러워보여서 추가함.
     var lastParticleTime: TimeInterval = 0
-    
+
+    // MARK: - 배경색 설정
+    var customBackgroundColor: UIColor = .gray50
+
     // MARK: - Init / Deinit
     init(
         ringType: RingType,
         chainType: ChainType,
         bodyImage: UIImage? = nil,
-        bodyImageURL: String? = nil
+        bodyImageURL: String? = nil,
+        backgroundColor: UIColor = .gray50
     ) {
-        
+
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImageURL = bodyImageURL
-        
+        self.customBackgroundColor = backgroundColor
+
         if let image = bodyImage {
             self.bodyImage = image.fixedOrientation()
         } else {
@@ -93,7 +98,7 @@ class KeyringScene: SKScene {
 
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
-        backgroundColor = .gray50
+        backgroundColor = customBackgroundColor
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
         setupKeyring()
