@@ -71,10 +71,7 @@ extension KeyringCellScene {
                         // orientation 정규화
                         let fixedImage = downloadedImage.fixedOrientation()
                         
-                        // 아크릴 테두리만 적용
-                        let strokedImage = fixedImage.addAcrylicStroke()
-                        
-                        return strokedImage ?? fixedImage
+                        return fixedImage
                     }.value
                 }
                 
@@ -150,7 +147,7 @@ extension KeyringCellScene {
 //        let gapByScreen = size.height * 0.01
 //        let gapByBody = bodyFrame.height * 0.03
 //        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 20.0
+        let connectGap = 25.0
         //let gap = gapByScreen
         
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
