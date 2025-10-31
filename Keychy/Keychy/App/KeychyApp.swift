@@ -112,6 +112,8 @@ struct RootView: View {
                         introViewModel.needsProfileSetup = false
                     } else {
                         // 프로필 없음 → 닉네임 설정 화면
+                        introViewModel.tempUserUID = user.uid
+                        introViewModel.tempUserEmail = user.email ?? ""
                         introViewModel.isLoggedIn = false
                         introViewModel.needsProfileSetup = true
                     }
