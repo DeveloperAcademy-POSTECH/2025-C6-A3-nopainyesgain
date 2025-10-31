@@ -1,5 +1,5 @@
 //
-//  myPageView.swift
+//  MyPageView.swift
 //  Keychy
 //
 //  Created by rundo on 10/31/25.
