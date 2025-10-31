@@ -25,6 +25,8 @@ extension IntroView {
         
         // TODO: Hi-fi 나오면 디자인 반영할 것
         VStack(spacing: 20) {
+            Spacer()
+            
             if viewModel.isLoading {
                 ProgressView("로그인 중...")
             }
@@ -50,8 +52,21 @@ extension IntroView {
                 }
             )
             .frame(height: 55)
-            .padding(.horizontal, 16)
+            .cornerRadius(256)
+            .padding(.horizontal, 34)
+            .padding(.bottom, 30)
         }
+        .overlay(
+            VStack(spacing: 20) {
+                Image("appIcon")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                
+                Image("logoType")
+                    .resizable()
+                    .frame(width: 98, height: 20)
+            }
+        )
     }
 }
 
