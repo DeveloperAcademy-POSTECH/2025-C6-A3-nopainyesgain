@@ -47,3 +47,7 @@ struct ProfileSetupView: View {
         
     }
 }
+
+#Preview {
+    ProfileSetupView(viewModel: .init())
+}
