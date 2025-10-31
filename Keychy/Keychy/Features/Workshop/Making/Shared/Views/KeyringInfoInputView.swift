@@ -33,6 +33,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State private var newTagName: String = ""
     @State private var keyboardHandler = KeyboardResponder()
     @State private var sheetDetent: PresentationDetent = .height(76)
+    @State private var showSheet: Bool = true
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -61,7 +62,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
         .navigationTitle(navigationTitle)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
-        .sheet(isPresented: .constant(true)) {
+        .sheet(isPresented: $showSheet) {
             infoSheet
                 .presentationDetents([.height(76), .height(395)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
@@ -288,6 +289,7 @@ extension KeyringInfoInputView {
         ToolbarItem(placement: .topBarTrailing) {
             Button("완료") {
                 dismissKeyboard()
+                showSheet = false
                 router.push(nextRoute)
                 showAddTagAlert = false
                 showTagNameAlreadyExistsToast = false

@@ -245,6 +245,4 @@ extension CollectionViewModel {
                 }
             }
     }
-    
-
 }
