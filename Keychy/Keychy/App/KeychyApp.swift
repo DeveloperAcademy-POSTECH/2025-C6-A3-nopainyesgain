@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
@@ -65,21 +66,73 @@ struct KeychyApp: App {
 struct RootView: View {
     @State private var introViewModel = IntroViewModel()
     @State private var userManager = UserManager.shared
+    @State private var isCheckingAuth = true
     
     var body: some View {
         Group {
-            if introViewModel.needsProfileSetup {
-                ProfileSetupView(viewModel: introViewModel)
-            } else if introViewModel.isLoggedIn {
-                MainTabView()
-                    .environment(userManager)
+            if isCheckingAuth {
+                SplashView()
+                    .onAppear {
+                        // 스플래시 표시하면서 유저 확인
+                        checkAuthAndNavigate()
+                    }
             } else {
-                IntroView(viewModel: introViewModel)
+                // 유저 상태에 따라 화면 전환
+                if introViewModel.needsProfileSetup {
+                    // 프로필 설정 필요
+                    ProfileSetupView(viewModel: introViewModel)
+                } else if introViewModel.isLoggedIn {
+                    // 로그인 완료 → 메인 화면
+                    MainTabView()
+                        .environment(userManager)
+                } else {
+                    // 로그인 필요 → 로그인 화면
+                    IntroView(viewModel: introViewModel)
+                }
             }
         }
-        .onAppear {
-            // RootView onAppear시 Auth 확인 (Firebase 초기화된 상태)
-            introViewModel.checkAuthStatus()
+        .animation(.easeInOut(duration: 0.3), value: isCheckingAuth)
+    }
+    
+    private func checkAuthAndNavigate() {
+        let minimumSplashTime: TimeInterval = 1.5 // 최소 1.5초 스플래시 표시
+        let startTime = Date()
+        
+        if let user = Auth.auth().currentUser {
+            print("로그인된 사용자 발견: \(user.uid)")
+            
+            // Firebase에서 유저 프로필 확인
+            UserManager.shared.loadUserInfo(uid: user.uid) { hasProfile in
+                let elapsed = Date().timeIntervalSince(startTime)
+                let remainingTime = max(0, minimumSplashTime - elapsed)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
+                    if hasProfile {
+                        // 프로필 있음 → 메인 화면
+                        introViewModel.isLoggedIn = true
+                        introViewModel.needsProfileSetup = false
+                    } else {
+                        // 프로필 없음 → 닉네임 설정 화면
+                        introViewModel.tempUserUID = user.uid
+                        introViewModel.tempUserEmail = user.email ?? ""
+                        introViewModel.isLoggedIn = false
+                        introViewModel.needsProfileSetup = true
+                    }
+                    isCheckingAuth = false
+                }
+            }
+        } else {
+            print("로그인된 사용자 없음")
+            
+            // 로그인 안 됨 → 로그인 화면
+            let elapsed = Date().timeIntervalSince(startTime)
+            let remainingTime = max(0, minimumSplashTime - elapsed)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
+                introViewModel.isLoggedIn = false
+                introViewModel.needsProfileSetup = false
+                isCheckingAuth = false
+            }
         }
     }
 }

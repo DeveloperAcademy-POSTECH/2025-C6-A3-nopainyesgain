@@ -25,6 +25,8 @@ extension IntroView {
         
         // TODO: Hi-fi 나오면 디자인 반영할 것
         VStack(spacing: 20) {
+            Spacer()
+            
             if viewModel.isLoading {
                 ProgressView("로그인 중...")
             }
@@ -36,22 +38,50 @@ extension IntroView {
             }
             
             // TODO: HIG 맞춰서 버튼 디자인 수정 필요
-            SignInWithAppleButton(
-                onRequest: { request in
-                    viewModel.configureRequest(request)
-                },
-                onCompletion: { result in
-                    switch result {
-                    case .success(let authorization):
-                        viewModel.handleSignInWithApple(authorization: authorization)
-                    case .failure(let error):
-                        viewModel.handleSignInFailure(error)
+            HStack(spacing: 12) {
+                
+                Image(systemName: "apple.logo")
+                    .font(.system(size: 20, weight: .semibold))
+                
+                Text("Sign in with Apple")
+                    .font(.system(size: 16, weight: .semibold))
+            }
+            .foregroundColor(.white)
+            .frame(width: 334, height: 48)
+            .overlay {
+                SignInWithAppleButton(
+                    onRequest: { request in
+                        viewModel.configureRequest(request)
+                    },
+                    onCompletion: { result in
+                        switch result {
+                        case .success(let authorization):
+                            viewModel.handleSignInWithApple(authorization: authorization)
+                        case .failure(let error):
+                            viewModel.handleSignInFailure(error)
+                        }
                     }
-                }
-            )
-            .frame(height: 55)
-            .padding(.horizontal, 16)
+                )
+                .blendMode(.overlay)
+            }
+            .frame(width: 334, height: 48)
+            .background(Color.black)
+            .cornerRadius(256)
+            .padding(.horizontal, 34)
+            .padding(.bottom, 32)
+
         }
+        .overlay(
+            VStack(spacing: 20) {
+                Image("appIcon")
+                    .resizable()
+                    .frame(width: 100, height: 100)
+                
+                Image("logoType")
+                    .resizable()
+                    .frame(width: 98, height: 20)
+            }
+        )
     }
 }
 

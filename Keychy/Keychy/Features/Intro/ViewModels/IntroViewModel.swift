@@ -84,7 +84,7 @@ class IntroViewModel {
     // MARK: - 로그인 실패 처리
     func handleSignInFailure(_ error: Error) {
         // TODO: 이후 로그인 화면 나오면 UI & 로직 수정 필요
-        errorMessage = "로그인 실패: \(error.localizedDescription)"
+        errorMessage = "로그인에 실패했습니다. 다시 시도해주세요."
         isLoading = false
     }
     
