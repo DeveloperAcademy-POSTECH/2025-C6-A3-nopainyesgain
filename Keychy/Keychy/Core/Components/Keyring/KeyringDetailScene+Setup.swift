@@ -1,35 +1,36 @@
 //
-//  KeyringCellScene+Setup.swift
-//  KeytschPrototype
+//  KeyringDetailScene+Setup.swift
+//  Keychy
+//
+//  Created by Jini on 10/31/25.
 //
 
 import SwiftUI
 import SpriteKit
 
 // MARK: - Setup & Assembly
-extension KeyringCellScene {
+extension KeyringDetailScene {
     
     // MARK: - 키링 전체 조립
     func setupKeyring() {
         // 모든 이미지를 먼저 다운로드
-        downloadAllImages { [weak self] result in
-            guard let self = self else {
-                print("KeyringCellScene - self가 해제됨")
-                return
-            }
-            
-            switch result {
-            case .success(let images):
+        if let cached = cachedImages {
+            // 캐시된 이미지로 즉시 조립
+            assembleKeyring(with: cached)
+        } else {
+            // 처음에만 다운로드
+            downloadAllImages { [weak self] result in
+                guard let self = self else { return }
                 
-                // 다운로드된 이미지로 키링 조립
-                self.assembleKeyring(with: images)
-                
-            case .failure(let error):
-                print("이미지 다운로드 실패: \(error)")
-                
-                // 실패해도 가능한 것만 조립 (fallback)
-                // 필요없으면 빼도 됨... 얜 어떻게 처리할지...
-                self.assembleFallbackKeyring()
+                switch result {
+                case .success(let images):
+                    self.cachedImages = images // ⭐️ 캐시 저장
+                    self.assembleKeyring(with: images)
+                    
+                case .failure(let error):
+                    print("이미지 다운로드 실패: \(error)")
+                    self.assembleFallbackKeyring()
+                }
             }
         }
     }
@@ -99,13 +100,14 @@ extension KeyringCellScene {
     // MARK: - 키링 조립 (이미지 다운로드 완료 후)
     private func assembleKeyring(with images: KeyringImages) {
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.67 - (originalSize.height / 2)
+        let topY = originalSize.height * 0.68 - (originalSize.height / 2)
 
         // 1. Ring 생성
         let ring = createRingNode(image: images.ring)
         ring.position = CGPoint(x: centerX, y: topY)
         ring.physicsBody?.isDynamic = false
         containerNode.addChild(ring)
+        self.ringNode = ring
         
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
@@ -128,6 +130,7 @@ extension KeyringCellScene {
             containerNode.addChild(chainNode)
             chains.append(chainNode)
         }
+        self.chainNodes = chains
         
         // 3. Body 생성
         var body: SKNode
@@ -142,7 +145,6 @@ extension KeyringCellScene {
         let bodyHalfHeight = bodyFrame.height / 2
         
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
-        
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
         
@@ -157,9 +159,12 @@ extension KeyringCellScene {
         
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         containerNode.addChild(body)
+        self.bodyNode = body
         
         // 4. 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
+        
+        self.isReady = true
         
         self.onLoadingComplete?()
     }
@@ -169,7 +174,7 @@ extension KeyringCellScene {
         // Fallback시 기본 키링 생성
         
         let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.67 - (originalSize.height / 2)
+        let topY = originalSize.height * 0.68 - (originalSize.height / 2)
         
         // 기본 Ring (회색 원)
         let ring = SKShapeNode(circleOfRadius: 40)
@@ -187,6 +192,8 @@ extension KeyringCellScene {
         let body = createBasicBody()
         body.position = CGPoint(x: centerX, y: topY - 200)
         containerNode.addChild(body)
+        
+        self.isReady = true
         
         self.onLoadingComplete?()
     }
@@ -246,11 +253,11 @@ extension KeyringCellScene {
         let physicsBody = SKPhysicsBody(
             rectangleOf: CGSize(width: link.width - 4, height: link.height - 4)
         )
-        physicsBody.mass = 2.0
-        physicsBody.friction = 0.4
-        physicsBody.restitution = 0.3
-        physicsBody.linearDamping = 0.5
-        physicsBody.angularDamping = 0.8
+        physicsBody.mass = 1.5  // ⭐️ 2.0 → 1.5 (가볍게)
+        physicsBody.friction = 0.3  // ⭐️ 0.4 → 0.3 (마찰 감소)
+        physicsBody.restitution = 0.4  // ⭐️ 0.3 → 0.4 (탄성 증가)
+        physicsBody.linearDamping = 0.3  // ⭐️ 0.5 → 0.3 (감쇠 감소)
+        physicsBody.angularDamping = 0.5  // ⭐️ 0.8 → 0.5 (회전 감쇠 감소)
         node.physicsBody = physicsBody
         
         return node
@@ -259,7 +266,7 @@ extension KeyringCellScene {
     // MARK: - Mini Body 생성
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
         // 크기 제한 (비율 유지)
-        let maxSize: CGFloat = 200
+        let maxSize: CGFloat = 200.0
         let originalSize = image.size
         var displaySize = originalSize
         
@@ -311,7 +318,6 @@ extension KeyringCellScene {
         return node
     }
     
-    // MARK: - 조인트 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
         
         var previousNode: SKNode = ring
@@ -330,7 +336,7 @@ extension KeyringCellScene {
                 )
             )
             joint.shouldEnableLimits = false
-            joint.frictionTorque = 0.2
+            joint.frictionTorque = 0.05
             physicsWorld.add(joint)
             
             let distance = hypot(
@@ -347,8 +353,8 @@ extension KeyringCellScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            firstChain.physicsBody?.linearDamping = 0.7
-            firstChain.physicsBody?.angularDamping = 0.7
+            firstChain.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
+            firstChain.physicsBody?.angularDamping = 0.4
             previousNode = firstChain
         }
         
@@ -368,7 +374,7 @@ extension KeyringCellScene {
                     y: (previousWorldPos.y + currentWorldPos.y) / 2
                 )
             )
-            joint.frictionTorque = 0.2
+            joint.frictionTorque = 0.05
             physicsWorld.add(joint)
             
             let distance = hypot(
@@ -385,8 +391,8 @@ extension KeyringCellScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            current.physicsBody?.linearDamping = 0.7
-            current.physicsBody?.angularDamping = 0.7
+            current.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
+            current.physicsBody?.angularDamping = 0.4
             previousNode = current
         }
         
@@ -415,16 +421,8 @@ extension KeyringCellScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            bodyPhysics.linearDamping = 0.7
-            bodyPhysics.angularDamping = 0.7
+            bodyPhysics.linearDamping = 0.5
+            bodyPhysics.angularDamping = 0.5
         }
     }
-}
-
-// MARK: - Keyring 완전체 구조체
-struct KeyringImages {
-    let ring: UIImage
-    let chains: [Int: UIImage]
-    let chainLinks: [ChainType.ChainLink]
-    let body: UIImage?
 }

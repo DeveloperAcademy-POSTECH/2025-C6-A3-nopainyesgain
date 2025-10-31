@@ -1,5 +1,5 @@
 //
-//  HomeTab.swift
+//  CollectionTab.swift
 //  KeytschPrototype
 //
 //  Created by 길지훈 on 10/16/25.
@@ -17,11 +17,11 @@ struct CollectionTab: View {
                     switch route {
                         
                     case .collectionKeyringDetailView(let keyring):
-                        CollectionKeyringDetailView(keyring: keyring)
+                        CollectionKeyringDetailView(router: router, keyring: keyring)
                     case .bundleInventoryView:
                         EmptyView()
                     case .widgetSettingView:
-                        WidgetSettingView()
+                        WidgetSettingView(router: router)
                     }
                 }
         }

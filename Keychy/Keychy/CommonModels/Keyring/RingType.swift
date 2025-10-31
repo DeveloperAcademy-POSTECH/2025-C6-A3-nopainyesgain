@@ -22,7 +22,7 @@ enum RingType {
     var size: CGFloat {
         switch self {
         case .basic:
-            return 100
+            return 90
         }
     }
     
