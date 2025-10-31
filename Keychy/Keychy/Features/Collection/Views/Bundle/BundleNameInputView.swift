@@ -185,10 +185,11 @@ extension BundleNameInputView {
                     return
                 }
                 
-                // 선택된 키링들을 인덱스 순서대로 [String]으로 변환 (UUID 문자열 사용)
+                // 선택된 키링들을 인덱스 순서대로 [String]으로 변환 (ViewModel 매핑 사용)
                 let keyringIds: [String] = (0..<carabiner.maxKeyringCount).compactMap { idx in
-                    if let kr = viewModel.selectedKeyringsForBundle[idx] {
-                        return kr.id.uuidString
+                    if let kr = viewModel.selectedKeyringsForBundle[idx],
+                       let docId = viewModel.keyringDocumentIdByLocalId[kr.id] {
+                        return docId
                     }
                     return nil
                 }
@@ -197,6 +198,7 @@ extension BundleNameInputView {
                 let isMain = viewModel.bundles.isEmpty
                 
                 viewModel.createBundle(
+                    userId: UserManager.shared.userUID,
                     name: bundleName.trimmingCharacters(in: .whitespacesAndNewlines),
                     selectedBackground: backgroundId,
                     selectedCarabiner: carabinerId,
@@ -238,14 +240,18 @@ extension BundleNameInputView {
             }
         }
         
-        // 새로운 KeyringBundle 생성 (현재 모델이 keyrings: [String]이므로 ID로 저장)
+        // Firestore 문서 ID 배열
+        let keyringIds = keyringArray.compactMap { viewModel.keyringDocumentIdByLocalId[$0.id] }
+        
+        // 새로운 KeyringBundle 생성
         let newBundle = KeyringBundle(
+            userId: UserManager.shared.userUID,
             name: bundleName.trimmingCharacters(in: .whitespacesAndNewlines),
             selectedBackground: "cherries", // 임시로 체리 배경
             selectedCarabiner: carabiner.carabinerImage[0],
             keyrings: keyringArray.map { $0.id.uuidString }, // UUID를 String으로 변환
             maxKeyrings: carabiner.maxKeyringCount,
-            isMain: viewModel.bundles.isEmpty, // 첫 번째 번들이면 메인으로 설정
+            isMain: viewModel.bundles.isEmpty,
             createdAt: Date()
         )
         return newBundle
@@ -265,3 +271,4 @@ extension BundleNameInputView {
         viewModel: CollectionViewModel()
     )
 }
+

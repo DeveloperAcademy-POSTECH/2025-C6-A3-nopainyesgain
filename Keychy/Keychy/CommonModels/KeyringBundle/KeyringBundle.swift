@@ -11,6 +11,8 @@ import FirebaseFirestore
 
 struct KeyringBundle: Identifiable, Equatable, Hashable {
     let id = UUID()
+    
+    var userId: String
     var name: String
     var selectedBackground: String
     var selectedCarabiner: String
@@ -21,7 +23,8 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
     
     //MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
-        var dict: [String: Any] = [
+        let dict: [String: Any] = [
+            "userId": userId,
             "name": name,
             "selectedBackground": selectedBackground,
             "selectedCarabiner": selectedCarabiner,
@@ -35,7 +38,8 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
     
     //MARK: - Firestore DocumentSnapshot에서 초기화
     init?(documentId: String, data: [String: Any]) {
-        guard let name = data["name"] as? String,
+        guard let userId = data["userId"] as? String,
+              let name = data["name"] as? String,
               let selectedBackground = data["selectedBackground"] as? String,
               let selectedCarabiner = data["selectedCarabiner"] as? String,
               let keyrings = data["keyrings"] as? [String],
@@ -44,7 +48,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
               let createdAtTimestamp = data["createdAt"] as? Timestamp else {
             return nil
         }
-        
+        self.userId = userId
         self.name = name
         self.selectedBackground = selectedBackground
         self.selectedCarabiner = selectedCarabiner
@@ -55,7 +59,8 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
     }
     
     //MARK: - 일반 초기화 (새 번들 생성용)
-    init(name: String,
+    init(userId: String,
+         name: String,
          selectedBackground: String,
          selectedCarabiner: String,
          keyrings: [String],
@@ -63,6 +68,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
          isMain: Bool,
          createdAt: Date
     ) {
+        self.userId = userId
         self.name = name
         self.selectedBackground = selectedBackground
         self.selectedCarabiner = selectedCarabiner

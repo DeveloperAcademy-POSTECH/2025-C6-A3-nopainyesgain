@@ -87,8 +87,7 @@ struct BundleAddKeyringView: View {
     
     // MARK: - 사용자 데이터 로드
     private func fetchUserData() {
-        let uid = "iX4yns1clYf9z8TS0Wv10k83pFw2"
-        
+        let uid = UserManager.shared.userUID
         fetchUserCategories(uid: uid) {
             fetchUserKeyrings(uid: uid)
         }
