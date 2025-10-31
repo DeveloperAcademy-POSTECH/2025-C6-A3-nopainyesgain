@@ -39,10 +39,6 @@ struct BundleNameInputView: View {
             }
             .padding(.bottom, max(380 - keyboardHeight, 20))
             .onAppear {
-                print("📱 BundleNameInputView 나타남")
-                print("🔍 viewModel.selectedKeyringsForBundle: \(viewModel.selectedKeyringsForBundle.count)개")
-                print("🎯 viewModel.bundlePreviewScene 존재: \(viewModel.bundlePreviewScene != nil)")
-                
                 // 키보드 자동 활성화
                 DispatchQueue.main.async {
                     isTextFieldFocused = true
@@ -96,7 +92,6 @@ extension BundleNameInputView {
     
     // 씬을 미리보기용으로 최적화
     private func optimizeSceneForPreview(_ scene: CarabinerScene) {
-        print("🎨 씬 미리보기 최적화 시작")
         
         // 스케일 모드를 aspectFit으로 변경하여 비율 유지
         scene.scaleMode = .aspectFit
@@ -111,8 +106,6 @@ extension BundleNameInputView {
             node.physicsBody?.isDynamic = false
             node.physicsBody?.affectedByGravity = false
         }
-        
-        print("✅ 씬 미리보기 최적화 완료")
     }
 }
 
@@ -189,7 +182,6 @@ extension BundleNameInputView {
         for index in 0..<carabiner.maxKeyringCount {
             if let keyring = selectedKeyrings[index] {
                 keyringArray.append(keyring)
-                print("📦 키링 위치 \(index) → 배열 인덱스 \(keyringArray.count - 1): \(keyring.name)")
             }
         }
         
@@ -207,13 +199,9 @@ extension BundleNameInputView {
         // ViewModel의 bundles에 추가
         viewModel.bundles.append(newBundle)
         
-        print("✅ 새 번들 저장 완료: \(newBundle.name), 키링 수: \(keyringArray.count)")
-        print("📋 저장된 키링 순서: \(keyringArray.map { $0.name })")
-        
         // 저장 완료 후 씬 정리
         viewModel.bundlePreviewScene = nil
         viewModel.selectedKeyringsForBundle = [:]
-        print("🧹 번들 생성 완료 후 데이터 정리")
     }
 }
 
