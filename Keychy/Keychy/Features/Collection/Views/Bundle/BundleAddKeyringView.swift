@@ -374,7 +374,7 @@ extension BundleAddKeyringView {
     
     private func createCarabinerScene(targetSize: CGSize, screenWidth: CGFloat) -> CarabinerScene? {
         guard let carabiner = viewModel.selectedCarabiner,
-              let cbImage = UIImage(named: carabiner.carabinerImage) else {
+              let cbImage = UIImage(named: carabiner.carabinerImage[0]) else {
             return nil
         }
         

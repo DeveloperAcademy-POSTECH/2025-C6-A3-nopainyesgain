@@ -296,7 +296,7 @@ func initializeCarabiners() async {
         [
             "id": "BasicSilver",
             "carabinerName": "베이직 실버",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "심플한 실버 카라비너",
             "maxKeyringCount": 5,
             "tags": ["심플"],
@@ -309,7 +309,7 @@ func initializeCarabiners() async {
         [
             "id": "GoldLuxury",
             "carabinerName": "골드 럭셔리",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "고급스러운 골드 카라비너",
             "maxKeyringCount": 7,
             "tags": ["심플"],
@@ -322,7 +322,7 @@ func initializeCarabiners() async {
         [
             "id": "RainbowColor",
             "carabinerName": "레인보우 컬러",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "알록달록 무지개 카라비너",
             "maxKeyringCount": 6,
             "tags": ["귀여움"],
@@ -335,7 +335,7 @@ func initializeCarabiners() async {
         [
             "id": "HeartShape",
             "carabinerName": "하트 모양",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "사랑스러운 하트 카라비너",
             "maxKeyringCount": 4,
             "tags": ["귀여움"],
@@ -348,7 +348,7 @@ func initializeCarabiners() async {
         [
             "id": "StarDesign",
             "carabinerName": "별 디자인",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "반짝이는 별 모양 카라비너",
             "maxKeyringCount": 5,
             "tags": ["귀여움"],
@@ -361,7 +361,7 @@ func initializeCarabiners() async {
         [
             "id": "MiniSize",
             "carabinerName": "미니 사이즈",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "작고 귀여운 미니 카라비너",
             "maxKeyringCount": 3,
             "tags": ["귀여움"],
@@ -374,7 +374,7 @@ func initializeCarabiners() async {
         [
             "id": "LargeCapacity",
             "carabinerName": "라지 캐퍼시티",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "많이 걸 수 있는 대용량 카라비너",
             "maxKeyringCount": 10,
             "tags": ["심플"],
@@ -387,7 +387,7 @@ func initializeCarabiners() async {
         [
             "id": "PastelPink",
             "carabinerName": "파스텔 핑크",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "부드러운 핑크 카라비너",
             "maxKeyringCount": 5,
             "tags": ["귀여움"],
@@ -400,7 +400,7 @@ func initializeCarabiners() async {
         [
             "id": "BlackMatte",
             "carabinerName": "블랙 매트",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "세련된 블랙 매트 카라비너",
             "maxKeyringCount": 6,
             "tags": ["심플"],
@@ -413,7 +413,7 @@ func initializeCarabiners() async {
         [
             "id": "ClearTransparent",
             "carabinerName": "클리어 투명",
-            "carabinerImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
             "description": "투명한 아크릴 카라비너",
             "maxKeyringCount": 5,
             "tags": ["심플"],
