@@ -30,7 +30,7 @@ struct AcrylicPhotoEditedView: View {
     @State private var checkmarkOpacity: Double = 0.0
 
     // MARK: - Constants
-    private let imageMaxWidth: CGFloat = 300
+    private let imageMaxWidth: CGFloat = 350
     private let initialAppearDuration: Double = 1.6
     private let transitionDelay: Double = 2.0
     private let springResponse: Double = 2.5
@@ -67,6 +67,7 @@ struct AcrylicPhotoEditedView: View {
                 afterImageLayer
             }
         }
+        .padding(.bottom, 60)
     }
 
     /// 누끼 전 이미지 (배경 레이어)
