@@ -160,7 +160,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             priceOverlay(
                 isFree: item.isFree,
                 price: item.workshopPrice,
-                isOwned: isOwned
+                isOwned: isOwned,
+                item: item
             )
         }
         .frame(width: 175, height: itemHeight)
@@ -235,7 +236,7 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
 }
 
 /// 공통 가격 오버레이 (유료 표시)
-func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
+func priceOverlay<Item: WorkshopItem>(isFree: Bool, price: Int, isOwned: Bool, item: Item) -> some View {
     VStack {
         HStack(spacing: 0) {
             if isOwned || !isFree {
@@ -251,23 +252,26 @@ func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
             }
         }
         .frame(height: 43)
-        
+
         Spacer()
-        
-        HStack {
-            Spacer()
-            
-            effectButtonStyle()
+
+        // 이펙트 타입일 때만 재생 버튼 표시
+        if item is Sound || item is Particle {
+            HStack {
+                Spacer()
+
+                effectButtonStyle(item: item)
+            }
+            .padding(8)
         }
-        .padding(8)
     }
 }
 
-func effectButtonStyle() -> some View {
+func effectButtonStyle<Item: WorkshopItem>(item: Item) -> some View {
     Button {
-
+        playEffect(item: item)
     } label: {
-        ZStack{
+        ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(.gray50)
                 .frame(width: 38, height: 38)
@@ -276,11 +280,22 @@ func effectButtonStyle() -> some View {
                         .stroke(.white100, lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
-            
+
             Image(.polygon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 14, height: 14)
         }
+    }
+}
+
+/// 이펙트 재생 함수
+func playEffect<Item: WorkshopItem>(item: Item) {
+    if let sound = item as? Sound {
+        print("사운드 재생: \(sound.soundName)")
+        // TODO: 실제 사운드 재생 로직 구현
+    } else if let particle = item as? Particle {
+        print("파티클 재생: \(particle.particleName)")
+        // TODO: 실제 파티클 재생 로직 구현
     }
 }
