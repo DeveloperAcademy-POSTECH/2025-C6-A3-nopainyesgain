@@ -296,15 +296,17 @@ extension WorkshopView {
             
             // 보유 아이템 리스트
             Group {
-                if viewModel.isLoading {
+                if viewModel.isLoading || !viewModel.hasLoadedOwnedItems {
                     loadingOwnedView
-                } else if viewModel.ownedTemplates.isEmpty {
-                    emptyOwnedView
                 } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 7) {
-                            ForEach(viewModel.ownedTemplates) { template in
-                                OwnedItemCard(item: template, router: router)
+                    if viewModel.ownedTemplates.isEmpty {
+                        emptyOwnedView
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 7) {
+                                ForEach(viewModel.ownedTemplates) { template in
+                                    OwnedItemCard(item: template, router: router)
+                                }
                             }
                         }
                     }
@@ -324,7 +326,7 @@ extension WorkshopView {
                 .foregroundColor(.gray500)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 112)
+        .frame(height: 135)
         .padding(.bottom, 1)
         .background(.white70)
         .cornerRadius(10)
@@ -337,7 +339,7 @@ extension WorkshopView {
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 112)
+        .frame(height: 135)
     }
 
 }
@@ -532,11 +534,11 @@ extension WorkshopView {
     
     // 프리뷰용 더미 유저 생성
     userManager.currentUser = KeychyUser(
-        id: "preview-user-id",
-        nickname: "프리뷰유저",
-        email: "preview@example.com"
+        id: "2FcoxDhMhGR4dZtaQSdqZWqQzEp2",
+        nickname: "런도",
+        email: "bbpwj8qhnc@privaterelay.appleid.com"
     )
-    userManager.currentUser?.templates = [] // 보유 템플릿 ID 추가
+    userManager.currentUser?.templates = ["AcrylicPhoto"] // 보유 템플릿 ID 추가
         
     return WorkshopView(router: NavigationRouter<WorkshopRoute>())
         .environment(userManager)

@@ -260,7 +260,11 @@ func priceOverlay<Item: WorkshopItem>(
                 Spacer()
 
                 if isOwned {
-                    Image(.owned)
+                    VStack {
+                        Image(.owned)
+                        
+                        Spacer()
+                    }
                 }
             }
         }

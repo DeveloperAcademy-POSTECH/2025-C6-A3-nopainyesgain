@@ -101,7 +101,8 @@ class WorkshopViewModel {
     
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    
+    var hasLoadedOwnedItems: Bool = false
+
     // 보유한 아이템 목록
     var ownedTemplates: [KeyringTemplate] = []
     var ownedBackgrounds: [Background] = []
@@ -256,12 +257,14 @@ class WorkshopViewModel {
     /// 사용자가 보유한 아이템 목록 로드
     func loadOwnedItems() async {
         guard let user = userManager.currentUser else { return }
-        
+
         ownedTemplates = await loadOwnedItems(collection: "Template", ids: user.templates)
         ownedBackgrounds = await loadOwnedItems(collection: "Background", ids: user.backgrounds)
         ownedCarabiners = await loadOwnedItems(collection: "Carabiner", ids: user.carabiners)
         ownedParticles = await loadOwnedItems(collection: "Particle", ids: user.particleEffects)
         ownedSounds = await loadOwnedItems(collection: "Sound", ids: user.soundEffects)
+
+        hasLoadedOwnedItems = true
     }
     
     /// 통합된 보유 아이템 로드 함수
