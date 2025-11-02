@@ -65,14 +65,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .task {
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
-
+            
             // 커스터마이징 화면 진입 시 모든 사운드 리소스 프리로드
             await preloadAllSoundEffects()
-
+            
             isLoadingResources = false
         }
     }
-
+    
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
         // Firebase에서 가져온 사운드를 순차적으로 로드
@@ -175,7 +175,7 @@ extension KeyringCustomizingView {
                 }
                 .padding(.leading, 20)
                 .padding(.trailing, 8)
-
+                
                 // 버튼들만 스크롤
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -191,7 +191,7 @@ extension KeyringCustomizingView {
                                 .background(viewModel.selectedSound == nil ? .main500 : .gray50)
                                 .clipShape(.rect(cornerRadius: 15))
                         }
-
+                        
                         // Firebase 사운드 목록
                         ForEach(viewModel.availableSounds) { sound in
                             soundItemButton(sound: sound)
@@ -233,7 +233,7 @@ extension KeyringCustomizingView {
                             .background(viewModel.selectedParticle == nil ? .main500 : .gray50)
                             .clipShape(.rect(cornerRadius: 15))
                     }
-
+                    
                     // Firebase 파티클 목록
                     ForEach(viewModel.availableParticles) { particle in
                         particleItemButton(particle: particle)
@@ -243,9 +243,9 @@ extension KeyringCustomizingView {
             }
         }
     }
-
+    
     // MARK: - Item Button Helpers
-
+    
     /// 사운드 아이템 버튼
     @ViewBuilder
     private func soundItemButton(sound: Sound) -> some View {
@@ -255,11 +255,12 @@ extension KeyringCustomizingView {
             let isOwned = viewModel.isOwned(soundId: soundId)
             let isDownloading = viewModel.downloadingItemIds.contains(soundId)
             let isSelected = viewModel.selectedSound?.id == soundId
-
+            
             // UI 스타일 계산
             let isPaidUnownedUnselected = !sound.isFree && !isOwned && !isSelected
             let isPaidOwnedSelected = !sound.isFree && isOwned && isSelected
-
+            let isPaidUnOwnedSelected = !sound.isFree && !isOwned && isSelected
+            
             Button {
                 // 케이스 1: Bundle 무료 → 바로 사용
                 if isInBundle {
@@ -322,10 +323,10 @@ extension KeyringCustomizingView {
                             }
                         }
                     }
-
+                    
                     Text(sound.soundName)
                         .typography(isSelected ? .suit15SB25 : .suit15M25)
-
+                    
                     // 다운로드 안됨: download 아이콘
                     if !isInCache && !isInBundle {
                         Image("download")
@@ -342,7 +343,11 @@ extension KeyringCustomizingView {
                             // 유료 + 보유 + 선택 → 백그라운드 gradient
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.gradient(.primary))
-                        } else if isSelected {
+                        } else if isPaidUnOwnedSelected {
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gradient(.primary))
+                        }
+                        else if isSelected {
                             // 나머지 선택 → 백그라운드 .main500
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.main500)
@@ -355,9 +360,9 @@ extension KeyringCustomizingView {
                 )
                 .foregroundStyle(
                     isPaidUnownedUnselected ?
-                        AnyShapeStyle(.gradient(.primary)) :
-                    isSelected ?
-                        AnyShapeStyle(.white100) :
+                    AnyShapeStyle(.gradient(.primary)) :
+                        isSelected ?
+                    AnyShapeStyle(.white100) :
                         AnyShapeStyle(.gray500)
                 )
                 .overlay(
@@ -367,7 +372,7 @@ extension KeyringCustomizingView {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 15)
                                     .fill(Color.black.opacity(0.3))
-
+                                
                                 if let progress = viewModel.downloadProgress[soundId], progress.isFinite {
                                     VStack(spacing: 2) {
                                         ProgressView()
@@ -386,7 +391,7 @@ extension KeyringCustomizingView {
             .disabled(isDownloading)
         }
     }
-
+    
     /// 파티클 아이템 버튼
     @ViewBuilder
     private func particleItemButton(particle: Particle) -> some View {
@@ -396,11 +401,12 @@ extension KeyringCustomizingView {
             let isOwned = viewModel.isOwned(particleId: particleId)
             let isDownloading = viewModel.downloadingItemIds.contains(particleId)
             let isSelected = viewModel.selectedParticle?.id == particleId
-
+            
             // UI 스타일 계산
             let isPaidUnownedUnselected = !particle.isFree && !isOwned && !isSelected
             let isPaidOwnedSelected = !particle.isFree && isOwned && isSelected
-
+            let isPaidUnOwnedSelected = !particle.isFree && !isOwned && isSelected
+            
             Button {
                 // 케이스 1: Bundle 무료 → 바로 사용
                 if isInBundle {
@@ -463,10 +469,10 @@ extension KeyringCustomizingView {
                             }
                         }
                     }
-
+                    
                     Text(particle.particleName)
                         .typography(isSelected ? .suit15SB25 : .suit15M25)
-
+                    
                     // 다운로드 안됨: download 아이콘
                     if !isInCache && !isInBundle {
                         Image("download")
@@ -483,7 +489,11 @@ extension KeyringCustomizingView {
                             // 유료 + 보유 + 선택 → 백그라운드 gradient
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.gradient(.primary))
-                        } else if isSelected {
+                        } else if isPaidUnOwnedSelected {
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gradient(.primary))
+                        }
+                        else if isSelected {
                             // 나머지 선택 → 백그라운드 .main500
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.main500)
@@ -496,9 +506,10 @@ extension KeyringCustomizingView {
                 )
                 .foregroundStyle(
                     isPaidUnownedUnselected ?
-                        AnyShapeStyle(.gradient(.primary)) :
-                    isSelected ?
-                        AnyShapeStyle(.white100) :
+                    AnyShapeStyle(.gradient(.primary)) :
+                        
+                        isSelected ?
+                    AnyShapeStyle(.white100) :
                         AnyShapeStyle(.gray500)
                 )
                 .overlay(
@@ -508,7 +519,7 @@ extension KeyringCustomizingView {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 15)
                                     .fill(Color.black.opacity(0.3))
-
+                                
                                 if let progress = viewModel.downloadProgress[particleId], progress.isFinite {
                                     VStack(spacing: 2) {
                                         ProgressView()
