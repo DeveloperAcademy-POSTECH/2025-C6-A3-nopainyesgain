@@ -13,6 +13,7 @@ import Lottie
 struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
     @Bindable var viewModel: VM
     var backgroundColor: UIColor = .gray50
+    var onSceneReady: (() -> Void)? = nil  // 씬 준비 완료 콜백
 
     @State private var scene: KeyringScene? = nil
     @State private var showEffect: Bool = false
@@ -35,13 +36,18 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
                 newScene.scaleMode = .resizeFill
                 newScene.bind(to: viewModel)
                 scene = newScene
+
+                // 씬 생성 후 약간의 딜레이 (렌더링 완료 대기)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    onSceneReady?()
+                }
             }
         }
         .task {
             scene?.onPlayParticleEffect = { effectName in
                 DispatchQueue.main.async {
                     currentEffect = effectName
-                    lottieID = UUID()  // 강제 재생 트리거
+                    lottieID = UUID()
                     showEffect = true
                 }
             }

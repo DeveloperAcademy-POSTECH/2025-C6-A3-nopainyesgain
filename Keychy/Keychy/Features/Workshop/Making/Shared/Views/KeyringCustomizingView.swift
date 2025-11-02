@@ -19,12 +19,26 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     
     @State private var selectedMode: CustomizingMode = .effect
     @State private var isLoadingResources = true
-    
+    @State private var isSceneReady = false
+    @State private var loadingScale: CGFloat = 0.3
+
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                ZStack(alignment: .bottomTrailing) {
-                    KeyringSceneView(viewModel: viewModel)
+                ZStack(alignment: .center) {
+                    KeyringSceneView(viewModel: viewModel, onSceneReady: {
+                        withAnimation(.easeIn(duration: 0.3)) {
+                            isSceneReady = true
+                        }
+                        closeLoadingIfReady()
+                    })
+                    // 준비되면 fade-in하게 했음.
+                    .opacity(isSceneReady ? 1.0 : 0.0)
+
+                    // 로딩 인디케이터 (키링씬 중앙)
+                    if isLoadingResources || !isSceneReady {
+                        loadingIndicator()
+                    }
                     
                     // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
@@ -35,26 +49,12 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     }
                     .padding(18)
                 }
-                
-                // MARK: - 하단 영역 (선택된 모드에 따라 변경)
+
+                // MARK: - 하단 영역
                 bottomContentView
             }
             .background(.gray50)
-            .blur(radius: isLoadingResources ? 3 : 0)
-            .disabled(isLoadingResources)
-            
-            // 로딩 인디케이터
-            if isLoadingResources {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                    Text("리소스를 가져오고 있어요")
-                        .font(.headline)
-                }
-                .padding(32)
-                .background(.regularMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            }
+            .disabled(isLoadingResources || !isSceneReady)
         }
         .navigationTitle(navigationTitle)
         .navigationBarBackButtonHidden(true)
@@ -74,9 +74,18 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             await soundsTask
             await particlesTask
 
-            // 로딩 완료 후 부드럽게 닫기
+            // 리소스 프리로딩 완료
+            isLoadingResources = false
+            closeLoadingIfReady()
+        }
+    }
+
+    // MARK: - Loading Helper
+    private func closeLoadingIfReady() {
+        // 리소스 + 씬 모두 준비되면 로딩 닫기
+        if !isLoadingResources && isSceneReady {
             withAnimation {
-                isLoadingResources = false
+                // 이미 조건이 맞으면 자동으로 UI 업데이트됨
             }
         }
     }
@@ -143,6 +152,23 @@ extension KeyringCustomizingView {
 
 // MARK: - Mode Selection & Bottom Content Section
 extension KeyringCustomizingView {
+    /// 로딩 인디케이터
+    private func loadingIndicator() -> some View {
+        VStack(spacing: 23) {
+            Image("appIcon")
+
+            Text("키링을 만들고 있어요")
+                .typography(.suit17SB)
+        }
+        .padding(20)
+        .scaleEffect(loadingScale)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                loadingScale = 1.0
+            }
+        }
+    }
+    
     /// 모드 선택 버튼
     private func modeButton(for mode: CustomizingMode) -> some View {
         Button {
