@@ -127,7 +127,6 @@ extension WorkshopView {
         .padding(.bottom, 24)
         .background(Color(UIColor.systemBackground))
         .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
-//        .animation(.easeInOut(duration: 0.2), value: viewModel.mainContentOffset)
     }
     
     /// 타이틀 텍스트
@@ -426,7 +425,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 50)
+                .padding(.top, 92)
             }
         }
     }

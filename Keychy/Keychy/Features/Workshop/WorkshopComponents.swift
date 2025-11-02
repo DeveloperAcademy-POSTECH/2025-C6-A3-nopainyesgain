@@ -156,8 +156,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             }
             .padding(.vertical,10)
 
-            Spacer()
-
             // 가격 오버레이
             priceOverlay(
                 isFree: item.isFree,
@@ -236,32 +234,24 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
     }
 }
 
-/// 공통 가격 오버레이 (보유/무료/유료 표시)
+/// 공통 가격 오버레이 (유료 표시)
 func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
-    HStack(spacing: 0) {
-        if isOwned {
-            VStack {
+    VStack {
+        HStack(spacing: 0) {
+            if isOwned || !isFree {
                 Image(.keyHole)
-            }
-            .padding(.leading, 10)
-            .padding(.top, 7)
+                    .padding(.leading, 10)
+                    .padding(.top, 7)
 
-            Spacer()
-
-            VStack {
-                Image(.owned)
                 Spacer()
-            }
-        } else if !isFree {
-            // 가격 배지
-            VStack {
-                Image(.keyHole)
-            }
-            .padding(.leading, 10)
-            .padding(.top, 7)
 
-            Spacer()
+                if isOwned {
+                    Image(.owned)
+                }
+            }
         }
+        .frame(height: 43)
+        
+        Spacer()
     }
-    .frame(height: 43)
 }
