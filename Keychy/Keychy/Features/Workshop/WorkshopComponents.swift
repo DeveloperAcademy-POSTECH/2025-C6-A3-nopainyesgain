@@ -140,25 +140,34 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     private var thumbnailImage: some View {
         ZStack(alignment: .top) {
             VStack {
-                LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        Color.gray50
-                            .overlay { ProgressView() }
-                    } else {
-                        Color.gray50
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.gray50)
-                            }
+                ZStack {
+                    LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else if state.isLoading {
+                            Color.gray50
+                                .overlay { ProgressView() }
+                        } else {
+                            Color.gray50
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.gray50)
+                                }
+                        }
+                    }
+                    .scaledToFit()
+                    .opacity(isParticlePlaying ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
+
+                    // 파티클 Lottie 뷰를 같은 위치에 배치
+                    if let particle = item as? Particle,
+                       let particleId = particle.id,
+                       effectManager.playingParticleId == particleId {
+                        particleLottieView(particleId: particleId, effectManager: effectManager)
                     }
                 }
-                .scaledToFit()
-                .opacity(isParticlePlaying ? 0 : 1)
-                .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
             }
             .padding(.vertical,10)
 
@@ -285,24 +294,16 @@ func priceOverlay<Item: WorkshopItem>(
 
         // 이펙트 타입일 때만 재생 버튼 표시
         if item is Sound || item is Particle {
-            ZStack {
-                if let particle = item as? Particle,
-                   let particleId = particle.id,
-                   effectManager.playingParticleId == particleId {
-                    particleLottieView(particleId: particleId, effectManager: effectManager)
-                }
+            HStack {
+                Spacer()
 
-                HStack {
-                    Spacer()
-
-                    effectButtonStyle(
-                        item: item,
-                        effectManager: effectManager,
-                        userManager: userManager
-                    )
-                }
-                .padding(8)
+                effectButtonStyle(
+                    item: item,
+                    effectManager: effectManager,
+                    userManager: userManager
+                )
             }
+            .padding(8)
         }
     }
 }
