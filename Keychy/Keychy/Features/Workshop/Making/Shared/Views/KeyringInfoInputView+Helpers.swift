@@ -38,7 +38,11 @@ extension KeyringInfoInputView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button(action: {
-                router.pop()
+                showSheet = false
+                viewModel.resetInfoData()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    router.pop()
+                }
             }) {
                 Image(systemName: "chevron.left")
             }
