@@ -72,18 +72,19 @@ struct WorkshopView: View {
                 myCollectionSection
                 
                 // 메인 콘텐츠 (그리드)
-                VStack {
-                    mainContentSection
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear
-                                    .onChange(of: geo.frame(in: .global).minY) { oldValue, newValue in
-                                        viewModel.mainContentOffset = newValue
-                                    }
-                            }
-                        )
-                }
-                .background(Color(UIColor.systemBackground))
+                mainContentSection
+                    .background(
+                        GeometryReader { geo in
+                            let minY = geo.frame(in: .global).minY
+                            Color.clear
+                                .onAppear {
+                                    viewModel.mainContentOffset = minY
+                                }
+                                .onChange(of: minY) { oldValue, newValue in
+                                    viewModel.mainContentOffset = newValue
+                                }
+                        }
+                    )
             }
             .padding(.top, 60)
             .background(alignment: .top) {
@@ -295,14 +296,14 @@ extension WorkshopView {
             }
             
             // 보유 아이템 리스트
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 7) {
-                    if viewModel.isLoading {
-                        loadingOwnedView
-                    } else {
-                        if viewModel.ownedTemplates.isEmpty {
-                            emptyOwnedView
-                        } else {
+            Group {
+                if viewModel.isLoading {
+                    loadingOwnedView
+                } else if viewModel.ownedTemplates.isEmpty {
+                    emptyOwnedView
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 7) {
                             ForEach(viewModel.ownedTemplates) { template in
                                 OwnedItemCard(item: template, router: router)
                             }
@@ -312,33 +313,32 @@ extension WorkshopView {
             }
             .padding(.bottom, 12)
         }
-        .padding(.horizontal, 25)
-        .padding(.bottom, 20)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 30)
     }
     
     /// 빈 창고 뷰
     private var emptyOwnedView: some View {
-        HStack(spacing: 0) {
-            Spacer()
+        HStack(alignment: .center, spacing: 0) {
             Text("내 창고가 비었어요")
-                .typography(.suit14SB18)
-                .foregroundColor(.secondary)
-            Spacer()
+                .typography(.suit13SB)
+                .foregroundColor(.gray500)
         }
-        .frame(width: 345, height: 112)
-        .background(Color.white.opacity(0.4))
+        .frame(maxWidth: .infinity)
+        .frame(height: 112)
+        .padding(.bottom, 1)
+        .background(.white70)
         .cornerRadius(10)
     }
-    
+
     /// 내 창고 로딩 중 뷰
     private var loadingOwnedView: some View {
-        HStack(spacing: 0) {
-            Spacer()
+        HStack(alignment: .center, spacing: 0) {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-            Spacer()
         }
-        .frame(width: 345, height: 113)
+        .frame(maxWidth: .infinity)
+        .frame(height: 112)
     }
 
 }
@@ -359,6 +359,7 @@ extension WorkshopView {
                 }
             }
         }
+        .background(Color(UIColor.systemBackground))
     }
     
     /// 로딩 뷰
@@ -466,7 +467,7 @@ extension WorkshopView {
 
             Text("KEYCHY! 디자이너 열일중..")
                 .typography(.suit14SB18)
-                .foregroundColor(.secondary)
+                .foregroundColor(.gray500)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
@@ -482,7 +483,7 @@ extension WorkshopView {
             
             Text("Comming Soon~")
                 .typography(.suit14SB18)
-                .foregroundColor(.secondary)
+                .foregroundColor(.gray500)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
         .padding(.top, 50)
@@ -536,7 +537,7 @@ extension WorkshopView {
         nickname: "프리뷰유저",
         email: "preview@example.com"
     )
-    userManager.currentUser?.templates = ["AcrylicPhoto", "CirclePhoto", "CloudDream", "MinimalSquare"] // 보유 템플릿 ID 추가
+    userManager.currentUser?.templates = [] // 보유 템플릿 ID 추가
         
     return WorkshopView(router: NavigationRouter<WorkshopRoute>())
         .environment(userManager)

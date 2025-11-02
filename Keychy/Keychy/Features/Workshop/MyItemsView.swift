@@ -262,7 +262,7 @@ struct MyItemsView: View {
 
             Text("보유한 아이템이 없어요")
                 .typography(.suit14SB18)
-                .foregroundColor(.secondary)
+                .foregroundColor(.gray500)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
         .padding(.top, 50)

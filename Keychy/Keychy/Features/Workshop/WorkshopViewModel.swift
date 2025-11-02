@@ -86,7 +86,7 @@ class WorkshopViewModel {
     var selectedEffectFilter: EffectFilterType? = nil
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
-    var mainContentOffset: CGFloat = 0
+    var mainContentOffset: CGFloat = 140
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
