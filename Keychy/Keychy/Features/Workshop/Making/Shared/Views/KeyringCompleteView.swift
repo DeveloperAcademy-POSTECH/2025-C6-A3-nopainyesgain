@@ -83,6 +83,7 @@ extension KeyringCompleteView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button(action: {
+                viewModel.resetAll()
                 router.reset()
             }) {
                 Image(systemName: "xmark")
