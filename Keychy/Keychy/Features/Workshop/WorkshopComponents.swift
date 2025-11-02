@@ -157,6 +157,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                     }
                 }
                 .scaledToFit()
+                .opacity(isParticlePlaying ? 0 : 1)
+                .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
             }
             .padding(.vertical,10)
 
@@ -173,6 +175,15 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         .frame(width: 175, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
+    }
+
+    /// 현재 아이템의 파티클이 재생 중인지 확인
+    private var isParticlePlaying: Bool {
+        if let particle = item as? Particle,
+           let particleId = particle.id {
+            return effectManager.playingParticleId == particleId
+        }
+        return false
     }
 
     /// 아이템 타입에 따른 높이 계산
@@ -275,7 +286,6 @@ func priceOverlay<Item: WorkshopItem>(
         // 이펙트 타입일 때만 재생 버튼 표시
         if item is Sound || item is Particle {
             ZStack {
-                // 파티클 재생 중일 때 Lottie 표시
                 if let particle = item as? Particle,
                    let particleId = particle.id,
                    effectManager.playingParticleId == particleId {
@@ -304,10 +314,14 @@ func particleLottieView(particleId: String, effectManager: EffectManager) -> som
         loopMode: .playOnce,
         speed: 1.0
     )
+    .transition(.opacity)
+    .animation(.easeInOut(duration: 0.3), value: effectManager.playingParticleId)
     .onAppear {
         // 애니메이션 시간만큼 대기 후 재생 상태 해제
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            effectManager.playingParticleId = nil
+            withAnimation(.easeInOut(duration: 0.3)) {
+                effectManager.playingParticleId = nil
+            }
         }
     }
 }
@@ -366,7 +380,7 @@ struct CircularProgressView: View {
 
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(Color.purple, lineWidth: 2)
+                .stroke(.main500, lineWidth: 2)
                 .rotationEffect(.degrees(-90))
         }
     }
