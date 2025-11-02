@@ -9,6 +9,7 @@
 
 import SwiftUI
 import SpriteKit
+import Lottie
 
 struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
@@ -65,20 +66,57 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .task {
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
-            
-            // 커스터마이징 화면 진입 시 모든 사운드 리소스 프리로드
-            await preloadAllSoundEffects()
-            
-            isLoadingResources = false
+
+            // 사운드 + 파티클 병렬 프리로딩
+            async let soundsTask: () = preloadAllSoundEffects()
+            async let particlesTask: () = preloadAllParticleEffects()
+
+            await soundsTask
+            await particlesTask
+
+            // 로딩 완료 후 부드럽게 닫기
+            withAnimation {
+                isLoadingResources = false
+            }
         }
     }
-    
+
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
         // Firebase에서 가져온 사운드를 순차적으로 로드
         for sound in viewModel.availableSounds {
             guard let soundId = sound.id else { continue }
             await SoundEffectComponent.shared.preloadSound(named: soundId)
+        }
+    }
+
+    // MARK: - Preload Particle Resources
+    private func preloadAllParticleEffects() async {
+        // Firebase에서 가져온 파티클을 순차적으로 로드
+        for particle in viewModel.availableParticles {
+            guard let particleId = particle.id else { continue }
+            await preloadParticle(named: particleId)
+        }
+    }
+
+    private func preloadParticle(named particleId: String) async {
+        // 백그라운드 스레드에서 파일 로딩 (UI 블로킹 방지)
+        await withCheckedContinuation { continuation in
+            Task.detached(priority: .userInitiated) {
+                let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+                let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
+
+                // 캐시에서 로드 시도
+                if FileManager.default.fileExists(atPath: cachedURL.path) {
+                    _ = LottieAnimation.filepath(cachedURL.path)
+                }
+                // Bundle에서 로드 시도
+                else {
+                    _ = LottieAnimation.named(particleId)
+                }
+
+                continuation.resume()
+            }
         }
     }
 }
