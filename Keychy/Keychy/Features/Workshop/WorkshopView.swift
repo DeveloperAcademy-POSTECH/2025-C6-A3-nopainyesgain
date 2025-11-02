@@ -299,11 +299,13 @@ extension WorkshopView {
                 HStack(spacing: 7) {
                     if viewModel.isLoading {
                         loadingOwnedView
-                    } else if viewModel.ownedTemplates.isEmpty {
-                        emptyOwnedView
                     } else {
-                        ForEach(viewModel.ownedTemplates) { template in
-                            OwnedItemCard(item: template, router: router)
+                        if viewModel.ownedTemplates.isEmpty {
+                            emptyOwnedView
+                        } else {
+                            ForEach(viewModel.ownedTemplates) { template in
+                                OwnedItemCard(item: template, router: router)
+                            }
                         }
                     }
                 }
@@ -349,10 +351,12 @@ extension WorkshopView {
         VStack {
             if viewModel.isLoading {
                 loadingView
-            } else if let errorMessage = viewModel.errorMessage {
-                errorView(message: errorMessage)
             } else {
-                categoryContent
+                if let errorMessage = viewModel.errorMessage {
+                    errorView(message: errorMessage)
+                } else {
+                    categoryContent
+                }
             }
         }
     }
