@@ -156,6 +156,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             }
             .padding(.vertical,10)
 
+            Spacer()
+
             // 가격 오버레이
             priceOverlay(
                 isFree: item.isFree,
@@ -163,9 +165,18 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 isOwned: isOwned
             )
         }
-        .frame(width: 175, height: 233)
+        .frame(width: 175, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
+    }
+
+    /// 아이템 타입에 따른 높이 계산
+    private var itemHeight: CGFloat {
+        if item is KeyringTemplate || item is Background {
+            return 233
+        } else {
+            return 175
+        }
     }
 
     /// 탭 핸들러 (KeyringTemplate만 네비게이션)
@@ -227,7 +238,7 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
 
 /// 공통 가격 오버레이 (보유/무료/유료 표시)
 func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
-    HStack {
+    HStack(spacing: 0) {
         if isOwned {
             VStack {
                 Image(.keyHole)
