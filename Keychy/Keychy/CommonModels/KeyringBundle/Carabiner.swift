@@ -18,8 +18,11 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     /// 카라비너 이름
     let carabinerName: String
     
-    /// 카라비너 이미지 URL (썸네일 공통)
-    let carabinerImage: String
+    /// 카라비너 이미지 URL
+    /// - [0] : 합체 이미지 (썸네일용)
+    /// - [1] : 뒷 이미지
+    /// - [2] : 앞 이미지
+    let carabinerImage: [String]
     
     /// 카라비너 설명
     let description: String
