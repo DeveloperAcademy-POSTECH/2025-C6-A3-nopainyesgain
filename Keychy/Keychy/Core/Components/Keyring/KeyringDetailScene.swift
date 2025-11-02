@@ -173,9 +173,16 @@ class KeyringDetailScene: SKScene {
     // MARK: - 사운드 효과 적용
     func applySoundEffect(soundId: String) {
         guard soundId != "none" else { return }
-        
-        // SoundEffect enum으로 변환
-        
+
+        // Firebase Storage URL인 경우 (커스텀 사운드가 저장된 경우)
+        if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
+            if let url = URL(string: soundId) {
+                SoundEffectComponent.shared.playSound(from: url)
+            }
+            return
+        }
+
+        // 일반 사운드 파일
         SoundEffectComponent.shared.playSound(named: soundId)
     }
     
