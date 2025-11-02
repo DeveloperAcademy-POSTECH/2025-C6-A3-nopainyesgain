@@ -22,6 +22,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var isSceneReady = false
     @State private var loadingScale: CGFloat = 0.3
     @State private var showRecordingSheet = false
+    @State private var showResetAlert = false
 
     var body: some View {
         ZStack {
@@ -137,9 +138,18 @@ extension KeyringCustomizingView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
-                router.pop()
+                showResetAlert = true
             } label: {
                 Image(systemName: "chevron.left")
+            }
+            .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
+                Button("취소", role: .cancel) { }
+                Button("확인", role: .destructive) {
+                    viewModel.resetAll()
+                    router.reset()
+                }
+            } message: {
+                Text("지금까지 작업한 내용이 모두 초기화됩니다.")
             }
         }
     }

@@ -7,9 +7,9 @@ struct AcrylicPhotoCropView: View {
     var body: some View {
         ZStack {
             // 배경색
-            Color.black
+            Color.clear
                 .ignoresSafeArea()
-            
+
             // MARK: - 이미지 & 크롭 박스
             GeometryReader { geo in
                 ZStack {
@@ -31,10 +31,13 @@ struct AcrylicPhotoCropView: View {
                                 viewModel.resetToCenter()
                             }
                     }
-                    
-                    // 크롭박스 바깥 영역 어둡게
-                    DimmingOverlay(cropRect: viewModel.cropArea)
-                    
+
+                    // 크롭박스 바깥 영역 어둡게 (이미지 영역 내에서만)
+                    DimmingOverlay(
+                        cropRect: viewModel.cropArea,
+                        imageRect: viewModel.getDisplayedImageRect()
+                    )
+
                     // 크롭박스
                     CropBoxView(
                         rect: $viewModel.cropArea,
@@ -60,13 +63,14 @@ extension AcrylicPhotoCropView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                viewModel.resetImageData()
                 router.pop()
             } label: {
                 Image(systemName: "chevron.left")
             }
         }
     }
-    
+
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("다음") {
@@ -89,17 +93,19 @@ extension AcrylicPhotoCropView {
 // MARK: - DimmingOverlay (크롭박스 바깥 어둡게)
 struct DimmingOverlay: View {
     let cropRect: CGRect
-    
+    let imageRect: CGRect
+
     var body: some View {
-        GeometryReader { geo in
-            Color.black.opacity(0.6)
-                .reverseMask {
-                    Rectangle()
-                        .frame(width: cropRect.width, height: cropRect.height)
-                        .position(x: cropRect.midX, y: cropRect.midY)
-                }
-        }
-        .allowsHitTesting(false)
+        // 이미지 영역 내에서만 디밍 효과 적용
+        Color.black.opacity(0.6)
+            .frame(width: imageRect.width, height: imageRect.height)
+            .position(x: imageRect.midX, y: imageRect.midY)
+            .reverseMask {
+                Rectangle()
+                    .frame(width: cropRect.width, height: cropRect.height)
+                    .position(x: cropRect.midX, y: cropRect.midY)
+            }
+            .allowsHitTesting(false)
     }
 }
 
