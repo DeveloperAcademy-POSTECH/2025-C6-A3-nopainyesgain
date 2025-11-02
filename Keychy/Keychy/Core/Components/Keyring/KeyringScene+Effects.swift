@@ -10,6 +10,14 @@ import AVFoundation
 extension KeyringScene {
     func applySoundEffect(soundId: String) {
         guard soundId != "none" else { return }
+
+        // 커스텀 녹음 파일인 경우
+        if soundId == "custom_recording", let customURL = customSoundURL {
+            SoundEffectComponent.shared.playSound(from: customURL)
+            return
+        }
+
+        // 일반 사운드 파일
         SoundEffectComponent.shared.playSound(named: soundId)
     }
 
@@ -26,6 +34,9 @@ class SoundEffectComponent {
 
     // 사운드 파일들을 미리 로드해서 저장
     private var audioPlayers: [String: AVAudioPlayer] = [:]
+
+    // 커스텀 사운드 플레이어 (strong reference 유지)
+    private var customAudioPlayer: AVAudioPlayer?
 
     // 스레드 안전성을 위한 직렬 큐
     private let audioQueue = DispatchQueue(label: "com.keychy.audioQueue", qos: .userInteractive)
@@ -80,6 +91,29 @@ class SoundEffectComponent {
                 player.play()
             } catch {
                 print("Error playing sound: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// URL 기반 사운드 재생 (커스텀 녹음 파일용)
+    func playSound(from url: URL) {
+        audioQueue.async { [weak self] in
+            guard let self = self else { return }
+
+            do {
+                // 오디오 세션 활성화 (재생용)
+                let audioSession = AVAudioSession.sharedInstance()
+                try audioSession.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+                try audioSession.setActive(true)
+
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.prepareToPlay()
+
+                // strong reference 유지
+                self.customAudioPlayer = player
+                player.play()
+            } catch {
+                print("Error playing custom sound: \(error.localizedDescription)")
             }
         }
     }

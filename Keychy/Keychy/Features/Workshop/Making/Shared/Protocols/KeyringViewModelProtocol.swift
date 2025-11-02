@@ -49,6 +49,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     var selectedSound: Sound? { get set }
     var selectedParticle: Particle? { get set }
 
+    /// 커스텀 사운드 (녹음)
+    var customSoundURL: URL? { get set }
+    var hasCustomSound: Bool { get }
+
     /// 다운로드 상태 관리
     var downloadingItemIds: Set<String> { get set }
     var downloadProgress: [String: Double] { get set }
@@ -61,6 +65,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     // MARK: - Methods
     func updateSound(_ sound: Sound?)
     func updateParticle(_ particle: Particle?)
+
+    /// 커스텀 사운드 적용
+    func applyCustomSound(_ url: URL)
+    func removeCustomSound()
 
     /// Firebase Effects 가져오기
     func fetchEffects() async

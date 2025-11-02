@@ -21,6 +21,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var isLoadingResources = true
     @State private var isSceneReady = false
     @State private var loadingScale: CGFloat = 0.3
+    @State private var showRecordingSheet = false
 
     var body: some View {
         ZStack {
@@ -48,6 +49,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                         Spacer()
                     }
                     .padding(18)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 }
 
                 // MARK: - 하단 영역
@@ -232,14 +234,21 @@ extension KeyringCustomizingView {
                 .padding(.top, 30)
             
             HStack(spacing: 0) {
-                // 마이크 아이콘 (고정)
-                ZStack {
+                // 녹음 버튼
+                Button {
+                    showRecordingSheet = true
+                } label: {
                     Image("record")
                         .frame(width: 32, height: 32)
                 }
                 .padding(.leading, 20)
                 .padding(.trailing, 8)
-                
+                .sheet(isPresented: $showRecordingSheet) {
+                    RecordingSheet { url in
+                        viewModel.applyCustomSound(url)
+                    }
+                }
+
                 // 버튼들만 스크롤
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -248,14 +257,29 @@ extension KeyringCustomizingView {
                             viewModel.updateSound(nil)
                         } label: {
                             Text("없음")
-                                .typography(viewModel.selectedSound == nil ? .suit15SB25 : .suit15M25)
+                                .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 9)
-                                .foregroundStyle(viewModel.selectedSound == nil ? .white100 : .gray500)
-                                .background(viewModel.selectedSound == nil ? .main500 : .gray50)
+                                .foregroundStyle(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .white100 : .gray500)
+                                .background(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .main500 : .gray50)
                                 .clipShape(.rect(cornerRadius: 15))
                         }
-                        
+
+                        // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
+                        if viewModel.hasCustomSound {
+                            Button {
+                                viewModel.applyCustomSound(viewModel.customSoundURL!)
+                            } label: {
+                                Text("음성 메모")
+                                    .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 9)
+                                    .foregroundStyle(viewModel.soundId == "custom_recording" ? .white100 : .gray500)
+                                    .background(viewModel.soundId == "custom_recording" ? .main500 : .gray50)
+                                    .clipShape(.rect(cornerRadius: 15))
+                            }
+                        }
+
                         // Firebase 사운드 목록
                         ForEach(viewModel.availableSounds) { sound in
                             soundItemButton(sound: sound)

@@ -17,6 +17,7 @@ class KeyringScene: SKScene {
     // MARK: - Properties
     var bodyImage: UIImage? // UIImage용
     var bodyImageURL: String? // Firebase URL용
+    var customSoundURL: URL? // 커스텀 녹음 파일 URL
     var cancellables = Set<AnyCancellable>()
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"
@@ -80,11 +81,17 @@ class KeyringScene: SKScene {
     
     // MARK: - ViewModel 바인딩 (Generic)
     func bind<VM: KeyringViewModelProtocol>(to viewModel: VM) {
+        // 커스텀 사운드 URL 전달
+        self.customSoundURL = viewModel.customSoundURL
+
         viewModel.effectSubject
             .sink { [weak self] (soundId, particleId, type) in
                 guard let self = self else { return }
                 self.currentSoundId = soundId
                 self.currentParticleId = particleId
+
+                // 커스텀 사운드 URL 업데이트 (effectSubject가 발생할 때마다)
+                self.customSoundURL = viewModel.customSoundURL
 
                 switch type {
                 case .sound:
