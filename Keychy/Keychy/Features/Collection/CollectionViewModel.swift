@@ -121,7 +121,7 @@ class CollectionViewModel {
         Carabiner(
             id: "12343",
             carabinerName: "카라비너 A",
-            carabinerImage: "basicRing",
+            carabinerImage: ["basicRing"],
             description: "기본 스타일의 실버 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
@@ -135,7 +135,7 @@ class CollectionViewModel {
         Carabiner(
             id: "12344",
             carabinerName: "카라비너 B",
-            carabinerImage: "basicRing",
+            carabinerImage: ["basicRing"],
             description: "세련된 골드 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],
@@ -149,7 +149,7 @@ class CollectionViewModel {
         Carabiner(
             id: "12345",
             carabinerName: "카라비너 C",
-            carabinerImage: "ddochi",
+            carabinerImage: ["ddochi"],
             description: "모던한 블랙 카라비너",
             maxKeyringCount: 4,
             tags: ["tags"],

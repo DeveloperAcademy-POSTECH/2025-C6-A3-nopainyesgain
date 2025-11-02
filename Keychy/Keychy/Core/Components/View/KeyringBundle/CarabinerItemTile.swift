@@ -13,7 +13,7 @@ struct CarabinerItemTile: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Image(carabiner.carabinerImage)
+            Image(carabiner.carabinerImage[0])
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
@@ -43,7 +43,7 @@ struct CarabinerItemTile: View {
         carabiner: Carabiner(
             id: "PreviewCarabiner",
             carabinerName: "카라비너",
-            carabinerImage: "ddochi",
+            carabinerImage: ["ddochi"],
             description: "des",
             maxKeyringCount: 1,
             tags: ["tags"],
