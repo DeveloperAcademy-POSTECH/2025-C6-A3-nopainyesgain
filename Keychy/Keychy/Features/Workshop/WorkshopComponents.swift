@@ -253,5 +253,34 @@ func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
         .frame(height: 43)
         
         Spacer()
+        
+        HStack {
+            Spacer()
+            
+            effectButtonStyle()
+        }
+        .padding(8)
+    }
+}
+
+func effectButtonStyle() -> some View {
+    Button {
+
+    } label: {
+        ZStack{
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.gray50)
+                .frame(width: 38, height: 38)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(.white100, lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+            
+            Image(.polygon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 14, height: 14)
+        }
     }
 }
