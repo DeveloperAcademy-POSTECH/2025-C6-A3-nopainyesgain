@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import Lottie
 
 // MARK: - Filter Components
 
@@ -116,6 +117,9 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     var isOwned: Bool = false
     var router: NavigationRouter<WorkshopRoute>? = nil
 
+    @State private var effectManager = EffectManager.shared
+    @Environment(UserManager.self) private var userManager
+
     var body: some View {
         Button {
             handleTap()
@@ -161,7 +165,9 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 isFree: item.isFree,
                 price: item.workshopPrice,
                 isOwned: isOwned,
-                item: item
+                item: item,
+                effectManager: effectManager,
+                userManager: userManager
             )
         }
         .frame(width: 175, height: itemHeight)
@@ -236,7 +242,14 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
 }
 
 /// 공통 가격 오버레이 (유료 표시)
-func priceOverlay<Item: WorkshopItem>(isFree: Bool, price: Int, isOwned: Bool, item: Item) -> some View {
+func priceOverlay<Item: WorkshopItem>(
+    isFree: Bool,
+    price: Int,
+    isOwned: Bool,
+    item: Item,
+    effectManager: EffectManager,
+    userManager: UserManager
+) -> some View {
     VStack {
         HStack(spacing: 0) {
             if isOwned || !isFree {
@@ -257,19 +270,61 @@ func priceOverlay<Item: WorkshopItem>(isFree: Bool, price: Int, isOwned: Bool, i
 
         // 이펙트 타입일 때만 재생 버튼 표시
         if item is Sound || item is Particle {
-            HStack {
-                Spacer()
+            ZStack {
+                // 파티클 재생 중일 때 Lottie 표시
+                if let particle = item as? Particle,
+                   let particleId = particle.id,
+                   effectManager.playingParticleId == particleId {
+                    particleLottieView(particleId: particleId, effectManager: effectManager)
+                }
 
-                effectButtonStyle(item: item)
+                HStack {
+                    Spacer()
+
+                    effectButtonStyle(
+                        item: item,
+                        effectManager: effectManager,
+                        userManager: userManager
+                    )
+                }
+                .padding(8)
             }
-            .padding(8)
         }
     }
 }
 
-func effectButtonStyle<Item: WorkshopItem>(item: Item) -> some View {
-    Button {
-        playEffect(item: item)
+/// 파티클 Lottie 뷰
+func particleLottieView(particleId: String, effectManager: EffectManager) -> some View {
+    LottieView(
+        name: particleId,
+        loopMode: .playOnce,
+        speed: 1.0
+    )
+    .onAppear {
+        // 애니메이션 시간만큼 대기 후 재생 상태 해제
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            effectManager.playingParticleId = nil
+        }
+    }
+}
+
+func effectButtonStyle<Item: WorkshopItem>(
+    item: Item,
+    effectManager: EffectManager,
+    userManager: UserManager
+) -> some View {
+    let itemId = item.id ?? ""
+    let isDownloading = effectManager.downloadingItemIds.contains(itemId)
+    let progress = effectManager.downloadProgress[itemId] ?? 0.0
+
+    return Button {
+        Task {
+            if let sound = item as? Sound {
+                await effectManager.playSound(sound, userManager: userManager)
+            } else if let particle = item as? Particle {
+                await effectManager.playParticle(particle, userManager: userManager)
+            }
+        }
     } label: {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -281,21 +336,34 @@ func effectButtonStyle<Item: WorkshopItem>(item: Item) -> some View {
                 )
                 .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
 
-            Image(.polygon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 14, height: 14)
+            if isDownloading {
+                // 다운로드 중이면 프로그레스 표시
+                CircularProgressView(progress: progress)
+                    .frame(width: 20, height: 20)
+            } else {
+                Image(.polygon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 14, height: 14)
+            }
         }
     }
+    .disabled(isDownloading)
 }
 
-/// 이펙트 재생 함수
-func playEffect<Item: WorkshopItem>(item: Item) {
-    if let sound = item as? Sound {
-        print("사운드 재생: \(sound.soundName)")
-        // TODO: 실제 사운드 재생 로직 구현
-    } else if let particle = item as? Particle {
-        print("파티클 재생: \(particle.particleName)")
-        // TODO: 실제 파티클 재생 로직 구현
+/// 원형 프로그레스 뷰
+struct CircularProgressView: View {
+    let progress: Double
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.gray300, lineWidth: 2)
+
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(Color.purple, lineWidth: 2)
+                .rotationEffect(.degrees(-90))
+        }
     }
 }
