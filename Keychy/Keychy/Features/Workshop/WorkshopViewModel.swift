@@ -56,7 +56,7 @@ extension Background: WorkshopItem {
 extension Carabiner: WorkshopItem {
     var name: String { carabinerName }
     var itemDescription: String { description }
-    var thumbnailURL: String { carabinerImage }
+    var thumbnailURL: String { carabinerImage[0] }
     var workshopPrice: Int { price }
 }
 

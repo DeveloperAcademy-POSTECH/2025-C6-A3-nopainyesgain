@@ -189,7 +189,7 @@ extension BundleNameInputView {
         let newBundle = KeyringBundle(
             name: bundleName.trimmingCharacters(in: .whitespacesAndNewlines),
             selectedBackground: "cherries", // 임시로 체리 배경
-            selectedCarabiner: carabiner.carabinerImage,
+            selectedCarabiner: carabiner.carabinerImage[0],
             keyrings: keyringArray.map { $0.id.uuidString }, // UUID를 String으로 변환
             maxKeyrings: carabiner.maxKeyringCount,
             isMain: viewModel.bundles.isEmpty, // 첫 번째 번들이면 메인으로 설정
