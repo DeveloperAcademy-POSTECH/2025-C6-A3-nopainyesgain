@@ -15,6 +15,25 @@ struct WorkshopPreview: View {
 
     let item: any WorkshopItem
 
+    /// 아이템 보유 여부 확인
+    private var isOwned: Bool {
+        guard let user = userManager.currentUser,
+              let itemId = item.id else { return false }
+
+        if item is KeyringTemplate {
+            return user.templates.contains(itemId)
+        } else if item is Background {
+            return user.backgrounds.contains(itemId)
+        } else if item is Carabiner {
+            return user.carabiners.contains(itemId)
+        } else if item is Particle {
+            return user.particleEffects.contains(itemId)
+        } else if item is Sound {
+            return user.soundEffects.contains(itemId)
+        }
+        return false
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 0) {
@@ -166,20 +185,17 @@ extension WorkshopPreview {
     private var actionButton: some View {
         if item.isFree {
             freeButton
+        } else if isOwned {
+            ownedButton
         } else {
             purchaseButton
         }
     }
 
-    /// 무료 버튼 (비활성화)
+    /// 무료 버튼
     private var freeButton: some View {
         Button {
-            // 무료 아이템 - 키링일 경우 만들기로 이동
-            if let template = item as? KeyringTemplate,
-               let templateId = template.id,
-               let route = WorkshopRoute.from(string: templateId) {
-                router.push(route)
-            }
+            // 비활성화 - 아무 동작 없음.
         } label: {
             Text("무료")
                 .typography(.suit17B)
@@ -188,21 +204,29 @@ extension WorkshopPreview {
         }
         .buttonStyle(.glassProminent)
         .tint(.gray300)
-        .disabled(!(item is KeyringTemplate))
+        .disabled(true)
+    }
+
+    /// 보유중 버튼 (비활성화)
+    private var ownedButton: some View {
+        Button {
+            // 비활성화 - 아무 동작 없음
+        } label: {
+            Text("보유중")
+                .typography(.suit17B)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 7.5)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(.gray300)
+        .disabled(true)
     }
 
     /// 구입 버튼 (유료)
     private var purchaseButton: some View {
         Button {
-            // 키링일 경우에만 만들기로 이동
-            if let template = item as? KeyringTemplate,
-               let templateId = template.id,
-               let route = WorkshopRoute.from(string: templateId) {
-                router.push(route)
-            } else {
-                // TODO: 구매 로직 구현
-                print("구매: \(item.name) - \(item.workshopPrice) 코인")
-            }
+            // TODO: 구매 로직 구현
+            print("구매: \(item.name) - \(item.workshopPrice) 코인")
         } label: {
             HStack(spacing: 4) {
                 Image(.keyCoin)

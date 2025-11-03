@@ -205,7 +205,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         }
     }
 
-    /// 탭 핸들러 (모든 아이템 WorkshopPreview로 이동)
+    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
     private func handleTap() {
         guard let router = router else { return }
 
@@ -213,10 +213,14 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         viewModel?.savedScrollPosition = item.id
         viewModel?.savedCategory = viewModel?.selectedCategory
 
-        // 모든 아이템을 WorkshopPreview로 이동
-        if let template = item as? KeyringTemplate {
-            router.push(.workshopPreview(item: AnyHashable(template)))
-        } else if let background = item as? Background {
+        // 키링일 경우 바로 해당 키링 Preview로 이동
+        if let template = item as? KeyringTemplate,
+           let templateId = template.id,
+           let route = WorkshopRoute.from(string: templateId) {
+            router.push(route)
+        }
+        // 나머지 아이템들은 WorkshopPreview로 이동
+        else if let background = item as? Background {
             router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
             router.push(.workshopPreview(item: AnyHashable(carabiner)))
@@ -266,17 +270,21 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
         .buttonStyle(.plain)
     }
 
-    /// 탭 핸들러 (모든 아이템 WorkshopPreview로 이동)
+    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
     private func handleTap() {
         guard let router = router else { return }
 
         // 카테고리만 저장
         viewModel?.savedCategory = viewModel?.selectedCategory
 
-        // 모든 아이템을 WorkshopPreview로 이동
-        if let template = item as? KeyringTemplate {
-            router.push(.workshopPreview(item: AnyHashable(template)))
-        } else if let background = item as? Background {
+        // 키링일 경우 바로 해당 키링 Preview로 이동
+        if let template = item as? KeyringTemplate,
+           let templateId = template.id,
+           let route = WorkshopRoute.from(string: templateId) {
+            router.push(route)
+        }
+        // 나머지 아이템들은 WorkshopPreview로 이동
+        else if let background = item as? Background {
             router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
             router.push(.workshopPreview(item: AnyHashable(carabiner)))
