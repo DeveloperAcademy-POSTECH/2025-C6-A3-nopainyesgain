@@ -23,6 +23,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State private var keyring: [Keyring] = []
     @State private var isCreatingKeyring: Bool = false
 
+    // 시네마틱 애니메이션
+    @State private var showDismissButton = false
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -32,6 +35,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
                     .ignoresSafeArea()
+                    .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
 
                 VStack(spacing: 0) {
                     // 타이틀
@@ -39,16 +43,19 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 
                     // 키링 씬
                     keyringScene
+                        .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
 
                     Spacer()
 
                     // 키링 정보
                     keyringInfo
                         .padding(.bottom, 30)
+                        .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
 
                     // 이미지 저장 버튼
                     saveButton
                         .padding(.bottom, 40)
+                        .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
                 }
             }
         }
@@ -56,14 +63,26 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         .navigationBarBackButtonHidden(true)
         .navigationTitle("")
         .toolbar {
-            backToolbarItem
+            if showDismissButton {
+                backToolbarItem
+            }
         }
+        .animation(.easeIn(duration: 0.5), value: showDismissButton)
         .navigationTitle("키링이 완성되었어요!")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
+
+            // Firebase 저장 시작
             saveKeyringToFirebase()
+
+            // dismiss 버튼은 2초 후 등장 (저장 시간 확보)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.easeIn(duration: 0.5)) {
+                    showDismissButton = true
+                }
+            }
         }
     }
 }
@@ -74,7 +93,6 @@ extension KeyringCompleteView {
         KeyringSceneView(viewModel: viewModel, backgroundColor: .clear)
             .frame(maxWidth: .infinity)
             .frame(height: 500)
-            .scaleEffect(1.2)
     }
 }
 
@@ -306,7 +324,7 @@ extension KeyringCompleteView {
         let docRef = db.collection("Keyring").document()
         
         docRef.setData(keyringData) { error in
-            if let error = error {
+            if error != nil {
                 completion(false, nil)
                 return
             }
@@ -335,7 +353,7 @@ extension KeyringCompleteView {
             .updateData([
                 "keyrings": FieldValue.arrayUnion([keyringId])
             ]) { error in
-                if let error = error {
+                if error != nil {
                     completion(false)
                 } else {
                     completion(true)
