@@ -10,9 +10,32 @@ import SwiftUI
 import FirebaseFirestore
 import FirebaseStorage
 
+// MARK: - 화면 표시용 구조체
+struct BackgroundViewData: Identifiable, Equatable, Hashable {
+    var id: String { background.id ?? UUID().uuidString }
+    let background: Background
+    let isOwned: Bool
+}
+
+struct CarabinerViewData: Identifiable, Equatable, Hashable {
+    var id: String { carabiner.id ?? UUID().uuidString }
+    let carabiner: Carabiner
+    let isOwned: Bool
+}
+
 extension CollectionViewModel {
     private var db: Firestore {
         Firestore.firestore()
+    }
+    
+    // MARK: - 화면 표시용 배열
+    var backgroundViewData: [BackgroundViewData] {
+        get { _backgroundViewData }
+        set { _backgroundViewData = newValue }
+    }
+    var carabinerViewData: [CarabinerViewData] {
+        get { _carabinerViewData }
+        set { _carabinerViewData = newValue }
     }
     
     //MARK: - 새 뭉치 생성 및 파베에 업로드
@@ -92,5 +115,62 @@ extension CollectionViewModel {
                 completion(true)
             }
     }
+    
+    // MARK: - 전체 배경 로드 + 소유 여부 주석
+    func fetchAllBackgrounds(completion: @escaping (Bool) -> Void) {
+        isLoading = true
+        Task {
+            do {
+                let snapshot = try await db.collection("Background").getDocuments()
+                let items: [Background] = try snapshot.documents.compactMap { try $0.data(as: Background.self) }
+                let ownedIds = UserManager.shared.currentUser?.backgrounds ?? []
+                let decorated = items.map { bg in
+                    BackgroundViewData(background: bg, isOwned: ownedIds.contains(bg.id ?? "")) }
+                
+                await MainActor.run {
+                    self.backgrounds = items
+                    self.backgroundViewData = decorated
+                    self.isLoading = false
+                    completion(true)
+                }
+            } catch {
+                print("배경 로드 에러: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.backgrounds = []
+                    self.backgroundViewData = []
+                    self.isLoading = false
+                    completion(false)
+                }
+            }
+        }
+    }
+    
+    // MARK: - 전체 카라비너 로드 + 소유 여부 주석
+    func fetchAllCarabinersAndAnnotate(completion: @escaping (Bool) -> Void) {
+        isLoading = true
+        Task {
+            do {
+                let snapshot = try await db.collection("Carabiner").getDocuments()
+                let items: [Carabiner] = try snapshot.documents.compactMap { try $0.data(as: Carabiner.self) }
+                let ownedIds = UserManager.shared.currentUser?.carabiners ?? []
+                let decorated = items.map { cb in
+                    CarabinerViewData(carabiner: cb, isOwned: ownedIds.contains(cb.id ?? "")) }
+                
+                await MainActor.run {
+                    self.carabiners = items
+                    self.carabinerViewData = decorated
+                    self.isLoading = false
+                    completion(true)
+                }
+            } catch {
+                print("카라비너 로드 에러: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.carabiners = []
+                    self.carabinerViewData = []
+                    self.isLoading = false
+                    completion(false)
+                }
+            }
+        }
+    }
 }
-

@@ -11,10 +11,14 @@ struct BundleSelectCarabinerView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
+    @State var backgroundImage: UIImage
+    @State private var carabinerImage: UIImage?
+    
     var body: some View {
         GeometryReader { geo in
             VStack(alignment: .center) {
-                carabinerImageView
+                // 카라비너의 사이즈는 화면 전체 높이의 1/2만 차지하도록 수정
+                showSelectCarabinerView
                     .frame(width: geo.size.width * 0.5)
                 Spacer()
                 selectCarabinerbottomSection
@@ -25,13 +29,29 @@ struct BundleSelectCarabinerView: View {
                 backToolbarItem
                 nextToolbarItem
             }
+            // 배경화면 이미지
             .background(
-                // 배경화면 이미지
-                Image(.cherries)
-                    .resizable()
-                    .blur(radius: 10)
-                    .scaledToFill()
+                Group {
+                    if let selectedBackground = viewModel.selectedBackground {
+                        Image(uiImage: viewModel.selectedBackgroundImage)
+                            .resizable()
+                            .blur(radius: 10)
+                            .scaledToFill()
+                    } else {
+                        Color.clear
+                    }
+                }
             )
+        }
+        .onAppear {
+            viewModel.fetchAllCarabiners(uid: UserManager.shared.userUID) { success in
+                if success {
+                    print("카라비너 로드 완료 : \(viewModel.carabiners.count)")
+                } else {
+                    print("카라비너 로드 실패")
+                }
+                
+            }
         }
     }
 }
@@ -57,14 +77,24 @@ extension BundleSelectCarabinerView {
     }
 }
 
-//MARK: - 카라비너 뷰
+//MARK: - 선택한 카라비너 뷰
 extension BundleSelectCarabinerView {
-    private var carabinerImageView: some View {
+    private var showSelectCarabinerView: some View {
         VStack {
             // 카라비너 이미지
-            Image(.basicRing)
-                .resizable()
-                .scaledToFit()
+            Group {
+                if let image = carabinerImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                }
+                else {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                        .scaleEffect(1.5)
+                }
+            }
+            // 카라비너 위 +버튼들 배치
                 .overlay {
                     if let carabiner = viewModel.selectedCarabiner {
                         GeometryReader { geo in
@@ -123,8 +153,4 @@ extension BundleSelectCarabinerView {
             .shadow(radius: 10)
         )
     }
-}
-
-#Preview {
-    BundleSelectCarabinerView(router: NavigationRouter(), viewModel: CollectionViewModel())
 }

@@ -12,18 +12,21 @@ import SpriteKit
 @Observable
 class CollectionViewModel {
     
-    // MARK: - 프로퍼티
+    // MARK: - 공통 상태
     var isLoading = false
-    var keyring: [Keyring] = [] // 키링
     var tags: [String] = [] // 태그
     var selectedSort: String = "최신순" // 기본값
     var maxKeyringCount: Int = 100 // 기본값
     var coin: Int = 0
+    
+    // MARK: - 키링
+    var keyring: [Keyring] = []
     var selectedKeyrings: [Keyring] = []
     
     // MARK: - 초기화
     init() {}
-    // 키링 뭉치 관련
+    
+    // MARK: - 키링 뭉치 관련
     var maxBundleNameCount: Int = 9
     var selectedKeyringsForBundle: [Int: Keyring] = [:] // 번들 생성용 선택된 키링들
     var bundlePreviewScene: CarabinerScene?

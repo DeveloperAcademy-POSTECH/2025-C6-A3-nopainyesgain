@@ -16,7 +16,7 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     @DocumentID var id: String?
     
     /// 카라비너 이름
-    let carabinerName: String
+    let carabinerName: [String]
     
     /// 카라비너 이미지 URL
     /// - [0] : 합체 이미지 (썸네일용)
