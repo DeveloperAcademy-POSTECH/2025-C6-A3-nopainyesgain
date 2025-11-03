@@ -209,10 +209,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     private func handleTap() {
         guard let router = router else { return }
 
-        // 현재 아이템 ID와 카테고리 저장
-        viewModel?.savedScrollPosition = item.id
-        viewModel?.savedCategory = viewModel?.selectedCategory
-
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
@@ -273,9 +269,6 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
     /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
     private func handleTap() {
         guard let router = router else { return }
-
-        // 카테고리만 저장
-        viewModel?.savedCategory = viewModel?.selectedCategory
 
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
