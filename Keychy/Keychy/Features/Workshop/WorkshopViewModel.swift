@@ -164,7 +164,7 @@ class WorkshopViewModel {
         }
     }
 
-    /// 모든 데이터 가져오기 (기존 메서드 유지 - 필요시 사용)
+    /// 모든 데이터 가져오기 (다시 시도 버튼에서 사용)
     func fetchAllData() async {
         isLoading = true
         errorMessage = nil
@@ -364,10 +364,5 @@ class WorkshopViewModel {
         selectedTemplateFilter = nil
         selectedCommonFilter = nil
         selectedEffectFilter = nil
-    }
-
-    /// 특정 카테고리가 로드되었는지 확인
-    func isCategoryLoaded(_ category: String) -> Bool {
-        return loadedCategories.contains(category)
     }
 }
