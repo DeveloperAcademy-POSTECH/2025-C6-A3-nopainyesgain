@@ -72,16 +72,8 @@ struct CategoryContextMenu: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 34)
-                            .fill(.regularMaterial)
-                        
-                        RoundedRectangle(cornerRadius: 34)
-                            .stroke(.white.opacity(0.3), lineWidth: 1)
-                    }
-                )
-                
+                .background(.thinMaterial, in: .rect(cornerRadius: 34))
+                .glassEffect(in: .rect(cornerRadius: 34))
                 .position( // 메뉴 위치
                     x: calculateSafeX(in: geometry),
                     y: position.maxY + 20
