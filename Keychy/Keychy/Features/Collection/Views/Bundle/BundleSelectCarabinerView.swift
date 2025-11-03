@@ -6,18 +6,19 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct BundleSelectCarabinerView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
-    @State var backgroundImage: UIImage
+    @State var backgroundImage: String?
     @State private var carabinerImage: UIImage?
     
     var body: some View {
         GeometryReader { geo in
             VStack(alignment: .center) {
-                // 카라비너의 사이즈는 화면 전체 높이의 1/2만 차지하도록 수정
+                // 카라비너의 사이즈는 화면 전체 높이의 1/2만 차지하도록
                 showSelectCarabinerView
                     .frame(width: geo.size.width * 0.5)
                 Spacer()
@@ -32,28 +33,30 @@ struct BundleSelectCarabinerView: View {
             // 배경화면 이미지
             .background(
                 Group {
-                    if let selectedBackground = viewModel.selectedBackground {
-                        Image(uiImage: viewModel.selectedBackgroundImage)
-                            .resizable()
-                            .blur(radius: 10)
-                            .scaledToFill()
-                    } else {
-                        Color.clear
+                    if let background = viewModel.selectedBackground {
+                        LazyImage(url: URL(string: background.backgroundImage)) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } else if state.isLoading {
+                                Color.clear
+                            }
+                        }
                     }
                 }
+                    .ignoresSafeArea()
             )
         }
-        .onAppear {
-            viewModel.fetchAllCarabiners(uid: UserManager.shared.userUID) { success in
-                if success {
-                    print("카라비너 로드 완료 : \(viewModel.carabiners.count)")
-                } else {
-                    print("카라비너 로드 실패")
+        .task {
+            viewModel.fetchAllCarabiners { success in
+                if !success {
+                    print("카라비너 데이터 로드 실패")
                 }
-                
             }
         }
     }
+    
 }
 
 //MARK: - 툴바
@@ -80,18 +83,24 @@ extension BundleSelectCarabinerView {
 //MARK: - 선택한 카라비너 뷰
 extension BundleSelectCarabinerView {
     private var showSelectCarabinerView: some View {
-        VStack {
+        VStack(spacing: 0) {
             // 카라비너 이미지
             Group {
-                if let image = carabinerImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                }
-                else {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-                        .scaleEffect(1.5)
+                if let carabiner = viewModel.selectedCarabiner {
+                    LazyImage(url: URL(string: carabiner.carabinerImage[0])) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxHeight: 200) // 최대 높이만 제한, 비율은 자유롭게
+                        } else if state.isLoading {
+                            ProgressView()
+                                .frame(height: 200)
+                        } else {
+                            Color.clear
+                                .frame(height: 200)
+                        }
+                    }
                 }
             }
             // 카라비너 위 +버튼들 배치
@@ -110,6 +119,7 @@ extension BundleSelectCarabinerView {
                                     action: {},
                                     secondAction: {}
                                 )
+                                .disabled(true)
                                 .position(x: x, y: y)
                             }
                         }
@@ -129,11 +139,11 @@ extension BundleSelectCarabinerView {
             }
             ScrollView(.horizontal) {
                 HStack(spacing: 10) {
-                    ForEach(viewModel.carabiners, id: \.id) { cb in
+                    ForEach(viewModel.carabinerViewData, id: \.id) { cb in
                         Button {
-                            viewModel.selectedCarabiner = cb
+                            viewModel.selectedCarabiner = cb.carabiner
                         } label: {
-                            CarabinerItemTile(isSelected: viewModel.selectedCarabiner == cb, carabiner: cb)
+                            CarabinerItemTile(isSelected: viewModel.selectedCarabiner == cb.carabiner, carabiner: cb)
                         }
                     }
                 }
