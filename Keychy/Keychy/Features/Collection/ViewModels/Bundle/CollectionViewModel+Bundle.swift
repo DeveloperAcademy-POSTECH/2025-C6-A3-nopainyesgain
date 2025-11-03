@@ -116,60 +116,46 @@ extension CollectionViewModel {
             }
     }
     
-    // MARK: - 전체 배경 로드 + 소유 여부 주석
+    // MARK: - 전체 배경 로드 + 소유 여부 주석 (dataManager 활용)
     func fetchAllBackgrounds(completion: @escaping (Bool) -> Void) {
         isLoading = true
         Task {
-            do {
-                let snapshot = try await db.collection("Background").getDocuments()
-                let items: [Background] = try snapshot.documents.compactMap { try $0.data(as: Background.self) }
-                let ownedIds = UserManager.shared.currentUser?.backgrounds ?? []
-                let decorated = items.map { bg in
-                    BackgroundViewData(background: bg, isOwned: ownedIds.contains(bg.id ?? "")) }
-                
-                await MainActor.run {
-                    self.backgrounds = items
-                    self.backgroundViewData = decorated
-                    self.isLoading = false
-                    completion(true)
-                }
-            } catch {
-                print("배경 로드 에러: \(error.localizedDescription)")
-                await MainActor.run {
-                    self.backgrounds = []
-                    self.backgroundViewData = []
-                    self.isLoading = false
-                    completion(false)
-                }
+            // dataManager를 통해 캐싱된 데이터 활용
+            await dataManager.fetchBackgroundsIfNeeded()
+            
+            // dataManager에서 이미 로드된 데이터 가져오기
+            let items = backgrounds // dataManager.backgrounds
+            let ownedIds = UserManager.shared.currentUser?.backgrounds ?? []
+            let decorated = items.map { bg in
+                BackgroundViewData(background: bg, isOwned: ownedIds.contains(bg.id ?? ""))
+            }
+            
+            await MainActor.run {
+                self.backgroundViewData = decorated
+                self.isLoading = false
+                completion(true)
             }
         }
     }
     
-    // MARK: - 전체 카라비너 로드 + 소유 여부 주석
-    func fetchAllCarabinersAndAnnotate(completion: @escaping (Bool) -> Void) {
+    // MARK: - 전체 카라비너 로드 + 소유 여부 주석 (dataManager 활용)
+    func fetchAllCarabiners(completion: @escaping (Bool) -> Void) {
         isLoading = true
         Task {
-            do {
-                let snapshot = try await db.collection("Carabiner").getDocuments()
-                let items: [Carabiner] = try snapshot.documents.compactMap { try $0.data(as: Carabiner.self) }
-                let ownedIds = UserManager.shared.currentUser?.carabiners ?? []
-                let decorated = items.map { cb in
-                    CarabinerViewData(carabiner: cb, isOwned: ownedIds.contains(cb.id ?? "")) }
-                
-                await MainActor.run {
-                    self.carabiners = items
-                    self.carabinerViewData = decorated
-                    self.isLoading = false
-                    completion(true)
-                }
-            } catch {
-                print("카라비너 로드 에러: \(error.localizedDescription)")
-                await MainActor.run {
-                    self.carabiners = []
-                    self.carabinerViewData = []
-                    self.isLoading = false
-                    completion(false)
-                }
+            // dataManager를 통해 캐싱된 데이터 활용
+            await dataManager.fetchCarabinersIfNeeded()
+            
+            // dataManager에서 이미 로드된 데이터 가져오기
+            let items = carabiners // dataManager.carabiners
+            let ownedIds = UserManager.shared.currentUser?.carabiners ?? []
+            let decorated = items.map { cb in
+                CarabinerViewData(carabiner: cb, isOwned: ownedIds.contains(cb.id ?? ""))
+            }
+            
+            await MainActor.run {
+                self.carabinerViewData = decorated
+                self.isLoading = false
+                completion(true)
             }
         }
     }
