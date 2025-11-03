@@ -93,7 +93,7 @@ private struct LoadingOverlay: View {
             
             Text("키링을 준비하고 있어요...")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.gray500)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(0.1))
