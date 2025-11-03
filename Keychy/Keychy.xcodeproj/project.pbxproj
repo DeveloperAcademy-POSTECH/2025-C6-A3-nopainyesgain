@@ -381,6 +381,8 @@
 			children = (
 				38A5967F2EAFCF5F0003D712 /* UserManager.swift */,
 				38C147C62EB1F57F00A8E511 /* StorageManager.swift */,
+				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
+				C6830F032EB8A4000059379A /* WorkshopDataManager.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -926,12 +928,10 @@
 			children = (
 				C6830F072EB8E96D0059379A /* MyItemsView.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
-				C6830F032EB8A4000059379A /* WorkshopDataManager.swift */,
 				C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */,
 				C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */,
 				C68931D12EB850BC00C5F083 /* WorkshopMain */,
 				C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */,
-				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
 				C665DDE92EAEFAA800CE4495 /* Coin */,
 			);
