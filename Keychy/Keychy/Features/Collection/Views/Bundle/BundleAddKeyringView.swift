@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SpriteKit
+import NukeUI
 
 struct BundleAddKeyringView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
@@ -31,14 +32,6 @@ struct BundleAddKeyringView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                // 배경 이미지
-                Image(.cherries)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height)
-                    .clipped()
-                    .blur(radius: 20)
-                
                 keyringSceneView(geo: geo)
                 
                 if showSelectKeyringSheet {
@@ -56,6 +49,23 @@ struct BundleAddKeyringView: View {
                 }
             }
             .ignoresSafeArea()
+            .background(
+                // 배경 이미지
+                Group {
+                    if let background = viewModel.selectedBackground {
+                        LazyImage(url: URL(string: background.backgroundImage)) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } else if state.isLoading {
+                                Color.clear
+                            }
+                        }
+                    }
+                }
+                    .ignoresSafeArea()
+            )
             .onAppear {
                 fetchUserData()
                 //임시로 넣어둔 것
@@ -372,41 +382,45 @@ extension BundleAddKeyringView {
     }
     
     private func createCarabinerScene(targetSize: CGSize, screenWidth: CGFloat) -> CarabinerScene? {
-        guard let carabiner = viewModel.selectedCarabiner,
-              let cbImage = UIImage(named: carabiner.carabinerImage[0]) else {
-            return nil
-        }
+        let carabiner = viewModel.selectedCarabiner
         
-        // 초기 씬은 키링 없이 생성 (나중에 업데이트로 추가)
-        let bodyImages: [UIImage] = []
-        
-        let scene = CarabinerScene(
-            carabiner: carabiner,
-            carabinerImage: cbImage,
-            ringType: .basic,
-            chainType: .basic,
-            bodyType: .basic,
-            bodyImages: bodyImages,
-            targetSize: targetSize,
-            screenWidth: screenWidth,
-            // 카라비너 사이즈가 화면 가로 너비의 정확히 0.5배가 되도록 zoomScale을 1.0으로 설정
-            zoomScale: 1.0,
-            // 뭉치 만들기 뷰에서는 물리 설정 비활성화
-            isPhysicsEnabled: false
-        )
-        scene.scaleMode = .resizeFill
-        
-        // 씬 로딩 완료 콜백 설정
-        scene.onSceneReady = {
-            DispatchQueue.main.async {
-                self.isSceneReady = true
-                // 씬이 준비되면 기존 키링들이 있다면 업데이트
-                if !self.selectedKeyrings.isEmpty {
-                    self.needsSceneUpdate = true
+        // 카라비너 이미지 URL 로드 후 씬 생성
+        if let imageURLString = carabiner?.carabinerImage[0] {
+            Task {
+                do {
+                    let loadedImage = try await StorageManager.shared.getImage(path: imageURLString)
+                    await MainActor.run {
+                        // 이미지가 준비된 후 씬 생성
+                        let scene = CarabinerScene(
+                            carabiner: carabiner,
+                            carabinerImage: loadedImage,
+                            ringType: .basic,
+                            chainType: .basic,
+                            bodyType: .basic,
+                            bodyImages: [],
+                            targetSize: targetSize,
+                            screenWidth: screenWidth,
+                            zoomScale: 1.0,
+                            isPhysicsEnabled: false
+                        )
+                        scene.scaleMode = SKSceneScaleMode.resizeFill
+                        scene.onSceneReady = {
+                            DispatchQueue.main.async {
+                                self.isSceneReady = true
+                                if !self.selectedKeyrings.isEmpty {
+                                    self.needsSceneUpdate = true
+                                }
+                            }
+                        }
+                        self.carabinerScene = scene
+                    }
+                } catch {
+                    print("카라비너 이미지 로드 실패: \(error)")
                 }
             }
         }
-        return scene
+        
+        return nil // 비동기로 나중에 설정될 예정
     }
     
     // CarabinerScene 생성 또는 업데이트 (원래 방식)
@@ -462,7 +476,6 @@ extension BundleAddKeyringView {
                 if let carabinerNode = scene.carabinerNode {
                     
                     var completedKeyrings = 0
-                    let totalKeyrings = keyringData.count
                     
                     // 각 키링을 올바른 위치에 개별적으로 생성
                     for (arrayIndex, (keyringIndex, _)) in keyringData.enumerated() {
@@ -495,7 +508,7 @@ extension BundleAddKeyringView {
         }
     }
     
-    // URL 또는 번들에서 이미지들을 로드하는 메서드
+    // URL에서 이미지들을 로드하는 메서드
     private func loadKeyringImages(
         keyringData: [(index: Int, keyring: Keyring)],
         completion: @escaping ([UIImage]) -> Void
@@ -507,22 +520,11 @@ extension BundleAddKeyringView {
             
             for imageIdentifier in imageIdentifiers {
                 do {
-                    let image: UIImage
-                    
-                    if imageIdentifier.hasPrefix("http") {
-                        // URL에서 이미지 로드 (StorageManager 사용)
-                        image = try await StorageManager.shared.getImage(path: imageIdentifier)
-                    } else {
-                        // 번들에서 이미지 로드
-                        guard let bundleImage = UIImage(named: imageIdentifier) else {
-                            print("번들 이미지 로드 실패: \(imageIdentifier)")
-                            continue
-                        }
-                        image = bundleImage
-                    }
-                    
+                    // URL에서 이미지 로드 (StorageManager 사용)
+                    let image = try await StorageManager.shared.getImage(path: imageIdentifier)
                     loadedImages.append(image)
                 } catch {
+                    print("키링 이미지 로드 실패: \(imageIdentifier), 에러: \(error)")
                 }
             }
             
