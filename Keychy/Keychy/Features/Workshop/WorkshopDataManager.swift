@@ -47,7 +47,8 @@ class WorkshopDataManager {
         if isCacheValid(for: "Template") && !templates.isEmpty {
             return
         }
-        templates = await fetchItems(collection: "Template")
+        let items: [KeyringTemplate] = await fetchItems(collection: "Template")
+        self.templates = items
         updateLastFetched(for: "Template")
     }
 
@@ -56,7 +57,8 @@ class WorkshopDataManager {
         if isCacheValid(for: "Background") && !backgrounds.isEmpty {
             return
         }
-        backgrounds = await fetchItems(collection: "Background")
+        let items: [Background] = await fetchItems(collection: "Background")
+        self.backgrounds = items
         updateLastFetched(for: "Background")
     }
 
@@ -65,7 +67,8 @@ class WorkshopDataManager {
         if isCacheValid(for: "Carabiner") && !carabiners.isEmpty {
             return
         }
-        carabiners = await fetchItems(collection: "Carabiner")
+        let items: [Carabiner] = await fetchItems(collection: "Carabiner")
+        self.carabiners = items
         updateLastFetched(for: "Carabiner")
     }
 
@@ -74,7 +77,8 @@ class WorkshopDataManager {
         if isCacheValid(for: "Particle") && !particles.isEmpty {
             return
         }
-        particles = await fetchItems(collection: "Particle")
+        let items: [Particle] = await fetchItems(collection: "Particle")
+        self.particles = items
         updateLastFetched(for: "Particle")
     }
 
@@ -83,14 +87,9 @@ class WorkshopDataManager {
         if isCacheValid(for: "Sound") && !sounds.isEmpty {
             return
         }
-        sounds = await fetchItems(collection: "Sound")
+        let items: [Sound] = await fetchItems(collection: "Sound")
+        self.sounds = items
         updateLastFetched(for: "Sound")
-    }
-
-    /// 캐시를 강제로 무효화하고 다시 가져오기
-    func forceRefresh() async {
-        lastFetchedDate.removeAll()
-        await fetchAllDataIfNeeded()
     }
 
     // MARK: - Private Helper Methods

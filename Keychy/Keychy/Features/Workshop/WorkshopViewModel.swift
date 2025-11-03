@@ -101,9 +101,6 @@ class WorkshopViewModel {
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
     var availableCarabinerTags: [String] = []
-    
-    // Shared data manager
-    private let dataManager = WorkshopDataManager.shared
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
@@ -112,6 +109,8 @@ class WorkshopViewModel {
     // 카테고리별 로딩 상태 추적
     private var loadedCategories: Set<String> = []
 
+    // Shared data manager
+    private let dataManager = WorkshopDataManager.shared
 
     // Computed properties for shared data
     var templates: [KeyringTemplate] { dataManager.templates }
@@ -147,19 +146,19 @@ class WorkshopViewModel {
 
         switch category {
         case "키링":
-            templates = await fetchItems(collection: "Template")
+            await dataManager.fetchTemplatesIfNeeded()
             loadedCategories.insert("키링")
         case "배경":
-            backgrounds = await fetchItems(collection: "Background")
+            await dataManager.fetchBackgroundsIfNeeded()
             extractAvailableTags()
             loadedCategories.insert("배경")
         case "카라비너":
-            carabiners = await fetchItems(collection: "Carabiner")
+            await dataManager.fetchCarabinersIfNeeded()
             extractAvailableTags()
             loadedCategories.insert("카라비너")
         case "이펙트":
-            particles = await fetchItems(collection: "Particle")
-            sounds = await fetchItems(collection: "Sound")
+            await dataManager.fetchParticlesIfNeeded()
+            await dataManager.fetchSoundsIfNeeded()
             loadedCategories.insert("이펙트")
         default:
             break
