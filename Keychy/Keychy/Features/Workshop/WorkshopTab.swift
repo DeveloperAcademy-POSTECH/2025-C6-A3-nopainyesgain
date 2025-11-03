@@ -86,4 +86,9 @@ struct WorkshopTab: View {
         }
         return viewModel
     }
+
+    // MARK: - ViewModel Reset
+    func resetAcrylicPhotoVM() {
+        acrylicPhotoVM = nil
+    }
 }

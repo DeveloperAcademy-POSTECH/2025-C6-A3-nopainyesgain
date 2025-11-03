@@ -154,7 +154,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                             Color.gray50
                                 .overlay {
                                     Image(systemName: "photo")
-                                        .foregroundStyle(.gray50)
+                                        .foregroundStyle(.gray300)                                
                                 }
                         }
                     }
@@ -252,7 +252,7 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
                         } else if state.isLoading {
                             ProgressView()
                         } else {
-                            Color.gray.opacity(0.1)
+                            Color.gray50
                         }
                     }
                     .scaledToFit()
