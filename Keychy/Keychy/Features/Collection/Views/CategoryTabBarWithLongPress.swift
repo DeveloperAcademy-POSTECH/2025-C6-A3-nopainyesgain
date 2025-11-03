@@ -49,15 +49,26 @@ private struct CategoryTabButtonWithLongPress: View {
     let onLongPress: (CGRect) -> Void
     
     @State private var buttonFrame: CGRect = .zero
+    @State private var isPressing: Bool = false
+    @State private var longPressTriggered: Bool = false
     @State private var pressStartTime: Date?
-    @State private var timer: Timer?
+    @State private var longPressTimer: Timer?
+    @State private var styleTimer: Timer?
+    @State private var initialTouchLocation: CGPoint = .zero
+    @State private var hasMoved: Bool = false
     
     var body: some View {
         // 기존 CategoryTabBar 스타일
         VStack(spacing: Spacing.sm) {
-            Text(title) // 17B gray300
-                .typography(isSelected ? .suit15B25 : .suit15SB25)
-                .foregroundStyle(isSelected ? Color.main500 : Color.black100)
+            Text(title)
+                .typography(
+                    isPressing ? .suit17B :
+                    isSelected ? .suit15B25 : .suit15SB25
+                )
+                .foregroundStyle(
+                    isPressing ? Color.gray300 :
+                    isSelected ? Color.main500 : Color.black100
+                )
             
             Rectangle()
                 .fill(isSelected ? Color.main500 : Color.clear)
@@ -76,48 +87,100 @@ private struct CategoryTabButtonWithLongPress: View {
             buttonFrame = frame
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            if pressStartTime == nil {
-                onTap()
-            }
-        }
-        .gesture( // Long press 제스쳐 직접 구현
+        // Long Press Gesture
+        .gesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { value in
+                    // 첫 터치
                     if pressStartTime == nil {
                         pressStartTime = Date()
+                        initialTouchLocation = value.location
+                        longPressTriggered = false
+                        hasMoved = false
                         
-                        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
-                            if isEditable {
+                        // 편집 가능한 태그만 누르는 중 스타일 적용
+                        if isEditable {
+                            styleTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { _ in
+                                if !hasMoved && !longPressTriggered {
+                                    isPressing = true
+                                }
+                            }
+                        }
+                        
+                        longPressTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+                            // 편집 가능하고, 아직 long press 안 됐고, 안 움직였으면
+                            if isEditable && !longPressTriggered && !hasMoved {
                                 let generator = UIImpactFeedbackGenerator(style: .medium)
                                 generator.impactOccurred()
                                 
                                 onLongPress(buttonFrame)
+                                longPressTriggered = true
+                            } else {
+                                // long press 안 되면 스타일 원복
+                                isPressing = false
                             }
-                            pressStartTime = nil
                         }
                     }
                     
-                    if abs(value.translation.width) > 10 || abs(value.translation.height) > 10 {
-                        timer?.invalidate()
-                        pressStartTime = nil
+                    let dragDistance = hypot(
+                        value.location.x - initialTouchLocation.x,
+                        value.location.y - initialTouchLocation.y
+                    )
+                    
+                    // 10pt 이상 움직이면 스크롤로 간주
+                    if dragDistance > 10 {
+                        hasMoved = true
+                        cancelPress()
                     }
                 }
-                .onEnded { _ in
-                    if let startTime = pressStartTime {
+                .onEnded { value in
+                    defer {
+                        resetPress()
+                    }
+                    
+                    // Long press가 실행되었으면 아무것도 안 함
+                    guard !longPressTriggered else { return }
+                    
+                    // 움직였으면 (스크롤) 아무것도 안 함
+                    guard !hasMoved else { return }
+                    
+                    // 드래그 거리 최종 체크
+                    let dragDistance = hypot(
+                        value.location.x - initialTouchLocation.x,
+                        value.location.y - initialTouchLocation.y
+                    )
+                    
+                    // 거의 안 움직이고 빠르게 뗐으면 탭
+                    if dragDistance < 10, let startTime = pressStartTime {
                         let duration = Date().timeIntervalSince(startTime)
-                        if duration < 0.2 {
+                        if duration < 0.3 {
                             onTap()
                         }
                     }
-                    
-                    timer?.invalidate()
-                    pressStartTime = nil
                 }
         )
-        .transaction { transaction in
-            transaction.animation = nil
-        }
+        .animation(.easeInOut(duration: 0.1), value: isPressing)
+    }
+    
+    // Press 취소 (타이머만 취소, 상태는 유지)
+    private func cancelPress() {
+        styleTimer?.invalidate()
+        styleTimer = nil
+        longPressTimer?.invalidate()
+        longPressTimer = nil
+        isPressing = false
+    }
+    
+    // 완전 초기화
+    private func resetPress() {
+        styleTimer?.invalidate()
+        styleTimer = nil
+        longPressTimer?.invalidate()
+        longPressTimer = nil
+        pressStartTime = nil
+        isPressing = false
+        longPressTriggered = false
+        hasMoved = false
     }
 }
 
