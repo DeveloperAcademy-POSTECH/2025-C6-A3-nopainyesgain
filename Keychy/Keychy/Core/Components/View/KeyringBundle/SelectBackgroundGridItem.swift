@@ -6,39 +6,31 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct SelectBackgroundGridItem: View {
     let background: BackgroundViewData
-    @State private var backgroundImage: UIImage?
-    @State private var isLoading = true
-    @State private var hasError = false
     
     var body: some View {
         VStack(spacing: 10) {
             ZStack {
-                // 배경 이미지/플레이스홀더
-                if let image = backgroundImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(2/3, contentMode: .fill)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                } else if hasError {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.gray.opacity(0.2))
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
-                        )
-                } else {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.gray.opacity(0.2))
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                        .overlay(ProgressView())
+                // 배경 이미지
+                LazyImage(url: URL(string: background.background.backgroundImage)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(2/3, contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    } else if state.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .aspectRatio(2/3, contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    } else {
+                        Color.gray.opacity(0.1)
+                            .aspectRatio(2/3, contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
                 }
                 
                 // 오버레이 요소들
@@ -46,7 +38,7 @@ struct SelectBackgroundGridItem: View {
                     HStack {
                         // 유료 배경은 유료 아이콘 표시
                         if !background.background.isFree {
-                            Image(.cherries)
+                            Image(.deselectPaid)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 20, height: 20)
@@ -77,20 +69,10 @@ struct SelectBackgroundGridItem: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.gray.opacity(0.2))
             )
-            .task {
-                do {
-                    backgroundImage = try await
-                    StorageManager.shared.getImage(path: background.background.backgroundImage)
-                    isLoading = false
-                } catch {
-                    hasError = true
-                    isLoading = false
-                    print("배경 이미지 로드 실패: \(error)")
-                }
-            }
+
             Text(background.background.backgroundName)
                 .typography(.suit14SB18)
-                .foregroundStyle(Color.black100)
+                .foregroundStyle(.black100)
         } //:VSTACK
     }
 }
