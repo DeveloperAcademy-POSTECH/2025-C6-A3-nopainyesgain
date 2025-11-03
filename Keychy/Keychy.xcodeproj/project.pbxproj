@@ -64,6 +64,12 @@
 		4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF192EB2565900252590 /* Nuke */; };
 		4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBBEF1B2EB2565900252590 /* NukeUI */; };
 		4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */; };
+		4CBBEF242EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF222EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift */; };
+		4CBBEF252EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF232EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift */; };
+		4CBBEF262EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF212EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift */; };
+		4CBBEF2A2EB7DB9800252590 /* RecordingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */; };
+		4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF272EB7DB9800252590 /* AudioRecorderManager.swift */; };
+		4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -223,6 +229,12 @@
 		4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGuiding.swift; sourceTree = "<group>"; };
 		4CBBEF162EB24DEC00252590 /* AcrylicPhotoGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcrylicPhotoGuiding.swift; sourceTree = "<group>"; };
 		4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
+		4CBBEF212EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+Helpers.swift"; sourceTree = "<group>"; };
+		4CBBEF222EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+Sheet.swift"; sourceTree = "<group>"; };
+		4CBBEF232EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+TagManagement.swift"; sourceTree = "<group>"; };
+		4CBBEF272EB7DB9800252590 /* AudioRecorderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderManager.swift; sourceTree = "<group>"; };
+		4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSheet.swift; sourceTree = "<group>"; };
+		4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringViewModelProtocol+Reset.swift"; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -434,6 +446,7 @@
 		4C7775302EB0ED0800981C3E /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4CBBEF292EB7DB9800252590 /* Recording */,
 				4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */,
 				4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */,
 			);
@@ -459,6 +472,15 @@
 				4C7775372EB0EFD800981C3E /* ItemDetailMakingBtn.swift */,
 			);
 			path = Items;
+			sourceTree = "<group>";
+		};
+		4CBBEF292EB7DB9800252590 /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				4CBBEF272EB7DB9800252590 /* AudioRecorderManager.swift */,
+				4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */,
+			);
+			path = Recording;
 			sourceTree = "<group>";
 		};
 		4CEC61A82EAE071B0099ECEE = {
@@ -795,6 +817,7 @@
 		4CEC62522EAE08DF0099ECEE /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */,
 				4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */,
 			);
 			path = Protocols;
@@ -805,6 +828,9 @@
 			children = (
 				4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */,
 				4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */,
+				4CBBEF222EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift */,
+				4CBBEF212EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift */,
+				4CBBEF232EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift */,
 				4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */,
 			);
 			path = Views;
@@ -1131,6 +1157,8 @@
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
+				4CBBEF2A2EB7DB9800252590 /* RecordingSheet.swift in Sources */,
+				4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */,
 				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
 				4C77753E2EB1343600981C3E /* IntroViewModel.swift in Sources */,
 				385425C62EB3BD7C00A06C02 /* AcrylicPhotoGuiding.swift in Sources */,
@@ -1154,6 +1182,9 @@
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
 				4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */,
+				4CBBEF242EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift in Sources */,
+				4CBBEF252EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift in Sources */,
+				4CBBEF262EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift in Sources */,
 				4C7775342EB0EF8800981C3E /* ItemDetailInfoSection.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
@@ -1161,6 +1192,7 @@
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
+				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				385425C82EB3C3F300A06C02 /* KeyringDetailSceneView.swift in Sources */,
@@ -1377,7 +1409,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5M5VM39FM9;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Keychy/Info.plist;
@@ -1394,10 +1426,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.keychy.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.KeychyOfficial.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Keychy_Profile;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = KeychyApp;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;

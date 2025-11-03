@@ -83,6 +83,7 @@ extension KeyringCompleteView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button(action: {
+                viewModel.resetAll()
                 router.reset()
             }) {
                 Image(systemName: "xmark")
@@ -160,29 +161,48 @@ extension KeyringCompleteView {
                 return
             }
 
-            // 2. 키링 생성
-            let templateId: String
-            if let vm = self.viewModel as? AcrylicPhotoVM {
-                templateId = vm.template?.id ?? "AcrylicPhoto"
-            } else {
-                templateId = "AcrylicPhoto"
-            }
+            // 2. 커스텀 사운드가 있으면 Firebase Storage에 업로드
+            if let customSoundURL = self.viewModel.customSoundURL {
+                self.uploadSoundToStorage(soundURL: customSoundURL, uid: uid) { soundURL in
+                    guard let soundURL = soundURL else {
+                        // 업로드 실패 시 기존 soundId 사용
+                        self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
+                        return
+                    }
 
-            self.createKeyring(
-                uid: uid,
-                name: self.viewModel.nameText,
-                bodyImage: imageURL,
-                soundId: self.viewModel.soundId,
-                particleId: self.viewModel.particleId,
-                memo: self.viewModel.memoText.isEmpty ? nil : self.viewModel.memoText,
-                tags: self.viewModel.selectedTags,
-                selectedTemplate: templateId,
-                selectedRing: "basic",
-                selectedChain: "basic",
-                chainLength: 5
-            ) { success, keyringId in
-                // 키링 생성 완료
+                    // 업로드 성공 - Firebase Storage URL을 soundId로 사용
+                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL)
+                }
+            } else {
+                // 커스텀 사운드 없음 - 기존 soundId 사용
+                self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
             }
+        }
+    }
+
+    // MARK: - 키링 생성 헬퍼 메서드
+    private func createKeyringWithData(uid: String, imageURL: String, soundId: String) {
+        let templateId: String
+        if let vm = self.viewModel as? AcrylicPhotoVM {
+            templateId = vm.template?.id ?? "AcrylicPhoto"
+        } else {
+            templateId = "AcrylicPhoto"
+        }
+
+        self.createKeyring(
+            uid: uid,
+            name: self.viewModel.nameText,
+            bodyImage: imageURL,
+            soundId: soundId,
+            particleId: self.viewModel.particleId,
+            memo: self.viewModel.memoText.isEmpty ? nil : self.viewModel.memoText,
+            tags: self.viewModel.selectedTags,
+            selectedTemplate: templateId,
+            selectedRing: "basic",
+            selectedChain: "basic",
+            chainLength: 5
+        ) { success, keyringId in
+            // 키링 생성 완료
         }
     }
 
@@ -201,13 +221,46 @@ extension KeyringCompleteView {
             .child(fileName)
 
         storageRef.putData(imageData, metadata: nil) { metadata, error in
+            if error != nil {
+                completion(nil)
+                return
+            }
+
+            storageRef.downloadURL { url, error in
+                if error != nil {
+                    completion(nil)
+                    return
+                }
+
+                completion(url?.absoluteString)
+            }
+        }
+    }
+
+    // MARK: - Firebase Storage에 커스텀 사운드 업로드
+    private func uploadSoundToStorage(soundURL: URL, uid: String, completion: @escaping (String?) -> Void) {
+        guard let soundData = try? Data(contentsOf: soundURL) else {
+            completion(nil)
+            return
+        }
+
+        let fileName = "\(UUID().uuidString).m4a"
+        let storageRef = Storage.storage().reference()
+            .child("Keyrings")
+            .child("CustomSounds")
+            .child(uid)
+            .child(fileName)
+
+        storageRef.putData(soundData, metadata: nil) { metadata, error in
             if let error = error {
+                print("Error uploading custom sound: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
 
             storageRef.downloadURL { url, error in
                 if let error = error {
+                    print("Error getting download URL: \(error.localizedDescription)")
                     completion(nil)
                     return
                 }

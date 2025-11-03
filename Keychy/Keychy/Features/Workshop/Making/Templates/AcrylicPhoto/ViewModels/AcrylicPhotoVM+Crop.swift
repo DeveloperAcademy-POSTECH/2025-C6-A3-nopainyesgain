@@ -13,7 +13,15 @@ extension AcrylicPhotoVM {
     /// 크롭 영역을 이미지 중앙으로 리셋
     func resetToCenter() {
         let displayRect = getDisplayedImageRect()
-        cropArea = displayRect
+
+        // 크롭박스 초기 크기
+        let scale: CGFloat = 1.0
+        let newWidth = displayRect.width * scale
+        let newHeight = displayRect.height * scale
+        let newX = displayRect.midX - newWidth / 2
+        let newY = displayRect.midY - newHeight / 2
+
+        cropArea = CGRect(x: newX, y: newY, width: newWidth, height: newHeight)
         hasCropAreaBeenSet = true
     }
 
