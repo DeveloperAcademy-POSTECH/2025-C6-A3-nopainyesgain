@@ -46,7 +46,7 @@ struct KeyringDetailSceneView: View {
                             .scaleEffect(1.2)
                         Text("키링을 불러오는 중...")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.gray500)
                     }
                     .padding(20)
                     .background(.regularMaterial)

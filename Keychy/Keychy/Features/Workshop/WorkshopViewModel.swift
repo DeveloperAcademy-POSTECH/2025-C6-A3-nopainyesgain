@@ -27,6 +27,12 @@ enum EffectFilterType: String, CaseIterable {
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
 protocol WorkshopItem: Identifiable, Decodable {
+    
+    /// id의 사용
+    /// - 스크롤 위치 복원 (savedScrollPosition)
+    /// - 보유 아이템 확인 (user.templates.contains(itemId))
+    /// - 이펙트 다운로드 추적 (downloadingItemIds)
+    /// - SwiftUI 뷰 식별 (.id() modifier)
     var id: String? { get }
     var name: String { get }
     var itemDescription: String { get }
@@ -86,17 +92,25 @@ class WorkshopViewModel {
     var selectedEffectFilter: EffectFilterType? = nil
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
-    var mainContentOffset: CGFloat = 0
+    var mainContentOffset: CGFloat = 140
+
+    // 스크롤 위치 저장
+    var savedScrollPosition: String? = nil
+    var savedCategory: String? = nil
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
     var availableCarabinerTags: [String] = []
-    
-    // Shared data manager
-    private let dataManager = WorkshopDataManager.shared
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var hasLoadedOwnedItems: Bool = false
+
+    // 카테고리별 로딩 상태 추적
+    private var loadedCategories: Set<String> = []
+
+    // Shared data manager
+    private let dataManager = WorkshopDataManager.shared
 
     // Computed properties for shared data
     var templates: [KeyringTemplate] { dataManager.templates }
@@ -120,7 +134,50 @@ class WorkshopViewModel {
     
     // MARK: - Firebase Methods (통합)
 
-    /// 모든 데이터 가져오기 (캐싱된 데이터 활용)
+    /// 특정 카테고리의 데이터만 가져오기
+    func fetchDataForCategory(_ category: String) async {
+        // 이미 로드된 카테고리는 스킵
+        guard !loadedCategories.contains(category) else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        defer { isLoading = false }
+
+        switch category {
+        case "키링":
+            await dataManager.fetchTemplatesIfNeeded()
+            loadedCategories.insert("키링")
+        case "배경":
+            await dataManager.fetchBackgroundsIfNeeded()
+            extractAvailableTags()
+            loadedCategories.insert("배경")
+        case "카라비너":
+            await dataManager.fetchCarabinersIfNeeded()
+            extractAvailableTags()
+            loadedCategories.insert("카라비너")
+        case "이펙트":
+            await dataManager.fetchParticlesIfNeeded()
+            await dataManager.fetchSoundsIfNeeded()
+            loadedCategories.insert("이펙트")
+        default:
+            break
+        }
+    }
+
+    /// 나머지 카테고리들을 백그라운드에서 프리페칭
+    func prefetchRemainingData() async {
+        let allCategories = ["키링", "배경", "카라비너", "이펙트"]
+
+        for category in allCategories {
+            // 이미 로드된 카테고리는 스킵
+            guard !loadedCategories.contains(category) else { continue }
+
+            await fetchDataForCategory(category)
+        }
+    }
+
+    /// 모든 데이터 가져오기 (다시 시도 버튼에서 사용)
     func fetchAllData() async {
         isLoading = true
         errorMessage = nil
@@ -129,6 +186,9 @@ class WorkshopViewModel {
 
         // WorkshopDataManager를 통해 캐싱된 데이터 가져오기
         await dataManager.fetchAllDataIfNeeded()
+
+        // 모든 카테고리를 로드된 것으로 표시
+        loadedCategories = ["키링", "배경", "카라비너", "이펙트"]
 
         // 데이터를 가져온 후 사용 가능한 태그 추출
         extractAvailableTags()
@@ -232,12 +292,14 @@ class WorkshopViewModel {
     /// 사용자가 보유한 아이템 목록 로드
     func loadOwnedItems() async {
         guard let user = userManager.currentUser else { return }
-        
+
         ownedTemplates = await loadOwnedItems(collection: "Template", ids: user.templates)
         ownedBackgrounds = await loadOwnedItems(collection: "Background", ids: user.backgrounds)
         ownedCarabiners = await loadOwnedItems(collection: "Carabiner", ids: user.carabiners)
         ownedParticles = await loadOwnedItems(collection: "Particle", ids: user.particleEffects)
         ownedSounds = await loadOwnedItems(collection: "Sound", ids: user.soundEffects)
+
+        hasLoadedOwnedItems = true
     }
     
     /// 통합된 보유 아이템 로드 함수
