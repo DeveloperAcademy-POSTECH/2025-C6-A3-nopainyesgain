@@ -94,7 +94,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 92)
+                .padding(.vertical, 92)
             }
         }
     }
