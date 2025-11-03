@@ -23,7 +23,7 @@ extension WorkshopView {
                 }
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(.white100)
     }
 
     /// 로딩 뷰

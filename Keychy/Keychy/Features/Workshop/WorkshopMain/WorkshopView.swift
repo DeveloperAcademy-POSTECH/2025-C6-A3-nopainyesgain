@@ -36,6 +36,24 @@ struct WorkshopView: View {
 
             // 스티키 헤더 (카테고리 탭 + 필터)
             stickyHeaderSection
+
+            // 상단 그라데이션 블러 오버레이
+            VStack {
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(0.8),
+                        Color.white.opacity(0.6),
+                        Color.white.opacity(0.3),
+                        Color.clear
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 100)
+                .ignoresSafeArea(edges: .top)
+                Spacer()
+            }
+            .allowsHitTesting(false)
         }
         .background(
             Image(.back)
@@ -76,7 +94,7 @@ struct WorkshopView: View {
 
     /// 메인 스크롤 콘텐츠
     var mainScrollContent: some View {
-        ScrollView(showsIndicators: false){
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 // 상단 배너 (코인 버튼 + 타이틀)
                 topBannerSection
