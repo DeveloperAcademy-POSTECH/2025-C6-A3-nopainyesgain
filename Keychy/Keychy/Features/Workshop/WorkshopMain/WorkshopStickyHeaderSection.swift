@@ -32,36 +32,38 @@ extension WorkshopView {
 
     /// 카테고리에 따라 다른 필터바 표시
     var filterBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                // 정렬 버튼
-                Button {
-                    viewModel.showFilterSheet = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(viewModel.sortOrder)
-                            .typography(.suit14SB18)
-                            .foregroundColor(.gray500)
+        HStack(spacing: 8) {
+            // 정렬 버튼 (고정)
+            Button {
+                viewModel.showFilterSheet = true
+            } label: {
+                HStack(spacing: 4) {
+                    Text(viewModel.sortOrder)
+                        .typography(.suit14SB18)
+                        .foregroundColor(.gray500)
 
-                        Image(systemName: "chevron.down")
-                            .foregroundColor(.gray500)
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.gray500)
 
-                    }
-                    .padding(.horizontal, Spacing.gap)
-                    .padding(.vertical, Spacing.sm)
-                    .frame(height: 34)
-                    .background(
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(.gray50)
-                    )
                 }
-                .buttonStyle(PlainButtonStyle())
-
-                // 카테고리별 필터
-                categorySpecificFilters
+                .padding(.horizontal, Spacing.gap)
+                .padding(.vertical, Spacing.sm)
+                .frame(height: 34)
+                .background(
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(.gray50)
+                )
             }
-            .padding(.top, 12)
+            .buttonStyle(PlainButtonStyle())
+
+            // 카테고리별 필터 (스크롤 가능)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    categorySpecificFilters
+                }
+            }
         }
+        .padding(.top, 12)
     }
 
 
