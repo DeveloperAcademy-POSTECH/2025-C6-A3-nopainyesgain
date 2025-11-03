@@ -45,7 +45,7 @@ class CollectionViewModel {
     var selectedBundle: KeyringBundle?
     
     // MARK: - Shared Data Manager
-    private let dataManager = WorkshopDataManager.shared
+    let dataManager = WorkshopDataManager.shared
 
     // MARK: - 배경 및 카라비너 데이터 (WorkshopDataManager에서 가져옴)
     var backgrounds: [Background] { dataManager.backgrounds }
@@ -53,6 +53,10 @@ class CollectionViewModel {
 
     var carabiners: [Carabiner] { dataManager.carabiners }
     var selectedCarabiner: Carabiner?
+
+    // MARK: - 화면 표시용 데이터 (Bundle 관련)
+    var _backgroundViewData: [BackgroundViewData] = []
+    var _carabinerViewData: [CarabinerViewData] = []
 
     // MARK: - Data Loading
     /// 배경 및 카라비너 데이터 로드 (캐싱된 데이터 활용)
