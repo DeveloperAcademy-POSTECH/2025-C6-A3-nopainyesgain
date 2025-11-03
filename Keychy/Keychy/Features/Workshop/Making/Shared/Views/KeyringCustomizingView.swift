@@ -258,43 +258,55 @@ extension KeyringCustomizingView {
                 }
 
                 // 버튼들만 스크롤
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        // "없음" 버튼
-                        Button {
-                            viewModel.updateSound(nil)
-                        } label: {
-                            Text("없음")
-                                .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 9)
-                                .foregroundStyle(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .white100 : .gray500)
-                                .background(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .main500 : .gray50)
-                                .clipShape(.rect(cornerRadius: 15))
-                        }
-
-                        // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
-                        if viewModel.hasCustomSound {
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            // "없음" 버튼
                             Button {
-                                viewModel.applyCustomSound(viewModel.customSoundURL!)
+                                viewModel.updateSound(nil)
                             } label: {
-                                Text("음성 메모")
-                                    .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
+                                Text("없음")
+                                    .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 9)
-                                    .foregroundStyle(viewModel.soundId == "custom_recording" ? .white100 : .gray500)
-                                    .background(viewModel.soundId == "custom_recording" ? .main500 : .gray50)
+                                    .foregroundStyle(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .white100 : .gray500)
+                                    .background(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .main500 : .gray50)
                                     .clipShape(.rect(cornerRadius: 15))
                             }
-                        }
+                            .id("sound_none")
 
-                        // Firebase 사운드 목록
-                        ForEach(viewModel.availableSounds) { sound in
-                            soundItemButton(sound: sound)
+                            // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
+                            if viewModel.hasCustomSound {
+                                Button {
+                                    viewModel.applyCustomSound(viewModel.customSoundURL!)
+                                } label: {
+                                    Text("음성 메모")
+                                        .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 9)
+                                        .foregroundStyle(viewModel.soundId == "custom_recording" ? .white100 : .gray500)
+                                        .background(viewModel.soundId == "custom_recording" ? .main500 : .gray50)
+                                        .clipShape(.rect(cornerRadius: 15))
+                                }
+                                .id("sound_custom")
+                            }
+
+                            // Firebase 사운드 목록 (정렬됨)
+                            ForEach(viewModel.sortedAvailableSounds) { sound in
+                                soundItemButton(sound: sound)
+                                    .id(sound.id)
+                            }
+                        }
+                        .padding(.leading, 8)
+                        .padding(.trailing, 20)
+                    }
+                    .onChange(of: viewModel.selectedSound?.id) { _, newValue in
+                        if let soundId = newValue {
+                            withAnimation {
+                                proxy.scrollTo(soundId, anchor: .center)
+                            }
                         }
                     }
-                    .padding(.leading, 8)
-                    .padding(.trailing, 20)
                 }
                 .overlay(alignment: .leading) {
                     // Rectangle을 위에 겹쳐서 자연스럽게 가림
@@ -315,27 +327,38 @@ extension KeyringCustomizingView {
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    // "없음" 버튼
-                    Button {
-                        viewModel.updateParticle(nil)
-                    } label: {
-                        Text("없음")
-                            .typography(viewModel.selectedParticle == nil ? .suit15SB25 : .suit15M25)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 9)
-                            .foregroundStyle(viewModel.selectedParticle == nil ? .white100 : .gray500)
-                            .background(viewModel.selectedParticle == nil ? .main500 : .gray50)
-                            .clipShape(.rect(cornerRadius: 15))
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        // "없음" 버튼
+                        Button {
+                            viewModel.updateParticle(nil)
+                        } label: {
+                            Text("없음")
+                                .typography(viewModel.selectedParticle == nil ? .suit15SB25 : .suit15M25)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 9)
+                                .foregroundStyle(viewModel.selectedParticle == nil ? .white100 : .gray500)
+                                .background(viewModel.selectedParticle == nil ? .main500 : .gray50)
+                                .clipShape(.rect(cornerRadius: 15))
+                        }
+                        .id("particle_none")
+
+                        // Firebase 파티클 목록 (정렬됨)
+                        ForEach(viewModel.sortedAvailableParticles) { particle in
+                            particleItemButton(particle: particle)
+                                .id(particle.id)
+                        }
                     }
-                    
-                    // Firebase 파티클 목록
-                    ForEach(viewModel.availableParticles) { particle in
-                        particleItemButton(particle: particle)
+                    .padding(.horizontal, 20)
+                }
+                .onChange(of: viewModel.selectedParticle?.id) { _, newValue in
+                    if let particleId = newValue {
+                        withAnimation {
+                            proxy.scrollTo(particleId, anchor: .center)
+                        }
                     }
                 }
-                .padding(.horizontal, 20)
             }
         }
     }
