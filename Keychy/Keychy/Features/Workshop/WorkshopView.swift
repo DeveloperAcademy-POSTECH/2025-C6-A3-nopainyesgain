@@ -120,11 +120,11 @@ struct WorkshopView: View {
                     // 카테고리 복원
                     viewModel.selectedCategory = savedCategory
 
-                    // 스크롤 위치 복원
+                    // 스크롤 위치 복원 (아이템이 화면 중앙에 오도록)
                     if let savedPosition = viewModel.savedScrollPosition {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             withAnimation {
-                                scrollProxy.scrollTo(savedPosition, anchor: .top)
+                                scrollProxy.scrollTo(savedPosition, anchor: .center)
                             }
                         }
                     }
@@ -462,6 +462,7 @@ extension WorkshopView {
                                 router: router,
                                 viewModel: viewModel
                             )
+                            .id(sound.id)
                         } else if let particle = item as? Particle {
                             WorkshopItemView(
                                 item: particle,
@@ -469,6 +470,7 @@ extension WorkshopView {
                                 router: router,
                                 viewModel: viewModel
                             )
+                            .id(particle.id)
                         }
                     }
                 }
@@ -498,6 +500,7 @@ extension WorkshopView {
                             router: router,
                             viewModel: viewModel
                         )
+                        .id(item.id)
                     }
                 }
                 .padding(.horizontal, 16)

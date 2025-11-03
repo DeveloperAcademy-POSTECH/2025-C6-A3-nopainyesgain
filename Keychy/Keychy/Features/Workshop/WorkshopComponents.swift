@@ -209,8 +209,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     private func handleTap() {
         guard let router = router else { return }
 
-        // 스크롤 위치 저장
-        viewModel?.savedScrollPosition = "mainContent"
+        // 현재 아이템 ID와 카테고리 저장
+        viewModel?.savedScrollPosition = item.id
         viewModel?.savedCategory = viewModel?.selectedCategory
 
         // 모든 아이템을 WorkshopPreview로 이동
