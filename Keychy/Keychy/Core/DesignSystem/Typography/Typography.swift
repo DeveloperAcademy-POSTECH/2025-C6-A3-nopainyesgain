@@ -63,6 +63,7 @@ struct Typography {
     static let nanum14EB18 = Typography(font: .custom(.nanumExtraBold, size: 14), lineSpacing: 4)
     
     static let nanum10EB12 = Typography(font: .custom(.nanumExtraBold, size: 10), lineSpacing: 2)
+    static let nanum18EB = Typography(font: .custom(.nanumExtraBold, size: 18), lineSpacing: 2)
     static let nanum32EB = Typography(font: .custom(.nanumExtraBold, size: 32), lineSpacing: 2)
 }
 
