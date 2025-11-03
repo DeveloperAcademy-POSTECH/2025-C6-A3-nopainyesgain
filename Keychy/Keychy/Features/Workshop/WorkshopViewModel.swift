@@ -27,9 +27,8 @@ enum EffectFilterType: String, CaseIterable {
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
 protocol WorkshopItem: Identifiable, Decodable {
-    
+
     /// id의 사용
-    /// - 스크롤 위치 복원 (savedScrollPosition)
     /// - 보유 아이템 확인 (user.templates.contains(itemId))
     /// - 이펙트 다운로드 추적 (downloadingItemIds)
     /// - SwiftUI 뷰 식별 (.id() modifier)
@@ -93,10 +92,6 @@ class WorkshopViewModel {
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
     var mainContentOffset: CGFloat = 140
-
-    // 스크롤 위치 저장
-    var savedScrollPosition: String? = nil
-    var savedCategory: String? = nil
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
