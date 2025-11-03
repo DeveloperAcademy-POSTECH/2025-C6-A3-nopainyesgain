@@ -13,7 +13,7 @@ import Observation
 class AudioRecorderManager: NSObject {
     // MARK: - Properties
     private var audioRecorder: AVAudioRecorder?
-    private var recordingTimer: Timer?
+    private var recordingTask: Task<Void, Never>?
 
     var isRecording = false
     var recordingTime: TimeInterval = 0
@@ -28,7 +28,7 @@ class AudioRecorderManager: NSObject {
         let soundsDir = documentsPath.appendingPathComponent("CustomSounds")
 
         // 디렉토리가 없으면 생성
-        if !FileManager.default.fileExists(atPath: soundsDir.path) {
+        if !FileManager.default.fileExists(atPath: soundsDir.path()) {
             try? FileManager.default.createDirectory(at: soundsDir, withIntermediateDirectories: true)
         }
         return soundsDir
@@ -37,22 +37,7 @@ class AudioRecorderManager: NSObject {
     // MARK: - Permission
     /// 마이크 권한 요청
     func requestPermission() async -> Bool {
-        await withCheckedContinuation { continuation in
-            if #available(iOS 17.0, *) {
-                AVAudioApplication.requestRecordPermission { granted in
-                    continuation.resume(returning: granted)
-                }
-            } else {
-                AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                    continuation.resume(returning: granted)
-                }
-            }
-        }
-    }
-
-    /// 현재 권한 상태 확인
-    func checkPermission() -> AVAudioSession.RecordPermission {
-        return AVAudioSession.sharedInstance().recordPermission
+        await AVAudioApplication.requestRecordPermission()
     }
 
     // MARK: - Recording
@@ -97,14 +82,15 @@ class AudioRecorderManager: NSObject {
         recordingTime = 0
         recordingURL = url
 
-        // 타이머 시작
-        startTimer()
+        // Swift Concurrency 타이머 시작
+        startRecordingTimer()
     }
 
     /// 녹음 중지
     func stopRecording() {
         audioRecorder?.stop()
-        stopTimer()
+        recordingTask?.cancel()
+        recordingTask = nil
         isRecording = false
 
         // 오디오 세션 비활성화
@@ -121,22 +107,23 @@ class AudioRecorderManager: NSObject {
         }
     }
 
-    // MARK: - Timer
-    private func startTimer() {
-        recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            self.recordingTime += 0.1
+    // MARK: - Timer (Swift Concurrency)
+    private func startRecordingTimer() {
+        recordingTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(100))
 
-            // 최대 시간 도달 시 자동 중지
-            if self.recordingTime >= self.maxRecordingDuration {
-                self.stopRecording()
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.recordingTime += 0.1
+
+                    // 최대 시간 도달 시 자동 중지
+                    if self.recordingTime >= self.maxRecordingDuration {
+                        self.stopRecording()
+                    }
+                }
             }
         }
-    }
-
-    private func stopTimer() {
-        recordingTimer?.invalidate()
-        recordingTimer = nil
     }
 
     // MARK: - Playback Preview
@@ -166,13 +153,13 @@ class AudioRecorderManager: NSObject {
     /// 녹음 파일이 존재하는지 확인
     func hasRecording() -> Bool {
         guard let url = recordingURL else { return false }
-        return FileManager.default.fileExists(atPath: url.path)
+        return FileManager.default.fileExists(atPath: url.path())
     }
 
     /// 임시 녹음 파일을 영구 파일로 복사 (고유한 UUID 파일명)
     func savePermanentCopy() -> URL? {
         guard let tempURL = recordingURL else { return nil }
-        guard FileManager.default.fileExists(atPath: tempURL.path) else { return nil }
+        guard FileManager.default.fileExists(atPath: tempURL.path()) else { return nil }
 
         // UUID 기반 고유 파일명 생성
         let uniqueFilename = "\(UUID().uuidString).m4a"
@@ -187,24 +174,14 @@ class AudioRecorderManager: NSObject {
             return nil
         }
     }
-
-    /// 저장된 커스텀 사운드 URL 가져오기 (하위 호환성 - 더 이상 사용 안 함)
-    func getSavedRecordingURL() -> URL? {
-        let filename = "custom_recording.m4a"
-        let url = customSoundsDirectory.appendingPathComponent(filename)
-
-        if FileManager.default.fileExists(atPath: url.path) {
-            return url
-        }
-        return nil
-    }
 }
 
 // MARK: - AVAudioRecorderDelegate
 extension AudioRecorderManager: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         isRecording = false
-        stopTimer()
+        recordingTask?.cancel()
+        recordingTask = nil
     }
 
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {

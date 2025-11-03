@@ -249,21 +249,12 @@ extension RecordingSheet {
 
     /// 권한 체크 후 녹음 시작
     private func startRecordingWithPermission() async {
-        let permission = recorder.checkPermission()
+        // iOS 26: AVAudioApplication 사용
+        let granted = await recorder.requestPermission()
 
-        switch permission {
-        case .granted:
+        if granted {
             startRecording()
-        case .denied:
-            showPermissionAlert = true
-        case .undetermined:
-            let granted = await recorder.requestPermission()
-            if granted {
-                startRecording()
-            } else {
-                showPermissionAlert = true
-            }
-        @unknown default:
+        } else {
             showPermissionAlert = true
         }
     }
