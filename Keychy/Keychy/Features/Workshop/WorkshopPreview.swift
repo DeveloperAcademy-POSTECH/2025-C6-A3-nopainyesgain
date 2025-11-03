@@ -211,17 +211,19 @@ extension WorkshopPreview {
             // TODO: 구매 로직 구현
             print("구매: \(item.name) - \(item.workshopPrice) 코인")
         } label: {
-            HStack(spacing: 4) {
-                Image(.keyCoin)
+            HStack(spacing: 5) {
+                Image(.buyKey)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 32)
                 
                 Text("\(item.workshopPrice)")
-                    .typography(.suit17B)
+                    .typography(.nanum18EB)
+                    .foregroundStyle(.white100)
+                    .background(Color.gray50)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 7.5)
+            .frame(height: 36)
         }
         .buttonStyle(.glassProminent)
         .tint(.black80)
