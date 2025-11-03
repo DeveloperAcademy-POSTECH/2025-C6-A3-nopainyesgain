@@ -53,35 +53,36 @@ struct WorkshopPreview: View {
 
 // MARK: - Item Preview Section
 extension WorkshopPreview {
-    @ViewBuilder
     private var itemPreview: some View {
-        ZStack {
-            // 이미지 표시
-            ItemDetailImage(itemURL: getPreviewURL())
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .frame(height: getItemHeight())
-                .opacity(isParticlePlaying ? 0 : 1)
-                .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
+        GeometryReader { geometry in
+            ZStack {
+                // 이미지 표시
+                ItemDetailImage(itemURL: getPreviewURL())
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: getItemHeight(containerWidth: geometry.size.width))
+                    .opacity(isParticlePlaying ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
 
-            // 파티클 이펙트일 경우 재생 뷰 표시
-            if let particle = item as? Particle,
-               let particleId = particle.id,
-               effectManager.playingParticleId == particleId {
-                particleLottieView(particleId: particleId, effectManager: effectManager)
-                    .frame(height: getItemHeight())
-            }
-
-            // 이펙트일 경우 재생 버튼 표시
-            if item is Sound || item is Particle {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        effectPlayButton
-                    }
+                // 파티클 이펙트일 경우 재생 뷰 표시
+                if let particle = item as? Particle,
+                   let particleId = particle.id,
+                   effectManager.playingParticleId == particleId {
+                    particleLottieView(particleId: particleId, effectManager: effectManager)
+                        .frame(height: getItemHeight(containerWidth: geometry.size.width))
                 }
-                .padding(16)
+
+                // 이펙트일 경우 재생 버튼 표시
+                if item is Sound || item is Particle {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            effectPlayButton
+                        }
+                    }
+                    .padding(16)
+                }
             }
         }
     }
@@ -151,23 +152,18 @@ extension WorkshopPreview {
     }
 
     /// 아이템 타입에 따른 높이 계산
-    private func getItemHeight() -> CGFloat {
-        let screenWidth = UIScreen.main.bounds.width
-        let imageWidth: CGFloat = 282
-        let horizontalPadding: CGFloat = 70 // 35 * 2
-        let availableWidth = screenWidth - horizontalPadding
-        let scale = availableWidth / imageWidth
-
+    private func getItemHeight(containerWidth: CGFloat) -> CGFloat {
         if item is KeyringTemplate {
-            // 키링: AcrylicPhotoPreView와 비슷한 비율
-            return availableWidth * 1.3
+            // 키링: 4:3 비율
+            let ratio: CGFloat = 4 / 3
+            return containerWidth * ratio
         } else if item is Background {
-            // 배경: 282x500 비율
-            let ratio: CGFloat = 500 / 282
-            return availableWidth * ratio
+            // 배경: 16:9 비율
+            let ratio: CGFloat = 16 / 9
+            return containerWidth * ratio
         } else {
             // 카라비너, 이펙트: 1:1 비율
-            return availableWidth
+            return containerWidth
         }
     }
 }
@@ -181,14 +177,15 @@ extension WorkshopPreview {
 
 // MARK: - Action Button Section
 extension WorkshopPreview {
-    @ViewBuilder
     private var actionButton: some View {
-        if item.isFree {
-            freeButton
-        } else if isOwned {
-            ownedButton
-        } else {
-            purchaseButton
+        Group {
+            if item.isFree {
+                freeButton
+            } else if isOwned {
+                ownedButton
+            } else {
+                purchaseButton
+            }
         }
     }
 
