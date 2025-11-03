@@ -26,7 +26,11 @@ struct BundleSelectBackgroundView: View {
             .scrollIndicators(.hidden)
             .navigationTitle("배경")
             .task {
-                await viewModel.loadBackgroundsAndCarabiners()
+                viewModel.fetchAllBackgrounds { success in
+                    if !success {
+                        print("배경 데이터 로드 실패")
+                    }
+                }
             }
     }
 }
@@ -43,6 +47,7 @@ extension BundleSelectBackgroundView {
                         router.push(.bundleSelectCarabinerView)
                     } label: {
                         SelectBackgroundGridItem(background: bg)
+                            .frame(maxWidth: .infinity)
                     }
                 }
                 
