@@ -27,6 +27,12 @@ enum EffectFilterType: String, CaseIterable {
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
 protocol WorkshopItem: Identifiable, Decodable {
+    
+    /// id의 사용
+    /// - 스크롤 위치 복원 (savedScrollPosition)
+    /// - 보유 아이템 확인 (user.templates.contains(itemId))
+    /// - 이펙트 다운로드 추적 (downloadingItemIds)
+    /// - SwiftUI 뷰 식별 (.id() modifier)
     var id: String? { get }
     var name: String { get }
     var itemDescription: String { get }
