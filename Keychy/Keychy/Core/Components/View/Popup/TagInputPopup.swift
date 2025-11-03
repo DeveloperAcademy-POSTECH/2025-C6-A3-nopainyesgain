@@ -12,6 +12,8 @@ struct TagInputPopup: View {
     let onCancel: () -> Void
     let onConfirm: () -> Void
     
+    @FocusState private var isTextFieldFocused: Bool
+    
     var body: some View {
         ZStack {
             // 반투명 배경
@@ -32,6 +34,13 @@ struct TagInputPopup: View {
                         .foregroundColor(.black100)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
+                        .focused($isTextFieldFocused)
+                        .onChange(of: tagName) { oldValue, newValue in
+                            if newValue.count > 10 {
+                                tagName = String(newValue.prefix(10))
+                            }
+                        }
+                        .submitLabel(.done)
                     
                     if !tagName.isEmpty {
                         Button(action: {
@@ -81,6 +90,7 @@ struct TagInputPopup: View {
                             )
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .disabled(tagName.isEmpty)
                 }
                 
             }
@@ -92,6 +102,12 @@ struct TagInputPopup: View {
             )
             .frame(width: 300, height: 204)
             .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+        }
+        .onAppear {
+            // 팝업 뜰 때 자동으로 키보드 올리기
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isTextFieldFocused = true
+            }
         }
         .transition(.scale.combined(with: .opacity))
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: true)

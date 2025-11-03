@@ -55,7 +55,7 @@ private struct CategoryTabButtonWithLongPress: View {
     var body: some View {
         // 기존 CategoryTabBar 스타일
         VStack(spacing: Spacing.sm) {
-            Text(title)
+            Text(title) // 17B gray300
                 .typography(isSelected ? .suit15B25 : .suit15SB25)
                 .foregroundStyle(isSelected ? Color.main500 : Color.black100)
             
