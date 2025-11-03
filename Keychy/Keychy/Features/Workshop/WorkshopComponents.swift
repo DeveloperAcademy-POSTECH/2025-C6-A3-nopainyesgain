@@ -116,6 +116,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     let item: Item
     var isOwned: Bool = false
     var router: NavigationRouter<WorkshopRoute>? = nil
+    var viewModel: WorkshopViewModel? = nil
 
     @State private var effectManager = EffectManager.shared
     @Environment(UserManager.self) private var userManager
@@ -208,6 +209,10 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     private func handleTap() {
         guard let router = router else { return }
 
+        // 스크롤 위치 저장
+        viewModel?.savedScrollPosition = "mainContent"
+        viewModel?.savedCategory = viewModel?.selectedCategory
+
         // 모든 아이템을 WorkshopPreview로 이동
         if let template = item as? KeyringTemplate {
             router.push(.workshopPreview(item: AnyHashable(template)))
@@ -227,6 +232,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
 struct OwnedItemCard<Item: WorkshopItem>: View {
     let item: Item
     var router: NavigationRouter<WorkshopRoute>? = nil
+    var viewModel: WorkshopViewModel? = nil
 
     var body: some View {
         Button {
@@ -263,6 +269,9 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
     /// 탭 핸들러 (모든 아이템 WorkshopPreview로 이동)
     private func handleTap() {
         guard let router = router else { return }
+
+        // 카테고리만 저장
+        viewModel?.savedCategory = viewModel?.selectedCategory
 
         // 모든 아이템을 WorkshopPreview로 이동
         if let template = item as? KeyringTemplate {

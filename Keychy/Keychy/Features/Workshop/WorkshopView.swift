@@ -15,9 +15,10 @@ struct WorkshopView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
-    
+    @State private var hasInitialized = false
+
     private let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
-        
+
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
     init(router: NavigationRouter<WorkshopRoute>) {
@@ -46,15 +47,19 @@ struct WorkshopView: View {
             sortSheet
         }
         .task {
-            viewModel = WorkshopViewModel(userManager: userManager)
+            // 최초 한 번만 초기화
+            if !hasInitialized {
+                viewModel = WorkshopViewModel(userManager: userManager)
+                hasInitialized = true
 
-            // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
-            await viewModel.fetchDataForCategory(viewModel.selectedCategory)
-            await viewModel.loadOwnedItems()
+                // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
+                await viewModel.fetchDataForCategory(viewModel.selectedCategory)
+                await viewModel.loadOwnedItems()
 
-            // 2. 백그라운드에서 나머지 카테고리 프리페칭
-            Task.detached(priority: .background) {
-                await viewModel.prefetchRemainingData()
+                // 2. 백그라운드에서 나머지 카테고리 프리페칭
+                Task.detached(priority: .background) {
+                    await viewModel.prefetchRemainingData()
+                }
             }
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
@@ -71,38 +76,65 @@ struct WorkshopView: View {
     
     /// 메인 스크롤 콘텐츠
     private var mainScrollContent: some View {
-        ScrollView(showsIndicators: false){
-            VStack(spacing: 0) {
-                // 상단 배너 (코인 버튼 + 타이틀)
-                topBannerSection
-                    .frame(height: 150)
-                
-                Spacer()
-                    .frame(height: 20)
-                
-                // 내 창고 섹션
-                myCollectionSection
-                
-                // 메인 콘텐츠 (그리드)
-                mainContentSection
-                    .background(
-                        GeometryReader { geo in
-                            let minY = geo.frame(in: .global).minY
-                            Color.clear
-                                .onAppear {
-                                    viewModel.mainContentOffset = minY
-                                }
-                                .onChange(of: minY) { oldValue, newValue in
-                                    viewModel.mainContentOffset = newValue
-                                }
-                        }
-                    )
+        ScrollViewReader { scrollProxy in
+            ScrollView(showsIndicators: false){
+                VStack(spacing: 0) {
+                    // 상단 배너 (코인 버튼 + 타이틀)
+                    topBannerSection
+                        .frame(height: 150)
+                        .id("top")
+
+                    Spacer()
+                        .frame(height: 20)
+
+                    // 내 창고 섹션
+                    myCollectionSection
+                        .id("myCollection")
+
+                    // 메인 콘텐츠 (그리드)
+                    mainContentSection
+                        .id("mainContent")
+                        .background(
+                            GeometryReader { geo in
+                                let minY = geo.frame(in: .global).minY
+                                Color.clear
+                                    .onAppear {
+                                        viewModel.mainContentOffset = minY
+                                    }
+                                    .onChange(of: minY) { oldValue, newValue in
+                                        viewModel.mainContentOffset = newValue
+                                    }
+                            }
+                        )
+                }
+                .padding(.top, 60)
+                .background(alignment: .top) {
+                    Image("WorkshopBack")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
             }
-            .padding(.top, 60)
-            .background(alignment: .top) {
-                Image("WorkshopBack")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+            .onAppear {
+                // 저장된 카테고리와 스크롤 위치 복원
+                if let savedCategory = viewModel.savedCategory {
+                    // 카테고리 복원
+                    viewModel.selectedCategory = savedCategory
+
+                    // 스크롤 위치 복원
+                    if let savedPosition = viewModel.savedScrollPosition {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation {
+                                scrollProxy.scrollTo(savedPosition, anchor: .top)
+                            }
+                        }
+                    }
+
+                    // 복원 후 초기화
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        viewModel.savedScrollPosition = nil
+                        viewModel.savedCategory = nil
+                    }
+                }
             }
         }
     }
@@ -317,7 +349,7 @@ extension WorkshopView {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 7) {
                                 ForEach(viewModel.ownedTemplates) { template in
-                                    OwnedItemCard(item: template, router: router)
+                                    OwnedItemCard(item: template, router: router, viewModel: viewModel)
                                 }
                             }
                         }
@@ -427,13 +459,15 @@ extension WorkshopView {
                             WorkshopItemView(
                                 item: sound,
                                 isOwned: viewModel.isSoundOwned(sound),
-                                router: router
+                                router: router,
+                                viewModel: viewModel
                             )
                         } else if let particle = item as? Particle {
                             WorkshopItemView(
                                 item: particle,
                                 isOwned: viewModel.isParticleOwned(particle),
-                                router: router
+                                router: router,
+                                viewModel: viewModel
                             )
                         }
                     }
@@ -461,7 +495,8 @@ extension WorkshopView {
                         WorkshopItemView(
                             item: item,
                             isOwned: isOwnedCheck(item),
-                            router: router
+                            router: router,
+                            viewModel: viewModel
                         )
                     }
                 }

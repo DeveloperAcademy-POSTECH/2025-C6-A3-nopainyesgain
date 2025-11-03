@@ -88,6 +88,10 @@ class WorkshopViewModel {
     var showFilterSheet: Bool = false
     var mainContentOffset: CGFloat = 140
 
+    // 스크롤 위치 저장
+    var savedScrollPosition: String? = nil
+    var savedCategory: String? = nil
+
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
     var availableCarabinerTags: [String] = []
