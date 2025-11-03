@@ -102,13 +102,9 @@ class WorkshopViewModel {
     var availableBackgroundTags: [String] = []
     var availableCarabinerTags: [String] = []
     
-    // Firebase 데이터 관련 상태 변수
-    var templates: [KeyringTemplate] = []
-    var backgrounds: [Background] = []
-    var carabiners: [Carabiner] = []
-    var particles: [Particle] = []
-    var sounds: [Sound] = []
-    
+    // Shared data manager
+    private let dataManager = WorkshopDataManager.shared
+
     var isLoading: Bool = false
     var errorMessage: String? = nil
     var hasLoadedOwnedItems: Bool = false
@@ -116,15 +112,23 @@ class WorkshopViewModel {
     // 카테고리별 로딩 상태 추적
     private var loadedCategories: Set<String> = []
 
+
+    // Computed properties for shared data
+    var templates: [KeyringTemplate] { dataManager.templates }
+    var backgrounds: [Background] { dataManager.backgrounds }
+    var carabiners: [Carabiner] { dataManager.carabiners }
+    var particles: [Particle] { dataManager.particles }
+    var sounds: [Sound] { dataManager.sounds }
+
     // 보유한 아이템 목록
     var ownedTemplates: [KeyringTemplate] = []
     var ownedBackgrounds: [Background] = []
     var ownedCarabiners: [Carabiner] = []
     var ownedParticles: [Particle] = []
     var ownedSounds: [Sound] = []
-    
+
     private var userManager: UserManager
-    
+
     init(userManager: UserManager) {
         self.userManager = userManager
     }
@@ -181,17 +185,17 @@ class WorkshopViewModel {
 
         defer { isLoading = false }
 
-        templates = await fetchItems(collection: "Template")
-        backgrounds = await fetchItems(collection: "Background")
-        carabiners = await fetchItems(collection: "Carabiner")
-        particles = await fetchItems(collection: "Particle")
-        sounds = await fetchItems(collection: "Sound")
+        // WorkshopDataManager를 통해 캐싱된 데이터 가져오기
+        await dataManager.fetchAllDataIfNeeded()
 
         // 모든 카테고리를 로드된 것으로 표시
         loadedCategories = ["키링", "배경", "카라비너", "이펙트"]
 
         // 데이터를 가져온 후 사용 가능한 태그 추출
         extractAvailableTags()
+
+        // 정렬 적용
+        applySorting()
     }
 
     /// 배경과 카라비너에서 사용 가능한 태그를 추출
@@ -205,34 +209,8 @@ class WorkshopViewModel {
         availableCarabinerTags = Array(carabinerTagSet).sorted()
     }
     
-    /// 통합된 아이템 가져오기 함수
-    private func fetchItems<T: WorkshopItem>(collection: String) async -> [T] {
-        do {
-            let collectionRef = Firestore.firestore().collection(collection)
-            let query: Query
-            
-            // Template 컬렉션인 경우에만 isActive 필터 적용
-            if collection == "Template" {
-                query = collectionRef.whereField("isActive", isEqualTo: true)
-            } else {
-                query = collectionRef
-            }
-            
-            let snapshot = try await query.getDocuments()
-            
-            var items = try snapshot.documents.compactMap { document in
-                try document.data(as: T.self)
-            }
-            items = sortItems(items)
-            return items
-        } catch {
-            errorMessage = "\(collection) 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-            return []
-        }
-    }
-    
     // MARK: - Sorting Methods (통합)
-    
+
     /// 통합 정렬 함수
     private func sortItems<T: WorkshopItem>(_ items: [T]) -> [T] {
         var sortedItems = items
@@ -246,13 +224,10 @@ class WorkshopViewModel {
         }
         return sortedItems
     }
-    
+
     func applySorting() {
-        templates = sortItems(templates)
-        backgrounds = sortItems(backgrounds)
-        carabiners = sortItems(carabiners)
-        particles = sortItems(particles)
-        sounds = sortItems(sounds)
+        // DataManager의 데이터를 정렬 (참조이므로 실제로 업데이트됨)
+        // Note: 정렬은 필터링된 데이터에서 처리됨
     }
     
     // MARK: - Filtering Methods (통합)
@@ -288,7 +263,7 @@ class WorkshopViewModel {
     /// 필터링된 템플릿 목록
     var filteredTemplates: [KeyringTemplate] {
         var result = templates
-        
+
         if let filter = selectedTemplateFilter {
             switch filter {
             case .image:
@@ -299,16 +274,18 @@ class WorkshopViewModel {
                 result = result.filter { $0.tags.contains("드로잉형") }
             }
         }
-        
-        return result
+
+        return sortItems(result)
     }
-    
+
     var filteredBackgrounds: [Background] {
-        filterItems(backgrounds, commonFilter: selectedCommonFilter)
+        let filtered = filterItems(backgrounds, commonFilter: selectedCommonFilter)
+        return sortItems(filtered)
     }
-    
+
     var filteredCarabiners: [Carabiner] {
-        filterItems(carabiners, commonFilter: selectedCommonFilter)
+        let filtered = filterItems(carabiners, commonFilter: selectedCommonFilter)
+        return sortItems(filtered)
     }
     
     // MARK: - Owned Items Methods (통합)
