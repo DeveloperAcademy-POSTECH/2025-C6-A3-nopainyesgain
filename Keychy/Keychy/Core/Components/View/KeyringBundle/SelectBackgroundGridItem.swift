@@ -16,14 +16,19 @@ struct SelectBackgroundGridItem: View {
     var body: some View {
         VStack(spacing: 10) {
             ZStack {
+                // 배경 이미지/플레이스홀더
                 if let image = backgroundImage {
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFit()
+                        .aspectRatio(2/3, contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else if hasError {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .frame(maxWidth: .infinity)
                         .overlay(
                             Image(systemName: "photo")
                                 .foregroundColor(.gray)
@@ -31,10 +36,12 @@ struct SelectBackgroundGridItem: View {
                 } else {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .frame(maxWidth: .infinity)
                         .overlay(ProgressView())
                 }
-            }
-            .overlay(
+                
+                // 오버레이 요소들
                 VStack {
                     HStack {
                         // 유료 배경은 유료 아이콘 표시
@@ -57,11 +64,15 @@ struct SelectBackgroundGridItem: View {
                                     UnevenRoundedRectangle(bottomLeadingRadius: 5, topTrailingRadius: 10)
                                         .fill(Color.black60)
                                 )
+                            // 텍스트가 아주 조금 띄워져 보여져서 음수 오프셋을 사용합니다
+                                .offset(y: -1)
                         }
                     }
+                    .padding(.all, 0)
                     Spacer()
                 }
-            )
+                .padding(.all, 0)
+            }
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.gray.opacity(0.2))
