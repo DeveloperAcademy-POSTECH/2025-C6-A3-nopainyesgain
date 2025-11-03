@@ -12,8 +12,8 @@ import UIKit
 struct CategoryTabBarWithLongPress: View {
     let categories: [String]
     @Binding var selectedCategory: String
-    let onLongPress: (String, CGRect) -> Void  // 카테고리와 위치 전달
-    let editableCategories: Set<String>  // 편집 가능한 카테고리들
+    let onLongPress: (String, CGRect) -> Void
+    let editableCategories: Set<String>  // 편집 가능한 카테고리들 (전체 제외)
     
     @State private var buttonFrames: [String: CGRect] = [:]
     @State private var pressStates: [String: PressState] = [:]

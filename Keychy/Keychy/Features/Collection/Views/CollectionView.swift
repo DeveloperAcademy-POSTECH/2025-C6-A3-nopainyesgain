@@ -81,32 +81,50 @@ struct CollectionView: View {
                         showingMenuFor = nil
                     }
                 )
+                .zIndex(50)
+            }
+            
+            if showDeleteAlert {
+                DeletePopup(
+                    title: "[\(deletingCategory)]\n정말 삭제하시겠어요?",
+                    message: "한 번 삭제하면 복구 할 수 없습니다.",
+                    onCancel: {
+                        withAnimation {
+                            showDeleteAlert = false
+                            deletingCategory = ""
+                        }
+                    },
+                    onConfirm: {
+                        withAnimation {
+                            showDeleteAlert = false
+                            //confirmDeleteCategory()
+                        }
+                    }
+                )
+                .zIndex(100)
+            }
+            
+            if showRenameAlert {
+                TagInputPopup(
+                    tagName: .constant("\(renamingCategory)"),
+                    onCancel: {
+                        withAnimation {
+                            showRenameAlert = false
+                            deletingCategory = ""
+                        }
+                    },
+                    onConfirm: {
+                        withAnimation {
+                            showRenameAlert = false
+                            //confirmDeleteCategory()
+                        }
+                    }
+                )
+                .zIndex(100)
             }
         }
         .sheet(isPresented: $showSortSheet) {
             sortSheet
-        }
-        .alert("태그 이름 수정", isPresented: $showRenameAlert) {
-            TextField("새 이름", text: $newCategoryName)
-            
-            Button("취소", role: .cancel) {
-                newCategoryName = ""
-            }
-            
-            Button("완료") {
-                // 수정 완료 로직
-            }
-        }
-        .alert("태그 삭제", isPresented: $showDeleteAlert) {
-            Button("취소", role: .cancel) {
-                deletingCategory = ""
-            }
-            
-            Button("확인", role: .destructive) {
-                // 삭제 로직
-            }
-        } message: {
-            Text("'\(deletingCategory)'\n정말 삭제하시겠어요?\n한 번 삭제하면 복구 할 수 없습니다.")
         }
         .onAppear {
             fetchUserData()

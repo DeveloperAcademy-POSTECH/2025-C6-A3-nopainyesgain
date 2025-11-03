@@ -1,0 +1,103 @@
+//
+//  TagInputPopup.swift
+//  Keychy
+//
+//  Created by Jini on 11/4/25.
+//
+
+import SwiftUI
+
+struct TagInputPopup: View {
+    @Binding var tagName: String
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+    
+    var body: some View {
+        ZStack {
+            // 반투명 배경
+            Color.black20
+                .ignoresSafeArea()
+            
+            VStack(spacing: 10) {
+                // 제목
+                Text("태그 이름 수정")
+                    .typography(.suit17B)
+                    .foregroundColor(.black100)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 8)
+                
+                HStack {
+                    TextField("태그 이름", text: $tagName)
+                        .typography(.suit16M)
+                        .foregroundColor(.black100)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                    
+                    if !tagName.isEmpty {
+                        Button(action: {
+                            tagName = ""
+                        }) {
+                            Image("EmptyIcon")
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .padding(.trailing, 8)
+                    }
+                }
+                .frame(height: 52)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.gray50)
+                )
+                .padding(.bottom, 19)
+
+                // 버튼들
+                HStack(spacing: 16) {
+                    // 취소 버튼
+                    Button(action: onCancel) {
+                        Text("취소")
+                            .typography(.suit17SB)
+                            .foregroundColor(.black100)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 100)
+                                    .fill(.gray200)
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // 확인 버튼
+                    Button(action: onConfirm) {
+                        Text("완료")
+                            .typography(.suit17B)
+                            .foregroundColor(.white100)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 100)
+                                    .fill(.main500)
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 34)
+                    .fill(.white)
+            )
+            .frame(width: 300, height: 204)
+            .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+        }
+        .transition(.scale.combined(with: .opacity))
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: true)
+    }
+}
+
+#Preview {
+    TagInputPopup(tagName: .constant("태그"), onCancel: {}, onConfirm: {})
+}
