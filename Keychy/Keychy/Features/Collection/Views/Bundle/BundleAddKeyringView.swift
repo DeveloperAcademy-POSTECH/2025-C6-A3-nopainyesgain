@@ -452,7 +452,7 @@ extension BundleAddKeyringView {
             return
         }
         
-        // URL 또는 번들에서 이미지들을 로드
+        // 이미지들을 로드
         loadKeyringImages(keyringData: keyringData) { loadedImages in
             guard let scene = self.carabinerScene else {
                 return 
