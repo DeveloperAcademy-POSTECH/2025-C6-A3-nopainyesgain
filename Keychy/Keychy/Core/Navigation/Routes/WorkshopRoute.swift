@@ -8,6 +8,9 @@ import UIKit
 
 /// 공방 탭 라우팅
 enum WorkshopRoute: Hashable {
+    // MARK: - 공통 프리뷰
+    case workshopPreview(item: AnyHashable)
+
     // MARK: - 아크릴 포토 템플릿
     case acrylicPhotoPreview
     case acrylicPhotoCrop
@@ -17,7 +20,7 @@ enum WorkshopRoute: Hashable {
     case acrylicPhotoComplete
     case coinCharge
     case myItems
-    
+
     // MARK: - 텍스트 포토 템플릿
     case TextPhotoPreView
     

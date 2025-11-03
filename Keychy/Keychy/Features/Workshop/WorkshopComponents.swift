@@ -204,12 +204,21 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         }
     }
 
-    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
+    /// 탭 핸들러 (모든 아이템 WorkshopPreview로 이동)
     private func handleTap() {
-        if let template = item as? KeyringTemplate,
-           let router = router,
-           let route = WorkshopRoute.from(string: template.id!) {
-            router.push(route)
+        guard let router = router else { return }
+
+        // 모든 아이템을 WorkshopPreview로 이동
+        if let template = item as? KeyringTemplate {
+            router.push(.workshopPreview(item: AnyHashable(template)))
+        } else if let background = item as? Background {
+            router.push(.workshopPreview(item: AnyHashable(background)))
+        } else if let carabiner = item as? Carabiner {
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
+        } else if let particle = item as? Particle {
+            router.push(.workshopPreview(item: AnyHashable(particle)))
+        } else if let sound = item as? Sound {
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
@@ -251,12 +260,21 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
         .buttonStyle(.plain)
     }
 
-    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
+    /// 탭 핸들러 (모든 아이템 WorkshopPreview로 이동)
     private func handleTap() {
-        if let template = item as? KeyringTemplate,
-           let router = router,
-           let route = WorkshopRoute.from(string: template.id!) {
-            router.push(route)
+        guard let router = router else { return }
+
+        // 모든 아이템을 WorkshopPreview로 이동
+        if let template = item as? KeyringTemplate {
+            router.push(.workshopPreview(item: AnyHashable(template)))
+        } else if let background = item as? Background {
+            router.push(.workshopPreview(item: AnyHashable(background)))
+        } else if let carabiner = item as? Carabiner {
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
+        } else if let particle = item as? Particle {
+            router.push(.workshopPreview(item: AnyHashable(particle)))
+        } else if let sound = item as? Sound {
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
