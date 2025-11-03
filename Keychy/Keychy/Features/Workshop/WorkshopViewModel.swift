@@ -27,6 +27,12 @@ enum EffectFilterType: String, CaseIterable {
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
 protocol WorkshopItem: Identifiable, Decodable {
+    
+    /// id의 사용
+    /// - 스크롤 위치 복원 (savedScrollPosition)
+    /// - 보유 아이템 확인 (user.templates.contains(itemId))
+    /// - 이펙트 다운로드 추적 (downloadingItemIds)
+    /// - SwiftUI 뷰 식별 (.id() modifier)
     var id: String? { get }
     var name: String { get }
     var itemDescription: String { get }
@@ -86,52 +92,109 @@ class WorkshopViewModel {
     var selectedEffectFilter: EffectFilterType? = nil
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
-    var mainContentOffset: CGFloat = 0
+    var mainContentOffset: CGFloat = 140
+
+    // 스크롤 위치 저장
+    var savedScrollPosition: String? = nil
+    var savedCategory: String? = nil
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
     var availableCarabinerTags: [String] = []
-    
-    // Firebase 데이터 관련 상태 변수
-    var templates: [KeyringTemplate] = []
-    var backgrounds: [Background] = []
-    var carabiners: [Carabiner] = []
-    var particles: [Particle] = []
-    var sounds: [Sound] = []
-    
+
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    
+    var hasLoadedOwnedItems: Bool = false
+
+    // 카테고리별 로딩 상태 추적
+    private var loadedCategories: Set<String> = []
+
+    // Shared data manager
+    private let dataManager = WorkshopDataManager.shared
+
+    // Computed properties for shared data
+    var templates: [KeyringTemplate] { dataManager.templates }
+    var backgrounds: [Background] { dataManager.backgrounds }
+    var carabiners: [Carabiner] { dataManager.carabiners }
+    var particles: [Particle] { dataManager.particles }
+    var sounds: [Sound] { dataManager.sounds }
+
     // 보유한 아이템 목록
     var ownedTemplates: [KeyringTemplate] = []
     var ownedBackgrounds: [Background] = []
     var ownedCarabiners: [Carabiner] = []
     var ownedParticles: [Particle] = []
     var ownedSounds: [Sound] = []
-    
+
     private var userManager: UserManager
-    
+
     init(userManager: UserManager) {
         self.userManager = userManager
     }
     
     // MARK: - Firebase Methods (통합)
-    
-    /// 모든 데이터 가져오기
+
+    /// 특정 카테고리의 데이터만 가져오기
+    func fetchDataForCategory(_ category: String) async {
+        // 이미 로드된 카테고리는 스킵
+        guard !loadedCategories.contains(category) else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        defer { isLoading = false }
+
+        switch category {
+        case "키링":
+            await dataManager.fetchTemplatesIfNeeded()
+            loadedCategories.insert("키링")
+        case "배경":
+            await dataManager.fetchBackgroundsIfNeeded()
+            extractAvailableTags()
+            loadedCategories.insert("배경")
+        case "카라비너":
+            await dataManager.fetchCarabinersIfNeeded()
+            extractAvailableTags()
+            loadedCategories.insert("카라비너")
+        case "이펙트":
+            await dataManager.fetchParticlesIfNeeded()
+            await dataManager.fetchSoundsIfNeeded()
+            loadedCategories.insert("이펙트")
+        default:
+            break
+        }
+    }
+
+    /// 나머지 카테고리들을 백그라운드에서 프리페칭
+    func prefetchRemainingData() async {
+        let allCategories = ["키링", "배경", "카라비너", "이펙트"]
+
+        for category in allCategories {
+            // 이미 로드된 카테고리는 스킵
+            guard !loadedCategories.contains(category) else { continue }
+
+            await fetchDataForCategory(category)
+        }
+    }
+
+    /// 모든 데이터 가져오기 (다시 시도 버튼에서 사용)
     func fetchAllData() async {
         isLoading = true
         errorMessage = nil
 
         defer { isLoading = false }
 
-        templates = await fetchItems(collection: "Template")
-        backgrounds = await fetchItems(collection: "Background")
-        carabiners = await fetchItems(collection: "Carabiner")
-        particles = await fetchItems(collection: "Particle")
-        sounds = await fetchItems(collection: "Sound")
+        // WorkshopDataManager를 통해 캐싱된 데이터 가져오기
+        await dataManager.fetchAllDataIfNeeded()
+
+        // 모든 카테고리를 로드된 것으로 표시
+        loadedCategories = ["키링", "배경", "카라비너", "이펙트"]
 
         // 데이터를 가져온 후 사용 가능한 태그 추출
         extractAvailableTags()
+
+        // 정렬 적용
+        applySorting()
     }
 
     /// 배경과 카라비너에서 사용 가능한 태그를 추출
@@ -145,34 +208,8 @@ class WorkshopViewModel {
         availableCarabinerTags = Array(carabinerTagSet).sorted()
     }
     
-    /// 통합된 아이템 가져오기 함수
-    private func fetchItems<T: WorkshopItem>(collection: String) async -> [T] {
-        do {
-            let collectionRef = Firestore.firestore().collection(collection)
-            let query: Query
-            
-            // Template 컬렉션인 경우에만 isActive 필터 적용
-            if collection == "Template" {
-                query = collectionRef.whereField("isActive", isEqualTo: true)
-            } else {
-                query = collectionRef
-            }
-            
-            let snapshot = try await query.getDocuments()
-            
-            var items = try snapshot.documents.compactMap { document in
-                try document.data(as: T.self)
-            }
-            items = sortItems(items)
-            return items
-        } catch {
-            errorMessage = "\(collection) 목록을 불러오는데 실패했습니다: \(error.localizedDescription)"
-            return []
-        }
-    }
-    
     // MARK: - Sorting Methods (통합)
-    
+
     /// 통합 정렬 함수
     private func sortItems<T: WorkshopItem>(_ items: [T]) -> [T] {
         var sortedItems = items
@@ -186,13 +223,10 @@ class WorkshopViewModel {
         }
         return sortedItems
     }
-    
+
     func applySorting() {
-        templates = sortItems(templates)
-        backgrounds = sortItems(backgrounds)
-        carabiners = sortItems(carabiners)
-        particles = sortItems(particles)
-        sounds = sortItems(sounds)
+        // DataManager의 데이터를 정렬 (참조이므로 실제로 업데이트됨)
+        // Note: 정렬은 필터링된 데이터에서 처리됨
     }
     
     // MARK: - Filtering Methods (통합)
@@ -228,7 +262,7 @@ class WorkshopViewModel {
     /// 필터링된 템플릿 목록
     var filteredTemplates: [KeyringTemplate] {
         var result = templates
-        
+
         if let filter = selectedTemplateFilter {
             switch filter {
             case .image:
@@ -239,16 +273,18 @@ class WorkshopViewModel {
                 result = result.filter { $0.tags.contains("드로잉형") }
             }
         }
-        
-        return result
+
+        return sortItems(result)
     }
-    
+
     var filteredBackgrounds: [Background] {
-        filterItems(backgrounds, commonFilter: selectedCommonFilter)
+        let filtered = filterItems(backgrounds, commonFilter: selectedCommonFilter)
+        return sortItems(filtered)
     }
-    
+
     var filteredCarabiners: [Carabiner] {
-        filterItems(carabiners, commonFilter: selectedCommonFilter)
+        let filtered = filterItems(carabiners, commonFilter: selectedCommonFilter)
+        return sortItems(filtered)
     }
     
     // MARK: - Owned Items Methods (통합)
@@ -256,12 +292,14 @@ class WorkshopViewModel {
     /// 사용자가 보유한 아이템 목록 로드
     func loadOwnedItems() async {
         guard let user = userManager.currentUser else { return }
-        
+
         ownedTemplates = await loadOwnedItems(collection: "Template", ids: user.templates)
         ownedBackgrounds = await loadOwnedItems(collection: "Background", ids: user.backgrounds)
         ownedCarabiners = await loadOwnedItems(collection: "Carabiner", ids: user.carabiners)
         ownedParticles = await loadOwnedItems(collection: "Particle", ids: user.particleEffects)
         ownedSounds = await loadOwnedItems(collection: "Sound", ids: user.soundEffects)
+
+        hasLoadedOwnedItems = true
     }
     
     /// 통합된 보유 아이템 로드 함수

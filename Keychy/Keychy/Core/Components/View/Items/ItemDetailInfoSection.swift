@@ -19,7 +19,14 @@ struct ItemDetailInfoSection: View {
                 if !item.isFree {
                     Image("keyHole")
                 }
-                itemTags
+
+                /// 이펙트 타입 표시 (사운드/파티클)
+                if let effectType = effectTypeTag {
+                    tagView(text: effectType.rawValue)
+                } else {
+                    // 이펙트가 아닐 경우에만 일반 태그 표시
+                    itemTags
+                }
             }
             .padding(.bottom, 4)
 
@@ -37,30 +44,33 @@ struct ItemDetailInfoSection: View {
 
 // MARK: - Components
 extension ItemDetailInfoSection {
+    /// 이펙트 타입 태그 (사운드/파티클)
+    private var effectTypeTag: EffectFilterType? {
+        if item is Sound {
+            return .sound
+        } else if item is Particle {
+            return .particle
+        }
+        return nil
+    }
+
+    /// 태그 뷰 생성
+    private func tagView(text: String) -> some View {
+        Text(text)
+            .typography(.suit14M)
+            .foregroundStyle(.gray500)
+            .multilineTextAlignment(.center)
+            .padding(.vertical, 5)
+            .padding(.horizontal, 8)
+            .background(.gray50)
+            .clipShape(.rect)
+            .cornerRadius(10)
+    }
+
     private var itemTags: some View {
         HStack(spacing: 8) {
-            if item.tags.isEmpty {
-                Text("지정된 태그가 없습니다.")
-                    .typography(.suit14M)
-                    .foregroundStyle(.gray500)
-                    .multilineTextAlignment(.center)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 8)
-                    .background(.gray50)
-                    .clipShape(.rect)
-                    .cornerRadius(10)
-            } else {
-                ForEach(item.tags, id: \.self) { tag in
-                    Text(tag)
-                        .typography(.suit14M)
-                        .foregroundStyle(.gray500)
-                        .multilineTextAlignment(.center)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 8)
-                        .background(.gray50)
-                        .clipShape(.rect)
-                        .cornerRadius(10)
-                }
+            ForEach(item.tags, id: \.self) { tag in
+                tagView(text: tag)
             }
         }
     }

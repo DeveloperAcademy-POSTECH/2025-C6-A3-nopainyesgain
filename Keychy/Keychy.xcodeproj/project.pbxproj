@@ -159,6 +159,14 @@
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
 		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
 		C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */; };
+		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
+		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
+		C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CC2EB7B94B00C5F083 /* EffectManager.swift */; };
+		C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */; };
+		C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */; };
+		C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */; };
+		C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */; };
+		C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */; };
 		C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -328,6 +336,14 @@
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
 		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
+		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
+		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
+		C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
+		C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
+		C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMyCollectionSection.swift; sourceTree = "<group>"; };
+		C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopStickyHeaderSection.swift; sourceTree = "<group>"; };
+		C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTopBannerSection.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPhotoPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -698,6 +714,7 @@
 		4CEC62192EAE08DA0099ECEE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				C68931CD2EB7B94B00C5F083 /* FileManagers */,
 				4CEC62062EAE08DA0099ECEE /* Components */,
 				4CEC620D2EAE08DA0099ECEE /* Navigation */,
 				4CEC62152EAE08DA0099ECEE /* DesignSystem */,
@@ -918,11 +935,14 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
-				C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */,
+				C6830F072EB8E96D0059379A /* MyItemsView.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
+				C6830F032EB8A4000059379A /* WorkshopDataManager.swift */,
+				C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */,
 				C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */,
-				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
+				C68931D12EB850BC00C5F083 /* WorkshopMain */,
 				C6C402902EB2F8A1006B58DF /* MyItemsView.swift */,
+				C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */,
 				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
 				C665DDE92EAEFAA800CE4495 /* Coin */,
@@ -1029,6 +1049,26 @@
 				C665DDED2EAF077900CE4495 /* Product.storekit */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C68931CD2EB7B94B00C5F083 /* FileManagers */ = {
+			isa = PBXGroup;
+			children = (
+				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
+			);
+			path = FileManagers;
+			sourceTree = "<group>";
+		};
+		C68931D12EB850BC00C5F083 /* WorkshopMain */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
+				C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */,
+				C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */,
+				C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */,
+				C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */,
+			);
+			path = WorkshopMain;
 			sourceTree = "<group>";
 		};
 		C6C4027F2EB26BFB006B58DF /* TextPhoto */ = {
@@ -1161,6 +1201,10 @@
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
 				AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
+				C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */,
+				C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */,
+				C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */,
+				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				C6C402912EB2F8A1006B58DF /* MyItemsView.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
@@ -1191,6 +1235,7 @@
 				385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */,
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
+				C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */,
 				4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */,
 				4CBBEF242EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift in Sources */,
 				4CBBEF252EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift in Sources */,
@@ -1212,12 +1257,14 @@
 				AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */,
 				AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */,
 				AADD2AB42EB3A4E50051478E /* CarabinerSceneView.swift in Sources */,
+				C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
 				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
+				C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */,
 				C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */,
 				4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */,
@@ -1226,6 +1273,7 @@
 				385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */,
 				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
+				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,

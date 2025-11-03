@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import Lottie
 
 // MARK: - Filter Components
 
@@ -115,6 +116,10 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     let item: Item
     var isOwned: Bool = false
     var router: NavigationRouter<WorkshopRoute>? = nil
+    var viewModel: WorkshopViewModel? = nil
+
+    @State private var effectManager = EffectManager.shared
+    @Environment(UserManager.self) private var userManager
 
     var body: some View {
         Button {
@@ -136,23 +141,34 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     private var thumbnailImage: some View {
         ZStack(alignment: .top) {
             VStack {
-                LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else if state.isLoading {
-                        ProgressView()
-                            .background(.gray50)
-                    } else {
-                        Color.gray50
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.gray300)
-                            }
+                ZStack {
+                    LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else if state.isLoading {
+                            Color.gray50
+                                .overlay { ProgressView() }
+                        } else {
+                            Color.gray50
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.gray300)                                
+                                }
+                        }
+                    }
+                    .scaledToFit()
+                    .opacity(isParticlePlaying ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
+
+                    // 파티클 Lottie 뷰를 같은 위치에 배치
+                    if let particle = item as? Particle,
+                       let particleId = particle.id,
+                       effectManager.playingParticleId == particleId {
+                        particleLottieView(particleId: particleId, effectManager: effectManager)
                     }
                 }
-                .scaledToFit()
             }
             .padding(.vertical,10)
 
@@ -160,20 +176,58 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             priceOverlay(
                 isFree: item.isFree,
                 price: item.workshopPrice,
-                isOwned: isOwned
+                isOwned: isOwned,
+                item: item,
+                effectManager: effectManager,
+                userManager: userManager
             )
         }
-        .frame(width: 175, height: 233)
+        .frame(width: 175, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
     }
 
-    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
+    /// 현재 아이템의 파티클이 재생 중인지 확인
+    private var isParticlePlaying: Bool {
+        if let particle = item as? Particle,
+           let particleId = particle.id {
+            return effectManager.playingParticleId == particleId
+        }
+        return false
+    }
+
+    /// 아이템 타입에 따른 높이 계산
+    private var itemHeight: CGFloat {
+        if item is KeyringTemplate || item is Background {
+            return 233
+        } else {
+            return 175
+        }
+    }
+
+    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
     private func handleTap() {
+        guard let router = router else { return }
+
+        // 현재 아이템 ID와 카테고리 저장
+        viewModel?.savedScrollPosition = item.id
+        viewModel?.savedCategory = viewModel?.selectedCategory
+
+        // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
-           let router = router,
-           let route = WorkshopRoute.from(string: template.id!) {
+           let templateId = template.id,
+           let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
+        }
+        // 나머지 아이템들은 WorkshopPreview로 이동
+        else if let background = item as? Background {
+            router.push(.workshopPreview(item: AnyHashable(background)))
+        } else if let carabiner = item as? Carabiner {
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
+        } else if let particle = item as? Particle {
+            router.push(.workshopPreview(item: AnyHashable(particle)))
+        } else if let sound = item as? Sound {
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
@@ -182,6 +236,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
 struct OwnedItemCard<Item: WorkshopItem>: View {
     let item: Item
     var router: NavigationRouter<WorkshopRoute>? = nil
+    var viewModel: WorkshopViewModel? = nil
 
     var body: some View {
         Button {
@@ -215,42 +270,154 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
         .buttonStyle(.plain)
     }
 
-    /// 탭 핸들러 (KeyringTemplate만 네비게이션)
+    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
     private func handleTap() {
+        guard let router = router else { return }
+
+        // 카테고리만 저장
+        viewModel?.savedCategory = viewModel?.selectedCategory
+
+        // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
-           let router = router,
-           let route = WorkshopRoute.from(string: template.id!) {
+           let templateId = template.id,
+           let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
+        }
+        // 나머지 아이템들은 WorkshopPreview로 이동
+        else if let background = item as? Background {
+            router.push(.workshopPreview(item: AnyHashable(background)))
+        } else if let carabiner = item as? Carabiner {
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
+        } else if let particle = item as? Particle {
+            router.push(.workshopPreview(item: AnyHashable(particle)))
+        } else if let sound = item as? Sound {
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
 
-/// 공통 가격 오버레이 (보유/무료/유료 표시)
-func priceOverlay(isFree: Bool, price: Int, isOwned: Bool) -> some View {
-    HStack {
-        if isOwned {
-            VStack {
+/// 공통 가격 오버레이 (유료 표시)
+func priceOverlay<Item: WorkshopItem>(
+    isFree: Bool,
+    price: Int,
+    isOwned: Bool,
+    item: Item,
+    effectManager: EffectManager,
+    userManager: UserManager
+) -> some View {
+    VStack {
+        HStack(spacing: 0) {
+            if isOwned || !isFree {
                 Image(.keyHole)
-            }
-            .padding(.leading, 10)
-            .padding(.top, 7)
+                    .padding(.leading, 10)
+                    .padding(.top, 7)
 
-            Spacer()
-
-            VStack {
-                Image(.owned)
                 Spacer()
-            }
-        } else if !isFree {
-            // 가격 배지
-            VStack {
-                Image(.keyHole)
-            }
-            .padding(.leading, 10)
-            .padding(.top, 7)
 
-            Spacer()
+                if isOwned {
+                    VStack {
+                        Image(.owned)
+                        
+                        Spacer()
+                    }
+                }
+            }
+        }
+        .frame(height: 43)
+
+        Spacer()
+
+        // 이펙트 타입일 때만 재생 버튼 표시
+        if item is Sound || item is Particle {
+            HStack {
+                Spacer()
+
+                effectButtonStyle(
+                    item: item,
+                    effectManager: effectManager,
+                    userManager: userManager
+                )
+            }
+            .padding(8)
         }
     }
-    .frame(height: 43)
+}
+
+/// 파티클 Lottie 뷰
+func particleLottieView(particleId: String, effectManager: EffectManager) -> some View {
+    LottieView(
+        name: particleId,
+        loopMode: .playOnce,
+        speed: 1.0
+    )
+    .transition(.opacity)
+    .animation(.easeInOut(duration: 0.3), value: effectManager.playingParticleId)
+    .onAppear {
+        // 애니메이션 시간만큼 대기 후 재생 상태 해제
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                effectManager.playingParticleId = nil
+            }
+        }
+    }
+}
+
+func effectButtonStyle<Item: WorkshopItem>(
+    item: Item,
+    effectManager: EffectManager,
+    userManager: UserManager
+) -> some View {
+    let itemId = item.id ?? ""
+    let isDownloading = effectManager.downloadingItemIds.contains(itemId)
+    let progress = effectManager.downloadProgress[itemId] ?? 0.0
+
+    return Button {
+        Task {
+            if let sound = item as? Sound {
+                await effectManager.playSound(sound, userManager: userManager)
+            } else if let particle = item as? Particle {
+                await effectManager.playParticle(particle, userManager: userManager)
+            }
+        }
+    } label: {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.gray50)
+                .frame(width: 38, height: 38)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(.white100, lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+
+            if isDownloading {
+                // 다운로드 중이면 프로그레스 표시
+                CircularProgressView(progress: progress)
+                    .frame(width: 20, height: 20)
+            } else {
+                Image(.polygon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 14, height: 14)
+            }
+        }
+    }
+    .disabled(isDownloading)
+}
+
+/// 원형 프로그레스 뷰
+struct CircularProgressView: View {
+    let progress: Double
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.gray300, lineWidth: 2)
+
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(.main500, lineWidth: 2)
+                .rotationEffect(.degrees(-90))
+        }
+    }
 }
