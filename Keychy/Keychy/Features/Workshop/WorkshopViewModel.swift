@@ -103,6 +103,9 @@ class WorkshopViewModel {
     var errorMessage: String? = nil
     var hasLoadedOwnedItems: Bool = false
 
+    // 카테고리별 로딩 상태 추적
+    private var loadedCategories: Set<String> = []
+
     // 보유한 아이템 목록
     var ownedTemplates: [KeyringTemplate] = []
     var ownedBackgrounds: [Background] = []
@@ -117,8 +120,51 @@ class WorkshopViewModel {
     }
     
     // MARK: - Firebase Methods (통합)
-    
-    /// 모든 데이터 가져오기
+
+    /// 특정 카테고리의 데이터만 가져오기
+    func fetchDataForCategory(_ category: String) async {
+        // 이미 로드된 카테고리는 스킵
+        guard !loadedCategories.contains(category) else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        defer { isLoading = false }
+
+        switch category {
+        case "키링":
+            templates = await fetchItems(collection: "Template")
+            loadedCategories.insert("키링")
+        case "배경":
+            backgrounds = await fetchItems(collection: "Background")
+            extractAvailableTags()
+            loadedCategories.insert("배경")
+        case "카라비너":
+            carabiners = await fetchItems(collection: "Carabiner")
+            extractAvailableTags()
+            loadedCategories.insert("카라비너")
+        case "이펙트":
+            particles = await fetchItems(collection: "Particle")
+            sounds = await fetchItems(collection: "Sound")
+            loadedCategories.insert("이펙트")
+        default:
+            break
+        }
+    }
+
+    /// 나머지 카테고리들을 백그라운드에서 프리페칭
+    func prefetchRemainingData() async {
+        let allCategories = ["키링", "배경", "카라비너", "이펙트"]
+
+        for category in allCategories {
+            // 이미 로드된 카테고리는 스킵
+            guard !loadedCategories.contains(category) else { continue }
+
+            await fetchDataForCategory(category)
+        }
+    }
+
+    /// 모든 데이터 가져오기 (기존 메서드 유지 - 필요시 사용)
     func fetchAllData() async {
         isLoading = true
         errorMessage = nil
@@ -130,6 +176,9 @@ class WorkshopViewModel {
         carabiners = await fetchItems(collection: "Carabiner")
         particles = await fetchItems(collection: "Particle")
         sounds = await fetchItems(collection: "Sound")
+
+        // 모든 카테고리를 로드된 것으로 표시
+        loadedCategories = ["키링", "배경", "카라비너", "이펙트"]
 
         // 데이터를 가져온 후 사용 가능한 태그 추출
         extractAvailableTags()
@@ -315,5 +364,10 @@ class WorkshopViewModel {
         selectedTemplateFilter = nil
         selectedCommonFilter = nil
         selectedEffectFilter = nil
+    }
+
+    /// 특정 카테고리가 로드되었는지 확인
+    func isCategoryLoaded(_ category: String) -> Bool {
+        return loadedCategories.contains(category)
     }
 }

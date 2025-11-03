@@ -47,11 +47,23 @@ struct WorkshopView: View {
         }
         .task {
             viewModel = WorkshopViewModel(userManager: userManager)
-            await viewModel.fetchAllData()
+
+            // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
+            await viewModel.fetchDataForCategory(viewModel.selectedCategory)
             await viewModel.loadOwnedItems()
+
+            // 2. 백그라운드에서 나머지 카테고리 프리페칭
+            Task.detached(priority: .background) {
+                await viewModel.prefetchRemainingData()
+            }
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
             viewModel.resetFilters()
+
+            // 카테고리 전환 시 해당 카테고리가 로드되지 않았다면 로드
+            Task {
+                await viewModel.fetchDataForCategory(newValue)
+            }
         }
     }
     
