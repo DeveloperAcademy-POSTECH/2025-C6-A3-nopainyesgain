@@ -37,6 +37,20 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State var showSheet: Bool = true
     @FocusState var isFocused: Bool
 
+    // MARK: - Dynamic Sheet Heights
+    /// 고정된 detents (태그 줄 수에 따라 단계별로)
+    private var dynamicDetents: Set<PresentationDetent> {
+        [
+            .height(76),   // 접힌 상태
+            .height(395),  // 1줄
+            .height(440),  // 2줄
+            .height(485),  // 3줄
+            .height(530),  // 4줄
+            .height(575),  // 5줄
+            .height(620)   // 6줄
+        ]
+    }
+
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -52,12 +66,20 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
             .interactiveDismissDisabled(true)
             .sheet(isPresented: $showSheet) {
                 infoSheet
-                    .presentationDetents([.height(76), .height(measuredSheetHeight)], selection: $sheetDetent)
+                    .presentationDetents(dynamicDetents, selection: $sheetDetent)
                     .presentationDragIndicator(.visible)
                     .presentationBackgroundInteraction(.enabled(upThrough: .height(measuredSheetHeight)))
                     .interactiveDismissDisabled()
                     .onAppear {
                         sheetDetent = .height(measuredSheetHeight)
+                    }
+                    .onChange(of: measuredSheetHeight) { _, newHeight in
+                        // 측정된 높이가 변경되면 자동으로 이동
+                        if sheetDetent != .height(76) {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                sheetDetent = .height(newHeight)
+                            }
+                        }
                     }
             }
             .toolbar {
