@@ -14,7 +14,6 @@ import FirebaseFirestore
 struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: VM
-    let navigationTitle: String
     let nextRoute: WorkshopRoute
 
     // UserManager 주입
@@ -49,7 +48,6 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                     .frame(maxWidth: .infinity)
             }
             .ignoresSafeArea()
-            .navigationTitle(navigationTitle)
             .navigationBarBackButtonHidden(true)
             .interactiveDismissDisabled(true)
             .sheet(isPresented: $showSheet) {

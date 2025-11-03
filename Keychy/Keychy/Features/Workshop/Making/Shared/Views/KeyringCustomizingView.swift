@@ -14,7 +14,6 @@ import Lottie
 struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: VM
-    let navigationTitle: String
     let nextRoute: WorkshopRoute
     
     @State private var selectedMode: CustomizingMode = .effect
@@ -59,7 +58,6 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             .background(.gray50)
             .disabled(isLoadingResources || !isSceneReady)
         }
-        .navigationTitle(navigationTitle)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .toolbar {

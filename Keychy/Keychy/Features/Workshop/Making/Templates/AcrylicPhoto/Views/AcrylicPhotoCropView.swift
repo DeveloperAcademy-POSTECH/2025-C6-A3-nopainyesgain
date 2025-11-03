@@ -49,6 +49,7 @@ struct AcrylicPhotoCropView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 70)
         }
+        .navigationTitle("누끼 영역을 지정해주세요")
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .toolbar {
@@ -134,15 +135,14 @@ struct CropBoxView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             ZStack {
-                grid
                 pins
+                grid
             }
             .overlay(
                 Rectangle()
-                    .strokeBorder(.white, lineWidth: 3)
-                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 0)
+                    .strokeBorder(.white, lineWidth: 1)
             )
-            .background(Color.white.opacity(0.001))
+            .background(.white.opacity(0.001))
             .frame(width: rect.width, height: rect.height)
             .position(x: rect.midX, y: rect.midY)
             .contentShape(Rectangle())
@@ -182,18 +182,17 @@ struct CropBoxView: View {
                 pin(corner: .bottomRight)
             }
         }
-        .padding(-6)
+        .padding(-4)
     }
     
     private func pin(corner: UIRectCorner) -> some View {
         Circle()
             .fill(.white)
-            .frame(width: 12, height: 12)
+            .frame(width: 10, height: 10)
             .overlay(
                 Circle()
-                    .stroke(Color.black.opacity(0.3), lineWidth: 1)
+                    .stroke(Color.black.opacity(0.5), lineWidth: 1.5)
             )
-            .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 0)
     }
     
     private var grid: some View {
@@ -201,22 +200,22 @@ struct CropBoxView: View {
             HStack {
                 Spacer()
                 Rectangle()
-                    .frame(width: 1)
+                    .frame(width: 0.5)
                     .frame(maxHeight: .infinity)
                 Spacer()
                 Rectangle()
-                    .frame(width: 1)
+                    .frame(width: 0.5)
                     .frame(maxHeight: .infinity)
                 Spacer()
             }
             VStack {
                 Spacer()
                 Rectangle()
-                    .frame(height: 1)
+                    .frame(height: 0.5)
                     .frame(maxWidth: .infinity)
                 Spacer()
                 Rectangle()
-                    .frame(height: 1)
+                    .frame(height: 0.5)
                     .frame(maxWidth: .infinity)
                 Spacer()
             }
