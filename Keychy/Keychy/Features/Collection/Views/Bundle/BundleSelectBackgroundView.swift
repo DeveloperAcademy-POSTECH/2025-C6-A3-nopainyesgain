@@ -25,6 +25,9 @@ struct BundleSelectBackgroundView: View {
             .toolbar(.hidden, for: .tabBar)
             .scrollIndicators(.hidden)
             .navigationTitle("배경")
+            .task {
+                await viewModel.loadBackgroundsAndCarabiners()
+            }
     }
 }
 
