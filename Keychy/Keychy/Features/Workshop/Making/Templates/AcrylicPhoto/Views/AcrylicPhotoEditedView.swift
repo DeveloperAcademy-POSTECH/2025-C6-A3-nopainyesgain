@@ -12,38 +12,39 @@ struct AcrylicPhotoEditedView: View {
     // MARK: - Dependencies
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: AcrylicPhotoVM
-
+    
     // MARK: - Animation States
     @State private var showRemovedBackground = false
-
+    
     // 누끼 전 이미지 (배경 레이어) - 등장 애니메이션
     @State private var beforeImageScale: CGFloat = 0.3
     @State private var beforeImageOpacity: Double = 0.0
-
+    
     // 누끼 후 이미지 (전경 레이어) - 전환 애니메이션
     @State private var afterImageScale: CGFloat = 2.2
     @State private var afterImageOpacity: Double = 0.0
-
+    
     // 완료 체크마크 애니메이션
     @State private var showCheckmark = false
     @State private var checkmarkScale: CGFloat = 0.3
     @State private var checkmarkOpacity: Double = 0.0
-
+    
     // MARK: - Constants
-    private let imageMaxWidth: CGFloat = 300
+    private let imageMaxWidth: CGFloat = 350
     private let initialAppearDuration: Double = 1.6
     private let transitionDelay: Double = 2.0
     private let springResponse: Double = 2.5
     private let springDamping: Double = 0.3
-
+    
     // MARK: - Body
     var body: some View {
         ZStack {
             imageTransitionView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+            
             if showCheckmark {
                 checkmarkView
+                    .padding(.bottom, 60)
             }
         }
         .navigationTitle("누끼를 제거합니다!")
@@ -54,21 +55,22 @@ struct AcrylicPhotoEditedView: View {
             resetCheckmarkState()
         }
     }
-
+    
     // MARK: - Components
     /// 누끼 전→후 이미지 트랜지션 (레이어 효과)
     private var imageTransitionView: some View {
         ZStack {
             // 배경 레이어: 누끼 전 (흐림)
             beforeImageLayer
-
+            
             // 전경 레이어: 누끼 후 (선명)
             if showRemovedBackground {
                 afterImageLayer
             }
         }
+        .padding(.bottom, 60)
     }
-
+    
     /// 누끼 전 이미지 (배경 레이어)
     private var beforeImageLayer: some View {
         Image(uiImage: viewModel.croppedImage)
@@ -80,7 +82,7 @@ struct AcrylicPhotoEditedView: View {
             .scaleEffect(beforeImageScale)
             .opacity(beforeImageOpacity)
     }
-
+    
     /// 누끼 후 이미지 (전경 레이어)
     private var afterImageLayer: some View {
         Image(uiImage: viewModel.removedBackgroundImage)
@@ -92,24 +94,25 @@ struct AcrylicPhotoEditedView: View {
             .scaleEffect(afterImageScale)
             .opacity(afterImageOpacity)
     }
-
+    
     /// 완료 체크마크
     private var checkmarkView: some View {
-        ZStack {
-            Circle()
-                .fill(Color.green)
-                .frame(width: 60, height: 60)
-
-            Image(systemName: "checkmark")
-                .typography(.nanum18B)
-                .foregroundColor(.white)
+        VStack(spacing: 23) {
+            Image("checkmark")
+            
+            Text("완료!")
+                .typography(.suit17SB)
         }
+        .padding(.top, 42)
+        .padding(.horizontal, 55)
+        .padding(.bottom, 26)
+        .glassEffect(in: .rect(cornerRadius: 15))
+        .frame(minWidth: 300)
         .scaleEffect(checkmarkScale)
-        .opacity(checkmarkOpacity)
     }
-
+    
     // MARK: - Actions
-
+    
     /// 다음 단계로 진행
     private func proceedToNextStep() {
         AcrylicPhotoVM.removeBackgroundAndCrop(from: viewModel.removedBackgroundImage) { croppedImage in
@@ -121,21 +124,21 @@ struct AcrylicPhotoEditedView: View {
             }
         }
     }
-
+    
     /// 체크마크 상태 리셋 (뒤로가기 시)
     private func resetCheckmarkState() {
         showCheckmark = false
         checkmarkScale = 0.3
         checkmarkOpacity = 0.0
     }
-
+    
     // MARK: - Animation Sequence
     /// 배경 제거 및 애니메이션 시퀀스 시작
     private func startBackgroundRemoval() {
         animateImageAppearance()
         performBackgroundRemoval()
     }
-
+    
     /// 1단계: 원본 이미지 등장 애니메이션
     private func animateImageAppearance() {
         withAnimation(.easeOut(duration: initialAppearDuration)) {
@@ -143,39 +146,39 @@ struct AcrylicPhotoEditedView: View {
             beforeImageOpacity = 1.0
         }
     }
-
+    
     /// 2단계: 배경 제거 처리
     private func performBackgroundRemoval() {
         AcrylicPhotoVM.removeBackground(from: viewModel.croppedImage) { [self] result in
             viewModel.removedBackgroundImage = result ?? viewModel.croppedImage
-
+            
             // 3단계로 진행
             DispatchQueue.main.asyncAfter(deadline: .now() + transitionDelay) {
                 animateImageTransition()
             }
         }
     }
-
+    
     /// 3단계: 누끼 전→후 전환 애니메이션 (레이어 효과)
     private func animateImageTransition() {
         withAnimation(.spring(response: springResponse, dampingFraction: springDamping)) {
             // 배경 레이어: 흐려지기
             beforeImageScale = 1.0
             beforeImageOpacity = 0.3
-
+            
             // 전경 레이어: 크게 등장 → 정상 크기
             afterImageOpacity = 1.0
             afterImageScale = 1.0
-
+            
             showRemovedBackground = true
         }
-
+        
         // 4단계: 전환 완료 후 햅틱 + 체크마크
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             triggerCompletionFeedback()
         }
     }
-
+    
     /// 4단계: 완료 피드백 (햅틱 + 체크마크 + 자동 진행)
     private func triggerCompletionFeedback() {
         // 햅틱 두둑두둑ㅋㅋ일단넣어
@@ -183,14 +186,14 @@ struct AcrylicPhotoEditedView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             Haptic.impact()
         }
-
+        
         // 체크마크 애니메이션
         showCheckmark = true
         withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
             checkmarkScale = 1.0
             checkmarkOpacity = 1.0
         }
-
+        
         // 2.5초 후 자동으로 다음 화면
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             proceedToNextStep()

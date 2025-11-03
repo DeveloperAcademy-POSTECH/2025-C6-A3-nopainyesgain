@@ -17,7 +17,7 @@ struct ItemDetailInfoSection: View {
             HStack(spacing: 8) {
                 /// 유료 태그 표시
                 if !item.isFree {
-                    itemPaidTag
+                    Image("keyHole")
                 }
                 itemTags
             }

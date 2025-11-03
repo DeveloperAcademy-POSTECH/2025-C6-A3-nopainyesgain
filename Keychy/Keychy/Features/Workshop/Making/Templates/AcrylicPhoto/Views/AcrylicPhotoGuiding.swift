@@ -14,23 +14,26 @@ struct AcrylicPhotoGuiding: View {
     @Binding var showCamera: Bool
     let guidingText: String
     let guidingImageURL: String
-    
+
+    @State private var contentHeight: CGFloat = 500
+
     var body: some View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
             HStack {
                 backBtn
-                    .padding(.top, 30.5)
+                    .padding(.top, 30)
                     .padding(.leading, 20)
                 Spacer()
             }
             .padding(.bottom, 19.5)
             
-            guidingIcon
-                .padding(.bottom, 8)
-            
             guidingTextLabel
-                .padding(.bottom, 22)
+                .padding(.bottom, 5)
+            
+            Text("배경은 자동으로 지워져요.")
+                .typography(.suit16B)
+                .padding(.bottom, 38)
             
             guidingImage
                 .padding(.bottom, 23)
@@ -42,7 +45,28 @@ struct AcrylicPhotoGuiding: View {
             }
             .padding(.horizontal, 35)
         }
-        .presentationDetents([.medium])
+        .background(
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: GuidingHeightPreferenceKey.self,
+                    value: geometry.size.height
+                )
+            }
+        )
+        .onPreferenceChange(GuidingHeightPreferenceKey.self) { height in
+            if height > 0 {
+                contentHeight = height
+            }
+        }
+        .presentationDetents([.height(contentHeight)])
+    }
+}
+
+// MARK: - PreferenceKey
+struct GuidingHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 500
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
@@ -52,8 +76,7 @@ extension AcrylicPhotoGuiding {
         Button {
             dismiss()
         } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 24))
+            Image("dismiss")
                 .foregroundStyle(.primary)
         }
     }
@@ -65,8 +88,7 @@ extension AcrylicPhotoGuiding {
                 showCamera = true
             }
         } label: {
-            Image(systemName: "camera.fill")
-                .font(.system(size: 20))
+            Image("camera")
                 .foregroundStyle(.primary)
                 .frame(width: 50, height: 48)
         }
@@ -82,26 +104,20 @@ extension AcrylicPhotoGuiding {
             }
         } label: {
             HStack(spacing: 8) {
-                Image(systemName: "photo.fill")
-                    .font(.system(size: 15))
+                Image("pic")
                 Text("사진 선택")
                     .font(.system(size: 15, weight: .semibold))
                     .padding(.vertical, 15)
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .background(Color.black.opacity(0.8))
+            .background(.gray700)
             .clipShape(Capsule())
         }
     }
     
-    private var guidingIcon: some View {
-        Image(.fireworks)
-            .resizable()
-            .frame(width: 32, height: 32)
-    }
-    
     private var guidingTextLabel: some View {
+        
         Text(guidingText)
             .typography(.suit20B)
             .multilineTextAlignment(.center)
@@ -109,19 +125,11 @@ extension AcrylicPhotoGuiding {
     }
     
     private var guidingImage: some View {
-//        LazyImage(url: URL(string: guidingImageURL)) { state in
-//            if let image = state.image {
-//                image
-//                    .resizable()
-//                    .scaledToFit()
-//            } else {
-//                ProgressView()
-//            }
-//        }
         Image("acrylicGudingImage")
             .resizable()
             .scaledToFit()
-            //.frame(maxWidth: .infinity)
+            .frame(minHeight: 272.87)
+            .padding(.horizontal, 30)
     }
 }
 
