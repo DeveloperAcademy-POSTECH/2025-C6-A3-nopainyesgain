@@ -27,7 +27,7 @@ struct HomeTab: View {
                     case .bundleSelectBackgroundView:
                         BundleSelectBackgroundView(router: router, viewModel: collectionViewModel)
                     case .bundleSelectCarabinerView:
-                        BundleSelectCarabinerView(router: router, viewModel: collectionViewModel, backgroundImage: collectionViewModel.selectedBackgroundImage)
+                        BundleSelectCarabinerView(router: router, viewModel: collectionViewModel)
                     case .bundleAddKeyringView:
                         BundleAddKeyringView(router: router, viewModel: collectionViewModel)
                     case .bundleNameInputView:
