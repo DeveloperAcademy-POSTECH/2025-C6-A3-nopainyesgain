@@ -49,27 +49,11 @@ struct AcrylicPhotoEditedView: View {
         }
         .navigationTitle("누끼를 제거합니다!")
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            backToolbarItem
-        }
         .onAppear {
             startBackgroundRemoval()
         }
         .onDisappear {
             resetCheckmarkState()
-        }
-    }
-}
-
-// MARK: - Toolbar
-extension AcrylicPhotoEditedView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                router.pop()
-            } label: {
-                Image(systemName: "chevron.left")
-            }
         }
     }
 }
@@ -118,7 +102,7 @@ extension AcrylicPhotoEditedView {
     /// 완료 체크마크
     private var checkmarkView: some View {
         VStack(spacing: 23) {
-            Image("checkmark")
+            Image("checkmarker")
             
             Text("완료!")
                 .typography(.suit17SB)

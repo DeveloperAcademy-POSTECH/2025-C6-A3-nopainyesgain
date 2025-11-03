@@ -70,6 +70,7 @@
 		4CBBEF2A2EB7DB9800252590 /* RecordingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */; };
 		4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF272EB7DB9800252590 /* AudioRecorderManager.swift */; };
 		4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */; };
+		4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -243,6 +244,7 @@
 		4CBBEF272EB7DB9800252590 /* AudioRecorderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderManager.swift; sourceTree = "<group>"; };
 		4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSheet.swift; sourceTree = "<group>"; };
 		4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringViewModelProtocol+Reset.swift"; sourceTree = "<group>"; };
+		4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicAppearanceModifier.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -465,6 +467,7 @@
 				4CBBEF292EB7DB9800252590 /* Recording */,
 				4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */,
 				4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */,
+				4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1249,6 +1252,7 @@
 				AADD2AB42EB3A4E50051478E /* CarabinerSceneView.swift in Sources */,
 				C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
+				4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */,
 				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,

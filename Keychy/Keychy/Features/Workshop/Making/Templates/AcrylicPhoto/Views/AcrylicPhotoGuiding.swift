@@ -90,8 +90,8 @@ extension AcrylicPhotoGuiding {
             }
         } label: {
             Image("camera")
-                .foregroundStyle(.primary)
-                .frame(width: 50, height: 48)
+                .foregroundStyle(.secondary)
+                //.frame(width: 36, height: 36)
         }
         .buttonStyle(.glass)
         .clipShape(Circle())
@@ -104,13 +104,13 @@ extension AcrylicPhotoGuiding {
                 showPhotoPicker = true
             }
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: 2) {
                 Image("pic")
                 Text("사진 선택")
-                    .font(.system(size: 15, weight: .semibold))
+                    .typography(.suit17B)
                     .padding(.vertical, 15)
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(.white100)
             .frame(maxWidth: .infinity)
             .background(.gray700)
             .clipShape(Capsule())
