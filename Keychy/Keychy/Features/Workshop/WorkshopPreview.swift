@@ -57,25 +57,23 @@ extension WorkshopPreview {
         GeometryReader { geometry in
             VStack {
                 Spacer()
-                
+
                 ZStack {
-                    ItemDetailImage(itemURL: getPreviewURL())
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
-                    
-                        .opacity(isParticlePlaying ? 0 : 1)
-                        .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
-                    
-                    // 파티클 이펙트일 경우 재생 뷰 표시
-                    if let particle = item as? Particle,
-                       let particleId = particle.id,
-                       effectManager.playingParticleId == particleId {
-                        particleLottieView(particleId: particleId, effectManager: effectManager)
-                            .frame(height: getItemHeight(containerWidth: geometry.size.width))
+                    // 파티클이 아닌 경우 이미지 표시
+                    if !(item is Particle) {
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
                     }
-                    
-                    // 이펙트일 경우 재생 버튼 표시
-                    if item is Sound || item is Particle {
+
+                    // 파티클 이펙트일 경우 무한 재생
+                    if let particle = item as? Particle,
+                       let particleId = particle.id {
+                        infiniteParticleLottieView(particleId: particleId)
+                    }
+
+                    // 사운드일 경우 재생 버튼 표시
+                    if item is Sound {
                         VStack {
                             Spacer()
                             HStack {
@@ -87,34 +85,32 @@ extension WorkshopPreview {
                         .padding(.trailing, 16)
                     }
                 }
-                
+
                 Spacer()
             }
             .frame(height: 500)
         }
     }
-    
-    /// 파티클이 재생 중인지 확인
-    private var isParticlePlaying: Bool {
-        if let particle = item as? Particle,
-           let particleId = particle.id {
-            return effectManager.playingParticleId == particleId
-        }
-        return false
+
+    /// 파티클 무한 재생 뷰
+    private func infiniteParticleLottieView(particleId: String) -> some View {
+        LottieView(
+            name: particleId,
+            loopMode: .loop,  // 무한 재생
+            speed: 1.0
+        )
     }
     
-    /// 이펙트 재생 버튼
+    /// 사운드 재생 버튼
     private var effectPlayButton: some View {
         let itemId = item.id ?? ""
         let isDownloading = effectManager.downloadingItemIds.contains(itemId)
         let progress = effectManager.downloadProgress[itemId] ?? 0.0
-        
+
         return Button {
             Task {
                 if let sound = item as? Sound {
                     await effectManager.playSound(sound, userManager: userManager)
-                } else if let particle = item as? Particle {
-                    await effectManager.playParticle(particle, userManager: userManager)
                 }
             }
         } label: {
@@ -127,7 +123,7 @@ extension WorkshopPreview {
                             .stroke(.white100, lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
-                
+
                 if isDownloading {
                     CircularProgressView(progress: progress)
                         .frame(width: 25, height: 25)
@@ -156,22 +152,6 @@ extension WorkshopPreview {
             return sound.thumbnail
         }
         return item.thumbnailURL
-    }
-    
-    /// 아이템 타입에 따른 높이 계산
-    private func getItemHeight(containerWidth: CGFloat) -> CGFloat {
-        if item is KeyringTemplate {
-            // 키링: 4:3 비율
-            let ratio: CGFloat = 4 / 3
-            return containerWidth * ratio
-        } else if item is Background {
-            // 배경: 16:9 비율
-            let ratio: CGFloat = 16 / 9
-            return containerWidth * ratio
-        } else {
-            // 카라비너, 이펙트: 1:1 비율
-            return containerWidth
-        }
     }
 }
 
