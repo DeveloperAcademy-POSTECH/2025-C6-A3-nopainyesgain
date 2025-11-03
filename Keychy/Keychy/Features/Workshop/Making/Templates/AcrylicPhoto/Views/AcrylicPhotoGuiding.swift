@@ -47,10 +47,11 @@ struct AcrylicPhotoGuiding: View {
         }
         .background(
             GeometryReader { geometry in
-                Color.clear.preference(
+                Color.white100.preference(
                     key: GuidingHeightPreferenceKey.self,
                     value: geometry.size.height
                 )
+                .ignoresSafeArea()
             }
         )
         .onPreferenceChange(GuidingHeightPreferenceKey.self) { height in
