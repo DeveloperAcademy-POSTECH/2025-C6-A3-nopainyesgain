@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // 기존 CategoryTabBar를 재사용하되, long press 기능만 추가
 struct CategoryTabBarWithLongPress: View {
@@ -86,8 +87,11 @@ private struct CategoryTabButtonWithLongPress: View {
                     if pressStartTime == nil {
                         pressStartTime = Date()
                         
-                        timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+                        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
                             if isEditable {
+                                let generator = UIImpactFeedbackGenerator(style: .medium)
+                                generator.impactOccurred()
+                                
                                 onLongPress(buttonFrame)
                             }
                             pressStartTime = nil
@@ -102,7 +106,7 @@ private struct CategoryTabButtonWithLongPress: View {
                 .onEnded { _ in
                     if let startTime = pressStartTime {
                         let duration = Date().timeIntervalSince(startTime)
-                        if duration < 0.3 {
+                        if duration < 0.2 {
                             onTap()
                         }
                     }
