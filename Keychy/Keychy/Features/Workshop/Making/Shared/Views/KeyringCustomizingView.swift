@@ -19,12 +19,28 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     
     @State private var selectedMode: CustomizingMode = .effect
     @State private var isLoadingResources = true
-    
+    @State private var isSceneReady = false
+    @State private var loadingScale: CGFloat = 0.3
+    @State private var showRecordingSheet = false
+    @State private var showResetAlert = false
+
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                ZStack(alignment: .bottomTrailing) {
-                    KeyringSceneView(viewModel: viewModel)
+                ZStack(alignment: .center) {
+                    KeyringSceneView(viewModel: viewModel, onSceneReady: {
+                        withAnimation(.easeIn(duration: 0.3)) {
+                            isSceneReady = true
+                        }
+                        closeLoadingIfReady()
+                    })
+                    // 준비되면 fade-in하게 했음.
+                    .opacity(isSceneReady ? 1.0 : 0.0)
+
+                    // 로딩 인디케이터 (키링씬 중앙)
+                    if isLoadingResources || !isSceneReady {
+                        loadingIndicator()
+                    }
                     
                     // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
@@ -34,27 +50,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                         Spacer()
                     }
                     .padding(18)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 }
-                
-                // MARK: - 하단 영역 (선택된 모드에 따라 변경)
+
+                // MARK: - 하단 영역
                 bottomContentView
             }
             .background(.gray50)
-            .blur(radius: isLoadingResources ? 3 : 0)
-            .disabled(isLoadingResources)
-            
-            // 로딩 인디케이터
-            if isLoadingResources {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                    Text("리소스를 가져오고 있어요")
-                        .font(.headline)
-                }
-                .padding(32)
-                .background(.regularMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            }
+            .disabled(isLoadingResources || !isSceneReady)
         }
         .navigationTitle(navigationTitle)
         .navigationBarBackButtonHidden(true)
@@ -74,9 +77,18 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             await soundsTask
             await particlesTask
 
-            // 로딩 완료 후 부드럽게 닫기
+            // 리소스 프리로딩 완료
+            isLoadingResources = false
+            closeLoadingIfReady()
+        }
+    }
+
+    // MARK: - Loading Helper
+    private func closeLoadingIfReady() {
+        // 리소스 + 씬 모두 준비되면 로딩 닫기
+        if !isLoadingResources && isSceneReady {
             withAnimation {
-                isLoadingResources = false
+                // 이미 조건이 맞으면 자동으로 UI 업데이트됨
             }
         }
     }
@@ -126,9 +138,18 @@ extension KeyringCustomizingView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
-                router.pop()
+                showResetAlert = true
             } label: {
                 Image(systemName: "chevron.left")
+            }
+            .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
+                Button("취소", role: .cancel) { }
+                Button("확인", role: .destructive) {
+                    viewModel.resetAll()
+                    router.reset()
+                }
+            } message: {
+                Text("지금까지 작업한 내용이 모두 초기화됩니다.")
             }
         }
     }
@@ -143,6 +164,23 @@ extension KeyringCustomizingView {
 
 // MARK: - Mode Selection & Bottom Content Section
 extension KeyringCustomizingView {
+    /// 로딩 인디케이터
+    private func loadingIndicator() -> some View {
+        VStack(spacing: 23) {
+            Image("appIcon")
+
+            Text("키링을 만들고 있어요")
+                .typography(.suit17SB)
+        }
+        .padding(20)
+        .scaleEffect(loadingScale)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                loadingScale = 1.0
+            }
+        }
+    }
+    
     /// 모드 선택 버튼
     private func modeButton(for mode: CustomizingMode) -> some View {
         Button {
@@ -206,14 +244,21 @@ extension KeyringCustomizingView {
                 .padding(.top, 30)
             
             HStack(spacing: 0) {
-                // 마이크 아이콘 (고정)
-                ZStack {
+                // 녹음 버튼
+                Button {
+                    showRecordingSheet = true
+                } label: {
                     Image("record")
                         .frame(width: 32, height: 32)
                 }
                 .padding(.leading, 20)
                 .padding(.trailing, 8)
-                
+                .sheet(isPresented: $showRecordingSheet) {
+                    RecordingSheet { url in
+                        viewModel.applyCustomSound(url)
+                    }
+                }
+
                 // 버튼들만 스크롤
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -222,14 +267,29 @@ extension KeyringCustomizingView {
                             viewModel.updateSound(nil)
                         } label: {
                             Text("없음")
-                                .typography(viewModel.selectedSound == nil ? .suit15SB25 : .suit15M25)
+                                .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 9)
-                                .foregroundStyle(viewModel.selectedSound == nil ? .white100 : .gray500)
-                                .background(viewModel.selectedSound == nil ? .main500 : .gray50)
+                                .foregroundStyle(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .white100 : .gray500)
+                                .background(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .main500 : .gray50)
                                 .clipShape(.rect(cornerRadius: 15))
                         }
-                        
+
+                        // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
+                        if viewModel.hasCustomSound {
+                            Button {
+                                viewModel.applyCustomSound(viewModel.customSoundURL!)
+                            } label: {
+                                Text("음성 메모")
+                                    .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 9)
+                                    .foregroundStyle(viewModel.soundId == "custom_recording" ? .white100 : .gray500)
+                                    .background(viewModel.soundId == "custom_recording" ? .main500 : .gray50)
+                                    .clipShape(.rect(cornerRadius: 15))
+                            }
+                        }
+
                         // Firebase 사운드 목록
                         ForEach(viewModel.availableSounds) { sound in
                             soundItemButton(sound: sound)

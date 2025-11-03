@@ -48,6 +48,10 @@ struct AcrylicPhotoEditedView: View {
             }
         }
         .navigationTitle("누끼를 제거합니다!")
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            backToolbarItem
+        }
         .onAppear {
             startBackgroundRemoval()
         }
@@ -55,7 +59,23 @@ struct AcrylicPhotoEditedView: View {
             resetCheckmarkState()
         }
     }
-    
+}
+
+// MARK: - Toolbar
+extension AcrylicPhotoEditedView {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image(systemName: "chevron.left")
+            }
+        }
+    }
+}
+
+// MARK: - View Components
+extension AcrylicPhotoEditedView {
     // MARK: - Components
     /// 누끼 전→후 이미지 트랜지션 (레이어 효과)
     private var imageTransitionView: some View {

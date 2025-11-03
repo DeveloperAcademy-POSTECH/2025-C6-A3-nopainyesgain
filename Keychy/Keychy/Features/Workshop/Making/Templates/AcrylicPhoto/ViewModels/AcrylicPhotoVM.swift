@@ -30,6 +30,9 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var selectedSound: Sound? = nil
     var selectedParticle: Particle? = nil
 
+    // MARK: - Custom Sound (녹음)
+    var customSoundURL: URL? = nil
+
     // MARK: - Download State
     var downloadingItemIds: Set<String> = []
     var downloadProgress: [String: Double] = [:]
