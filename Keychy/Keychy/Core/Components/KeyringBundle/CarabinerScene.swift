@@ -10,7 +10,8 @@ import SpriteKit
 class CarabinerScene: SKScene {
     
     // MARK: - Properties
-    var carabinerImage: UIImage?
+    var carabinerImage: UIImage?  // 뒷면 이미지
+    var carabinerFrontImage: UIImage?  // 앞면 이미지 (햄버거 구조용)
     var bodyImages: [UIImage] = []
     var screenWidth: CGFloat
     var carabiner: Carabiner?
@@ -31,8 +32,9 @@ class CarabinerScene: SKScene {
         return originalSize.height / originalSize.width
     }
     
-    // MARK: - 구성 요소들
-    var carabinerNode: SKSpriteNode?
+    // MARK: - 구성 요소들 (햄버거 구조)
+    var carabinerNode: SKSpriteNode?  // 뒷면 카라비너
+    var carabinerFrontNode: SKSpriteNode?  // 앞면 카라비너 (오버레이)
     var ringNode: SKSpriteNode?
     var chainNodes: [SKSpriteNode] = []
     var bodyNode: SKNode?
@@ -59,7 +61,7 @@ class CarabinerScene: SKScene {
         targetSize: CGSize,
         screenWidth: CGFloat,
         zoomScale: CGFloat = 1.5,
-        isPhysicsEnabled: Bool = true  // 물리 시뮬레이션 활성화 여부 🎛️
+        isPhysicsEnabled: Bool = true  // 물리 시뮬레이션 활성화 여부
     ) {
         self.carabiner = carabiner
         self.carabinerImage = carabinerImage
@@ -68,7 +70,7 @@ class CarabinerScene: SKScene {
         self.currentBodyType = bodyType
         self.bodyImages = bodyImages.map { $0.fixedOrientation() }
         self.screenWidth = screenWidth
-        self.isPhysicsEnabled = isPhysicsEnabled  // 물리 시뮬레이션 설정 저장 🎛️
+        self.isPhysicsEnabled = isPhysicsEnabled  // 물리 시뮬레이션 설정 저장
         
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height

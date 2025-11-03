@@ -270,7 +270,7 @@ extension BundleAddKeyringView {
         }
         
         // 중복된 노드 제거 (첫 번째만 남기고 나머지 제거)
-        for (name, nodes) in keyringNodes {
+        for (_, nodes) in keyringNodes {
             if nodes.count > 1 {
                 // 첫 번째 노드를 제외한 나머지 제거
                 for i in 1..<nodes.count {
@@ -384,16 +384,23 @@ extension BundleAddKeyringView {
     private func createCarabinerScene(targetSize: CGSize, screenWidth: CGFloat) -> CarabinerScene? {
         let carabiner = viewModel.selectedCarabiner
         
-        // 카라비너 이미지 URL 로드 후 씬 생성
-        if let imageURLString = carabiner?.carabinerImage[0] {
+        // 카라비너 뒷면/앞면 이미지 URL 로드 후 씬 생성
+        if let backImageURL = carabiner?.carabinerImage[1],
+           let frontImageURL = carabiner?.carabinerImage[2] {
             Task {
                 do {
-                    let loadedImage = try await StorageManager.shared.getImage(path: imageURLString)
+                    // 뒷면과 앞면 이미지를 동시에 로드
+                    async let backImage = StorageManager.shared.getImage(path: backImageURL)
+                    async let frontImage = StorageManager.shared.getImage(path: frontImageURL)
+                    
+                    let loadedBackImage = try await backImage
+                    let loadedFrontImage = try await frontImage
+                    
                     await MainActor.run {
-                        // 이미지가 준비된 후 씬 생성
+                        // 뒷면/앞면 이미지가 준비된 후 씬 생성 (기존 방식 유지하되 이미지만 뒷면으로)
                         let scene = CarabinerScene(
                             carabiner: carabiner,
-                            carabinerImage: loadedImage,
+                            carabinerImage: loadedBackImage, // 뒷면 이미지를 기본으로 사용
                             ringType: .basic,
                             chainType: .basic,
                             bodyType: .basic,
@@ -403,6 +410,9 @@ extension BundleAddKeyringView {
                             zoomScale: 1.0,
                             isPhysicsEnabled: false
                         )
+                        // 앞면 이미지를 씬에 전달 (나중에 오버레이용으로 사용)
+                        scene.carabinerFrontImage = loadedFrontImage
+                        
                         scene.scaleMode = SKSceneScaleMode.resizeFill
                         scene.onSceneReady = {
                             DispatchQueue.main.async {
@@ -474,9 +484,6 @@ extension BundleAddKeyringView {
             DispatchQueue.main.async {
                 // 새 키링들을 개별적으로 위치에 맞게 생성
                 if let carabinerNode = scene.carabinerNode {
-                    
-                    var completedKeyrings = 0
-                    
                     // 각 키링을 올바른 위치에 개별적으로 생성
                     for (arrayIndex, (keyringIndex, _)) in keyringData.enumerated() {
                         if arrayIndex < loadedImages.count {
@@ -489,7 +496,7 @@ extension BundleAddKeyringView {
                             let xOffset = (nx - 0.5) * carabinerSize.width
                             let yOffset = (ny - 0.5) * carabinerSize.height
                             
-                            // 개별 키링 생성
+                            // 개별 키링 생성 (원래 방식대로)
                             scene.setupKeyringNode(
                                 bodyImage: bodyImage,
                                 position: CGPoint(x: xOffset, y: yOffset),
@@ -497,12 +504,9 @@ extension BundleAddKeyringView {
                                 index: keyringIndex
                             ) { createdKeyring in
                                 scene.keyrings.append(createdKeyring)
-                                completedKeyrings += 1
                             }
                         }
                     }
-                } else {
-                    print("카라비너 노드를 찾을 수 없음")
                 }
             }
         }
