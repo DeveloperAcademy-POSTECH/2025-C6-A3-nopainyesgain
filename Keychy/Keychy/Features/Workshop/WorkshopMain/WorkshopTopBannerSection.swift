@@ -42,7 +42,7 @@ extension WorkshopView {
 
     /// 타이틀 뷰
     var titleView: some View {
-        Text("작업실")
+        Text("공방")
             .typography(.suit32B)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
