@@ -156,8 +156,9 @@ struct BundleSelectCarabinerView: View {
 
     /// 선택 초기화
     private func resetSelection() {
-        // 카라비너 선택 초기화
-        viewModel.selectedCarabiner = nil
+        // 카라비너 선택은 유지 (다음 화면에서 필요)
+        // viewModel.selectedCarabiner = nil
+
         // 기존 씬의 카라비너 제거
         carabinerScene?.carabinerNode?.removeFromParent()
         carabinerScene?.keyringPointNodes.forEach { $0.removeFromParent() }
