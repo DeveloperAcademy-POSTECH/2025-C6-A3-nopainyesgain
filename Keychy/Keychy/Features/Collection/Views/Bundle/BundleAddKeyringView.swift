@@ -68,8 +68,7 @@ struct BundleAddKeyringView: View {
             )
             .onAppear {
                 fetchUserData()
-                //임시로 넣어둔 것
-                viewModel.selectedCarabiner = viewModel.carabiners[0]
+                // BundleSelectCarabinerView에서 선택된 카라비너 사용
                 let sceneSize = CGSize(width: geo.size.width, height: geo.size.height)
                 makeOrUpdateCarabinerScene(
                     targetSize: sceneSize,
