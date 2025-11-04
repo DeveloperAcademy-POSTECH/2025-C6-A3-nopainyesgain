@@ -72,7 +72,7 @@ extension WorkshopView {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 16) {
+                ], spacing: 11) {
                     ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                         if let sound = item as? Sound {
                             WorkshopItemView(
@@ -94,7 +94,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 92)
+                .padding(.top, 92)
             }
         }
     }
@@ -123,7 +123,7 @@ extension WorkshopView {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 92)
+                .padding(.top, 92)
             }
         }
     }

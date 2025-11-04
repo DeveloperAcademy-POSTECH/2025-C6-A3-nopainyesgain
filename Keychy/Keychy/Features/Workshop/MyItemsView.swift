@@ -206,25 +206,25 @@ struct MyItemsView: View {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 16) {
+                ], spacing: 11) {
                     ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                         if let sound = item as? Sound {
                             WorkshopItemView(
                                 item: sound,
-                                isOwned: true,
+                                isOwned: false,
                                 router: nil
                             )
                         } else if let particle = item as? Particle {
                             WorkshopItemView(
                                 item: particle,
-                                isOwned: true,
+                                isOwned: false,
                                 router: nil
                             )
                         }
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 50)
+                .padding(.vertical, 92)
             }
         }
     }
@@ -242,7 +242,7 @@ struct MyItemsView: View {
                     ForEach(items) { item in
                         WorkshopItemView(
                             item: item,
-                            isOwned: true,
+                            isOwned: false,
                             router: nil
                         )
                     }
