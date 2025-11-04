@@ -12,7 +12,8 @@ struct WorkshopPreview: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var effectManager = EffectManager.shared
-    
+    @State private var isParticleReady = false
+
     let item: any WorkshopItem
     
     /// 아이템 보유 여부 확인
@@ -50,10 +51,14 @@ struct WorkshopPreview: View {
                 
                 // 사운드일 경우 재생 버튼 표시
                 if item is Sound {
-                    effectPlayButton
+                    VStack {
+                        Spacer()
+                        effectPlayButton
+                    }
                 }
             }
             .padding(.bottom, 40)
+            .frame(height: 120)
             
             actionButton
         }
@@ -81,7 +86,14 @@ extension WorkshopPreview {
                 // 파티클 이펙트일 경우 무한 재생
                 if let particle = item as? Particle,
                    let particleId = particle.id {
-                    infiniteParticleLottieView(particleId: particleId)
+                    if isParticleReady {
+                        infiniteParticleLottieView(particleId: particleId)
+                    } else {
+                        ProgressView()
+                            .task {
+                                await ensureParticleReady(particle)
+                            }
+                    }
                 }
 
                 Spacer()
@@ -89,6 +101,28 @@ extension WorkshopPreview {
             .padding(.horizontal, 30)
             .frame(height: 500)
         }
+    }
+
+    /// 파티클 다운로드 및 소유권 처리
+    private func ensureParticleReady(_ particle: Particle) async {
+        guard let particleId = particle.id else { return }
+
+        // 무료 파티클이고 아직 소유하지 않았다면 소유권 추가
+        if particle.isFree && !(userManager.currentUser?.particleEffects.contains(particleId) ?? false) {
+            // playParticle을 통해 다운로드 및 소유권 처리
+            await effectManager.playParticle(particle, userManager: userManager)
+        } else {
+            // 이미 캐시 또는 Bundle에 있으면 바로 준비 완료
+            if effectManager.isInCache(particleId: particleId) || effectManager.isInBundle(particleId: particleId) {
+                isParticleReady = true
+                return
+            }
+
+            // 다운로드 필요
+            await effectManager.downloadParticle(particle, userManager: userManager)
+        }
+
+        isParticleReady = true
     }
 
     /// 파티클 무한 재생 뷰
@@ -114,23 +148,18 @@ extension WorkshopPreview {
             }
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.gray50)
-                    .frame(width: 50, height: 50)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.white100, lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.black100)
+                    .frame(width: 38, height: 38)
 
                 if isDownloading {
                     CircularProgressView(progress: progress)
-                        .frame(width: 25, height: 25)
+                        .frame(width: 20, height: 20)
                 } else {
-                    Image(.polygon)
+                    Image(.whitePolygon)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 18, height: 18)
+                        .frame(width: 12, height: 12)
                 }
             }
         }

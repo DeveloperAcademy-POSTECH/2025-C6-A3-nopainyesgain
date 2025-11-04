@@ -300,19 +300,19 @@ func priceOverlay<Item: WorkshopItem>(
 ) -> some View {
     VStack {
         HStack(spacing: 0) {
-            if isOwned || !isFree {
+            if !isFree {
                 Image(.keyHole)
                     .padding(.leading, 10)
                     .padding(.top, 7)
+            }
 
-                Spacer()
+            Spacer()
 
-                if isOwned {
-                    VStack {
-                        Image(.owned)
-                        
-                        Spacer()
-                    }
+            if isOwned {
+                VStack {
+                    Image(.owned)
+                    
+                    Spacer()
                 }
             }
         }
@@ -386,7 +386,7 @@ func effectButtonStyle<Item: WorkshopItem>(
             if isDownloading {
                 // 다운로드 중이면 프로그레스 표시
                 CircularProgressView(progress: progress)
-                    .frame(width: 20, height: 20)
+                    .frame(width: 25, height: 25)
             } else {
                 Image(.polygon)
                     .resizable()
@@ -409,7 +409,7 @@ struct CircularProgressView: View {
 
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(.main500, lineWidth: 2)
+                .stroke(.white100, lineWidth: 2)
                 .rotationEffect(.degrees(-90))
         }
     }
