@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyItemsView: View {
 
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
 
@@ -16,7 +17,8 @@ struct MyItemsView: View {
 
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
-    init() {
+    init(router: NavigationRouter<WorkshopRoute>) {
+        self.router = router
         _viewModel = State(initialValue: WorkshopViewModel(userManager: UserManager.shared))
     }
 
@@ -99,24 +101,24 @@ struct MyItemsView: View {
                 WorkshopGridHelpers.itemGridView(
                     items: filteredOwnedTemplates,
                     isOwnedCheck: { _ in false },
-                    router: nil,
-                    viewModel: nil,
+                    router: router,
+                    viewModel: viewModel,
                     emptyView: emptyContentView
                 )
             case "배경":
                 WorkshopGridHelpers.itemGridView(
                     items: filteredOwnedBackgrounds,
                     isOwnedCheck: { _ in false },
-                    router: nil,
-                    viewModel: nil,
+                    router: router,
+                    viewModel: viewModel,
                     emptyView: emptyContentView
                 )
             case "카라비너":
                 WorkshopGridHelpers.itemGridView(
                     items: filteredOwnedCarabiners,
                     isOwnedCheck: { _ in false },
-                    router: nil,
-                    viewModel: nil,
+                    router: router,
+                    viewModel: viewModel,
                     emptyView: emptyContentView
                 )
             case "이펙트":
@@ -124,8 +126,8 @@ struct MyItemsView: View {
                     items: filteredOwnedEffects,
                     isSoundOwned: { _ in false },
                     isParticleOwned: { _ in false },
-                    router: nil,
-                    viewModel: nil,
+                    router: router,
+                    viewModel: viewModel,
                     emptyView: emptyContentView
                 )
             default:
@@ -242,8 +244,10 @@ struct MyItemsView: View {
 }
 
 #Preview {
+    @Previewable @State var router = NavigationRouter<WorkshopRoute>()
+
     NavigationStack {
-        MyItemsView()
+        MyItemsView(router: router)
             .environment(UserManager.shared)
     }
 }

@@ -30,9 +30,10 @@ struct WorkshopTab: View {
                         } else if let sound = item.base as? Sound {
                             WorkshopPreview(router: router, item: sound)
                         }
-
+                    
+                    // MARK: - 내 창고뷰
                     case .myItems:
-                        MyItemsView()
+                        MyItemsView(router: router)
 
                     // MARK: - AcrylicPhoto
                     case .acrylicPhotoPreview:
