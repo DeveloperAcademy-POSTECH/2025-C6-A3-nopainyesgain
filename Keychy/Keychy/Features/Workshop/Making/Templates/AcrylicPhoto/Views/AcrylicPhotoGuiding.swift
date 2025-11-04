@@ -47,13 +47,14 @@ struct AcrylicPhotoGuiding: View {
         }
         .background(
             GeometryReader { geometry in
-                Color.white100.preference(
+                Color.clear.preference(
                     key: GuidingHeightPreferenceKey.self,
                     value: geometry.size.height
                 )
-                .ignoresSafeArea()
             }
         )
+        .background(Color.white100) // VStack 전체 배경
+        .presentationBackground(Color.white100) // 시트 배경 (위로 땡겨도 하얀색)
         .onPreferenceChange(GuidingHeightPreferenceKey.self) { height in
             if height > 0 {
                 contentHeight = height
