@@ -6,47 +6,53 @@
 //
 
 import SwiftUI
+import Nuke
 import NukeUI
+import SpriteKit
 
 struct BundleSelectCarabinerView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
-    @State var backgroundImage: String?
-    @State private var carabinerImage: UIImage?
+    // 상단 컨테이너 높이 비율 (보기 영역 확대)
+    private let previewContainerHeightFactor: CGFloat = 0.8
+    
+    // Scene 보관 - BundleAddKeyringView와 동일한 씬 사용
+    @State private var carabinerScene: CarabinerPreviewScene?
+    @State private var isSceneReady: Bool = false
     
     var body: some View {
         GeometryReader { geo in
-            VStack(alignment: .center) {
-                // 카라비너의 사이즈는 화면 전체 높이의 1/2만 차지하도록
-                showSelectCarabinerView
-                    .frame(width: geo.size.width * 0.5)
-                Spacer()
+            ZStack(alignment: .bottom) {
+                VStack(spacing: 0) {
+                    previewSceneView
+                        .frame(
+                            width: geo.size.width,
+                            height: geo.size.height * previewContainerHeightFactor
+                        )
+                    Spacer()
+                }
                 selectCarabinerbottomSection
             }
             .navigationBarBackButtonHidden(true)
-            .ignoresSafeArea(edges: .bottom)
+            .ignoresSafeArea()
             .toolbar {
                 backToolbarItem
                 nextToolbarItem
             }
-            // 배경화면 이미지
-            .background(
-                Group {
-                    if let background = viewModel.selectedBackground {
-                        LazyImage(url: URL(string: background.backgroundImage)) { state in
-                            if let image = state.image {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            } else if state.isLoading {
-                                Color.clear
-                            }
-                        }
-                    }
-                }
-                    .ignoresSafeArea()
-            )
+            .background(backgroundLayer)
+            .onAppear {
+                let targetSize = CGSize(width: geo.size.width, height: geo.size.height * previewContainerHeightFactor)
+                makeOrUpdateCarabinerScene(targetSize: targetSize, screenWidth: geo.size.width)
+            }
+            .onChange(of: viewModel.selectedCarabiner?.carabinerImage.first ?? "") { _, _ in
+                let targetSize = CGSize(width: geo.size.width, height: geo.size.height * previewContainerHeightFactor)
+                makeOrUpdateCarabinerScene(targetSize: targetSize, screenWidth: geo.size.width)
+            }
+            .onChange(of: geo.size) { _, newSize in
+                let targetSize = CGSize(width: newSize.width, height: newSize.height * previewContainerHeightFactor)
+                carabinerScene?.updateSize(targetSize)
+            }
         }
         .task {
             viewModel.fetchAllCarabiners { success in
@@ -57,6 +63,70 @@ struct BundleSelectCarabinerView: View {
         }
     }
     
+    private var previewSceneView: some View {
+        ZStack {
+            if let carabinerScene {
+                SpriteView(scene: carabinerScene, options: [.allowsTransparency])
+                    .ignoresSafeArea()
+            } else {
+                ProgressView()
+            }
+        }
+    }
+}
+
+// MARK: - 배경
+extension BundleSelectCarabinerView {
+    private var backgroundLayer: some View {
+        Group {
+            if let background = viewModel.selectedBackground {
+                LazyImage(url: URL(string: background.backgroundImage)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else if state.isLoading {
+                        Color.clear
+                    }
+                }
+            }
+        }
+        .ignoresSafeArea()
+    }
+}
+
+// MARK: - 씬 생성 (BundleAddKeyringView와 동일한 방식)
+extension BundleSelectCarabinerView {
+    // CarabinerPreviewScene 생성 또는 업데이트
+    private func makeOrUpdateCarabinerScene(targetSize: CGSize, screenWidth: CGFloat) {
+        guard let carabiner = viewModel.selectedCarabiner else { return }
+        
+        // 이미지 URL 확인
+        guard let backImageURL = carabiner.carabinerImage.first else { return }
+        
+        Task {
+            do {
+                // 이미지 로드
+                let carabinerImage = try await StorageManager.shared.getImage(path: backImageURL)
+                
+                await MainActor.run {
+                    // CarabinerPreviewScene 생성 (BundleAddKeyringView의 CarabinerScene과 동일한 크기 적용)
+                    let scene = CarabinerPreviewScene(targetSize: targetSize, carabinerImage: carabinerImage)
+                    scene.scaleMode = .resizeFill
+                    
+                    // 키링 포인트 업데이트
+                    let xs = carabiner.keyringXPosition.map { CGFloat($0) }
+                    let ys = carabiner.keyringYPosition.map { CGFloat($0) }
+                    scene.updateKeyringPositions(x: xs, y: ys)
+                    
+                    self.carabinerScene = scene
+                    self.isSceneReady = true
+                }
+            } catch {
+                print("카라비너 이미지 로드 실패: \(error)")
+            }
+        }
+    }
 }
 
 //MARK: - 툴바
@@ -76,55 +146,6 @@ extension BundleSelectCarabinerView {
             Button("다음") {
                 router.push(.bundleAddKeyringView)
             }
-        }
-    }
-}
-
-//MARK: - 선택한 카라비너 뷰
-extension BundleSelectCarabinerView {
-    private var showSelectCarabinerView: some View {
-        VStack(spacing: 0) {
-            // 카라비너 이미지
-            Group {
-                if let carabiner = viewModel.selectedCarabiner {
-                    LazyImage(url: URL(string: carabiner.carabinerImage[0])) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxHeight: 200) // 최대 높이만 제한, 비율은 자유롭게
-                        } else if state.isLoading {
-                            ProgressView()
-                                .frame(height: 200)
-                        } else {
-                            Color.clear
-                                .frame(height: 200)
-                        }
-                    }
-                }
-            }
-            // 카라비너 위 +버튼들 배치
-                .overlay {
-                    if let carabiner = viewModel.selectedCarabiner {
-                        GeometryReader { geo in
-                            ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-                                let x = geo.size.width * carabiner.keyringXPosition[index]
-                                // Y 좌표: SpriteKit 비율(0=아래, 1=위)을 SwiftUI 비율(0=위, 1=아래)로 변환
-                                let yRatio = 1.0 - carabiner.keyringYPosition[index] // 비율 뒤집기
-                                let y = geo.size.height * yRatio
-                                
-                                CarabinerAddKeyringButton(
-                                    isSelected: false,
-                                    hasKeyring: false,
-                                    action: {},
-                                    secondAction: {}
-                                )
-                                .disabled(true)
-                                .position(x: x, y: y)
-                            }
-                        }
-                    }
-                }
         }
     }
 }
