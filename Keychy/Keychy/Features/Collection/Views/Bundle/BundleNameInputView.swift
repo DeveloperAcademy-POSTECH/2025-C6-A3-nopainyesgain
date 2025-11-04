@@ -174,7 +174,7 @@ extension BundleNameInputView {
     
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("완료") {
+            Button {
                 // 필수 값 안전 확인
                 guard
                     let backgroundId = viewModel.selectedBackground?.id,
@@ -216,6 +216,8 @@ extension BundleNameInputView {
                         uploadError = "뭉치 저장에 실패했어요. 잠시 후 다시 시도해 주세요."
                     }
                 }
+            } label: {
+                Text("다음")
             }
             .disabled(
                 isUploading ||
