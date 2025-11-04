@@ -23,6 +23,17 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var showRecordingSheet = false
     @State private var showResetAlert = false
 
+    // 구매 시트
+    @State var showPurchaseSheet = false
+    @State var purchaseSheetHeight: CGFloat = 500
+    @State var cartItems: [EffectItem] = []
+
+    // 구매 Alert 애니메이션
+    @State var showPurchaseSuccessAlert = false
+    @State var purchaseSuccessScale: CGFloat = 0.3
+    @State var showPurchaseFailAlert = false
+    @State var purchaseFailScale: CGFloat = 0.3
+
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -40,7 +51,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     if isLoadingResources || !isSceneReady {
                         loadingIndicator()
                     }
-                    
+
                     // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
                         ForEach(viewModel.availableCustomizingModes) { mode in
@@ -57,6 +68,43 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             }
             .background(.gray50)
             .disabled(isLoadingResources || !isSceneReady)
+
+            // MARK: - Purchase Alerts
+            if showPurchaseSuccessAlert {
+                PerchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
+                    .padding(.bottom, 60)
+                    .padding(.horizontal, 51)
+            }
+
+            if showPurchaseFailAlert {
+                PurchaseFailAlert(
+                    checkmarkScale: purchaseFailScale,
+                    onCancel: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            purchaseFailScale = 0.3
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            showPurchaseFailAlert = false
+                            // Alert 닫힌 후 시트 다시 열기
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                showPurchaseSheet = true
+                            }
+                        }
+                    },
+                    onCharge: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            purchaseFailScale = 0.3
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            showPurchaseFailAlert = false
+                            // 충전 페이지로 이동
+                            router.push(.coinCharge)
+                        }
+                    }
+                )
+                .padding(.horizontal, 51)
+                .padding(.bottom, 60)
+            }
         }
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
@@ -78,6 +126,9 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             // 리소스 프리로딩 완료
             isLoadingResources = false
             closeLoadingIfReady()
+        }
+        .sheet(isPresented: $showPurchaseSheet) {
+            purchaseSheet
         }
     }
 
@@ -153,9 +204,15 @@ extension KeyringCustomizingView {
     }
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("다음") {
-                router.push(nextRoute)
+            Button(hasCartItems ? "구매 \(cartItems.count)" : "다음") {
+                if hasCartItems {
+                    showPurchaseSheet = true
+                } else {
+                    router.push(nextRoute)
+                }
             }
+            .foregroundStyle(hasCartItems ? Color.main500 : Color.black100)
+            .fontWeight(hasCartItems ? .bold : .regular)
         }
     }
 }
@@ -374,47 +431,68 @@ extension KeyringCustomizingView {
             let isOwned = viewModel.isOwned(soundId: soundId)
             let isDownloading = viewModel.downloadingItemIds.contains(soundId)
             let isSelected = viewModel.selectedSound?.id == soundId
-            
+
             // UI 스타일 계산
             let isPaidUnownedUnselected = !sound.isFree && !isOwned && !isSelected
             let isPaidOwnedSelected = !sound.isFree && isOwned && isSelected
             let isPaidUnOwnedSelected = !sound.isFree && !isOwned && isSelected
             
             Button {
-                // 케이스 1: Bundle 무료 → 바로 사용
-                if isInBundle {
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 2: 구매 + 캐시 있음 → 바로 사용
-                else if isOwned && isInCache {
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 3: 구매 + 캐시 없음 → 재다운로드
-                else if isOwned && !isInCache {
-                    Task {
-                        await viewModel.downloadSound(sound)
+                // 이미 선택된 상태라면 선택 해제
+                if isSelected {
+                    viewModel.updateSound(nil)
+                    // 장바구니에 있다면 제거
+                    if !isOwned && !sound.isFree {
+                        removeFromCart(sound.id ?? "")
                     }
                 }
-                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
-                else if !isOwned && sound.isFree && isInCache {
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
-                else if !isOwned && sound.isFree && !isInCache {
-                    Task {
-                        await viewModel.downloadSound(sound)
-                    }
-                }
-                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
-                else if !isOwned && !sound.isFree && isInCache {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
+                // 선택되지 않은 상태라면 선택
                 else {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    Task {
-                        await viewModel.downloadSound(sound)
+                    // 케이스 1: Bundle 무료 → 바로 사용
+                    if isInBundle {
+                        viewModel.updateSound(sound)
+                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 2: 구매 + 캐시 있음 → 바로 사용
+                    else if isOwned && isInCache {
+                        viewModel.updateSound(sound)
+                        // 장바구니에서 사운드 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 3: 구매 + 캐시 없음 → 재다운로드
+                    else if isOwned && !isInCache {
+                        Task {
+                            await viewModel.downloadSound(sound)
+                        }
+                        // 장바구니에서 사운드 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                    else if !isOwned && sound.isFree && isInCache {
+                        viewModel.updateSound(sound)
+                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                    else if !isOwned && sound.isFree && !isInCache {
+                        Task {
+                            await viewModel.downloadSound(sound)
+                        }
+                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 6: 미구매 + 유료 + 캐시 있음 → 다운로드 + 장바구니 추가
+                    else if !isOwned && !sound.isFree && isInCache {
+                        viewModel.updateSound(sound)
+                        addSoundToCart(sound)
+                    }
+                    // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 + 장바구니 추가
+                    else {
+                        Task {
+                            await viewModel.downloadSound(sound)
+                        }
+                        addSoundToCart(sound)
                     }
                 }
             } label: {
@@ -423,10 +501,17 @@ extension KeyringCustomizingView {
                     if !sound.isFree {
                         if isOwned {
                             // 유료 + 보유
-                            Image("ownPaid")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 18, height: 18)
+                            if isSelected {
+                                Image("selectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            } else {
+                                Image("ownPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            }
                         } else {
                             // 유료 + 미보유
                             if isSelected {
@@ -527,40 +612,61 @@ extension KeyringCustomizingView {
             let isPaidUnOwnedSelected = !particle.isFree && !isOwned && isSelected
             
             Button {
-                // 케이스 1: Bundle 무료 → 바로 사용
-                if isInBundle {
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 2: 구매 + 캐시 있음 → 바로 사용
-                else if isOwned && isInCache {
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 3: 구매 + 캐시 없음 → 재다운로드
-                else if isOwned && !isInCache {
-                    Task {
-                        await viewModel.downloadParticle(particle)
+                // 이미 선택된 상태라면 선택 해제
+                if isSelected {
+                    viewModel.updateParticle(nil)
+                    // 장바구니에 있다면 제거
+                    if !isOwned && !particle.isFree {
+                        removeFromCart(particle.id ?? "")
                     }
                 }
-                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
-                else if !isOwned && particle.isFree && isInCache {
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
-                else if !isOwned && particle.isFree && !isInCache {
-                    Task {
-                        await viewModel.downloadParticle(particle)
-                    }
-                }
-                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
-                else if !isOwned && !particle.isFree && isInCache {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
+                // 선택되지 않은 상태라면 선택
                 else {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    Task {
-                        await viewModel.downloadParticle(particle)
+                    // 케이스 1: Bundle 무료 → 바로 사용
+                    if isInBundle {
+                        viewModel.updateParticle(particle)
+                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 2: 구매 + 캐시 있음 → 바로 사용
+                    else if isOwned && isInCache {
+                        viewModel.updateParticle(particle)
+                        // 장바구니에서 파티클 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 3: 구매 + 캐시 없음 → 재다운로드
+                    else if isOwned && !isInCache {
+                        Task {
+                            await viewModel.downloadParticle(particle)
+                        }
+                        // 장바구니에서 파티클 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                    else if !isOwned && particle.isFree && isInCache {
+                        viewModel.updateParticle(particle)
+                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                    else if !isOwned && particle.isFree && !isInCache {
+                        Task {
+                            await viewModel.downloadParticle(particle)
+                        }
+                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 6: 미구매 + 유료 + 캐시 있음 → 다운로드 + 장바구니 추가
+                    else if !isOwned && !particle.isFree && isInCache {
+                        viewModel.updateParticle(particle)
+                        addParticleToCart(particle)
+                    }
+                    // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 + 장바구니 추가
+                    else {
+                        Task {
+                            await viewModel.downloadParticle(particle)
+                        }
+                        addParticleToCart(particle)
                     }
                 }
             } label: {
@@ -569,10 +675,17 @@ extension KeyringCustomizingView {
                     if !particle.isFree {
                         if isOwned {
                             // 유료 + 보유
-                            Image("ownPaid")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 18, height: 18)
+                            if isSelected {
+                                Image("selectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            } else {
+                                Image("ownPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            }
                         } else {
                             // 유료 + 미보유
                             if isSelected {
