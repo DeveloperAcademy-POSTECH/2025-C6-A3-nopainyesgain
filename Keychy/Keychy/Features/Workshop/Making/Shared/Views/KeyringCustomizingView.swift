@@ -28,7 +28,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             VStack(spacing: 0) {
                 ZStack(alignment: .center) {
                     KeyringSceneView(viewModel: viewModel, onSceneReady: {
-                        withAnimation(.easeIn(duration: 0.3)) {
+                        withAnimation(.easeIn(duration: 0.6)) {
                             isSceneReady = true
                         }
                         closeLoadingIfReady()
