@@ -15,7 +15,7 @@ struct HomeView: View {
     var body: some View {
         ZStack(alignment: .top) {
             // TODO: 뭉치 Scene넣기
-            Color.clear // 📏 ZStack의 높이 확보용
+            Color.clear
                 .frame(maxHeight: .infinity)
             
             HStack(spacing: 10) {

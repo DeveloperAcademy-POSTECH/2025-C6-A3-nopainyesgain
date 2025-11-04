@@ -99,9 +99,9 @@ final class CarabinerPreviewScene: SKScene {
     
     private func positionCarabiner() {
         guard let node = carabinerNode else { return }
+        // CarabinerScene+SetUp.swift와 동일한 위치 (line 18)
         let topY = originalSize.height * 0.3
-        let centeredY = topY - (originalSize.height / 2)
-        node.position = CGPoint(x: 0, y: centeredY)
+        node.position = CGPoint(x: 0, y: topY)
         node.zPosition = 0
     }
     
