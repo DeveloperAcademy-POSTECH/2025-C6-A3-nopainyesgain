@@ -161,7 +161,6 @@
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
 		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
-		C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -341,7 +340,6 @@
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
 		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
-		C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -542,7 +540,6 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
-				C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
 				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
@@ -1201,7 +1198,6 @@
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
 				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
-				C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
 				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
