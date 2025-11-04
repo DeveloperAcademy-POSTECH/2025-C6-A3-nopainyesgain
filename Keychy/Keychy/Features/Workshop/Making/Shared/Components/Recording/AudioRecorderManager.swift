@@ -16,11 +16,12 @@ class AudioRecorderManager: NSObject {
     private var recordingTask: Task<Void, Never>?
 
     var isRecording = false
-    var recordingTime: TimeInterval = 0
+    var recordingTime: TimeInterval = 3.0 // 3초
     var recordingURL: URL?
+    var audioLevel: Float = 0.0
 
     // MARK: - Constants
-    private let maxRecordingDuration: TimeInterval = 3.0
+    private let maxRecordingDuration: TimeInterval = 3.0 // 3초
 
     // MARK: - File Paths
     private var customSoundsDirectory: URL {
@@ -75,12 +76,14 @@ class AudioRecorderManager: NSObject {
         // 녹음기 생성 및 시작
         audioRecorder = try AVAudioRecorder(url: url, settings: settings)
         audioRecorder?.delegate = self
+        audioRecorder?.isMeteringEnabled = true // 오디오 레벨 측정 활성화
         audioRecorder?.prepareToRecord()
         audioRecorder?.record()
 
         isRecording = true
-        recordingTime = 0
+        recordingTime = maxRecordingDuration // 3:00부터 시작
         recordingURL = url
+        audioLevel = 0.0
 
         // Swift Concurrency 타이머 시작
         startRecordingTimer()
@@ -92,6 +95,7 @@ class AudioRecorderManager: NSObject {
         recordingTask?.cancel()
         recordingTask = nil
         isRecording = false
+        audioLevel = 0.0
 
         // 오디오 세션 비활성화
         try? AVAudioSession.sharedInstance().setActive(false)
@@ -115,10 +119,29 @@ class AudioRecorderManager: NSObject {
 
                 await MainActor.run { [weak self] in
                     guard let self else { return }
-                    self.recordingTime += 0.1
+                    self.recordingTime -= 0.1 // 카운트다운
 
-                    // 최대 시간 도달 시 자동 중지
-                    if self.recordingTime >= self.maxRecordingDuration {
+                    // 오디오 레벨 업데이트
+                    self.audioRecorder?.updateMeters()
+                    if let averagePower = self.audioRecorder?.averagePower(forChannel: 0) {
+                        // averagePower는 -160 ~ 0 범위 (dB)
+                        // -50dB ~ 0dB를 0.0 ~ 1.0으로 매핑 (더 민감하게)
+                        let minDb: Float = -50.0
+                        let maxDb: Float = 0.0
+
+                        // 클램핑 후 정규화
+                        let clampedDb = max(minDb, min(maxDb, averagePower))
+                        let normalizedLevel = (clampedDb - minDb) / (maxDb - minDb)
+
+                        self.audioLevel = normalizedLevel
+
+                        // 디버그: 오디오 레벨 출력
+                        print("🎤 Audio Level: \(String(format: "%.2f", self.audioLevel)) (dB: \(String(format: "%.1f", averagePower)))")
+                    }
+
+                    // 0초 도달 시 자동 중지
+                    if self.recordingTime <= 0 {
+                        self.recordingTime = 0
                         self.stopRecording()
                     }
                 }
