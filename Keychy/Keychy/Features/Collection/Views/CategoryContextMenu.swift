@@ -20,17 +20,11 @@ struct CategoryContextMenu: View {
     private let menuWidth: CGFloat = 170
     private let menuHeight: CGFloat = 156
     
+    @State private var isAppearing = false
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // TODO: Dim용 배경색 수정
-                // 배경 탭하면 닫기
-                Color.black20
-                    .ignoresSafeArea()
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        onDismiss()
-                    }
                 
                 // 메뉴
                 VStack(alignment: .leading, spacing: 25) {
@@ -73,14 +67,19 @@ struct CategoryContextMenu: View {
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+                .scaleEffect(isAppearing ? 1.0 : 0.8, anchor: .top)
+                .opacity(isAppearing ? 1.0 : 0.0)
                 .position( // 메뉴 위치
                     x: calculateSafeX(in: geometry),
                     y: position.maxY + 20
                 )
             }
         }
-        .transition(.scale.combined(with: .opacity))
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: true)
+        .onAppear {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                isAppearing = true
+            }
+        }
     }
     
     // 화면 밖으로 나가지 않게 안전한 X 위치 계산
