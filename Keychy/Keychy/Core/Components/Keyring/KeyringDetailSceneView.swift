@@ -13,6 +13,7 @@ import Lottie
 struct KeyringDetailSceneView: View {
     let keyring: Keyring
     let availableHeight: CGFloat
+    let isSheetExpanded: Bool
     
     @State private var scene: KeyringDetailScene?
     @State private var showEffect: Bool = false
@@ -21,7 +22,7 @@ struct KeyringDetailSceneView: View {
     @State private var isLoading: Bool = true
     
     private var calculatedZoomScale: CGFloat {
-        // 560일 때 1.0, 267일 때 0.6 정도로 선형 보간
+        // 선형 보간
         let maxHeight: CGFloat = 633
         let minHeight: CGFloat = 267
         let maxZoom: CGFloat = 2.0
@@ -67,7 +68,9 @@ struct KeyringDetailSceneView: View {
             .onChange(of: availableHeight) { oldValue, newValue in
                 updateSceneSize(width: geometry.size.width, height: newValue)
             }
-            
+            .onChange(of: isSheetExpanded) { oldValue, newValue in
+                scene?.isTouchEnabled = !newValue
+            }
         }
     }
     
@@ -92,6 +95,8 @@ struct KeyringDetailSceneView: View {
         newScene.size = size
         newScene.scaleMode = .aspectFill
         newScene.backgroundColor = .clear
+        
+        newScene.isTouchEnabled = !isSheetExpanded
         
         // 파티클 효과 콜백 설정 (읽기 전용이지만 효과는 볼 수 있게)
         newScene.onPlayParticleEffect = { [weak newScene] effectName in

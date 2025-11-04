@@ -26,7 +26,9 @@ struct CollectionKeyringDetailView: View {
                 
                 KeyringDetailSceneView(
                     keyring: keyring,
-                    availableHeight: availableSceneHeight)
+                    availableHeight: availableSceneHeight,
+                    isSheetExpanded: sheetDetent == .height(395)
+                )
                 .animation(.easeInOut(duration: 0.3), value: sheetDetent)
                 .padding(.top, 8)
             }
@@ -96,40 +98,6 @@ struct CollectionKeyringDetailView: View {
     // 바텀시트 높이 제외한 사용 가능한 높이 계산
     private var availableSceneHeight: CGFloat {
         sheetDetent == .height(76) ? 633 : 267
-    }
-    
-    private func createDetailScene(size: CGSize) {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        print("🎬 Creating detail scene with ring: \(ringType), chain: \(chainType), size: \(size)")
-        
-        let newScene = KeyringDetailScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: size, // 전체 화면 크기 사용
-            onLoadingComplete: {
-                DispatchQueue.main.async {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        self.isLoading = false
-                    }
-                }
-            }
-        )
-        newScene.size = size
-        newScene.scaleMode = .aspectFill
-        newScene.backgroundColor = .clear
-        
-        // 저장된 사운드/파티클 효과 적용
-        if keyring.soundId != "none" {
-            newScene.currentSoundId = keyring.soundId
-        }
-        if keyring.particleId != "none" {
-            newScene.currentParticleId = keyring.particleId
-        }
-        
-        scene = newScene
     }
 }
 

@@ -167,12 +167,12 @@ struct CollectionView: View {
                 .zIndex(100)
             }
             
-            if showInvenExpandAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                
-                // 추가 예정
-            }
+//            if showInvenExpandAlert {
+//                Color.black20
+//                    .ignoresSafeArea()
+//                
+//                // 추가 예정
+//            }
             
         }
         .sheet(isPresented: $showSortSheet) {

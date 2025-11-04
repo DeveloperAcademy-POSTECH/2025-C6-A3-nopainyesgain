@@ -24,7 +24,7 @@ extension KeyringDetailScene {
                 
                 switch result {
                 case .success(let images):
-                    self.cachedImages = images // ⭐️ 캐시 저장
+                    self.cachedImages = images
                     self.assembleKeyring(with: images)
                     
                 case .failure(let error):
@@ -250,11 +250,11 @@ extension KeyringDetailScene {
         let physicsBody = SKPhysicsBody(
             rectangleOf: CGSize(width: link.width - 4, height: link.height - 4)
         )
-        physicsBody.mass = 1.5  // ⭐️ 2.0 → 1.5 (가볍게)
-        physicsBody.friction = 0.3  // ⭐️ 0.4 → 0.3 (마찰 감소)
-        physicsBody.restitution = 0.4  // ⭐️ 0.3 → 0.4 (탄성 증가)
-        physicsBody.linearDamping = 0.3  // ⭐️ 0.5 → 0.3 (감쇠 감소)
-        physicsBody.angularDamping = 0.5  // ⭐️ 0.8 → 0.5 (회전 감쇠 감소)
+        physicsBody.mass = 1.5
+        physicsBody.friction = 0.3
+        physicsBody.restitution = 0.4
+        physicsBody.linearDamping = 0.3
+        physicsBody.angularDamping = 0.5
         node.physicsBody = physicsBody
         
         return node
@@ -350,7 +350,7 @@ extension KeyringDetailScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            firstChain.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
+            firstChain.physicsBody?.linearDamping = 0.4
             firstChain.physicsBody?.angularDamping = 0.4
             previousNode = firstChain
         }
@@ -388,7 +388,7 @@ extension KeyringDetailScene {
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            current.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
+            current.physicsBody?.linearDamping = 0.4
             current.physicsBody?.angularDamping = 0.4
             previousNode = current
         }

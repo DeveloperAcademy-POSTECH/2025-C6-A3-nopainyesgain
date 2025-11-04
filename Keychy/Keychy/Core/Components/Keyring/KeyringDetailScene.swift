@@ -44,6 +44,9 @@ class KeyringDetailScene: SKScene {
     var containerNode: SKNode!
     let scaleFactor: CGFloat // 크기 비율
     
+    // MARK: - 터치 인터랙션 활성화 여부
+    var isTouchEnabled: Bool = true
+    
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
     
@@ -105,7 +108,7 @@ class KeyringDetailScene: SKScene {
         let currentScale = containerNode.xScale
         let isScalingUp = newScaleFactor > currentScale
         
-        // 3. ⭐️ 확대/축소에 따른 전략 분기
+        // 3. 확대/축소에 따른 분기
         if isScalingUp {
             // ===== 확대 시: 위에서 아래로 부드럽게 =====
             
@@ -201,33 +204,30 @@ class KeyringDetailScene: SKScene {
     private func applySwipeForceToNearbyChains(at location: CGPoint, velocity: CGVector) {
         guard let body = bodyNode else { return }
         
-        // ⭐️ 기본 감도 설정 (KeyringScene과 동일하게)
-        let baseForceMagnitude: CGFloat = 0.3
-        
-        // ⭐️ scaleFactor에 따른 보정
-        // containerNode가 확대되어 있으면 힘을 줄이고, 축소되어 있으면 힘을 늘림
-        let scaledForceMagnitude = baseForceMagnitude / scaleFactor
+        // 기본 감도 설정
+        let forceMagnitude: CGFloat = 0.8
         
         // 체인에 힘 적용
         for chainNode in chainNodes {
             let force = CGVector(
-                dx: velocity.dx * scaledForceMagnitude * 0.3,
-                dy: velocity.dy * scaledForceMagnitude * 0.3
+                dx: velocity.dx * forceMagnitude * 0.3,
+                dy: velocity.dy * forceMagnitude * 0.3
             )
             chainNode.physicsBody?.applyImpulse(force)
         }
         
         // Body에도 힘 적용
         let bodyForce = CGVector(
-            dx: velocity.dx * scaledForceMagnitude * 0.5,
-            dy: velocity.dy * scaledForceMagnitude * 0.5
+            dx: velocity.dx * forceMagnitude * 0.5,
+            dy: velocity.dy * forceMagnitude * 0.5
         )
         body.physicsBody?.applyImpulse(bodyForce)
     }
     
     // MARK: - 터치 인터랙션
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard isReady else { return } // ⭐️ 로딩 완료 전에는 터치 무시
+        guard isTouchEnabled else { return }
+        guard isReady else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
@@ -241,7 +241,8 @@ class KeyringDetailScene: SKScene {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard isReady else { return } // ⭐️ 로딩 완료 전에는 터치 무시
+        guard isTouchEnabled else { return }
+        guard isReady else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
@@ -260,7 +261,7 @@ class KeyringDetailScene: SKScene {
                 applySwipeForceToNearbyChains(at: localLocation, velocity: velocity)
                 
                 let speed = hypot(velocity.dx, velocity.dy)
-                if speed > 2500 && (touch.timestamp - lastParticleTime) > 0.3 {
+                if speed > 1000 && (touch.timestamp - lastParticleTime) > 0.3 {
                     applyParticleEffect(particleId: currentParticleId)
                     lastParticleTime = touch.timestamp
                 }
@@ -272,7 +273,8 @@ class KeyringDetailScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard isReady else { return } // ⭐️ 로딩 완료 전에는 터치 무시
+        guard isTouchEnabled else { return }
+        guard isReady else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
