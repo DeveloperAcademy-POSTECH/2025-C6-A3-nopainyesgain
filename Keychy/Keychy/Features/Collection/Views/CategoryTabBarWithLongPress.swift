@@ -133,11 +133,11 @@ struct CategoryTabBarWithLongPress: View {
         
         let horizontalDrag = abs(value.translation.width)
         
-        // 거의 안 움직이고 빠르게 뗐으면 탭
+        // 거의 안 움직이고 빠르게 떼면 탭
         if horizontalDrag < 5, let startTime = pressStartTime {
             let duration = Date().timeIntervalSince(startTime)
             if duration < 0.3 {
-                // ✅ 로컬 좌표를 글로벌 좌표로 변환
+                // 로컬 좌표를 글로벌 좌표로 변환
                 let globalLocation = CGPoint(
                     x: value.startLocation.x + geometry.frame(in: .global).minX,
                     y: value.startLocation.y + geometry.frame(in: .global).minY
@@ -145,7 +145,6 @@ struct CategoryTabBarWithLongPress: View {
                 
                 if let category = findTappedCategory(at: globalLocation) {
                     selectedCategory = category
-                    print("👆 탭: \(category)")
                 }
             }
         }
@@ -156,7 +155,7 @@ struct CategoryTabBarWithLongPress: View {
     // 터치 위치에서 어떤 카테고리인지 찾기
     private func findTappedCategory(at location: CGPoint) -> String? {
         for (category, frame) in buttonFrames {
-            // ✅ 약간의 여유 공간 추가 (터치 영역 확대)
+            // 약간의 여유 공간 추가 (터치 영역 확대)
             let expandedFrame = frame.insetBy(dx: -5, dy: -5)
             if expandedFrame.contains(location) {
                 return category
@@ -217,7 +216,7 @@ private struct CategoryTabButton: View {
             Rectangle()
                 .fill(isSelected ? Color.main500 : Color.clear)
                 .frame(height: 2)
-                .padding(.horizontal, 2)
+                .padding(.horizontal, -Spacing.xs)
         }
         .padding(.horizontal, 18)
         .contentShape(Rectangle())
