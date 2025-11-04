@@ -52,13 +52,12 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     keyringInfo
                         .padding(.bottom, 30)
                         .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
-                    
-                    // 이미지 저장 버튼
-                    if showSaveButton {
-                        saveButton
-                            .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
-                            .padding(.top, 30)
-                    }
+
+                    // 이미지 저장 버튼 (공간 유지를 위해 opacity 사용)
+                    saveButton
+                        .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
+                        .padding(.top, 30)
+                        .opacity(showSaveButton ? 1 : 0)
                 }
                 
                 if showImageSaved {
@@ -74,9 +73,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                 backToolbarItem
             }
         }
-        .animation(.easeIn(duration: 0.5), value: showDismissButton)
         .navigationTitle(showDismissButton ? "키링이 완성되었어요!" : "")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(showSaveButton ? .visible : .hidden, for: .navigationBar)
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
