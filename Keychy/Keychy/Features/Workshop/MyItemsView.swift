@@ -12,6 +12,7 @@ struct MyItemsView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
+    @State private var hasInitialized = false
 
     private let categories = ["키링", "카라비너", "이펙트", "배경"]
 
@@ -30,6 +31,18 @@ struct MyItemsView: View {
                     // 메인 콘텐츠 (그리드)
                     mainContentSection
                         .padding(.top, 20)
+                        .background(
+                            GeometryReader { geo in
+                                let minY = geo.frame(in: .global).minY
+                                Color.clear
+                                    .onAppear {
+                                        viewModel.mainContentOffset = minY
+                                    }
+                                    .onChange(of: minY) { oldValue, newValue in
+                                        viewModel.mainContentOffset = newValue
+                                    }
+                            }
+                        )
                 }
             }
 
@@ -50,9 +63,14 @@ struct MyItemsView: View {
         .navigationTitle("내 창고")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            viewModel = WorkshopViewModel(userManager: userManager)
-            await viewModel.fetchAllData()
-            await viewModel.loadOwnedItems()
+            // 최초 한 번만 초기화
+            if !hasInitialized {
+                viewModel = WorkshopViewModel(userManager: userManager)
+                hasInitialized = true
+
+                await viewModel.fetchAllData()
+                await viewModel.loadOwnedItems()
+            }
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
             viewModel.resetFilters()
