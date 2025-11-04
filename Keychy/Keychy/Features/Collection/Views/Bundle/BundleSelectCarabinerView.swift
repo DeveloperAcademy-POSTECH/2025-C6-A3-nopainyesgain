@@ -13,7 +13,8 @@ struct BundleSelectCarabinerView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
 
-    @State private var carabinerScene: CarabinerPreviewScene?
+    @State private var carabinerScene: CarabinerScene?
+    @State private var isSceneReady: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -46,8 +47,8 @@ struct BundleSelectCarabinerView: View {
             resetSelection()
         }
         .onChange(of: viewModel.selectedCarabiner) { _, newCarabiner in
-            // 카라비너 선택 시 씬에 적용
-            if let carabiner = newCarabiner {
+            // 카라비너 선택 시 씬에 적용 (씬이 준비된 후에만)
+            if let carabiner = newCarabiner, isSceneReady {
                 updateSceneWithCarabiner(carabiner)
             }
         }
@@ -114,25 +115,41 @@ struct BundleSelectCarabinerView: View {
     /// 빈 씬 생성 (초기 상태)
     private func createEmptyScene() {
         let defaultSize = CGSize(width: 393, height: 852)
-        let scene = CarabinerPreviewScene(targetSize: defaultSize, carabinerImage: nil)
+        let scene = CarabinerScene(
+            carabiner: nil,
+            carabinerImage: nil,
+            ringType: .basic,
+            chainType: .basic,
+            bodyType: .basic,
+            bodyImages: [],
+            targetSize: defaultSize,
+            screenWidth: defaultSize.width,
+            zoomScale: 1.0,
+            isPhysicsEnabled: false
+        )
         scene.scaleMode = .resizeFill
+
+        // 씬이 준비되면 플래그 설정
+        scene.onSceneReady = {
+            DispatchQueue.main.async {
+                self.isSceneReady = true
+            }
+        }
+
         self.carabinerScene = scene
     }
 
     /// 카라비너 선택 시 씬 업데이트
     private func updateSceneWithCarabiner(_ carabiner: Carabiner) {
-        guard let imageURL = carabiner.carabinerImage.first else { return }
+        guard let imageURL = carabiner.carabinerImage.first,
+              let scene = carabinerScene else { return }
 
         Task {
             guard let image = try? await StorageManager.shared.getImage(path: imageURL) else { return }
 
             await MainActor.run {
-                // 기존 씬에 이미지와 키링 위치 업데이트
-                carabinerScene?.updateCarabinerImage(image)
-                carabinerScene?.updateKeyringPositions(
-                    x: carabiner.keyringXPosition.map { CGFloat($0) },
-                    y: carabiner.keyringYPosition.map { CGFloat($0) }
-                )
+                // 기존 씬의 카라비너만 업데이트
+                scene.updateCarabiner(carabiner: carabiner, image: image)
             }
         }
     }
@@ -141,8 +158,10 @@ struct BundleSelectCarabinerView: View {
     private func resetSelection() {
         // 카라비너 선택 초기화
         viewModel.selectedCarabiner = nil
-        // 씬을 빈 씬으로 초기화
-        createEmptyScene()
+        // 기존 씬의 카라비너 제거
+        carabinerScene?.carabinerNode?.removeFromParent()
+        carabinerScene?.keyringPointNodes.forEach { $0.removeFromParent() }
+        carabinerScene?.keyringPointNodes.removeAll()
     }
 }
 

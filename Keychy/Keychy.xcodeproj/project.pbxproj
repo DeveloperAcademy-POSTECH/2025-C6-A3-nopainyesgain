@@ -150,7 +150,6 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
-		AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */; };
 		AADD2AB12EB3A4E50051478E /* CarabinerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */; };
 		AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */; };
 		AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */; };
@@ -330,7 +329,6 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
-		AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerPreviewScene.swift; sourceTree = "<group>"; };
 		AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerScene.swift; sourceTree = "<group>"; };
 		AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+Interaction.swift"; sourceTree = "<group>"; };
 		AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+SetUp.swift"; sourceTree = "<group>"; };
@@ -1026,7 +1024,6 @@
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
-				AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -1349,7 +1346,6 @@
 				C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
-				AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
 				386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */,
 			);

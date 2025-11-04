@@ -39,6 +39,7 @@ class CarabinerScene: SKScene {
     var chainNodes: [SKSpriteNode] = []
     var bodyNode: SKNode?
     var keyrings: [SKNode] = []
+    var keyringPointNodes: [SKNode] = []  // 키링 위치 표시용 포인트들
     
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
@@ -91,7 +92,7 @@ class CarabinerScene: SKScene {
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
         backgroundColor = .clear
-        
+
         // 물리 시뮬레이션 설정 분기 처리
         if isPhysicsEnabled {
             // 물리 시뮬레이션 활성화 (다른 뷰들용)
@@ -102,19 +103,16 @@ class CarabinerScene: SKScene {
             physicsWorld.gravity = CGVector(dx: 0, dy: 0)
             physicsWorld.speed = 0
         }
-        
+
         // 컨테이너 설정
         containerNode = SKNode()
         containerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         containerNode.setScale(scaleFactor)
         addChild(containerNode)
-        
+
         setupCarabinerWithKeyrings()
-        
-        // 씬 로딩 완료 후 콜백 호출
-        DispatchQueue.main.async {
-            self.onSceneReady?()
-        }
+
+        // onSceneReady는 createKeyringsAsync에서 호출됨 (중복 호출 제거)
     }
     
     // MARK: - 접근자 메서드들
@@ -155,9 +153,66 @@ class CarabinerScene: SKScene {
         )
     }
     
-    // MARK: - 기본 씬 설정
-    func setupBasicConfiguration() {
-        backgroundColor = .clear
-        physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+    // MARK: - 카라비너 업데이트 (BundleSelectCarabinerView용)
+    func updateCarabiner(carabiner: Carabiner, image: UIImage) {
+        // containerNode가 아직 초기화되지 않았으면 리턴
+        guard containerNode != nil else {
+            print("⚠️ containerNode가 아직 초기화되지 않았습니다.")
+            return
+        }
+
+        // 카라비너 데이터 업데이트
+        self.carabiner = carabiner
+        self.carabinerImage = image
+
+        // 기존 카라비너 노드 제거
+        carabinerNode?.removeFromParent()
+        carabinerFrontNode?.removeFromParent()
+
+        // 새 카라비너 생성 및 배치
+        let centerX: CGFloat = 0
+        let topY = originalSize.height * 0.3
+
+        let backCarabiner = createCarabiner()
+        backCarabiner.position = CGPoint(x: centerX, y: topY)
+        backCarabiner.physicsBody?.isDynamic = false
+        containerNode.addChild(backCarabiner)
+        carabinerNode = backCarabiner
+
+        // 키링 포인트 렌더링
+        renderKeyringPoints()
+    }
+
+    // MARK: - 키링 포인트 렌더링 (BundleSelectCarabinerView용)
+    func renderKeyringPoints() {
+        // 기존 포인트 제거
+        keyringPointNodes.forEach { $0.removeFromParent() }
+        keyringPointNodes.removeAll()
+
+        guard let carabiner = carabiner,
+              let carabinerNode = carabinerNode else { return }
+
+        let carabinerSize = carabinerNode.size
+
+        // 카라비너 노드 중심 기준으로 비율 좌표를 실제 좌표로 변환
+        for i in 0..<min(carabiner.keyringXPosition.count, carabiner.keyringYPosition.count) {
+            let nx = carabiner.keyringXPosition[i]  // 0~1
+            let ny = carabiner.keyringYPosition[i]  // 0~1 (SpriteKit 기준: 0=아래, 1=위)
+
+            let xOffset = (nx - 0.5) * carabinerSize.width
+            let yOffset = (ny - 0.5) * carabinerSize.height
+
+            // 간단한 원형 포인트
+            let point = SKShapeNode(circleOfRadius: 10)
+            point.fillColor = .white
+            point.strokeColor = .clear
+            point.alpha = 0.9
+            point.position = CGPoint(x: carabinerNode.position.x + xOffset,
+                                     y: carabinerNode.position.y + yOffset)
+            point.zPosition = 1 // 카라비너 위
+
+            containerNode.addChild(point)
+            keyringPointNodes.append(point)
+        }
     }
 }
