@@ -182,73 +182,40 @@ struct MyItemsView: View {
         Group {
             switch viewModel.selectedCategory {
             case "키링":
-                ownedItemGridView(items: filteredOwnedTemplates)
+                WorkshopGridHelpers.itemGridView(
+                    items: filteredOwnedTemplates,
+                    isOwnedCheck: { _ in false },
+                    router: nil,
+                    viewModel: nil,
+                    emptyView: emptyContentView
+                )
             case "배경":
-                ownedItemGridView(items: filteredOwnedBackgrounds)
+                WorkshopGridHelpers.itemGridView(
+                    items: filteredOwnedBackgrounds,
+                    isOwnedCheck: { _ in false },
+                    router: nil,
+                    viewModel: nil,
+                    emptyView: emptyContentView
+                )
             case "카라비너":
-                ownedItemGridView(items: filteredOwnedCarabiners)
+                WorkshopGridHelpers.itemGridView(
+                    items: filteredOwnedCarabiners,
+                    isOwnedCheck: { _ in false },
+                    router: nil,
+                    viewModel: nil,
+                    emptyView: emptyContentView
+                )
             case "이펙트":
-                ownedEffectContentView
+                WorkshopGridHelpers.effectGridView(
+                    items: filteredOwnedEffects,
+                    isSoundOwned: { _ in false },
+                    isParticleOwned: { _ in false },
+                    router: nil,
+                    viewModel: nil,
+                    emptyView: emptyContentView
+                )
             default:
                 emptyContentView
-            }
-        }
-    }
-
-    /// 이펙트 전용 콘텐츠 (사운드 + 파티클)
-    private var ownedEffectContentView: some View {
-        Group {
-            let items = filteredOwnedEffects
-
-            if items.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 11) {
-                    ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                        if let sound = item as? Sound {
-                            WorkshopItemView(
-                                item: sound,
-                                isOwned: false,
-                                router: nil
-                            )
-                        } else if let particle = item as? Particle {
-                            WorkshopItemView(
-                                item: particle,
-                                isOwned: false,
-                                router: nil
-                            )
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 92)
-            }
-        }
-    }
-
-    /// 통합 보유 아이템 그리드 뷰
-    private func ownedItemGridView<T: WorkshopItem>(items: [T]) -> some View {
-        Group {
-            if items.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 11) {
-                    ForEach(items) { item in
-                        WorkshopItemView(
-                            item: item,
-                            isOwned: false,
-                            router: nil
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 92)
             }
         }
     }

@@ -158,6 +158,7 @@
 		C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
+		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
 		C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CC2EB7B94B00C5F083 /* EffectManager.swift */; };
 		C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */; };
 		C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */; };
@@ -331,6 +332,7 @@
 		C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
+		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
 		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
 		C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
 		C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
@@ -1053,6 +1055,7 @@
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */,
 				C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */,
+				C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */,
 				C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */,
 				C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */,
 			);
@@ -1191,6 +1194,7 @@
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
 				C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */,
 				C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */,
+				C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */,
 				C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */,
 				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
