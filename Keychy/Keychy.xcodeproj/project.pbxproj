@@ -150,6 +150,7 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
+		AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */; };
 		AADD2AB12EB3A4E50051478E /* CarabinerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */; };
 		AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */; };
 		AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */; };
@@ -160,7 +161,6 @@
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
 		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
-		C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -329,6 +329,7 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerPreviewScene.swift; sourceTree = "<group>"; };
 		AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerScene.swift; sourceTree = "<group>"; };
 		AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+Interaction.swift"; sourceTree = "<group>"; };
 		AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+SetUp.swift"; sourceTree = "<group>"; };
@@ -339,7 +340,6 @@
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
 		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
-		C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -540,7 +540,6 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
-				C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
 				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
@@ -1024,6 +1023,7 @@
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
+				AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -1198,7 +1198,6 @@
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
 				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
-				C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
 				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
@@ -1346,6 +1345,7 @@
 				C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
+				AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
 				386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */,
 			);

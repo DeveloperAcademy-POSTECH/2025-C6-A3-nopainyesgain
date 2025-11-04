@@ -10,22 +10,37 @@ import SpriteKit
 // MARK: - Setup & Assembly
 extension CarabinerScene {
     
-    // 카라비너 + 여러 키링 전체 조립
+    // 카라비너 + 여러 키링 전체 조립 (햄버거 구조)
     func setupCarabinerWithKeyrings() {
         let centerX: CGFloat = 0
         // 곱하는 숫자가 높아질 수록 화면 위로 올라가는데, 너무 많이 올리면 화면 밖으로 나가서 아예 안 보이니 주의할 것.
         // 0.3 정도가 적당함
         let topY = originalSize.height * 0.3
         
-        // 1. 카라비너 생성 (루트 노드)
-        let madeCarabiner = createCarabiner()
-        madeCarabiner.position = CGPoint(x: centerX, y: topY)
-        madeCarabiner.physicsBody?.isDynamic = false
-        containerNode.addChild(madeCarabiner)
-        carabinerNode = madeCarabiner
+        // 1. 뒷면 카라비너 생성 (키링들의 부모가 됨)
+        let backCarabiner = createCarabiner()
+        backCarabiner.position = CGPoint(x: centerX, y: topY)
+        backCarabiner.physicsBody?.isDynamic = false
+        containerNode.addChild(backCarabiner)
+        carabinerNode = backCarabiner
         
-        // 2. 키링들 비동기 생성
-        createKeyringsAsync(for: madeCarabiner)
+        // 2. 앞면 카라비너 생성 (오버레이용)
+        if let frontImage = carabinerFrontImage {
+            let frontCarabiner = createCarabinerFront(with: frontImage)
+            frontCarabiner.position = CGPoint(x: centerX, y: topY)
+            frontCarabiner.physicsBody?.isDynamic = false
+            // 앞면은 컨테이너에 직접 추가 (키링들 위에 오버레이)
+            containerNode.addChild(frontCarabiner)
+            carabinerFrontNode = frontCarabiner
+            
+            // zPosition 설정으로 레이어 순서 보장
+            backCarabiner.zPosition = 0  // 맨 뒤
+            // 키링들은 setupKeyringNode에서 zPosition = 1로 설정될 예정
+            frontCarabiner.zPosition = 2  // 맨 앞
+        }
+        
+        // 3. 키링들 비동기 생성 (뒷면 카라비너의 자식으로)
+        createKeyringsAsync(for: backCarabiner)
     }
     
     // 키링들을 비동기로 생성 (외부에서도 호출 가능하도록 public으로 변경)
@@ -81,6 +96,7 @@ extension CarabinerScene {
         let keyringContainer = SKNode()
         keyringContainer.position = position
         keyringContainer.name = "keyring_\(index)"
+        keyringContainer.zPosition = 1  // 햄버거 구조: 뒷면(0) < 키링(1) < 앞면(2)
         parent.addChild(keyringContainer)
         
         let centerX: CGFloat = 0
@@ -393,6 +409,26 @@ extension CarabinerScene {
         carabiner.physicsBody?.affectedByGravity = false
         
         return carabiner
+    }
+    
+    // 앞면 카라비너 생성 (햄버거 구조용)
+    func createCarabinerFront(with frontImage: UIImage) -> SKSpriteNode {
+        let frontCarabiner = SKSpriteNode()
+        
+        frontCarabiner.texture = SKTexture(image: frontImage)
+        
+        // 기기 화면 가로 크기의 0.5배로 카라비너 크기 설정 (뒷면과 동일)
+        let carabinerWidth = screenWidth * 0.5
+        // 원본 이미지의 비율 유지
+        let aspectRatio = frontImage.size.height / frontImage.size.width
+        let carabinerHeight = carabinerWidth * aspectRatio
+        
+        frontCarabiner.size = CGSize(width: carabinerWidth, height: carabinerHeight)
+        
+        // 앞면은 물리 효과 없음 (순수 시각적 오버레이)
+        frontCarabiner.physicsBody = nil
+        
+        return frontCarabiner
     }
 }
 
