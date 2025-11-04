@@ -279,7 +279,7 @@ extension BundleAddKeyringView {
                     targetSize: size,
                     screenWidth: screenWidth,
                     zoomScale: 1.0,
-                    isPhysicsEnabled: false
+                    isPhysicsEnabled: true
                 )
 
                 scene.scaleMode = .resizeFill
