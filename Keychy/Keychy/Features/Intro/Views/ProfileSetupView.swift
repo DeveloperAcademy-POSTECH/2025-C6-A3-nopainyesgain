@@ -22,7 +22,7 @@ struct ProfileSetupView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("KEYCEY\n\n반가워요,\n뭐라고 불러드릴까요?")
+            Text("KEYCHY\n\n반가워요,\n뭐라고 불러드릴까요?")
                 .multilineTextAlignment(.leading)
                 .typography(.suit20B)
                 .padding(.top, 66)
