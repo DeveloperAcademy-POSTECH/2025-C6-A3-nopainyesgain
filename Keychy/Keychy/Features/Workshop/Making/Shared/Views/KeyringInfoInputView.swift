@@ -94,7 +94,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                     .ignoresSafeArea()
 
                 addNewTagAlertView
-                    .padding(.horizontal, 25)
+                    .padding(.horizontal, 51)
             }
         }
     }
