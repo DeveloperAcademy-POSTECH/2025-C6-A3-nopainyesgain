@@ -154,20 +154,11 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                             Color.gray50
                                 .overlay {
                                     Image(systemName: "photo")
-                                        .foregroundStyle(.gray300)                                
+                                        .foregroundStyle(.gray300)
                                 }
                         }
                     }
                     .scaledToFit()
-                    .opacity(isParticlePlaying ? 0 : 1)
-                    .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
-
-                    // 파티클 Lottie 뷰를 같은 위치에 배치
-                    if let particle = item as? Particle,
-                       let particleId = particle.id,
-                       effectManager.playingParticleId == particleId {
-                        particleLottieView(particleId: particleId, effectManager: effectManager)
-                    }
                 }
             }
             .padding(.vertical,10)
@@ -185,15 +176,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         .frame(width: 175, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
-    }
-
-    /// 현재 아이템의 파티클이 재생 중인지 확인
-    private var isParticlePlaying: Bool {
-        if let particle = item as? Particle,
-           let particleId = particle.id {
-            return effectManager.playingParticleId == particleId
-        }
-        return false
     }
 
     /// 아이템 타입에 따른 높이 계산
@@ -320,8 +302,8 @@ func priceOverlay<Item: WorkshopItem>(
 
         Spacer()
 
-        // 이펙트 타입일 때만 재생 버튼 표시
-        if item is Sound || item is Particle {
+        // 사운드일 때만 재생 버튼 표시
+        if item is Sound {
             HStack {
                 Spacer()
 
@@ -332,25 +314,6 @@ func priceOverlay<Item: WorkshopItem>(
                 )
             }
             .padding(8)
-        }
-    }
-}
-
-/// 파티클 Lottie 뷰
-func particleLottieView(particleId: String, effectManager: EffectManager) -> some View {
-    LottieView(
-        name: particleId,
-        loopMode: .playOnce,
-        speed: 1.0
-    )
-    .transition(.opacity)
-    .animation(.easeInOut(duration: 0.3), value: effectManager.playingParticleId)
-    .onAppear {
-        // 애니메이션 시간만큼 대기 후 재생 상태 해제
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                effectManager.playingParticleId = nil
-            }
         }
     }
 }
@@ -368,8 +331,6 @@ func effectButtonStyle<Item: WorkshopItem>(
         Task {
             if let sound = item as? Sound {
                 await effectManager.playSound(sound, userManager: userManager)
-            } else if let particle = item as? Particle {
-                await effectManager.playParticle(particle, userManager: userManager)
             }
         }
     } label: {

@@ -15,10 +15,11 @@ class UserManager {
 
     /// 유저 모델
     var currentUser: KeychyUser?
-    
+
     var isLoaded: Bool = false
 
     private let db = Firestore.firestore()
+    private var userListener: ListenerRegistration?
 
     // 편의 접근 프로퍼티
     var userUID: String { currentUser?.id ?? "" }
@@ -79,6 +80,9 @@ class UserManager {
                 // 필드 마이그레이션: 누락된 필드 자동 추가
                 self.migrateUserFieldsIfNeeded(user: user)
 
+                // 실시간 리스너 시작
+                self.startUserListener(uid: uid)
+
                 print("프로필 로드 완료: \(user.nickname)")
                 completion(true)
             } else {
@@ -87,6 +91,40 @@ class UserManager {
                 completion(false)
             }
         }
+    }
+
+    // MARK: - 실시간 리스너
+    /// Firestore 유저 데이터 실시간 리스너 시작
+    private func startUserListener(uid: String) {
+        // 기존 리스너 제거
+        userListener?.remove()
+
+        userListener = db.collection("User").document(uid).addSnapshotListener { [weak self] snapshot, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("실시간 리스너 에러: \(error)")
+                return
+            }
+
+            guard let snapshot = snapshot,
+                  snapshot.exists,
+                  let data = snapshot.data(),
+                  let user = KeychyUser(id: uid, data: data) else {
+                return
+            }
+
+            // 유저 데이터 업데이트
+            self.currentUser = user
+            self.saveToCache()
+            print("실시간 업데이트: \(user.nickname)")
+        }
+    }
+
+    /// 실시간 리스너 중지
+    func stopUserListener() {
+        userListener?.remove()
+        userListener = nil
     }
 
     // MARK: - UserDefaults 캐시 관리
@@ -128,6 +166,7 @@ class UserManager {
     }
 
     func clearUserInfo() {
+        stopUserListener()
         currentUser = nil
         isLoaded = false
 
