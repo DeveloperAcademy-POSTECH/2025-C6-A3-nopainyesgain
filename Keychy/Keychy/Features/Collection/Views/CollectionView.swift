@@ -167,12 +167,22 @@ struct CollectionView: View {
                 .zIndex(100)
             }
             
-//            if showInvenExpandAlert {
-//                Color.black20
-//                    .ignoresSafeArea()
-//                
-//                // 추가 예정
-//            }
+            if showInvenExpandAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showInvenExpandAlert = false // dismiss용
+                    }
+                
+                PurchasePopup(
+                    title: "인벤토리 확장 [+100]",
+                    myCoin: collectionViewModel.coin,
+                    price: 100,
+                    onCancel: {},
+                    onConfirm: {}
+                )
+            }
             
         }
         .sheet(isPresented: $showSortSheet) {
