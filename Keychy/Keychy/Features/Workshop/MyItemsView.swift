@@ -53,7 +53,6 @@ struct MyItemsView: View {
                     selectedCategory: $viewModel.selectedCategory
                 )
                 .padding(.top, 16)
-                .padding(.horizontal, 20)
 
                 // 필터바
                 filterBar
