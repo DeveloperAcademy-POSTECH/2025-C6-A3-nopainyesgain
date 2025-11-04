@@ -88,7 +88,7 @@ class WorkshopViewModel {
     var selectedCategory: String = "키링"
     var selectedTemplateFilter: TemplateFilterType? = nil
     var selectedCommonFilter: String? = nil
-    var selectedEffectFilter: EffectFilterType? = nil
+    var selectedEffectFilter: EffectFilterType? = .sound
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
     var mainContentOffset: CGFloat = 140
@@ -344,6 +344,12 @@ class WorkshopViewModel {
     func resetFilters() {
         selectedTemplateFilter = nil
         selectedCommonFilter = nil
-        selectedEffectFilter = nil
+
+        // 이펙트 카테고리는 기본값을 사운드로 설정
+        if selectedCategory == "이펙트" {
+            selectedEffectFilter = .sound
+        } else {
+            selectedEffectFilter = nil
+        }
     }
 }
