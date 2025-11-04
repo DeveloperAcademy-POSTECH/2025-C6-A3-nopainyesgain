@@ -16,14 +16,12 @@ extension KeyringCustomizingView {
         // 1. 현재 유저 정보 확인
         guard let userId = UserManager.shared.currentUser?.id,
               let userCoins = UserManager.shared.currentUser?.coin else {
-            print("유저 정보를 가져올 수 없습니다.")
             return
         }
 
         // 2. 재화 충분한지 확인
         let totalPrice = totalCartPrice
         if userCoins < totalPrice {
-            print("❌ 재화 부족: 필요 \(totalPrice), 보유 \(userCoins)")
             await MainActor.run {
                 // 시트 먼저 닫기
                 showPurchaseSheet = false
@@ -92,8 +90,6 @@ extension KeyringCustomizingView {
                 return nil
             }
 
-            print("구매 완료: \(totalPrice) 차감, \(cartItems.count)개 아이템 추가")
-
             // 4. UserManager 데이터 갱신
             UserManager.shared.loadUserInfo(uid: userId) { _ in }
 
@@ -123,7 +119,6 @@ extension KeyringCustomizingView {
             }
 
         } catch {
-            print("❌ 구매 실패: \(error.localizedDescription)")
             await MainActor.run {
                 // 시트 먼저 닫기
                 showPurchaseSheet = false
