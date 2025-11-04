@@ -43,10 +43,10 @@ struct DeletePopup: View {
                         .frame(height: 48)
                         .background(
                             RoundedRectangle(cornerRadius: 100)
-                                .fill(.secondaryLightGray)
+                                .fill(.black10)
                         )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 
                 // 확인 버튼
                 Button(action: onConfirm) {
@@ -60,14 +60,13 @@ struct DeletePopup: View {
                                 .fill(Color(red: 1.0, green: 0.2, blue: 0.4))
                         )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
             
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
-        .background(.ultraThinMaterial, in: .rect(cornerRadius: 34))
-        .glassEffect(in: .rect(cornerRadius: 34))
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
         .frame(width: 300, height: 278)
     }
 }
