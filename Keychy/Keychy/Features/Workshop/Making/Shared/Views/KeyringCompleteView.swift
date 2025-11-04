@@ -20,12 +20,18 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 
     // Firebase
     let db = Firestore.firestore()
-    @State private var keyring: [Keyring] = []
-    @State private var isCreatingKeyring: Bool = false
+    @State var keyring: [Keyring] = []
+    @State var isCreatingKeyring: Bool = false
 
     // 시네마틱 애니메이션
-    @State private var showDismissButton = false
+    @State var showDismissButton = false
 
+    // 이미지 저장
+    @State var checkmarkScale: CGFloat = 0.3
+    @State var checkmarkOpacity: Double = 0.0
+    @State var showImageSaved = false
+    @State var showSaveButton = true
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -53,9 +59,16 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                         .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
 
                     // 이미지 저장 버튼
-                    saveButton
-                        .padding(.bottom, 40)
-                        .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
+                    if showSaveButton {
+                        saveButton
+                            .padding(.bottom, 40)
+                            .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
+                    }
+                }
+
+                if showImageSaved {
+                    ImageSaveAlert(checkmarkScale: checkmarkScale)
+                        .padding(.bottom, 60)
                 }
             }
         }
@@ -78,7 +91,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
             saveKeyringToFirebase()
 
             // dismiss 버튼은 2초 후 등장 (저장 시간 확보)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 withAnimation(.easeIn(duration: 0.5)) {
                     showDismissButton = true
                 }
@@ -130,7 +143,7 @@ extension KeyringCompleteView {
         }
     }
 
-    private func formattedDate(date: Date) -> String {
+    func formattedDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "yyyy년 M월 d일"
@@ -143,7 +156,7 @@ extension KeyringCompleteView {
     private var saveButton: some View {
         VStack(spacing: 12) {
             Button {
-                // 이미지 저장 로직
+                captureAndSaveImage()
             } label: {
                 VStack(spacing: 8) {
                     Image(systemName: "arrow.down.circle")
