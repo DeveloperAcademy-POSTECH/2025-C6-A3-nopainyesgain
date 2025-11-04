@@ -30,21 +30,8 @@ struct BundleSelectCarabinerView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    // 뒤로 가기 시 초기화
-                    resetSelection()
-                    router.pop()
-                }) {
-                    Image(systemName: "chevron.left")
-                }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("다음") {
-                    router.push(.bundleAddKeyringView)
-                }
-                .disabled(viewModel.selectedCarabiner == nil)
-            }
+            backToolbarItem
+            nextToolbarItem
         }
         .onAppear {
             // 빈 씬 먼저 생성
@@ -156,5 +143,29 @@ struct BundleSelectCarabinerView: View {
         viewModel.selectedCarabiner = nil
         // 씬을 빈 씬으로 초기화
         createEmptyScene()
+    }
+}
+
+// MARK: - 툴바
+extension BundleSelectCarabinerView {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button(action: {
+                // 뒤로 가기 시 초기화
+                resetSelection()
+                router.pop()
+            }) {
+                Image(systemName: "chevron.left")
+            }
+        }
+    }
+
+    private var nextToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("다음") {
+                router.push(.bundleAddKeyringView)
+            }
+            .disabled(viewModel.selectedCarabiner == nil)
+        }
     }
 }
