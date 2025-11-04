@@ -42,10 +42,6 @@ struct BundleSelectCarabinerView: View {
                 print("카라비너 목록 로드: \(success), 개수: \(viewModel.carabinerViewData.count)")
             }
         }
-        .onDisappear {
-            // 화면을 떠날 때 초기화
-            resetSelection()
-        }
         .onChange(of: viewModel.selectedCarabiner) { _, newCarabiner in
             // 카라비너 선택 시 씬에 적용 (씬이 준비된 후에만)
             if let carabiner = newCarabiner, isSceneReady {
@@ -156,8 +152,8 @@ struct BundleSelectCarabinerView: View {
 
     /// 선택 초기화
     private func resetSelection() {
-        // 카라비너 선택은 유지 (다음 화면에서 필요)
-        // viewModel.selectedCarabiner = nil
+        // 카라비너 선택 초기화
+        viewModel.selectedCarabiner = nil
 
         // 기존 씬의 카라비너 제거
         carabinerScene?.carabinerNode?.removeFromParent()

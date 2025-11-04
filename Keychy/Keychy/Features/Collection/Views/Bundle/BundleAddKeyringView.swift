@@ -9,286 +9,126 @@ import SwiftUI
 import SpriteKit
 import NukeUI
 
+/// 번들에 키링을 추가하는 뷰
 struct BundleAddKeyringView: View {
+    // MARK: - Properties
+
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
-    
-    @State var showSelectKeyringSheet: Bool = false
-    /// [index: Keyring]으로 몇 번째 인덱스(버튼 위치)에 어떤 키링이 있는지 저장합니다.
-    @State var selectedKeyrings: [Int: Keyring] = [:]
-    @State var selectedPosition: Int = 0
-    @State var carabinerScene: CarabinerScene?
-    @State var isSceneReady: Bool = false
-    @State var needsSceneUpdate: Bool = false
-    /// 키링이 걸려있는 부분의 버튼이 눌렸는지 확인하는 변수입니다.
-    @State var isDeleteButtonSelected: Bool = false
-    
-    let columns: [GridItem] = [
-        // GridItem의 Spacing은 horizontal 간격
+
+    @State private var showSelectKeyringSheet: Bool = false
+    @State private var selectedKeyrings: [Int: Keyring] = [:]
+    @State private var selectedPosition: Int = 0
+    @State private var carabinerScene: CarabinerScene?
+    @State private var isSceneReady: Bool = false
+    @State private var isDeleteButtonSelected: Bool = false
+
+    private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
-    
+
+    // MARK: - Body
+
     var body: some View {
-        GeometryReader { geo in
+        GeometryReader { geometry in
             ZStack {
-                keyringSceneView(geo: geo)
-                
+                sceneView(geometry: geometry)
+
                 if showSelectKeyringSheet {
-                    keyringSelectScrollView
-                        .frame(maxWidth: .infinity)
-                    // 하단 뷰 사이즈는 전체 화면 높이의 1/2 채움
-                        .frame(height: geo.size.height * 0.5)
-                        .background(.white100)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(radius: 10)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                        .transition(.move(edge: .bottom))
-                    // ZStack에서 순서 보장 (index가 2이므로 항상 맨 위에 쌓이는 것이 보장됨)
-                        .zIndex(2)
+                    keyringSelectionSheet(height: geometry.size.height * 0.5)
                 }
             }
             .ignoresSafeArea()
-            .background(
-                // 배경 이미지
-                Group {
-                    if let background = viewModel.selectedBackground {
-                        LazyImage(url: URL(string: background.backgroundImage)) { state in
-                            if let image = state.image {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            } else if state.isLoading {
-                                Color.clear
-                            }
-                        }
-                    }
-                }
-                    .ignoresSafeArea()
-            )
+            .background(backgroundImage)
             .onAppear {
-                fetchUserData()
-                //임시로 넣어둔 것
-                viewModel.selectedCarabiner = viewModel.carabiners[0]
-                let sceneSize = CGSize(width: geo.size.width, height: geo.size.height)
-                makeOrUpdateCarabinerScene(
-                    targetSize: sceneSize,
-                    screenWidth: geo.size.width
-                )
+                setupScene(geometry: geometry)
             }
-            .onChange(of: selectedKeyrings) { oldValue, newValue in
-                // selectedKeyrings이 변경될 때 씬 업데이트 플래그 설정
-                needsSceneUpdate = true
-            }
-            .onChange(of: needsSceneUpdate) { oldValue, newValue in
-                // needsSceneUpdate가 true가 되면 씬 업데이트
-                if newValue {
-                    updateCarabinerSceneWithKeyrings()
-                    needsSceneUpdate = false
-                }
+            .onChange(of: selectedKeyrings) { _, _ in
+                updateKeyringsInScene()
             }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            backToolbarItem
-            nextToolbarItem
-        }
-    }
-    
-    // MARK: - 사용자 데이터 로드
-    private func fetchUserData() {
-        let uid = UserManager.shared.userUID
-        fetchUserCategories(uid: uid) {
-            fetchUserKeyrings(uid: uid)
-        }
-    }
-    
-    // 키링 로드
-    private func fetchUserKeyrings(uid: String) {
-        viewModel.fetchUserKeyrings(uid: uid) { success in
-            if success {
-                print("키링 로드 완료: \(viewModel.keyring.count)개")
-            } else {
-                print("키링 로드 실패")
-            }
-        }
-    }
-    
-    // 사용자 기반 데이터 로드
-    private func fetchUserCategories(uid: String, completion: @escaping () -> Void) {
-        viewModel.fetchUserCollectionData(uid: uid) { success in
-            if success {
-                print("정보 로드 완료")
-            } else {
-                print("정보 로드 실패")
-            }
-            completion()
+            backButton
+            nextButton
         }
     }
 }
 
-// MARK: - 카라비너 + 키링 SpriteKit 씬 표시
+// MARK: - View Components
+
 extension BundleAddKeyringView {
-    private func keyringSceneView(geo: GeometryProxy) -> some View {
+    /// 배경 이미지
+    private var backgroundImage: some View {
+        Group {
+            if let background = viewModel.selectedBackground {
+                LazyImage(url: URL(string: background.backgroundImage)) { state in
+                    if let image = state.image {
+                        image.resizable().scaledToFill()
+                    } else if state.isLoading {
+                        Color.clear
+                    }
+                }
+            }
+        }
+        .ignoresSafeArea()
+    }
+
+    /// 씬 뷰
+    private func sceneView(geometry: GeometryProxy) -> some View {
         VStack {
             ZStack {
                 if let scene = carabinerScene {
                     SpriteView(scene: scene, options: [.allowsTransparency])
                         .background(.clear)
-                    
-                    // 버튼 오버레이 - 씬이 준비된 후에만 표시
-                    carabinerButtonOverlay(scene: scene)
+
+                    if isSceneReady, let carabiner = viewModel.selectedCarabiner,
+                       let frame = scene.getCarabinerFrame() {
+                        keyringButtons(carabiner: carabiner, frame: frame)
+                    }
                 } else {
                     ProgressView()
-                        .frame(width: geo.size.width * 0.5, height: geo.size.height * 0.5)
                 }
             }
             Spacer()
         }
     }
-    
-    private func carabinerButtonOverlay(scene: CarabinerScene) -> some View {
-        Group {
-            if let carabiner = viewModel.selectedCarabiner, isSceneReady {
-                if let carabinerFrame = scene.getCarabinerFrame() {
-                    buttonOverlays(carabiner: carabiner, carabinerFrame: carabinerFrame)
-                } else {
-                    EmptyView()
-                }
-            } else {
-                EmptyView()
-            }
-        }
-    }
-    
-    private func buttonOverlays(carabiner: Carabiner, carabinerFrame: CGRect) -> some View {
+
+    /// 키링 추가 버튼들
+    private func keyringButtons(carabiner: Carabiner, frame: CGRect) -> some View {
         ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-            let x = carabinerFrame.origin.x + (carabinerFrame.width * carabiner.keyringXPosition[index])
-            // Y 좌표: SpriteKit 비율(0=아래, 1=위)을 SwiftUI 비율(0=위, 1=아래)로 변환
-            let yRatio = 1.0 - carabiner.keyringYPosition[index] // 비율 뒤집기
-            let y = carabinerFrame.origin.y + (carabinerFrame.height * yRatio)
-            
+            let position = buttonPosition(index: index, carabiner: carabiner, frame: frame)
+
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
                 hasKeyring: selectedKeyrings[index] != nil,
                 action: {
-                    // 키링 추가/교체 액션 (키링이 없거나, 이미 있는 키링을 교체하고 싶을 때)
                     selectedPosition = index
                     withAnimation(.easeInOut) {
                         showSelectKeyringSheet = true
                     }
                 },
                 secondAction: {
-                    selectedPosition = index  // 선택된 위치도 설정
+                    selectedPosition = index
                     isDeleteButtonSelected = true
                 }
             )
-            .position(x: x, y: y)
+            .position(position)
             .overlay(alignment: .top) {
                 if isDeleteButtonSelected && selectedPosition == index && selectedKeyrings[index] != nil {
-                    editKeyringCapsuleButton()
-                        .position(x: x, y: y - 49) // 버튼 위로 띄움
+                    deleteButton()
+                        .position(x: position.x, y: position.y - 49)
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                         .animation(.spring, value: isDeleteButtonSelected)
                 }
             }
         }
     }
-}
 
-//MARK: - 툴바
-extension BundleAddKeyringView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
-                router.pop()
-            }) {
-                Image(systemName: "chevron.left")
-            }
-        }
-    }
-    
-    private var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button("다음") {
-                // 선택된 키링들을 ViewModel에 저장
-                viewModel.selectedKeyringsForBundle = selectedKeyrings
-                
-                // 씬을 미리보기용으로 안정화 후 저장
-                prepareSceneForPreview()
-                
-                router.push(.bundleNameInputView)
-            }
-        }
-    }
-    
-    // 씬을 미리보기용으로 안정화하는 메서드
-    private func prepareSceneForPreview() {
-        guard let scene = carabinerScene else {
-            return
-        }
-        
-        // 중복된 키링 노드 제거 (혹시나 하는 안전 장치)
-        cleanupDuplicateKeyrings(in: scene)
-        
-        // 물리 시뮬레이션 완전 비활성화
-        scene.physicsWorld.speed = 0
-        scene.physicsWorld.gravity = CGVector.zero
-        
-        // 모든 키링의 물리 속성을 고정
-        for keyring in scene.keyrings {
-            keyring.enumerateChildNodes(withName: "//*") { node, _ in
-                node.physicsBody?.isDynamic = false
-                node.physicsBody?.affectedByGravity = false
-                node.removeAllActions() // 모든 애니메이션 제거
-            }
-        }
-        
-        // 카라비너도 완전히 고정
-        scene.carabinerNode?.physicsBody?.isDynamic = false
-        scene.carabinerNode?.physicsBody?.affectedByGravity = false
-        scene.carabinerNode?.removeAllActions()
-        
-        // ViewModel에 안정화된 씬 저장
-        viewModel.bundlePreviewScene = scene
-    }
-    
-    // 중복된 키링 노드 정리
-    private func cleanupDuplicateKeyrings(in scene: CarabinerScene) {
-        guard let carabinerNode = scene.carabinerNode else { return }
-        
-        // 카라비너의 모든 자식 중에서 keyring_으로 시작하는 노드들 찾기
-        var keyringNodes: [String: [SKNode]] = [:]
-        
-        carabinerNode.enumerateChildNodes(withName: "keyring_*") { node, _ in
-            if let name = node.name {
-                if keyringNodes[name] == nil {
-                    keyringNodes[name] = []
-                }
-                keyringNodes[name]?.append(node)
-            }
-        }
-        
-        // 중복된 노드 제거 (첫 번째만 남기고 나머지 제거)
-        for (_, nodes) in keyringNodes {
-            if nodes.count > 1 {
-                // 첫 번째 노드를 제외한 나머지 제거
-                for i in 1..<nodes.count {
-                    nodes[i].removeFromParent()
-                }
-            }
-        }
-        
-        // scene.keyrings 배열도 정리
-        scene.keyrings = scene.keyrings.filter { $0.parent != nil }
-    }
-}
-
-//MARK: - 시트처럼 생긴 뷰, 키링 선택 스크롤뷰
-extension BundleAddKeyringView {
-    private var keyringSelectScrollView : some View {
+    /// 키링 선택 시트
+    private func keyringSelectionSheet(height: CGFloat) -> some View {
         VStack {
-            // 상단 타이틀
             HStack {
                 Button {
                     withAnimation(.easeInOut) {
@@ -301,10 +141,8 @@ extension BundleAddKeyringView {
                 Text("키링 선택")
                 Spacer()
             }
-            
-            // 스크롤뷰
+
             ScrollView {
-                //LazyVGrid의 spacing은 vertical 간격
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(viewModel.keyring, id: \.self) { keyring in
                         keyringCell(keyring: keyring)
@@ -313,18 +151,30 @@ extension BundleAddKeyringView {
             }
         }
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
+        .frame(maxWidth: .infinity)
+        .frame(height: height)
+        .background(.white100)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(radius: 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+        .transition(.move(edge: .bottom))
+        .zIndex(2)
     }
-    
+
+    /// 키링 셀
     private func keyringCell(keyring: Keyring) -> some View {
-        Button(action: {
-            selectedKeyrings[selectedPosition] = keyring  // 키링 추가/교체
-            withAnimation(.easeInOut) { showSelectKeyringSheet = false }
-        }) {
+        Button {
+            selectedKeyrings[selectedPosition] = keyring
+            withAnimation(.easeInOut) {
+                showSelectKeyringSheet = false
+            }
+        } label: {
             VStack {
                 CollectionCellView(keyring: keyring)
                     .frame(width: 175, height: 223)
                     .cornerRadius(10)
                     .padding(.bottom, 10)
+
                 Text("\(keyring.name) 키링")
                     .typography(.suit14SB18)
                     .foregroundStyle(.black100)
@@ -334,9 +184,9 @@ extension BundleAddKeyringView {
         .frame(width: 175, height: 261)
         .disabled(keyring.status == .packaged || keyring.status == .published)
     }
-    
-    /// 쓰레기통 버튼 클릭 되었을 때 버튼 위에 뜨는 Dual Action Capsule Button
-    private func editKeyringCapsuleButton() -> some View {
+
+    /// 삭제 버튼
+    private func deleteButton() -> some View {
         HStack(spacing: 0) {
             Spacer()
             Button {
@@ -347,8 +197,7 @@ extension BundleAddKeyringView {
                     .foregroundStyle(.black100)
             }
             Spacer()
-            Divider()
-                .frame(height: 20) // Divider 높이 제한
+            Divider().frame(height: 20)
             Spacer()
             Button {
                 selectedKeyrings[selectedPosition] = nil
@@ -366,176 +215,194 @@ extension BundleAddKeyringView {
     }
 }
 
-//MARK: - 씬 생성
+// MARK: - Toolbar
+
 extension BundleAddKeyringView {
-    // 개별 키링 미니 프리뷰 씬 생성 (KeyringCellScene 사용)
-    private func createMiniScene(body: String) -> KeyringCellScene {
-        let scene = KeyringCellScene(
-            ringType: .basic,
-            chainType: .basic,
-            bodyImage: body, // String으로 전달
-            targetSize: CGSize(width: 100, height: 100),
-            zoomScale: 1.8
-        )
-        scene.scaleMode = .aspectFill
-        return scene
-    }
-    
-    private func createCarabinerScene(targetSize: CGSize, screenWidth: CGFloat) -> CarabinerScene? {
-        let carabiner = viewModel.selectedCarabiner
-        
-        // 카라비너 뒷면/앞면 이미지 URL 로드 후 씬 생성
-        if let backImageURL = carabiner?.carabinerImage[1],
-           let frontImageURL = carabiner?.carabinerImage[2] {
-            Task {
-                do {
-                    // 뒷면과 앞면 이미지를 동시에 로드
-                    async let backImage = StorageManager.shared.getImage(path: backImageURL)
-                    async let frontImage = StorageManager.shared.getImage(path: frontImageURL)
-                    
-                    let loadedBackImage = try await backImage
-                    let loadedFrontImage = try await frontImage
-                    
-                    await MainActor.run {
-                        // 뒷면/앞면 이미지가 준비된 후 씬 생성 (기존 방식 유지하되 이미지만 뒷면으로)
-                        let scene = CarabinerScene(
-                            carabiner: carabiner,
-                            carabinerImage: loadedBackImage, // 뒷면 이미지를 기본으로 사용
-                            ringType: .basic,
-                            chainType: .basic,
-                            bodyType: .basic,
-                            bodyImages: [],
-                            targetSize: targetSize,
-                            screenWidth: screenWidth,
-                            zoomScale: 1.0,
-                            isPhysicsEnabled: false
-                        )
-                        // 앞면 이미지를 씬에 전달 (나중에 오버레이용으로 사용)
-                        scene.carabinerFrontImage = loadedFrontImage
-                        
-                        scene.scaleMode = SKSceneScaleMode.resizeFill
-                        scene.onSceneReady = {
-                            DispatchQueue.main.async {
-                                self.isSceneReady = true
-                                if !self.selectedKeyrings.isEmpty {
-                                    self.needsSceneUpdate = true
-                                }
-                            }
-                        }
-                        self.carabinerScene = scene
-                    }
-                } catch {
-                    print("카라비너 이미지 로드 실패: \(error)")
-                }
+    private var backButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image(systemName: "chevron.left")
             }
         }
-        
-        return nil // 비동기로 나중에 설정될 예정
     }
-    
-    // CarabinerScene 생성 또는 업데이트 (원래 방식)
-    private func makeOrUpdateCarabinerScene(targetSize: CGSize, screenWidth: CGFloat) {
-        // 초기 씬 생성 시에만 isSceneReady를 false로 설정
-        if carabinerScene == nil {
-            isSceneReady = false
+
+    private var nextButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("다음") {
+                saveScene()
+                router.push(.bundleNameInputView)
+            }
         }
-        
-        // 카라비너 씬 새로 생성
-        carabinerScene = createCarabinerScene(targetSize: targetSize, screenWidth: screenWidth)
     }
-    
-    // 키링만 업데이트하는 새로운 메서드
-    private func updateCarabinerSceneWithKeyrings() {
+}
+
+// MARK: - Scene Management
+
+extension BundleAddKeyringView {
+    /// 초기 씬 설정
+    private func setupScene(geometry: GeometryProxy) {
+        fetchData()
+
+        // TODO: 임시 - 첫 번째 카라비너 자동 선택
+        if !viewModel.carabiners.isEmpty {
+            viewModel.selectedCarabiner = viewModel.carabiners[0]
+        }
+
+        createScene(size: geometry.size, screenWidth: geometry.size.width)
+    }
+
+    /// 씬 생성
+    private func createScene(size: CGSize, screenWidth: CGFloat) {
+        guard let carabiner = viewModel.selectedCarabiner,
+              let imageURL = carabiner.carabinerImage[safe: 1] else {
+            return
+        }
+
+        isSceneReady = false
+
+        Task {
+            guard let image = try? await StorageManager.shared.getImage(path: imageURL) else {
+                print("카라비너 이미지 로드 실패")
+                return
+            }
+
+            await MainActor.run {
+                let scene = CarabinerScene(
+                    carabiner: carabiner,
+                    carabinerImage: image,
+                    ringType: .basic,
+                    chainType: .basic,
+                    bodyType: .basic,
+                    bodyImages: [],
+                    targetSize: size,
+                    screenWidth: screenWidth,
+                    zoomScale: 1.0,
+                    isPhysicsEnabled: false
+                )
+
+                scene.scaleMode = .resizeFill
+                scene.onSceneReady = {
+                    DispatchQueue.main.async {
+                        self.isSceneReady = true
+                    }
+                }
+
+                self.carabinerScene = scene
+            }
+        }
+    }
+
+    /// 키링 업데이트
+    private func updateKeyringsInScene() {
         guard let scene = carabinerScene,
               let carabiner = viewModel.selectedCarabiner else {
             return
         }
-        
-        // selectedKeyrings에서 키링들을 수집
-        var keyringData: [(index: Int, keyring: Keyring)] = []
-        
-        for index in 0..<carabiner.maxKeyringCount {
-            if let keyring = selectedKeyrings[index] {  // 옵셔널 바인딩으로 실제 키링 존재 확인
-                keyringData.append((index: index, keyring: keyring))
-            }
-        }
-        
-        // 물리 시뮬레이션이 활성화된 경우에만 조인트 제거
-        if scene.isPhysicsEnabled {
-            scene.physicsWorld.removeAllJoints()
-        }
-        
-        // 기존 키링들 제거
-        scene.keyrings.forEach { keyring in
-            keyring.removeFromParent()
-        }
+
+        // 기존 키링 제거
+        scene.keyrings.forEach { $0.removeFromParent() }
         scene.keyrings.removeAll()
-        
-        // 키링이 없으면 바로 종료
-        guard !keyringData.isEmpty else {
-            return
+
+        // 선택된 키링 수집
+        let keyringData = selectedKeyrings.compactMap { index, keyring in
+            index < carabiner.maxKeyringCount ? (index, keyring) : nil
         }
-        
-        // 이미지들을 로드
-        loadKeyringImages(keyringData: keyringData) { loadedImages in
-            guard let scene = self.carabinerScene else {
-                return
+
+        guard !keyringData.isEmpty else { return }
+
+        // 키링 추가
+        loadAndAddKeyrings(keyringData: keyringData, scene: scene)
+    }
+
+    /// 키링 로드 및 추가
+    private func loadAndAddKeyrings(keyringData: [(Int, Keyring)], scene: CarabinerScene) {
+        Task {
+            var images: [UIImage] = []
+
+            for (_, keyring) in keyringData {
+                if let image = try? await StorageManager.shared.getImage(path: keyring.bodyImage) {
+                    images.append(image)
+                }
             }
-            DispatchQueue.main.async {
-                // 새 키링들을 개별적으로 위치에 맞게 생성
-                if let carabinerNode = scene.carabinerNode {
-                    // 각 키링을 올바른 위치에 개별적으로 생성
-                    for (arrayIndex, (keyringIndex, _)) in keyringData.enumerated() {
-                        if arrayIndex < loadedImages.count {
-                            let bodyImage = loadedImages[arrayIndex]
-                            
-                            // 카라비너에서 실제 키링 위치 가져오기
-                            let nx = scene.getKeyringXPosition(for: keyringIndex)
-                            let ny = scene.getKeyringYPosition(for: keyringIndex)
-                            let carabinerSize = carabinerNode.size
-                            let xOffset = (nx - 0.5) * carabinerSize.width
-                            let yOffset = (ny - 0.5) * carabinerSize.height
-                            
-                            // 개별 키링 생성 (원래 방식대로)
-                            scene.setupKeyringNode(
-                                bodyImage: bodyImage,
-                                position: CGPoint(x: xOffset, y: yOffset),
-                                parent: carabinerNode,
-                                index: keyringIndex
-                            ) { createdKeyring in
-                                scene.keyrings.append(createdKeyring)
-                            }
-                        }
+
+            await MainActor.run {
+                guard let carabinerNode = scene.carabinerNode else { return }
+
+                for (i, (index, _)) in keyringData.enumerated() where i < images.count {
+                    let position = keyringPosition(index: index, scene: scene, size: carabinerNode.frame.size)
+
+                    scene.setupKeyringNode(
+                        bodyImage: images[i],
+                        position: position,
+                        parent: carabinerNode,
+                        index: index
+                    ) { keyring in
+                        scene.keyrings.append(keyring)
                     }
                 }
             }
         }
     }
-    
-    // URL에서 이미지들을 로드하는 메서드
-    private func loadKeyringImages(
-        keyringData: [(index: Int, keyring: Keyring)],
-        completion: @escaping ([UIImage]) -> Void
-    ) {
-        let imageIdentifiers = keyringData.map { $0.keyring.bodyImage }
-        
-        Task {
-            var loadedImages: [UIImage] = []
-            
-            for imageIdentifier in imageIdentifiers {
-                do {
-                    // URL에서 이미지 로드 (StorageManager 사용)
-                    let image = try await StorageManager.shared.getImage(path: imageIdentifier)
-                    loadedImages.append(image)
-                } catch {
-                    print("키링 이미지 로드 실패: \(imageIdentifier), 에러: \(error)")
-                }
-            }
-            
-            await MainActor.run {
-                completion(loadedImages)
+
+    /// 씬 저장
+    private func saveScene() {
+        guard let scene = carabinerScene else { return }
+
+        viewModel.selectedKeyringsForBundle = selectedKeyrings
+
+        // 물리 시뮬레이션 비활성화
+        scene.physicsWorld.speed = 0
+        scene.physicsWorld.gravity = .zero
+
+        // 모든 노드 고정
+        scene.keyrings.forEach { keyring in
+            keyring.enumerateChildNodes(withName: "//*") { node, _ in
+                node.physicsBody?.isDynamic = false
+                node.physicsBody?.affectedByGravity = false
+                node.removeAllActions()
             }
         }
+
+        scene.carabinerNode?.physicsBody?.isDynamic = false
+        scene.carabinerNode?.physicsBody?.affectedByGravity = false
+        scene.carabinerNode?.removeAllActions()
+
+        viewModel.bundlePreviewScene = scene
+    }
+}
+
+// MARK: - Data Fetching
+
+extension BundleAddKeyringView {
+    private func fetchData() {
+        let uid = UserManager.shared.userUID
+
+        viewModel.fetchUserCollectionData(uid: uid) { success in
+            if success {
+                viewModel.fetchUserKeyrings(uid: uid) { _ in }
+            }
+        }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension BundleAddKeyringView {
+    /// 버튼 위치 계산
+    private func buttonPosition(index: Int, carabiner: Carabiner, frame: CGRect) -> CGPoint {
+        let x = frame.origin.x + (frame.width * carabiner.keyringXPosition[index])
+        let yRatio = 1.0 - carabiner.keyringYPosition[index]
+        let y = frame.origin.y + (frame.height * yRatio)
+        return CGPoint(x: x, y: y)
+    }
+
+    /// 키링 위치 계산
+    private func keyringPosition(index: Int, scene: CarabinerScene, size: CGSize) -> CGPoint {
+        let nx = scene.getKeyringXPosition(for: index)
+        let ny = scene.getKeyringYPosition(for: index)
+        return CGPoint(x: (nx - 0.5) * size.width, y: (ny - 0.5) * size.height)
     }
 }
 
