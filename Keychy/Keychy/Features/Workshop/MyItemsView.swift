@@ -9,14 +9,17 @@ import SwiftUI
 
 struct MyItemsView: View {
 
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
+    @State private var hasInitialized = false
 
     private let categories = ["키링", "카라비너", "이펙트", "배경"]
 
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
-    init() {
+    init(router: NavigationRouter<WorkshopRoute>) {
+        self.router = router
         _viewModel = State(initialValue: WorkshopViewModel(userManager: UserManager.shared))
     }
 
@@ -28,6 +31,18 @@ struct MyItemsView: View {
                     // 메인 콘텐츠 (그리드)
                     mainContentSection
                         .padding(.top, 20)
+                        .background(
+                            GeometryReader { geo in
+                                let minY = geo.frame(in: .global).minY
+                                Color.clear
+                                    .onAppear {
+                                        viewModel.mainContentOffset = minY
+                                    }
+                                    .onChange(of: minY) { oldValue, newValue in
+                                        viewModel.mainContentOffset = newValue
+                                    }
+                            }
+                        )
                 }
             }
 
@@ -38,7 +53,6 @@ struct MyItemsView: View {
                     selectedCategory: $viewModel.selectedCategory
                 )
                 .padding(.top, 16)
-                .padding(.horizontal, 20)
 
                 // 필터바
                 filterBar
@@ -48,9 +62,14 @@ struct MyItemsView: View {
         .navigationTitle("내 창고")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            viewModel = WorkshopViewModel(userManager: userManager)
-            await viewModel.fetchAllData()
-            await viewModel.loadOwnedItems()
+            // 최초 한 번만 초기화
+            if !hasInitialized {
+                viewModel = WorkshopViewModel(userManager: userManager)
+                hasInitialized = true
+
+                await viewModel.fetchAllData()
+                await viewModel.loadOwnedItems()
+            }
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
             viewModel.resetFilters()
@@ -60,97 +79,11 @@ struct MyItemsView: View {
         }
     }
 
-    /// 카테고리에 따라 다른 필터바 표시
+    /// 필터바
     private var filterBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                // 정렬 버튼
-                Button {
-                    viewModel.showFilterSheet = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(viewModel.sortOrder)
-                            .typography(.suit14SB18)
-                            .foregroundColor(.gray500)
-
-                        Image(systemName: "chevron.down")
-                            .foregroundColor(.gray500)
-                    }
-                    .padding(.horizontal, Spacing.gap)
-                    .padding(.vertical, Spacing.sm)
-                    .frame(height: 34)
-                    .background(
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(.gray50)
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-
-                // 카테고리별 필터
-                categorySpecificFilters
-            }
-            .padding(.top, 12)
-        }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 20)
-    }
-
-    /// 카테고리별 필터 옵션
-    private var categorySpecificFilters: some View {
-        Group {
-            switch viewModel.selectedCategory {
-            case "키링":
-                // 템플릿 필터 (이미지형, 텍스트형, 드로잉형)
-                ForEach(TemplateFilterType.allCases, id: \.self) { filter in
-                    FilterChip(
-                        title: filter.rawValue,
-                        isSelected: viewModel.selectedTemplateFilter == filter
-                    ) {
-                        viewModel.selectedTemplateFilter =
-                            viewModel.selectedTemplateFilter == filter ? nil : filter
-                    }
-                }
-
-            case "이펙트":
-                // 이펙트 타입 필터 (사운드, 파티클)
-                ForEach(EffectFilterType.allCases, id: \.self) { filter in
-                    FilterChip(
-                        title: filter.rawValue,
-                        isSelected: viewModel.selectedEffectFilter == filter
-                    ) {
-                        viewModel.selectedEffectFilter =
-                            viewModel.selectedEffectFilter == filter ? nil : filter
-                    }
-                }
-
-            case "카라비너":
-                // 카라비너 태그 (동적으로 로드)
-                ForEach(viewModel.availableCarabinerTags, id: \.self) { tag in
-                    FilterChip(
-                        title: tag,
-                        isSelected: viewModel.selectedCommonFilter == tag
-                    ) {
-                        viewModel.selectedCommonFilter =
-                            viewModel.selectedCommonFilter == tag ? nil : tag
-                    }
-                }
-
-            case "배경":
-                // 배경 태그 (동적으로 로드)
-                ForEach(viewModel.availableBackgroundTags, id: \.self) { tag in
-                    FilterChip(
-                        title: tag,
-                        isSelected: viewModel.selectedCommonFilter == tag
-                    ) {
-                        viewModel.selectedCommonFilter =
-                            viewModel.selectedCommonFilter == tag ? nil : tag
-                    }
-                }
-
-            default:
-                EmptyView()
-            }
-        }
+        WorkshopFilterBar(viewModel: $viewModel)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
     }
 
     // MARK: - Main Content Section
@@ -182,73 +115,40 @@ struct MyItemsView: View {
         Group {
             switch viewModel.selectedCategory {
             case "키링":
-                ownedItemGridView(items: filteredOwnedTemplates)
+                WorkshopGridHelpers.itemGridView(
+                    items: filteredOwnedTemplates,
+                    isOwnedCheck: { _ in false },
+                    router: router,
+                    viewModel: viewModel,
+                    emptyView: emptyContentView
+                )
             case "배경":
-                ownedItemGridView(items: filteredOwnedBackgrounds)
+                WorkshopGridHelpers.itemGridView(
+                    items: filteredOwnedBackgrounds,
+                    isOwnedCheck: { _ in false },
+                    router: router,
+                    viewModel: viewModel,
+                    emptyView: emptyContentView
+                )
             case "카라비너":
-                ownedItemGridView(items: filteredOwnedCarabiners)
+                WorkshopGridHelpers.itemGridView(
+                    items: filteredOwnedCarabiners,
+                    isOwnedCheck: { _ in false },
+                    router: router,
+                    viewModel: viewModel,
+                    emptyView: emptyContentView
+                )
             case "이펙트":
-                ownedEffectContentView
+                WorkshopGridHelpers.effectGridView(
+                    items: filteredOwnedEffects,
+                    isSoundOwned: { _ in false },
+                    isParticleOwned: { _ in false },
+                    router: router,
+                    viewModel: viewModel,
+                    emptyView: emptyContentView
+                )
             default:
                 emptyContentView
-            }
-        }
-    }
-
-    /// 이펙트 전용 콘텐츠 (사운드 + 파티클)
-    private var ownedEffectContentView: some View {
-        Group {
-            let items = filteredOwnedEffects
-
-            if items.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 16) {
-                    ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                        if let sound = item as? Sound {
-                            WorkshopItemView(
-                                item: sound,
-                                isOwned: true,
-                                router: nil
-                            )
-                        } else if let particle = item as? Particle {
-                            WorkshopItemView(
-                                item: particle,
-                                isOwned: true,
-                                router: nil
-                            )
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 50)
-            }
-        }
-    }
-
-    /// 통합 보유 아이템 그리드 뷰
-    private func ownedItemGridView<T: WorkshopItem>(items: [T]) -> some View {
-        Group {
-            if items.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 11) {
-                    ForEach(items) { item in
-                        WorkshopItemView(
-                            item: item,
-                            isOwned: true,
-                            router: nil
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 92)
             }
         }
     }
@@ -361,8 +261,10 @@ struct MyItemsView: View {
 }
 
 #Preview {
+    @Previewable @State var router = NavigationRouter<WorkshopRoute>()
+
     NavigationStack {
-        MyItemsView()
+        MyItemsView(router: router)
             .environment(UserManager.shared)
     }
 }
