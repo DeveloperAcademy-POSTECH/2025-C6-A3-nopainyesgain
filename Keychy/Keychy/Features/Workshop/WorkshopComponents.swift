@@ -158,7 +158,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                                 }
                         }
                     }
-                    .scaledToFit()
                 }
             }
             .padding(.vertical,10)
