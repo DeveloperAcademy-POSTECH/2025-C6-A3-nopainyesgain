@@ -140,27 +140,22 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     /// 썸네일 이미지 + 가격 오버레이
     private var thumbnailImage: some View {
         ZStack(alignment: .top) {
-            VStack {
-                ZStack {
-                    LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } else if state.isLoading {
-                            Color.gray50
-                                .overlay { ProgressView() }
-                        } else {
-                            Color.gray50
-                                .overlay {
-                                    Image(systemName: "photo")
-                                        .foregroundStyle(.gray300)
-                                }
+            LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if state.isLoading {
+                    Color.gray50
+                        .overlay { ProgressView() }
+                } else {
+                    Color.gray50
+                        .overlay {
+                            Image(systemName: "photo")
+                                .foregroundStyle(.gray300)
                         }
-                    }
                 }
             }
-            .padding(.vertical,10)
 
             // 가격 오버레이
             priceOverlay(
@@ -297,7 +292,7 @@ func priceOverlay<Item: WorkshopItem>(
                 }
             }
         }
-        .frame(height: 43)
+        .frame(width:175, height: 43)
 
         Spacer()
 
