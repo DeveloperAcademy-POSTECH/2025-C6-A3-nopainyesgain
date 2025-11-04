@@ -30,19 +30,17 @@ struct CategoryTabBar: View {
     @Binding var selectedCategory: String
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 28) {
-                ForEach(categories, id: \.self) { category in
-                    CategoryTabButton(
-                        title: category,
-                        isSelected: selectedCategory == category
-                    ) {
-                        selectedCategory = category
-                    }
+        HStack(spacing: 0) {
+            ForEach(categories, id: \.self) { category in
+                CategoryTabButton(
+                    title: category,
+                    isSelected: selectedCategory == category
+                ) {
+                    selectedCategory = category
                 }
+                
             }
         }
-        .scrollBounceBehavior(.basedOnSize)
     }
 }
 
@@ -69,7 +67,9 @@ private struct CategoryTabButton: View {
                     .fill(isSelected ? Color.main500 : Color.clear)
                     .frame(height: 2)
             }
+            .fixedSize(horizontal: true, vertical: false)
         }
+        .frame(maxWidth: .infinity)
         .buttonStyle(.plain)
         .transaction { transaction in
             transaction.animation = nil

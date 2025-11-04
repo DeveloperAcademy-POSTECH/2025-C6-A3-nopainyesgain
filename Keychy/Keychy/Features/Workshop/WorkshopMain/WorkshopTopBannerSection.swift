@@ -43,7 +43,7 @@ extension WorkshopView {
     /// 타이틀 뷰
     var titleView: some View {
         Text("공방")
-            .typography(.suit32B)
+            .typography(.nanum32EB)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
