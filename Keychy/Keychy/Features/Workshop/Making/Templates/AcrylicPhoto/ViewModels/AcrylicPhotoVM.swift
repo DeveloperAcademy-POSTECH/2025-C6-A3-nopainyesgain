@@ -115,7 +115,7 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var nameText: String = ""
     var maxTextCount: Int = 30
     var memoText: String = ""
-    var maxMemoCount: Int = 100
+    var maxMemoCount: Int = 500
     var selectedTags: [String] = []
     var createdAt: Date = Date()
 
