@@ -182,6 +182,8 @@ extension BundleSelectCarabinerView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("다음") {
+                // 씬을 viewModel에 저장하여 다음 화면으로 전달
+                viewModel.bundlePreviewScene = carabinerScene
                 router.push(.bundleAddKeyringView)
             }
             .disabled(viewModel.selectedCarabiner == nil)
