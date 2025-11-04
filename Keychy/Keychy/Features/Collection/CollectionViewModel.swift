@@ -23,6 +23,9 @@ class CollectionViewModel {
     var keyring: [Keyring] = []
     var selectedKeyrings: [Keyring] = []
     
+    // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
+    var keyringDocumentIdByLocalId: [UUID: String] = [:]
+    
     // MARK: - 초기화
     init() {}
     
