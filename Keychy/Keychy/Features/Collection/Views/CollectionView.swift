@@ -120,7 +120,7 @@ struct CollectionView: View {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showDeleteAlert = false
                             }
-                            // 팝업이 사라진 직후 완료 팝업 표시
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                                 confirmDeleteCategory()
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -171,7 +171,7 @@ struct CollectionView: View {
                 Color.black20
                     .ignoresSafeArea()
                 
-                //
+                // 추가 예정
             }
             
         }
@@ -272,7 +272,6 @@ struct CollectionView: View {
                     deletingCategory = ""
                 }
             } else {
-                // 실패 시 즉시 완료 팝업 닫기
                 showDeleteCompleteAlert = false
                 deletingCategory = ""
             }
@@ -388,14 +387,15 @@ extension CollectionView {
     
     private var emptyview: some View {
         VStack {
-            Spacer().frame(height: 200)
+            Spacer().frame(height: 180)
             
-            Text("비었음")
-                .typography(.suit14M)
-            
-            Image("fireworks")
+            Image("EmptyViewIcon")
                 .resizable()
-                .frame(width: 94, height: 94)
+                .frame(width: 124, height: 111)
+            
+            Text("보관함이 비었어요.")
+                .typography(.suit15R)
+                .padding(.top, 15)
             
             Spacer()
         }
