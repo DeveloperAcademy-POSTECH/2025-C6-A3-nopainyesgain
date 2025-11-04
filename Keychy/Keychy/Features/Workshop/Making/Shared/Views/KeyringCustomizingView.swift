@@ -493,12 +493,12 @@ extension KeyringCustomizingView {
                                     .fill(Color.black.opacity(0.3))
                                 
                                 if let progress = viewModel.downloadProgress[soundId], progress.isFinite {
-                                    VStack(spacing: 2) {
+                                    VStack(spacing: 0) {
                                         ProgressView()
                                             .tint(.white)
                                             .scaleEffect(0.7)
                                         Text("\(Int(min(max(progress * 100, 0), 100)))%")
-                                            .font(.system(size: 10, weight: .semibold))
+                                            .typography(.nanum14EB18)
                                             .foregroundStyle(.white)
                                     }
                                 }
