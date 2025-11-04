@@ -35,18 +35,29 @@ struct WorkshopPreview: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                itemPreview
-                Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            
+            Spacer()
+            
+            itemPreview
+            
+            Spacer()
+            
+            HStack {
                 ItemDetailInfoSection(item: item)
+                
+                Spacer()
+                
+                // 사운드일 경우 재생 버튼 표시
+                if item is Sound {
+                    effectPlayButton
+                }
             }
-            .padding(.bottom, 120)
+            .padding(.bottom, 40)
             
             actionButton
         }
-        .padding(.horizontal, 35)
+        .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
     }
 }
@@ -56,38 +67,26 @@ extension WorkshopPreview {
     private var itemPreview: some View {
         GeometryReader { geometry in
             VStack {
+                
                 Spacer()
 
-                ZStack {
-                    // 파티클이 아닌 경우 이미지 표시
-                    if !(item is Particle) {
-                        ItemDetailImage(itemURL: getPreviewURL())
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity)
-                    }
+                // 파티클이 아닌 경우 이미지 표시
+                if !(item is Particle) {
+                    ItemDetailImage(itemURL: getPreviewURL())
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .cornerRadius(20)
+                }
 
-                    // 파티클 이펙트일 경우 무한 재생
-                    if let particle = item as? Particle,
-                       let particleId = particle.id {
-                        infiniteParticleLottieView(particleId: particleId)
-                    }
-
-                    // 사운드일 경우 재생 버튼 표시
-                    if item is Sound {
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                effectPlayButton
-                            }
-                        }
-                        .padding(.bottom, 93)
-                        .padding(.trailing, 16)
-                    }
+                // 파티클 이펙트일 경우 무한 재생
+                if let particle = item as? Particle,
+                   let particleId = particle.id {
+                    infiniteParticleLottieView(particleId: particleId)
                 }
 
                 Spacer()
             }
+            .padding(.horizontal, 30)
             .frame(height: 500)
         }
     }
@@ -200,7 +199,6 @@ extension WorkshopPreview {
                 Text("\(item.workshopPrice)")
                     .typography(.nanum18EB)
                     .foregroundStyle(.white100)
-                    .background(Color.gray50)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 36)
@@ -217,7 +215,8 @@ extension WorkshopPreview {
         soundName: "딸랑딸랑",
         description: "귀여운 종소리 효과음",
         soundData: "sample_bell.mp3",
-        thumbnail: "https://via.placeholder.com/150",
+        thumbnail: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FCloudHangerBack.png?alt=media&token=74b8d537-6b27-4562-8536-3b97624e1e9f"
+,
         tags: ["귀여움", "종소리"],
         price: 100,
         downloadCount: 42,
