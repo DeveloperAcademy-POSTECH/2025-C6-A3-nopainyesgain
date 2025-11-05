@@ -46,14 +46,12 @@ struct WorkshopTab: View {
                         KeyringCustomizingView(
                             router: router,
                             viewModel: getAcrylicPhotoVM(),
-                            navigationTitle: "",
                             nextRoute: .acrylicPhotoInfoInput
                         )
                     case .acrylicPhotoInfoInput:
                         KeyringInfoInputView(
                             router: router,
                             viewModel: getAcrylicPhotoVM(),
-                            navigationTitle: "",
                             nextRoute: .acrylicPhotoComplete
                         )
                     case .acrylicPhotoComplete:

@@ -70,7 +70,7 @@ extension KeyringDetailScene {
                     // 2. 이미지 처리 (메인 스레드가 아닌 백그라운드에서 실행)
                     processedBodyImage = await Task.detached(priority: .userInitiated) {
                         // orientation 정규화
-                        let fixedImage = downloadedImage.fixedOrientation()
+                        let fixedImage = await downloadedImage.fixedOrientation()
                         
                         return fixedImage
                     }.value

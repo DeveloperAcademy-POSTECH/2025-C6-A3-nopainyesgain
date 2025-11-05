@@ -53,10 +53,15 @@ struct CollectionView: View {
         ZStack {
             VStack {
                 headerSection
+                    .padding(.horizontal, Spacing.margin)
+                    .padding(.top, Spacing.padding)
+                
                 tagSection
+                    .padding(.horizontal, Spacing.xs)
+                
                 collectionSection
+                    .padding(.horizontal, Spacing.padding)
             }
-            .padding(Spacing.padding)
             .ignoresSafeArea()
             
             if let menuCategory = showingMenuFor {
@@ -319,7 +324,7 @@ extension CollectionView {
                 collectionGridView
             }
         }
-        .padding(.top, Spacing.xs)
+        //.padding(.top, Spacing.xs)
         .padding(.horizontal, Spacing.xs)
     }
     

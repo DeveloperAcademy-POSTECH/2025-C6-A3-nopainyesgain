@@ -18,7 +18,7 @@ struct CategoryContextMenu: View {
     
     // 메뉴 크기
     private let menuWidth: CGFloat = 170
-    private let menuHeight: CGFloat = 146
+    private let menuHeight: CGFloat = 156
     
     var body: some View {
         GeometryReader { geometry in
@@ -46,7 +46,7 @@ struct CategoryContextMenu: View {
                         HStack(spacing: 8) {
                             Image("Pencil")
                                 .resizable()
-                                .frame(width: 20, height: 20)
+                                .frame(width: 25, height: 25)
                             
                             Text("태그 이름 변경")
                                 .typography(.suit16M)
@@ -60,11 +60,11 @@ struct CategoryContextMenu: View {
                         HStack(spacing: 8) {
                             Image("Trash")
                                 .resizable()
-                                .frame(width: 20, height: 20)
+                                .frame(width: 25, height: 25)
                             
                             Text("삭제")
                                 .typography(.suit16M)
-                                .foregroundColor(.red)
+                                .foregroundColor(.pink100)
                         }
                     }
                     .buttonStyle(.plain)
@@ -72,8 +72,7 @@ struct CategoryContextMenu: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
-                .background(.thinMaterial, in: .rect(cornerRadius: 34))
-                .glassEffect(in: .rect(cornerRadius: 34))
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
                 .position( // 메뉴 위치
                     x: calculateSafeX(in: geometry),
                     y: position.maxY + 20

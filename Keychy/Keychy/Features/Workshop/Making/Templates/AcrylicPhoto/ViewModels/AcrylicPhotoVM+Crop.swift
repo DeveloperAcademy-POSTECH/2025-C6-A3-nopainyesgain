@@ -15,7 +15,7 @@ extension AcrylicPhotoVM {
         let displayRect = getDisplayedImageRect()
 
         // 크롭박스 초기 크기
-        let scale: CGFloat = 1.0
+        let scale: CGFloat = 0.75
         let newWidth = displayRect.width * scale
         let newHeight = displayRect.height * scale
         let newX = displayRect.midX - newWidth / 2

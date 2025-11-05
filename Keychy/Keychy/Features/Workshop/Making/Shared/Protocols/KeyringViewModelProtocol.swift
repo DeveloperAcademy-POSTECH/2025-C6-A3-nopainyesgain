@@ -45,6 +45,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     var availableSounds: [Sound] { get }
     var availableParticles: [Particle] { get }
 
+    /// 정렬된 이펙트 리스트 (무료 다운로드됨 → 무료 미다운로드 → 유료 보유 다운로드됨 → 유료 보유 미다운로드 → 유료 미보유)
+    var sortedAvailableSounds: [Sound] { get }
+    var sortedAvailableParticles: [Particle] { get }
+
     /// 선택된 이펙트
     var selectedSound: Sound? { get set }
     var selectedParticle: Particle? { get set }

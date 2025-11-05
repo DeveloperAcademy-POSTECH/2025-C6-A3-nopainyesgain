@@ -67,10 +67,10 @@ struct TagInputPopup: View {
                         .frame(height: 48)
                         .background(
                             RoundedRectangle(cornerRadius: 100)
-                                .fill(.gray200)
+                                .fill(.black10)
                         )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 
                 // 확인 버튼
                 Button(action: onConfirm) {
@@ -84,15 +84,14 @@ struct TagInputPopup: View {
                                 .fill(.main500)
                         )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
                 .disabled(tagName.isEmpty)
             }
             
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
-        //.background(.ultraThinMaterial, in: .rect(cornerRadius: 34))
-        .glassEffect(in: .rect(cornerRadius: 34))
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
         .frame(width: 300, height: 204)
         .onAppear {
             // 팝업 뜰 때 자동으로 키보드 올리기
