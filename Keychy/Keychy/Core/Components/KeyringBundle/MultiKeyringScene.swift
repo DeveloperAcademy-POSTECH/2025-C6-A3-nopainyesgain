@@ -21,14 +21,6 @@ class MultiKeyringScene: SKScene {
         let bodyImageURL: String
         let soundId: String  // 사운드 ID
         let customSoundURL: URL?  // 커스텀 녹음 파일 URL
-
-        static func == (lhs: KeyringData, rhs: KeyringData) -> Bool {
-            return lhs.index == rhs.index &&
-                   lhs.position == rhs.position &&
-                   lhs.bodyImageURL == rhs.bodyImageURL &&
-                   lhs.soundId == rhs.soundId &&
-                   lhs.customSoundURL == rhs.customSoundURL
-        }
     }
 
     var keyringDataList: [KeyringData] = []
