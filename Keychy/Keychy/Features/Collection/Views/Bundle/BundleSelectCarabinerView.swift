@@ -13,39 +13,50 @@ struct BundleSelectCarabinerView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
 
-    @State private var carabinerScene: CarabinerScene?
-    @State private var isSceneReady: Bool = false
+    @State private var carabinerImage: UIImage?
+    @State private var isLoading: Bool = false
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // 씬 프리뷰 (항상 표시)
-            if let carabinerScene {
-                SpriteView(scene: carabinerScene, options: [.allowsTransparency])
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+        GeometryReader { geometry in
+            ZStack(alignment: .bottom) {
+                // 카라비너 이미지 프리뷰
+                if let image = carabinerImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 0.5)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // 하단 선택 UI (항상 하단에 배치)
-            carabinerSelectionView
+                    // 키링 포인트 표시
+                    if let carabiner = viewModel.selectedCarabiner {
+                        keyringPointsOverlay(carabiner: carabiner, geometry: geometry)
+                    }
+                } else if isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+
+                // 하단 선택 UI (항상 하단에 배치)
+                carabinerSelectionView
+            }
+            .background(backgroundImage)
+            .ignoresSafeArea()
         }
-        .background(backgroundImage)
-        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar {
             backToolbarItem
             nextToolbarItem
         }
         .onAppear {
-            // 빈 씬 먼저 생성
-            createEmptyScene()
             // 카라비너 목록 로드
             viewModel.fetchAllCarabiners { success in
                 print("카라비너 목록 로드: \(success), 개수: \(viewModel.carabinerViewData.count)")
             }
         }
         .onChange(of: viewModel.selectedCarabiner) { _, newCarabiner in
-            // 카라비너 선택 시 씬에 적용 (씬이 준비된 후에만)
-            if let carabiner = newCarabiner, isSceneReady {
-                updateSceneWithCarabiner(carabiner)
+            // 카라비너 선택 시 이미지 업데이트
+            if let carabiner = newCarabiner {
+                loadCarabinerImage(carabiner)
             }
         }
     }
@@ -106,59 +117,55 @@ struct BundleSelectCarabinerView: View {
         )
     }
 
-    // MARK: - 씬 생성
+    // MARK: - 키링 포인트 오버레이
 
-    /// 빈 씬 생성 (초기 상태)
-    private func createEmptyScene() {
-        let defaultSize = CGSize(width: 393, height: 852)
-        let scene = CarabinerScene(
-            carabiner: nil,
-            carabinerImage: nil,
-            ringType: .basic,
-            chainType: .basic,
-            bodyType: .basic,
-            bodyImages: [],
-            targetSize: defaultSize,
-            screenWidth: defaultSize.width,
-            zoomScale: 1.0,
-            isPhysicsEnabled: false
-        )
-        scene.scaleMode = .resizeFill
+    /// 키링 포인트 표시
+    private func keyringPointsOverlay(carabiner: Carabiner, geometry: GeometryProxy) -> some View {
+        let carabinerWidth = geometry.size.width * 0.5
+        let aspectRatio = carabinerImage.map { $0.size.height / $0.size.width } ?? 1.0
+        let carabinerHeight = carabinerWidth * aspectRatio
 
-        // 씬이 준비되면 플래그 설정
-        scene.onSceneReady = {
-            DispatchQueue.main.async {
-                self.isSceneReady = true
-            }
+        let centerX = geometry.size.width / 2
+        let centerY = geometry.size.height / 2
+
+        return ForEach(0..<min(carabiner.keyringXPosition.count, carabiner.keyringYPosition.count), id: \.self) { index in
+            let x = centerX + (carabinerWidth * (carabiner.keyringXPosition[index] - 0.5))
+            let y = centerY - (carabinerHeight * (carabiner.keyringYPosition[index] - 0.5))
+
+            Circle()
+                .fill(Color.white.opacity(0.9))
+                .frame(width: 20, height: 20)
+                .position(x: x, y: y)
         }
-
-        self.carabinerScene = scene
     }
 
-    /// 카라비너 선택 시 씬 업데이트
-    private func updateSceneWithCarabiner(_ carabiner: Carabiner) {
-        guard let imageURL = carabiner.carabinerImage.first,
-              let scene = carabinerScene else { return }
+    // MARK: - 이미지 로딩
+
+    /// 카라비너 이미지 로드
+    private func loadCarabinerImage(_ carabiner: Carabiner) {
+        guard let imageURL = carabiner.carabinerImage.first else { return }
+
+        isLoading = true
 
         Task {
-            guard let image = try? await StorageManager.shared.getImage(path: imageURL) else { return }
+            guard let image = try? await StorageManager.shared.getImage(path: imageURL) else {
+                await MainActor.run {
+                    isLoading = false
+                }
+                return
+            }
 
             await MainActor.run {
-                // 기존 씬의 카라비너만 업데이트
-                scene.updateCarabiner(carabiner: carabiner, image: image)
+                self.carabinerImage = image
+                self.isLoading = false
             }
         }
     }
 
     /// 선택 초기화
     private func resetSelection() {
-        // 카라비너 선택 초기화
         viewModel.selectedCarabiner = nil
-
-        // 기존 씬의 카라비너 제거
-        carabinerScene?.carabinerNode?.removeFromParent()
-        carabinerScene?.keyringPointNodes.forEach { $0.removeFromParent() }
-        carabinerScene?.keyringPointNodes.removeAll()
+        carabinerImage = nil
     }
 }
 
@@ -179,8 +186,6 @@ extension BundleSelectCarabinerView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("다음") {
-                // 씬을 viewModel에 저장하여 다음 화면으로 전달
-                viewModel.bundlePreviewScene = carabinerScene
                 router.push(.bundleAddKeyringView)
             }
             .disabled(viewModel.selectedCarabiner == nil)
