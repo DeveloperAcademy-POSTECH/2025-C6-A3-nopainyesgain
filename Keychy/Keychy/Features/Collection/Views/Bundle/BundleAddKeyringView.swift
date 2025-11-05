@@ -77,21 +77,17 @@ extension BundleAddKeyringView {
     private func sceneView(geometry: GeometryProxy) -> some View {
         VStack {
             ZStack {
-                // 카라비너 이미지 표시
+                // 1층: 카라비너 이미지 표시
                 if let image = carabinerImage {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                         .frame(width: geometry.size.width * 0.5)
-
-                    if isSceneReady, let carabiner = viewModel.selectedCarabiner {
-                        keyringButtons(carabiner: carabiner, geometry: geometry)
-                    }
                 } else {
                     ProgressView()
                 }
 
-                // 여러 키링을 하나의 씬에 표시
+                // 2층: 여러 키링을 하나의 씬에 표시
                 if let carabiner = viewModel.selectedCarabiner, !selectedKeyrings.isEmpty {
                     MultiKeyringSceneView(
                         keyringDataList: createKeyringDataList(carabiner: carabiner, geometry: geometry),
@@ -99,6 +95,11 @@ extension BundleAddKeyringView {
                         chainType: .basic,
                         backgroundColor: .clear
                     )
+                }
+
+                // 3층: 버튼 오버레이 (가장 위)
+                if isSceneReady, let carabiner = viewModel.selectedCarabiner {
+                    keyringButtons(carabiner: carabiner, geometry: geometry)
                 }
             }
             Spacer()
