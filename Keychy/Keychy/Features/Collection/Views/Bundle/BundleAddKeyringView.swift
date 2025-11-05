@@ -320,10 +320,25 @@ extension BundleAddKeyringView {
 
         for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
             let position = buttonPosition(index: index, carabiner: carabiner, geometry: geometry)
+
+            // 사운드 정보 추출
+            let soundId = keyring.soundId
+
+            // 커스텀 사운드 URL 처리
+            // soundId가 URL 형식이면 해당 URL 사용, 아니면 nil
+            let customSoundURL: URL? = {
+                if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
+                    return URL(string: soundId)
+                }
+                return nil
+            }()
+
             let data = MultiKeyringScene.KeyringData(
                 index: index,
                 position: position,
-                bodyImageURL: keyring.bodyImage
+                bodyImageURL: keyring.bodyImage,
+                soundId: soundId,
+                customSoundURL: customSoundURL
             )
             dataList.append(data)
         }

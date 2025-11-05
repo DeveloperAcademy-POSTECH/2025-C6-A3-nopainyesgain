@@ -19,6 +19,16 @@ class MultiKeyringScene: SKScene {
         let index: Int
         let position: CGPoint  // 화면 좌표
         let bodyImageURL: String
+        let soundId: String  // 사운드 ID
+        let customSoundURL: URL?  // 커스텀 녹음 파일 URL
+
+        static func == (lhs: KeyringData, rhs: KeyringData) -> Bool {
+            return lhs.index == rhs.index &&
+                   lhs.position == rhs.position &&
+                   lhs.bodyImageURL == rhs.bodyImageURL &&
+                   lhs.soundId == rhs.soundId &&
+                   lhs.customSoundURL == rhs.customSoundURL
+        }
     }
 
     var keyringDataList: [KeyringData] = []
@@ -28,6 +38,10 @@ class MultiKeyringScene: SKScene {
     var ringNodes: [Int: SKSpriteNode] = [:]
     var chainNodesByKeyring: [Int: [SKSpriteNode]] = [:]
     var bodyNodes: [Int: SKNode] = [:]
+
+    // MARK: - 키링별 사운드 정보 저장
+    var soundIdsByKeyring: [Int: String] = [:]  // index: soundId
+    var customSoundURLsByKeyring: [Int: URL] = [:]  // index: customSoundURL
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
@@ -85,6 +99,12 @@ class MultiKeyringScene: SKScene {
 
     /// 단일 키링 설정
     private func setupSingleKeyring(data: KeyringData) {
+        // 사운드 정보 저장
+        soundIdsByKeyring[data.index] = data.soundId
+        if let customURL = data.customSoundURL {
+            customSoundURLsByKeyring[data.index] = customURL
+        }
+
         // 좌표 변환: SwiftUI 좌표 -> SpriteKit 좌표
         let spriteKitPosition = convertToSpriteKitCoordinates(data.position)
 
@@ -377,6 +397,28 @@ class MultiKeyringScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let end = touch.location(in: self)
+
+        // 거리 계산
+        if let start = swipeStartLocation {
+            let distance = hypot(end.x - start.x, end.y - start.y)
+
+            // 탭 감지: 거리가 짧으면 사운드 효과 실행
+            if distance < 30 {
+                // 어떤 바디가 탭되었는지 확인
+                for (index, body) in bodyNodes {
+                    if body.contains(end) {
+                        // 해당 키링의 사운드 재생
+                        if let soundId = soundIdsByKeyring[index] {
+                            applySoundEffect(soundId: soundId, index: index)
+                        }
+                        break
+                    }
+                }
+            }
+        }
+
         swipeStartLocation = nil
         lastTouchLocation = nil
     }
@@ -384,6 +426,30 @@ class MultiKeyringScene: SKScene {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         swipeStartLocation = nil
         lastTouchLocation = nil
+    }
+
+    // MARK: - Sound Effect
+
+    /// 사운드 효과 재생 (KeyringScene+Effects와 동일)
+    func applySoundEffect(soundId: String, index: Int) {
+        guard soundId != "none" else { return }
+
+        // Firebase Storage URL인 경우 (커스텀 사운드가 저장된 경우)
+        if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
+            if let url = URL(string: soundId) {
+                SoundEffectComponent.shared.playSound(from: url)
+            }
+            return
+        }
+
+        // 로컬 커스텀 녹음 파일인 경우
+        if soundId == "custom_recording", let customURL = customSoundURLsByKeyring[index] {
+            SoundEffectComponent.shared.playSound(from: customURL)
+            return
+        }
+
+        // 일반 사운드 파일
+        SoundEffectComponent.shared.playSound(named: soundId)
     }
 
     // MARK: - Swipe Force Application
