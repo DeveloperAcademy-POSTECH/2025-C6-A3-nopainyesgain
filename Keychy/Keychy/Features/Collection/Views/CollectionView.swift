@@ -469,6 +469,7 @@ extension CollectionView {
                 }
             }
             .padding(.vertical, 4)
+            .padding(.bottom, 90)
         }
         .padding(.top, 10)
         .scrollIndicators(.hidden)
