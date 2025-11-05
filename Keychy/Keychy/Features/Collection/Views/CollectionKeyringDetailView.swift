@@ -21,46 +21,49 @@ struct CollectionKeyringDetailView: View {
     let keyring: Keyring
     
     var body: some View {
-        ZStack {
-            Color.gray50
-                .ignoresSafeArea()
-            
-            KeyringDetailSceneView(
-                keyring: keyring
-            )
-            .frame(maxWidth: .infinity)
-            .scaleEffect(sceneScale)
-            .offset(y: sceneYOffset)
-            .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
-            .allowsHitTesting(sheetDetent != .height(395))
-            
-            if showMenu { // 위치 조정 필요
-                Color.clear
+        GeometryReader { geometry in
+            ZStack {
+                Color.gray50
                     .ignoresSafeArea()
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showMenu = false // dismiss용
-                        }
-                    }
                 
-                KeyringMenu(
-                    onEdit: {
-                        showMenu = false
-                        // TODO: 편집 로직
-                    },
-                    onCopy: {
-                        showMenu = false
-                        // TODO: 복사 로직
-                    },
-                    onDelete: {
-                        showMenu = false
-                        // TODO: 삭제 로직
-                    }
+                KeyringDetailSceneView(
+                    keyring: keyring
                 )
-                .zIndex(50)
-            }
+                .frame(maxWidth: .infinity)
+                .scaleEffect(sceneScale)
+                .offset(y: sceneYOffset)
+                .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
+                .allowsHitTesting(sheetDetent != .height(395))
                 
+                if showMenu { // 위치 조정 필요
+                    Color.clear
+                        .ignoresSafeArea()
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showMenu = false // dismiss용
+                            }
+                        }
+                    
+                    KeyringMenu(
+                        position: menuPosition,
+                        onEdit: {
+                            showMenu = false
+                            // TODO: 편집 로직
+                        },
+                        onCopy: {
+                            showMenu = false
+                            // TODO: 복사 로직
+                        },
+                        onDelete: {
+                            showMenu = false
+                            // TODO: 삭제 로직
+                        }
+                    )
+                    .zIndex(50)
+                }
+                    
+            }
         }
         .ignoresSafeArea()
         .navigationTitle(keyring.name)
@@ -100,6 +103,9 @@ struct CollectionKeyringDetailView: View {
             backToolbarItem
             menuToolbarItem
         }
+        .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
+            menuPosition = frame
+        }
     }
     
     // Firebase에서 작성자 이름 가져오기 (나중에 viewModel로 이동 예정)
@@ -135,6 +141,14 @@ struct CollectionKeyringDetailView: View {
 
 }
 
+// MARK: - PreferenceKey
+struct MenuButtonPreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
 // MARK: - 툴바
 extension CollectionKeyringDetailView {
     private var backToolbarItem: some ToolbarContent {
@@ -157,6 +171,15 @@ extension CollectionKeyringDetailView {
             }) {
                 Image(systemName: "ellipsis")
                     .foregroundColor(.primary)
+                    .contentShape(Rectangle())
+                    .background(
+                        GeometryReader { geometry in
+                            Color.clear.preference(
+                                key: MenuButtonPreferenceKey.self,
+                                value: geometry.frame(in: .global)
+                            )
+                        }
+                    )
             }
         }
     }

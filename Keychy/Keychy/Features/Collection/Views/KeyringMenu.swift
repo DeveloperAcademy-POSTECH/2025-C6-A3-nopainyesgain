@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct KeyringMenu: View {
+    let position: CGRect
     let onEdit: () -> Void
     let onCopy: () -> Void
     let onDelete: () -> Void
+    
+    private let menuWidth: CGFloat = 165
+    private let menuHeight: CGFloat = 170
     
     @State private var isAppearing = false
     
@@ -68,10 +72,14 @@ struct KeyringMenu: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
-                .frame(width: 170, height: 186)
+                .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
                 .scaleEffect(isAppearing ? 1.0 : 0.8, anchor: .topTrailing)
                 .opacity(isAppearing ? 1.0 : 0.0)
+                .position(
+                    x: geometry.size.width - menuWidth / 2 - 16,
+                    y: position.maxY + menuHeight + 28
+                )
             }
         }
         .onAppear {
