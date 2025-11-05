@@ -22,36 +22,36 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var loadingScale: CGFloat = 0.3
     @State private var showRecordingSheet = false
     @State private var showResetAlert = false
-
+    
     // 구매 시트
     @State var showPurchaseSheet = false
-    @State var purchaseSheetHeight: CGFloat = 500
+    @State var purchaseSheetHeight: CGFloat = 400
     @State var cartItems: [EffectItem] = []
-
+    
     // 구매 Alert 애니메이션
     @State var showPurchaseSuccessAlert = false
     @State var purchaseSuccessScale: CGFloat = 0.3
     @State var showPurchaseFailAlert = false
     @State var purchaseFailScale: CGFloat = 0.3
-
+    
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 ZStack(alignment: .center) {
                     KeyringSceneView(viewModel: viewModel, onSceneReady: {
-                        withAnimation(.easeIn(duration: 0.6)) {
+                        withAnimation(.easeIn(duration: 1.0)) {
                             isSceneReady = true
                         }
                         closeLoadingIfReady()
                     })
                     // 준비되면 fade-in하게 했음.
                     .opacity(isSceneReady ? 1.0 : 0.0)
-
+                    
                     // 로딩 인디케이터 (키링씬 중앙)
                     if isLoadingResources || !isSceneReady {
                         loadingIndicator()
                     }
-
+                    
                     // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
                         ForEach(viewModel.availableCustomizingModes) { mode in
@@ -62,20 +62,20 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .padding(18)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 }
-
+                
                 // MARK: - 하단 영역
                 bottomContentView
             }
             .background(.gray50)
             .disabled(isLoadingResources || !isSceneReady)
-
+            
             // MARK: - Purchase Alerts
             if showPurchaseSuccessAlert {
                 PerchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
                     .padding(.bottom, 60)
                     .padding(.horizontal, 51)
             }
-
+            
             if showPurchaseFailAlert {
                 PurchaseFailAlert(
                     checkmarkScale: purchaseFailScale,
@@ -115,14 +115,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .task {
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
-
+            
             // 사운드 + 파티클 병렬 프리로딩
             async let soundsTask: () = preloadAllSoundEffects()
             async let particlesTask: () = preloadAllParticleEffects()
-
+            
             await soundsTask
             await particlesTask
-
+            
             // 리소스 프리로딩 완료
             isLoadingResources = false
             closeLoadingIfReady()
@@ -131,7 +131,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             purchaseSheet
         }
     }
-
+    
     // MARK: - Loading Helper
     private func closeLoadingIfReady() {
         // 리소스 + 씬 모두 준비되면 로딩 닫기
@@ -141,7 +141,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             }
         }
     }
-
+    
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
         // Firebase에서 가져온 사운드를 순차적으로 로드
@@ -150,7 +150,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             await SoundEffectComponent.shared.preloadSound(named: soundId)
         }
     }
-
+    
     // MARK: - Preload Particle Resources
     private func preloadAllParticleEffects() async {
         // Firebase에서 가져온 파티클을 순차적으로 로드
@@ -159,14 +159,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             await preloadParticle(named: particleId)
         }
     }
-
+    
     private func preloadParticle(named particleId: String) async {
         // 백그라운드 스레드에서 파일 로딩 (UI 블로킹 방지)
         await withCheckedContinuation { continuation in
             Task.detached(priority: .userInitiated) {
                 let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
                 let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
-
+                
                 // 캐시에서 로드 시도
                 if FileManager.default.fileExists(atPath: cachedURL.path) {
                     _ = LottieAnimation.filepath(cachedURL.path)
@@ -175,7 +175,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 else {
                     _ = LottieAnimation.named(particleId)
                 }
-
+                
                 continuation.resume()
             }
         }
@@ -204,15 +204,19 @@ extension KeyringCustomizingView {
     }
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button(hasCartItems ? "구매 \(cartItems.count)" : "다음") {
+            Button {
                 if hasCartItems {
                     showPurchaseSheet = true
                 } else {
                     router.push(nextRoute)
                 }
+            } label: {
+                Text(hasCartItems ? "구매 \(cartItems.count)" : "다음")
+                    .foregroundStyle(hasCartItems ? .white : .black100)
+                    .fontWeight(hasCartItems ? .bold : .regular)
             }
-            .foregroundStyle(hasCartItems ? Color.main500 : Color.black100)
-            .fontWeight(hasCartItems ? .bold : .regular)
+            .buttonStyle(.glassProminent)
+            .tint(hasCartItems ? .black100 : .white)
         }
     }
 }
@@ -223,7 +227,9 @@ extension KeyringCustomizingView {
     private func loadingIndicator() -> some View {
         VStack(spacing: 23) {
             Image("appIcon")
-
+                .resizable()
+                .frame(width: 80, height: 80)
+            
             Text("키링을 만들고 있어요")
                 .typography(.suit17SB)
         }
@@ -244,7 +250,7 @@ extension KeyringCustomizingView {
             ZStack {
                 RoundedRectangle(cornerRadius: 13)
                     .fill(selectedMode == mode ? .main500 : .white100)
-                    .frame(width: 48, height: 48)
+                    .frame(width: 46, height: 46)
                     .shadow(color: .black.opacity(0.25), radius: 4)
                 
                 Image(mode.btnImage)
@@ -313,7 +319,7 @@ extension KeyringCustomizingView {
                         viewModel.applyCustomSound(url)
                     }
                 }
-
+                
                 // 버튼들만 스크롤
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -331,7 +337,7 @@ extension KeyringCustomizingView {
                                     .clipShape(.rect(cornerRadius: 15))
                             }
                             .id("sound_none")
-
+                            
                             // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
                             if viewModel.hasCustomSound {
                                 Button {
@@ -347,7 +353,7 @@ extension KeyringCustomizingView {
                                 }
                                 .id("sound_custom")
                             }
-
+                            
                             // Firebase 사운드 목록 (정렬됨)
                             ForEach(viewModel.sortedAvailableSounds) { sound in
                                 soundItemButton(sound: sound)
@@ -400,7 +406,7 @@ extension KeyringCustomizingView {
                                 .clipShape(.rect(cornerRadius: 15))
                         }
                         .id("particle_none")
-
+                        
                         // Firebase 파티클 목록 (정렬됨)
                         ForEach(viewModel.sortedAvailableParticles) { particle in
                             particleItemButton(particle: particle)
@@ -431,7 +437,7 @@ extension KeyringCustomizingView {
             let isOwned = viewModel.isOwned(soundId: soundId)
             let isDownloading = viewModel.downloadingItemIds.contains(soundId)
             let isSelected = viewModel.selectedSound?.id == soundId
-
+            
             // UI 스타일 계산
             let isPaidUnownedUnselected = !sound.isFree && !isOwned && !isSelected
             let isPaidOwnedSelected = !sound.isFree && isOwned && isSelected
@@ -546,7 +552,7 @@ extension KeyringCustomizingView {
                         if isPaidOwnedSelected {
                             // 유료 + 보유 + 선택 → 백그라운드 gradient
                             RoundedRectangle(cornerRadius: 15)
-                                .fill(.gradient(.primary))
+                                .fill(.main500)
                         } else if isPaidUnOwnedSelected {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.gradient(.primary))
@@ -720,7 +726,7 @@ extension KeyringCustomizingView {
                         if isPaidOwnedSelected {
                             // 유료 + 보유 + 선택 → 백그라운드 gradient
                             RoundedRectangle(cornerRadius: 15)
-                                .fill(.gradient(.primary))
+                                .fill(.main500)
                         } else if isPaidUnOwnedSelected {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.gradient(.primary))

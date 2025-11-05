@@ -108,7 +108,7 @@ extension KeyringCustomizingView {
 
             // 타입 표시
             Text(item.type.rawValue)
-                .typography(.suit14M)
+                .typography(.suit12M)
                 .foregroundStyle(.gray400)
 
             Spacer()

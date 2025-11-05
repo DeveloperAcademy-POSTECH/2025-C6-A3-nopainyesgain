@@ -40,6 +40,7 @@
 		4C6530482EBA8886000F8154 /* EffectItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530472EBA8886000F8154 /* EffectItem.swift */; };
 		4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304A2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift */; };
 		4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */; };
+		4C6530502EBB2A90000F8154 /* LoadingAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
 		4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */; };
@@ -224,6 +225,7 @@
 		4C6530472EBA8886000F8154 /* EffectItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectItem.swift; sourceTree = "<group>"; };
 		4C65304A2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCustomizingView+Purchase.swift"; sourceTree = "<group>"; };
 		4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCustomizingView+Cart.swift"; sourceTree = "<group>"; };
+		4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAlert.swift; sourceTree = "<group>"; };
 		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
 		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
 		4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
 			isa = PBXGroup;
 			children = (
+				4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */,
 				4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */,
 				4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */,
 				4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */,
@@ -1349,6 +1352,7 @@
 				4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */,
 				C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */,
 				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
+				4C6530502EBB2A90000F8154 /* LoadingAlert.swift in Sources */,
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				385425CC2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,

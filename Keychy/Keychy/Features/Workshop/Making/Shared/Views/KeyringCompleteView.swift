@@ -70,11 +70,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             backToolbarItem
-            
         }
         .navigationTitle(showDismissButton ? "키링이 완성되었어요!" : "")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(showSaveButton ? .visible : .hidden)
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
@@ -82,10 +80,8 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
             // Firebase 저장 시작 (completion으로 dismiss 버튼 표시)
             saveKeyringToFirebase {
                 DispatchQueue.main.async {
-                    withAnimation(.easeIn(duration: 0.1)) {
-                        showDismissButton = true
-                        showSaveButton = true
-                    }
+                    showDismissButton = true
+                    showSaveButton = true
                 }
             }
         }
@@ -103,13 +99,16 @@ extension KeyringCompleteView {
 
 //MARK: - 툴바
 extension KeyringCompleteView {
+    @ToolbarContentBuilder
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
-                viewModel.resetAll()
-                router.reset()
-            }) {
-                Image(systemName: "xmark")
+            if showDismissButton {
+                Button(action: {
+                    viewModel.resetAll()
+                    router.reset()
+                }) {
+                    Image(systemName: "xmark")
+                }
             }
         }
     }
@@ -165,39 +164,41 @@ extension KeyringCompleteView {
 
 extension KeyringCompleteView {
     // MARK: - Firebase 저장 메인 함수
-    private func saveKeyringToFirebase() {
+    private func saveKeyringToFirebase(completion: @escaping () -> Void) {
         guard let uid = userManager.currentUser?.id,
               let bodyImage = viewModel.bodyImage else {
+            completion()
             return
         }
-        
+
         // 1. Firebase Storage에 이미지 업로드
         uploadImageToStorage(image: bodyImage, uid: uid) { imageURL in
             guard let imageURL = imageURL else {
+                completion()
                 return
             }
-            
+
             // 2. 커스텀 사운드가 있으면 Firebase Storage에 업로드
             if let customSoundURL = self.viewModel.customSoundURL {
                 self.uploadSoundToStorage(soundURL: customSoundURL, uid: uid) { soundURL in
                     guard let soundURL = soundURL else {
                         // 업로드 실패 시 기존 soundId 사용
-                        self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
+                        self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId, completion: completion)
                         return
                     }
-                    
+
                     // 업로드 성공 - Firebase Storage URL을 soundId로 사용
-                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL)
+                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL, completion: completion)
                 }
             } else {
                 // 커스텀 사운드 없음 - 기존 soundId 사용
-                self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
+                self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId, completion: completion)
             }
         }
     }
-    
+
     // MARK: - 키링 생성 헬퍼 메서드
-    private func createKeyringWithData(uid: String, imageURL: String, soundId: String) {
+    private func createKeyringWithData(uid: String, imageURL: String, soundId: String, completion: @escaping () -> Void) {
         let templateId: String
         if let vm = self.viewModel as? AcrylicPhotoVM {
             templateId = vm.template?.id ?? "AcrylicPhoto"
@@ -219,6 +220,7 @@ extension KeyringCompleteView {
             chainLength: 5
         ) { success, keyringId in
             // 키링 생성 완료
+            completion()
         }
     }
     
