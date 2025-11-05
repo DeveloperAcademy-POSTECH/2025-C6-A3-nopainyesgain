@@ -12,26 +12,13 @@ import Lottie
 /// 읽기 전용 키링 뷰 (Detail 화면 전용)
 struct KeyringDetailSceneView: View {
     let keyring: Keyring
-    let availableHeight: CGFloat
-    let isSheetExpanded: Bool
     
     @State private var scene: KeyringDetailScene?
     @State private var showEffect: Bool = false
     @State private var currentEffect: String = ""
     @State private var lottieID = UUID()
     @State private var isLoading: Bool = true
-    
-    private var calculatedZoomScale: CGFloat {
-        // 선형 보간
-        let maxHeight: CGFloat = 633
-        let minHeight: CGFloat = 267
-        let maxZoom: CGFloat = 2.0
-        let minZoom: CGFloat = 1.8
-        
-        // 선형 보간
-        let ratio = (availableHeight - minHeight) / (maxHeight - minHeight)
-        return minZoom + (maxZoom - minZoom) * ratio
-    }
+    @State private var fixedSize: CGSize? = nil
 
     var body: some View {
         GeometryReader { geometry in
@@ -54,27 +41,19 @@ struct KeyringDetailSceneView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
-            .frame(height: availableHeight) // 높이 제한
-            .frame(maxWidth: .infinity) // 너비는 전체
-            .position(x: geometry.size.width / 2, y: availableHeight / 2)
+            .frame(width: geometry.size.width, height: fixedSize?.height ?? geometry.size.height, alignment: .top)
+            .clipped()
             .onAppear {
                 if scene == nil {
-                    initializeScene(size: CGSize(
-                        width: geometry.size.width,
-                        height: availableHeight)
-                                    )
+                    initializeScene()
                 }
             }
-            .onChange(of: availableHeight) { oldValue, newValue in
-                updateSceneSize(width: geometry.size.width, height: newValue)
-            }
-            .onChange(of: isSheetExpanded) { oldValue, newValue in
-                scene?.isTouchEnabled = !newValue
-            }
         }
+    
+        
     }
     
-    private func initializeScene(size: CGSize) {
+    private func initializeScene() {
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
         
@@ -82,23 +61,25 @@ struct KeyringDetailSceneView: View {
             ringType: ringType,
             chainType: chainType,
             bodyImage: keyring.bodyImage,
-            targetSize: size,
-            zoomScale: calculatedZoomScale,
-            onLoadingComplete: { // 로딩 완료 콜백
-                DispatchQueue.main.async {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        self.isLoading = false
-                    }
+            onLoadingComplete: nil
+        )
+        
+        newScene.onLoadingComplete = { [weak newScene] in
+            DispatchQueue.main.async {
+                // 씬이 완전히 로드된 후 크기 저장
+                if self.fixedSize == nil, let view = newScene?.view {
+                    self.fixedSize = view.bounds.size
+                }
+                
+                withAnimation(.easeOut(duration: 0.3)) {
+                    self.isLoading = false
                 }
             }
-        )
-        newScene.size = size
-        newScene.scaleMode = .aspectFill
+        }
+        
+        newScene.scaleMode = .resizeFill
         newScene.backgroundColor = .clear
         
-        newScene.isTouchEnabled = !isSheetExpanded
-        
-        // 파티클 효과 콜백 설정 (읽기 전용이지만 효과는 볼 수 있게)
         newScene.onPlayParticleEffect = { [weak newScene] effectName in
             DispatchQueue.main.async {
                 currentEffect = effectName
@@ -107,7 +88,6 @@ struct KeyringDetailSceneView: View {
             }
         }
         
-        // 저장된 사운드/파티클 ID 적용
         if keyring.soundId != "none" {
             newScene.currentSoundId = keyring.soundId
         }
@@ -117,32 +97,6 @@ struct KeyringDetailSceneView: View {
         
         scene = newScene
     }
-    
-    private func updateSceneSize(width: CGFloat, height: CGFloat) {
-        guard let scene = scene else { return }
-        
-        let newSize = CGSize(width: width, height: height)
-        
-        scene.updateForNewSize(newSize, zoomScale: calculatedZoomScale)
-    }
-    
-    // 노드 안정화 (조인트 재정렬)
-    private func stabilizeNodes(scene: KeyringDetailScene) {
-        // 모든 노드의 속도 초기화
-        scene.chainNodes.forEach { chain in
-            chain.physicsBody?.velocity = .zero
-            chain.physicsBody?.angularVelocity = 0
-        }
-        scene.bodyNode?.physicsBody?.velocity = .zero
-        scene.bodyNode?.physicsBody?.angularVelocity = 0
-        
-        // 약간의 중력 임펄스로 정렬
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            scene.chainNodes.forEach { chain in
-                chain.physicsBody?.applyImpulse(CGVector(dx: 0, dy: -0.5))
-            }
-        }
-    }
 }
 
 extension KeyringDetailSceneView {
@@ -151,10 +105,10 @@ extension KeyringDetailSceneView {
         Group {
             if let scene {
                 SpriteView(scene: scene, options: [.allowsTransparency])
-                    .ignoresSafeArea()
                     .contentShape(Rectangle())
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             } else {
-                Color.gray.opacity(0.1) // 로딩 중
+                Color.gray.opacity(0.1)
             }
         }
     }
