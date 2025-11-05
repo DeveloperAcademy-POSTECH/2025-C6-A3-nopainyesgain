@@ -124,6 +124,23 @@ class EffectManager {
         // 사운드 프리로드 (재생 준비)
         await SoundEffectComponent.shared.preloadSound(named: soundId)
 
+        // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
+        if sound.isFree {
+            Task {
+                guard let userId = userManager.currentUser?.id else { return }
+
+                try? await Firestore.firestore()
+                    .collection("User")
+                    .document(userId)
+                    .updateData([
+                        "soundEffects": FieldValue.arrayUnion([soundId])
+                    ])
+
+                // UserManager 업데이트
+                await refreshUserData(userManager: userManager)
+            }
+        }
+
         // 다운로드 상태 초기화
         downloadingItemIds.remove(soundId)
         downloadProgress.removeValue(forKey: soundId)
@@ -188,6 +205,23 @@ class EffectManager {
             attempts += 1
         }
 
+        // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
+        if particle.isFree {
+            Task {
+                guard let userId = userManager.currentUser?.id else { return }
+
+                try? await Firestore.firestore()
+                    .collection("User")
+                    .document(userId)
+                    .updateData([
+                        "particleEffects": FieldValue.arrayUnion([particleId])
+                    ])
+
+                // UserManager 업데이트
+                await refreshUserData(userManager: userManager)
+            }
+        }
+
         // 다운로드 상태 초기화
         downloadingItemIds.remove(particleId)
         downloadProgress.removeValue(forKey: particleId)
@@ -198,22 +232,6 @@ class EffectManager {
     /// 사운드 재생 (다운로드 후 자동 재생)
     func playSound(_ sound: Sound, userManager: UserManager) async {
         guard let soundId = sound.id else { return }
-
-        // 무료 사운드이고 아직 소유하지 않았다면 소유권 추가
-        if sound.isFree && !(userManager.currentUser?.soundEffects.contains(soundId) ?? false) {
-            Task {
-                guard let userId = userManager.currentUser?.id else { return }
-
-                try? await Firestore.firestore()
-                    .collection("User")
-                    .document(userId)
-                    .updateData([
-                        "soundEffects": FieldValue.arrayUnion([soundId])
-                    ])
-
-                await refreshUserData(userManager: userManager)
-            }
-        }
 
         // 이미 캐시 또는 Bundle에 있으면 바로 재생
         if isInCache(soundId: soundId) || isInBundle(soundId: soundId) {
@@ -231,22 +249,6 @@ class EffectManager {
     /// 파티클 재생 (다운로드 후 자동 재생)
     func playParticle(_ particle: Particle, userManager: UserManager) async {
         guard let particleId = particle.id else { return }
-
-        // 무료 파티클이고 아직 소유하지 않았다면 소유권 추가
-        if particle.isFree && !(userManager.currentUser?.particleEffects.contains(particleId) ?? false) {
-            Task {
-                guard let userId = userManager.currentUser?.id else { return }
-
-                try? await Firestore.firestore()
-                    .collection("User")
-                    .document(userId)
-                    .updateData([
-                        "particleEffects": FieldValue.arrayUnion([particleId])
-                    ])
-
-                await refreshUserData(userManager: userManager)
-            }
-        }
 
         // 이미 캐시 또는 Bundle에 있으면 바로 재생
         if isInCache(particleId: particleId) || isInBundle(particleId: particleId) {

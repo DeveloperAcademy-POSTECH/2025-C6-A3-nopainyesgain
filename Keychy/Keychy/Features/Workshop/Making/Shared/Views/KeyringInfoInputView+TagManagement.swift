@@ -49,16 +49,37 @@ extension KeyringInfoInputView {
     }
 }
 
-// MARK: - Add Tag Alert
+// MARK: - Add Tag Alert (Glass Style)
 extension KeyringInfoInputView {
     var addNewTagAlertView: some View {
-        VStack(spacing: 26) {
-            VStack(spacing: 11) {
-                Text("태그 만들기")
-                    .font(.system(size: 20, weight: .semibold))
-                TextField("태그 이름을 입력하세요", text: $newTagName)
-            }
-            HStack(spacing: 10) {
+        VStack(spacing: 0) {
+            // 타이틀
+            Text("태그 추가하기")
+                .typography(.suit17B)
+                .foregroundStyle(.primary)
+                .padding(8)
+                .padding(.bottom, 10)
+
+            // TextField
+            TextField("태그 이름을 입력해주세요.", text: $newTagName)
+                .typography(.suit16M)
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(.gray50)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            
+            Text(showTagNameEmptyToast ? "태그 이름을 입력해주세요." : "이미 사용 중인 태그 이름입니다.")
+                .typography(.suit12M)
+                .foregroundStyle(.main700)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+                .padding(.top, 9)
+                .opacity(showTagNameEmptyToast || showTagNameAlreadyExistsToast ? 1 : 0)
+
+            // 버튼들
+            HStack(spacing: 16) {
+                // 취소 버튼
                 Button {
                     newTagName = ""
                     showAddTagAlert = false
@@ -67,16 +88,15 @@ extension KeyringInfoInputView {
                     sheetDetent = .height(measuredSheetHeight)
                 } label: {
                     Text("취소")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(Color.black)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 50)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.gray.opacity(0.2))
-                        )
+                        .typography(.suit17B)
+                        .foregroundStyle(.black100)
+                        .padding(.vertical, 13)
+                        .frame(maxWidth: .infinity)
                 }
-
+                .buttonStyle(.glassProminent)
+                .tint(.black10)
+                
+                // 추가 버튼
                 Button {
                     if newTagName.isEmpty {
                         showTagNameEmptyToast = true
@@ -96,34 +116,17 @@ extension KeyringInfoInputView {
                     }
                 } label: {
                     Text("추가")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(Color.white)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 50)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.red)
-                        )
+                        .typography(.suit17B)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 13)
+                        .frame(maxWidth: .infinity)
                 }
-            }
-            if showTagNameEmptyToast {
-                Text("태그 이름을 입력해주세요.")
-                    .font(.system(size: 10))
-                    .foregroundStyle(Color.red)
-            }
-            if showTagNameAlreadyExistsToast {
-                Text("이미 사용 중인 태그 이름입니다.")
-                    .font(.system(size: 10))
-                    .foregroundStyle(Color.red)
+                .buttonStyle(.glassProminent)
+                .tint(.main500)
             }
         }
-        .padding(.horizontal, 19)
-        .padding(.vertical, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white)
-                .shadow(radius: 1)
-        )
+        .padding(14)
+        .glassEffect(in: .rect(cornerRadius: 26.0))
     }
 }
 

@@ -92,6 +92,9 @@ extension KeyringInfoInputView {
                 }
                 .typography(.suit16M25)
                 .foregroundStyle(.black100)
+            
+                /// 커서 표시기 색상
+                .tint(.black70)
 
                 Text("\(textCount)/\(viewModel.maxTextCount)")
                     .typography(.suit13M)
@@ -121,6 +124,10 @@ extension KeyringInfoInputView {
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                     .typography(.suit16M25)
+                    .foregroundStyle(.black100)
+                
+                    /// 커서 표시기 색상
+                    .tint(.black70)
                     .frame(minHeight: 80, maxHeight: 150)
                     .padding(.vertical, 10)
                     .padding(.horizontal, 12)
