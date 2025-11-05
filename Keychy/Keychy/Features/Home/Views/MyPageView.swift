@@ -11,26 +11,30 @@ import FirebaseAuth
 struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
     @Bindable var router: NavigationRouter<HomeRoute>
-    
-    var body: some View {
-        VStack(alignment: .center, spacing: 30) {
-            userInfo
-            itemAndCharge
-            
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 25)
-        .navigationTitle("마이페이지")
-        .navigationBarTitleDisplayMode(.inline)
+    @State private var isPushNotificationEnabled = false
+
+    // 앱 버전 정보 가져오기!
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     }
-    
-    private func logout() {
-        do {
-            try Auth.auth().signOut()
-            userManager.clearUserInfo()
-        } catch {
-            print("로그아웃 실패: \(error.localizedDescription)")
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .center, spacing: 30) {
+                userInfo
+                itemAndCharge
+                VStack(spacing: 20) {
+                    managaAccount
+                    managaNotificaiton
+                    usingGuide
+                    termsOfService
+                    guitar
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 25)
+            .navigationTitle("마이페이지")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
@@ -59,14 +63,7 @@ extension MyPageView {
                 
                 Spacer()
                 
-                Button {
-                    router.push(.coinCharge)
-                } label: {
-                    Text("충전하기")
-                        .typography(.suit15M25)
-                        .foregroundStyle(.gray500)
-                }
-                .buttonStyle(.plain)
+                myPageBtn(type: .charge)
             }
             
             HStack(spacing: 20) {
@@ -74,13 +71,12 @@ extension MyPageView {
                 myKeyringCount
                 myCopyPass
             }
+            .frame(maxWidth: .infinity)
             .padding(.top, 5)
             .padding(.bottom, 15)
             .background(.gray50)
             .cornerRadius(15)
-            
         }
-        .padding(.horizontal, 11)
     }
     
     /// 내 코인
@@ -97,7 +93,6 @@ extension MyPageView {
             Text("3,000")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
-                
         }
     }
     
@@ -137,12 +132,176 @@ extension MyPageView {
 }
 
 // MARK: - 계정 관리
+extension MyPageView {
+    private var managaAccount: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle("계정 관리")
+            
+            myPageBtn(type: .changeName)
+            
+            Divider()
+                .padding(.top, 20)
+        }
+    }
+}
 
-// MARK: - 알림 설정
+// MARK: - 알림 설정 (알림 로직 추가 필요)
+extension MyPageView {
+    private var managaNotificaiton: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle("알림 설정")
+            
+            HStack {
+                menuItemText("푸시 알림")
+                Spacer()
+                Toggle("", isOn: $isPushNotificationEnabled)
+                    .labelsHidden()
+            }
+            Divider()
+                .padding(.top, 20)
+        }
+    }
+}
 
 // MARK: - 이용 안내
+extension MyPageView {
+    private var usingGuide: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle("이용 안내")
+            
+            VStack(alignment: .leading, spacing: 15) {
+                HStack(spacing: 0) {
+                    menuItemText("앱 버전")
+                        .padding(.trailing, 12)
+                    subText("ver \(appVersion)")
+                }
+                Button {
+                      openInstagram(username: "keychy.app")
+                  } label: {
+                      Text("Contact to 운영자")
+                          .typography(.suit17M)
+                          .foregroundStyle(.black100)
+                  }
+                  .buttonStyle(.plain)
+            }
+            Divider()
+                .padding(.top, 20)
+        }
+    }
+    
+    private func openInstagram(username: String) {
+          let instagramURL = URL(string: "instagram://user?username=\(username)")!
+          let webURL = URL(string: "https://www.instagram.com/\(username)")!
 
-// MARK: - 약관 및 정책
+          if UIApplication.shared.canOpenURL(instagramURL) {
+              // 인스타그램 앱이 설치되어 있으면 앱으로 열기
+              UIApplication.shared.open(instagramURL)
+          } else {
+              // 앱이 없으면 Safari로 웹 열기
+              UIApplication.shared.open(webURL)
+          }
+      }
+}
+
+// MARK: - 약관 및 정책 (약관, 정책 파일 확인 후 작업 필요)
+extension MyPageView {
+    private var termsOfService: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle("약관 및 정책")
+            Divider()
+                .padding(.top, 20)
+        }
+    }
+}
 
 // MARK: - 기타
+extension MyPageView {
+    private var guitar: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionTitle("기타")
+            Divider()
+                .padding(.top, 20)
+        }
+    }
+    
+    private func logout() {
+        do {
+            try Auth.auth().signOut()
+            userManager.clearUserInfo()
+        } catch {
+            print("로그아웃 실패: \(error.localizedDescription)")
+        }
+    }
+}
 
+// MARK: - 화면 이동
+extension MyPageView {
+    
+    // 버튼 종류
+    enum MyPageButtonType {
+        case charge
+        case changeName
+        case helloMaster
+        
+        var text: String {
+            switch self {
+            case .charge:
+                return "충전하기"
+            case .changeName:
+                return "닉네임 변경"
+            case .helloMaster:
+                return "Contact to 운영자"
+            }
+        }
+        
+        // MARK: - 루트 수정 필요
+        var route: HomeRoute? {
+            switch self {
+            case .charge:
+                return .coinCharge
+            case .changeName:
+                return .coinCharge
+            case .helloMaster:
+                return .coinCharge
+            }
+        }
+    }
+    
+    // 각 기능 버튼
+    private func myPageBtn(type: MyPageButtonType) -> some View {
+        Button {
+            guard let route = type.route else { return }
+            router.push(route)
+        } label: {
+            Text(type.text)
+                .typography(.suit17M)
+                .foregroundStyle(.black100)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - 재사용 컴포넌트
+extension MyPageView {
+    /// 섹션 타이틀 텍스트 (회색, suit15M25, padding bottom 12)
+    private func sectionTitle(_ text: String) -> some View {
+        Text(text)
+            .typography(.suit15M25)
+            .foregroundStyle(.gray500)
+            .padding(.bottom, 12)
+    }
+    
+    /// 메뉴 아이템 텍스트 (검은색, suit17M)
+    private func menuItemText(_ text: String) -> some View {
+        Text(text)
+            .typography(.suit17M)
+            .foregroundStyle(.black100)
+    }
+    
+    /// 서브 텍스트 (회색, suit12M25)
+    private func subText(_ text: String) -> some View {
+        Text(text)
+            .typography(.suit12M25)
+            .foregroundStyle(.gray600)
+    }
+}
