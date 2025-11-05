@@ -15,6 +15,8 @@ struct CollectionView: View {
     @State private var showSortSheet: Bool = false
     @State private var showRenameAlert: Bool = false
     @State private var showDeleteAlert: Bool = false
+    @State private var showDeleteCompleteAlert: Bool = false
+    @State private var showInvenExpandAlert: Bool = false // 추후 인벤토리 확장용
     @State private var renamingCategory: String = ""
     @State private var deletingCategory: String = ""
     @State private var newCategoryName: String = ""
@@ -65,6 +67,13 @@ struct CollectionView: View {
             .ignoresSafeArea()
             
             if let menuCategory = showingMenuFor {
+                Color.black20
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showingMenuFor = nil // dismiss용
+                    }
+                
                 CategoryContextMenu(
                     categoryName: menuCategory,
                     position: menuPosition,
@@ -72,12 +81,16 @@ struct CollectionView: View {
                         showingMenuFor = nil
                         renamingCategory = menuCategory
                         newCategoryName = menuCategory
-                        showRenameAlert = true
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showRenameAlert = true
+                        }
                     },
                     onDelete: {
                         showingMenuFor = nil
                         deletingCategory = menuCategory
-                        showDeleteAlert = true
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showDeleteAlert = true
+                        }
                     },
                     onDismiss: {
                         showingMenuFor = nil
@@ -86,44 +99,91 @@ struct CollectionView: View {
                 .zIndex(50)
             }
             
-            if showDeleteAlert {
-                DeletePopup(
-                    title: "[\(deletingCategory)]\n정말 삭제하시겠어요?",
-                    message: "한 번 삭제하면 복구 할 수 없습니다.",
-                    onCancel: {
-                        withAnimation {
-                            showDeleteAlert = false
-                            deletingCategory = ""
+            if showDeleteAlert || showDeleteCompleteAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(99)
+                
+                if showDeleteAlert {
+                    DeletePopup(
+                        title: "[\(deletingCategory)]\n정말 삭제하시겠어요?",
+                        message: "한 번 삭제하면 복구 할 수 없습니다.",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showDeleteAlert = false
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                deletingCategory = ""
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showDeleteAlert = false
+                            }
+
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                confirmDeleteCategory()
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteCompleteAlert = true
+                                }
+                            }
                         }
-                    },
-                    onConfirm: {
-                        withAnimation {
-                            showDeleteAlert = false
-                            confirmDeleteCategory()
-                        }
-                    }
-                )
-                .zIndex(100)
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+                
+                if showDeleteCompleteAlert {
+                    DeleteCompletePopup(isPresented: $showDeleteCompleteAlert)
+                        .zIndex(100)
+                }
             }
             
+            
             if showRenameAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                
                 TagInputPopup(
                     tagName: $newCategoryName,
                     onCancel: {
-                        withAnimation {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showRenameAlert = false
-                            deletingCategory = ""
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                            newCategoryName = ""
                         }
                     },
                     onConfirm: {
-                        withAnimation {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showRenameAlert = false
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                             renameCategory()
                         }
                     }
                 )
+                .transition(.scale.combined(with: .opacity))
                 .zIndex(100)
             }
+            
+            if showInvenExpandAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showInvenExpandAlert = false // dismiss용
+                    }
+                
+                PurchasePopup(
+                    title: "인벤토리 확장 [+100]",
+                    myCoin: collectionViewModel.coin,
+                    price: 100,
+                    onCancel: {},
+                    onConfirm: {}
+                )
+            }
+            
         }
         .sheet(isPresented: $showSortSheet) {
             sortSheet
@@ -216,7 +276,14 @@ struct CollectionView: View {
                 if selectedCategory == deletingCategory {
                     selectedCategory = "전체"
                 }
-                fetchUserData()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                    fetchUserData()
+                    deletingCategory = ""
+                }
+            } else {
+                showDeleteCompleteAlert = false
+                deletingCategory = ""
             }
         }
         
@@ -330,14 +397,15 @@ extension CollectionView {
     
     private var emptyview: some View {
         VStack {
-            Spacer().frame(height: 200)
+            Spacer().frame(height: 180)
             
-            Text("비었음")
-                .typography(.suit14M)
-            
-            Image("fireworks")
+            Image("EmptyViewIcon")
                 .resizable()
-                .frame(width: 94, height: 94)
+                .frame(width: 124, height: 111)
+            
+            Text("보관함이 비었어요.")
+                .typography(.suit15R)
+                .padding(.top, 15)
             
             Spacer()
         }
@@ -357,10 +425,14 @@ extension CollectionView {
                 .foregroundColor(.black100)
                 .padding(.trailing, 8)
 
-            Image("InvenPlus")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 18, height: 18)
+            Button(action: {
+                showInvenExpandAlert = true
+            }) {
+                Image("InvenPlus")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+            }
         }
     }
     

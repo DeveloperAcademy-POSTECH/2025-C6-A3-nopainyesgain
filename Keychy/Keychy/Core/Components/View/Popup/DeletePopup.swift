@@ -71,6 +71,26 @@ struct DeletePopup: View {
     }
 }
 
+struct DeleteCompletePopup: View {
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        Text("삭제 되었습니다.")
+            .typography(.suit17SB)
+            .foregroundColor(.black100)
+            .frame(width: 300, height: 73)
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+            .transition(.scale.combined(with: .opacity))
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isPresented = false
+                    }
+                }
+            }
+    }
+}
+
 #Preview {
     DeletePopup(title: "[태그 1]\n정말 삭제하시겠어요?", message: "한 번 삭제하면 복구 할 수 없습니다.", onCancel: {}, onConfirm: {})
 }

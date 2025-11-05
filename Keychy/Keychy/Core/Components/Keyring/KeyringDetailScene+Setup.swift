@@ -24,7 +24,7 @@ extension KeyringDetailScene {
                 
                 switch result {
                 case .success(let images):
-                    self.cachedImages = images // ⭐️ 캐시 저장
+                    self.cachedImages = images
                     self.assembleKeyring(with: images)
                     
                 case .failure(let error):
@@ -96,21 +96,22 @@ extension KeyringDetailScene {
     
     // MARK: - 키링 조립 (이미지 다운로드 완료 후)
     private func assembleKeyring(with images: KeyringImages) {
-        let centerX: CGFloat = 0
-        let topY = originalSize.height * 0.68 - (originalSize.height / 2)
+        
+        let centerX = size.width / 2
+        let topY = size.height * 0.77
 
         // 1. Ring 생성
         let ring = createRingNode(image: images.ring)
         ring.position = CGPoint(x: centerX, y: topY)
         ring.physicsBody?.isDynamic = false
-        containerNode.addChild(ring)
+        addChild(ring)
         self.ringNode = ring
         
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY
-        let chainSpacing: CGFloat = 17
+        let chainSpacing: CGFloat = 16
         
         var chains: [SKSpriteNode] = []
         for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {
@@ -124,7 +125,7 @@ extension KeyringDetailScene {
                 index: index
             )
             
-            containerNode.addChild(chainNode)
+            addChild(chainNode)
             chains.append(chainNode)
         }
         self.chainNodes = chains
@@ -149,13 +150,13 @@ extension KeyringDetailScene {
 //        let gapByScreen = size.height * 0.01
 //        let gapByBody = bodyFrame.height * 0.03
 //        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 25.0
+        let connectGap = 30.0
         //let gap = gapByScreen
         
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
         
         body.position = CGPoint(x: centerX, y: bodyCenterY)
-        containerNode.addChild(body)
+        addChild(body)
         self.bodyNode = body
         
         // 4. 조인트 연결
@@ -183,12 +184,12 @@ extension KeyringDetailScene {
         let ringPhysics = SKPhysicsBody(circleOfRadius: 40)
         ringPhysics.isDynamic = false
         ring.physicsBody = ringPhysics
-        containerNode.addChild(ring)
+        addChild(ring)
         
         // 기본 Body만 추가
         let body = createBasicBody()
         body.position = CGPoint(x: centerX, y: topY - 200)
-        containerNode.addChild(body)
+        addChild(body)
         
         self.isReady = true
         
@@ -250,11 +251,11 @@ extension KeyringDetailScene {
         let physicsBody = SKPhysicsBody(
             rectangleOf: CGSize(width: link.width - 4, height: link.height - 4)
         )
-        physicsBody.mass = 1.5  // ⭐️ 2.0 → 1.5 (가볍게)
-        physicsBody.friction = 0.3  // ⭐️ 0.4 → 0.3 (마찰 감소)
-        physicsBody.restitution = 0.4  // ⭐️ 0.3 → 0.4 (탄성 증가)
-        physicsBody.linearDamping = 0.3  // ⭐️ 0.5 → 0.3 (감쇠 감소)
-        physicsBody.angularDamping = 0.5  // ⭐️ 0.8 → 0.5 (회전 감쇠 감소)
+        physicsBody.mass = 1.5
+        physicsBody.friction = 0.3
+        physicsBody.restitution = 0.4
+        physicsBody.linearDamping = 0.3
+        physicsBody.angularDamping = 0.5
         node.physicsBody = physicsBody
         
         return node
@@ -281,7 +282,7 @@ extension KeyringDetailScene {
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
         
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
-        physicsBody.mass = 3.0
+        physicsBody.mass = 2.0
         physicsBody.friction = 0.5
         physicsBody.restitution = 0.2
         physicsBody.linearDamping = 0.8
@@ -316,104 +317,99 @@ extension KeyringDetailScene {
     }
     
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
-        
         var previousNode: SKNode = ring
         
         // Ring과 첫 번째 Chain 연결
         if let firstChain = chains.first {
-            let ringWorldPos = containerNode.convert(ring.position, to: self)
-            let firstChainWorldPos = containerNode.convert(firstChain.position, to: self)
+            let anchorY = previousNode.position.y
             
             let joint = SKPhysicsJointPin.joint(
                 withBodyA: ring.physicsBody!,
                 bodyB: firstChain.physicsBody!,
                 anchor: CGPoint(
-                    x: (ringWorldPos.x + firstChainWorldPos.x) / 2,
-                    y: ringWorldPos.y
+                    x: (ring.position.x + firstChain.position.x) / 2,
+                    y: anchorY
                 )
             )
             joint.shouldEnableLimits = false
-            joint.frictionTorque = 0.05
+            joint.frictionTorque = 0.1
             physicsWorld.add(joint)
             
             let distance = hypot(
                 firstChain.position.x - ring.position.x,
                 firstChain.position.y - ring.position.y
-            ) * scaleFactor
-            
+            )
             let limitJoint = SKPhysicsJointLimit.joint(
                 withBodyA: ring.physicsBody!,
                 bodyB: firstChain.physicsBody!,
-                anchorA: .zero,
-                anchorB: .zero
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
             )
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)
             
-            firstChain.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
-            firstChain.physicsBody?.angularDamping = 0.4
+            firstChain.physicsBody?.linearDamping = 0.5
+            firstChain.physicsBody?.angularDamping = 0.5
+            
             previousNode = firstChain
         }
         
         // Chain 링크들 연결
         for i in 1..<chains.count {
             let current = chains[i]
-            guard let previous = previousNode.physicsBody else { continue }
-            
-            let previousWorldPos = containerNode.convert(previousNode.position, to: self)
-            let currentWorldPos = containerNode.convert(current.position, to: self)
-            
-            let joint = SKPhysicsJointPin.joint(
-                withBodyA: previous,
-                bodyB: current.physicsBody!,
-                anchor: CGPoint(
-                    x: (previousWorldPos.x + currentWorldPos.x) / 2,
-                    y: (previousWorldPos.y + currentWorldPos.y) / 2
+            if let previous = previousNode.physicsBody {
+                let joint = SKPhysicsJointPin.joint(
+                    withBodyA: previous,
+                    bodyB: current.physicsBody!,
+                    anchor: CGPoint(
+                        x: (previousNode.position.x + current.position.x) / 2,
+                        y: (previousNode.position.y + current.position.y) / 2
+                    )
                 )
-            )
-            joint.frictionTorque = 0.05
-            physicsWorld.add(joint)
-            
-            let distance = hypot(
-                current.position.x - previousNode.position.x,
-                current.position.y - previousNode.position.y
-            ) * scaleFactor
-            
-            let limitJoint = SKPhysicsJointLimit.joint(
-                withBodyA: previous,
-                bodyB: current.physicsBody!,
-                anchorA: .zero,
-                anchorB: .zero
-            )
-            limitJoint.maxLength = distance * 1.05
-            physicsWorld.add(limitJoint)
-            
-            current.physicsBody?.linearDamping = 0.4  // ⭐️ 0.7 → 0.4
-            current.physicsBody?.angularDamping = 0.4
+                joint.shouldEnableLimits = false
+                joint.frictionTorque = 0.1
+                physicsWorld.add(joint)
+                
+                let distance = hypot(
+                    current.position.x - previousNode.position.x,
+                    current.position.y - previousNode.position.y
+                )
+                let limitJoint = SKPhysicsJointLimit.joint(
+                    withBodyA: previous,
+                    bodyB: current.physicsBody!,
+                    anchorA: CGPoint.zero,
+                    anchorB: CGPoint.zero
+                )
+                limitJoint.maxLength = distance * 1.05
+                physicsWorld.add(limitJoint)
+                
+                current.physicsBody?.linearDamping = 0.05
+                current.physicsBody?.angularDamping = 0.05
+            }
             previousNode = current
         }
         
         // 마지막 Chain과 Body 연결
         if let lastChain = chains.last, let bodyPhysics = body.physicsBody {
-            let lastChainWorldPos = containerNode.convert(lastChain.position, to: self)
-            
             let joint = SKPhysicsJointFixed.joint(
                 withBodyA: lastChain.physicsBody!,
                 bodyB: bodyPhysics,
-                anchor: lastChainWorldPos
+                anchor: CGPoint(
+                    x: lastChain.position.x,
+                    y: lastChain.position.y
+                )
             )
             physicsWorld.add(joint)
             
             let distance = hypot(
                 body.position.x - lastChain.position.x,
                 body.position.y - lastChain.position.y
-            ) * scaleFactor
-            
+            )
             let limitJoint = SKPhysicsJointLimit.joint(
                 withBodyA: lastChain.physicsBody!,
                 bodyB: bodyPhysics,
-                anchorA: .zero,
-                anchorB: .zero
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
             )
             limitJoint.maxLength = distance * 1.05
             physicsWorld.add(limitJoint)

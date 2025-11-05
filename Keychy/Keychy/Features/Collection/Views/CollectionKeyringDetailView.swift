@@ -15,23 +15,54 @@ struct CollectionKeyringDetailView: View {
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
     @State private var authorName: String = ""
+    @State private var showMenu: Bool = false
+    @State private var menuPosition: CGRect = .zero
     
     let keyring: Keyring
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Color.gray50
+        ZStack {
+            Color.gray50
+                .ignoresSafeArea()
+            
+            KeyringDetailSceneView(
+                keyring: keyring
+            )
+            .frame(maxWidth: .infinity)
+            .scaleEffect(sceneScale)
+            .offset(y: sceneYOffset)
+            .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
+            .allowsHitTesting(sheetDetent != .height(395))
+            
+            if showMenu { // 위치 조정 필요
+                Color.clear
                     .ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMenu = false // dismiss용
+                        }
+                    }
                 
-                KeyringDetailSceneView(
-                    keyring: keyring,
-                    availableHeight: availableSceneHeight)
-                .animation(.easeInOut(duration: 0.3), value: sheetDetent)
-                .padding(.top, 8)
+                KeyringMenu(
+                    onEdit: {
+                        showMenu = false
+                        // TODO: 편집 로직
+                    },
+                    onCopy: {
+                        showMenu = false
+                        // TODO: 복사 로직
+                    },
+                    onDelete: {
+                        showMenu = false
+                        // TODO: 삭제 로직
+                    }
+                )
+                .zIndex(50)
             }
+                
         }
-        //.ignoresSafeArea()
+        .ignoresSafeArea()
         .navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
@@ -92,45 +123,16 @@ struct CollectionKeyringDetailView: View {
                 self.authorName = name
             }
     }
-    
-    // 바텀시트 높이 제외한 사용 가능한 높이 계산
-    private var availableSceneHeight: CGFloat {
-        sheetDetent == .height(76) ? 633 : 267
+    /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
+    private var sceneScale: CGFloat {
+        sheetDetent == .height(395) ? 0.8 : 1.3
     }
     
-    private func createDetailScene(size: CGSize) {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        print("🎬 Creating detail scene with ring: \(ringType), chain: \(chainType), size: \(size)")
-        
-        let newScene = KeyringDetailScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: size, // 전체 화면 크기 사용
-            onLoadingComplete: {
-                DispatchQueue.main.async {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        self.isLoading = false
-                    }
-                }
-            }
-        )
-        newScene.size = size
-        newScene.scaleMode = .aspectFill
-        newScene.backgroundColor = .clear
-        
-        // 저장된 사운드/파티클 효과 적용
-        if keyring.soundId != "none" {
-            newScene.currentSoundId = keyring.soundId
-        }
-        if keyring.particleId != "none" {
-            newScene.currentParticleId = keyring.particleId
-        }
-        
-        scene = newScene
+    /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
+    private var sceneYOffset: CGFloat {
+        sheetDetent == .height(395) ? -80 : 70
     }
+
 }
 
 // MARK: - 툴바
@@ -149,7 +151,9 @@ extension CollectionKeyringDetailView {
     private var menuToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
-                // 액션 추가
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showMenu.toggle()
+                }
             }) {
                 Image(systemName: "ellipsis")
                     .foregroundColor(.primary)
