@@ -161,7 +161,6 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
-		AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */; };
 		AADD2AB12EB3A4E50051478E /* CarabinerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */; };
 		AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */; };
 		AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */; };
@@ -175,6 +174,9 @@
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
+		C6830F102EBA0A8C0059379A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6830F0F2EBA0A8C0059379A /* GoogleService-Info.plist */; };
+		C6830F172EBB08380059379A /* MultiKeyringScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F152EBB08380059379A /* MultiKeyringScene.swift */; };
+		C6830F182EBB08380059379A /* MultiKeyringSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */; };
 		C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CC2EB7B94B00C5F083 /* EffectManager.swift */; };
 		C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */; };
 		C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */; };
@@ -351,7 +353,6 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
-		AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerPreviewScene.swift; sourceTree = "<group>"; };
 		AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerScene.swift; sourceTree = "<group>"; };
 		AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+Interaction.swift"; sourceTree = "<group>"; };
 		AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+SetUp.swift"; sourceTree = "<group>"; };
@@ -365,6 +366,9 @@
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
+		C6830F0F2EBA0A8C0059379A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C6830F152EBB08380059379A /* MultiKeyringScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringScene.swift; sourceTree = "<group>"; };
+		C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringSceneView.swift; sourceTree = "<group>"; };
 		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
 		C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
 		C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
@@ -1064,7 +1068,6 @@
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
-				AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -1080,6 +1083,8 @@
 		AADD2AB52EB3AF520051478E /* KeyringBundle */ = {
 			isa = PBXGroup;
 			children = (
+				C6830F152EBB08380059379A /* MultiKeyringScene.swift */,
+				C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */,
 				AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */,
 				AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */,
 				AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */,
@@ -1288,6 +1293,8 @@
 				4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */,
 				4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */,
 				38173D0C2EB8AD8800E36F7E /* CategoryContextMenu.swift in Sources */,
+				C6830F172EBB08380059379A /* MultiKeyringScene.swift in Sources */,
+				C6830F182EBB08380059379A /* MultiKeyringSceneView.swift in Sources */,
 				385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */,
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
