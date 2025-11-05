@@ -15,14 +15,23 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: VM
     let navigationTitle: String
-
+    
     var userManager: UserManager = UserManager.shared
-
+    
     // Firebase
     let db = Firestore.firestore()
-    @State private var keyring: [Keyring] = []
-    @State private var isCreatingKeyring: Bool = false
-
+    @State var keyring: [Keyring] = []
+    @State var isCreatingKeyring: Bool = false
+    
+    // 시네마틱 애니메이션
+    @State var showDismissButton = false
+    
+    // 이미지 저장
+    @State var checkmarkScale: CGFloat = 0.3
+    @State var checkmarkOpacity: Double = 0.0
+    @State var showImageSaved = false
+    @State var showSaveButton = true
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -32,38 +41,49 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
                     .ignoresSafeArea()
-
+                    .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
+                
                 VStack(spacing: 0) {
-                    // 타이틀
-                    Spacer()
-
                     // 키링 씬
                     keyringScene
-
-                    Spacer()
-
+                        .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
+                    
                     // 키링 정보
                     keyringInfo
                         .padding(.bottom, 30)
+                        .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
 
-                    // 이미지 저장 버튼
+                    // 이미지 저장 버튼 (공간 유지를 위해 opacity 사용)
                     saveButton
-                        .padding(.bottom, 40)
+                        .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
+                        .padding(.top, 30)
+                        .opacity(showSaveButton ? 1 : 0)
+                }
+                
+                if showImageSaved {
+                    ImageSaveAlert(checkmarkScale: checkmarkScale)
+                        .padding(.bottom, 30)
                 }
             }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("")
         .toolbar {
             backToolbarItem
         }
-        .navigationTitle("키링이 완성되었어요!")
+        .navigationTitle(showDismissButton ? "키링이 완성되었어요!" : "")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
-            saveKeyringToFirebase()
+
+            // Firebase 저장 시작 (completion으로 dismiss 버튼 표시)
+            saveKeyringToFirebase {
+                DispatchQueue.main.async {
+                    showDismissButton = true
+                    showSaveButton = true
+                }
+            }
         }
     }
 }
@@ -74,19 +94,21 @@ extension KeyringCompleteView {
         KeyringSceneView(viewModel: viewModel, backgroundColor: .clear)
             .frame(maxWidth: .infinity)
             .frame(height: 500)
-            .scaleEffect(1.2)
     }
 }
 
 //MARK: - 툴바
 extension KeyringCompleteView {
+    @ToolbarContentBuilder
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
-                viewModel.resetAll()
-                router.reset()
-            }) {
-                Image(systemName: "xmark")
+            if showDismissButton {
+                Button(action: {
+                    viewModel.resetAll()
+                    router.reset()
+                }) {
+                    Image(systemName: "xmark")
+                }
             }
         }
     }
@@ -95,24 +117,26 @@ extension KeyringCompleteView {
 // MARK: - 키링 정보 뷰
 extension KeyringCompleteView {
     private var keyringInfo: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             Text(viewModel.nameText)
-                .typography(.suit20B)
+                .typography(.suit24B)
                 .foregroundStyle(.black100)
-
+            
             Text(formattedDate(date: viewModel.createdAt))
                 .typography(.suit14M)
-                .foregroundStyle(.gray300)
-
+                .foregroundStyle(.black100)
+                .padding(.bottom, 15)
+            
             if let nickname = userManager.currentUser?.nickname {
                 Text("@\(nickname)")
-                    .typography(.suit16M)
+                    .typography(.suit15M25)
                     .foregroundStyle(.black100)
+                    .padding(.vertical, 1)
             }
         }
     }
-
-    private func formattedDate(date: Date) -> String {
+    
+    func formattedDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "yyyy년 M월 d일"
@@ -123,41 +147,34 @@ extension KeyringCompleteView {
 // MARK: - 저장 버튼
 extension KeyringCompleteView {
     private var saveButton: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 9) {
             Button {
-                // 이미지 저장 로직
+                captureAndSaveImage()
             } label: {
-                VStack(spacing: 8) {
-                    Image(systemName: "arrow.down.circle")
-                        .font(.system(size: 28))
-                        .foregroundStyle(.black100)
-
-                    Text("이미지 저장")
-                        .typography(.suit14M)
-                        .foregroundStyle(.black100)
-                }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(.white.opacity(0.8))
-                )
+                Image("imageDownload")
             }
+            .buttonStyle(.glass)
+            
+            Text("이미지 저장")
+                .typography(.suit13SB)
+                .foregroundStyle(.black100)
         }
     }
 }
 
 extension KeyringCompleteView {
     // MARK: - Firebase 저장 메인 함수
-    private func saveKeyringToFirebase() {
+    private func saveKeyringToFirebase(completion: @escaping () -> Void) {
         guard let uid = userManager.currentUser?.id,
               let bodyImage = viewModel.bodyImage else {
+            completion()
             return
         }
 
         // 1. Firebase Storage에 이미지 업로드
         uploadImageToStorage(image: bodyImage, uid: uid) { imageURL in
             guard let imageURL = imageURL else {
+                completion()
                 return
             }
 
@@ -166,29 +183,29 @@ extension KeyringCompleteView {
                 self.uploadSoundToStorage(soundURL: customSoundURL, uid: uid) { soundURL in
                     guard let soundURL = soundURL else {
                         // 업로드 실패 시 기존 soundId 사용
-                        self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
+                        self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId, completion: completion)
                         return
                     }
 
                     // 업로드 성공 - Firebase Storage URL을 soundId로 사용
-                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL)
+                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL, completion: completion)
                 }
             } else {
                 // 커스텀 사운드 없음 - 기존 soundId 사용
-                self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
+                self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId, completion: completion)
             }
         }
     }
 
     // MARK: - 키링 생성 헬퍼 메서드
-    private func createKeyringWithData(uid: String, imageURL: String, soundId: String) {
+    private func createKeyringWithData(uid: String, imageURL: String, soundId: String, completion: @escaping () -> Void) {
         let templateId: String
         if let vm = self.viewModel as? AcrylicPhotoVM {
             templateId = vm.template?.id ?? "AcrylicPhoto"
         } else {
             templateId = "AcrylicPhoto"
         }
-
+        
         self.createKeyring(
             uid: uid,
             name: self.viewModel.nameText,
@@ -203,73 +220,74 @@ extension KeyringCompleteView {
             chainLength: 5
         ) { success, keyringId in
             // 키링 생성 완료
+            completion()
         }
     }
-
+    
     // MARK: - Firebase Storage에 이미지 업로드
     private func uploadImageToStorage(image: UIImage, uid: String, completion: @escaping (String?) -> Void) {
         guard let imageData = image.pngData() else {
             completion(nil)
             return
         }
-
+        
         let fileName = "\(UUID().uuidString).png"
         let storageRef = Storage.storage().reference()
             .child("Keyrings")
             .child("BodyImages")
             .child(uid)
             .child(fileName)
-
+        
         storageRef.putData(imageData, metadata: nil) { metadata, error in
             if error != nil {
                 completion(nil)
                 return
             }
-
+            
             storageRef.downloadURL { url, error in
                 if error != nil {
                     completion(nil)
                     return
                 }
-
+                
                 completion(url?.absoluteString)
             }
         }
     }
-
+    
     // MARK: - Firebase Storage에 커스텀 사운드 업로드
     private func uploadSoundToStorage(soundURL: URL, uid: String, completion: @escaping (String?) -> Void) {
         guard let soundData = try? Data(contentsOf: soundURL) else {
             completion(nil)
             return
         }
-
+        
         let fileName = "\(UUID().uuidString).m4a"
         let storageRef = Storage.storage().reference()
             .child("Keyrings")
             .child("CustomSounds")
             .child(uid)
             .child(fileName)
-
+        
         storageRef.putData(soundData, metadata: nil) { metadata, error in
             if let error = error {
                 print("Error uploading custom sound: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
-
+            
             storageRef.downloadURL { url, error in
                 if let error = error {
                     print("Error getting download URL: \(error.localizedDescription)")
                     completion(nil)
                     return
                 }
-
+                
                 completion(url?.absoluteString)
             }
         }
     }
-
+    
     // MARK: - 새 키링 생성 및 User에 추가
     func createKeyring(
         uid: String,
@@ -306,20 +324,20 @@ extension KeyringCompleteView {
         let docRef = db.collection("Keyring").document()
         
         docRef.setData(keyringData) { error in
-            if let error = error {
+            if error != nil {
                 completion(false, nil)
                 return
             }
-
+            
             let keyringId = docRef.documentID
-
+            
             // User 문서의 keyrings 배열에 ID 추가
             self.addKeyringToUser(uid: uid, keyringId: keyringId) { success in
                 if success {
                     // 로컬 배열에도 추가
                     let mutableKeyring = newKeyring
                     self.keyring.append(mutableKeyring)
-
+                    
                     completion(true, keyringId)
                 } else {
                     completion(false, nil)
@@ -335,7 +353,7 @@ extension KeyringCompleteView {
             .updateData([
                 "keyrings": FieldValue.arrayUnion([keyringId])
             ]) { error in
-                if let error = error {
+                if error != nil {
                     completion(false)
                 } else {
                     completion(true)
