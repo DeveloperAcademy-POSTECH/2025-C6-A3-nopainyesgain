@@ -359,30 +359,27 @@ extension CollectionKeyringDetailView {
     
     private struct MemoView: View {
         let memo: String
+        @State private var textHeight: CGFloat = 0
         
-        private var lineCount: Int {
-            let lines = memo.components(separatedBy: .newlines)
-            return max(1, lines.count)
+        private var needsScroll: Bool {
+            textHeight > 76 // 3줄 정도의 높이
         }
         
-        // 줄 수에 따른 높이 계산
-        private var memoHeight: CGFloat {
-            switch lineCount {
-            case 1:
+        private var displayHeight: CGFloat {
+            if textHeight <= 36 { // 1줄
                 return 60
-            case 2:
+            } else if textHeight <= 60 { // 2줄
                 return 80
-            case 3:
+            } else if textHeight <= 76 { // 3줄
                 return 100
-            default:
-                // 4줄 이상일 경우
+            } else { // 4줄 이상
                 return 100
             }
         }
         
         var body: some View {
             Group {
-                if lineCount >= 4 {
+                if needsScroll {
                     // 4줄 이상일 때 스크롤 가능
                     ScrollView {
                         Text(memo)
@@ -390,8 +387,16 @@ extension CollectionKeyringDetailView {
                             .foregroundColor(.black100)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
+                            .background(
+                                GeometryReader { geometry in
+                                    Color.clear.onAppear {
+                                        textHeight = geometry.size.height
+                                    }
+                                }
+                            )
                     }
-                    .frame(height: memoHeight)
+                    .scrollIndicators(.hidden)
+                    .frame(height: displayHeight)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(.gray100, lineWidth: 1)
@@ -402,7 +407,19 @@ extension CollectionKeyringDetailView {
                         .typography(.suit16M25)
                         .foregroundColor(.black100)
                         .padding()
-                        .frame(maxWidth: .infinity, minHeight: memoHeight, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true) // 수직으로 확장
+                        .background(
+                            GeometryReader { geometry in
+                                Color.clear.preference(
+                                    key: TextHeightPreferenceKey.self,
+                                    value: geometry.size.height
+                                )
+                            }
+                        )
+                        .onPreferenceChange(TextHeightPreferenceKey.self) { height in
+                            textHeight = height
+                        }
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(.gray100, lineWidth: 1)
@@ -495,6 +512,13 @@ extension UIViewController {
         }
         
         return parent?.findTabBarController()
+    }
+}
+
+struct TextHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
