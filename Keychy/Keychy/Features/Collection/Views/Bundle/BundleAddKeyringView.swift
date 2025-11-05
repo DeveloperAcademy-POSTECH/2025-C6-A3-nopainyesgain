@@ -348,14 +348,11 @@ extension BundleAddKeyringView {
         for index in keyringOrder {
             guard let keyring = selectedKeyrings[index] else { continue }
             let soundId = keyring.soundId
-            // 사운드 정보 추출
-
-
+            
             // 커스텀 사운드 URL 처리
-            // soundId가 URL 형식이면 해당 URL 사용, 아니면 nil
             let customSoundURL: URL? = {
-                    return URL(string: soundId)
                 if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
+                    return URL(string: soundId)
                 }
                 return nil
             }()
@@ -363,14 +360,16 @@ extension BundleAddKeyringView {
             // 파티클 정보 추출
             let particleId = keyring.particleId
 
+            // 버튼과 동일한 위치 계산 방식 사용
+            let absolutePosition = buttonPosition(index: index, carabiner: carabiner, geometry: geometry)
             let relativePosition = CGPoint(
-                x: carabiner.keyringXPosition[index],
-                y: carabiner.keyringYPosition[index]
+                x: absolutePosition.x / geometry.size.width,
+                y: absolutePosition.y / geometry.size.height
             )
             
             let data = MultiKeyringScene.KeyringData(
                 index: index,
-                position: relativePosition,  // 비율 좌표 직접 전달
+                position: relativePosition,  // 버튼 위치와 동일한 비율 좌표
                 bodyImageURL: keyring.bodyImage,
                 soundId: soundId,
                 customSoundURL: customSoundURL,

@@ -378,9 +378,12 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - Helper Methods
 
-    /// SwiftUI 좌표를 SpriteKit 좌표로 변환
+    /// 비율 좌표를 SpriteKit 절대 좌표로 변환
+    /// point.x, point.y는 화면 크기의 배수 (0.0 ~ 1.0 범위)
     private func convertToSpriteKitCoordinates(_ point: CGPoint) -> CGPoint {
-        return CGPoint(x: point.x, y: size.height - point.y)
+        let absoluteX = point.x * size.width
+        let absoluteY = (1.0 - point.y) * size.height  // SwiftUI는 위에서 아래로, SpriteKit은 아래에서 위로
+        return CGPoint(x: absoluteX, y: absoluteY)
     }
 
     // MARK: - Touch Handling
