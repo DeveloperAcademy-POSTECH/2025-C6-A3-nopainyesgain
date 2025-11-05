@@ -1,36 +1,35 @@
 //
-//  DeletePopup.swift
+//  LackPopup.swift
 //  Keychy
 //
-//  Created by Jini on 11/4/25.
+//  Created by Jini on 11/6/25.
 //
 
 import SwiftUI
 
-struct DeletePopup: View {
+struct LackPopup: View {
     let title: String
-    let message: String
     let onCancel: () -> Void
     let onConfirm: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             // 아이콘
-            Image("DeleteAlert")
+            Image("bangMark")
                 .resizable()
                 .frame(width: 57, height: 54)
-                .padding(.top, 12)
+                .padding(.top, 14)
             
             // 제목
-            Text(title)
+            Text(title) // ~~가 부족합니다!
                 .typography(.suit20B)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
             
             // 메시지
-            Text(message)
+            Text("충전하러 갈까요?")
                 .typography(.suit17SB)
-                .padding(.bottom, 22)
+                .padding(.bottom, 24)
             
             // 버튼들
             HStack(spacing: 16) {
@@ -57,7 +56,7 @@ struct DeletePopup: View {
                         .frame(height: 48)
                         .background(
                             RoundedRectangle(cornerRadius: 100)
-                                .fill(.pink100)
+                                .fill(.main500)
                         )
                 }
                 .buttonStyle(.plain)
@@ -67,30 +66,10 @@ struct DeletePopup: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 278)
-    }
-}
-
-struct DeleteCompletePopup: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        Text("삭제 되었습니다.")
-            .typography(.suit17SB)
-            .foregroundColor(.black100)
-            .frame(width: 300, height: 73)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-            .transition(.scale.combined(with: .opacity))
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        isPresented = false
-                    }
-                }
-            }
+        .frame(width: 300, height: 246)
     }
 }
 
 #Preview {
-    DeletePopup(title: "[태그 1]\n정말 삭제하시겠어요?", message: "한 번 삭제하면 복구 할 수 없습니다.", onCancel: {}, onConfirm: {})
+    LackPopup(title: "열쇠가 부족합니다!", onCancel: {}, onConfirm: {})
 }
