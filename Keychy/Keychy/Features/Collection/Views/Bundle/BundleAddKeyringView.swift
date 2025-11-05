@@ -345,12 +345,16 @@ extension BundleAddKeyringView {
                 return nil
             }()
 
+            // 파티클 정보 추출
+            let particleId = keyring.particleId
+
             let data = MultiKeyringScene.KeyringData(
                 index: index,
                 position: position,
                 bodyImageURL: keyring.bodyImage,
                 soundId: soundId,
-                customSoundURL: customSoundURL
+                customSoundURL: customSoundURL,
+                particleId: particleId
             )
             dataList.append(data)
         }
