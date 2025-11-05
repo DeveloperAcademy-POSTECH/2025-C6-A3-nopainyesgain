@@ -135,7 +135,7 @@ extension KeyringCustomizingView {
                 Image("purchaseSheet")
 
                 Text("\(totalCartPrice)")
-                    .typography(.nanum18EB)
+                    .typography(.nanum18EB12)
 
                 Text("(\(cartItems.count)개)")
                     .typography(.suit17SB)
