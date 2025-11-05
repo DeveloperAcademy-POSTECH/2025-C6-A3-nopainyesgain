@@ -69,24 +69,23 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            if showDismissButton {
-                backToolbarItem
-            }
+            backToolbarItem
+            
         }
         .navigationTitle(showDismissButton ? "키링이 완성되었어요!" : "")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(showSaveButton ? .visible : .hidden, for: .navigationBar)
+        .toolbar(showSaveButton ? .visible : .hidden)
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
-            
-            // Firebase 저장 시작
-            saveKeyringToFirebase()
-            
-            // dismiss 버튼은 2초 후 등장 (저장 시간 확보)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                withAnimation(.easeIn(duration: 0.5)) {
-                    showDismissButton = true
+
+            // Firebase 저장 시작 (completion으로 dismiss 버튼 표시)
+            saveKeyringToFirebase {
+                DispatchQueue.main.async {
+                    withAnimation(.easeIn(duration: 0.1)) {
+                        showDismissButton = true
+                        showSaveButton = true
+                    }
                 }
             }
         }
