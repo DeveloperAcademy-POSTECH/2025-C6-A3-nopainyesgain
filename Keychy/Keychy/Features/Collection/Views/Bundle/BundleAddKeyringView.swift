@@ -42,10 +42,8 @@ struct BundleAddKeyringView: View {
             .ignoresSafeArea()
             .background(backgroundImage)
             .onAppear {
-                setupScene(geometry: geometry)
-            }
-            .onChange(of: selectedKeyrings) { _, _ in
-                updateKeyringsInScene()
+                fetchData()
+                createScene(size: geometry.size, screenWidth: geometry.size.width)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -253,17 +251,6 @@ extension BundleAddKeyringView {
 // MARK: - Scene Management
 
 extension BundleAddKeyringView {
-    /// 초기 씬 설정
-    private func setupScene(geometry: GeometryProxy) {
-        fetchData()
-
-        // TODO: 임시 - 첫 번째 카라비너 자동 선택
-        if !viewModel.carabiners.isEmpty {
-            viewModel.selectedCarabiner = viewModel.carabiners[0]
-        }
-
-        createScene(size: geometry.size, screenWidth: geometry.size.width)
-    }
 
     /// 씬 생성
     private func createScene(size: CGSize, screenWidth: CGFloat) {
@@ -287,16 +274,9 @@ extension BundleAddKeyringView {
         }
     }
 
-    /// 키링 업데이트
-    private func updateKeyringsInScene() {
-        // KeyringSceneView로 대체되어 더 이상 필요 없음
-        // 씬이 자동으로 업데이트됨
-    }
-
     /// 씬 저장
     private func saveScene() {
         viewModel.selectedKeyringsForBundle = selectedKeyrings
-        // KeyringScene을 사용하므로 별도 저장 불필요
     }
 }
 
