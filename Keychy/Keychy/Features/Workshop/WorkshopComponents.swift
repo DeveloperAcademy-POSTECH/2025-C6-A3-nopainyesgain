@@ -155,7 +155,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                     Color.gray50
                         .overlay { ProgressView() }
                 } else {
-                    Color.gray50    
+                    Color.gray50
                         .overlay {
                             Image(systemName: "photo")
                                 .foregroundStyle(.gray300)

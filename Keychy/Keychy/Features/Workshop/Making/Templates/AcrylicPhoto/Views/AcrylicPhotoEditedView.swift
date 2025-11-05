@@ -43,33 +43,17 @@ struct AcrylicPhotoEditedView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             if showCheckmark {
-                checkmarkView
+                CheckmarkAlert(checkmarkScale: checkmarkScale)
                     .padding(.bottom, 60)
             }
         }
         .navigationTitle("누끼를 제거합니다!")
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            backToolbarItem
-        }
         .onAppear {
             startBackgroundRemoval()
         }
         .onDisappear {
             resetCheckmarkState()
-        }
-    }
-}
-
-// MARK: - Toolbar
-extension AcrylicPhotoEditedView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                router.pop()
-            } label: {
-                Image(systemName: "chevron.left")
-            }
         }
     }
 }
@@ -113,22 +97,6 @@ extension AcrylicPhotoEditedView {
             .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
             .scaleEffect(afterImageScale)
             .opacity(afterImageOpacity)
-    }
-    
-    /// 완료 체크마크
-    private var checkmarkView: some View {
-        VStack(spacing: 23) {
-            Image("checkmark")
-            
-            Text("완료!")
-                .typography(.suit17SB)
-        }
-        .padding(.top, 42)
-        .padding(.horizontal, 55)
-        .padding(.bottom, 26)
-        .glassEffect(in: .rect(cornerRadius: 15))
-        .frame(minWidth: 300)
-        .scaleEffect(checkmarkScale)
     }
     
     // MARK: - Actions

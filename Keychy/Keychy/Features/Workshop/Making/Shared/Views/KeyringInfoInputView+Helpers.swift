@@ -9,14 +9,19 @@ import SwiftUI
 
 // MARK: - Computed Properties
 extension KeyringInfoInputView {
+    /// 시트가 펼쳐진 상태인지 확인
+    var isSheetExpanded: Bool {
+        sheetDetent != .height(76)
+    }
+
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     var sceneScale: CGFloat {
-        sheetDetent == .height(measuredSheetHeight) ? 0.7 : 1.2
+        isSheetExpanded ? 0.7 : 1.2
     }
 
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     var sceneYOffset: CGFloat {
-        sheetDetent == .height(measuredSheetHeight) ? -120 : 0
+        isSheetExpanded ? -120 : 0
     }
 }
 
@@ -27,9 +32,8 @@ extension KeyringInfoInputView {
             .frame(maxWidth: .infinity)
             .scaleEffect(sceneScale)
             .offset(y: sceneYOffset)
-            //.animation(.linear, value: sheetDetent)
             .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
-            .allowsHitTesting(sheetDetent != .height(measuredSheetHeight))
+            .allowsHitTesting(!isSheetExpanded)
     }
 }
 

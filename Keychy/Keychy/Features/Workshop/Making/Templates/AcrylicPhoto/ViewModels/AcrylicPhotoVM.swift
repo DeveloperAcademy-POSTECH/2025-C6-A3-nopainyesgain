@@ -27,6 +27,48 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var availableSounds: [Sound] = []
     var availableParticles: [Particle] = []
 
+    /// 정렬된 사운드 리스트
+    var sortedAvailableSounds: [Sound] {
+        availableSounds.sorted { sound1, sound2 in
+            guard let id1 = sound1.id, let id2 = sound2.id else { return false }
+
+            let downloaded1 = isInBundle(soundId: id1) || isInCache(soundId: id1)
+            let downloaded2 = isInBundle(soundId: id2) || isInCache(soundId: id2)
+
+            let priority1 = getSortPriority(
+                isFree: sound1.isFree,
+                isDownloaded: downloaded1
+            )
+            let priority2 = getSortPriority(
+                isFree: sound2.isFree,
+                isDownloaded: downloaded2
+            )
+
+            return priority1 < priority2
+        }
+    }
+
+    /// 정렬된 파티클 리스트
+    var sortedAvailableParticles: [Particle] {
+        availableParticles.sorted { particle1, particle2 in
+            guard let id1 = particle1.id, let id2 = particle2.id else { return false }
+
+            let downloaded1 = isInBundle(particleId: id1) || isInCache(particleId: id1)
+            let downloaded2 = isInBundle(particleId: id2) || isInCache(particleId: id2)
+
+            let priority1 = getSortPriority(
+                isFree: particle1.isFree,
+                isDownloaded: downloaded1
+            )
+            let priority2 = getSortPriority(
+                isFree: particle2.isFree,
+                isDownloaded: downloaded2
+            )
+
+            return priority1 < priority2
+        }
+    }
+
     var selectedSound: Sound? = nil
     var selectedParticle: Particle? = nil
 
@@ -73,7 +115,7 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var nameText: String = ""
     var maxTextCount: Int = 30
     var memoText: String = ""
-    var maxMemoCount: Int = 100
+    var maxMemoCount: Int = 500
     var selectedTags: [String] = []
     var createdAt: Date = Date()
 
@@ -177,5 +219,16 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
         } catch {
             errorMessage = "이펙트 목록을 불러오는데 실패했습니다."
         }
+    }
+
+    // MARK: - Sorting Helper
+    /// 이펙트 정렬 우선순위 계산
+    /// 다운로드 여부 중심 정렬: 무료 다운로드 → 유료 다운로드 → 무료 미다운로드 → 유료 미다운로드
+    private func getSortPriority(isFree: Bool, isDownloaded: Bool) -> Int {
+        if isFree && isDownloaded { return 1 }
+        if !isFree && isDownloaded { return 2 }
+        if isFree && !isDownloaded { return 3 }
+        if !isFree && !isDownloaded { return 4 }
+        return 99
     }
 }

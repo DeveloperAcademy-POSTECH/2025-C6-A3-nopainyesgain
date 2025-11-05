@@ -48,9 +48,12 @@ extension CarabinerScene {
         let carabinerSize = carabiner.size
         var completedKeyrings = 0
         let totalKeyrings = bodyImages.count
-        
+
         guard totalKeyrings > 0 else {
-            onSceneReady?()
+            // 키링이 없을 때도 0.7초 딜레이 후 콜백 호출
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                self.onSceneReady?()
+            }
             return
         }
         
@@ -74,10 +77,10 @@ extension CarabinerScene {
                 
                 self.keyrings.append(keyring)
                 completedKeyrings += 1
-                
-                // 모든 키링이 완성되면 콜백 호출
+
+                // 모든 키링이 완성되면 0.7초 딜레이 후 콜백 호출
                 if completedKeyrings == totalKeyrings {
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                         self.onSceneReady?()
                     }
                 }

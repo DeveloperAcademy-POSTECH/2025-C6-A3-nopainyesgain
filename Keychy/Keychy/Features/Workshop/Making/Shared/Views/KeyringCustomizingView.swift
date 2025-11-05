@@ -14,7 +14,6 @@ import Lottie
 struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: VM
-    let navigationTitle: String
     let nextRoute: WorkshopRoute
     
     @State private var selectedMode: CustomizingMode = .effect
@@ -23,20 +22,31 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var loadingScale: CGFloat = 0.3
     @State private var showRecordingSheet = false
     @State private var showResetAlert = false
-
+    
+    // 구매 시트
+    @State var showPurchaseSheet = false
+    @State var purchaseSheetHeight: CGFloat = 400
+    @State var cartItems: [EffectItem] = []
+    
+    // 구매 Alert 애니메이션
+    @State var showPurchaseSuccessAlert = false
+    @State var purchaseSuccessScale: CGFloat = 0.3
+    @State var showPurchaseFailAlert = false
+    @State var purchaseFailScale: CGFloat = 0.3
+    
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 ZStack(alignment: .center) {
                     KeyringSceneView(viewModel: viewModel, onSceneReady: {
-                        withAnimation(.easeIn(duration: 0.3)) {
+                        withAnimation(.easeIn(duration: 1.0)) {
                             isSceneReady = true
                         }
                         closeLoadingIfReady()
                     })
                     // 준비되면 fade-in하게 했음.
                     .opacity(isSceneReady ? 1.0 : 0.0)
-
+                    
                     // 로딩 인디케이터 (키링씬 중앙)
                     if isLoadingResources || !isSceneReady {
                         loadingIndicator()
@@ -52,14 +62,50 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .padding(18)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 }
-
+                
                 // MARK: - 하단 영역
                 bottomContentView
             }
             .background(.gray50)
             .disabled(isLoadingResources || !isSceneReady)
+            
+            // MARK: - Purchase Alerts
+            if showPurchaseSuccessAlert {
+                PerchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
+                    .padding(.bottom, 60)
+                    .padding(.horizontal, 51)
+            }
+            
+            if showPurchaseFailAlert {
+                PurchaseFailAlert(
+                    checkmarkScale: purchaseFailScale,
+                    onCancel: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            purchaseFailScale = 0.3
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            showPurchaseFailAlert = false
+                            // Alert 닫힌 후 시트 다시 열기
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                showPurchaseSheet = true
+                            }
+                        }
+                    },
+                    onCharge: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            purchaseFailScale = 0.3
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            showPurchaseFailAlert = false
+                            // 충전 페이지로 이동
+                            router.push(.coinCharge)
+                        }
+                    }
+                )
+                .padding(.horizontal, 51)
+                .padding(.bottom, 60)
+            }
         }
-        .navigationTitle(navigationTitle)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .toolbar {
@@ -69,20 +115,23 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .task {
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
-
+            
             // 사운드 + 파티클 병렬 프리로딩
             async let soundsTask: () = preloadAllSoundEffects()
             async let particlesTask: () = preloadAllParticleEffects()
-
+            
             await soundsTask
             await particlesTask
-
+            
             // 리소스 프리로딩 완료
             isLoadingResources = false
             closeLoadingIfReady()
         }
+        .sheet(isPresented: $showPurchaseSheet) {
+            purchaseSheet
+        }
     }
-
+    
     // MARK: - Loading Helper
     private func closeLoadingIfReady() {
         // 리소스 + 씬 모두 준비되면 로딩 닫기
@@ -92,7 +141,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             }
         }
     }
-
+    
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
         // Firebase에서 가져온 사운드를 순차적으로 로드
@@ -101,7 +150,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             await SoundEffectComponent.shared.preloadSound(named: soundId)
         }
     }
-
+    
     // MARK: - Preload Particle Resources
     private func preloadAllParticleEffects() async {
         // Firebase에서 가져온 파티클을 순차적으로 로드
@@ -110,14 +159,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             await preloadParticle(named: particleId)
         }
     }
-
+    
     private func preloadParticle(named particleId: String) async {
         // 백그라운드 스레드에서 파일 로딩 (UI 블로킹 방지)
         await withCheckedContinuation { continuation in
             Task.detached(priority: .userInitiated) {
                 let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
                 let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
-
+                
                 // 캐시에서 로드 시도
                 if FileManager.default.fileExists(atPath: cachedURL.path) {
                     _ = LottieAnimation.filepath(cachedURL.path)
@@ -126,7 +175,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 else {
                     _ = LottieAnimation.named(particleId)
                 }
-
+                
                 continuation.resume()
             }
         }
@@ -155,9 +204,19 @@ extension KeyringCustomizingView {
     }
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("다음") {
-                router.push(nextRoute)
+            Button {
+                if hasCartItems {
+                    showPurchaseSheet = true
+                } else {
+                    router.push(nextRoute)
+                }
+            } label: {
+                Text(hasCartItems ? "구매 \(cartItems.count)" : "다음")
+                    .foregroundStyle(hasCartItems ? .white : .black100)
+                    .fontWeight(hasCartItems ? .bold : .regular)
             }
+            .buttonStyle(.glassProminent)
+            .tint(hasCartItems ? .black100 : .white)
         }
     }
 }
@@ -168,7 +227,9 @@ extension KeyringCustomizingView {
     private func loadingIndicator() -> some View {
         VStack(spacing: 23) {
             Image("appIcon")
-
+                .resizable()
+                .frame(width: 80, height: 80)
+            
             Text("키링을 만들고 있어요")
                 .typography(.suit17SB)
         }
@@ -189,7 +250,7 @@ extension KeyringCustomizingView {
             ZStack {
                 RoundedRectangle(cornerRadius: 13)
                     .fill(selectedMode == mode ? .main500 : .white100)
-                    .frame(width: 48, height: 48)
+                    .frame(width: 46, height: 46)
                     .shadow(color: .black.opacity(0.25), radius: 4)
                 
                 Image(mode.btnImage)
@@ -258,45 +319,57 @@ extension KeyringCustomizingView {
                         viewModel.applyCustomSound(url)
                     }
                 }
-
+                
                 // 버튼들만 스크롤
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        // "없음" 버튼
-                        Button {
-                            viewModel.updateSound(nil)
-                        } label: {
-                            Text("없음")
-                                .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 9)
-                                .foregroundStyle(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .white100 : .gray500)
-                                .background(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .main500 : .gray50)
-                                .clipShape(.rect(cornerRadius: 15))
-                        }
-
-                        // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
-                        if viewModel.hasCustomSound {
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            // "없음" 버튼
                             Button {
-                                viewModel.applyCustomSound(viewModel.customSoundURL!)
+                                viewModel.updateSound(nil)
                             } label: {
-                                Text("음성 메모")
-                                    .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
+                                Text("없음")
+                                    .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 9)
-                                    .foregroundStyle(viewModel.soundId == "custom_recording" ? .white100 : .gray500)
-                                    .background(viewModel.soundId == "custom_recording" ? .main500 : .gray50)
+                                    .foregroundStyle(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .white100 : .gray500)
+                                    .background(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .main500 : .gray50)
                                     .clipShape(.rect(cornerRadius: 15))
                             }
+                            .id("sound_none")
+                            
+                            // "음성 메모" 버튼 (커스텀 사운드가 있을 때만)
+                            if viewModel.hasCustomSound {
+                                Button {
+                                    viewModel.applyCustomSound(viewModel.customSoundURL!)
+                                } label: {
+                                    Text("음성 메모")
+                                        .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 9)
+                                        .foregroundStyle(viewModel.soundId == "custom_recording" ? .white100 : .gray500)
+                                        .background(viewModel.soundId == "custom_recording" ? .main500 : .gray50)
+                                        .clipShape(.rect(cornerRadius: 15))
+                                }
+                                .id("sound_custom")
+                            }
+                            
+                            // Firebase 사운드 목록 (정렬됨)
+                            ForEach(viewModel.sortedAvailableSounds) { sound in
+                                soundItemButton(sound: sound)
+                                    .id(sound.id)
+                            }
                         }
-
-                        // Firebase 사운드 목록
-                        ForEach(viewModel.availableSounds) { sound in
-                            soundItemButton(sound: sound)
+                        .padding(.leading, 8)
+                        .padding(.trailing, 20)
+                    }
+                    .onChange(of: viewModel.selectedSound?.id) { _, newValue in
+                        if let soundId = newValue {
+                            withAnimation {
+                                proxy.scrollTo(soundId, anchor: .center)
+                            }
                         }
                     }
-                    .padding(.leading, 8)
-                    .padding(.trailing, 20)
                 }
                 .overlay(alignment: .leading) {
                     // Rectangle을 위에 겹쳐서 자연스럽게 가림
@@ -317,27 +390,38 @@ extension KeyringCustomizingView {
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    // "없음" 버튼
-                    Button {
-                        viewModel.updateParticle(nil)
-                    } label: {
-                        Text("없음")
-                            .typography(viewModel.selectedParticle == nil ? .suit15SB25 : .suit15M25)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 9)
-                            .foregroundStyle(viewModel.selectedParticle == nil ? .white100 : .gray500)
-                            .background(viewModel.selectedParticle == nil ? .main500 : .gray50)
-                            .clipShape(.rect(cornerRadius: 15))
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        // "없음" 버튼
+                        Button {
+                            viewModel.updateParticle(nil)
+                        } label: {
+                            Text("없음")
+                                .typography(viewModel.selectedParticle == nil ? .suit15SB25 : .suit15M25)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 9)
+                                .foregroundStyle(viewModel.selectedParticle == nil ? .white100 : .gray500)
+                                .background(viewModel.selectedParticle == nil ? .main500 : .gray50)
+                                .clipShape(.rect(cornerRadius: 15))
+                        }
+                        .id("particle_none")
+                        
+                        // Firebase 파티클 목록 (정렬됨)
+                        ForEach(viewModel.sortedAvailableParticles) { particle in
+                            particleItemButton(particle: particle)
+                                .id(particle.id)
+                        }
                     }
-                    
-                    // Firebase 파티클 목록
-                    ForEach(viewModel.availableParticles) { particle in
-                        particleItemButton(particle: particle)
+                    .padding(.horizontal, 20)
+                }
+                .onChange(of: viewModel.selectedParticle?.id) { _, newValue in
+                    if let particleId = newValue {
+                        withAnimation {
+                            proxy.scrollTo(particleId, anchor: .center)
+                        }
                     }
                 }
-                .padding(.horizontal, 20)
             }
         }
     }
@@ -360,40 +444,61 @@ extension KeyringCustomizingView {
             let isPaidUnOwnedSelected = !sound.isFree && !isOwned && isSelected
             
             Button {
-                // 케이스 1: Bundle 무료 → 바로 사용
-                if isInBundle {
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 2: 구매 + 캐시 있음 → 바로 사용
-                else if isOwned && isInCache {
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 3: 구매 + 캐시 없음 → 재다운로드
-                else if isOwned && !isInCache {
-                    Task {
-                        await viewModel.downloadSound(sound)
+                // 이미 선택된 상태라면 선택 해제
+                if isSelected {
+                    viewModel.updateSound(nil)
+                    // 장바구니에 있다면 제거
+                    if !isOwned && !sound.isFree {
+                        removeFromCart(sound.id ?? "")
                     }
                 }
-                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
-                else if !isOwned && sound.isFree && isInCache {
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
-                else if !isOwned && sound.isFree && !isInCache {
-                    Task {
-                        await viewModel.downloadSound(sound)
-                    }
-                }
-                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
-                else if !isOwned && !sound.isFree && isInCache {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    viewModel.updateSound(sound)
-                }
-                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
+                // 선택되지 않은 상태라면 선택
                 else {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    Task {
-                        await viewModel.downloadSound(sound)
+                    // 케이스 1: Bundle 무료 → 바로 사용
+                    if isInBundle {
+                        viewModel.updateSound(sound)
+                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 2: 구매 + 캐시 있음 → 바로 사용
+                    else if isOwned && isInCache {
+                        viewModel.updateSound(sound)
+                        // 장바구니에서 사운드 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 3: 구매 + 캐시 없음 → 재다운로드
+                    else if isOwned && !isInCache {
+                        Task {
+                            await viewModel.downloadSound(sound)
+                        }
+                        // 장바구니에서 사운드 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                    else if !isOwned && sound.isFree && isInCache {
+                        viewModel.updateSound(sound)
+                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                    else if !isOwned && sound.isFree && !isInCache {
+                        Task {
+                            await viewModel.downloadSound(sound)
+                        }
+                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .sound }
+                    }
+                    // 케이스 6: 미구매 + 유료 + 캐시 있음 → 다운로드 + 장바구니 추가
+                    else if !isOwned && !sound.isFree && isInCache {
+                        viewModel.updateSound(sound)
+                        addSoundToCart(sound)
+                    }
+                    // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 + 장바구니 추가
+                    else {
+                        Task {
+                            await viewModel.downloadSound(sound)
+                        }
+                        addSoundToCart(sound)
                     }
                 }
             } label: {
@@ -402,10 +507,17 @@ extension KeyringCustomizingView {
                     if !sound.isFree {
                         if isOwned {
                             // 유료 + 보유
-                            Image("ownPaid")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 18, height: 18)
+                            if isSelected {
+                                Image("selectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            } else {
+                                Image("ownPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            }
                         } else {
                             // 유료 + 미보유
                             if isSelected {
@@ -440,7 +552,7 @@ extension KeyringCustomizingView {
                         if isPaidOwnedSelected {
                             // 유료 + 보유 + 선택 → 백그라운드 gradient
                             RoundedRectangle(cornerRadius: 15)
-                                .fill(.gradient(.primary))
+                                .fill(.main500)
                         } else if isPaidUnOwnedSelected {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.gradient(.primary))
@@ -472,12 +584,12 @@ extension KeyringCustomizingView {
                                     .fill(Color.black.opacity(0.3))
                                 
                                 if let progress = viewModel.downloadProgress[soundId], progress.isFinite {
-                                    VStack(spacing: 2) {
+                                    VStack(spacing: 0) {
                                         ProgressView()
                                             .tint(.white)
                                             .scaleEffect(0.7)
                                         Text("\(Int(min(max(progress * 100, 0), 100)))%")
-                                            .font(.system(size: 10, weight: .semibold))
+                                            .typography(.nanum14EB18)
                                             .foregroundStyle(.white)
                                     }
                                 }
@@ -506,40 +618,61 @@ extension KeyringCustomizingView {
             let isPaidUnOwnedSelected = !particle.isFree && !isOwned && isSelected
             
             Button {
-                // 케이스 1: Bundle 무료 → 바로 사용
-                if isInBundle {
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 2: 구매 + 캐시 있음 → 바로 사용
-                else if isOwned && isInCache {
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 3: 구매 + 캐시 없음 → 재다운로드
-                else if isOwned && !isInCache {
-                    Task {
-                        await viewModel.downloadParticle(particle)
+                // 이미 선택된 상태라면 선택 해제
+                if isSelected {
+                    viewModel.updateParticle(nil)
+                    // 장바구니에 있다면 제거
+                    if !isOwned && !particle.isFree {
+                        removeFromCart(particle.id ?? "")
                     }
                 }
-                // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
-                else if !isOwned && particle.isFree && isInCache {
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
-                else if !isOwned && particle.isFree && !isInCache {
-                    Task {
-                        await viewModel.downloadParticle(particle)
-                    }
-                }
-                // 케이스 6: 미구매 + 유료 + 캐시 있음 → 바로 사용 (체험)
-                else if !isOwned && !particle.isFree && isInCache {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    viewModel.updateParticle(particle)
-                }
-                // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 (체험)
+                // 선택되지 않은 상태라면 선택
                 else {
-                    // TODO: 저장 시점에 구매 체크 및 구매 플로우 필요
-                    Task {
-                        await viewModel.downloadParticle(particle)
+                    // 케이스 1: Bundle 무료 → 바로 사용
+                    if isInBundle {
+                        viewModel.updateParticle(particle)
+                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 2: 구매 + 캐시 있음 → 바로 사용
+                    else if isOwned && isInCache {
+                        viewModel.updateParticle(particle)
+                        // 장바구니에서 파티클 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 3: 구매 + 캐시 없음 → 재다운로드
+                    else if isOwned && !isInCache {
+                        Task {
+                            await viewModel.downloadParticle(particle)
+                        }
+                        // 장바구니에서 파티클 타입 제거 (보유템으로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
+                    else if !isOwned && particle.isFree && isInCache {
+                        viewModel.updateParticle(particle)
+                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
+                    else if !isOwned && particle.isFree && !isInCache {
+                        Task {
+                            await viewModel.downloadParticle(particle)
+                        }
+                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
+                        cartItems.removeAll { $0.type == .particle }
+                    }
+                    // 케이스 6: 미구매 + 유료 + 캐시 있음 → 다운로드 + 장바구니 추가
+                    else if !isOwned && !particle.isFree && isInCache {
+                        viewModel.updateParticle(particle)
+                        addParticleToCart(particle)
+                    }
+                    // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 + 장바구니 추가
+                    else {
+                        Task {
+                            await viewModel.downloadParticle(particle)
+                        }
+                        addParticleToCart(particle)
                     }
                 }
             } label: {
@@ -548,10 +681,17 @@ extension KeyringCustomizingView {
                     if !particle.isFree {
                         if isOwned {
                             // 유료 + 보유
-                            Image("ownPaid")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 18, height: 18)
+                            if isSelected {
+                                Image("selectPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            } else {
+                                Image("ownPaid")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 18, height: 18)
+                            }
                         } else {
                             // 유료 + 미보유
                             if isSelected {
@@ -586,7 +726,7 @@ extension KeyringCustomizingView {
                         if isPaidOwnedSelected {
                             // 유료 + 보유 + 선택 → 백그라운드 gradient
                             RoundedRectangle(cornerRadius: 15)
-                                .fill(.gradient(.primary))
+                                .fill(.main500)
                         } else if isPaidUnOwnedSelected {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(.gradient(.primary))
