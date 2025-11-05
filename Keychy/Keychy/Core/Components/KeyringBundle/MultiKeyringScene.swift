@@ -24,12 +24,23 @@ class MultiKeyringScene: SKScene {
     var keyringDataList: [KeyringData] = []
     var keyringNodes: [Int: SKNode] = [:]  // index: keyring node
 
+    // MARK: - 키링별 구성 요소 저장
+    var ringNodes: [Int: SKSpriteNode] = [:]
+    var chainNodesByKeyring: [Int: [SKSpriteNode]] = [:]
+    var bodyNodes: [Int: SKNode] = [:]
+
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
     var currentChainType: ChainType = .basic
 
     // MARK: - 배경색 설정
     var customBackgroundColor: UIColor = .clear
+
+    // MARK: - 스와이프 제스처 관련
+    var lastTouchLocation: CGPoint?
+    var lastTouchTime: TimeInterval = 0
+    var swipeStartLocation: CGPoint?
+    var lastParticleTime: TimeInterval = 0
 
     // MARK: - Init
     init(
@@ -94,6 +105,10 @@ class MultiKeyringScene: SKScene {
             ring.physicsBody?.contactTestBitMask = 0
             self.addChild(ring)
 
+            // Ring 노드 저장
+            self.ringNodes[data.index] = ring
+            self.keyringNodes[data.index] = ring
+
             // 2. Chain 생성
             self.setupChain(
                 ring: ring,
@@ -101,8 +116,6 @@ class MultiKeyringScene: SKScene {
                 bodyImageURL: data.bodyImageURL,
                 index: data.index
             )
-
-            keyringNodes[data.index] = ring
         }
     }
 
@@ -136,6 +149,9 @@ class MultiKeyringScene: SKScene {
                 chain.physicsBody?.contactTestBitMask = 0
                 self.addChild(chain)
             }
+
+            // Chain 노드 저장
+            self.chainNodesByKeyring[index] = chains
 
             // 3. Body 생성
             self.setupBody(
@@ -205,6 +221,9 @@ class MultiKeyringScene: SKScene {
         body.physicsBody?.contactTestBitMask = 0
 
         addChild(body)
+
+        // Body 노드 저장
+        bodyNodes[index] = body
 
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
@@ -319,5 +338,79 @@ class MultiKeyringScene: SKScene {
     /// SwiftUI 좌표를 SpriteKit 좌표로 변환
     private func convertToSpriteKitCoordinates(_ point: CGPoint) -> CGPoint {
         return CGPoint(x: point.x, y: size.height - point.y)
+    }
+
+    // MARK: - Touch Handling
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+
+        lastTouchLocation = location
+        lastTouchTime = touch.timestamp
+        swipeStartLocation = location
+
+        Haptic.impact(style: .medium)
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+
+        if let lastLocation = lastTouchLocation {
+            let deltaX = location.x - lastLocation.x
+            let deltaY = location.y - lastLocation.y
+            let deltaTime = touch.timestamp - lastTouchTime
+
+            if deltaTime > 0 {
+                let velocityX = deltaX / CGFloat(deltaTime)
+                let velocityY = deltaY / CGFloat(deltaTime)
+                let velocity = CGVector(dx: velocityX, dy: velocityY)
+
+                // 모든 키링에 스와이프 힘 적용
+                applySwipeForceToAllKeyrings(at: location, velocity: velocity)
+            }
+        }
+
+        lastTouchLocation = location
+        lastTouchTime = touch.timestamp
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        swipeStartLocation = nil
+        lastTouchLocation = nil
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        swipeStartLocation = nil
+        lastTouchLocation = nil
+    }
+
+    // MARK: - Swipe Force Application
+
+    private func applySwipeForceToAllKeyrings(at location: CGPoint, velocity: CGVector) {
+        for (index, chains) in chainNodesByKeyring {
+            guard let body = bodyNodes[index] else { continue }
+
+            // Body 중심 기준으로 스와이프 적용
+            let bodyCenter = body.position
+            let distance = hypot(location.x - bodyCenter.x, location.y - bodyCenter.y)
+
+            // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
+            if distance < 200 {
+                let force = CGVector(
+                    dx: velocity.dx * 0.3,
+                    dy: velocity.dy * 0.3
+                )
+
+                // 각 체인에 힘 적용
+                for chain in chains {
+                    chain.physicsBody?.applyImpulse(force)
+                }
+
+                // Body에도 힘 적용
+                body.physicsBody?.applyImpulse(force)
+            }
+        }
     }
 }

@@ -101,7 +101,6 @@ extension BundleAddKeyringView {
                         chainType: .basic,
                         backgroundColor: .clear
                     )
-                    .allowsHitTesting(false)
                 }
             }
             Spacer()
