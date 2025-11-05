@@ -18,6 +18,7 @@ struct BundleAddKeyringView: View {
 
     @State private var showSelectKeyringSheet: Bool = false
     @State private var selectedKeyrings: [Int: Keyring] = [:]
+    @State private var keyringOrder: [Int] = []  // 키링이 추가된 순서 추적
     @State private var selectedPosition: Int = 0
     @State private var carabinerImage: UIImage?
     @State private var isSceneReady: Bool = false
@@ -176,7 +177,15 @@ extension BundleAddKeyringView {
     /// 키링 셀
     private func keyringCell(keyring: Keyring) -> some View {
         Button {
+            // 이미 키링이 있는 위치면 순서에서 제거 (교체)
+            if selectedKeyrings[selectedPosition] != nil {
+                keyringOrder.removeAll { $0 == selectedPosition }
+            }
+
+            // 키링 추가 및 순서 기록
             selectedKeyrings[selectedPosition] = keyring
+            keyringOrder.append(selectedPosition)
+
             withAnimation(.easeInOut) {
                 showSelectKeyringSheet = false
             }
@@ -213,6 +222,7 @@ extension BundleAddKeyringView {
             Spacer()
             Button {
                 selectedKeyrings[selectedPosition] = nil
+                keyringOrder.removeAll { $0 == selectedPosition }  // 순서에서도 제거
                 isDeleteButtonSelected = false
             } label: {
                 Text("삭제")
@@ -318,7 +328,9 @@ extension BundleAddKeyringView {
     private func createKeyringDataList(carabiner: Carabiner, geometry: GeometryProxy) -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
 
-        for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+        // 추가된 순서대로 처리
+        for index in keyringOrder {
+            guard let keyring = selectedKeyrings[index] else { continue }
             let position = buttonPosition(index: index, carabiner: carabiner, geometry: geometry)
 
             // 사운드 정보 추출
