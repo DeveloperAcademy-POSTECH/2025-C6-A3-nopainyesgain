@@ -19,7 +19,7 @@ struct BundleAddKeyringView: View {
     @State private var showSelectKeyringSheet: Bool = false
     @State private var selectedKeyrings: [Int: Keyring] = [:]
     @State private var selectedPosition: Int = 0
-    @State private var carabinerScene: CarabinerScene?
+    @State private var carabinerImage: UIImage?
     @State private var isSceneReady: Bool = false
     @State private var isDeleteButtonSelected: Bool = false
 
@@ -79,16 +79,29 @@ extension BundleAddKeyringView {
     private func sceneView(geometry: GeometryProxy) -> some View {
         VStack {
             ZStack {
-                if let scene = carabinerScene {
-                    SpriteView(scene: scene, options: [.allowsTransparency])
-                        .background(.clear)
+                // 카라비너 이미지 표시
+                if let image = carabinerImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geometry.size.width * 0.5)
 
-                    if isSceneReady, let carabiner = viewModel.selectedCarabiner,
-                       let frame = scene.getCarabinerFrame() {
-                        keyringButtons(carabiner: carabiner, frame: frame)
+                    if isSceneReady, let carabiner = viewModel.selectedCarabiner {
+                        keyringButtons(carabiner: carabiner, geometry: geometry)
                     }
                 } else {
                     ProgressView()
+                }
+
+                // 여러 키링을 하나의 씬에 표시
+                if let carabiner = viewModel.selectedCarabiner, !selectedKeyrings.isEmpty {
+                    MultiKeyringSceneView(
+                        keyringDataList: createKeyringDataList(carabiner: carabiner, geometry: geometry),
+                        ringType: .basic,
+                        chainType: .basic,
+                        backgroundColor: .clear
+                    )
+                    .allowsHitTesting(false)
                 }
             }
             Spacer()
@@ -96,9 +109,9 @@ extension BundleAddKeyringView {
     }
 
     /// 키링 추가 버튼들
-    private func keyringButtons(carabiner: Carabiner, frame: CGRect) -> some View {
+    private func keyringButtons(carabiner: Carabiner, geometry: GeometryProxy) -> some View {
         ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-            let position = buttonPosition(index: index, carabiner: carabiner, frame: frame)
+            let position = buttonPosition(index: index, carabiner: carabiner, geometry: geometry)
 
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
@@ -269,107 +282,22 @@ extension BundleAddKeyringView {
             }
 
             await MainActor.run {
-                let scene = CarabinerScene(
-                    carabiner: carabiner,
-                    carabinerImage: image,
-                    ringType: .basic,
-                    chainType: .basic,
-                    bodyType: .basic,
-                    bodyImages: [],
-                    targetSize: size,
-                    screenWidth: screenWidth,
-                    zoomScale: 1.0,
-                    isPhysicsEnabled: true
-                )
-
-                scene.scaleMode = .resizeFill
-                scene.onSceneReady = {
-                    DispatchQueue.main.async {
-                        self.isSceneReady = true
-                    }
-                }
-
-                self.carabinerScene = scene
+                self.carabinerImage = image
+                self.isSceneReady = true
             }
         }
     }
 
     /// 키링 업데이트
     private func updateKeyringsInScene() {
-        guard let scene = carabinerScene,
-              let carabiner = viewModel.selectedCarabiner else {
-            return
-        }
-
-        // 기존 키링 제거
-        scene.keyrings.forEach { $0.removeFromParent() }
-        scene.keyrings.removeAll()
-
-        // 선택된 키링 수집
-        let keyringData = selectedKeyrings.compactMap { index, keyring in
-            index < carabiner.maxKeyringCount ? (index, keyring) : nil
-        }
-
-        guard !keyringData.isEmpty else { return }
-
-        // 키링 추가
-        loadAndAddKeyrings(keyringData: keyringData, scene: scene)
-    }
-
-    /// 키링 로드 및 추가
-    private func loadAndAddKeyrings(keyringData: [(Int, Keyring)], scene: CarabinerScene) {
-        Task {
-            var images: [UIImage] = []
-
-            for (_, keyring) in keyringData {
-                if let image = try? await StorageManager.shared.getImage(path: keyring.bodyImage) {
-                    images.append(image)
-                }
-            }
-
-            await MainActor.run {
-                guard let carabinerNode = scene.carabinerNode else { return }
-
-                for (i, (index, _)) in keyringData.enumerated() where i < images.count {
-                    let position = keyringPosition(index: index, scene: scene, size: carabinerNode.frame.size)
-
-                    scene.setupKeyringNode(
-                        bodyImage: images[i],
-                        position: position,
-                        parent: carabinerNode,
-                        index: index
-                    ) { keyring in
-                        scene.keyrings.append(keyring)
-                    }
-                }
-            }
-        }
+        // KeyringSceneView로 대체되어 더 이상 필요 없음
+        // 씬이 자동으로 업데이트됨
     }
 
     /// 씬 저장
     private func saveScene() {
-        guard let scene = carabinerScene else { return }
-
         viewModel.selectedKeyringsForBundle = selectedKeyrings
-
-        // 물리 시뮬레이션 비활성화
-        scene.physicsWorld.speed = 0
-        scene.physicsWorld.gravity = .zero
-
-        // 모든 노드 고정
-        scene.keyrings.forEach { keyring in
-            keyring.enumerateChildNodes(withName: "//*") { node, _ in
-                node.physicsBody?.isDynamic = false
-                node.physicsBody?.affectedByGravity = false
-                node.removeAllActions()
-            }
-        }
-
-        scene.carabinerNode?.physicsBody?.isDynamic = false
-        scene.carabinerNode?.physicsBody?.affectedByGravity = false
-        scene.carabinerNode?.removeAllActions()
-
-        viewModel.bundlePreviewScene = scene
+        // KeyringScene을 사용하므로 별도 저장 불필요
     }
 }
 
@@ -391,18 +319,35 @@ extension BundleAddKeyringView {
 
 extension BundleAddKeyringView {
     /// 버튼 위치 계산
-    private func buttonPosition(index: Int, carabiner: Carabiner, frame: CGRect) -> CGPoint {
-        let x = frame.origin.x + (frame.width * carabiner.keyringXPosition[index])
-        let yRatio = 1.0 - carabiner.keyringYPosition[index]
-        let y = frame.origin.y + (frame.height * yRatio)
+    private func buttonPosition(index: Int, carabiner: Carabiner, geometry: GeometryProxy) -> CGPoint {
+        let carabinerWidth = geometry.size.width * 0.5
+        let aspectRatio = carabinerImage.map { $0.size.height / $0.size.width } ?? 1.0
+        let carabinerHeight = carabinerWidth * aspectRatio
+
+        let centerX = geometry.size.width / 2
+        let centerY = geometry.size.height / 2
+
+        let x = centerX + (carabinerWidth * (carabiner.keyringXPosition[index] - 0.5))
+        let y = centerY - (carabinerHeight * (carabiner.keyringYPosition[index] - 0.5))
+
         return CGPoint(x: x, y: y)
     }
 
-    /// 키링 위치 계산
-    private func keyringPosition(index: Int, scene: CarabinerScene, size: CGSize) -> CGPoint {
-        let nx = scene.getKeyringXPosition(for: index)
-        let ny = scene.getKeyringYPosition(for: index)
-        return CGPoint(x: (nx - 0.5) * size.width, y: (ny - 0.5) * size.height)
+    /// KeyringData 리스트 생성
+    private func createKeyringDataList(carabiner: Carabiner, geometry: GeometryProxy) -> [MultiKeyringScene.KeyringData] {
+        var dataList: [MultiKeyringScene.KeyringData] = []
+
+        for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+            let position = buttonPosition(index: index, carabiner: carabiner, geometry: geometry)
+            let data = MultiKeyringScene.KeyringData(
+                index: index,
+                position: position,
+                bodyImageURL: keyring.bodyImage
+            )
+            dataList.append(data)
+        }
+
+        return dataList
     }
 }
 
