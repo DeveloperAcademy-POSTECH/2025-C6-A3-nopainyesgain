@@ -84,13 +84,13 @@ class MultiKeyringScene: SKScene {
 
     /// 모든 키링 설정
     private func setupKeyrings() {
-        for data in keyringDataList {
-            setupSingleKeyring(data: data)
+        for (order, data) in keyringDataList.enumerated() {
+            setupSingleKeyring(data: data, order: order)
         }
     }
 
     /// 단일 키링 설정
-    private func setupSingleKeyring(data: KeyringData) {
+    private func setupSingleKeyring(data: KeyringData, order: Int) {
         // 사운드 정보 저장
         soundIdsByKeyring[data.index] = data.soundId
         if let customURL = data.customSoundURL {
@@ -104,6 +104,9 @@ class MultiKeyringScene: SKScene {
         let categoryBitMask: UInt32 = UInt32(1 << data.index)
         let collisionBitMask: UInt32 = categoryBitMask  // 자기 그룹 내에서만 충돌
 
+        // zPosition 계산: 생성 순서대로 레이어링 (나중에 생성된 것이 위에)
+        let baseZPosition = CGFloat(order * 10)
+
         // 1. Ring 생성 (KeyringScene과 동일하게 직접 씬에 추가)
         KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
             guard let self = self, let ring = ring else {
@@ -111,6 +114,7 @@ class MultiKeyringScene: SKScene {
             }
 
             ring.position = spriteKitPosition
+            ring.zPosition = baseZPosition  // Ring이 가장 뒤
             ring.physicsBody?.isDynamic = false
             ring.physicsBody?.categoryBitMask = categoryBitMask
             ring.physicsBody?.collisionBitMask = collisionBitMask
@@ -126,7 +130,8 @@ class MultiKeyringScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
-                index: data.index
+                index: data.index,
+                baseZPosition: baseZPosition
             )
         }
     }
@@ -136,7 +141,8 @@ class MultiKeyringScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
-        index: Int
+        index: Int,
+        baseZPosition: CGFloat
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
@@ -155,7 +161,8 @@ class MultiKeyringScene: SKScene {
             let categoryBitMask: UInt32 = UInt32(1 << index)
             let collisionBitMask: UInt32 = categoryBitMask
 
-            for chain in chains {
+            for (chainIndex, chain) in chains.enumerated() {
+                chain.zPosition = baseZPosition + 2 + CGFloat(chainIndex)  // Chain은 Body 위
                 chain.physicsBody?.categoryBitMask = categoryBitMask
                 chain.physicsBody?.collisionBitMask = collisionBitMask
                 chain.physicsBody?.contactTestBitMask = 0
@@ -173,7 +180,8 @@ class MultiKeyringScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
-                index: index
+                index: index,
+                baseZPosition: baseZPosition
             )
         }
     }
@@ -186,7 +194,8 @@ class MultiKeyringScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
-        index: Int
+        index: Int,
+        baseZPosition: CGFloat
     ) {
         KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else { return }
@@ -198,7 +207,8 @@ class MultiKeyringScene: SKScene {
                 centerX: centerX,
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
-                index: index
+                index: index,
+                baseZPosition: baseZPosition
             )
         }
     }
@@ -211,7 +221,8 @@ class MultiKeyringScene: SKScene {
         centerX: CGFloat,
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
-        index: Int
+        index: Int,
+        baseZPosition: CGFloat
     ) {
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
@@ -224,6 +235,7 @@ class MultiKeyringScene: SKScene {
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+        body.zPosition = baseZPosition + 1  // Body는 Ring 바로 위
 
         // Body에 고유한 물리 마스크 적용
         let categoryBitMask: UInt32 = UInt32(1 << index)
