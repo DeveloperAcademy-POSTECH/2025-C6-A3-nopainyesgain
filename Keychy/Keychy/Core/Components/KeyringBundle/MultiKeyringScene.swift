@@ -397,7 +397,7 @@ class MultiKeyringScene: SKScene {
             let distance = hypot(location.x - bodyCenter.x, location.y - bodyCenter.y)
 
             // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
-            if distance < 200 {
+            if distance < 50 {
                 let force = CGVector(
                     dx: velocity.dx * 0.3,
                     dy: velocity.dy * 0.3
