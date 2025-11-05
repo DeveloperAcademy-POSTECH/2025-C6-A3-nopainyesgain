@@ -22,8 +22,7 @@ class CarabinerScene: SKScene {
     // MARK: - 씬 로딩 완료 콜백
     var onSceneReady: (() -> Void)?
     
-    // MARK: - 크기 조절용 컨테이너 노드
-    var containerNode: SKNode!
+    // MARK: - 크기 조절 관련
     let scaleFactor: CGFloat
     let originalSize = CGSize(width: 393, height: 852)
     
@@ -94,20 +93,16 @@ class CarabinerScene: SKScene {
         
         // 물리 시뮬레이션 설정 분기 처리
         if isPhysicsEnabled {
-            // 물리 시뮬레이션 활성화 (다른 뷰들용)
+            // 물리 시뮬레이션 활성화 (안정성을 위해 속도 조금 줄임)
             physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-            physicsWorld.speed = 1.0
+            physicsWorld.speed = 0.8  // 1.0 → 0.8로 줄여서 안정성 증대
         } else {
             // 물리 시뮬레이션 비활성화 (BundleAddKeyringView용)
             physicsWorld.gravity = CGVector(dx: 0, dy: 0)
             physicsWorld.speed = 0
         }
         
-        // 컨테이너 설정
-        containerNode = SKNode()
-        containerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        containerNode.setScale(scaleFactor)
-        addChild(containerNode)
+        // 컨테이너 없이 직접 씬에서 관리
         
         setupCarabinerWithKeyrings()
         
@@ -139,16 +134,15 @@ class CarabinerScene: SKScene {
     func getCarabinerFrame() -> CGRect? {
         guard let carabiner = carabinerNode else { return nil }
         
-        // 카라비너의 월드 좌표와 크기 계산
-        let worldPos = containerNode.convert(carabiner.position, to: self)
+        // 컨테이너 없이 직접 카라비너의 위치와 크기 계산
         let carabinerWidth = carabiner.size.width * scaleFactor
         let carabinerHeight = carabiner.size.height * scaleFactor
         
         // SpriteKit 좌표계 (원점: 왼쪽 아래) → SwiftUI 좌표계 (원점: 왼쪽 위) 변환
-        let swiftUIY = size.height - worldPos.y - carabinerHeight / 2
+        let swiftUIY = size.height - carabiner.position.y - carabinerHeight / 2
         
         return CGRect(
-            x: worldPos.x - carabinerWidth / 2,
+            x: carabiner.position.x - carabinerWidth / 2,
             y: swiftUIY,
             width: carabinerWidth,
             height: carabinerHeight

@@ -351,8 +351,15 @@ extension BundleAddKeyringView {
                 .frame(height: 20) // Divider 높이 제한
             Spacer()
             Button {
+                // 키링 삭제 시 더 안전한 처리
+                print("🗑️ 키링 삭제 요청 - 위치: \(selectedPosition)")
                 selectedKeyrings[selectedPosition] = nil
                 isDeleteButtonSelected = false
+                
+                // 즉시 씬 업데이트 강제 실행
+                DispatchQueue.main.async {
+                    self.needsSceneUpdate = true
+                }
             } label: {
                 Text("삭제")
                     .typography(.suit16M)
@@ -397,7 +404,7 @@ extension BundleAddKeyringView {
                     let loadedFrontImage = try await frontImage
                     
                     await MainActor.run {
-                        // 뒷면/앞면 이미지가 준비된 후 씬 생성 (기존 방식 유지하되 이미지만 뒷면으로)
+                        // 뒷면/앞면 이미지가 준비된 후 씬 생성 (물리 시뮬레이션 활성화)
                         let scene = CarabinerScene(
                             carabiner: carabiner,
                             carabinerImage: loadedBackImage, // 뒷면 이미지를 기본으로 사용
@@ -408,7 +415,7 @@ extension BundleAddKeyringView {
                             targetSize: targetSize,
                             screenWidth: screenWidth,
                             zoomScale: 1.0,
-                            isPhysicsEnabled: false
+                            isPhysicsEnabled: true  // 물리 시뮬레이션 활성화
                         )
                         // 앞면 이미지를 씬에 전달 (나중에 오버레이용으로 사용)
                         scene.carabinerFrontImage = loadedFrontImage
@@ -444,12 +451,14 @@ extension BundleAddKeyringView {
         carabinerScene = createCarabinerScene(targetSize: targetSize, screenWidth: screenWidth)
     }
     
-    // 키링만 업데이트하는 새로운 메서드
+    // 키링만 업데이트하는 새로운 메서드 (개선된 버전)
     private func updateCarabinerSceneWithKeyrings() {
         guard let scene = carabinerScene,
               let carabiner = viewModel.selectedCarabiner else {
             return
         }
+        
+        print("🔄 씬 업데이트 시작 - 현재 selectedKeyrings: \(selectedKeyrings)")
         
         // selectedKeyrings에서 키링들을 수집
         var keyringData: [(index: Int, keyring: Keyring)] = []
@@ -460,56 +469,111 @@ extension BundleAddKeyringView {
             }
         }
         
-        // 물리 시뮬레이션이 활성화된 경우에만 조인트 제거
-        if scene.isPhysicsEnabled {
-            scene.physicsWorld.removeAllJoints()
-        }
+        print("🔄 새로 생성할 키링 데이터: \(keyringData.count)개")
         
-        // 기존 키링들 제거
-        scene.keyrings.forEach { keyring in
-            keyring.removeFromParent()
-        }
-        scene.keyrings.removeAll()
+        // 기존 키링들과 관련된 모든 노드 완전 제거
+        removeAllKeyringComponents(from: scene)
         
-        // 키링이 없으면 바로 종료
+        // 키링이 없으면 종료
         guard !keyringData.isEmpty else {
+            print("🔄 키링이 없음 - 업데이트 완료")
             return
         }
         
         // 이미지들을 로드
         loadKeyringImages(keyringData: keyringData) { loadedImages in
             guard let scene = self.carabinerScene else {
-                return 
+                return
             }
             DispatchQueue.main.async {
-                // 새 키링들을 개별적으로 위치에 맞게 생성
+                print("🔄 \(loadedImages.count)개 키링 이미지 로드 완료")
+                
+                // 각 키링을 올바른 위치에 개별적으로 생성
                 if let carabinerNode = scene.carabinerNode {
-                    // 각 키링을 올바른 위치에 개별적으로 생성
                     for (arrayIndex, (keyringIndex, _)) in keyringData.enumerated() {
                         if arrayIndex < loadedImages.count {
                             let bodyImage = loadedImages[arrayIndex]
                             
-                            // 카라비너에서 실제 키링 위치 가져오기
+                            // 카라비너에서 실제 키링 위치 가져오기 (선택된 위치)
                             let nx = scene.getKeyringXPosition(for: keyringIndex)
                             let ny = scene.getKeyringYPosition(for: keyringIndex)
                             let carabinerSize = carabinerNode.size
-                            let xOffset = (nx - 0.5) * carabinerSize.width
-                            let yOffset = (ny - 0.5) * carabinerSize.height
                             
-                            // 개별 키링 생성 (원래 방식대로)
-                            scene.setupKeyringNode(
+                            // scaleFactor를 적용한 오프셋 계산
+                            let xOffset = (nx - 0.5) * carabinerSize.width * scene.scaleFactor
+                            let yOffset = (ny - 0.5) * carabinerSize.height * scene.scaleFactor
+                            
+                            // 카라비너의 절대 위치에서 상대적 위치 계산
+                            let absoluteX = carabinerNode.position.x + xOffset
+                            let absoluteY = carabinerNode.position.y + yOffset
+                            
+                            print("🎯 Keyring \(keyringIndex) 생성 중 - position: (\(absoluteX), \(absoluteY))")
+                            
+                            // 개별 키링 생성
+                            self.createIndividualKeyring(
+                                scene: scene,
                                 bodyImage: bodyImage,
-                                position: CGPoint(x: xOffset, y: yOffset),
-                                parent: carabinerNode,
+                                position: CGPoint(x: absoluteX, y: absoluteY),
                                 index: keyringIndex
-                            ) { createdKeyring in
-                                scene.keyrings.append(createdKeyring)
-                            }
+                            )
                         }
+                    }
+                    
+                    // 씬 상태 확인 디버깅
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.debugSceneState(scene: scene)
                     }
                 }
             }
         }
+    }
+    
+    // 모든 키링 구성 요소를 완전히 제거하는 메서드
+    private func removeAllKeyringComponents(from scene: CarabinerScene) {
+        print("🗑️ 기존 키링 구성 요소 완전 제거 시작")
+        
+        // 1. 모든 물리 조인트 제거 (카라비너는 제외)
+        scene.physicsWorld.removeAllJoints()
+        
+        // 2. 키링 관련 모든 노드 찾아서 제거
+        var nodesToRemove: [SKNode] = []
+        
+        scene.enumerateChildNodes(withName: "//*keyring*") { node, _ in
+            nodesToRemove.append(node)
+        }
+        
+        // 3. 찾은 노드들 제거
+        for node in nodesToRemove {
+            print("🗑️ 제거: \(node.name ?? "unnamed node")")
+            node.removeAllActions() // 모든 액션 제거
+            node.removeFromParent() // 부모에서 제거
+        }
+        
+        // 4. scene.keyrings 배열 초기화
+        scene.keyrings.removeAll()
+        
+        print("🗑️ 키링 구성 요소 제거 완료 - 제거된 노드: \(nodesToRemove.count)개")
+    }
+    
+    // 씬 상태 디버깅 메서드
+    private func debugSceneState(scene: CarabinerScene) {
+        print("🔍 씬 상태 디버깅:")
+        print("   - 전체 자식 노드 수: \(scene.children.count)")
+        print("   - 키링 배열 크기: \(scene.keyrings.count)")
+        print("   - 물리 조인트 수: 정보 없음") // SKPhysicsWorld에서 조인트 수를 직접 가져올 수 없음
+        
+        // 키링 관련 노드 카운트
+        var keyringNodeCount = 0
+        scene.enumerateChildNodes(withName: "//*keyring*") { node, _ in
+            keyringNodeCount += 1
+            if let nodeName = node.name {
+                print("   - 발견된 키링 노드: \(nodeName)")
+            }
+        }
+        print("   - keyring 이름을 가진 노드 수: \(keyringNodeCount)")
+        
+        // selectedKeyrings 상태 확인
+        print("   - selectedKeyrings: \(selectedKeyrings)")
     }
     
     // URL에서 이미지들을 로드하는 메서드
@@ -536,6 +600,328 @@ extension BundleAddKeyringView {
                 completion(loadedImages)
             }
         }
+    }
+    
+    // 개별 키링을 직접 생성하는 메서드 (디버깅 포함)
+    private func createIndividualKeyring(
+        scene: CarabinerScene,
+        bodyImage: UIImage,
+        position: CGPoint,
+        index: Int
+    ) {
+        print("🔴 Starting keyring creation at position: \(position)")
+        
+        // 1. Ring 생성
+        KeyringRingComponent.createNode(from: scene.currentRingType) { ring in
+            guard let ring = ring else { 
+                print("❌ Ring creation failed for index \(index)")
+                return 
+            }
+            
+            // Ring 위치 설정 (scaleFactor 적용)
+            ring.setScale(0.6 * scene.scaleFactor)
+            ring.name = "keyring_\(index)_ring"
+            
+            let ringFrame = ring.calculateAccumulatedFrame()
+            let ringRadius = ringFrame.height / 2
+            let ringCenterY = position.y - ringRadius
+            
+            ring.position = CGPoint(x: position.x, y: ringCenterY)
+            ring.physicsBody?.isDynamic = false
+            ring.physicsBody?.affectedByGravity = false
+            ring.zPosition = 1
+            
+            // 키링별로 고유한 충돌 그룹 설정
+            if let physicsBody = ring.physicsBody {
+                physicsBody.categoryBitMask = UInt32(1 << (index % 31))  // 키링별 고유 카테고리
+                physicsBody.collisionBitMask = 0  // 다른 키링과 충돌하지 않음
+                physicsBody.contactTestBitMask = 0  // 접촉 감지 안함
+            }
+            
+            scene.addChild(ring)
+            
+            print("🔴 Ring added: x=\(ring.position.x), y=\(ring.position.y), scale=\(ring.xScale)")
+            
+            // 2. Chain 생성
+            self.createChainForKeyring(scene: scene, ring: ring, bodyImage: bodyImage, index: index)
+        }
+    }
+    
+    // 키링의 체인 생성 (KeyringScene과 동일한 물리 설정 + 위치 디버깅)
+    private func createChainForKeyring(
+        scene: CarabinerScene,
+        ring: SKSpriteNode,
+        bodyImage: UIImage,
+        index: Int
+    ) {
+        let ringHeight = ring.calculateAccumulatedFrame().height
+        let ringBottomY = ring.position.y - ringHeight / 2
+        let chainStartY = ringBottomY + 0.5
+        let chainSpacing: CGFloat = 16 * scene.scaleFactor
+        
+        print("🔵 Chain creation: ringBottom=\(ringBottomY), chainStart=\(chainStartY), spacing=\(chainSpacing)")
+        
+        KeyringChainComponent.createLinks(
+            from: scene.currentChainType,
+            count: 5,
+            startPosition: CGPoint(x: ring.position.x, y: chainStartY),
+            spacing: chainSpacing
+        ) { chains in
+            print("🔵 Created \(chains.count) chain links")
+            
+            // 체인들을 씬에 추가 (키링별 충돌 방지 설정)
+            for (i, chain) in chains.enumerated() {
+                chain.setScale(scene.scaleFactor)
+                chain.name = "keyring_\(index)_chain_\(i)"
+                chain.zPosition = 1
+                
+                // 키링별로 고유한 충돌 그룹 설정하여 다른 키링과 충돌 방지
+                if let physicsBody = chain.physicsBody {
+                    physicsBody.categoryBitMask = UInt32(1 << (index % 31))  // 키링별 고유 카테고리 (31개까지)
+                    physicsBody.collisionBitMask = 0  // 다른 키링과 충돌하지 않음
+                    physicsBody.contactTestBitMask = 0  // 접촉 감지 안함
+                }
+                
+                scene.addChild(chain)
+                print("🔵 Chain \(i) added for keyring \(index) with collision group \(1 << (index % 31))")
+            }
+            
+            // 3. Body 생성
+            self.createBodyForKeyring(scene: scene, ring: ring, chains: chains, bodyImage: bodyImage, index: index)
+        }
+    }
+    
+    // 키링의 몸체 생성 (KeyringScene과 동일한 물리 설정 + 위치 디버깅)
+    private func createBodyForKeyring(
+        scene: CarabinerScene,
+        ring: SKSpriteNode,
+        chains: [SKSpriteNode],
+        bodyImage: UIImage,
+        index: Int
+    ) {
+        print("🟢 Starting body creation for index \(index)")
+        
+        KeyringBodyComponent.createNode(from: bodyImage) { body in
+            guard let body = body else { 
+                print("❌ Body creation failed for index \(index)")
+                return 
+            }
+            
+            body.setScale(0.3 * scene.scaleFactor)
+            body.name = "keyring_\(index)_body"
+            
+            // 키링별로 고유한 충돌 그룹 설정하여 다른 키링과 충돌 방지
+            if let physicsBody = body.physicsBody {
+                physicsBody.categoryBitMask = UInt32(1 << (index % 31))  // 키링별 고유 카테고리
+                physicsBody.collisionBitMask = 0  // 다른 키링과 충돌하지 않음
+                physicsBody.contactTestBitMask = 0  // 접촉 감지 안함
+            }
+            
+            // Body 위치 계산 (KeyringScene과 동일한 방식)
+            let ringHeight = ring.calculateAccumulatedFrame().height
+            let ringBottomY = ring.position.y - ringHeight / 2
+            let chainStartY = ringBottomY + 0.5
+            let chainSpacing: CGFloat = 16 * scene.scaleFactor
+            
+            let bodyFrame = body.calculateAccumulatedFrame()
+            let bodyHalfHeight = bodyFrame.height / 2
+            
+            let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
+            let lastLinkHeight: CGFloat = chains.last?.calculateAccumulatedFrame().height ?? chainSpacing
+            let lastChainBottomY = lastChainY - lastLinkHeight / 2
+              
+            let connectGap = 30.0 * scene.scaleFactor
+            let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+            
+            // 화면 경계 체크 및 조정
+            let minY = bodyHalfHeight
+            let maxY = scene.size.height - bodyHalfHeight
+            let clampedY = max(minY, min(maxY, bodyCenterY))
+            
+            if clampedY != bodyCenterY {
+                print("⚠️ Body Y position clamped from \(bodyCenterY) to \(clampedY)")
+            }
+            
+            body.position = CGPoint(x: ring.position.x, y: clampedY)
+            body.zPosition = 1
+            
+            print("🟢 Body position calculation:")
+            print("   ringBottomY: \(ringBottomY)")
+            print("   chainStartY: \(chainStartY)")
+            print("   lastChainY: \(lastChainY)")
+            print("   lastChainBottomY: \(lastChainBottomY)")
+            print("   bodyHalfHeight: \(bodyHalfHeight)")
+            print("   connectGap: \(connectGap)")
+            print("   bodyCenterY: \(bodyCenterY)")
+            print("   final position: \(body.position)")
+            
+            // KeyringScene과 동일: Component에서 설정된 기본 물리 속성 유지
+            // isDynamic, affectedByGravity 등을 따로 설정하지 않음
+            
+            scene.addChild(body)
+            scene.keyrings.append(body) // 키링 배열에 추가
+            
+            print("🟢 Body added: x=\(body.position.x), y=\(body.position.y), scale=\(body.xScale)")
+            
+            // KeyringScene과 동일한 방식으로 물리 조인트 연결
+            self.connectKeyringComponents(scene: scene, ring: ring, chains: chains, body: body)
+        }
+    }
+    
+    // KeyringScene과 동일한 물리 조인트 연결 메서드 (안정성 개선)
+    private func connectKeyringComponents(
+        scene: CarabinerScene,
+        ring: SKSpriteNode,
+        chains: [SKSpriteNode],
+        body: SKNode
+    ) {
+        // 물리 시뮬레이션이 비활성화된 경우 조인트 연결 안함
+        guard scene.isPhysicsEnabled else {
+            print("🔗 물리 시뮬레이션 비활성화 - 조인트 연결 생략")
+            return
+        }
+        
+        print("🔗 KeyringScene 방식 조인트 연결 시작 - 키링 \(ring.name ?? "unknown")")
+        
+        // 조인트 연결 전 물리체 검증
+        guard let ringPhysics = ring.physicsBody else {
+            print("❌ Ring 물리체 없음 - 조인트 연결 실패")
+            return
+        }
+        
+        var previousNode: SKNode = ring
+
+        // Ring과 첫 번째 Chain 연결
+        if let firstChain = chains.first,
+           let firstChainPhysics = firstChain.physicsBody {
+            
+            // Ring은 항상 고정
+            ringPhysics.isDynamic = false
+            ringPhysics.affectedByGravity = false
+            
+            // 체인은 물리 활성화
+            firstChainPhysics.isDynamic = true
+            firstChainPhysics.affectedByGravity = true
+            
+            // Pin 조인트로 연결
+            let joint = SKPhysicsJointPin.joint(
+                withBodyA: ringPhysics,
+                bodyB: firstChainPhysics,
+                anchor: CGPoint(
+                    x: (ring.position.x + firstChain.position.x) / 2,
+                    y: ring.position.y
+                )
+            )
+            joint.shouldEnableLimits = false
+            joint.frictionTorque = 0.1
+            scene.physicsWorld.add(joint)
+            
+            // 거리 제한으로 안정성 확보
+            let distance = hypot(
+                firstChain.position.x - ring.position.x,
+                firstChain.position.y - ring.position.y
+            )
+            let limitJoint = SKPhysicsJointLimit.joint(
+                withBodyA: ringPhysics,
+                bodyB: firstChainPhysics,
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
+            )
+            limitJoint.maxLength = max(distance * 1.05, 20.0) // 최소 거리 보장
+            scene.physicsWorld.add(limitJoint)
+            
+            // 체인의 물리 속성 조정 - 더 안정적으로
+            firstChainPhysics.linearDamping = 0.8  // 높은 댐핑으로 안정성 증대
+            firstChainPhysics.angularDamping = 0.8
+            
+            previousNode = firstChain
+        }
+
+        // Chain 링크들 연결 - 더 안전하게 물리체 검증
+        for i in 1..<chains.count {
+            let current = chains[i]
+            guard let currentPhysics = current.physicsBody,
+                  let previousPhysics = previousNode.physicsBody else {
+                print("❌ 체인 \(i) 물리체 검증 실패")
+                continue
+            }
+            
+            // 체인 물리 활성화
+            currentPhysics.isDynamic = true
+            currentPhysics.affectedByGravity = true
+            
+            let joint = SKPhysicsJointPin.joint(
+                withBodyA: previousPhysics,
+                bodyB: currentPhysics,
+                anchor: CGPoint(
+                    x: (previousNode.position.x + current.position.x) / 2,
+                    y: (previousNode.position.y + current.position.y) / 2
+                )
+            )
+            joint.shouldEnableLimits = false
+            joint.frictionTorque = 0.1
+            scene.physicsWorld.add(joint)
+            
+            // 거리 제한 - 최소값 보장으로 안정성 확보
+            let distance = hypot(
+                current.position.x - previousNode.position.x,
+                current.position.y - previousNode.position.y
+            )
+            let limitJoint = SKPhysicsJointLimit.joint(
+                withBodyA: previousPhysics,
+                bodyB: currentPhysics,
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
+            )
+            limitJoint.maxLength = max(distance * 1.05, 15.0) // 최소 거리 보장
+            scene.physicsWorld.add(limitJoint)
+            
+            // 체인의 물리 속성 조정
+            currentPhysics.linearDamping = 0.8
+            currentPhysics.angularDamping = 0.8
+            
+            previousNode = current
+        }
+
+        // 마지막 Chain과 Body 연결 - 안전한 물리체 검증
+        if let lastChain = chains.last,
+           let lastChainPhysics = lastChain.physicsBody,
+           let bodyPhysics = body.physicsBody {
+            
+            // Body 물리 활성화
+            bodyPhysics.isDynamic = true
+            bodyPhysics.affectedByGravity = true
+            
+            let joint = SKPhysicsJointFixed.joint(
+                withBodyA: lastChainPhysics,
+                bodyB: bodyPhysics,
+                anchor: CGPoint(
+                    x: lastChain.position.x,
+                    y: lastChain.position.y
+                )
+            )
+            scene.physicsWorld.add(joint)
+            
+            // Body와 Chain 사이 거리 제한
+            let distance = hypot(
+                body.position.x - lastChain.position.x,
+                body.position.y - lastChain.position.y
+            )
+            let limitJoint = SKPhysicsJointLimit.joint(
+                withBodyA: lastChainPhysics,
+                bodyB: bodyPhysics,
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
+            )
+            limitJoint.maxLength = max(distance * 1.05, 25.0) // 최소 거리 보장
+            scene.physicsWorld.add(limitJoint)
+            
+            // Body의 물리 속성 조정 - 더 안정적으로
+            bodyPhysics.linearDamping = 0.9  // 몸체는 더 안정적으로
+            bodyPhysics.angularDamping = 0.9
+        }
+        
+        print("🔗 KeyringScene 방식 조인트 연결 완료 - 키링 \(ring.name ?? "unknown")")
     }
 }
 
