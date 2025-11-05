@@ -14,8 +14,12 @@ struct CollectionKeyringDetailView: View {
     @State private var sheetDetent: PresentationDetent = .height(76)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
+    @State private var isSheetPresented: Bool = true
+    @State private var isNavigatingDeeper: Bool = false
     @State private var authorName: String = ""
     @State private var showMenu: Bool = false
+    @State private var showDeleteAlert: Bool = false
+    @State private var showDeleteCompleteAlert: Bool = false
     @State private var menuPosition: CGRect = .zero
     
     let keyring: Keyring
@@ -48,8 +52,11 @@ struct CollectionKeyringDetailView: View {
                     KeyringMenu(
                         position: menuPosition,
                         onEdit: {
+                            isSheetPresented = false
+                            isNavigatingDeeper = true
                             showMenu = false
-                            // TODO: 편집 로직
+                            print("편집 버튼 눌림")
+                            router.push(.keyringEditView(keyring))
                         },
                         onCopy: {
                             showMenu = false
@@ -57,10 +64,52 @@ struct CollectionKeyringDetailView: View {
                         },
                         onDelete: {
                             showMenu = false
-                            // TODO: 삭제 로직
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showDeleteAlert = true
+                            }
                         }
                     )
                     .zIndex(50)
+                }
+                
+                if showDeleteAlert || showDeleteCompleteAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    if showDeleteAlert {
+                        DeletePopup(
+                            title: "[\(keyring.name)]\n정말 삭제하시겠어요?",
+                            message: "한 번 삭제하면 복구 할 수 없습니다.",
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteAlert = false
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    //deletingCategory = ""
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteAlert = false
+                                }
+
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    //confirmDeleteCategory()
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showDeleteCompleteAlert = true
+                                    }
+                                }
+                            }
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                        .zIndex(100)
+                    }
+                    
+                    if showDeleteCompleteAlert {
+                        DeleteCompletePopup(isPresented: $showDeleteCompleteAlert)
+                            .zIndex(100)
+                    }
                 }
                     
             }
@@ -69,7 +118,7 @@ struct CollectionKeyringDetailView: View {
         .navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
-        .sheet(isPresented: .constant(true)) {
+        .sheet(isPresented: $isSheetPresented) {
             infoSheet
                 .presentationDetents([.height(76), .height(395)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
@@ -78,25 +127,16 @@ struct CollectionKeyringDetailView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
-            // UITabBar 직접 제어
-            // sheet를 계속 true로 띄워놓으니까 .toolbar(.hidden, for: .tabBar)가 안 먹혀서 강제로 제어하는 코드를 넣음
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first,
-               let tabBarController = window.rootViewController?.findTabBarController() {
-                UIView.animate(withDuration: 0.3) {
-                    tabBarController.tabBar.isHidden = true
-                }
-            }
+            isSheetPresented = true
+            isNavigatingDeeper = false
+            hideTabBar()
             fetchAuthorName()
         }
         .onDisappear { // 일단 여기서 더 딥하게 들어가지는 않으니까 이렇게 해두겠음
+            isSheetPresented = false
             // 화면 나갈 때 탭바 다시 보이기
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first,
-               let tabBarController = window.rootViewController?.findTabBarController() {
-                UIView.animate(withDuration: 0.3) {
-                    tabBarController.tabBar.isHidden = false
-                }
+            if !isNavigatingDeeper {
+                showTabBar()
             }
         }
         .toolbar {
@@ -105,6 +145,28 @@ struct CollectionKeyringDetailView: View {
         }
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
+        }
+    }
+    
+    // MARK: - 탭바 제어
+    // sheet를 계속 true로 띄워놓으니까 .toolbar(.hidden, for: .tabBar)가 안 먹혀서 강제로 제어하는 코드를 넣음
+    private func hideTabBar() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let tabBarController = window.rootViewController?.findTabBarController() {
+            UIView.animate(withDuration: 0.3) {
+                tabBarController.tabBar.isHidden = true
+            }
+        }
+    }
+    
+    private func showTabBar() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let tabBarController = window.rootViewController?.findTabBarController() {
+            UIView.animate(withDuration: 0.3) {
+                tabBarController.tabBar.isHidden = false
+            }
         }
     }
     
@@ -154,6 +216,7 @@ extension CollectionKeyringDetailView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                isSheetPresented = false
                 router.pop()
             } label: {
                 Image(systemName: "chevron.left")

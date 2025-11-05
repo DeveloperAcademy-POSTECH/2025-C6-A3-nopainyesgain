@@ -11,6 +11,9 @@ enum CollectionRoute: Hashable {
     // 키링 상세보기
     case collectionKeyringDetailView(Keyring)
     
+    // 키링 수정하기
+    case keyringEditView(Keyring)
+    
     // 뭉치함
     case bundleInventoryView
     
