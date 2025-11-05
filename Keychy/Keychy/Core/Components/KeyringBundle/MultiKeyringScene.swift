@@ -21,6 +21,7 @@ class MultiKeyringScene: SKScene {
         let bodyImageURL: String
         let soundId: String  // 사운드 ID
         let customSoundURL: URL?  // 커스텀 녹음 파일 URL
+        let particleId: String  // 파티클 ID
     }
 
     var keyringDataList: [KeyringData] = []
@@ -34,6 +35,12 @@ class MultiKeyringScene: SKScene {
     // MARK: - 키링별 사운드 정보 저장
     var soundIdsByKeyring: [Int: String] = [:]  // index: soundId
     var customSoundURLsByKeyring: [Int: URL] = [:]  // index: customSoundURL
+
+    // MARK: - 키링별 파티클 정보 저장
+    var particleIdsByKeyring: [Int: String] = [:]  // index: particleId
+
+    // MARK: - 파티클 효과 콜백
+    var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
@@ -96,6 +103,9 @@ class MultiKeyringScene: SKScene {
         if let customURL = data.customSoundURL {
             customSoundURLsByKeyring[data.index] = customURL
         }
+
+        // 파티클 정보 저장
+        particleIdsByKeyring[data.index] = data.particleId
 
         // 좌표 변환: SwiftUI 좌표 -> SpriteKit 좌표
         let spriteKitPosition = convertToSpriteKitCoordinates(data.position)
@@ -393,6 +403,13 @@ class MultiKeyringScene: SKScene {
 
                 // 모든 키링에 스와이프 힘 적용
                 applySwipeForceToAllKeyrings(at: location, velocity: velocity)
+
+                // 일정 속도 이상 스와이프 시 파티클 효과 발사 (쓰로틀링 0.3초)
+                let speed = hypot(velocity.dx, velocity.dy)
+                if speed > 2500 && (touch.timestamp - lastParticleTime) > 0.3 {
+                    applyParticleEffectNearLocation(at: location)
+                    lastParticleTime = touch.timestamp
+                }
             }
         }
 
@@ -454,6 +471,33 @@ class MultiKeyringScene: SKScene {
 
         // 일반 사운드 파일
         SoundEffectComponent.shared.playSound(named: soundId)
+    }
+
+    // MARK: - Particle Effect
+
+    /// 특정 위치 근처의 키링에 파티클 효과 적용
+    private func applyParticleEffectNearLocation(at location: CGPoint) {
+        // 가장 가까운 키링 찾기
+        var closestIndex: Int?
+        var closestDistance: CGFloat = .infinity
+
+        for (index, body) in bodyNodes {
+            let bodyCenter = body.position
+            let distance = hypot(location.x - bodyCenter.x, location.y - bodyCenter.y)
+
+            if distance < 100 && distance < closestDistance {
+                closestDistance = distance
+                closestIndex = index
+            }
+        }
+
+        // 가장 가까운 키링의 파티클 효과 발생
+        if let index = closestIndex,
+           let particleId = particleIdsByKeyring[index],
+           particleId != "none",
+           let body = bodyNodes[index] {
+            onPlayParticleEffect?(index, particleId, body.position)
+        }
     }
 
     // MARK: - Swipe Force Application
