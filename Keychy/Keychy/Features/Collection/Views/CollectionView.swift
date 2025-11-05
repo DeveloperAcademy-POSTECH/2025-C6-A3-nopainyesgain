@@ -13,6 +13,14 @@ struct CollectionView: View {
     @State var collectionViewModel: CollectionViewModel
     @State private var selectedCategory = "전체"
     @State private var showSortSheet: Bool = false
+    @State private var showRenameAlert: Bool = false
+    @State private var showDeleteAlert: Bool = false
+    @State private var renamingCategory: String = ""
+    @State private var deletingCategory: String = ""
+    @State private var newCategoryName: String = ""
+    
+    @State private var showingMenuFor: String?
+    @State private var menuPosition: CGRect = .zero
     
     private var categories: [String] {
         var allCategories = ["전체"]
@@ -42,13 +50,81 @@ struct CollectionView: View {
     }
     
     var body: some View {
-        VStack {
-            headerSection
-            tagSection
-            collectionSection
+        ZStack {
+            VStack {
+                headerSection
+                    .padding(.horizontal, Spacing.margin)
+                    .padding(.top, Spacing.padding)
+                
+                tagSection
+                    .padding(.horizontal, Spacing.xs)
+                
+                collectionSection
+                    .padding(.horizontal, Spacing.padding)
+            }
+            .ignoresSafeArea()
+            
+            if let menuCategory = showingMenuFor {
+                CategoryContextMenu(
+                    categoryName: menuCategory,
+                    position: menuPosition,
+                    onRename: {
+                        showingMenuFor = nil
+                        renamingCategory = menuCategory
+                        newCategoryName = menuCategory
+                        showRenameAlert = true
+                    },
+                    onDelete: {
+                        showingMenuFor = nil
+                        deletingCategory = menuCategory
+                        showDeleteAlert = true
+                    },
+                    onDismiss: {
+                        showingMenuFor = nil
+                    }
+                )
+                .zIndex(50)
+            }
+            
+            if showDeleteAlert {
+                DeletePopup(
+                    title: "[\(deletingCategory)]\n정말 삭제하시겠어요?",
+                    message: "한 번 삭제하면 복구 할 수 없습니다.",
+                    onCancel: {
+                        withAnimation {
+                            showDeleteAlert = false
+                            deletingCategory = ""
+                        }
+                    },
+                    onConfirm: {
+                        withAnimation {
+                            showDeleteAlert = false
+                            confirmDeleteCategory()
+                        }
+                    }
+                )
+                .zIndex(100)
+            }
+            
+            if showRenameAlert {
+                TagInputPopup(
+                    tagName: $newCategoryName,
+                    onCancel: {
+                        withAnimation {
+                            showRenameAlert = false
+                            deletingCategory = ""
+                        }
+                    },
+                    onConfirm: {
+                        withAnimation {
+                            showRenameAlert = false
+                            renameCategory()
+                        }
+                    }
+                )
+                .zIndex(100)
+            }
         }
-        .padding(Spacing.padding)
-        .ignoresSafeArea()
         .sheet(isPresented: $showSortSheet) {
             sortSheet
         }
@@ -92,6 +168,61 @@ struct CollectionView: View {
         }
     }
     
+    // MARK: - 태그 관리
+    private func renameCategory() {
+        guard !newCategoryName.isEmpty else { return }
+        
+        // 기존 이름과 같으면 변경 안 함
+        guard newCategoryName != renamingCategory else { return }
+        
+        // 이미 존재하는 태그 이름인지 확인
+        if collectionViewModel.tags.contains(newCategoryName) {
+            // TODO: 에러 처리 어떻게?
+            return
+        }
+        
+        guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+            print("UID를 찾을 수 없습니다")
+            return
+        }
+        
+        collectionViewModel.renameTag(
+            uid: uid,
+            oldName: renamingCategory,
+            newName: newCategoryName
+        ) { success in
+            if success {
+                if selectedCategory == renamingCategory {
+                    selectedCategory = "전체"
+                }
+                fetchUserData()
+            }
+        }
+        
+        newCategoryName = ""
+    }
+    
+    private func confirmDeleteCategory() {
+        guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+            print("UID를 찾을 수 없습니다")
+            return
+        }
+        
+        collectionViewModel.deleteTag(
+            uid: uid,
+            tagName: deletingCategory
+        ) { success in
+            if success {
+                if selectedCategory == deletingCategory {
+                    selectedCategory = "전체"
+                }
+                fetchUserData()
+            }
+        }
+        
+        deletingCategory = ""
+    }
+    
     // MARK: - 사용자 데이터 정렬 시트
     // TODO: 디자인 확정되면 반영
     private var sortSheet: some View {
@@ -100,23 +231,23 @@ struct CollectionView: View {
                 Button {
                     showSortSheet = false
                 } label: {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.primary)
+                    Image("Dismiss_gray600")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                 }
                 
                 Spacer()
                 
                 Text("정렬 기준")
-                    .font(.headline)
+                    .typography(.suit15B25)
                 
                 Spacer()
                 
                 Color.clear
                     .frame(width: 24)
             }
-            .padding()
-            
-            Divider()
+            .padding(.horizontal, 20)
+            .padding(.bottom, 10)
             
             VStack(spacing: 0) {
                 ForEach(sortOptions, id: \.self) { sort in
@@ -164,9 +295,15 @@ extension CollectionView {
 extension CollectionView {
     
     private var tagSection: some View {
-        CategoryTabBar(
+        CategoryTabBarWithLongPress(
             categories: categories,
-            selectedCategory: $selectedCategory
+            selectedCategory: $selectedCategory,
+            onLongPress: { category, position in
+                // Long press 시 메뉴 표시
+                showingMenuFor = category
+                menuPosition = position
+            },
+            editableCategories: Set(collectionViewModel.tags) // 전체는 제외
         )
         .padding(.top, Spacing.xs)
         .padding(.horizontal, 2)
@@ -187,7 +324,7 @@ extension CollectionView {
                 collectionGridView
             }
         }
-        .padding(.top, Spacing.xs)
+        //.padding(.top, Spacing.xs)
         .padding(.horizontal, Spacing.xs)
     }
     

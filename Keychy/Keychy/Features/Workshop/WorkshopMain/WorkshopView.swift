@@ -36,6 +36,24 @@ struct WorkshopView: View {
 
             // 스티키 헤더 (카테고리 탭 + 필터)
             stickyHeaderSection
+
+            // 상단 그라데이션 블러 오버레이
+            VStack {
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(0.8),
+                        Color.white.opacity(0.6),
+                        Color.white.opacity(0.3),
+                        Color.clear
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 100)
+                .ignoresSafeArea(edges: .top)
+                Spacer()
+            }
+            .allowsHitTesting(false)
         }
         .background(
             Image(.back)
@@ -76,65 +94,38 @@ struct WorkshopView: View {
 
     /// 메인 스크롤 콘텐츠
     var mainScrollContent: some View {
-        ScrollViewReader { scrollProxy in
-            ScrollView(showsIndicators: false){
-                VStack(spacing: 0) {
-                    // 상단 배너 (코인 버튼 + 타이틀)
-                    topBannerSection
-                        .frame(height: 150)
-                        .id("top")
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                // 상단 배너 (코인 버튼 + 타이틀)
+                topBannerSection
+                    .frame(height: 150)
 
-                    Spacer()
-                        .frame(height: 20)
+                Spacer()
+                    .frame(height: 20)
 
-                    // 내 창고 섹션
-                    myCollectionSection
-                        .id("myCollection")
+                // 내 창고 섹션
+                myCollectionSection
 
-                    // 메인 콘텐츠 (그리드)
-                    mainContentSection
-                        .id("mainContent")
-                        .background(
-                            GeometryReader { geo in
-                                let minY = geo.frame(in: .global).minY
-                                Color.clear
-                                    .onAppear {
-                                        viewModel.mainContentOffset = minY
-                                    }
-                                    .onChange(of: minY) { oldValue, newValue in
-                                        viewModel.mainContentOffset = newValue
-                                    }
-                            }
-                        )
-                }
-                .padding(.top, 60)
-                .background(alignment: .top) {
-                    Image("WorkshopBack")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                }
-            }
-            .onAppear {
-                // 저장된 카테고리와 스크롤 위치 복원
-                if let savedCategory = viewModel.savedCategory {
-                    // 카테고리 복원
-                    viewModel.selectedCategory = savedCategory
-
-                    // 스크롤 위치 복원 (아이템이 화면 중앙에 오도록)
-                    if let savedPosition = viewModel.savedScrollPosition {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            withAnimation {
-                                scrollProxy.scrollTo(savedPosition, anchor: .center)
-                            }
+                // 메인 콘텐츠 (그리드)
+                mainContentSection
+                    .background(
+                        GeometryReader { geo in
+                            let minY = geo.frame(in: .global).minY
+                            Color.clear
+                                .onAppear {
+                                    viewModel.mainContentOffset = minY
+                                }
+                                .onChange(of: minY) { oldValue, newValue in
+                                    viewModel.mainContentOffset = newValue
+                                }
                         }
-                    }
-
-                    // 복원 후 초기화
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        viewModel.savedScrollPosition = nil
-                        viewModel.savedCategory = nil
-                    }
-                }
+                    )
+            }
+            .padding(.top, 60)
+            .background(alignment: .top) {
+                Image("WorkshopBack")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
             }
         }
     }

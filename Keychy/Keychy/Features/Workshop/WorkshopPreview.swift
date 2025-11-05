@@ -12,7 +12,8 @@ struct WorkshopPreview: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var effectManager = EffectManager.shared
-    
+    @State private var isParticleReady = false
+
     let item: any WorkshopItem
     
     /// 아이템 보유 여부 확인
@@ -35,18 +36,33 @@ struct WorkshopPreview: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                itemPreview
-                Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            
+            Spacer()
+            
+            itemPreview
+            
+            Spacer()
+            
+            HStack {
                 ItemDetailInfoSection(item: item)
+                
+                Spacer()
+                
+                // 사운드일 경우 재생 버튼 표시
+                if item is Sound {
+                    VStack {
+                        Spacer()
+                        effectPlayButton
+                    }
+                }
             }
-            .padding(.bottom, 120)
+            .padding(.bottom, 40)
+            .frame(height: 120)
             
             actionButton
         }
-        .padding(.horizontal, 35)
+        .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
     }
 }
@@ -56,86 +72,94 @@ extension WorkshopPreview {
     private var itemPreview: some View {
         GeometryReader { geometry in
             VStack {
-                Spacer()
                 
-                ZStack {
+                Spacer()
+
+                // 파티클이 아닌 경우 이미지 표시
+                if !(item is Particle) {
                     ItemDetailImage(itemURL: getPreviewURL())
                         .scaledToFit()
                         .frame(maxWidth: .infinity)
-                    
-                        .opacity(isParticlePlaying ? 0 : 1)
-                        .animation(.easeInOut(duration: 0.3), value: isParticlePlaying)
-                    
-                    // 파티클 이펙트일 경우 재생 뷰 표시
-                    if let particle = item as? Particle,
-                       let particleId = particle.id,
-                       effectManager.playingParticleId == particleId {
-                        particleLottieView(particleId: particleId, effectManager: effectManager)
-                            .frame(height: getItemHeight(containerWidth: geometry.size.width))
-                    }
-                    
-                    // 이펙트일 경우 재생 버튼 표시
-                    if item is Sound || item is Particle {
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                effectPlayButton
+                        .cornerRadius(20)
+                }
+
+                // 파티클 이펙트일 경우 무한 재생
+                if let particle = item as? Particle,
+                   let particleId = particle.id {
+                    if isParticleReady {
+                        infiniteParticleLottieView(particleId: particleId)
+                    } else {
+                        ProgressView()
+                            .task {
+                                await ensureParticleReady(particle)
                             }
-                        }
-                        .padding(.bottom, 93)
-                        .padding(.trailing, 16)
                     }
                 }
-                
+
                 Spacer()
             }
+            .padding(.horizontal, 30)
             .frame(height: 500)
         }
     }
-    
-    /// 파티클이 재생 중인지 확인
-    private var isParticlePlaying: Bool {
-        if let particle = item as? Particle,
-           let particleId = particle.id {
-            return effectManager.playingParticleId == particleId
+
+    /// 파티클 다운로드 및 소유권 처리
+    private func ensureParticleReady(_ particle: Particle) async {
+        guard let particleId = particle.id else { return }
+
+        // 무료 파티클이고 아직 소유하지 않았다면 소유권 추가
+        if particle.isFree && !(userManager.currentUser?.particleEffects.contains(particleId) ?? false) {
+            // playParticle을 통해 다운로드 및 소유권 처리
+            await effectManager.playParticle(particle, userManager: userManager)
+        } else {
+            // 이미 캐시 또는 Bundle에 있으면 바로 준비 완료
+            if effectManager.isInCache(particleId: particleId) || effectManager.isInBundle(particleId: particleId) {
+                isParticleReady = true
+                return
+            }
+
+            // 다운로드 필요
+            await effectManager.downloadParticle(particle, userManager: userManager)
         }
-        return false
+
+        isParticleReady = true
+    }
+
+    /// 파티클 무한 재생 뷰
+    private func infiniteParticleLottieView(particleId: String) -> some View {
+        LottieView(
+            name: particleId,
+            loopMode: .loop,  // 무한 재생
+            speed: 1.0
+        )
     }
     
-    /// 이펙트 재생 버튼
+    /// 사운드 재생 버튼
     private var effectPlayButton: some View {
         let itemId = item.id ?? ""
         let isDownloading = effectManager.downloadingItemIds.contains(itemId)
         let progress = effectManager.downloadProgress[itemId] ?? 0.0
-        
+
         return Button {
             Task {
                 if let sound = item as? Sound {
                     await effectManager.playSound(sound, userManager: userManager)
-                } else if let particle = item as? Particle {
-                    await effectManager.playParticle(particle, userManager: userManager)
                 }
             }
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.gray50)
-                    .frame(width: 50, height: 50)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.white100, lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
-                
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.black100)
+                    .frame(width: 38, height: 38)
+
                 if isDownloading {
                     CircularProgressView(progress: progress)
-                        .frame(width: 25, height: 25)
+                        .frame(width: 20, height: 20)
                 } else {
-                    Image(.polygon)
+                    Image(.whitePolygon)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 18, height: 18)
+                        .frame(width: 12, height: 12)
                 }
             }
         }
@@ -156,22 +180,6 @@ extension WorkshopPreview {
             return sound.thumbnail
         }
         return item.thumbnailURL
-    }
-    
-    /// 아이템 타입에 따른 높이 계산
-    private func getItemHeight(containerWidth: CGFloat) -> CGFloat {
-        if item is KeyringTemplate {
-            // 키링: 4:3 비율
-            let ratio: CGFloat = 4 / 3
-            return containerWidth * ratio
-        } else if item is Background {
-            // 배경: 16:9 비율
-            let ratio: CGFloat = 16 / 9
-            return containerWidth * ratio
-        } else {
-            // 카라비너, 이펙트: 1:1 비율
-            return containerWidth
-        }
     }
 }
 
@@ -211,17 +219,18 @@ extension WorkshopPreview {
             // TODO: 구매 로직 구현
             print("구매: \(item.name) - \(item.workshopPrice) 코인")
         } label: {
-            HStack(spacing: 4) {
-                Image(.keyCoin)
+            HStack(spacing: 5) {
+                Image(.buyKey)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 32)
                 
                 Text("\(item.workshopPrice)")
-                    .typography(.suit17B)
+                    .typography(.nanum18EB)
+                    .foregroundStyle(.white100)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 7.5)
+            .frame(height: 36)
         }
         .buttonStyle(.glassProminent)
         .tint(.black80)
@@ -235,7 +244,8 @@ extension WorkshopPreview {
         soundName: "딸랑딸랑",
         description: "귀여운 종소리 효과음",
         soundData: "sample_bell.mp3",
-        thumbnail: "https://via.placeholder.com/150",
+        thumbnail: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FCloudHangerBack.png?alt=media&token=74b8d537-6b27-4562-8536-3b97624e1e9f"
+,
         tags: ["귀여움", "종소리"],
         price: 100,
         downloadCount: 42,

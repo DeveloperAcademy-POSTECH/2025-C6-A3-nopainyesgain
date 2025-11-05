@@ -157,6 +157,11 @@ extension CollectionViewModel {
                     self.maxKeyringCount = maxCount
                 }
                 
+                // 재화 가져오기
+                if let coin = data["coin"] as? Int {
+                    self.coin = coin
+                }
+                
                 completion(true)
 
             }

@@ -23,7 +23,7 @@ extension WorkshopView {
                 }
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(.white100)
     }
 
     /// 로딩 뷰
@@ -63,40 +63,14 @@ extension WorkshopView {
 
     /// 이펙트 전용 콘텐츠 (사운드 + 파티클)
     var effectContentView: some View {
-        Group {
-            let items = viewModel.filteredEffects
-
-            if items.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 16) {
-                    ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                        if let sound = item as? Sound {
-                            WorkshopItemView(
-                                item: sound,
-                                isOwned: viewModel.isSoundOwned(sound),
-                                router: router,
-                                viewModel: viewModel
-                            )
-                            .id(sound.id)
-                        } else if let particle = item as? Particle {
-                            WorkshopItemView(
-                                item: particle,
-                                isOwned: viewModel.isParticleOwned(particle),
-                                router: router,
-                                viewModel: viewModel
-                            )
-                            .id(particle.id)
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 92)
-            }
-        }
+        WorkshopGridHelpers.effectGridView(
+            items: viewModel.filteredEffects,
+            isSoundOwned: viewModel.isSoundOwned,
+            isParticleOwned: viewModel.isParticleOwned,
+            router: router,
+            viewModel: viewModel,
+            emptyView: emptyContentView
+        )
     }
 
     /// 통합 아이템 그리드 뷰
@@ -104,28 +78,13 @@ extension WorkshopView {
         items: [T],
         isOwnedCheck: @escaping (T) -> Bool
     ) -> some View {
-        Group {
-            if items.isEmpty {
-                emptyContentView
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 11) {
-                    ForEach(items) { item in
-                        WorkshopItemView(
-                            item: item,
-                            isOwned: isOwnedCheck(item),
-                            router: router,
-                            viewModel: viewModel
-                        )
-                        .id(item.id)
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 92)
-            }
-        }
+        WorkshopGridHelpers.itemGridView(
+            items: items,
+            isOwnedCheck: isOwnedCheck,
+            router: router,
+            viewModel: viewModel,
+            emptyView: emptyContentView
+        )
     }
 
     /// KEYCHY! 전용 콘텐츠 (준비 중)

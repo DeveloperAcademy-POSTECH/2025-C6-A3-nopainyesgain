@@ -50,8 +50,11 @@ struct SortOption: View {
         Button(action: action) {
             HStack {
                 Text(title)
-                    .foregroundStyle(.primary)
+                    .typography(.suit16M)
+                    .foregroundColor(.black100)
+                
                 Spacer()
+                
                 if isSelected {
                     Image(systemName: "checkmark")
                         .foregroundStyle(.pink)
@@ -74,14 +77,15 @@ struct WorkshopSortSheet: View {
                 Button {
                     showSheet = false
                 } label: {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.primary)
+                    Image("Dismiss_gray600")
+                        .resizable()
+                        .frame(width: 24, height: 24)
                 }
-
+                
                 Spacer()
-
+                
                 Text("정렬 기준")
-                    .font(.headline)
+                    .typography(.suit15B25)
 
                 Spacer()
 
@@ -170,7 +174,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                     }
                 }
             }
-            .padding(.vertical,10)
 
             // 가격 오버레이
             priceOverlay(

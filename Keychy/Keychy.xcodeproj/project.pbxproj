@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		38173D082EB8AD3900E36F7E /* CollectionViewModel+Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */; };
+		38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */; };
+		38173D0C2EB8AD8800E36F7E /* CategoryContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38173D0B2EB8AD8800E36F7E /* CategoryContextMenu.swift */; };
+		38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38173D0E2EB9083900E36F7E /* DeletePopup.swift */; };
+		38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38173D102EB90CCE00E36F7E /* TagInputPopup.swift */; };
 		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */; };
 		385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */; };
@@ -16,6 +21,7 @@
 		385425CC2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425CB2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift */; };
 		386AECC92EB445F80001A5CD /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596772EAFA9430003D712 /* SplashView.swift */; };
 		386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AECCA2EB45A640001A5CD /* ProfileSetupCompleteView.swift */; };
+		38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */; };
 		38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943B2EAE4EE20003D712 /* FirebaseAnalytics */; };
 		38A5943E2EAE4EE20003D712 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943D2EAE4EE20003D712 /* FirebaseAuth */; };
 		38A594402EAE4EE20003D712 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943F2EAE4EE20003D712 /* FirebaseCore */; };
@@ -155,6 +161,7 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
+		AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */; };
 		AADD2AB12EB3A4E50051478E /* CarabinerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */; };
 		AADD2AB22EB3A4E50051478E /* CarabinerScene+Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */; };
 		AADD2AB32EB3A4E50051478E /* CarabinerScene+SetUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */; };
@@ -165,9 +172,9 @@
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
 		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
-		C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
+		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
 		C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CC2EB7B94B00C5F083 /* EffectManager.swift */; };
 		C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */; };
 		C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */; };
@@ -177,7 +184,6 @@
 		C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
-		C6C402912EB2F8A1006B58DF /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402902EB2F8A1006B58DF /* MyItemsView.swift */; };
 		C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */; };
 		C6C402A12EB3F3A9006B58DF /* WorkshopComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */; };
 		C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A22EB40ACA006B58DF /* AlarmView.swift */; };
@@ -198,6 +204,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Tags.swift"; sourceTree = "<group>"; };
+		38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBarWithLongPress.swift; sourceTree = "<group>"; };
+		38173D0B2EB8AD8800E36F7E /* CategoryContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryContextMenu.swift; sourceTree = "<group>"; };
+		38173D0E2EB9083900E36F7E /* DeletePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePopup.swift; sourceTree = "<group>"; };
+		38173D102EB90CCE00E36F7E /* TagInputPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagInputPopup.swift; sourceTree = "<group>"; };
 		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Sort.swift"; sourceTree = "<group>"; };
 		385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
@@ -205,6 +216,7 @@
 		385425C92EB3C79A00A06C02 /* KeyringDetailScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringDetailScene.swift; sourceTree = "<group>"; };
 		385425CB2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringDetailScene+Setup.swift"; sourceTree = "<group>"; };
 		386AECCA2EB45A640001A5CD /* ProfileSetupCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupCompleteView.swift; sourceTree = "<group>"; };
+		38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		38A596722EAFA8D20003D712 /* KeychyUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyUser.swift; sourceTree = "<group>"; };
 		38A596772EAFA9430003D712 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -339,6 +351,7 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerPreviewScene.swift; sourceTree = "<group>"; };
 		AADD2AAD2EB3A4E50051478E /* CarabinerScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerScene.swift; sourceTree = "<group>"; };
 		AADD2AAE2EB3A4E50051478E /* CarabinerScene+Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+Interaction.swift"; sourceTree = "<group>"; };
 		AADD2AAF2EB3A4E50051478E /* CarabinerScene+SetUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarabinerScene+SetUp.swift"; sourceTree = "<group>"; };
@@ -349,9 +362,9 @@
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
 		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
-		C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
+		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
 		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
 		C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
 		C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
@@ -361,7 +374,6 @@
 		C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPhotoPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
-		C6C402902EB2F8A1006B58DF /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
 		C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopComponents.swift; sourceTree = "<group>"; };
 		C6C402A22EB40ACA006B58DF /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
@@ -390,6 +402,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		38173D0D2EB902FD00E36F7E /* Popup */ = {
+			isa = PBXGroup;
+			children = (
+				38173D0E2EB9083900E36F7E /* DeletePopup.swift */,
+				38173D102EB90CCE00E36F7E /* TagInputPopup.swift */,
+			);
+			path = Popup;
+			sourceTree = "<group>";
+		};
 		385425C12EB2C34D00A06C02 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
@@ -403,6 +424,8 @@
 			children = (
 				38A5967F2EAFCF5F0003D712 /* UserManager.swift */,
 				38C147C62EB1F57F00A8E511 /* StorageManager.swift */,
+				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
+				C6830F032EB8A4000059379A /* WorkshopDataManager.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -553,7 +576,7 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
-				C665DE6E2EAF803F00CE4495 /* GoogleService-Info.plist */,
+				38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
 				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
@@ -632,6 +655,7 @@
 		4CEC61F82EAE08DA0099ECEE /* View */ = {
 			isa = PBXGroup;
 			children = (
+				38173D0D2EB902FD00E36F7E /* Popup */,
 				4CBBEF202EB3705E00252590 /* Items */,
 				38C147B92EB13B2100A8E511 /* Button */,
 				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
@@ -768,6 +792,7 @@
 				38C147BC2EB14DFF00A8E511 /* CollectionViewModel+Status.swift */,
 				38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */,
 				385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */,
+				38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */,
 				4CEC62A42EAE0BA30099ECEE /* Bundle */,
 			);
 			path = ViewModels;
@@ -780,6 +805,8 @@
 				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
 				385425BD2EB2989400A06C02 /* CollectionCellView.swift */,
 				38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */,
+				38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */,
+				38173D0B2EB8AD8800E36F7E /* CategoryContextMenu.swift */,
 				385425C12EB2C34D00A06C02 /* Widget */,
 				4CEC629D2EAE09990099ECEE /* Bundle */,
 			);
@@ -967,13 +994,10 @@
 			children = (
 				C6830F072EB8E96D0059379A /* MyItemsView.swift */,
 				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
-				C6830F032EB8A4000059379A /* WorkshopDataManager.swift */,
 				C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */,
 				C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */,
 				C68931D12EB850BC00C5F083 /* WorkshopMain */,
-				C6C402902EB2F8A1006B58DF /* MyItemsView.swift */,
 				C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */,
-				C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */,
 				4CEC62672EAE08DF0099ECEE /* Making */,
 				C665DDE92EAEFAA800CE4495 /* Coin */,
 			);
@@ -1040,6 +1064,7 @@
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
+				AAB30F852EB9F38400CF6C55 /* CarabinerPreviewScene.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -1094,6 +1119,7 @@
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */,
 				C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */,
+				C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */,
 				C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */,
 				C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */,
 			);
@@ -1212,7 +1238,7 @@
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
 				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
-				C665DE6F2EAF803F00CE4495 /* GoogleService-Info.plist in Resources */,
+				38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
 				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
@@ -1231,10 +1257,10 @@
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
 				C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */,
 				C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */,
+				C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */,
 				C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */,
 				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
-				C6C402912EB2F8A1006B58DF /* MyItemsView.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
 				4C6530482EBA8886000F8154 /* EffectItem.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
@@ -1261,6 +1287,7 @@
 				4CEC621E2EAE08DA0099ECEE /* KeyringChainComponent.swift in Sources */,
 				4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */,
 				4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */,
+				38173D0C2EB8AD8800E36F7E /* CategoryContextMenu.swift in Sources */,
 				385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */,
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
@@ -1277,6 +1304,7 @@
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
+				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
@@ -1307,11 +1335,13 @@
 				4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */,
 				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
+				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
 				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
 				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
+				38173D082EB8AD3900E36F7E /* CollectionViewModel+Tags.swift in Sources */,
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
 				C6C402A12EB3F3A9006B58DF /* WorkshopComponents.swift in Sources */,
@@ -1331,6 +1361,7 @@
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
+				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
 				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
 				4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */,
 				4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */,
@@ -1366,6 +1397,7 @@
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
 				4C6530422EBA7D12000F8154 /* KeyringCustomizingView+PurchaseSheet.swift in Sources */,
+				AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
 				386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */,
 			);
