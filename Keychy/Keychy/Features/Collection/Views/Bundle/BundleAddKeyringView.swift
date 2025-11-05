@@ -88,13 +88,14 @@ extension BundleAddKeyringView {
                 }
 
                 // 2층: 여러 키링을 하나의 씬에 표시
-                if let carabiner = viewModel.selectedCarabiner, !selectedKeyrings.isEmpty {
+                if let carabiner = viewModel.selectedCarabiner {
                     MultiKeyringSceneView(
                         keyringDataList: createKeyringDataList(carabiner: carabiner, geometry: geometry),
                         ringType: .basic,
                         chainType: .basic,
                         backgroundColor: .clear
                     )
+                    .id(selectedKeyrings.keys.sorted())  // 키링 변경 시 View 재생성
                 }
 
                 // 3층: 버튼 오버레이 (가장 위)
