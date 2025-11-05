@@ -33,8 +33,11 @@ struct BundleAddKeyringView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                sceneView(geometry: geometry)
+            ZStack(alignment: .bottom) {
+                VStack {
+                    sceneView(geometry: geometry)
+                    Spacer()
+                }
 
                 if showSelectKeyringSheet {
                     keyringSelectionSheet(height: geometry.size.height * 0.5)
@@ -77,15 +80,19 @@ extension BundleAddKeyringView {
     /// 씬 뷰
     private func sceneView(geometry: GeometryProxy) -> some View {
         VStack {
-            ZStack {
-                // 1층: 카라비너 이미지 표시
-                if let image = carabinerImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: geometry.size.width * 0.5)
-                } else {
-                    ProgressView()
+            ZStack(alignment: .top) {
+                // 1층: 뒷 카라비너 이미지 표시
+                if let carabiner = viewModel.selectedCarabiner {
+                    LazyImage(url: URL(string: carabiner.carabinerImage[1])) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                        
                 }
 
                 // 2층: 여러 키링을 하나의 씬에 표시
@@ -98,14 +105,28 @@ extension BundleAddKeyringView {
                     )
                     .id(selectedKeyrings.keys.sorted())  // 키링 변경 시 View 재생성
                 }
-
-                // 3층: 버튼 오버레이 (가장 위)
+                // 3층 : 앞 카라비너 이미지 표시 (햄버거 구조)
+                if let carabiner = viewModel.selectedCarabiner {
+                    LazyImage(url: URL(string: carabiner.carabinerImage[2])) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                }
+                
+                // 4층: 버튼 오버레이 (가장 위)
                 if isSceneReady, let carabiner = viewModel.selectedCarabiner {
                     keyringButtons(carabiner: carabiner, geometry: geometry)
                 }
             }
+            .padding(.top, 60) // 상단 여유 공간 추가
             Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     /// 키링 추가 버튼들
@@ -267,14 +288,14 @@ extension BundleAddKeyringView {
     /// 씬 생성
     private func createScene(size: CGSize, screenWidth: CGFloat) {
         guard let carabiner = viewModel.selectedCarabiner,
-              let imageURL = carabiner.carabinerImage[safe: 1] else {
+              let backImageURL = carabiner.carabinerImage[safe: 1], let frontImageURL = carabiner.carabinerImage[safe: 2] else {
             return
         }
 
         isSceneReady = false
 
         Task {
-            guard let image = try? await StorageManager.shared.getImage(path: imageURL) else {
+            guard let image = try? await StorageManager.shared.getImage(path: backImageURL) else {
                 print("카라비너 이미지 로드 실패")
                 return
             }
@@ -311,15 +332,10 @@ extension BundleAddKeyringView {
 extension BundleAddKeyringView {
     /// 버튼 위치 계산
     private func buttonPosition(index: Int, carabiner: Carabiner, geometry: GeometryProxy) -> CGPoint {
-        let carabinerWidth = geometry.size.width * 0.5
-        let aspectRatio = carabinerImage.map { $0.size.height / $0.size.width } ?? 1.0
-        let carabinerHeight = carabinerWidth * aspectRatio
-
-        let centerX = geometry.size.width / 2
-        let centerY = geometry.size.height / 2
-
-        let x = centerX + (carabinerWidth * (carabiner.keyringXPosition[index] - 0.5))
-        let y = centerY - (carabinerHeight * (carabiner.keyringYPosition[index] - 0.5))
+        // carabiner의 keyringXPosition, keyringYPosition은 화면 비율 (0.0 ~ 1.0)
+        let x = carabiner.keyringXPosition[index] * geometry.size.width
+        // 상단 패딩(60pt) 고려하여 Y 위치 조정
+        let y = carabiner.keyringYPosition[index] * geometry.size.height + 60
 
         return CGPoint(x: x, y: y)
     }
@@ -331,16 +347,15 @@ extension BundleAddKeyringView {
         // 추가된 순서대로 처리
         for index in keyringOrder {
             guard let keyring = selectedKeyrings[index] else { continue }
-            let position = buttonPosition(index: index, carabiner: carabiner, geometry: geometry)
-
-            // 사운드 정보 추출
             let soundId = keyring.soundId
+            // 사운드 정보 추출
+
 
             // 커스텀 사운드 URL 처리
             // soundId가 URL 형식이면 해당 URL 사용, 아니면 nil
             let customSoundURL: URL? = {
-                if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
                     return URL(string: soundId)
+                if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
                 }
                 return nil
             }()
@@ -348,9 +363,14 @@ extension BundleAddKeyringView {
             // 파티클 정보 추출
             let particleId = keyring.particleId
 
+            let relativePosition = CGPoint(
+                x: carabiner.keyringXPosition[index],
+                y: carabiner.keyringYPosition[index]
+            )
+            
             let data = MultiKeyringScene.KeyringData(
                 index: index,
-                position: position,
+                position: relativePosition,  // 비율 좌표 직접 전달
                 bodyImageURL: keyring.bodyImage,
                 soundId: soundId,
                 customSoundURL: customSoundURL,

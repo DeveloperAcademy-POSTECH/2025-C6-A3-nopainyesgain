@@ -109,6 +109,7 @@ class MultiKeyringScene: SKScene {
 
         // 좌표 변환: SwiftUI 좌표 -> SpriteKit 좌표
         let spriteKitPosition = convertToSpriteKitCoordinates(data.position)
+        
 
         // 각 키링 그룹에 고유한 categoryBitMask 설정 (충돌 방지)
         let categoryBitMask: UInt32 = UInt32(1 << data.index)
@@ -122,9 +123,17 @@ class MultiKeyringScene: SKScene {
             guard let self = self, let ring = ring else {
                 return
             }
-
-            ring.position = spriteKitPosition
             ring.zPosition = baseZPosition  // Ring이 가장 뒤
+            
+            let ringFrame = ring.calculateAccumulatedFrame()
+            let ringRadius = ringFrame.height / 2
+            
+            // Ring 위치: Ring의 상단이 정확히 + 버튼 위치에 오도록 설정
+            let ringCenterX = spriteKitPosition.x
+            // 미세 조정: 필요시 오프셋 추가
+            let ringCenterY = spriteKitPosition.y - ringRadius + 2  // +2pt 오프셋으로 조정
+            ring.position = CGPoint(x: ringCenterX, y: ringCenterY)
+            
             ring.physicsBody?.isDynamic = false
             ring.physicsBody?.categoryBitMask = categoryBitMask
             ring.physicsBody?.collisionBitMask = collisionBitMask
