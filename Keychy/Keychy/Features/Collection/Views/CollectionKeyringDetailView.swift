@@ -66,7 +66,7 @@ struct CollectionKeyringDetailView: View {
                             if let docId = firestoreDocumentId {
                                 print("복사할 키링 Firestore ID: \(docId)")
                             } else {
-                                print("⚠️ 복사 실패: Firestore ID 없음")
+                                print("복사 실패: Firestore ID 없음")
                             }
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showCopyAlert = true
@@ -74,11 +74,6 @@ struct CollectionKeyringDetailView: View {
                         },
                         onDelete: {
                             showMenu = false
-                            if let docId = firestoreDocumentId {
-                                print("삭제할 키링 Firestore ID: \(docId)")
-                            } else {
-                                print("⚠️ 삭제 실패: Firestore ID 없음")
-                            }
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showDeleteAlert = true
                             }
@@ -150,9 +145,6 @@ struct CollectionKeyringDetailView: View {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     showCopyAlert = false
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    //deletingCategory = ""
-                                }
                             },
                             onConfirm: {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -160,9 +152,19 @@ struct CollectionKeyringDetailView: View {
                                 }
 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    //confirmDeleteCategory()
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showCopyCompleteAlert = true
+                                    guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                                        print("UID를 찾을 수 없습니다")
+                                        return
+                                    }
+                                    
+                                    viewModel.copyKeyring(uid: uid, keyring: keyring) { success, newKeyringId in
+                                        if success {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                                showCopyCompleteAlert = true
+                                            }
+                                        } else {
+                                            print("키링 복사 실패")
+                                        }
                                     }
                                 }
                             }
