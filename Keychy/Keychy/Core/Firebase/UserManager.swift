@@ -370,6 +370,40 @@ class UserManager {
 
         return hashString
     }
+    
+    // MARK: - 코인 업데이트
+    /// 유저의 코인을 증가시키고 Firestore에 저장
+    func updateCoin(by amount: Int, completion: @escaping (Bool) -> Void) {
+        guard var user = currentUser else {
+            print("현재 유저가 없습니다.")
+            completion(false)
+            return
+        }
+
+        // 로컬 상태 업데이트
+        user.coin += amount
+
+        // Firestore에 업데이트
+        db.collection("User").document(user.id).updateData([
+            "coin": user.coin
+        ]) { [weak self] error in
+            guard let self = self else {
+                completion(false)
+                return
+            }
+
+            if let error = error {
+                print("코인 업데이트 실패: \(error)")
+                completion(false)
+            } else {
+                // 로컬 상태 반영
+                self.currentUser = user
+                print("코인 업데이트 성공: \(user.coin)")
+                completion(true)
+            }
+        }
+    }
+
 }
 
 // MARK: - AppleAuthCoordinator

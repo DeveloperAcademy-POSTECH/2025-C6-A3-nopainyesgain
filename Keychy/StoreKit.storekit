@@ -9,7 +9,7 @@
       }
     ]
   },
-  "identifier" : "C1BC10A5",
+  "identifier" : "720DB1B5",
   "nonRenewingSubscriptions" : [
 
   ],
@@ -17,25 +17,28 @@
     {
       "displayPrice" : "0.99",
       "familyShareable" : false,
-      "internalID" : "AFABFDA9",
+      "internalID" : "6754951218",
       "localizations" : [
         {
-          "description" : "",
-          "displayName" : "체리100",
-          "locale" : "en_US"
+          "description" : "치키 100개를 구입합니다.",
+          "displayName" : "100치키",
+          "locale" : "ko"
         }
       ],
-      "productID" : "coin",
-      "referenceName" : "Coin",
+      "productID" : "keychycoin01",
+      "referenceName" : "keychycoin100개",
       "type" : "Consumable"
     }
   ],
   "settings" : {
+    "_applicationInternalID" : "6754951347",
     "_askToBuyEnabled" : false,
     "_billingGracePeriodEnabled" : false,
     "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "BUKGH5MWAT",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 784088427.26765001,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",

@@ -174,12 +174,10 @@
 		C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
-		C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C665DDED2EAF077900CE4495 /* Product.storekit */; };
-		C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */; };
+		C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
-		C6830F102EBA0A8C0059379A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6830F0F2EBA0A8C0059379A /* GoogleService-Info.plist */; };
 		C6830F172EBB08380059379A /* MultiKeyringScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F152EBB08380059379A /* MultiKeyringScene.swift */; };
 		C6830F182EBB08380059379A /* MultiKeyringSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */; };
 		C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CC2EB7B94B00C5F083 /* EffectManager.swift */; };
@@ -188,6 +186,8 @@
 		C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */; };
 		C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */; };
 		C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */; };
+		C6B56F092EBC3D670049F969 /* StoreKit.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6B56F082EBC3D670049F969 /* StoreKit.storekit */; };
+		C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */; };
 		C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -371,12 +371,10 @@
 		C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateInitializer.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		C665DDED2EAF077900CE4495 /* Product.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Product.storekit; path = Keychy/Resources/Product.storekit; sourceTree = "<group>"; };
-		C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
+		C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
-		C6830F0F2EBA0A8C0059379A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C6830F152EBB08380059379A /* MultiKeyringScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringScene.swift; sourceTree = "<group>"; };
 		C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringSceneView.swift; sourceTree = "<group>"; };
 		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
@@ -385,6 +383,8 @@
 		C68931D32EB8527C00C5F083 /* WorkshopMyCollectionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMyCollectionSection.swift; sourceTree = "<group>"; };
 		C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopStickyHeaderSection.swift; sourceTree = "<group>"; };
 		C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTopBannerSection.swift; sourceTree = "<group>"; };
+		C6B56F082EBC3D670049F969 /* StoreKit.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = StoreKit.storekit; sourceTree = "<group>"; };
+		C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProduct.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPhotoPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -448,7 +448,8 @@
 		385425C52EB2C49D00A06C02 /* Store */ = {
 			isa = PBXGroup;
 			children = (
-				C665DDEF2EAF08D000CE4495 /* StoreKitManager.swift */,
+				C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */,
+				C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -1128,7 +1129,7 @@
 			isa = PBXGroup;
 			children = (
 				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
-				C665DDED2EAF077900CE4495 /* Product.storekit */,
+				C6B56F082EBC3D670049F969 /* StoreKit.storekit */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1253,6 +1254,7 @@
 				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,
 				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
 				4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */,
+				C6B56F092EBC3D670049F969 /* StoreKit.storekit in Resources */,
 				4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */,
 				4C6622072EAE5FC3001760B5 /* SUIT-ExtraLight.otf in Resources */,
 				4C6622082EAE5FC3001760B5 /* SUIT-Heavy.otf in Resources */,
@@ -1268,7 +1270,6 @@
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
 				38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
-				C665DDEE2EAF077900CE4495 /* Product.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1422,7 +1423,7 @@
 				385425CC2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift in Sources */,
 				4C6530722EBCFD10000F8154 /* BangmarkAlert.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
-				C665DDF02EAF08D000CE4495 /* StoreKitManager.swift in Sources */,
+				C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
 				AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */,
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
@@ -1431,8 +1432,8 @@
 				C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
+				C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */,
 				4C6530422EBA7D12000F8154 /* KeyringCustomizingView+PurchaseSheet.swift in Sources */,
-				AAB30F862EB9F38400CF6C55 /* CarabinerPreviewScene.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
 				386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */,
 			);

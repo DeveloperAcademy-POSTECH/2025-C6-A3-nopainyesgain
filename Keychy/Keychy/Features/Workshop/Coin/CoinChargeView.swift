@@ -10,10 +10,9 @@ import StoreKit
 
 struct CoinChargeView<Route: Hashable>: View {
     @Bindable var router: NavigationRouter<Route>
-    @Bindable var store = StoreKitManager()
-    
-    @State private var currentCherry: Int = 6000
-    
+    @State private var manager = PurchaseManager.shared
+    @State private var userManager = UserManager.shared
+
     var body: some View {
         List {
             currentCherrySection
@@ -32,9 +31,9 @@ extension CoinChargeView {
         Section {
             Label {
                 HStack {
-                    Text("현재 보유한 체리")
+                    Text("현재 보유한 키치")
                     Spacer()
-                    Text("\(currentCherry)")
+                    Text("\(userManager.currentUser?.coin ?? 0)")
                         .foregroundStyle(.red)
                         .fontWeight(.semibold)
                 }
@@ -47,25 +46,24 @@ extension CoinChargeView {
     }
     
     private var cherrySection: some View {
-        Section("체리") {
-            ForEach(store.products, id: \.id) { product in
-                cherryRow(for: product)
+        Section("키치") {
+            ForEach(manager.products, id: \.id) { product in
+                coinRow(for: product)
             }
         }
     }
     
-    private func cherryRow(for product: Product) -> some View {
+    private func coinRow(for product: Product) -> some View {
         HStack {
             Label("\(product.displayName)개", systemImage: "leaf.fill")
                 .foregroundStyle(.red)
-            
+
             Spacer()
-            
+
             Button(product.displayPrice) {
                 Task {
                     do {
-                        _ = try await store.purchase(product)
-                        // TODO: 구매 성공 시 처리 (ex. 체리 증가)
+                        try await manager.purchase(product)
                     } catch {
                         print("구매 실패: \(error.localizedDescription)")
                     }
