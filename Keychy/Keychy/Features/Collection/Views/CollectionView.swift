@@ -179,8 +179,16 @@ struct CollectionView: View {
                     title: "인벤토리 확장 [+100]",
                     myCoin: collectionViewModel.coin,
                     price: 100,
-                    onConfirm: {}
+                    onConfirm: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showInvenExpandAlert = false
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                            //확장 로직
+                        }
+                    }
                 )
+                .transition(.scale.combined(with: .opacity))
             }
             
         }
@@ -425,7 +433,9 @@ extension CollectionView {
                 .padding(.trailing, 8)
 
             Button(action: {
-                showInvenExpandAlert = true
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showInvenExpandAlert = true
+                }
             }) {
                 Image("InvenPlus")
                     .resizable()

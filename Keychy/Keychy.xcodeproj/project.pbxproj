@@ -42,6 +42,7 @@
 		38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */; };
 		38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */; };
 		38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C62EB1F57F00A8E511 /* StorageManager.swift */; };
+		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530402EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */; };
@@ -239,6 +240,7 @@
 		38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringDetailView.swift; sourceTree = "<group>"; };
 		38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+LoadData.swift"; sourceTree = "<group>"; };
 		38C147C62EB1F57F00A8E511 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -808,6 +810,7 @@
 				38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */,
 				385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */,
 				38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */,
+				38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */,
 				4CEC62A42EAE0BA30099ECEE /* Bundle */,
 			);
 			path = ViewModels;
@@ -1403,6 +1406,7 @@
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
+				38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */,
 				4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
 				4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */,

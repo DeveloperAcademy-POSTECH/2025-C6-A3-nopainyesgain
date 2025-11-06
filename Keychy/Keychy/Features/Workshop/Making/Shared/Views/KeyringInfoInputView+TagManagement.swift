@@ -21,14 +21,13 @@ extension KeyringInfoInputView {
                     sheetDetent = .height(76)
                     showAddTagAlert = true
                 } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 18.75))
-                        .foregroundStyle(.black100)
+                    Image("Plus")
+                        .resizable()
+                        .frame(width: 25, height: 25)
                         .padding(4)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.white100)
-                                .stroke(.gray200, lineWidth: 1)
+                                .fill(Color.gray50)
                         )
                 }
                 ForEach(availableTags, id: \.self) { tag in
@@ -174,21 +173,22 @@ struct ChipView: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .typography(.suit14M)
+                .typography(isSelected ? .nanum15EB25 : .nanum15B25)
                 .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 15)
-                        .fill(isSelected ? Color.mainOpacity15 : Color.gray50)
+                        .fill(isSelected ? .mainOpacity15 : .gray50)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(isSelected ? Color.main700 : Color.gray300, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(isSelected ? .main500 : .clear, lineWidth: 1.5)
                 )
-                .foregroundStyle(isSelected ? Color.main700 : Color.gray300)
+                .foregroundStyle(isSelected ? .main500 : .gray400)
                 .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .buttonStyle(.plain)
+        .frame(height: 37)
     }
 }
 

@@ -24,7 +24,7 @@ struct TagInputPopup: View {
                 .padding(.top, 8)
             
             HStack {
-                TextField("태그 이름", text: $tagName)
+                TextField("태그를 입력해주세요", text: $tagName)
                     .typography(.suit16M)
                     .foregroundColor(.black100)
                     .padding(.horizontal, 16)

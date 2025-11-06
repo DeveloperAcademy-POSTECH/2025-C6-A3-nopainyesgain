@@ -11,6 +11,7 @@ import FirebaseFirestore
 
 struct CollectionKeyringDetailView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
+    @Bindable var viewModel: CollectionViewModel
     @State private var sheetDetent: PresentationDetent = .height(76)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
@@ -20,6 +21,8 @@ struct CollectionKeyringDetailView: View {
     @State private var showMenu: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteAlert: Bool = false
+    @State private var showCopyAlert: Bool = false
+    @State private var showCopyCompleteAlert: Bool = false
     @State private var menuPosition: CGRect = .zero
     
     let keyring: Keyring
@@ -55,15 +58,27 @@ struct CollectionKeyringDetailView: View {
                             isSheetPresented = false
                             isNavigatingDeeper = true
                             showMenu = false
-                            print("편집 버튼 눌림")
+                            
                             router.push(.keyringEditView(keyring))
                         },
                         onCopy: {
                             showMenu = false
-                            // TODO: 복사 로직
+                            if let docId = firestoreDocumentId {
+                                print("복사할 키링 Firestore ID: \(docId)")
+                            } else {
+                                print("⚠️ 복사 실패: Firestore ID 없음")
+                            }
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showCopyAlert = true
+                            }
                         },
                         onDelete: {
                             showMenu = false
+                            if let docId = firestoreDocumentId {
+                                print("삭제할 키링 Firestore ID: \(docId)")
+                            } else {
+                                print("⚠️ 삭제 실패: Firestore ID 없음")
+                            }
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showDeleteAlert = true
                             }
@@ -111,6 +126,45 @@ struct CollectionKeyringDetailView: View {
                             .zIndex(100)
                     }
                 }
+                
+                if showCopyAlert || showCopyCompleteAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    if showCopyAlert {
+                        CopyPopup(
+                            myCopyPass: viewModel.copyVoucher,
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showCopyAlert = false
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    //deletingCategory = ""
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showCopyAlert = false
+                                }
+
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    //confirmDeleteCategory()
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showCopyCompleteAlert = true
+                                    }
+                                }
+                            }
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                        .zIndex(100)
+                    }
+                    
+                    if showCopyCompleteAlert {
+                        CopyCompletePopup(isPresented: $showCopyCompleteAlert)
+                            .zIndex(100)
+                    }
+                }
                     
             }
         }
@@ -146,6 +200,10 @@ struct CollectionKeyringDetailView: View {
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
         }
+    }
+    
+    private var firestoreDocumentId: String? {
+        viewModel.keyringDocumentIdByLocalId[keyring.id]
     }
     
     // MARK: - 탭바 제어
@@ -524,6 +582,6 @@ struct TextHeightPreferenceKey: PreferenceKey {
 
 #Preview {
     CollectionKeyringDetailView(
-        router: NavigationRouter<CollectionRoute>(), keyring: Keyring(name: "궁극의 또치 키링", bodyImage: "dsflksdkl", soundId: "sdfsdf", particleId: "dsfsdag", memo: "메모 테스트입니다", tags: ["태그 1", "태그 2"], createdAt: Date(), authorId: "dsfakldsk", selectedTemplate: "agdfsgd", selectedRing: "gafdgfd", selectedChain: "sgsafs", chainLength: 5)
+        router: NavigationRouter<CollectionRoute>(), viewModel: CollectionViewModel(), keyring: Keyring(name: "궁극의 또치 키링", bodyImage: "dsflksdkl", soundId: "sdfsdf", particleId: "dsfsdag", memo: "메모 테스트입니다", tags: ["태그 1", "태그 2"], createdAt: Date(), authorId: "dsfakldsk", selectedTemplate: "agdfsgd", selectedRing: "gafdgfd", selectedChain: "sgsafs", chainLength: 5)
     )
 }
