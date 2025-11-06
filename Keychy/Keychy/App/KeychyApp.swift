@@ -85,6 +85,7 @@ struct RootView: View {
                     // 로그인 완료 → 메인 화면
                     MainTabView()
                         .environment(userManager)
+                        .environment(introViewModel)
                 } else {
                     // 로그인 필요 → 로그인 화면
                     IntroView(viewModel: introViewModel)

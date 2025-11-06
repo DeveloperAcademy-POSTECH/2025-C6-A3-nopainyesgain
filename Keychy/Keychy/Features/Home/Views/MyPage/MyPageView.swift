@@ -11,55 +11,139 @@ import UserNotifications
 
 struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
+    @Environment(IntroViewModel.self) private var introViewModel
     @Bindable var router: NavigationRouter<HomeRoute>
     @State private var isPushNotificationEnabled = false
     @State private var showSettingsAlert = false
     @State private var alertType: AlertType = .turnOn
 
+    // 로그아웃/회원탈퇴 Alert
+    @State private var showLogoutAlert = false
+    @State private var logoutAlertScale: CGFloat = 0.3
+    @State private var showDeleteAccountAlert = false
+    @State private var deleteAccountAlertScale: CGFloat = 0.3
+    
     // 앱 버전 정보 가져오기!
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     }
-
+    
     var body: some View {
-        ScrollView {
-            VStack(alignment: .center, spacing: 30) {
-                userInfo
-                itemAndCharge
-                VStack(spacing: 20) {
-                    managaAccount
-                    managaNotificaiton
-                    usingGuide
-                    termsOfService
-                    guitar
+        ZStack {
+            ScrollView {
+                VStack(alignment: .center, spacing: 30) {
+                    userInfo
+                    itemAndCharge
+                    VStack(spacing: 20) {
+                        managaAccount
+                        managaNotificaiton
+                        usingGuide
+                        termsOfService
+                        guitar
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 25)
+                .padding(.bottom, 30)
+                .navigationTitle("마이페이지")
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 25)
-            .padding(.bottom, 30)
-            .navigationTitle("마이페이지")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-        .scrollIndicators(.never)
-        .onAppear {
-            checkNotificationPermission()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            checkNotificationPermission()
-        }
-        .alert(alertType.title, isPresented: $showSettingsAlert) {
-            Button("취소", role: .cancel) {
-                // 토글 원위치
+            .toolbar(.hidden, for: .tabBar)
+            .scrollIndicators(.never)
+            .onAppear {
                 checkNotificationPermission()
             }
-            Button("설정으로 이동") {
-                openSettings()
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                checkNotificationPermission()
             }
-        } message: {
-            Text(alertType.message)
+            .alert(alertType.title, isPresented: $showSettingsAlert) {
+                Button("취소", role: .cancel) {
+                    // 토글 원위치
+                    checkNotificationPermission()
+                }
+                Button("설정으로 이동") {
+                    openSettings()
+                }
+            } message: {
+                Text(alertType.message)
+            }
+            
+            // 로그아웃 Alert
+            if showLogoutAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
+                        }
+                    
+                    BangmarkAlert(
+                        checkmarkScale: logoutAlertScale,
+                        text: "로그아웃 하시겠어요?",
+                        cancelText: "취소",
+                        confirmText: "로그아웃",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                logoutAlertScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showLogoutAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                logoutAlertScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showLogoutAlert = false
+                                logout()
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
+            }
+            
+            // 회원 탈퇴 Alert
+            if showDeleteAccountAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
+                        }
+                    
+                    BangmarkAlert(
+                        checkmarkScale: deleteAccountAlertScale,
+                        text: "정말 탈퇴하시겠어요?",
+                        cancelText: "취소",
+                        confirmText: "탈퇴하기",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                deleteAccountAlertScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showDeleteAccountAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                deleteAccountAlertScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showDeleteAccountAlert = false
+                                deleteAccount()
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
+            }
         }
     }
-
+    
     // MARK: - 푸시 알림 권한 관련
     /// 현재 푸시 알림 권한 상태 확인
     private func checkNotificationPermission() {
@@ -69,7 +153,7 @@ struct MyPageView: View {
             }
         }
     }
-
+    
     /// 푸시 알림 권한 요청
     private func requestNotificationPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -78,7 +162,7 @@ struct MyPageView: View {
             }
         }
     }
-
+    
     /// 설정 앱 열기
     private func openSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -133,11 +217,11 @@ extension MyPageView {
             Image("myCoin")
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
-
+            
             Text("열쇠")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
-
+            
             Text("\(userManager.currentUser?.coin ?? 0)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
@@ -150,11 +234,11 @@ extension MyPageView {
             Image("myKeyringCount")
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
-
+            
             Text("보유 키링")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
-
+            
             Text("\(userManager.currentUser?.keyrings.count ?? 0)/\(userManager.currentUser?.maxKeyringCount ?? 100)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
@@ -167,11 +251,11 @@ extension MyPageView {
             Image("myCopyPass")
                 .padding(.vertical, 6)
                 .padding(.horizontal, 33)
-
+            
             Text("복사권")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
-
+            
             Text("\(userManager.currentUser?.copyVoucher ?? 0)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
@@ -200,7 +284,7 @@ extension MyPageView {
     enum AlertType {
         case turnOn
         case turnOff
-
+        
         var title: String {
             switch self {
             case .turnOn:
@@ -209,7 +293,7 @@ extension MyPageView {
                 return "알림을 끄시겠어요?"
             }
         }
-
+        
         var message: String {
             switch self {
             case .turnOn:
@@ -223,7 +307,7 @@ extension MyPageView {
     private var managaNotificaiton: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("알림 설정")
-
+            
             HStack {
                 menuItemText("푸시 알림")
                 Spacer()
@@ -238,7 +322,7 @@ extension MyPageView {
                 .padding(.top, 20)
         }
     }
-
+    
     /// 토글 변경 처리
     private func handleToggleChange(newValue: Bool) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
@@ -290,13 +374,13 @@ extension MyPageView {
                 
                 /// Keychy 인스타 그램 연결
                 Button {
-                      openInstagram(username: "keychy.app")
-                  } label: {
-                      Text("Contact to 운영자")
-                          .typography(.suit17M)
-                          .foregroundStyle(.black100)
-                  }
-                  .buttonStyle(.plain)
+                    openInstagram(username: "keychy.app")
+                } label: {
+                    Text("Contact to 운영자")
+                        .typography(.suit17M)
+                        .foregroundStyle(.black100)
+                }
+                .buttonStyle(.plain)
             }
             Divider()
                 .padding(.top, 20)
@@ -304,17 +388,17 @@ extension MyPageView {
     }
     
     private func openInstagram(username: String) {
-          let instagramURL = URL(string: "instagram://user?username=\(username)")!
-          let webURL = URL(string: "https://www.instagram.com/\(username)")!
-
-          if UIApplication.shared.canOpenURL(instagramURL) {
-              // 인스타그램 앱이 설치되어 있으면 앱으로 열기
-              UIApplication.shared.open(instagramURL)
-          } else {
-              // 앱이 없으면 Safari로 웹 열기
-              UIApplication.shared.open(webURL)
-          }
-      }
+        let instagramURL = URL(string: "instagram://user?username=\(username)")!
+        let webURL = URL(string: "https://www.instagram.com/\(username)")!
+        
+        if UIApplication.shared.canOpenURL(instagramURL) {
+            // 인스타그램 앱이 설치되어 있으면 앱으로 열기
+            UIApplication.shared.open(instagramURL)
+        } else {
+            // 앱이 없으면 Safari로 웹 열기
+            UIApplication.shared.open(webURL)
+        }
+    }
 }
 
 // MARK: - 약관 및 정책
@@ -322,9 +406,10 @@ extension MyPageView {
     private var termsOfService: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("약관 및 정책")
-
+            
+            /// 개인정보 처리 방침 및 이용약관
             myPageBtn(type: .termsAndPolicy)
-
+            
             Divider()
                 .padding(.top, 20)
         }
@@ -337,8 +422,32 @@ extension MyPageView {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("기타")
             VStack(alignment: .leading, spacing: 15) {
-                myPageBtn(type: .deleteAccout)
-                myPageBtn(type: .logout)
+                
+                /// 로그아웃
+                Button {
+                    showLogoutAlert = true
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                        logoutAlertScale = 1.0
+                    }
+                } label: {
+                    Text("로그아웃")
+                        .typography(.suit17M)
+                        .foregroundStyle(.black100)
+                }
+                .buttonStyle(.plain)
+                
+                /// 회원탈퇴
+                Button {
+                    showDeleteAccountAlert = true
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                        deleteAccountAlertScale = 1.0
+                    }
+                } label: {
+                    Text("회원 탈퇴")
+                        .typography(.suit17M)
+                        .foregroundStyle(.black100)
+                }
+                .buttonStyle(.plain)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -346,11 +455,25 @@ extension MyPageView {
     
     private func logout() {
         do {
+            // 1. Firebase Auth 로그아웃
             try Auth.auth().signOut()
+
+            // 2. UserManager 초기화
             userManager.clearUserInfo()
+
+            // 3. 로그인 상태 변경 → RootView가 자동으로 IntroView로 전환
+            introViewModel.isLoggedIn = false
+            introViewModel.needsProfileSetup = false
+
+            print("로그아웃 성공")
         } catch {
             print("로그아웃 실패: \(error.localizedDescription)")
+            // TODO: 사용자에게 에러 알림
         }
+    }
+    
+    private func deleteAccount() {
+        // TODO: 회원탈퇴 로직 구현
     }
 }
 
@@ -365,7 +488,7 @@ extension MyPageView {
         case termsAndPolicy
         case deleteAccout
         case logout
-
+        
         var text: String {
             switch self {
             case .charge:
@@ -382,7 +505,7 @@ extension MyPageView {
                 return "로그아웃"
             }
         }
-
+        
         // MARK: - 루트 수정 필요
         var route: HomeRoute? {
             switch self {
