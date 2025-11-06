@@ -25,6 +25,8 @@ struct CollectionTab: View {
                         EmptyView()
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
+                    case .packageCompleteView:
+                        PackageCompleteView(router: router)
                     }
                 }
         }

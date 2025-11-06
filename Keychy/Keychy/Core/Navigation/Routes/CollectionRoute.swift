@@ -19,4 +19,7 @@ enum CollectionRoute: Hashable {
     
     // 위젯 안내
     case widgetSettingView
+    
+    // 포장 완료
+    case packageCompleteView
 }

@@ -387,7 +387,7 @@ extension CollectionKeyringDetailView {
     private var topSection: some View {
         HStack {
             Button(action: {
-                // 이미지 다운로드 로직
+                // TODO: 이미지 다운로드 로직
             }) {
                 Image("Save")
                     .resizable()
@@ -402,7 +402,10 @@ extension CollectionKeyringDetailView {
             Spacer()
             
             Button(action: {
-                // 포장 로직
+                // TODO: 포장 로직 추가
+                isSheetPresented = false
+                isNavigatingDeeper = true
+                router.push(.packageCompleteView)
             }) {
                 Image("Present")
                     .resizable()
