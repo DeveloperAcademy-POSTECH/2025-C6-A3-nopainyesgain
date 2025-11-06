@@ -64,11 +64,17 @@ struct BundleSelectCarabinerView: View {
             viewModel.fetchAllCarabiners { success in
                 print("카라비너 목록 로드: \(success), 개수: \(viewModel.carabinerViewData.count)")
             }
+            // 초기 선택 상태가 있으면 이미지 로드
+            if let carabiner = viewModel.selectedCarabiner {
+                loadCarabinerImage(carabiner)
+            }
         }
         .onChange(of: viewModel.selectedCarabiner) { _, newCarabiner in
             // 카라비너 선택 시 이미지 업데이트
             if let carabiner = newCarabiner {
                 loadCarabinerImage(carabiner)
+            } else {
+                carabinerImage = nil
             }
         }
     }
@@ -155,7 +161,10 @@ struct BundleSelectCarabinerView: View {
 
     /// 카라비너 이미지 로드
     private func loadCarabinerImage(_ carabiner: Carabiner) {
-        guard let imageURL = carabiner.carabinerImage.first else { return }
+        guard let imageURL = carabiner.carabinerImage.first else {
+            carabinerImage = nil
+            return
+        }
 
         isLoading = true
 
@@ -163,6 +172,7 @@ struct BundleSelectCarabinerView: View {
             guard let image = try? await StorageManager.shared.getImage(path: imageURL) else {
                 await MainActor.run {
                     isLoading = false
+                    carabinerImage = nil
                 }
                 return
             }
