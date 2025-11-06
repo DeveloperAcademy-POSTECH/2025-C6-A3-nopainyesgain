@@ -158,5 +158,7 @@ extension CollectionViewModel {
                 completion(true)
             }
         }
+        // 카라비너는 기본 카라비너 자동 선택 됨
+        selectedCarabiner = carabiners.first
     }
 }

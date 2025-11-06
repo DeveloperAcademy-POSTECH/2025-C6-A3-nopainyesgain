@@ -334,8 +334,7 @@ extension BundleAddKeyringView {
     private func buttonPosition(index: Int, carabiner: Carabiner, geometry: GeometryProxy) -> CGPoint {
         // carabiner의 keyringXPosition, keyringYPosition은 화면 비율 (0.0 ~ 1.0)
         let x = carabiner.keyringXPosition[index] * geometry.size.width
-        // 상단 패딩(60pt) 고려하여 Y 위치 조정
-        let y = carabiner.keyringYPosition[index] * geometry.size.height + 60
+        let y = carabiner.keyringYPosition[index] * geometry.size.height
 
         return CGPoint(x: x, y: y)
     }
