@@ -7,11 +7,14 @@
 
 import SwiftUI
 import FirebaseAuth
+import UserNotifications
 
 struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
     @Bindable var router: NavigationRouter<HomeRoute>
     @State private var isPushNotificationEnabled = false
+    @State private var showSettingsAlert = false
+    @State private var alertType: AlertType = .turnOn
 
     // 앱 버전 정보 가져오기!
     private var appVersion: String {
@@ -38,6 +41,73 @@ struct MyPageView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .scrollIndicators(.never)
+        .onAppear {
+            checkNotificationPermission()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            checkNotificationPermission()
+        }
+        .alert(alertType.title, isPresented: $showSettingsAlert) {
+            Button("취소", role: .cancel) {
+                // 토글 원위치
+                checkNotificationPermission()
+            }
+            Button("설정으로 이동") {
+                openSettings()
+            }
+        } message: {
+            Text(alertType.message)
+        }
+    }
+
+    // Alert 타입
+    enum AlertType {
+        case turnOn
+        case turnOff
+
+        var title: String {
+            switch self {
+            case .turnOn:
+                return "알림 권한이 필요해요"
+            case .turnOff:
+                return "알림을 끄시겠어요?"
+            }
+        }
+
+        var message: String {
+            switch self {
+            case .turnOn:
+                return "설정에서 알림을 켜주세요"
+            case .turnOff:
+                return "설정에서 알림을 끌 수 있어요"
+            }
+        }
+    }
+
+    // MARK: - 푸시 알림 권한 관련
+    /// 현재 푸시 알림 권한 상태 확인
+    private func checkNotificationPermission() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                isPushNotificationEnabled = settings.authorizationStatus == .authorized
+            }
+        }
+    }
+
+    /// 푸시 알림 권한 요청
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            DispatchQueue.main.async {
+                isPushNotificationEnabled = granted
+            }
+        }
+    }
+
+    /// 설정 앱 열기
+    private func openSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
     }
 }
 
@@ -147,21 +217,59 @@ extension MyPageView {
     }
 }
 
-// MARK: - 알림 설정 (알림 로직 추가 필요)
+// MARK: - 알림 설정
 extension MyPageView {
     private var managaNotificaiton: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("알림 설정")
-            
+
             HStack {
                 menuItemText("푸시 알림")
                 Spacer()
                 Toggle("", isOn: $isPushNotificationEnabled)
                     .labelsHidden()
                     .tint(.gray700)
+                    .onChange(of: isPushNotificationEnabled) { oldValue, newValue in
+                        handleToggleChange(newValue: newValue)
+                    }
             }
             Divider()
                 .padding(.top, 20)
+        }
+    }
+
+    /// 토글 변경 처리
+    private func handleToggleChange(newValue: Bool) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                if newValue {
+                    // 토글 ON 시도
+                    switch settings.authorizationStatus {
+                    case .notDetermined:
+                        // 권한 미결정 -> 권한 요청
+                        requestNotificationPermission()
+                    case .denied:
+                        // 권한 거부됨 -> 설정 이동 Alert (켜기)
+                        alertType = .turnOn
+                        showSettingsAlert = true
+                    case .authorized:
+                        // 이미 허용됨
+                        isPushNotificationEnabled = true
+                    default:
+                        isPushNotificationEnabled = false
+                    }
+                } else {
+                    // 토글 OFF 시도
+                    if settings.authorizationStatus == .authorized {
+                        // 현재 권한이 있는 상태에서 끄려고 함 -> 설정으로 안내 (끄기)
+                        alertType = .turnOff
+                        showSettingsAlert = true
+                    } else {
+                        // 이미 꺼진 상태 -> 그대로 유지
+                        isPushNotificationEnabled = false
+                    }
+                }
+            }
         }
     }
 }
