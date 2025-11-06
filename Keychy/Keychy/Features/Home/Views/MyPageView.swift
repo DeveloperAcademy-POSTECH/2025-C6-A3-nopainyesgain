@@ -33,9 +33,11 @@ struct MyPageView: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 25)
+            .padding(.bottom, 30)
             .navigationTitle("마이페이지")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .scrollIndicators(.never)
     }
 }
 
@@ -51,7 +53,7 @@ extension MyPageView {
     }
 }
 
-// MARK: - 내 아이템, 충전하기 섹션
+// MARK: - 내 아이템, 충전하기 섹션 (아이템 정보 불러오기 필요)
 extension MyPageView {
     /// 내아이템 - 충전하기 헤더
     private var itemAndCharge: some View {
@@ -85,12 +87,12 @@ extension MyPageView {
             Image("myCoin")
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
-            
+
             Text("열쇠")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
-            
-            Text("3,000")
+
+            Text("\(userManager.currentUser?.coin ?? 0)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
         }
@@ -102,12 +104,12 @@ extension MyPageView {
             Image("myKeyringCount")
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
-            
+
             Text("보유 키링")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
-            
-            Text("30/100")
+
+            Text("\(userManager.currentUser?.keyrings.count ?? 0)/\(userManager.currentUser?.maxKeyringCount ?? 100)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
         }
@@ -119,12 +121,12 @@ extension MyPageView {
             Image("myCopyPass")
                 .padding(.vertical, 6)
                 .padding(.horizontal, 33)
-            
+
             Text("복사권")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
-            
-            Text("3/10")
+
+            Text("\(userManager.currentUser?.copyVoucher ?? 0)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
         }
@@ -156,6 +158,7 @@ extension MyPageView {
                 Spacer()
                 Toggle("", isOn: $isPushNotificationEnabled)
                     .labelsHidden()
+                    .tint(.gray700)
             }
             Divider()
                 .padding(.top, 20)
@@ -175,6 +178,8 @@ extension MyPageView {
                         .padding(.trailing, 12)
                     subText("ver \(appVersion)")
                 }
+                
+                /// Keychy 인스타 그램 연결
                 Button {
                       openInstagram(username: "keychy.app")
                   } label: {
@@ -219,8 +224,11 @@ extension MyPageView {
     private var guitar: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("기타")
-            Divider()
-                .padding(.top, 20)
+            VStack(alignment: .leading, spacing: 15) {
+                myPageBtn(type: .deleteAccout)
+                myPageBtn(type: .logout)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
     
@@ -242,6 +250,8 @@ extension MyPageView {
         case charge
         case changeName
         case helloMaster
+        case deleteAccout
+        case logout
         
         var text: String {
             switch self {
@@ -251,6 +261,10 @@ extension MyPageView {
                 return "닉네임 변경"
             case .helloMaster:
                 return "Contact to 운영자"
+            case .deleteAccout:
+                return "회원 탈퇴"
+            case .logout:
+                return "로그아웃"
             }
         }
         
@@ -262,6 +276,10 @@ extension MyPageView {
             case .changeName:
                 return .coinCharge
             case .helloMaster:
+                return .coinCharge
+            case .deleteAccout:
+                return .coinCharge
+            case .logout:
                 return .coinCharge
             }
         }
