@@ -20,21 +20,33 @@ struct BundleSelectCarabinerView: View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
                 // 카라비너 이미지 프리뷰
-                if let image = carabinerImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: geometry.size.width * 0.5)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack {
+                    if let image = carabinerImage {
+                        ZStack(alignment: .top) {
+                            // 이미지
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
 
-                    // 키링 포인트 표시
-                    if let carabiner = viewModel.selectedCarabiner {
-                        keyringPointsOverlay(carabiner: carabiner, geometry: geometry)
+                            // 키링 포인트 표시 (이미지 실제 표시 Rect 기준)
+                            if let carabiner = viewModel.selectedCarabiner {
+                                let imageRect = scaledToFitRect(
+                                    containerSize: geometry.size,
+                                    imageSize: geometry.size
+                                )
+                                keyringPointsOverlay(
+                                    carabiner: carabiner,
+                                    imageRect: imageRect
+                                )
+                            }
+                        }
+                    } else if isLoading {
+                        ProgressView()
+                            .padding(.top, 60)
                     }
-                } else if isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    Spacer()
                 }
+                .padding(.top, 60)
 
                 // 하단 선택 UI (항상 하단에 배치)
                 carabinerSelectionView
@@ -52,11 +64,17 @@ struct BundleSelectCarabinerView: View {
             viewModel.fetchAllCarabiners { success in
                 print("카라비너 목록 로드: \(success), 개수: \(viewModel.carabinerViewData.count)")
             }
+            // 초기 선택 상태가 있으면 이미지 로드
+            if let carabiner = viewModel.selectedCarabiner {
+                loadCarabinerImage(carabiner)
+            }
         }
         .onChange(of: viewModel.selectedCarabiner) { _, newCarabiner in
             // 카라비너 선택 시 이미지 업데이트
             if let carabiner = newCarabiner {
                 loadCarabinerImage(carabiner)
+            } else {
+                carabinerImage = nil
             }
         }
     }
@@ -68,8 +86,14 @@ struct BundleSelectCarabinerView: View {
                 LazyImage(url: URL(string: background.backgroundImage)) { state in
                     if let image = state.image {
                         image.resizable().scaledToFill()
+                    } else if state.isLoading {
+                        Color.clear
+                    } else {
+                        Color.clear
                     }
                 }
+            } else {
+                Color.clear
             }
         }
         .ignoresSafeArea()
@@ -97,7 +121,7 @@ struct BundleSelectCarabinerView: View {
                                 viewModel.selectedCarabiner = cb.carabiner
                             } label: {
                                 CarabinerItemTile(
-                                    isSelected: viewModel.selectedCarabiner == cb.carabiner,
+                                    isSelected: viewModel.selectedCarabiner?.id == cb.carabiner.id,
                                     carabiner: cb
                                 )
                             }
@@ -119,23 +143,20 @@ struct BundleSelectCarabinerView: View {
 
     // MARK: - 키링 포인트 오버레이
 
-    /// 키링 포인트 표시
-    private func keyringPointsOverlay(carabiner: Carabiner, geometry: GeometryProxy) -> some View {
-        let carabinerWidth = geometry.size.width * 0.5
-        let aspectRatio = carabinerImage.map { $0.size.height / $0.size.width } ?? 1.0
-        let carabinerHeight = carabinerWidth * aspectRatio
-
-        let centerX = geometry.size.width / 2
-        let centerY = geometry.size.height / 2
-
-        return ForEach(0..<min(carabiner.keyringXPosition.count, carabiner.keyringYPosition.count), id: \.self) { index in
-            let x = centerX + (carabinerWidth * (carabiner.keyringXPosition[index] - 0.5))
-            let y = centerY - (carabinerHeight * (carabiner.keyringYPosition[index] - 0.5))
-
-            Circle()
-                .fill(Color.white.opacity(0.9))
-                .frame(width: 20, height: 20)
-                .position(x: x, y: y)
+    /// 키링 포인트 표시 (이미지 실제 표시 Rect 기준)
+    private func keyringPointsOverlay(carabiner: Carabiner, imageRect: CGRect) -> some View {
+        ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
+            // 정규화 좌표 → 이미지 Rect 내부 실제 좌표
+            let x = carabiner.keyringXPosition[index] * imageRect.width
+            let y = carabiner.keyringYPosition[index] * imageRect.height
+            CarabinerAddKeyringButton(
+                isSelected: false,
+                hasKeyring: false,
+                action: {},
+                secondAction: {}
+            )
+            .position(x: x, y: y)
+            .disabled(true)
         }
     }
 
@@ -143,7 +164,10 @@ struct BundleSelectCarabinerView: View {
 
     /// 카라비너 이미지 로드
     private func loadCarabinerImage(_ carabiner: Carabiner) {
-        guard let imageURL = carabiner.carabinerImage.first else { return }
+        guard let imageURL = carabiner.carabinerImage.first else {
+            carabinerImage = nil
+            return
+        }
 
         isLoading = true
 
@@ -151,6 +175,7 @@ struct BundleSelectCarabinerView: View {
             guard let image = try? await StorageManager.shared.getImage(path: imageURL) else {
                 await MainActor.run {
                     isLoading = false
+                    carabinerImage = nil
                 }
                 return
             }
@@ -166,6 +191,36 @@ struct BundleSelectCarabinerView: View {
     private func resetSelection() {
         viewModel.selectedCarabiner = nil
         carabinerImage = nil
+    }
+
+    // MARK: - 유틸: scaledToFit 결과 Rect 계산
+    /// 컨테이너 크기와 원본 이미지 크기를 받아 .scaledToFit으로 렌더링될 실제 Rect를 반환
+    private func scaledToFitRect(containerSize: CGSize, imageSize: CGSize) -> CGRect {
+        guard containerSize.width > 0, containerSize.height > 0,
+              imageSize.width > 0, imageSize.height > 0 else {
+            return .zero
+        }
+
+        let containerAspect = containerSize.width / containerSize.height
+        let imageAspect = imageSize.width / imageSize.height
+
+        var drawSize = CGSize.zero
+        if imageAspect > containerAspect {
+            // 가로가 꽉 참
+            drawSize.width = containerSize.width
+            drawSize.height = containerSize.width / imageAspect
+        } else {
+            // 세로가 꽉 참
+            drawSize.height = containerSize.height
+            drawSize.width = containerSize.height * imageAspect
+        }
+
+        let origin = CGPoint(
+            x: (containerSize.width - drawSize.width) / 2,
+            y: (containerSize.height - drawSize.height) / 2
+        )
+
+        return CGRect(origin: origin, size: drawSize)
     }
 }
 
