@@ -100,9 +100,6 @@ struct CollectionKeyringDetailView: View {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     showDeleteAlert = false
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    //deletingCategory = ""
-                                }
                             },
                             onConfirm: {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -110,9 +107,23 @@ struct CollectionKeyringDetailView: View {
                                 }
 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    //confirmDeleteCategory()
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showDeleteCompleteAlert = true
+                                    guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                                        print("UID를 찾을 수 없습니다")
+                                        return
+                                    }
+                                    
+                                    viewModel.deleteKeyring(uid: uid, keyring: keyring) { success in
+                                        if success {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                                showDeleteCompleteAlert = true
+                                            }
+                                            
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                                                router.pop()
+                                            }
+                                        } else {
+                                            print("키링 삭제 실패")
+                                        }
                                     }
                                 }
                             }

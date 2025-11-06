@@ -62,17 +62,51 @@ extension CollectionViewModel {
         keyring: Keyring,
         completion: @escaping (Bool) -> Void
     ) {
-        print("키링 삭제 시작 - ID: \(keyring.id)")
         
         guard let documentId = keyringDocumentIdByLocalId[keyring.id] else {
-            print("⚠️ 키링 업데이트 실패: Firestore documentId를 찾을 수 없습니다")
-            print("현재 keyring.id: \(keyring.id)")
-            print("매핑 Dictionary 키들: \(keyringDocumentIdByLocalId.keys)")
             completion(false)
             return
         }
         
         let db = Firestore.firestore()
 
+        // Keyring 컬렉션에서 해당 키링 문서 삭제
+        db.collection("Keyring")
+            .document(documentId)
+            .delete { [weak self] error in
+                guard let self = self else {
+                    completion(false)
+                    return
+                }
+                
+                if let error = error {
+                    // Keyring 문서 삭제 실패
+                    completion(false)
+                    return
+                }
+                
+                // User 컬렉션에서 keyrings 배열에서 해당 키링 ID 제거
+                db.collection("User")
+                    .document(uid)
+                    .updateData([
+                        "keyrings": FieldValue.arrayRemove([documentId])
+                    ]) { error in
+                        if let error = error {
+                            // User의 keyrings 배열 업데이트 실패
+                            completion(false)
+                            return
+                        }
+                        
+                        // 로컬 데이터에서도 제거
+                        if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                            self.keyring.remove(at: index)
+                        }
+                        
+                        // 매핑 Dictionary에서도 제거
+                        self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
+
+                        completion(true)
+                    }
+            }
     }
 }
