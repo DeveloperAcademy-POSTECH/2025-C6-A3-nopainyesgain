@@ -23,11 +23,7 @@ extension CollectionViewModel {
                     return
                 }
                 
-                if let error = error {
-                    // 유저 문서 로드 실패
-                    completion(false)
-                    return
-                }
+                guard error == nil else { completion(false); return }
                 
                 guard let data = snapshot?.data() else {
                     // 유저 데이터 없음
@@ -62,11 +58,7 @@ extension CollectionViewModel {
                 db.collection("User")
                     .document(uid)
                     .updateData(["tags": tags]) { error in
-                        if let error = error {
-                            // 태그 업데이트 실패
-                            completion(false)
-                            return
-                        }
+                        guard error == nil else { completion(false); return }
                         
                         // 보유한 키링들의 태그 업데이트
                         self.updateKeyringTags(
@@ -92,11 +84,7 @@ extension CollectionViewModel {
                     return
                 }
                 
-                if let error = error {
-                    // 유저 문서 로드 실패
-                    completion(false)
-                    return
-                }
+                guard error == nil else { completion(false); return }
                 
                 guard let data = snapshot?.data() else {
                     // 유저 데이터 없음
@@ -117,11 +105,7 @@ extension CollectionViewModel {
                     .updateData([
                         "tags": FieldValue.arrayRemove([tagName])
                     ]) { error in
-                        if let error = error {
-                            // 태그 삭제 실패
-                            completion(false)
-                            return
-                        }
+                        guard error == nil else { completion(false); return }
                         
                         // 보유한 키링들에서 태그 제거
                         self.removeTagFromKeyrings(
@@ -167,10 +151,7 @@ extension CollectionViewModel {
                 .getDocuments { snapshot, error in
                     defer { dispatchGroup.leave() }
                     
-                    if let error = error {
-                        hasError = true
-                        return
-                    }
+                    guard error == nil else { completion(false); return }
                     
                     guard let documents = snapshot?.documents, !documents.isEmpty else {
                         return
@@ -195,10 +176,7 @@ extension CollectionViewModel {
                     
                     // 배치 커밋
                     writeBatch.commit { error in
-                        if let error = error {
-                            // 업데이트 실패
-                            hasError = true
-                        }
+                        guard error == nil else { completion(false); return }
                     }
                 }
         }
@@ -285,5 +263,25 @@ extension CollectionViewModel {
                 completion(true)
             }
         }
+    }
+    
+    // 태그 추가
+    func addNewTag(uid: String, newTagName: String) {
+
+        let db = Firestore.firestore()
+        
+        db.collection("User")
+            .document(uid)
+            .updateData([
+                "tags": FieldValue.arrayUnion([newTagName])
+            ]) { error in
+                if let error = error {
+                    print("태그 추가 실패: \(error.localizedDescription)")
+                    return
+                }
+                
+                print("Firestore에 태그 추가 완료: \(newTagName)")
+                
+            }
     }
 }
