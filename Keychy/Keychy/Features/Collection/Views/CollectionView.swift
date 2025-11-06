@@ -179,7 +179,6 @@ struct CollectionView: View {
                     title: "인벤토리 확장 [+100]",
                     myCoin: collectionViewModel.coin,
                     price: 100,
-                    onCancel: {},
                     onConfirm: {}
                 )
             }
