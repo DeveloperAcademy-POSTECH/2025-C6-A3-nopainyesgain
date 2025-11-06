@@ -55,26 +55,38 @@ extension KeyringInfoInputView {
             // 타이틀
             Text("태그 추가하기")
                 .typography(.suit17B)
-                .foregroundStyle(.primary)
-                .padding(8)
-                .padding(.bottom, 10)
+                .foregroundStyle(.black100)
+                .padding(.top, 14)
 
             // TextField
-            TextField("태그 이름을 입력해주세요.", text: $newTagName)
+            TextField("태그 이름을 입력해주세요", text: $newTagName)
                 .typography(.suit16M)
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
-                .background(.gray50)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .frame(height: 52)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.white100)
+                )
+                .padding(.top, 21)
+                .padding(.bottom, 5)
+                .onChange(of: newTagName) { oldValue, newValue in
+                    if newValue.count > 10 {
+                        newTagName = String(newValue.prefix(10))
+                    }
+                    showTagNameAlreadyExistsToast = availableTags.contains(newValue)
+                }
             
-            Text(showTagNameEmptyToast ? "태그 이름을 입력해주세요." : "이미 사용 중인 태그 이름입니다.")
-                .typography(.suit12M)
-                .foregroundStyle(.main700)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
-                .padding(.top, 9)
-                .opacity(showTagNameEmptyToast || showTagNameAlreadyExistsToast ? 1 : 0)
+            HStack {
+                Text(showTagNameAlreadyExistsToast ? "이미 사용 중인 태그 이름입니다." : "")
+                    .typography(.suit14M)
+                    .foregroundStyle(.error)
+                    .opacity(showTagNameAlreadyExistsToast ? 1 : 0)
+                
+                Spacer()
+            }
+            .padding(.bottom, 20)
+
 
             // 버튼들
             HStack(spacing: 16) {
@@ -83,49 +95,49 @@ extension KeyringInfoInputView {
                     newTagName = ""
                     showAddTagAlert = false
                     showTagNameAlreadyExistsToast = false
-                    showTagNameEmptyToast = false
                     sheetDetent = .height(measuredSheetHeight)
                 } label: {
                     Text("취소")
-                        .typography(.suit17B)
+                        .typography(.suit17SB)
                         .foregroundStyle(.black100)
-                        .padding(.vertical, 13)
                         .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: 100)
+                                .fill(.black10)
+                        )
                 }
-                .buttonStyle(.glassProminent)
-                .tint(.black10)
+                .buttonStyle(.plain)
                 
                 // 추가 버튼
                 Button {
-                    if newTagName.isEmpty {
-                        showTagNameEmptyToast = true
-                    } else {
-                        if availableTags.contains(newTagName) {
-                            showTagNameEmptyToast = false
-                            showTagNameAlreadyExistsToast = true
-                        } else {
-                            // Firebase에 태그 추가
-                            addTagToFirebase(tagName: newTagName)
-                            newTagName = ""
-                            showAddTagAlert = false
-                            showTagNameAlreadyExistsToast = false
-                            showTagNameEmptyToast = false
-                            sheetDetent = .height(measuredSheetHeight)
-                        }
+                    if !showTagNameAlreadyExistsToast, !newTagName.isEmpty {
+                        addTagToFirebase(tagName: newTagName)
+                        newTagName = ""
+                        showAddTagAlert = false
+                        showTagNameAlreadyExistsToast = false
+                        showTagNameEmptyToast = false
+                        sheetDetent = .height(measuredSheetHeight)
                     }
                 } label: {
                     Text("추가")
                         .typography(.suit17B)
-                        .foregroundStyle(.white)
-                        .padding(.vertical, 13)
+                        .foregroundStyle(.white100)
                         .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: 100)
+                                .fill(.main500)
+                        )
+
                 }
-                .buttonStyle(.glassProminent)
-                .tint(.main500)
+                .buttonStyle(.plain)
+                .disabled(newTagName.isEmpty || showTagNameAlreadyExistsToast)
             }
         }
         .padding(14)
-        .glassEffect(in: .rect(cornerRadius: 26.0))
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+        .frame(width: 300, height: 230)
     }
 }
 
