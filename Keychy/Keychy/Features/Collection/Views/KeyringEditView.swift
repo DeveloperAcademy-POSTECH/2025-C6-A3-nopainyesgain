@@ -17,6 +17,7 @@ struct KeyringEditView: View {
     
     @State private var showAddTagAlert: Bool = false
     @State private var newTagName: String = ""
+    @State private var showDuplicateTagError: Bool = false // 태그 중복검사용
     
     @FocusState private var focusedField: Field?
     
@@ -50,17 +51,47 @@ struct KeyringEditView: View {
 
     
     var body: some View {
-        VStack {
-            keyringSection
-            
-            ScrollView {
-                infoInputSection
+        ZStack {
+            VStack {
+                keyringSection
                 
-                tagSection
+                ScrollView {
+                    infoInputSection
+                    
+                    tagSection
+                }
+                .scrollIndicators(.hidden)
+                
+                Spacer()
             }
-            .scrollIndicators(.hidden)
             
-            Spacer()
+            if showAddTagAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                
+                TagInputPopup(
+                    type: .add,
+                    tagName: $newTagName,
+                    availableTags: availableTags,
+                    onCancel: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showAddTagAlert = false
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                            newTagName = ""
+                            showDuplicateTagError = false
+                        }
+                    },
+                    onConfirm: { tag in
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showAddTagAlert = false
+                        }
+                        viewModel.addNewTag(uid: userManager.userUID, newTagName: tag)
+                    }
+                )
+                .transition(.scale.combined(with: .opacity))
+                .zIndex(200)
+            }
         }
         .navigationTitle("키링 편집")
         .navigationBarBackButtonHidden(true)
@@ -74,7 +105,6 @@ struct KeyringEditView: View {
             // 빈 공간 탭하면 키보드 내리기
             focusedField = nil
         }
-
     }
 }
 
@@ -248,8 +278,10 @@ extension KeyringEditView {
             
             ChipLayout(verticalSpacing: 8, horizontalSpacing: 8) {
                 Button {
-                    focusedField = nil
-                    showAddTagAlert = true
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        focusedField = nil
+                        showAddTagAlert = true
+                    }
                 } label: {
                     Image("Plus")
                         .resizable()

@@ -145,7 +145,9 @@ struct CollectionView: View {
                     .ignoresSafeArea()
                 
                 TagInputPopup(
+                    type: .edit,
                     tagName: $newCategoryName,
+                    availableTags: categories,
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showRenameAlert = false
@@ -154,12 +156,13 @@ struct CollectionView: View {
                             newCategoryName = ""
                         }
                     },
-                    onConfirm: {
+                    onConfirm: {_ in 
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showRenameAlert = false
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                             renameCategory()
+                            newCategoryName = ""
                         }
                     }
                 )
@@ -473,7 +476,7 @@ extension CollectionView {
     private var collectionGridView: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 11) {
-                ForEach(myKeyrings, id: \.name) { keyring in
+                ForEach(myKeyrings, id: \.id) { keyring in
                     collectionCell(keyring: keyring)
                 }
             }
@@ -494,7 +497,7 @@ extension CollectionView {
                     .cornerRadius(10)
                     .padding(.bottom, 10)
                 
-                Text("\(keyring.name) 키링")
+                Text(keyring.name)
                     .typography(.suit14SB18)
                     .foregroundColor(.black100)
             }
