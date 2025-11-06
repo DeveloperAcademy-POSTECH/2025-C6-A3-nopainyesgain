@@ -19,4 +19,5 @@ enum HomeRoute: Hashable {
     case changeName
     case alarmView
     case introView
+    case termsAndPolicy
 }

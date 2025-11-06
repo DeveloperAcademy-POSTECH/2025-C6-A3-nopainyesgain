@@ -60,30 +60,6 @@ struct MyPageView: View {
         }
     }
 
-    // Alert 타입
-    enum AlertType {
-        case turnOn
-        case turnOff
-
-        var title: String {
-            switch self {
-            case .turnOn:
-                return "알림 권한이 필요해요"
-            case .turnOff:
-                return "알림을 끄시겠어요?"
-            }
-        }
-
-        var message: String {
-            switch self {
-            case .turnOn:
-                return "설정에서 알림을 켜주세요"
-            case .turnOff:
-                return "설정에서 알림을 끌 수 있어요"
-            }
-        }
-    }
-
     // MARK: - 푸시 알림 권한 관련
     /// 현재 푸시 알림 권한 상태 확인
     private func checkNotificationPermission() {
@@ -219,6 +195,31 @@ extension MyPageView {
 
 // MARK: - 알림 설정
 extension MyPageView {
+    
+    // Alert 타입
+    enum AlertType {
+        case turnOn
+        case turnOff
+
+        var title: String {
+            switch self {
+            case .turnOn:
+                return "알림 권한이 필요해요"
+            case .turnOff:
+                return "알림을 끄시겠어요?"
+            }
+        }
+
+        var message: String {
+            switch self {
+            case .turnOn:
+                return "설정에서 알림을 켜주세요"
+            case .turnOff:
+                return "설정에서 알림을 끌 수 있어요"
+            }
+        }
+    }
+    
     private var managaNotificaiton: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("알림 설정")
@@ -316,11 +317,14 @@ extension MyPageView {
       }
 }
 
-// MARK: - 약관 및 정책 (약관, 정책 파일 확인 후 작업 필요)
+// MARK: - 약관 및 정책
 extension MyPageView {
     private var termsOfService: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("약관 및 정책")
+
+            myPageBtn(type: .termsAndPolicy)
+
             Divider()
                 .padding(.top, 20)
         }
@@ -358,9 +362,10 @@ extension MyPageView {
         case charge
         case changeName
         case helloMaster
+        case termsAndPolicy
         case deleteAccout
         case logout
-        
+
         var text: String {
             switch self {
             case .charge:
@@ -369,13 +374,15 @@ extension MyPageView {
                 return "닉네임 변경"
             case .helloMaster:
                 return "Contact to 운영자"
+            case .termsAndPolicy:
+                return "개인정보 처리 방침 및 이용약관"
             case .deleteAccout:
                 return "회원 탈퇴"
             case .logout:
                 return "로그아웃"
             }
         }
-        
+
         // MARK: - 루트 수정 필요
         var route: HomeRoute? {
             switch self {
@@ -385,6 +392,8 @@ extension MyPageView {
                 return .changeName
             case .helloMaster:
                 return .coinCharge
+            case .termsAndPolicy:
+                return .termsAndPolicy
             case .deleteAccout:
                 return .coinCharge
             case .logout:
