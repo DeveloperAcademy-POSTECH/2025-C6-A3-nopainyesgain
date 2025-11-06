@@ -43,7 +43,7 @@ struct AcrylicPhotoEditedView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             if showCheckmark {
-                CheckmarkAlert(checkmarkScale: checkmarkScale)
+                CheckmarkAlert(checkmarkScale: checkmarkScale, text: "배경 제거 완료")
                     .padding(.bottom, 60)
             }
         }
@@ -188,3 +188,4 @@ extension AcrylicPhotoEditedView {
         }
     }
 }
+

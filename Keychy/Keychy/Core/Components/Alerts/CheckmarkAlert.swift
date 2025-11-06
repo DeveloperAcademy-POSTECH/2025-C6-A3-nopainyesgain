@@ -10,12 +10,13 @@ import SwiftUI
 struct CheckmarkAlert: View {
     
     let checkmarkScale: CGFloat
+    let text: String
     
     var body: some View {
         VStack(spacing: 23) {
             Image("checkmarker")
             
-            Text("완료!")
+            Text(text)
                 .typography(.suit17SB)
         }
         .padding(.top, 42)

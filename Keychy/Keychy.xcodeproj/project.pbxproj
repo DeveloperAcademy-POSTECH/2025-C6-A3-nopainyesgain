@@ -47,6 +47,7 @@
 		4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304A2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift */; };
 		4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */; };
 		4C6530502EBB2A90000F8154 /* LoadingAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */; };
+		4C65306C2EBC889B000F8154 /* ChangeNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65306B2EBC889B000F8154 /* ChangeNameView.swift */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
 		4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */; };
@@ -238,6 +239,7 @@
 		4C65304A2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCustomizingView+Purchase.swift"; sourceTree = "<group>"; };
 		4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCustomizingView+Cart.swift"; sourceTree = "<group>"; };
 		4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAlert.swift; sourceTree = "<group>"; };
+		4C65306B2EBC889B000F8154 /* ChangeNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeNameView.swift; sourceTree = "<group>"; };
 		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
 		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
 		4C6621FD2EAE5FC3001760B5 /* SUIT-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -486,6 +488,15 @@
 			path = Alerts;
 			sourceTree = "<group>";
 		};
+		4C6530572EBC8544000F8154 /* MyPage */ = {
+			isa = PBXGroup;
+			children = (
+				4C65306B2EBC889B000F8154 /* ChangeNameView.swift */,
+				C6EE7AD62EB445F6002B5669 /* MyPageView.swift */,
+			);
+			path = MyPage;
+			sourceTree = "<group>";
+		};
 		4C6622042EAE5FC3001760B5 /* SUIT */ = {
 			isa = PBXGroup;
 			children = (
@@ -517,7 +528,6 @@
 		4C7775302EB0ED0800981C3E /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4C65303C2EBA5FF3000F8154 /* Alerts */,
 				4CBBEF292EB7DB9800252590 /* Recording */,
 				4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */,
 				4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */,
@@ -695,6 +705,7 @@
 		4CEC62062EAE08DA0099ECEE /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4C65303C2EBA5FF3000F8154 /* Alerts */,
 				AADD2AB52EB3AF520051478E /* KeyringBundle */,
 				4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */,
 				4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */,
@@ -875,10 +886,10 @@
 		4CEC624C2EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4C6530572EBC8544000F8154 /* MyPage */,
 				4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */,
 				4CEC624B2EAE08DF0099ECEE /* HomeView.swift */,
 				C6C402A22EB40ACA006B58DF /* AlarmView.swift */,
-				C6EE7AD62EB445F6002B5669 /* MyPageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1258,6 +1269,7 @@
 				C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */,
 				C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */,
 				C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */,
+				4C65306C2EBC889B000F8154 /* ChangeNameView.swift in Sources */,
 				C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */,
 				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,

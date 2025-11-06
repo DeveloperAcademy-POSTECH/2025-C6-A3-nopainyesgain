@@ -274,7 +274,7 @@ extension MyPageView {
             case .charge:
                 return .coinCharge
             case .changeName:
-                return .coinCharge
+                return .changeName
             case .helloMaster:
                 return .coinCharge
             case .deleteAccout:

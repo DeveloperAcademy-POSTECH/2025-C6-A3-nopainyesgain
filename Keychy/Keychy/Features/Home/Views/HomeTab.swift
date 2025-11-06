@@ -37,6 +37,8 @@ struct HomeTab: View {
                         CoinChargeView(router: router)
                     case .myPageView:
                         MyPageView(router: router)
+                    case .changeName:
+                        ChangeNameView(router: router)
                     case .alarmView:
                         AlarmView()
                     case .introView:
