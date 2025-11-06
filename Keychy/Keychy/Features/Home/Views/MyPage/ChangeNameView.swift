@@ -126,6 +126,7 @@ struct ChangeNameView: View {
                     checkmarkScale: successAlertScale,
                     text: "닉네임이 변경되었습니다."
                 )
+                .padding(.bottom, 30)
             }
         }
     }

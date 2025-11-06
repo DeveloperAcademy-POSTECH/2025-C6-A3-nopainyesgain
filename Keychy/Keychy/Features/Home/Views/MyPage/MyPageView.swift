@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseAuth
 import UserNotifications
+import AuthenticationServices
+import CryptoKit
 
 struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
@@ -16,20 +18,27 @@ struct MyPageView: View {
     @State private var isPushNotificationEnabled = false
     @State private var showSettingsAlert = false
     @State private var alertType: AlertType = .turnOn
-
+    
     // 로그아웃/회원탈퇴 Alert
     @State private var showLogoutAlert = false
     @State private var logoutAlertScale: CGFloat = 0.3
     @State private var showDeleteAccountAlert = false
     @State private var deleteAccountAlertScale: CGFloat = 0.3
     
-    // 앱 버전 정보 가져오기!
-    private var appVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
-    }
+    // 재인증 필요 Alert
+    @State private var showReauthAlert = false
     
+    // 로딩 Alert
+    @State private var showLoadingAlert = false
+    @State private var loadingAlertScale: CGFloat = 0.3
+    
+    // Apple Sign In 재인증용
+    @State private var currentNonce: String?
+    @State private var authCoordinator: AppleAuthCoordinator?
+     
     var body: some View {
         ZStack {
+            // 메인 컨텐츠
             ScrollView {
                 VStack(alignment: .center, spacing: 30) {
                     userInfo
@@ -45,10 +54,7 @@ struct MyPageView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
-                .navigationTitle("마이페이지")
-                .navigationBarTitleDisplayMode(.inline)
             }
-            .toolbar(.hidden, for: .tabBar)
             .scrollIndicators(.never)
             .onAppear {
                 checkNotificationPermission()
@@ -67,6 +73,16 @@ struct MyPageView: View {
             } message: {
                 Text(alertType.message)
             }
+            .alert("재인증 필요", isPresented: $showReauthAlert) {
+                Button("재인증하기") {
+                    // Apple Sign In으로 재인증
+                    startReauthentication()
+                }
+                Button("취소", role: .cancel) {}
+            } message: {
+                Text("보안을 위해 재인증이 필요합니다")
+            }
+            .allowsHitTesting(!showLogoutAlert && !showDeleteAccountAlert && !showLoadingAlert)
             
             // 로그아웃 Alert
             if showLogoutAlert {
@@ -105,7 +121,7 @@ struct MyPageView: View {
                 }
             }
             
-            // 회원 탈퇴 Alert
+            // 회원탈퇴 Alert
             if showDeleteAccountAlert {
                 ZStack {
                     Color.black.opacity(0.4)
@@ -141,33 +157,23 @@ struct MyPageView: View {
                     .padding(.bottom, 30)
                 }
             }
-        }
-    }
-    
-    // MARK: - 푸시 알림 권한 관련
-    /// 현재 푸시 알림 권한 상태 확인
-    private func checkNotificationPermission() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                isPushNotificationEnabled = settings.authorizationStatus == .authorized
+            
+            // 회원탈퇴 로딩 Alert
+            if showLoadingAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+                    LoadingAlert(checkmarkScale: loadingAlertScale)
+                }
             }
         }
-    }
-    
-    /// 푸시 알림 권한 요청
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
-                isPushNotificationEnabled = granted
-            }
-        }
-    }
-    
-    /// 설정 앱 열기
-    private func openSettings() {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url)
-        }
+        
+        // 각 alert가 뜰 때, backBtn 숨기기
+        .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert)
+        .navigationTitle("마이페이지")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 
@@ -279,7 +285,6 @@ extension MyPageView {
 
 // MARK: - 알림 설정
 extension MyPageView {
-    
     // Alert 타입
     enum AlertType {
         case turnOn
@@ -357,6 +362,31 @@ extension MyPageView {
             }
         }
     }
+    
+    /// 현재 푸시 알림 권한 상태 확인
+    private func checkNotificationPermission() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                isPushNotificationEnabled = settings.authorizationStatus == .authorized
+            }
+        }
+    }
+    
+    /// 푸시 알림 권한 요청
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            DispatchQueue.main.async {
+                isPushNotificationEnabled = granted
+            }
+        }
+    }
+    
+    /// 설정 앱 열기
+    private func openSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
 }
 
 // MARK: - 이용 안내
@@ -369,7 +399,9 @@ extension MyPageView {
                 HStack(spacing: 0) {
                     menuItemText("앱 버전")
                         .padding(.trailing, 12)
-                    subText("ver \(appVersion)")
+                    
+                    // 앱 버전 정보 가져오기!
+                    subText("ver \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")")
                 }
                 
                 /// Keychy 인스타 그램 연결
@@ -464,16 +496,173 @@ extension MyPageView {
             // 3. 로그인 상태 변경 → RootView가 자동으로 IntroView로 전환
             introViewModel.isLoggedIn = false
             introViewModel.needsProfileSetup = false
-
-            print("로그아웃 성공")
         } catch {
-            print("로그아웃 실패: \(error.localizedDescription)")
-            // TODO: 사용자에게 에러 알림
+            // 로그아웃 실패 처리
         }
     }
     
+    // MARK: - Apple Sign In 재인증
+    private func startReauthentication() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.email]
+        request.nonce = sha256(nonce)
+        
+        // Coordinator 생성 및 저장
+        let coordinator = AppleAuthCoordinator(
+            nonce: nonce,
+            onSuccess: { [self] credential in
+                self.handleReauthSuccess(credential: credential)
+            },
+            onFailure: { error in
+                // Apple 재인증 취소 또는 실패
+            }
+        )
+        authCoordinator = coordinator
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = coordinator
+        authorizationController.performRequests()
+    }
+    
+    private func handleReauthSuccess(credential: AuthCredential) {
+        guard let user = Auth.auth().currentUser else {
+            return
+        }
+
+        // LoadingAlert 표시
+        showLoadingAlert = true
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+            loadingAlertScale = 1.0
+        }
+
+        user.reauthenticate(with: credential) { _, error in
+            if let error = error {
+                // LoadingAlert 숨기기
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    loadingAlertScale = 0.3
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    showLoadingAlert = false
+                }
+            } else {
+                deleteAccountAfterReauth(user: user)
+            }
+        }
+    }
+    
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+        }
+        
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let nonce = randomBytes.map { byte in
+            charset[Int(byte) % charset.count]
+        }
+        
+        return String(nonce)
+    }
+    
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+        
+        return hashString
+    }
+    
     private func deleteAccount() {
-        // TODO: 회원탈퇴 로직 구현
+        guard let user = Auth.auth().currentUser else {
+            return
+        }
+
+        let uid = user.uid
+
+        // LoadingAlert 표시
+        showLoadingAlert = true
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+            loadingAlertScale = 1.0
+        }
+
+        // 1. 먼저 Firebase Auth 계정 삭제 시도 (재인증 필요 여부 확인)
+        user.delete { error in
+            if let error = error {
+                // LoadingAlert 숨기기
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    loadingAlertScale = 0.3
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    showLoadingAlert = false
+                }
+
+                // 재인증 필요 에러 처리
+                let nsError = error as NSError
+                if nsError.code == 17014 { // FIRAuthErrorCodeRequiresRecentLogin
+                    showReauthAlert = true
+                }
+            } else {
+                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
+                userManager.deleteUserData(uid: uid) { result in
+                    // LoadingAlert 숨기기
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                        loadingAlertScale = 0.3
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showLoadingAlert = false
+                    }
+
+                    // 3. 로그인 화면으로 이동
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        introViewModel.isLoggedIn = false
+                        introViewModel.needsProfileSetup = false
+                    }
+                }
+            }
+        }
+    }
+    
+    // 재인증 후 회원탈퇴 진행
+    private func deleteAccountAfterReauth(user: FirebaseAuth.User) {
+        let uid = user.uid
+
+        // 1. Firebase Auth 계정 삭제
+        user.delete { error in
+            if let error = error {
+                // LoadingAlert 숨기기
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    loadingAlertScale = 0.3
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    showLoadingAlert = false
+                }
+            } else {
+                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
+                userManager.deleteUserData(uid: uid) { result in
+                    // LoadingAlert 숨기기
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                        loadingAlertScale = 0.3
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showLoadingAlert = false
+                    }
+
+                    // 3. 로그인 화면으로 이동
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        introViewModel.isLoggedIn = false
+                        introViewModel.needsProfileSetup = false
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -561,5 +750,16 @@ extension MyPageView {
         Text(text)
             .typography(.suit12M25)
             .foregroundStyle(.gray600)
+    }
+    
+    /// 뒤로가기
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image(systemName: "chevron.left")
+            }
+        }
     }
 }
