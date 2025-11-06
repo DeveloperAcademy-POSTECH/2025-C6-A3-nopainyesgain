@@ -33,6 +33,10 @@ struct KeyringEditView: View {
         !editedName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
+    private var canEdit: Bool {
+        keyring.isEditable
+    }
+    
     enum Field: Hashable {
         case name
         case memo
@@ -169,8 +173,10 @@ extension KeyringEditView {
     private var infoInputSection: some View {
         VStack(spacing: 25) {
             nameInputField
-            memoInputField
             
+            if canEdit || !(keyring.memo?.isEmpty ?? true) {
+                memoInputField
+            }
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 25)
@@ -182,13 +188,14 @@ extension KeyringEditView {
                 .typography(.suit16B)
             
             HStack {
-                TextField("태그 이름", text: $editedName)
+                TextField("이름을 입력해주세요", text: $editedName)
                     .typography(.suit16M)
                     .foregroundColor(.black100)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
                     .submitLabel(.done)
                     .focused($focusedField, equals: .name)
+                    .disabled(!canEdit)
                     .onChange(of: editedName) { _, newValue in
                         let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
                         var sanitized = newValue.replacingOccurrences(
@@ -217,15 +224,22 @@ extension KeyringEditView {
                     .buttonStyle(PlainButtonStyle())
                     .padding(.trailing, 16)
                     .padding(.leading, 8)
+                    .opacity(canEdit ? 1 : 0)
                 }
             }
             .frame(height: 52)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.gray50)
+                    .fill(canEdit ? .gray50 : .white100)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(canEdit ? .clear : .gray100, lineWidth: 1)
             )
             .onTapGesture {
-                focusedField = .name
+                if canEdit {
+                    focusedField = .name
+                }
             }
         }
     }
@@ -255,14 +269,21 @@ extension KeyringEditView {
                     .padding(.vertical, 10)
                     .scrollIndicators(.hidden)
                     .focused($focusedField, equals: .memo)
+                    .disabled(!canEdit)
             }
             .frame(height: 135)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(.gray50)
+                    .fill(canEdit ? .gray50 : .white100)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(canEdit ? .clear : .gray100, lineWidth: 1)
             )
             .onTapGesture {
-                focusedField = .memo
+                if canEdit {
+                    focusedField = .memo
+                }
             }
         }
     }
@@ -310,9 +331,4 @@ extension KeyringEditView {
         }
         .padding(.horizontal, 20)
     }
-}
-
-
-#Preview {
-    KeyringEditView(router: NavigationRouter<CollectionRoute>(), viewModel: CollectionViewModel(), keyring: Keyring(name: "", bodyImage: "", soundId: "", particleId: "", memo: "동해물과 백두산이 마르고 닳도록 하느님이 보우 하사 우리나라 만세 무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세 남산 위에 저 소나무 철갑을 두른듯 바람 서리 불변함은 우리 기상일세 무궁화 삼천리 화려강산 대한 사람 대한으로 길이 보전하세 Hey 한국 Hey 한국 oh oh oh oh 대 한 민 국 대 한 민 국 가을 하늘 공활한데 높고 구름 없이 밝은 달은 우리 가슴 일편단심일세 무궁화 삼천리 화려강산 대한 사람 대한으로 길이 보전하세 이 기상과 이 맘으로 충성을 다하여 괴로우나 즐거우나 나라 사랑하세 무궁화 삼천리 화려강산 대한 사람 대한으로 길이 보전하세 동해물과 백 두 산 이", tags: ["sdf", "df"], createdAt: Date(), authorId: "", selectedTemplate: "", selectedRing: "", selectedChain: "", chainLength: 5))
 }

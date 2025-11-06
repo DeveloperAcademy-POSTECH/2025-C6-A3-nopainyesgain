@@ -9,12 +9,15 @@ import SwiftUI
 
 struct KeyringMenu: View {
     let position: CGRect
+    let isMyKeyring: Bool
     let onEdit: () -> Void
     let onCopy: () -> Void
     let onDelete: () -> Void
     
     private let menuWidth: CGFloat = 165
-    private let menuHeight: CGFloat = 170
+    private var menuHeight: CGFloat {
+        isMyKeyring ? 170 : 115  // 복사 버튼 있으면 170, 없으면 115
+    }
     
     @State private var isAppearing = false
     
@@ -39,21 +42,22 @@ struct KeyringMenu: View {
                     .buttonStyle(.plain)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    
-                    // 복사 버튼
-                    Button(action: onCopy) {
-                        HStack(spacing: 8) {
-                            Image("Copy")
-                                .resizable()
-                                .frame(width: 25, height: 25)
-                            
-                            Text("복사")
-                                .typography(.suit16M)
-                                .foregroundColor(.gray600)
+                    if isMyKeyring {
+                        // 복사 버튼
+                        Button(action: onCopy) {
+                            HStack(spacing: 8) {
+                                Image("Copy")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                
+                                Text("복사")
+                                    .typography(.suit16M)
+                                    .foregroundColor(.gray600)
+                            }
                         }
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .buttonStyle(.plain)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     
                     // 삭제 버튼
                     Button(action: onDelete) {
@@ -78,7 +82,7 @@ struct KeyringMenu: View {
                 .opacity(isAppearing ? 1.0 : 0.0)
                 .position(
                     x: geometry.size.width - menuWidth / 2 - 16,
-                    y: position.maxY + menuHeight + 28
+                    y: (isMyKeyring ? position.maxY + menuHeight + 28 : position.maxY + menuHeight + 56)
                 )
             }
         }

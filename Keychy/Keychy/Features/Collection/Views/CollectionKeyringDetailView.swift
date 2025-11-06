@@ -27,6 +27,13 @@ struct CollectionKeyringDetailView: View {
     
     let keyring: Keyring
     
+    private var isMyKeyring: Bool {
+        guard let currentUserId = UserDefaults.standard.string(forKey: "userUID") else {
+            return false
+        }
+        return keyring.authorId == currentUserId
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -54,6 +61,7 @@ struct CollectionKeyringDetailView: View {
                     
                     KeyringMenu(
                         position: menuPosition,
+                        isMyKeyring: isMyKeyring,
                         onEdit: {
                             isSheetPresented = false
                             isNavigatingDeeper = true
@@ -591,10 +599,4 @@ struct TextHeightPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
-}
-
-#Preview {
-    CollectionKeyringDetailView(
-        router: NavigationRouter<CollectionRoute>(), viewModel: CollectionViewModel(), keyring: Keyring(name: "궁극의 또치 키링", bodyImage: "dsflksdkl", soundId: "sdfsdf", particleId: "dsfsdag", memo: "메모 테스트입니다", tags: ["태그 1", "태그 2"], createdAt: Date(), authorId: "dsfakldsk", selectedTemplate: "agdfsgd", selectedRing: "gafdgfd", selectedChain: "sgsafs", chainLength: 5)
-    )
 }
