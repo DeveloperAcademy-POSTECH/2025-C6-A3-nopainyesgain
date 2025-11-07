@@ -145,7 +145,9 @@ struct CollectionView: View {
                     .ignoresSafeArea()
                 
                 TagInputPopup(
+                    type: .edit,
                     tagName: $newCategoryName,
+                    availableTags: categories,
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showRenameAlert = false
@@ -154,12 +156,13 @@ struct CollectionView: View {
                             newCategoryName = ""
                         }
                     },
-                    onConfirm: {
+                    onConfirm: {_ in 
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showRenameAlert = false
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                             renameCategory()
+                            newCategoryName = ""
                         }
                     }
                 )
@@ -179,9 +182,16 @@ struct CollectionView: View {
                     title: "인벤토리 확장 [+100]",
                     myCoin: collectionViewModel.coin,
                     price: 100,
-                    onCancel: {},
-                    onConfirm: {}
+                    onConfirm: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showInvenExpandAlert = false
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                            //확장 로직
+                        }
+                    }
                 )
+                .transition(.scale.combined(with: .opacity))
             }
             
         }
@@ -426,7 +436,9 @@ extension CollectionView {
                 .padding(.trailing, 8)
 
             Button(action: {
-                showInvenExpandAlert = true
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showInvenExpandAlert = true
+                }
             }) {
                 Image("InvenPlus")
                     .resizable()
@@ -464,11 +476,12 @@ extension CollectionView {
     private var collectionGridView: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 11) {
-                ForEach(myKeyrings, id: \.name) { keyring in
+                ForEach(myKeyrings, id: \.id) { keyring in
                     collectionCell(keyring: keyring)
                 }
             }
             .padding(.vertical, 4)
+            .padding(.bottom, 90)
         }
         .padding(.top, 10)
         .scrollIndicators(.hidden)
@@ -484,7 +497,7 @@ extension CollectionView {
                     .cornerRadius(10)
                     .padding(.bottom, 10)
                 
-                Text("\(keyring.name) 키링")
+                Text(keyring.name)
                     .typography(.suit14SB18)
                     .foregroundColor(.black100)
             }

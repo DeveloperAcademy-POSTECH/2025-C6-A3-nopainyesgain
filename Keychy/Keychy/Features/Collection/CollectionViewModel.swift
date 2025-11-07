@@ -18,6 +18,7 @@ class CollectionViewModel {
     var selectedSort: String = "최신순" // 기본값
     var maxKeyringCount: Int = 100 // 기본값
     var coin: Int = 0
+    var copyVoucher: Int = 0
     
     // MARK: - 키링
     var keyring: [Keyring] = []

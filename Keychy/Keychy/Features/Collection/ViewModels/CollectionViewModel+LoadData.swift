@@ -88,8 +88,10 @@ extension CollectionViewModel {
             
             db.collection("Keyring")
                 .whereField(FieldPath.documentID(), in: batch)
-                .getDocuments { snapshot, error in
+                .getDocuments { [weak self] snapshot, error in
                     defer { dispatchGroup.leave() }
+                    
+                    guard let self = self else { return }
                     
                     if let error = error {
                         print("Keyring 배치 \(index + 1) 로드 에러: \(error.localizedDescription)")
@@ -98,8 +100,11 @@ extension CollectionViewModel {
                     
                     let keyrings = snapshot?.documents.compactMap { document -> Keyring? in
                         let documentData = document.data()
+                        let firestoreDocId = document.documentID
                         
-                        let keyring = Keyring(documentId: document.documentID, data: documentData)
+                        let keyring = Keyring(documentId: firestoreDocId, data: documentData)
+                        
+                        self.keyringDocumentIdByLocalId[keyring?.id ?? UUID()] = firestoreDocId
                         
                         return keyring
                     } ?? []
@@ -160,6 +165,11 @@ extension CollectionViewModel {
                 // 재화 가져오기
                 if let coin = data["coin"] as? Int {
                     self.coin = coin
+                }
+                
+                // 복사권 가져오기
+                if let copyVoucher = data["copyVoucher"] as? Int {
+                    self.copyVoucher = copyVoucher
                 }
                 
                 completion(true)

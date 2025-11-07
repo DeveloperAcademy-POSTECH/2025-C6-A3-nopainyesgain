@@ -11,7 +11,6 @@ struct PurchasePopup: View {
     let title: String
     let myCoin: Int
     let price: Int
-    let onCancel: () -> Void // 임시
     let onConfirm: () -> Void
     
     
