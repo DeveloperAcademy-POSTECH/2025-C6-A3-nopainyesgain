@@ -88,7 +88,7 @@ extension CoinChargeView {
                     coinRow(for: product)
                 }
             }
-        
+            
             Divider()
                 .padding(.top, 20)
         }
@@ -140,14 +140,14 @@ extension CoinChargeView {
                 otherItemRow(
                     icon: "myKeyringCount",
                     title: "인벤토리 확장권",
-                    subtitle: "내 보유 10",
+                    subtitle: "내 보유 \(userManager.currentUser?.inventoryTicket ?? 0)",
                     cost: 1200
                 )
                 
                 otherItemRow(
                     icon: "myCopyPass",
                     title: "내 키링 복사권 10개",
-                    subtitle: "내 보유 0",
+                    subtitle: "내 보유 \(userManager.currentUser?.copyVoucher ?? 0)",
                     cost: 1200
                 )
             }
