@@ -46,6 +46,9 @@ struct CoinChargeView<Route: Hashable>: View {
             .navigationTitle("충전하기")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
+            .navigationBarBackButtonHidden(showPurchaseSuccessAlert || showPurchaseFailAlert)
+            .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
+            .animation(.easeInOut(duration: 0.2), value: showPurchaseFailAlert)
             .sheet(isPresented: $showPurchaseSheet) {
                 purchaseSheet
             }
