@@ -78,10 +78,8 @@ final class PurchaseManager {
     func fetchProducts() async {
         do {
             let productIDs = StoreProduct.allCases.map { $0.rawValue }
-            print("요청할 상품 ID들: \(productIDs)")
 
             let storeProducts = try await Product.products(for: productIDs)
-            print("StoreKit에서 반환된 상품들: \(storeProducts)")
 
             // StoreProduct enum의 순서대로 정렬
             products = storeProducts.sorted { product1, product2 in

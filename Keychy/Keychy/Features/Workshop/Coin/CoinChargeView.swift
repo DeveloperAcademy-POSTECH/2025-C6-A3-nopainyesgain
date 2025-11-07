@@ -13,66 +13,105 @@ struct CoinChargeView<Route: Hashable>: View {
     @State private var manager = PurchaseManager.shared
     @State private var userManager = UserManager.shared
     
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 30) {
-                currentItemsSection
-                coinSection
-                otherItemsSection
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 25)
-            .padding(.bottom, 30)
-        }
-        .scrollIndicators(.never)
-        .navigationTitle("충전하기")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.hidden, for: .tabBar)
-    }
-}
-
-// MARK: - Current Items Section
-extension CoinChargeView {
-    private var currentItemsSection: some View {
-        HStack(spacing: 20) {
-            currentItemCard(
-                image: "myCoin",
-                title: "열쇠",
-                count: "\(userManager.currentUser?.coin ?? 0)"
-            )
-            
-            currentItemCard(
-                image: "myKeyringCount",
-                title: "내 보유 키링",
-                count: "\(userManager.currentUser?.keyrings.count ?? 0)/\(userManager.currentUser?.maxKeyringCount ?? 100)"
-            )
-            
-            currentItemCard(
-                image: "myCopyPass",
-                title: "복사권",
-                count: "\(userManager.currentUser?.copyVoucher ?? 0)/10"
-            )
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 5)
-        .padding(.bottom, 15)
-        .background(.gray50)
-        .cornerRadius(15)
-    }
+    // Purchase Sheet
+    @State var showPurchaseSheet = false
+    @State var purchaseSheetHeight: CGFloat = 400
+    @State var selectedItem: OtherItem?
     
-    private func currentItemCard(image: String, title: String, count: String) -> some View {
-        VStack(spacing: 5) {
-            Image(image)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 35)
+    // Success/Fail Alert
+    @State var showPurchaseSuccessAlert = false
+    @State var purchaseSuccessScale: CGFloat = 0.3
+    @State var showPurchaseFailAlert = false
+    @State var purchaseFailScale: CGFloat = 0.3
+    
+    var body: some View {
+        ZStack {
+            ScrollView {
+                VStack(spacing: 30) {
+                    CurrentItemsCard()
+                    coinSection
+                    otherItemsSection
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 25)
+                .padding(.bottom, 30)
+            }
+            .scrollIndicators(.never)
+            .navigationTitle("충전하기")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .tabBar)
+            .sheet(isPresented: $showPurchaseSheet) {
+                purchaseSheet
+            }
+            .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
             
-            Text(title)
-                .typography(.suit12M)
-                .foregroundStyle(.black100)
+            // 구매 성공 Alert
+            if showPurchaseSuccessAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+                    
+                    BangmarkAlert(
+                        checkmarkScale: purchaseSuccessScale,
+                        text: "구매 완료!",
+                        cancelText: "닫기",
+                        confirmText: "확인",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseSuccessScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseSuccessAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseSuccessScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseSuccessAlert = false
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
+            }
             
-            Text(count)
-                .typography(.nanum16EB)
-                .foregroundStyle(.main500)
+            // 구매 실패 Alert
+            if showPurchaseFailAlert {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+                    
+                    BangmarkAlert(
+                        checkmarkScale: purchaseFailScale,
+                        text: "열쇠가 부족해요",
+                        cancelText: "취소",
+                        confirmText: "확인",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseFailScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseFailAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseFailScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseFailAlert = false
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
+            }
         }
     }
 }
@@ -137,36 +176,25 @@ extension CoinChargeView {
             sectionTitle("기타 아이템")
             
             VStack(spacing: 15) {
-                otherItemRow(
-                    icon: "myKeyringCount",
-                    title: "인벤토리 확장권",
-                    subtitle: "내 보유 \(userManager.currentUser?.inventoryTicket ?? 0)",
-                    cost: 1200
-                )
-                
-                otherItemRow(
-                    icon: "myCopyPass",
-                    title: "내 키링 복사권 10개",
-                    subtitle: "내 보유 \(userManager.currentUser?.copyVoucher ?? 0)",
-                    cost: 1200
-                )
+                otherItemRow(item: .inventoryExpansion)
+                otherItemRow(item: .copyVoucher10)
             }
         }
     }
     
-    private func otherItemRow(icon: String, title: String, subtitle: String, cost: Int) -> some View {
+    private func otherItemRow(item: OtherItem) -> some View {
         HStack(spacing: 12) {
-            Image(icon)
+            Image(item.icon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(title)
+                Text(item.title)
                     .typography(.suit17M)
                     .foregroundStyle(.black100)
                 
-                Text(subtitle)
+                Text(item.currentCount)
                     .typography(.suit12M25)
                     .foregroundStyle(.main500)
             }
@@ -174,7 +202,8 @@ extension CoinChargeView {
             Spacer()
             
             Button {
-                // TODO: 아이템 구매 로직
+                selectedItem = item
+                showPurchaseSheet = true
             } label: {
                 HStack(spacing: 4) {
                     Image("myCoin")
@@ -182,7 +211,7 @@ extension CoinChargeView {
                         .scaledToFit()
                         .frame(width: 16, height: 16)
                     
-                    Text("\(cost)")
+                    Text("\(item.price)")
                         .typography(.suit14M)
                         .foregroundStyle(.white)
                 }
@@ -195,9 +224,175 @@ extension CoinChargeView {
     }
 }
 
+// MARK: - Purchase Sheet
+extension CoinChargeView {
+    var purchaseSheet: some View {
+        VStack(spacing: 0) {
+            /// 상단 닫기, 타이틀
+            ZStack {
+                Text("구매하기")
+                    .typography(.suit15B25)
+                    .foregroundStyle(.black100)
+
+                HStack {
+                    dismissButton
+                        .padding(.leading, 20)
+                    Spacer()
+                }
+            }
+            .padding(.top, 30)
+            .padding(.bottom, 22)
+
+            /// 구매 아이템 표시
+            if let item = selectedItem {
+                purchaseItemRow(item: item)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+            }
+
+            Spacer()
+
+            // 내 보유 포인트
+            HStack(spacing: 4) {
+                Text("내 보유 :")
+                    .typography(.suit15M25)
+                    .foregroundStyle(.black100)
+
+                Text("\(UserManager.shared.currentUser?.coin ?? 0)")
+                    .typography(.nanum16EB)
+                    .foregroundStyle(.main500)
+            }
+            .padding(.bottom, 16)
+
+            // 구매 버튼
+            purchaseButton
+                .padding(.horizontal, 20)
+                .padding(.bottom, 30)
+        }
+        .background(
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: PurchaseSheetHeightPreferenceKey.self,
+                    value: geometry.size.height
+                )
+            }
+        )
+        .background(Color.white100)
+        .presentationBackground(Color.white100)
+        .onPreferenceChange(PurchaseSheetHeightPreferenceKey.self) { height in
+            if height > 0 {
+                purchaseSheetHeight = height
+            }
+        }
+        .presentationDetents([.height(purchaseSheetHeight)])
+    }
+    
+    private var dismissButton: some View {
+        Button {
+            showPurchaseSheet = false
+        } label: {
+            Image(systemName: "xmark")
+                .font(.system(size: 20))
+                .foregroundStyle(.black100)
+        }
+    }
+
+    private func purchaseItemRow(item: OtherItem) -> some View {
+        HStack(spacing: 0) {
+            Image(item.icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .padding(.trailing, 12)
+
+            Text(item.title)
+                .typography(.suit17B)
+                .foregroundStyle(.black100)
+
+            Spacer()
+
+            HStack(spacing: 4) {
+                Image("myCoin")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                
+                Text("\(item.price)")
+                    .typography(.nanum16EB)
+                    .foregroundStyle(.main500)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(Color.gray50)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var purchaseButton: some View {
+        Button {
+            Task {
+                await handlePurchase()
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Image("purchaseSheet")
+
+                Text("\(selectedItem?.price ?? 0)")
+                    .typography(.nanum18EB12)
+
+                Text("(1개)")
+                    .typography(.suit17SB)
+            }
+            .foregroundStyle(.white100)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(.black80)
+            .clipShape(RoundedRectangle(cornerRadius: 100))
+        }
+    }
+}
+
+// MARK: - Other Item Model
+extension CoinChargeView {
+    enum OtherItem {
+        case inventoryExpansion
+        case copyVoucher10
+        
+        var icon: String {
+            switch self {
+            case .inventoryExpansion: return "myKeyringCount"
+            case .copyVoucher10: return "myCopyPass"
+            }
+        }
+        
+        var title: String {
+            switch self {
+            case .inventoryExpansion: return "인벤토리 확장권"
+            case .copyVoucher10: return "내 키링 복사권 10개"
+            }
+        }
+        
+        var currentCount: String {
+            let user = UserManager.shared.currentUser
+            switch self {
+            case .inventoryExpansion:
+                return "내 보유 \(user?.inventoryTicket ?? 0)"
+            case .copyVoucher10:
+                return "내 보유 \(user?.copyVoucher ?? 0)"
+            }
+        }
+        
+        var price: Int {
+            switch self {
+            case .inventoryExpansion: return 5
+            case .copyVoucher10: return 20
+            }
+        }
+    }
+}
+
 // MARK: - Reusable Components
 extension CoinChargeView {
-    /// 섹션 타이틀 텍스트
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
             .typography(.suit15M25)
