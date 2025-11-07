@@ -88,7 +88,7 @@ extension CoinChargeView {
                     coinRow(for: product)
                 }
             }
-            
+        
             Divider()
                 .padding(.top, 20)
         }

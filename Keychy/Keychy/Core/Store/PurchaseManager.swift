@@ -58,7 +58,7 @@ final class PurchaseManager {
             return
         }
 
-        print("\(product.title) 트랜잭션 처리 (\(product.coinAmount) 치키)")
+        print("\(product.coinAmount)개 트랜잭션 처리")
 
         // UserManager를 통해 코인 업데이트
         await withCheckedContinuation { continuation in
@@ -83,8 +83,16 @@ final class PurchaseManager {
             let storeProducts = try await Product.products(for: productIDs)
             print("StoreKit에서 반환된 상품들: \(storeProducts)")
 
-            products = storeProducts.sorted(by: { $0.displayName < $1.displayName })
-            print("불러온 상품: \(products.map(\.id))")
+            // StoreProduct enum의 순서대로 정렬
+            products = storeProducts.sorted { product1, product2 in
+                guard let index1 = StoreProduct.allCases.firstIndex(where: { $0.rawValue == product1.id }),
+                      let index2 = StoreProduct.allCases.firstIndex(where: { $0.rawValue == product2.id }) else {
+                    return false
+                }
+                return index1 < index2
+            }
+            
+            print("정렬된 상품: \(products.map(\.id))")
             print("상품 개수: \(products.count)")
 
             if products.isEmpty {
