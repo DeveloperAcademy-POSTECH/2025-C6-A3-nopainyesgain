@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import AuthenticationServices
+import CryptoKit
 
 @Observable
 class UserManager {
@@ -20,6 +22,10 @@ class UserManager {
 
     private let db = Firestore.firestore()
     private var userListener: ListenerRegistration?
+
+    // Apple Sign In 재인증용
+    var currentNonce: String?
+    var authCoordinator: AppleAuthCoordinator?
 
     // 편의 접근 프로퍼티
     var userUID: String { currentUser?.id ?? "" }
@@ -41,14 +47,12 @@ class UserManager {
             }
 
             if let error = error {
-                print("Firestore 저장 실패: \(error)")
                 completion(false)
             } else {
                 // 저장 성공 시 로컬 상태 업데이트
                 self.currentUser = user
                 self.isLoaded = true
                 self.saveToCache()
-                print("프로필 저장 완료")
                 completion(true)
             }
         }
@@ -63,7 +67,6 @@ class UserManager {
             }
 
             if let error = error {
-                print("Firestore 로드 에러: \(error)")
                 completion(false)
                 return
             }
@@ -83,11 +86,9 @@ class UserManager {
                 // 실시간 리스너 시작
                 self.startUserListener(uid: uid)
 
-                print("프로필 로드 완료: \(user.nickname)")
                 completion(true)
             } else {
                 // 신규 유저 또는 프로필 미완성
-                print("프로필 미완성 - 회원가입 필요")
                 completion(false)
             }
         }
@@ -103,7 +104,6 @@ class UserManager {
             guard let self = self else { return }
 
             if let error = error {
-                print("실시간 리스너 에러: \(error)")
                 return
             }
 
@@ -117,7 +117,6 @@ class UserManager {
             // 유저 데이터 업데이트
             self.currentUser = user
             self.saveToCache()
-            print("실시간 업데이트: \(user.nickname)")
         }
     }
 
@@ -157,11 +156,19 @@ class UserManager {
         // merge: true로 누락된 필드만 추가 (기존 데이터는 유지)
         let userData = user.toDictionary()
         db.collection("User").document(user.id).setData(userData, merge: true) { error in
-            if let error = error {
-                print("필드 마이그레이션 실패: \(error)")
-            } else {
-                print("필드 마이그레이션 완료")
-            }
+            // 필드 마이그레이션 처리
+        }
+    }
+
+    // MARK: - 로그아웃
+    /// Firebase Auth 로그아웃
+    func logout(completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            clearUserInfo()
+            completion(.success(()))
+        } catch {
+            completion(.failure(error))
         }
     }
 
@@ -175,4 +182,225 @@ class UserManager {
         UserDefaults.standard.removeObject(forKey: "userUID")
     }
 
+    // MARK: - 회원탈퇴
+    /// Firebase Auth 계정 삭제 (재인증 필요 여부 확인)
+    func deleteAccount(completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(.failure(NSError(domain: "UserManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "로그인된 사용자가 없음"])))
+            return
+        }
+
+        let uid = user.uid
+
+        // 1. 먼저 Firebase Auth 계정 삭제 시도 (재인증 필요 여부 확인)
+        user.delete { [weak self] error in
+            guard let self = self else { return }
+
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
+                self.deleteUserData(uid: uid) { result in
+                    switch result {
+                    case .success:
+                        completion(.success(()))
+
+                    case .failure:
+                        // Auth는 이미 삭제됐지만 Firestore는 남아있음
+                        // 어차피 로그인 불가능하므로 성공으로 처리
+                        completion(.success(()))
+                    }
+                }
+            }
+        }
+    }
+
+    /// 재인증 후 회원탈퇴 진행
+    func deleteAccountAfterReauth(completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(.failure(NSError(domain: "UserManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "로그인된 사용자가 없음"])))
+            return
+        }
+
+        let uid = user.uid
+
+        // 1. Firebase Auth 계정 삭제
+        user.delete { [weak self] error in
+            guard let self = self else { return }
+
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
+                self.deleteUserData(uid: uid) { result in
+                    switch result {
+                    case .success:
+                        completion(.success(()))
+
+                    case .failure:
+                        completion(.success(()))
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Firestore 데이터 삭제
+    func deleteUserData(uid: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        // 1. User 문서에서 keyrings 배열 가져오기
+        db.collection("User").document(uid).getDocument { [weak self] snapshot, error in
+            guard let self = self else {
+                completion(.failure(NSError(domain: "UserManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "UserManager instance is nil"])))
+                return
+            }
+
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            guard let data = snapshot?.data(),
+                  let keyringIds = data["keyrings"] as? [String] else {
+                // keyrings가 없어도 User 문서는 삭제해야 하므로 계속 진행
+                self.deleteUserDocument(uid: uid, completion: completion)
+                return
+            }
+
+            // 2. Keyring 컬렉션에서 각 키링 문서 삭제
+            let group = DispatchGroup()
+            var deletionError: Error?
+
+            for keyringId in keyringIds {
+                group.enter()
+                self.db.collection("Keyring").document(keyringId).delete { error in
+                    if let error = error {
+                        deletionError = error
+                    }
+                    group.leave()
+                }
+            }
+
+            // 3. 모든 키링 삭제 완료 후 User 문서 삭제
+            group.notify(queue: .main) {
+                if let error = deletionError {
+                    completion(.failure(error))
+                } else {
+                    self.deleteUserDocument(uid: uid, completion: completion)
+                }
+            }
+        }
+    }
+
+    // User 문서 삭제 헬퍼 함수
+    private func deleteUserDocument(uid: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        db.collection("User").document(uid).delete { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                // 로컬 데이터 정리
+                self.clearUserInfo()
+                completion(.success(()))
+            }
+        }
+    }
+
+    // MARK: - Apple Sign In 재인증
+    /// Apple Sign In 재인증 시작
+    func startReauthentication(onSuccess: @escaping (AuthCredential) -> Void, onFailure: @escaping (Error) -> Void) {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.email]
+        request.nonce = sha256(nonce)
+
+        // Coordinator 생성 및 저장
+        let coordinator = AppleAuthCoordinator(
+            nonce: nonce,
+            onSuccess: onSuccess,
+            onFailure: onFailure
+        )
+        authCoordinator = coordinator
+
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = coordinator
+        authorizationController.performRequests()
+    }
+
+    /// Firebase 재인증
+    func reauthenticateWithCredential(credential: AuthCredential, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(.failure(NSError(domain: "UserManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "로그인된 사용자 없음"])))
+            return
+        }
+
+        user.reauthenticate(with: credential) { _, error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+
+    // MARK: - Helper Functions
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+        }
+
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let nonce = randomBytes.map { byte in
+            charset[Int(byte) % charset.count]
+        }
+
+        return String(nonce)
+    }
+
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+
+        return hashString
+    }
+}
+
+// MARK: - AppleAuthCoordinator
+class AppleAuthCoordinator: NSObject, ASAuthorizationControllerDelegate {
+    private let nonce: String
+    private let onSuccess: (AuthCredential) -> Void
+    private let onFailure: (Error) -> Void
+
+    init(nonce: String, onSuccess: @escaping (AuthCredential) -> Void, onFailure: @escaping (Error) -> Void) {
+        self.nonce = nonce
+        self.onSuccess = onSuccess
+        self.onFailure = onFailure
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+              let appleIDToken = appleIDCredential.identityToken,
+              let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            return
+        }
+
+        let credential = OAuthProvider.appleCredential(
+            withIDToken: idTokenString,
+            rawNonce: nonce,
+            fullName: appleIDCredential.fullName
+        )
+
+        onSuccess(credential)
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        onFailure(error)
+    }
 }

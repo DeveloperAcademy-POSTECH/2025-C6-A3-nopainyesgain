@@ -36,6 +36,7 @@ struct ProfileSetupView: View {
                 HStack {
                     TextField("닉네임을 입력하세요.", text: $nickname)
                         .typography(.suit16M25)
+                        .foregroundStyle(.black100)
                         .textFieldStyle(.plain)
                         .onChange(of: nickname) { oldValue, newValue in
                             // 글자수 제한
@@ -86,39 +87,33 @@ struct ProfileSetupView: View {
                 Text(validationMessage)
                     .typography(.suit14M)
                     .foregroundColor(
-                        isValidationPositive ? .green :
+                        isValidationPositive ? .gray400 :
                         (validationMessage == "영문, 숫자, 한글만 입력 가능해요." ? .gray400 : .red)
                     )
             }
             
             Spacer()
 
-            Button(action: {
+            Button {
                 if isNicknameValid {
                     viewModel.saveProfile(nickname: nickname)
-                } else {
-                    print("유효성 검사 실패")
                 }
-            }) {
-                Text("시작하기")
+            } label: {
+                Text("다음")
                     .typography(.suit17B)
-                    .foregroundColor(isNicknameValid ? .white100 : .black40)
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 1000)
-                            .fill(isNicknameValid ? .main500 : .black20)
-                    )
-                    .disabled(!isNicknameValid)
-                    .animation(.easeInOut(duration: 0.2), value: isNicknameValid)
+                    .padding(.vertical, 7.5)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 14)
-            
+            .buttonStyle(.glassProminent)
+            .tint(isNicknameValid ? .main500 : .black20)
+            .foregroundStyle(isNicknameValid ? .white100 : .black40)
+            .disabled(!isNicknameValid)
+            .animation(.easeInOut(duration: 0.2), value: isNicknameValid)
         }
         .padding(.horizontal, 20)
-
-        
+        .toolbar(.hidden, for: .tabBar)
+        .dismissKeyboardOnTap()
+        .ignoresSafeArea(.keyboard)
     }
     
     // 닉네임 유효성 검사
