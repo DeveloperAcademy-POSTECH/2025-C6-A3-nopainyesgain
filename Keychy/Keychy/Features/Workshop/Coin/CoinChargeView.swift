@@ -13,12 +13,12 @@ struct CoinChargeView<Route: Hashable>: View {
     @State private var manager = PurchaseManager.shared
     @State private var userManager = UserManager.shared
     
-    // Purchase Sheet
+    // 구매 시트 프로필
     @State var showPurchaseSheet = false
     @State var purchaseSheetHeight: CGFloat = 400
     @State var selectedItem: OtherItem?
     
-    // Success/Fail Alert
+    // 성공/실패 Alert
     @State var showPurchaseSuccessAlert = false
     @State var purchaseSuccessScale: CGFloat = 0.3
     @State var showPurchaseFailAlert = false
@@ -27,9 +27,15 @@ struct CoinChargeView<Route: Hashable>: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack(spacing: 30) {
+                VStack(spacing: 37) {
+                    
+                    // 내 아이템들 현황판
                     CurrentItemsCard()
+                    
+                    // 코인 구매 섹션
                     coinSection
+                    
+                    // 기타 아이템 섹션
                     otherItemsSection
                 }
                 .padding(.horizontal, 20)
@@ -116,33 +122,33 @@ struct CoinChargeView<Route: Hashable>: View {
     }
 }
 
-// MARK: - Coin Section
+// MARK: - Coin Section 코인 구매 섹션
 extension CoinChargeView {
     private var coinSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 20) {
             sectionTitle("코인")
             
-            VStack(spacing: 15) {
+            VStack(spacing: 30) {
                 ForEach(manager.products, id: \.id) { product in
                     coinRow(for: product)
                 }
             }
             
             Divider()
-                .padding(.top, 20)
+                .padding(.top, 16)
         }
     }
     
     private func coinRow(for product: Product) -> some View {
         HStack(spacing: 8) {
-            Image("myCoin")
+            Image(.buyKey)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
             
             if let storeProduct = StoreProduct(rawValue: product.id) {
                 Text("\(storeProduct.coinAmount)개")
-                    .typography(.suit17M)
+                    .typography(.nanum18EB)
                     .foregroundStyle(.main500)
             }
             
@@ -159,23 +165,22 @@ extension CoinChargeView {
             } label: {
                 Text(product.displayPrice)
                     .typography(.suit14M)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(.black)
-                    .cornerRadius(8)
+                    .foregroundStyle(.white100)
+                    .frame(width: 74, height: 30)
+                    .background(.black100)
+                    .cornerRadius(4)
             }
         }
     }
 }
 
-// MARK: - Other Items Section
+// MARK: - Other Items Section 하단 기타 아이템 섹션
 extension CoinChargeView {
     private var otherItemsSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 20) {
             sectionTitle("기타 아이템")
             
-            VStack(spacing: 15) {
+            VStack(spacing: 30) {
                 otherItemRow(item: .inventoryExpansion)
                 otherItemRow(item: .copyVoucher10)
             }
@@ -183,19 +188,19 @@ extension CoinChargeView {
     }
     
     private func otherItemRow(item: OtherItem) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             Image(item.icon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
             
-            VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 8) {
                 Text(item.title)
-                    .typography(.suit17M)
+                    .typography(.suit16M)
                     .foregroundStyle(.black100)
                 
                 Text(item.currentCount)
-                    .typography(.suit12M25)
+                    .typography(.suit13M)
                     .foregroundStyle(.main500)
             }
             
@@ -206,25 +211,24 @@ extension CoinChargeView {
                 showPurchaseSheet = true
             } label: {
                 HStack(spacing: 4) {
-                    Image("myCoin")
+                    Image(.buyKey)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: 24, height: 24)
                     
                     Text("\(item.price)")
-                        .typography(.suit14M)
+                        .typography(.suit14SB18)
                         .foregroundStyle(.white)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(.black)
-                .cornerRadius(8)
+                .frame(width: 74, height: 30)
+                .background(.black100)
+                .cornerRadius(4)
             }
         }
     }
 }
 
-// MARK: - Purchase Sheet
+// MARK: - purchaseSheet 구매 시트
 extension CoinChargeView {
     var purchaseSheet: some View {
         VStack(spacing: 0) {
@@ -352,7 +356,7 @@ extension CoinChargeView {
     }
 }
 
-// MARK: - Other Item Model
+// MARK: - Other Item 기타 아이템 모델
 extension CoinChargeView {
     enum OtherItem {
         case inventoryExpansion
@@ -360,8 +364,8 @@ extension CoinChargeView {
         
         var icon: String {
             switch self {
-            case .inventoryExpansion: return "myKeyringCount"
-            case .copyVoucher10: return "myCopyPass"
+            case .inventoryExpansion: return "invenBlack"
+            case .copyVoucher10: return "copyBlack"
             }
         }
         
@@ -391,18 +395,17 @@ extension CoinChargeView {
     }
 }
 
-// MARK: - Reusable Components
+// MARK: - 재사용 Components
 extension CoinChargeView {
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
             .typography(.suit15M25)
             .foregroundStyle(.gray500)
-            .padding(.bottom, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-// MARK: - Preview
+// MARK: - 프리뷰
 #Preview {
     NavigationStack {
         CoinChargeView(router: NavigationRouter<HomeRoute>())
