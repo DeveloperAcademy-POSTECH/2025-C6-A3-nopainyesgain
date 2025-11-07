@@ -45,7 +45,7 @@
       "type" : "Consumable"
     },
     {
-      "displayPrice" : "3",
+      "displayPrice" : "5",
       "familyShareable" : false,
       "internalID" : "4E96E5E0",
       "localizations" : [
