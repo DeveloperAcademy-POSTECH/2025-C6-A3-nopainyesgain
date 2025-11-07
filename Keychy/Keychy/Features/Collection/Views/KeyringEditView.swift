@@ -127,22 +127,39 @@ extension KeyringEditView {
     
     private var completeToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                viewModel.updateKeyring(
-                    keyring: keyring,
-                    name: editedName,
-                    memo: editedMemo,
-                    tags: editedTags
-                ) { success in
-                    if success {
-                        router.reset()
+            if isCompleteEnabled {
+                Button(role: .confirm, action: {
+                    viewModel.updateKeyring(
+                        keyring: keyring,
+                        name: editedName,
+                        memo: editedMemo,
+                        tags: editedTags
+                    ) { success in
+                        if success {
+                            router.reset()
+                        }
                     }
+                }) {
+                    Image("recCheck")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundStyle(.white100)
+
                 }
-            }) {
-                Image("recCheck")
-                    .resizable()
             }
-            .disabled(!isCompleteEnabled)
+            else {
+                Button(action: {
+                    // disabled
+                }) {
+                    Image("recCheck")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundStyle(.gray600)
+
+                }
+                .disabled(true)
+            }
+
         }
     }
 }
