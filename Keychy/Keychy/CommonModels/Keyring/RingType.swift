@@ -34,6 +34,14 @@ enum RingType {
         }
     }
     
+    // MARK: - 링 옆면 이미지 다운로드 URL
+    var sideImageURL: String {
+        switch self {
+        case .basic:
+            return ""
+        }
+    }
+    
     // MARK: - Storage 경로
     var storagePath: String {
         switch self {
