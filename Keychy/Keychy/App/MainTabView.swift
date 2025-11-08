@@ -14,7 +14,12 @@ struct MainTabView: View {
     @State private var workshopRouter = NavigationRouter<WorkshopRoute>()
     @State private var festivalRouter = NavigationRouter<FestivalRoute>()
     @State private var userManager = UserManager.shared
+    @State private var deepLinkManager = DeepLinkManager.shared
+    @State private var collectionViewModel = CollectionViewModel()
 
+    @State private var showReceiveSheet = false
+    @State private var receivedKeyringId: String?
+    
     var body: some View {
         TabView(selection: $selectedTab) {
             // 홈
@@ -54,5 +59,46 @@ struct MainTabView: View {
                 .tag(3)
         }
         .tint(.main500)  // 선택된 아이템 색상
+        .onAppear {
+            checkPendingDeepLink()
+        }
+        .onChange(of: deepLinkManager.pendingKeyringId) { oldValue, newValue in
+            if newValue != nil {
+                checkPendingDeepLink()
+            }
+        }
+        .fullScreenCover(isPresented: $showReceiveSheet) {
+            if let keyringId = receivedKeyringId {
+                KeyringReceiveView(
+                    viewModel: collectionViewModel,
+                    keyringId: keyringId
+                )
+                .onDisappear {
+                    receivedKeyringId = nil
+                }
+            }
+        }
+        
+    }
+    
+    private func checkPendingDeepLink() {
+        // 저장된 딥링크가 있는지 확인
+        if let keyringId = deepLinkManager.consumePendingDeepLink() {
+            print("저장된 딥링크 처리: \(keyringId)")
+            handleDeepLink(keyringId: keyringId)
+        }
+    }
+    
+    private func handleDeepLink(keyringId: String) {
+        print("키링 수신 처리 시작: \(keyringId)")
+        
+        selectedTab = 1
+        
+        receivedKeyringId = keyringId
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            showReceiveSheet = true
+        }
     }
 }
+//keychy://receive?keyringId=QK173zLjUXMlwII228Mn

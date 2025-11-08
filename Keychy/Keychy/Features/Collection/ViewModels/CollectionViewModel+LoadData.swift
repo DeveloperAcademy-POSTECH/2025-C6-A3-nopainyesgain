@@ -260,4 +260,52 @@ extension CollectionViewModel {
                 }
             }
     }
+    
+    // MARK: - 단일 키링 ID로 키링 데이터 로드
+    func fetchKeyringById(keyringId: String, completion: @escaping (Keyring?) -> Void) {
+        print("키링 데이터 로드 시작 - ID: \(keyringId)")
+        
+        db.collection("Keyring")
+            .document(keyringId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("키링 로드 에러: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                guard let document = snapshot,
+                      document.exists,
+                      let data = document.data() else {
+                    print("키링 문서가 존재하지 않습니다")
+                    completion(nil)
+                    return
+                }
+                
+                let keyring = Keyring(documentId: keyringId, data: data)
+                print("키링 로드 완료: \(keyring?.name ?? "이름 없음")")
+                completion(keyring)
+            }
+    }
+    
+    // MARK: - 작성자 닉네임 가져오기
+    func fetchAuthorName(authorId: String, completion: @escaping (String) -> Void) {
+        db.collection("User")
+            .document(authorId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("작성자 정보 로드 에러: \(error.localizedDescription)")
+                    completion("알 수 없음")
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let nickname = data["nickname"] as? String else {
+                    completion("알 수 없음")
+                    return
+                }
+                
+                completion(nickname)
+            }
+    }
 }

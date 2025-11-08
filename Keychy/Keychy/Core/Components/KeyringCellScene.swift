@@ -24,6 +24,8 @@ class KeyringCellScene: SKScene {
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
     
+    var customBackgroundColor: UIColor = .gray50
+    
     // MARK: - Init / Deinit
     // zoomScale : 확대 비율
     init(
@@ -31,6 +33,7 @@ class KeyringCellScene: SKScene {
         chainType: ChainType,
         bodyImage: String? = nil,
         targetSize: CGSize,
+        customBackgroundColor: UIColor = .gray50,
         zoomScale: CGFloat = 1.5,
         onLoadingComplete: (() -> Void)? = nil
     ) {
@@ -38,6 +41,7 @@ class KeyringCellScene: SKScene {
         self.currentChainType = chainType
         self.bodyImage = bodyImage
         self.onLoadingComplete = onLoadingComplete
+        self.customBackgroundColor = customBackgroundColor
         
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height
@@ -57,7 +61,7 @@ class KeyringCellScene: SKScene {
     
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
-        backgroundColor = .gray50
+        backgroundColor = customBackgroundColor
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
         
         // 컨테이너 설정

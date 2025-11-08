@@ -228,7 +228,7 @@ struct CollectionKeyringDetailView: View {
                         PackingPopup(isPresented: $showPackingAlert)
                             .zIndex(100)
                             .onDisappear {
-                                // ⭐️ PackingPopup이 사라진 후 화면 이동
+                                // PackingPopup이 사라진 후 화면 이동
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                     isSheetPresented = false
                                     isNavigatingDeeper = true

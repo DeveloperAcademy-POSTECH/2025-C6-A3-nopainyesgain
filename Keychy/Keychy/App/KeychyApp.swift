@@ -20,6 +20,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
+    func application(_ application: UIApplication,
+                     continue userActivity: NSUserActivity,
+                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        print("   AppDelegate continue userActivity 호출됨")
+        print("   activityType: \(userActivity.activityType)")
+        print("   webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
+        
+        return true
+    }
+    
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
@@ -57,6 +67,50 @@ struct KeychyApp: App {
         WindowGroup {
             RootView()
                 .preferredColorScheme(.light)
+                .onOpenURL { url in
+                    print("onOpenURL 호출됨: \(url)")
+                    handleDeepLink(url)
+                }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { userActivity in
+                    print("onContinueUserActivity 호출됨")
+                    print("   activityType: \(userActivity.activityType)")
+                    print("   webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
+                    if let url = userActivity.webpageURL {
+                        handleUniversalLink(url)
+                    }
+                }
+        }
+    }
+
+    // Custom URL Scheme (테스트용)
+    private func handleDeepLink(_ url: URL) {
+        print("Custom URL Scheme 수신: \(url)")
+        
+        guard url.scheme == "keychy" else { return }
+        
+        if url.host == "receive",
+           let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+           let keyringId = components.queryItems?.first(where: { $0.name == "keyringId" })?.value {
+            
+            DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
+        }
+    }
+    
+    // Universal Links (배포용)
+    private func handleUniversalLink(_ url: URL) {
+        print("Universal Link 수신: \(url)")
+        
+        guard url.host == "keychy-f6011.web.app" else { return }
+        
+        let path = url.path
+        
+        // https://keychy-f6011.web.app/receive/KEYRING_ID
+        if path.hasPrefix("/receive/") {
+            let keyringId = String(path.dropFirst("/receive/".count))
+            print("keyringId 추출 성공: \(keyringId)")
+            DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
+        } else {
+               print("경로 파싱 실패")
         }
     }
 }

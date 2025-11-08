@@ -26,7 +26,7 @@ struct CollectionTab: View {
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
                     case .packageCompleteView(let keyring):
-                        PackageCompleteView(router: router, keyring: keyring)
+                        PackageCompleteView(router: router, viewModel: collectionViewModel, keyring: keyring)
                     }
                 }
         }
