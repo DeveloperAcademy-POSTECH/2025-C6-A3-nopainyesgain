@@ -159,3 +159,7 @@ struct PackageCompleteView: View {
         print("이미지 저장 - 현재 페이지: \(currentPage)")
     }
 }
+
+#Preview {
+    PackageCompleteView(router: NavigationRouter<CollectionRoute>())
+}
