@@ -68,7 +68,6 @@ struct MyItemsView: View {
                 hasInitialized = true
 
                 await viewModel.fetchAllData()
-                await viewModel.loadOwnedItems()
             }
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
