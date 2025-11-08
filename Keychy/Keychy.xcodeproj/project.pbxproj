@@ -1107,8 +1107,8 @@
 			isa = PBXGroup;
 			children = (
 				4CEC62992EAE09990099ECEE /* BundleCreateView.swift */,
-				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
+				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */,
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
