@@ -308,4 +308,53 @@ extension CollectionViewModel {
                 completion(nickname)
             }
     }
+    
+    // MARK: - 인벤 확장
+    func purchaseInventoryExpansion(userManager: UserManager, expansionCost: Int = 100) async -> PurchaseResult {
+        guard let userId = userManager.currentUser?.id,
+              let userCoins = userManager.currentUser?.coin else {
+            return .failed("사용자 정보를 찾을 수 없습니다")
+        }
+        
+        // 코인 부족 시
+        guard userCoins >= expansionCost else {
+            return .insufficientCoins
+        }
+        
+        let db = Firestore.firestore()
+        let userRef = db.collection("User").document(userId)
+        
+        do {
+            let snapshot = try await userRef.getDocument()
+            guard let data = snapshot.data() else {
+                return .failed("사용자 정보를 찾을 수 없습니다")
+            }
+            
+            let currentCoin = data["coin"] as? Int ?? 0
+            let currentMaxCount = data["maxKeyringCount"] as? Int ?? 0
+            
+            guard currentCoin >= expansionCost else {
+                return .insufficientCoins
+            }
+            
+            // Firestore 업데이트
+            try await userRef.updateData([
+                "coin": currentCoin - expansionCost,
+                "maxKeyringCount": currentMaxCount + 10
+            ])
+            
+            // 로컬 UserManager 갱신
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                userManager.loadUserInfo(uid: userId) { _ in
+                    continuation.resume()
+                }
+            }
+            
+            return .success
+            
+        } catch {
+            print("인벤토리 확장 실패: \(error.localizedDescription)")
+            return .failed("인벤토리 확장 처리 중 오류가 발생했습니다")
+        }
+    }
 }

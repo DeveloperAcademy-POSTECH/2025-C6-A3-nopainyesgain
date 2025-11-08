@@ -72,6 +72,40 @@ struct PurchasePopup: View {
     }
 }
 
+
+struct PurchaseSuccessPopup: View {
+    
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            Image("checkmarker")
+                .resizable()
+                .frame(width: 188, height: 102)
+                .padding(.vertical, 8)
+                .padding(.top, 8)
+            
+            Text("구매가 완료되었습니다.")
+                .typography(.suit17SB)
+                .foregroundColor(.black100)
+
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+        .frame(width: 300, height: 214)
+        .transition(.scale.combined(with: .opacity))
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isPresented = false
+                }
+            }
+        }
+    }
+}
+
 #Preview {
-    PurchasePopup(title: "인벤토리 확장", myCoin: 3100, price: 100, onConfirm: {})
+    PurchaseSuccessPopup(isPresented: .constant(true))
 }

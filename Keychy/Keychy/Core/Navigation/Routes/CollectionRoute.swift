@@ -22,4 +22,6 @@ enum CollectionRoute: Hashable {
     
     // 포장 완료
     case packageCompleteView(Keyring)
+    
+    case coinCharge
 }
