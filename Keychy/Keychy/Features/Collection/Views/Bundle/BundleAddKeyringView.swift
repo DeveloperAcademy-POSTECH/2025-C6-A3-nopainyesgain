@@ -287,23 +287,24 @@ extension BundleAddKeyringView {
 
     /// 씬 생성
     private func createScene(size: CGSize, screenWidth: CGFloat) {
-        guard let carabiner = viewModel.selectedCarabiner,
-              let backImageURL = carabiner.carabinerImage[safe: 1], let frontImageURL = carabiner.carabinerImage[safe: 2] else {
+        if let carabiner = viewModel.selectedCarabiner {
+            let backImageURL = carabiner.carabinerImage[1]
+            let frontImageURL = carabiner.carabinerImage[2]
+            isSceneReady = false
+
+            Task {
+                guard let image = try? await StorageManager.shared.getImage(path: backImageURL) else {
+                    print("카라비너 이미지 로드 실패")
+                    return
+                }
+
+                await MainActor.run {
+                    self.carabinerImage = image
+                    self.isSceneReady = true
+                }
+            }
+        } else {
             return
-        }
-
-        isSceneReady = false
-
-        Task {
-            guard let image = try? await StorageManager.shared.getImage(path: backImageURL) else {
-                print("카라비너 이미지 로드 실패")
-                return
-            }
-
-            await MainActor.run {
-                self.carabinerImage = image
-                self.isSceneReady = true
-            }
         }
     }
 

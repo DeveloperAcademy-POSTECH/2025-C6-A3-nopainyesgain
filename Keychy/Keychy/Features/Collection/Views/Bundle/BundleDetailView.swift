@@ -36,7 +36,7 @@ struct BundleDetailView: View {
                             // 1층: 뒷 카라비너 이미지 표시
                             Group {
                                 if let carabiner = resolveCarabiner(from: bundle.selectedCarabiner) {
-                                    LazyImage(url: URL(string: carabiner.carabinerImage[safe: 1] ?? "")) { state in
+                                    LazyImage(url: URL(string: carabiner.carabinerImage[1] ?? "")) { state in
                                         if let image = state.image {
                                             image
                                                 .resizable()
@@ -78,7 +78,7 @@ struct BundleDetailView: View {
                             // 3층 : 앞 카라비너 이미지 표시 (햄버거 구조)
                             Group {
                                 if let carabiner = resolveCarabiner(from: bundle.selectedCarabiner) {
-                                    LazyImage(url: URL(string: carabiner.carabinerImage[safe: 2] ?? "")) { state in
+                                    LazyImage(url: URL(string: carabiner.carabinerImage[2] ?? "")) { state in
                                         if let image = state.image {
                                             image
                                                 .resizable()
@@ -139,10 +139,8 @@ struct BundleDetailView: View {
             didPrefetch = true
 
             // BundleAddKeyringView와 동일한 씬 준비 과정 추가
-            if let bundle = viewModel.selectedBundle,
-               let carabiner = resolveCarabiner(from: bundle.selectedCarabiner),
-               let backImageURL = carabiner.carabinerImage[safe: 1] {
-                
+            if let bundle = viewModel.selectedBundle, let carabiner = resolveCarabiner(from: bundle.selectedCarabiner) {
+                let backImageURL = carabiner.carabinerImage[1]
                 // 카라비너 이미지와 키링 바디 이미지들을 모두 프리로드
                 Task {
                     do {
@@ -253,7 +251,7 @@ extension BundleDetailView {
         // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
         for index in 0..<carabiner.maxKeyringCount {
             // 번들에 저장된 문서 id (없으면 "none")
-            let docId = bundle.keyrings[safe: index] ?? "none"
+            let docId = bundle.keyrings[index] ?? "none"
             if docId == "none" || docId.isEmpty {
                 print("[BundleDetailView] dataList skip carabinerPos=\(index) (no keyring)")
                 continue
