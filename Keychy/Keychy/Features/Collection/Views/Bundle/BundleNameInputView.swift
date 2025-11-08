@@ -106,7 +106,7 @@ extension BundleNameInputView {
     }
     
     // 씬을 미리보기용으로 최적화
-    private func optimizeSceneForPreview(_ scene: CarabinerScene) {
+    private func optimizeSceneForPreview(_ scene: MultiKeyringScene) {
         
         // 스케일 모드를 aspectFit으로 변경하여 비율 유지
         scene.scaleMode = .aspectFit
