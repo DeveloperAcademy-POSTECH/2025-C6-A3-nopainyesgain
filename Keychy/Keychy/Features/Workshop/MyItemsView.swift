@@ -155,17 +155,20 @@ struct MyItemsView: View {
 
     /// 빈 콘텐츠 뷰
     private var emptyContentView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "tray")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.purple).opacity(0.6)
-
+        VStack {
+            
+            Spacer()
+                .frame(height: 280)
+            
+            Image("EmptyViewIcon")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 124)
+                
             Text("보유한 아이템이 없어요")
-                .typography(.suit14SB18)
-                .foregroundColor(.gray500)
+                .typography(.suit15R)
+                .padding(.leading, 10)
         }
-        .frame(maxWidth: .infinity, minHeight: 300)
-        .padding(.top, 50)
     }
 
     // MARK: - Filtering Logic
