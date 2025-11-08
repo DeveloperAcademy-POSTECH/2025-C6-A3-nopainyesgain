@@ -2,7 +2,7 @@
 //  AcrylicPhotoGuiding.swift
 //  Keychy
 //
-//  Created by Claude on 10/29/25.
+//  Created by Rundo on 10/29/25.
 //
 
 import SwiftUI

@@ -1,24 +1,17 @@
 //
-//  AcrylicPhotoVM.swift
-//  KeytschPrototype
+//  NeonSignVM.swift
+//  Keychy
 //
-//  Created by 김서현 on 10/17/25.
-// 설명: 아크릴 포토 템플릿 뷰모델
-// 이미지 처리(크롭 + 누끼) + 템플릿 데이터 관리
+//  Created by Rundo on 11/8/25.
+// 설명: 네온 사인 템플릿 뷰모델
+// 이미지 선택 없이 미리 정의된 bodyImage 사용 + 이펙트 선택
 
 import SwiftUI
-import PhotosUI
-import Vision
 import Combine
 import FirebaseFirestore
 
-enum KeyringUpdateType {
-    case sound
-    case particle
-}
-
 @Observable
-class AcrylicPhotoVM: KeyringViewModelProtocol {
+class NeonSignVM: KeyringViewModelProtocol {
     // MARK: - Template Data (Firebase)
     var template: KeyringTemplate?
     var isLoadingTemplate = false
@@ -91,25 +84,9 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     // MARK: - UserManager
     var userManager: UserManager
 
-    // MARK: - 이미지 선택 관련
-    var selectedImage: UIImage?
-    var fixedImage: UIImage?
-    var isProcessing: Bool = false
-    var errorMessage: String?
-
-    // MARK: - 크롭 관련
-    var cropArea: CGRect = .zero
-    var imageViewSize: CGSize = .zero
-    var initialCropArea: CGRect?
-    var draggedCorner: CropCorner?
-    var hasCropAreaBeenSet: Bool = false
-
-    // MARK: - 크롭 결과
-    var croppedImage: UIImage = UIImage()
-    var removedBackgroundImage: UIImage = UIImage()
+    // MARK: - Body Image (템플릿에 미리 정의된 이미지)
     var bodyImage: UIImage? = nil
-
-    let minimumCropSize: CGSize = CGSize(width: 100, height: 100)
+    var errorMessage: String?
 
     // MARK: - 정보 입력
     var nameText: String = ""
@@ -124,34 +101,6 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
         self.userManager = userManager
     }
 
-    // MARK: - 이미지 데이터 초기화
-    func resetImageData() {
-        selectedImage = nil
-        fixedImage = nil
-        cropArea = .zero
-        hasCropAreaBeenSet = false
-        croppedImage = UIImage()
-        removedBackgroundImage = UIImage()
-        bodyImage = nil
-        errorMessage = nil
-    }
-
-    // MARK: - 편집 데이터 초기화
-    /// 편집뷰에서 뒤로가기 시 호출
-    /// 누끼 제거된 이미지를 초기화
-    func resetEditData() {
-        removedBackgroundImage = UIImage()
-        bodyImage = nil
-    }
-
-    // MARK: - 완전 초기화
-    /// 이미지 선택이 있는 템플릿이므로 resetImageData()도 호출
-    func resetAll() {
-        resetImageData()
-        resetCustomizingData()
-        resetInfoData()
-    }
-
     // MARK: - 생성일 Date formatter
     func formattedDate(date: Date) -> String {
         let formatter = DateFormatter()
@@ -164,16 +113,18 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     func fetchTemplate() async {
         isLoadingTemplate = true
 
-        /// defer 키워드 -> 함수가 끝날 때 무조건 실행되는 코드
         defer { isLoadingTemplate = false }
 
         do {
             let document = try await Firestore.firestore()
                 .collection("Template")
-                .document("AcrylicPhoto")
+                .document("NeonSign")
                 .getDocument()
 
             template = try document.data(as: KeyringTemplate.self)
+
+            // 네온사인 템플릿 전용 고정 이미지 (Assets)
+            bodyImage = UIImage(named: "bangMark")
 
         } catch {
             errorMessage = "템플릿을 불러오는데 실패했습니다."
@@ -207,7 +158,6 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
                 return !user.soundEffects.contains(id)
             }
 
-            // 소유한 것 먼저, 그 다음 미소유
             availableSounds = ownedSounds + notOwnedSounds
 
             // Particle 전체 가져오기
@@ -229,7 +179,6 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
                 return !user.particleEffects.contains(id)
             }
 
-            // 소유한 것 먼저, 그 다음 미소유
             availableParticles = ownedParticles + notOwnedParticles
 
         } catch {
@@ -238,8 +187,6 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     }
 
     // MARK: - Sorting Helper
-    /// 이펙트 정렬 우선순위 계산
-    /// 다운로드 여부 중심 정렬: 무료 다운로드 → 유료 다운로드 → 무료 미다운로드 → 유료 미다운로드
     private func getSortPriority(isFree: Bool, isDownloaded: Bool) -> Int {
         if isFree && isDownloaded { return 1 }
         if !isFree && isDownloaded { return 2 }

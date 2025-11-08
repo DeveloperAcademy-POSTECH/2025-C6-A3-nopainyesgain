@@ -15,7 +15,7 @@ extension KeyringInfoInputView {
             Text("태그")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
-
+            
             ChipLayout(verticalSpacing: 8, horizontalSpacing: 8) {
                 Button {
                     sheetDetent = .height(76)
@@ -57,7 +57,7 @@ extension KeyringInfoInputView {
                 .typography(.suit17B)
                 .foregroundStyle(.black100)
                 .padding(.top, 14)
-
+            
             // TextField
             TextField("태그 이름을 입력해주세요", text: $newTagName)
                 .typography(.suit16M)
@@ -86,8 +86,8 @@ extension KeyringInfoInputView {
                 Spacer()
             }
             .padding(.bottom, 20)
-
-
+            
+            
             // 버튼들
             HStack(spacing: 16) {
                 // 취소 버튼
@@ -129,7 +129,7 @@ extension KeyringInfoInputView {
                             RoundedRectangle(cornerRadius: 100)
                                 .fill(.main500)
                         )
-
+                    
                 }
                 .buttonStyle(.plain)
                 .disabled(newTagName.isEmpty || showTagNameAlreadyExistsToast)
@@ -146,7 +146,7 @@ extension KeyringInfoInputView {
     /// Firebase에 태그 추가
     func addTagToFirebase(tagName: String) {
         guard let userId = userManager.currentUser?.id else { return }
-
+        
         Task {
             do {
                 try await Firestore.firestore()
@@ -155,19 +155,27 @@ extension KeyringInfoInputView {
                     .updateData([
                         "tags": FieldValue.arrayUnion([tagName])
                     ])
-
+                
                 // UserManager 업데이트
                 await refreshUserData()
+                
+                // 새로 추가한 태그를 자동으로 선택
+                await MainActor.run {
+                    if !viewModel.selectedTags.contains(tagName) {
+                        viewModel.selectedTags.append(tagName)
+                    }
+                }
+                
             } catch {
                 print("태그 추가 실패: \(error.localizedDescription)")
             }
         }
     }
-
+    
     /// UserManager의 유저 데이터 새로고침
     func refreshUserData() async {
         guard let userId = userManager.currentUser?.id else { return }
-
+        
         await withCheckedContinuation { continuation in
             userManager.loadUserInfo(uid: userId) { _ in
                 continuation.resume()
@@ -181,7 +189,7 @@ struct ChipView: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -208,12 +216,12 @@ struct ChipView: View {
 struct ChipLayout: Layout {
     var verticalSpacing: CGFloat
     var horizontalSpacing: CGFloat
-
+    
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         var totalHeight: CGFloat = 0
         var currentRowWidth: CGFloat = 0
         var currentRowHeight: CGFloat = 0
-
+        
         for view in subviews {
             let viewSize = view.sizeThatFits(.unspecified)
             if currentRowWidth + viewSize.width > (proposal.width ?? .infinity) {
@@ -221,29 +229,29 @@ struct ChipLayout: Layout {
                 currentRowWidth = 0
                 currentRowHeight = 0
             }
-
+            
             currentRowWidth += viewSize.width + horizontalSpacing
             currentRowHeight = max(currentRowHeight, viewSize.height)
         }
-
+        
         totalHeight += currentRowHeight
         return CGSize(width: proposal.width ?? 0, height: totalHeight)
     }
-
+    
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         var currentX: CGFloat = bounds.minX
         var currentY: CGFloat = bounds.minY
         var maxHeightInRow: CGFloat = 0
-
+        
         for view in subviews {
             let viewSize = view.sizeThatFits(.unspecified)
-
+            
             if currentX + viewSize.width > bounds.maxX {
                 currentX = bounds.minX
                 currentY += maxHeightInRow + verticalSpacing
                 maxHeightInRow = 0
             }
-
+            
             view.place(at: CGPoint(x: currentX, y: currentY), anchor: .topLeading, proposal: .unspecified)
             currentX += viewSize.width + horizontalSpacing
             maxHeightInRow = max(maxHeightInRow, viewSize.height)

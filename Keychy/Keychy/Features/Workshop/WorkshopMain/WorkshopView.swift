@@ -19,11 +19,10 @@ struct WorkshopView: View {
 
     let categories = ["KEYCHY!", "키링", "카라비너", "이펙트", "배경"]
 
-    /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
-    /// 실제 userManager는 .task에서 교체됨
-    init(router: NavigationRouter<WorkshopRoute>) {
+    /// WorkshopTab에서 생성된 viewModel을 받아서 사용
+    init(router: NavigationRouter<WorkshopRoute>, viewModel: WorkshopViewModel) {
         self.router = router
-        _viewModel = State(initialValue: WorkshopViewModel(userManager: UserManager.shared))
+        _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
@@ -159,6 +158,8 @@ extension WorkshopView {
     )
     userManager.currentUser?.templates = ["AcrylicPhoto"] // 보유 템플릿 ID 추가
 
-    return WorkshopView(router: NavigationRouter<WorkshopRoute>())
+    let viewModel = WorkshopViewModel(userManager: userManager)
+
+    return WorkshopView(router: NavigationRouter<WorkshopRoute>(), viewModel: viewModel)
         .environment(userManager)
 }

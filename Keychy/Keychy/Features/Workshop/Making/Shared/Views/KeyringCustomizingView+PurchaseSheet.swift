@@ -29,8 +29,6 @@ extension KeyringCustomizingView {
             .padding(.top, 30)
             .padding(.bottom, 22)
 
-            
-
             /// 장바구니 리스트 (스크롤 가능)
             ScrollView {
                 VStack(spacing: 12) {
@@ -58,8 +56,7 @@ extension KeyringCustomizingView {
 
             // 구매 버튼
             purchaseButton
-                .padding(.horizontal, 20)
-                .padding(.bottom, 30)
+                .padding(.horizontal, 33.2)
         }
         .background(
             GeometryReader { geometry in

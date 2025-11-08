@@ -10,6 +10,11 @@ import Foundation
 
 @Observable
 class HomeViewModel {
+    // MARK: - Collection ViewModel
+    var collectionViewModel: CollectionViewModel
     
+    init(collectionViewModel: CollectionViewModel = CollectionViewModel()) {
+        self.collectionViewModel = collectionViewModel
+    }
 }
 

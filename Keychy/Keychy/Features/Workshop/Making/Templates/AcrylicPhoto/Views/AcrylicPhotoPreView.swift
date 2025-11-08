@@ -11,31 +11,23 @@ import PhotosUI
 struct AcrylicPhotoPreView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: AcrylicPhotoVM
+    @Environment(UserManager.self) private var userManager
     @State private var selectedItem: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var showGuide = false
     @State private var hasAppearedBefore = false
     @State private var capturedImage: UIImage?
-    
-    var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                keyringPreivew
-                Spacer()
-                keyringInfo(template: viewModel.template)
-            }
-            .padding(.bottom, 120)
 
-            makeBtn
-        }
-        .padding(.horizontal, 35)
-        .toolbar(.hidden, for: .tabBar)
-        .task {
-            // 템플릿 데이터 가져오기
-            await viewModel.fetchTemplate()
-        }
+    var body: some View {
+        TemplatePreviewBody(
+            template: viewModel.template,
+            fetchTemplate: { await viewModel.fetchTemplate() },
+            onMake: {
+                showGuide = true
+                selectedItem = nil
+            }
+        )
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)
@@ -86,37 +78,6 @@ struct AcrylicPhotoPreView: View {
                     router.push(.acrylicPhotoCrop)
                 }
             }
-        }
-    }
-}
-
-// MARK: - KeyringScene Section
-extension AcrylicPhotoPreView {
-    private var keyringPreivew: some View {
-        ItemDetailImage(
-            itemURL: viewModel.template?.previewURL ?? "")
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
-    }
-}
-
-// MARK: - Info Section
-extension AcrylicPhotoPreView {
-    @ViewBuilder
-    private func keyringInfo(template: KeyringTemplate?) -> some View {
-        if let template {
-            ItemDetailInfoSection(item: template)
-        } else {
-            Text("템플릿 정보 없음")
-        }
-    }
-}
-
-extension AcrylicPhotoPreView {
-    private var makeBtn: some View {
-        ItemDetailMakingBtn(title: "만들기") {
-            showGuide = true
-            selectedItem = nil
         }
     }
 }

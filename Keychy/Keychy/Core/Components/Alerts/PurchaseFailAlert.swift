@@ -17,6 +17,7 @@ struct PurchaseFailAlert: View {
         VStack(spacing: 10) {
             VStack(spacing: 10) {
                 Image("bangMark")
+                    .padding(.vertical, 4)
 
                 Text("열쇠가 부족합니다!")
                     .typography(.suit20B)
@@ -28,7 +29,7 @@ struct PurchaseFailAlert: View {
                     .foregroundStyle(.black100)
             }
             .padding(8)
-            .padding(.bottom, 10)
+            .padding(.bottom, 16)
 
             /// 취소, 확인 버튼
             HStack(spacing: 16) {
@@ -38,7 +39,7 @@ struct PurchaseFailAlert: View {
                     Text("취소")
                         .typography(.suit17SB)
                         .foregroundStyle(.black100)
-                        .padding(.vertical, 13)
+                        .padding(.vertical, 10)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.glassProminent)
@@ -51,7 +52,7 @@ struct PurchaseFailAlert: View {
                     Text("확인")
                         .typography(.suit17B)
                         .foregroundStyle(.white)
-                        .padding(.vertical, 13)
+                        .padding(.vertical, 10)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.glassProminent)

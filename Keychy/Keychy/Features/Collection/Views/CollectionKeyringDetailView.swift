@@ -8,14 +8,15 @@
 import SwiftUI
 import SpriteKit
 import FirebaseFirestore
+import Photos
 
 struct CollectionKeyringDetailView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @Bindable var viewModel: CollectionViewModel
-    @State private var sheetDetent: PresentationDetent = .height(76)
+    @State var sheetDetent: PresentationDetent = .height(76)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
-    @State private var isSheetPresented: Bool = true
+    @State var isSheetPresented: Bool = true
     @State private var isNavigatingDeeper: Bool = false
     @State private var authorName: String = ""
     @State private var showMenu: Bool = false
@@ -26,7 +27,13 @@ struct CollectionKeyringDetailView: View {
     @State private var showPackageAlert: Bool = false
     @State private var showPackingAlert: Bool = false
     @State private var menuPosition: CGRect = .zero
-    
+
+    // 이미지 저장 관련
+    @State var showImageSaved: Bool = false
+    @State var checkmarkScale: CGFloat = 0.0
+    @State var checkmarkOpacity: Double = 0.0
+    @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
+
     let keyring: Keyring
     
     private var isMyKeyring: Bool {
@@ -205,7 +212,7 @@ struct CollectionKeyringDetailView: View {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     showPackageAlert = false
                                 }
-
+                                
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                                     guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                                         print("UID를 찾을 수 없습니다")
@@ -238,11 +245,15 @@ struct CollectionKeyringDetailView: View {
                             }
                     }
                 }
-                    
+                // 이미지 저장 완료 체크마크
+                if showImageSaved {
+                    ImageSaveAlert(checkmarkScale: checkmarkScale)
+                        .opacity(checkmarkOpacity)
+                        .zIndex(101)
             }
         }
         .ignoresSafeArea()
-        .navigationTitle(keyring.name)
+        .navigationTitle(showUIForCapture ? keyring.name : "")
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .sheet(isPresented: $isSheetPresented) {
@@ -252,7 +263,7 @@ struct CollectionKeyringDetailView: View {
                 .presentationBackgroundInteraction(.enabled(upThrough: .height(395)))
                 .interactiveDismissDisabled()
         }
-        .toolbar(.hidden, for: .tabBar)
+        
         .onAppear {
             isSheetPresented = true
             isNavigatingDeeper = false
@@ -270,6 +281,9 @@ struct CollectionKeyringDetailView: View {
             backToolbarItem
             menuToolbarItem
         }
+        .toolbar(showUIForCapture ? .visible : .hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
+        
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
         }
@@ -308,7 +322,7 @@ struct CollectionKeyringDetailView: View {
         db.collection("User")
             .document(keyring.authorId)
             .getDocument { snapshot, error in
-                if let error = error {
+                if error != nil {
                     self.authorName = "알 수 없음"
                     return
                 }
@@ -353,9 +367,10 @@ extension CollectionKeyringDetailView {
                 Image(systemName: "chevron.left")
                     .foregroundColor(.primary)
             }
+            .opacity(showUIForCapture ? 1 : 0)
         }
     }
-    
+
     private var menuToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
@@ -375,6 +390,7 @@ extension CollectionKeyringDetailView {
                         }
                     )
             }
+            .opacity(showUIForCapture ? 1 : 0)
         }
     }
 }
@@ -439,12 +455,13 @@ extension CollectionKeyringDetailView {
     private var topSection: some View {
         HStack {
             Button(action: {
-                // TODO: 이미지 다운로드 로직
+                captureAndSaveImage()
             }) {
                 Image("Save")
                     .resizable()
                     .frame(width: 28, height: 28)
             }
+            .opacity(showUIForCapture ? 1 : 0)
             
             Spacer()
             

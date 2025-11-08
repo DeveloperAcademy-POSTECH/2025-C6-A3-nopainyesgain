@@ -33,7 +33,7 @@ class CollectionViewModel {
     // MARK: - 키링 뭉치 관련
     var maxBundleNameCount: Int = 9
     var selectedKeyringsForBundle: [Int: Keyring] = [:] // 번들 생성용 선택된 키링들
-    var bundlePreviewScene: CarabinerScene?
+    var bundlePreviewScene: MultiKeyringScene?
     
     // Firestore에서 로드되는 실제 뭉치 목록 (초기 빈 배열)
     var bundles: [KeyringBundle] = []
