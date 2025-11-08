@@ -37,16 +37,27 @@ struct PurchasePopup: View {
 
             // 버튼
             Button(action: onConfirm) {
-                Text("준비중")
-                    .typography(.suit17B)
-                    .foregroundColor(.white100)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 100)
-                            .fill(.black80)
-                    )
+                HStack(spacing: 4) {
+                    Image("buyKey")
+                        .resizable()
+                        .frame(width: 34, height: 34)
+                        .padding(.bottom, 4)
+                    
+                    Text("\(price)")
+                        .typography(.nanum18EB)
+                        .foregroundColor(.white100)
+                        .frame(height: 32)
+                        .padding(.top, 4)
+ 
+                }
+
             }
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(
+                RoundedRectangle(cornerRadius: 100)
+                    .fill(.black80)
+            )
             .buttonStyle(.plain)
             
         }
@@ -55,4 +66,8 @@ struct PurchasePopup: View {
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
         .frame(width: 300, height: 207)
     }
+}
+
+#Preview {
+    PurchasePopup(title: "인벤토리 확장", myCoin: 3100, price: 100, onConfirm: {})
 }
