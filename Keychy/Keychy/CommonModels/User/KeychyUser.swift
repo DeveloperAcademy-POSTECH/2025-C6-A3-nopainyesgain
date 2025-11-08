@@ -61,7 +61,7 @@ struct KeychyUser: Identifiable {
         self.nickname = nickname
         self.email = email
         self.createdAt = timestamp.dateValue()
-        self.maxKeyringCount = data["maxKeyringCount"] as? Int ?? 100
+        self.maxKeyringCount = data["maxKeyringCount"] as? Int ?? 50
         self.coin = data["coin"] as? Int ?? 0
         self.copyVoucher = data["copyVoucher"] as? Int ?? 0
         self.templates = data["templates"] as? [String] ?? []

@@ -66,8 +66,9 @@ struct KeychyApp: App {
 struct RootView: View {
     @State private var introViewModel = IntroViewModel()
     @State private var userManager = UserManager.shared
+    @State private var purchaseManager = PurchaseManager.shared
     @State private var isCheckingAuth = true
-    
+
     var body: some View {
         Group {
             if isCheckingAuth {
