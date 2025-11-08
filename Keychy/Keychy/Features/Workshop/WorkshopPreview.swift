@@ -14,6 +14,14 @@ struct WorkshopPreview: View {
     @State private var effectManager = EffectManager.shared
     @State private var isParticleReady = false
 
+    // 구매 관련 상태
+    @State private var showPurchaseSheet = false
+    @State private var purchasePopupScale: CGFloat = 0.3
+    @State private var showPurchaseSuccessAlert = false
+    @State private var purchaseSuccessScale: CGFloat = 0.3
+    @State private var showPurchaseFailAlert = false
+    @State private var purchaseFailScale: CGFloat = 0.3
+
     let viewModel: WorkshopViewModel
     let item: any WorkshopItem
     
@@ -73,6 +81,102 @@ struct WorkshopPreview: View {
             // 카라비너가 무료이고 아직 소유하지 않았다면 자동으로 추가
             else if let carabiner = item as? Carabiner {
                 await viewModel.addFreeCarabinerIfNeeded(carabiner)
+            }
+        }
+        .overlay {
+            ZStack(alignment: .center) {
+                // 구매 확인 팝업
+                if showPurchaseSheet {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchasePopupScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseSheet = false
+                            }
+                        }
+
+                    PurchasePopup(
+                        title: item.name,
+                        myCoin: userManager.currentUser?.coin ?? 0,
+                        price: item.workshopPrice,
+                        scale: purchasePopupScale,
+                        onConfirm: {
+                            Task {
+                                await handlePurchase()
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
+
+                // 구매 성공 알림
+                if showPurchaseSuccessAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+
+                    BangmarkAlert(
+                        checkmarkScale: purchaseSuccessScale,
+                        text: "구매 완료!",
+                        cancelText: "닫기",
+                        confirmText: "확인",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseSuccessScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseSuccessAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseSuccessScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseSuccessAlert = false
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
+
+                // 구매 실패 알림 (코인 부족)
+                if showPurchaseFailAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+
+                    BangmarkAlert(
+                        checkmarkScale: purchaseFailScale,
+                        text: "열쇠가 부족해요",
+                        cancelText: "취소",
+                        confirmText: "충전하기",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseFailScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseFailAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseFailScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseFailAlert = false
+                                router.push(.coinCharge)
+                            }
+                        }
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                }
             }
         }
     }
@@ -201,10 +305,53 @@ extension WorkshopPreview {
             item: item,
             isOwned: isOwned,
             onPurchase: {
-                // TODO: 구매 로직 구현
-                print("구매: \(item.name) - \(item.workshopPrice) 코인")
+                showPurchaseSheet = true
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                    purchasePopupScale = 1.0
+                }
             }
         )
+    }
+
+    /// 구매 처리
+    private func handlePurchase() async {
+        // ItemPurchaseManager를 통해 구매 처리
+        let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(item, userManager: userManager)
+
+        // 팝업 닫기 애니메이션
+        await MainActor.run {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                purchasePopupScale = 0.3
+            }
+        }
+
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        await MainActor.run {
+            showPurchaseSheet = false
+        }
+
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        switch result {
+        case .success:
+            // 성공 시 성공 알림 표시
+            showPurchaseSuccessAlert = true
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                purchaseSuccessScale = 1.0
+            }
+
+        case .insufficientCoins:
+            // 코인 부족 시 실패 알림 표시
+            showPurchaseFailAlert = true
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                purchaseFailScale = 1.0
+            }
+
+        case .failed(let message):
+            // 기타 실패 시 에러 출력
+            print("구매 실패: \(message)")
+        }
     }
 }
 
