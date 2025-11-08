@@ -32,8 +32,8 @@ extension KeyringViewModelProtocol {
 
     // MARK: - 완전 초기화
     /// 모든 데이터 초기화 (완성뷰 dismiss, 커스터마이징뷰 alert 후)
+    /// 이미지 선택이 있는 템플릿은 resetAll()을 override하여 resetImageData()도 호출
     func resetAll() {
-        resetImageData()
         resetCustomizingData()
         resetInfoData()
     }

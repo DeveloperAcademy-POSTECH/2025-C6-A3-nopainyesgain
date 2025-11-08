@@ -11,13 +11,21 @@ import PhotosUI
 struct AcrylicPhotoPreView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: AcrylicPhotoVM
+    @Environment(UserManager.self) private var userManager
     @State private var selectedItem: PhotosPickerItem?
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var showGuide = false
     @State private var hasAppearedBefore = false
     @State private var capturedImage: UIImage?
-    
+
+    /// 템플릿 보유 여부 확인
+    private var isOwned: Bool {
+        guard let user = userManager.currentUser,
+              let templateId = viewModel.template?.id else { return false }
+        return user.templates.contains(templateId)
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 0) {
@@ -114,9 +122,24 @@ extension AcrylicPhotoPreView {
 
 extension AcrylicPhotoPreView {
     private var makeBtn: some View {
-        ItemDetailMakingBtn(title: "만들기") {
-            showGuide = true
-            selectedItem = nil
+        Group {
+            if let template = viewModel.template {
+                KeyringTemplateActionButton(
+                    template: template,
+                    isOwned: isOwned,
+                    onMake: {
+                        showGuide = true
+                        selectedItem = nil
+                    },
+                    onPurchase: {
+                        // TODO: 구매 로직 구현
+                        print("구매: \(template.name) - \(template.workshopPrice) 코인")
+                    }
+                )
+            } else {
+                // 템플릿 로딩 중
+                ProgressView()
+            }
         }
     }
 }

@@ -197,54 +197,14 @@ extension WorkshopPreview {
 // MARK: - Action Button Section
 extension WorkshopPreview {
     private var actionButton: some View {
-        Group {
-            if item.isFree {
-                disabledButton(text: "무료")
-            } else if isOwned {
-                disabledButton(text: "보유중")
-            } else {
-                purchaseButton
+        WorkshopItemActionButton(
+            item: item,
+            isOwned: isOwned,
+            onPurchase: {
+                // TODO: 구매 로직 구현
+                print("구매: \(item.name) - \(item.workshopPrice) 코인")
             }
-        }
-    }
-    
-    /// 비활성화 버튼 (무료 / 보유중)
-    private func disabledButton(text: String) -> some View {
-        Button {
-            // 비활성화 - 아무 동작 없음
-        } label: {
-            Text(text)
-                .typography(.suit17B)
-                .foregroundStyle(.gray400)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 7.5)
-        }
-        .buttonStyle(.glassProminent)
-        .tint(.white100)
-        .disabled(true)
-    }
-    
-    /// 구입 버튼 (유료)
-    private var purchaseButton: some View {
-        Button {
-            // TODO: 구매 로직 구현
-            print("구매: \(item.name) - \(item.workshopPrice) 코인")
-        } label: {
-            HStack(spacing: 5) {
-                Image(.buyKey)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 32)
-                
-                Text("\(item.workshopPrice)")
-                    .typography(.nanum18EB)
-                    .foregroundStyle(.white100)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 36)
-        }
-        .buttonStyle(.glassProminent)
-        .tint(.black80)
+        )
     }
 }
 

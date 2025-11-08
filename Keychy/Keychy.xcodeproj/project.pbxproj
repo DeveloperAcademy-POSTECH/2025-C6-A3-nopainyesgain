@@ -196,7 +196,10 @@
 		C6B56F0F2EBD8A2E0049F969 /* StoreKit.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6B56F0E2EBD8A2E0049F969 /* StoreKit.storekit */; };
 		C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F102EBD96110049F969 /* CoinChargeView+Purchase.swift */; };
 		C6B56F132EBD962E0049F969 /* CurrentItemsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F122EBD962E0049F969 /* CurrentItemsCard.swift */; };
-		C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */; };
+		C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F162EBF28170049F969 /* NeonSignVM.swift */; };
+		C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */; };
+		C6B56F1C2EBF2A960049F969 /* NeonSignVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */; };
+		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
 		C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */; };
@@ -401,7 +404,10 @@
 		C6B56F0E2EBD8A2E0049F969 /* StoreKit.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = StoreKit.storekit; path = Keychy/StoreKit.storekit; sourceTree = "<group>"; };
 		C6B56F102EBD96110049F969 /* CoinChargeView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoinChargeView+Purchase.swift"; sourceTree = "<group>"; };
 		C6B56F122EBD962E0049F969 /* CurrentItemsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentItemsCard.swift; sourceTree = "<group>"; };
-		C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPhotoPreview.swift; sourceTree = "<group>"; };
+		C6B56F162EBF28170049F969 /* NeonSignVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignVM.swift; sourceTree = "<group>"; };
+		C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatePreviewComponents.swift; sourceTree = "<group>"; };
+		C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NeonSignVM+Effect.swift"; sourceTree = "<group>"; };
+		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
@@ -562,6 +568,7 @@
 		4C7775302EB0ED0800981C3E /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */,
 				4CBBEF292EB7DB9800252590 /* Recording */,
 				4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */,
 				4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */,
@@ -1179,9 +1186,19 @@
 			path = WorkshopMain;
 			sourceTree = "<group>";
 		};
+		C6B56F172EBF28170049F969 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C6B56F162EBF28170049F969 /* NeonSignVM.swift */,
+				C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		C6C4027F2EB26BFB006B58DF /* TextPhoto */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F172EBF28170049F969 /* ViewModels */,
 				C6C402802EB26C10006B58DF /* Views */,
 			);
 			path = TextPhoto;
@@ -1190,7 +1207,7 @@
 		C6C402802EB26C10006B58DF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C6C402852EB26C66006B58DF /* TextPhotoPreview.swift */,
+				C6C402852EB26C66006B58DF /* NeonSignPreview.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1315,6 +1332,7 @@
 				4C65306C2EBC889B000F8154 /* ChangeNameView.swift in Sources */,
 				C68931D82EB8527C00C5F083 /* WorkshopMyCollectionSection.swift in Sources */,
 				3822DDC02EBB2353003125BE /* KeyringMenu.swift in Sources */,
+				C6B56F1C2EBF2A960049F969 /* NeonSignVM+Effect.swift in Sources */,
 				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
@@ -1402,6 +1420,7 @@
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
 				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
+				C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
 				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
@@ -1434,6 +1453,7 @@
 				AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */,
 				4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */,
 				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
+				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
 				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
@@ -1461,7 +1481,7 @@
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
 				38A596732EAFA8D20003D712 /* KeychyUser.swift in Sources */,
 				385425CA2EB3C79A00A06C02 /* KeyringDetailScene.swift in Sources */,
-				C6C402862EB26C66006B58DF /* TextPhotoPreview.swift in Sources */,
+				C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
 				C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */,
