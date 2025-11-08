@@ -22,16 +22,18 @@ struct KeyringBundleItem: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.gray.opacity(0.2))
                     )
-                UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
-                    .fill(.pink100.opacity(0.7))
-                    .overlay(
-                        Text("대표")
-                            .typography(.suit13M)
-                            .foregroundStyle(.white100)
-                    )
-                    .frame(height: 26)
-                    .frame(maxWidth: .infinity)
-                
+                if bundle.isMain {
+                    UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
+                        .fill(.pink100.opacity(0.7))
+                        .overlay(
+                            Text("대표")
+                                .typography(.suit13M)
+                                .foregroundStyle(.white100)
+                        )
+                        .frame(height: 26)
+                        .frame(maxWidth: .infinity)
+                    
+                }
             }
             
             HStack {
