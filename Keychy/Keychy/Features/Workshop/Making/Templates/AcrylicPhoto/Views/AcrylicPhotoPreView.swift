@@ -26,7 +26,8 @@ struct AcrylicPhotoPreView: View {
             onMake: {
                 showGuide = true
                 selectedItem = nil
-            }
+            },
+            router: router
         )
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {

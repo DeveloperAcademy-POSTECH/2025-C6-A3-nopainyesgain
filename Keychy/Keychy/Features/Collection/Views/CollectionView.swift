@@ -17,6 +17,7 @@ struct CollectionView: View {
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteAlert: Bool = false
     @State private var showInvenExpandAlert: Bool = false // 추후 인벤토리 확장용
+    @State private var invenExpandAlertScale: CGFloat = 0.3
     @State private var renamingCategory: String = ""
     @State private var deletingCategory: String = ""
     @State private var newCategoryName: String = ""
@@ -175,15 +176,24 @@ struct CollectionView: View {
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        showInvenExpandAlert = false // dismiss용
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            invenExpandAlertScale = 0.3
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            showInvenExpandAlert = false
+                        }
                     }
-                
+
                 PurchasePopup(
                     title: "인벤토리 확장 [+100]",
                     myCoin: collectionViewModel.coin,
                     price: 100,
+                    scale: invenExpandAlertScale,
                     onConfirm: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            invenExpandAlertScale = 0.3
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             showInvenExpandAlert = false
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
@@ -191,6 +201,8 @@ struct CollectionView: View {
                         }
                     }
                 )
+                .padding(.horizontal, 40)
+                .padding(.bottom, 30)
                 .transition(.scale.combined(with: .opacity))
             }
             
@@ -436,8 +448,9 @@ extension CollectionView {
                 .padding(.trailing, 8)
 
             Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showInvenExpandAlert = true
+                showInvenExpandAlert = true
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                    invenExpandAlertScale = 1.0
                 }
             }) {
                 Image("InvenPlus")
