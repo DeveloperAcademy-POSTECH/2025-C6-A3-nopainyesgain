@@ -14,6 +14,7 @@ struct WorkshopPreview: View {
     @State private var effectManager = EffectManager.shared
     @State private var isParticleReady = false
 
+    let viewModel: WorkshopViewModel
     let item: any WorkshopItem
     
     /// 아이템 보유 여부 확인
@@ -64,6 +65,12 @@ struct WorkshopPreview: View {
         }
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
+        .task {
+            // 배경이 무료이고 아직 소유하지 않았다면 자동으로 추가
+            if let background = item as? Background {
+                await viewModel.addFreeBackgroundIfNeeded(background)
+            }
+        }
     }
 }
 
@@ -255,6 +262,7 @@ extension WorkshopPreview {
     
     return WorkshopPreview(
         router: NavigationRouter<WorkshopRoute>(),
+        viewModel: WorkshopViewModel(userManager: UserManager.shared),
         item: sampleSound
     )
     .environment(UserManager.shared)

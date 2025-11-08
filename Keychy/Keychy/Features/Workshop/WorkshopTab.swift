@@ -10,25 +10,26 @@ import SwiftUI
 struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
-    
+    @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
+
     var body: some View {
         NavigationStack(path: $router.path) {
-            WorkshopView(router: router)
+            WorkshopView(router: router, viewModel: workshopViewModel)
                 .navigationDestination(for: WorkshopRoute.self) { route in
                     switch route {
 
                     // MARK: - 공통 프리뷰
                     case .workshopPreview(let item):
                         if let template = item.base as? KeyringTemplate {
-                            WorkshopPreview(router: router, item: template)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: template)
                         } else if let background = item.base as? Background {
-                            WorkshopPreview(router: router, item: background)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: background)
                         } else if let carabiner = item.base as? Carabiner {
-                            WorkshopPreview(router: router, item: carabiner)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: carabiner)
                         } else if let particle = item.base as? Particle {
-                            WorkshopPreview(router: router, item: particle)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: particle)
                         } else if let sound = item.base as? Sound {
-                            WorkshopPreview(router: router, item: sound)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: sound)
                         }
                     
                     // MARK: - 내 창고뷰

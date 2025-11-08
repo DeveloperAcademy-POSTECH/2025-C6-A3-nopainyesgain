@@ -339,7 +339,52 @@ class WorkshopViewModel {
     func isSoundOwned(_ sound: Sound) -> Bool {
         isItemOwned(sound, userItems: userManager.currentUser?.soundEffects ?? [])
     }
-    
+
+    // MARK: - Free Item Ownership
+
+    /// 무료 배경 소유권 추가
+    func addFreeBackgroundIfNeeded(_ background: Background) async {
+        guard let backgroundId = background.id else { return }
+
+        // 무료이고 아직 소유하지 않은 경우에만 추가
+        if background.isFree && !isBackgroundOwned(background) {
+            await addItemOwnership(itemId: backgroundId, field: "backgrounds")
+        }
+    }
+
+    /// 아이템 소유권을 Firestore에 추가하는 공통 함수
+    private func addItemOwnership(itemId: String, field: String) async {
+        guard let userId = userManager.currentUser?.id else {
+            print("❌ WorkshopViewModel: User ID not found for \(field) ownership")
+            return
+        }
+
+        do {
+            try await Firestore.firestore()
+                .collection("User")
+                .document(userId)
+                .updateData([
+                    field: FieldValue.arrayUnion([itemId])
+                ])
+
+            // UserManager 업데이트
+            await refreshUserData()
+        } catch {
+            print("❌ WorkshopViewModel: Failed to add \(itemId) to Firestore: \(error.localizedDescription)")
+        }
+    }
+
+    /// UserManager의 유저 데이터 새로고침
+    private func refreshUserData() async {
+        guard let userId = userManager.currentUser?.id else { return }
+
+        await withCheckedContinuation { continuation in
+            userManager.loadUserInfo(uid: userId) { _ in
+                continuation.resume()
+            }
+        }
+    }
+
     /// 카테고리 변경 시 필터 초기화
     func resetFilters() {
         selectedTemplateFilter = nil
