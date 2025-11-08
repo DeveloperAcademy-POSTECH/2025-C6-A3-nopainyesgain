@@ -352,6 +352,16 @@ class WorkshopViewModel {
         }
     }
 
+    /// 무료 카라비너 소유권 추가
+    func addFreeCarabinerIfNeeded(_ carabiner: Carabiner) async {
+        guard let carabinerId = carabiner.id else { return }
+
+        // 무료이고 아직 소유하지 않은 경우에만 추가
+        if carabiner.isFree && !isCarabinerOwned(carabiner) {
+            await addItemOwnership(itemId: carabinerId, field: "carabiners")
+        }
+    }
+
     /// 아이템 소유권을 Firestore에 추가하는 공통 함수
     private func addItemOwnership(itemId: String, field: String) async {
         guard let userId = userManager.currentUser?.id else {

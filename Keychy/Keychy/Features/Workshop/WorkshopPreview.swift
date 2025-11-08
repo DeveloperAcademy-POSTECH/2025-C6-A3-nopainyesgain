@@ -70,6 +70,10 @@ struct WorkshopPreview: View {
             if let background = item as? Background {
                 await viewModel.addFreeBackgroundIfNeeded(background)
             }
+            // 카라비너가 무료이고 아직 소유하지 않았다면 자동으로 추가
+            else if let carabiner = item as? Carabiner {
+                await viewModel.addFreeCarabinerIfNeeded(carabiner)
+            }
         }
     }
 }
