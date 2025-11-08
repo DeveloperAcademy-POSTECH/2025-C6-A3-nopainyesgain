@@ -2,7 +2,7 @@
 //  NeonSignVM.swift
 //  Keychy
 //
-//  Created by Claude on 11/8/25.
+//  Created by Rundo on 11/8/25.
 // 설명: 네온 사인 템플릿 뷰모델
 // 이미지 선택 없이 미리 정의된 bodyImage 사용 + 이펙트 선택
 

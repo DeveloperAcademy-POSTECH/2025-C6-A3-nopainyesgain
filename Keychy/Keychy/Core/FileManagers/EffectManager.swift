@@ -2,7 +2,7 @@
 //  EffectManager.swift
 //  Keychy
 //
-//  Created by Claude on 11/3/25.
+//  Created by Rundo on 11/3/25.
 //
 
 import Foundation
