@@ -16,6 +16,7 @@ struct WorkshopGridHelpers {
         isOwnedCheck: @escaping (T) -> Bool,
         router: NavigationRouter<WorkshopRoute>?,
         viewModel: WorkshopViewModel?,
+        showDeleteButton: Bool = false,
         emptyView: EmptyView
     ) -> some View {
         Group {
@@ -31,7 +32,8 @@ struct WorkshopGridHelpers {
                             item: item,
                             isOwned: isOwnedCheck(item),
                             router: router,
-                            viewModel: viewModel
+                            viewModel: viewModel,
+                            showDeleteButton: showDeleteButton
                         )
                         .id(item.id)
                     }
@@ -49,6 +51,7 @@ struct WorkshopGridHelpers {
         isParticleOwned: @escaping (Particle) -> Bool,
         router: NavigationRouter<WorkshopRoute>?,
         viewModel: WorkshopViewModel?,
+        showDeleteButton: Bool = false,
         emptyView: EmptyView
     ) -> some View {
         Group {
@@ -65,7 +68,8 @@ struct WorkshopGridHelpers {
                                 item: sound,
                                 isOwned: isSoundOwned(sound),
                                 router: router,
-                                viewModel: viewModel
+                                viewModel: viewModel,
+                                showDeleteButton: showDeleteButton
                             )
                             .id(sound.id)
                         } else if let particle = item as? Particle {
@@ -73,7 +77,8 @@ struct WorkshopGridHelpers {
                                 item: particle,
                                 isOwned: isParticleOwned(particle),
                                 router: router,
-                                viewModel: viewModel
+                                viewModel: viewModel,
+                                showDeleteButton: showDeleteButton
                             )
                             .id(particle.id)
                         }

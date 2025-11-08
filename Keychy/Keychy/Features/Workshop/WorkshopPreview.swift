@@ -7,12 +7,14 @@
 
 import SwiftUI
 import Lottie
+import FirebaseFirestore
 
 struct WorkshopPreview: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var effectManager = EffectManager.shared
     @State private var isParticleReady = false
+    @State private var showDeleteAlert = false
 
     // 구매 관련 상태
     @State private var showPurchaseSheet = false
@@ -24,6 +26,7 @@ struct WorkshopPreview: View {
 
     let viewModel: WorkshopViewModel
     let item: any WorkshopItem
+    var showDeleteButton: Bool = false  // MyItemsView에서 올 때 true
     
     /// 아이템 보유 여부 확인
     private var isOwned: Bool {
@@ -73,6 +76,18 @@ struct WorkshopPreview: View {
         }
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
+        .toolbar {
+            if showDeleteButton {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showDeleteAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+        }
         .task {
             // 배경이 무료이고 아직 소유하지 않았다면 자동으로 추가
             if let background = item as? Background {
@@ -82,6 +97,16 @@ struct WorkshopPreview: View {
             else if let carabiner = item as? Carabiner {
                 await viewModel.addFreeCarabinerIfNeeded(carabiner)
             }
+        }
+        .alert("아이템 삭제", isPresented: $showDeleteAlert) {
+            Button("취소", role: .cancel) {}
+            Button("삭제", role: .destructive) {
+                Task {
+                    await deleteItem()
+                }
+            }
+        } message: {
+            Text("이 아이템을 삭제하시겠어요?\n삭제된 아이템은 복구할 수 없습니다.")
         }
         .overlay {
             ZStack(alignment: .center) {
@@ -178,6 +203,43 @@ struct WorkshopPreview: View {
                     .padding(.bottom, 30)
                 }
             }
+        }
+    }
+
+    /// 아이템 삭제
+    private func deleteItem() async {
+        guard let itemId = item.id,
+              let userId = userManager.currentUser?.id else { return }
+
+        do {
+            let field: String
+            if item is KeyringTemplate {
+                field = "templates"
+            } else if item is Background {
+                field = "backgrounds"
+            } else if item is Carabiner {
+                field = "carabiners"
+            } else if item is Particle {
+                field = "particleEffects"
+            } else if item is Sound {
+                field = "soundEffects"
+            } else {
+                return
+            }
+
+            try await Firestore.firestore()
+                .collection("User")
+                .document(userId)
+                .updateData([
+                    field: FieldValue.arrayRemove([itemId])
+                ])
+
+            // 뒤로 가기
+            await MainActor.run {
+                router.pop()
+            }
+        } catch {
+            print("아이템 삭제 실패: \(error.localizedDescription)")
         }
     }
 }
