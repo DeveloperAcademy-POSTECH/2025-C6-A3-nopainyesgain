@@ -8,6 +8,7 @@
 import SwiftUI
 import SpriteKit
 import FirebaseFirestore
+import CoreImage
 
 struct PackageCompleteView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
@@ -16,6 +17,7 @@ struct PackageCompleteView: View {
     @State private var authorName: String = ""
     @State private var scene: KeyringCellScene?
     @State private var isLoading: Bool = true
+    @State private var qrCodeImage: UIImage?
     
     private let totalPages = 2
     
@@ -112,7 +114,8 @@ struct PackageCompleteView: View {
         }
         .onAppear {
             hideTabBar()
-            //fetchAuthorName()
+            fetchAuthorName()
+            generateQRCodeImage()
         }
     }
     
@@ -225,11 +228,19 @@ struct PackageCompleteView: View {
                         .fill(.white100)
                         .frame(width: 215, height: 215)
                     
-                    Image("tempQR") // 실제 QR 이미지
-                        .resizable()
-                        .frame(width: 210, height: 210)
+                    if let qrCodeImage = qrCodeImage {
+                        Image(uiImage: qrCodeImage)
+                            .resizable()
+                            .interpolation(.none) // 픽셀화 방지
+                            .scaledToFit()
+                            .frame(width: 210, height: 210)
+                    } else {
+                        // 로딩 중이거나 실패 시
+                        ProgressView()
+                            .frame(width: 210, height: 210)
+                    }
                 }
-                .offset(y: -8)
+                .offset(y: -12)
 
             }
             .padding(.bottom, 30)
@@ -300,7 +311,7 @@ struct PackageCompleteView: View {
         .glassEffect(.regular.interactive(), in: .circle)
     }
     
-    // MARK: - 액션
+    // MARK: - 링크 관련
     private func copyLink() {
         guard let url = DeepLinkManager.createShareLink(keyringId: firestoreDocumentId!) else {
             print("링크 생성 실패")
@@ -325,6 +336,38 @@ struct PackageCompleteView: View {
            let rootVC = windowScene.windows.first?.rootViewController {
             rootVC.present(activityVC, animated: true)
         }
+    }
+    
+    // MARK: - QR 코드 생성
+    private func generateQRCodeImage() {
+        guard let url = DeepLinkManager.createShareLink(keyringId: firestoreDocumentId!) else {
+            print("링크 생성 실패")
+            return
+        }
+        
+        qrCodeImage = generateQRCode(from: url.absoluteString)
+        print("QR 코드 생성 완료: \(url.absoluteString)")
+    }
+
+    private func generateQRCode(from string: String) -> UIImage {
+        let context = CIContext()
+        guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return UIImage() }
+        
+        let data = Data(string.utf8)
+        filter.setValue(data, forKey: "inputMessage")
+        // 선택적으로 QR 코드 품질 조절
+        filter.setValue("Q", forKey: "inputCorrectionLevel")
+
+        guard let outputImage = filter.outputImage else { return UIImage() }
+        
+        let transform = CGAffineTransform(scaleX: 10, y: 10)
+        let scaledImage = outputImage.transformed(by: transform)
+        
+        if let cgImage = context.createCGImage(scaledImage, from: scaledImage.extent) {
+            return UIImage(cgImage: cgImage)
+        }
+        
+        return UIImage()
     }
     
     private func saveImage() {
