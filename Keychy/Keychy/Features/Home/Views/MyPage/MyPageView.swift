@@ -202,6 +202,7 @@ extension MyPageView {
                 Spacer()
                 
                 myPageBtn(type: .charge)
+                    
             }
             
             HStack(spacing: 20) {
@@ -540,7 +541,7 @@ extension MyPageView {
         }
 
         user.reauthenticate(with: credential) { _, error in
-            if let error = error {
+            if error != nil {
                 // LoadingAlert 숨기기
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                     loadingAlertScale = 0.3
@@ -636,7 +637,7 @@ extension MyPageView {
 
         // 1. Firebase Auth 계정 삭제
         user.delete { error in
-            if let error = error {
+            if error != nil {
                 // LoadingAlert 숨기기
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                     loadingAlertScale = 0.3
@@ -721,8 +722,8 @@ extension MyPageView {
             router.push(route)
         } label: {
             Text(type.text)
-                .typography(.suit17M)
-                .foregroundStyle(.black100)
+                .typography(type == .charge ? .suit15M25 : .suit17M)
+                .foregroundStyle(type == .charge ? .gray500 : .black100)
         }
         .buttonStyle(.plain)
     }
