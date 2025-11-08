@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 // MARK: - Preview Layout
 /// 템플릿 프리뷰 전체 레이아웃
@@ -82,13 +83,52 @@ struct TemplatePreviewActionButton: View {
     }
 }
 
-// MARK: - Ownership Helper
-/// 템플릿 소유 여부 확인 헬퍼
+// MARK: - Auto Own Free Template Modifier
+/// 무료 템플릿 자동 소유 처리
+struct AutoOwnFreeTemplateModifier: ViewModifier {
+    let template: KeyringTemplate?
+    let isOwned: Bool
+    @Environment(UserManager.self) private var userManager
+
+    func body(content: Content) -> some View {
+        content
+            .task(id: template?.id) {
+                // 무료 템플릿이면 자동으로 소유권 추가
+                if let template = template,
+                   template.isFree,
+                   !isOwned,
+                   let templateId = template.id,
+                   let userId = userManager.currentUser?.id {
+                    await addTemplateOwnership(userId: userId, templateId: templateId)
+                }
+            }
+    }
+
+    /// Firestore에 템플릿 소유권 추가
+    private func addTemplateOwnership(userId: String, templateId: String) async {
+        do {
+            try await Firestore.firestore()
+                .collection("User")
+                .document(userId)
+                .updateData([
+                    "templates": FieldValue.arrayUnion([templateId])
+                ])
+            
+        } catch {
+            print(" Failed to add template \(templateId): \(error.localizedDescription)")
+        }
+    }
+}
+
 extension View {
-    /// 템플릿 소유 여부 확인
-    func isTemplateOwned(templateId: String?, userManager: UserManager) -> Bool {
-        guard let user = userManager.currentUser,
-              let templateId = templateId else { return false }
-        return user.templates.contains(templateId)
+    /// 무료 템플릿 자동 소유 처리
+    func autoOwnFreeTemplate(
+        template: KeyringTemplate?,
+        isOwned: Bool
+    ) -> some View {
+        modifier(AutoOwnFreeTemplateModifier(
+            template: template,
+            isOwned: isOwned
+        ))
     }
 }

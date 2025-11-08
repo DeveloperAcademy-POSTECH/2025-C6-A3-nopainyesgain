@@ -37,6 +37,10 @@ struct NeonSignPreView: View {
             // 템플릿 데이터 가져오기
             await viewModel.fetchTemplate()
         }
+        .autoOwnFreeTemplate(
+            template: viewModel.template,
+            isOwned: isOwned
+        )
     }
 }
 

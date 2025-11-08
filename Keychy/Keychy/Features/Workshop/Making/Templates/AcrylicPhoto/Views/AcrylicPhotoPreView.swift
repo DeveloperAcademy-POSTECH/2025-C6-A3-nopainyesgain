@@ -44,6 +44,10 @@ struct AcrylicPhotoPreView: View {
             // 템플릿 데이터 가져오기
             await viewModel.fetchTemplate()
         }
+        .autoOwnFreeTemplate(
+            template: viewModel.template,
+            isOwned: isOwned
+        )
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)

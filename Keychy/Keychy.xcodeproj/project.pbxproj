@@ -568,11 +568,11 @@
 		4C7775302EB0ED0800981C3E /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */,
 				4CBBEF292EB7DB9800252590 /* Recording */,
 				4CBBEF1D2EB260BE00252590 /* CameraPicker.swift */,
 				4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */,
 				4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */,
+				C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
