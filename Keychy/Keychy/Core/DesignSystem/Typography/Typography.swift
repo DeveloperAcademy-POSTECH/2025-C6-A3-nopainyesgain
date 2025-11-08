@@ -68,6 +68,9 @@ struct Typography {
     static let nanum10EB12 = Typography(font: .custom(.nanumExtraBold, size: 10), lineSpacing: 2)
     static let nanum18EB12 = Typography(font: .custom(.nanumExtraBold, size: 18), lineSpacing: 2)
     static let nanum32EB = Typography(font: .custom(.nanumExtraBold, size: 32), lineSpacing: 2)
+    
+    // MARK: - Pretendard
+    static let pretendard16M  = Typography(font: .custom(.pretendardMedium, size: 16), lineSpacing: 0)
 }
 
 // MARK: - View Extension

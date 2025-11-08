@@ -44,6 +44,7 @@
 		38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */; };
 		38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C62EB1F57F00A8E511 /* StorageManager.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
+		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530402EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */; };
@@ -249,6 +250,7 @@
 		38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+LoadData.swift"; sourceTree = "<group>"; };
 		38C147C62EB1F57F00A8E511 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
+		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -504,6 +506,14 @@
 				38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */,
 			);
 			path = Button;
+			sourceTree = "<group>";
+		};
+		4C3687F52EBFA86B00C64E75 /* pretendard */ = {
+			isa = PBXGroup;
+			children = (
+				4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */,
+			);
+			path = pretendard;
 			sourceTree = "<group>";
 		};
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
@@ -1085,6 +1095,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4C3687F52EBFA86B00C64E75 /* pretendard */,
 				4C6622402EAF77AB001760B5 /* nanum-square-round */,
 				4C6622042EAE5FC3001760B5 /* SUIT */,
 			);
@@ -1295,6 +1306,7 @@
 				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
 				4C6622462EAF7D63001760B5 /* LICENSE in Resources */,
+				4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */,
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
 				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,

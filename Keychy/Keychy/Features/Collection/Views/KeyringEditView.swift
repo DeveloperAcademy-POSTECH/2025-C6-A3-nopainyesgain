@@ -206,7 +206,7 @@ extension KeyringEditView {
             
             HStack {
                 TextField("이름을 입력해주세요", text: $editedName)
-                    .typography(.suit16M)
+                    .typography(.pretendard16M)
                     .foregroundColor(.black100)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
@@ -278,7 +278,7 @@ extension KeyringEditView {
                 }
                 
                 TextEditor(text: $editedMemo)
-                    .typography(.suit16M25)
+                    .typography(.pretendard16M)
                     .foregroundColor(.black100)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)

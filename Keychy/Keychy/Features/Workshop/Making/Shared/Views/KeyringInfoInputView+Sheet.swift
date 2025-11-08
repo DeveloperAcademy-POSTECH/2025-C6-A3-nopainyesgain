@@ -90,7 +90,7 @@ extension KeyringInfoInputView {
 
                     textCount = viewModel.nameText.count
                 }
-                .typography(.suit16M25)
+                .typography(.pretendard16M)
                 .foregroundStyle(.black100)
             
                 /// 커서 표시기 색상
@@ -123,7 +123,7 @@ extension KeyringInfoInputView {
                     .focused($isFocused)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
-                    .typography(.suit16M25)
+                    .typography(.pretendard16M)
                     .foregroundStyle(.black100)
                 
                     /// 커서 표시기 색상

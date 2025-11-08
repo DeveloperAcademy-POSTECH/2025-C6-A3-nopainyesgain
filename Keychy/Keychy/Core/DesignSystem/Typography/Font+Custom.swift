@@ -40,6 +40,9 @@ enum FontFamily: String, CaseIterable, Identifiable {
     case nanumExtraBold = "NanumSquareRoundOTFEB"
     case nanumLight = "NanumSquareRoundOTFL"
     case nanumRegular = "NanumSquareRoundOTFR"
+    
+    /// pretendard 폰트
+    case pretendardMedium = "Pretendard-Medium"
 
     /// 화면 표시용
     var displayName: String {
@@ -57,6 +60,7 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .nanumExtraBold: return "나눔 엑스트라볼드"
         case .nanumLight: return "나눔 라이트"
         case .nanumRegular: return "나눔 레귤러"
+        case .pretendardMedium: return "프리텐다드 미디움"
         }
     }
 }
