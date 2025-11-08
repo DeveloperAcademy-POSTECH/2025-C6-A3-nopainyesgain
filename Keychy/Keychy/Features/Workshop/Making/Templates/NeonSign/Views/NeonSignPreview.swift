@@ -17,7 +17,8 @@ struct NeonSignPreView: View {
             fetchTemplate: { await viewModel.fetchTemplate() },
             onMake: {
                 router.push(.neonSignCustomizing)
-            }
+            },
+            router: router
         )
     }
 }
