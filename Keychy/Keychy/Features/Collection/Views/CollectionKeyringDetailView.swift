@@ -23,6 +23,8 @@ struct CollectionKeyringDetailView: View {
     @State private var showDeleteCompleteAlert: Bool = false
     @State private var showCopyAlert: Bool = false
     @State private var showCopyCompleteAlert: Bool = false
+    @State private var showPackageAlert: Bool = false
+    @State private var showPackingAlert: Bool = false
     @State private var menuPosition: CGRect = .zero
     
     let keyring: Keyring
@@ -186,6 +188,56 @@ struct CollectionKeyringDetailView: View {
                             .zIndex(100)
                     }
                 }
+                
+                if showPackageAlert || showPackingAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    if showPackageAlert {
+                        PackagePopup(
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showPackageAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showPackageAlert = false
+                                }
+
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                                        print("UID를 찾을 수 없습니다")
+                                        return
+                                    }
+                                    
+                                    print("포장하기")
+                                    
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showPackingAlert = true
+                                    }
+                                }
+                            }
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                        .zIndex(100)
+                    }
+                    
+                    if showPackingAlert {
+                        PackingPopup(isPresented: $showPackingAlert)
+                            .zIndex(100)
+                            .onDisappear {
+                                // ⭐️ PackingPopup이 사라진 후 화면 이동
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    isSheetPresented = false
+                                    isNavigatingDeeper = true
+                                    
+                                    router.push(.packageCompleteView(keyring))
+                                }
+                            }
+                    }
+                }
                     
             }
         }
@@ -207,7 +259,7 @@ struct CollectionKeyringDetailView: View {
             hideTabBar()
             fetchAuthorName()
         }
-        .onDisappear { // 일단 여기서 더 딥하게 들어가지는 않으니까 이렇게 해두겠음
+        .onDisappear {
             isSheetPresented = false
             // 화면 나갈 때 탭바 다시 보이기
             if !isNavigatingDeeper {
@@ -403,9 +455,10 @@ extension CollectionKeyringDetailView {
             
             Button(action: {
                 // TODO: 포장 로직 추가
-                isSheetPresented = false
-                isNavigatingDeeper = true
-                router.push(.packageCompleteView)
+
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPackageAlert = true
+                }
             }) {
                 Image("Present")
                     .resizable()

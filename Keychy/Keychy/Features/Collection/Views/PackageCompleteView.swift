@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import SpriteKit
 
 struct PackageCompleteView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State private var currentPage: Int = 0
     
     private let totalPages = 2
+    
+    let keyring: Keyring
     
     var body: some View {
         VStack(spacing: 0) {
@@ -99,23 +102,47 @@ struct PackageCompleteView: View {
             }
         }
         .padding(.horizontal, 20)
-        //.toolbar(.hidden, for: .tabBar)
-        
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .toolbar {
+            backToolbarItem
+        }
+        .onAppear {
+            hideTabBar()
+        }
+    }
+    
+    // MARK: - 탭바 제어
+    // sheet를 계속 true로 띄워놓으니까 .toolbar(.hidden, for: .tabBar)가 안 먹혀서 강제로 제어하는 코드를 넣음
+    private func hideTabBar() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let tabBarController = window.rootViewController?.findTabBarController() {
+            UIView.animate(withDuration: 0.3) {
+                tabBarController.tabBar.isHidden = true
+            }
+        }
     }
     
     // MARK: - 첫 번째 페이지 (포장 전체 뷰)
     private var packagePreviewPage: some View {
         VStack(spacing: 0) {
             
-            // 키링 이미지
-            Rectangle()
-                .fill(.gray200)
+//            // 키링 이미지
+//            Rectangle()
+//                .fill(.gray200)
+//                .frame(width: 240, height: 390)
+//                .overlay(
+//                    Text("키링 이미지만")
+//                        .foregroundColor(.gray500)
+//                )
+//                .padding(.bottom, 30)
+            
+            KeyringDetailSceneView(keyring: keyring)
                 .frame(width: 240, height: 390)
-                .overlay(
-                    Text("키링 이미지만")
-                        .foregroundColor(.gray500)
-                )
+                .cornerRadius(12)
                 .padding(.bottom, 30)
+                .allowsHitTesting(false)
             
             // 하단 버튼
             Text("링크 복사하기")
@@ -160,6 +187,16 @@ struct PackageCompleteView: View {
     }
 }
 
-#Preview {
-    PackageCompleteView(router: NavigationRouter<CollectionRoute>())
+// MARK: - 툴바
+extension PackageCompleteView {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image("dismiss")
+                    .foregroundColor(.primary)
+            }
+        }
+    }
 }
