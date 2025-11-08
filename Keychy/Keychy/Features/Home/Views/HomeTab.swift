@@ -13,17 +13,9 @@ struct HomeTab: View {
     @State private var collectionViewModel = CollectionViewModel()
     @Bindable private var introViewModel = IntroViewModel()
 
-    // 🚧 개발용: 알림 화면 바로 이동 (개발 완료 후 false로 변경!)
-    private let debugGoToAlarm = true
-
     var body: some View {
         NavigationStack(path: $router.path) {
             HomeView(router: router, userManager: userManager, collectionViewModel: collectionViewModel)
-                .onAppear {
-                    if debugGoToAlarm {
-                        router.push(.alarmView)
-                    }
-                }
                 .navigationDestination(for: HomeRoute.self) {route in
                     switch route {
                         //키링 뭉치함
