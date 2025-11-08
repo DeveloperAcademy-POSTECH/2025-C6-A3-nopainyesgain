@@ -89,9 +89,6 @@ final class PurchaseManager {
                 }
                 return index1 < index2
             }
-            
-            print("정렬된 상품: \(products.map(\.id))")
-            print("상품 개수: \(products.count)")
 
             if products.isEmpty {
                 print("경고: 상품이 비어있습니다!")

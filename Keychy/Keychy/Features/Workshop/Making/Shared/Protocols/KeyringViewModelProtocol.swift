@@ -94,9 +94,6 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     func downloadParticle(_ particle: Particle) async
 
     // MARK: - Reset Methods
-    /// 이미지 데이터 초기화 (크롭뷰 뒤로가기)
-    func resetImageData()
-
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
 

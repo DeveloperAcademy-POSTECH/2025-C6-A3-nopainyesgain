@@ -2,7 +2,7 @@
 //  CameraPicker.swift
 //  Keychy
 //
-//  Created by Claude on 10/29/25.
+//  Created by Rundo on 10/29/25.
 //  UIImagePickerController를 SwiftUI로 래핑한 카메라 피커
 //
 

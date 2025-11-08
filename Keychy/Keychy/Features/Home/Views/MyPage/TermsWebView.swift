@@ -2,7 +2,7 @@
 //  TermsWebView.swift
 //  Keychy
 //
-//  Created by Claude on 11/6/25.
+//  Created by Rundo on 11/6/25.
 //
 
 import SwiftUI

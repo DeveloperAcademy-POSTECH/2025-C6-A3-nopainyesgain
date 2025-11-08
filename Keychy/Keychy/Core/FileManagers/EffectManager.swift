@@ -2,7 +2,7 @@
 //  EffectManager.swift
 //  Keychy
 //
-//  Created by Claude on 11/3/25.
+//  Created by Rundo on 11/3/25.
 //
 
 import Foundation
@@ -124,23 +124,6 @@ class EffectManager {
         // 사운드 프리로드 (재생 준비)
         await SoundEffectComponent.shared.preloadSound(named: soundId)
 
-        // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
-        if sound.isFree {
-            Task {
-                guard let userId = userManager.currentUser?.id else { return }
-
-                try? await Firestore.firestore()
-                    .collection("User")
-                    .document(userId)
-                    .updateData([
-                        "soundEffects": FieldValue.arrayUnion([soundId])
-                    ])
-
-                // UserManager 업데이트
-                await refreshUserData(userManager: userManager)
-            }
-        }
-
         // 다운로드 상태 초기화
         downloadingItemIds.remove(soundId)
         downloadProgress.removeValue(forKey: soundId)
@@ -205,23 +188,6 @@ class EffectManager {
             attempts += 1
         }
 
-        // 무료 아이템이면 Firestore에 소유권 추가 (백그라운드 처리)
-        if particle.isFree {
-            Task {
-                guard let userId = userManager.currentUser?.id else { return }
-
-                try? await Firestore.firestore()
-                    .collection("User")
-                    .document(userId)
-                    .updateData([
-                        "particleEffects": FieldValue.arrayUnion([particleId])
-                    ])
-
-                // UserManager 업데이트
-                await refreshUserData(userManager: userManager)
-            }
-        }
-
         // 다운로드 상태 초기화
         downloadingItemIds.remove(particleId)
         downloadProgress.removeValue(forKey: particleId)
@@ -232,6 +198,11 @@ class EffectManager {
     /// 사운드 재생 (다운로드 후 자동 재생)
     func playSound(_ sound: Sound, userManager: UserManager) async {
         guard let soundId = sound.id else { return }
+
+        // 무료 아이템이고 아직 소유하지 않은 경우 Firestore에 추가
+        if sound.isFree && !isOwned(soundId: soundId, userManager: userManager) {
+            await addFreeItemOwnership(soundId: soundId, type: .sound, userManager: userManager)
+        }
 
         // 이미 캐시 또는 Bundle에 있으면 바로 재생
         if isInCache(soundId: soundId) || isInBundle(soundId: soundId) {
@@ -249,6 +220,11 @@ class EffectManager {
     /// 파티클 재생 (다운로드 후 자동 재생)
     func playParticle(_ particle: Particle, userManager: UserManager) async {
         guard let particleId = particle.id else { return }
+
+        // 무료 아이템이고 아직 소유하지 않은 경우 Firestore에 추가
+        if particle.isFree && !isOwned(particleId: particleId, userManager: userManager) {
+            await addFreeItemOwnership(particleId: particleId, type: .particle, userManager: userManager)
+        }
 
         // 이미 캐시 또는 Bundle에 있으면 바로 재생
         if isInCache(particleId: particleId) || isInBundle(particleId: particleId) {
@@ -282,6 +258,48 @@ class EffectManager {
     }
 
     // MARK: - Private
+
+    /// 아이템 타입
+    private enum ItemType {
+        case sound
+        case particle
+
+        var firestoreField: String {
+            switch self {
+            case .sound: return "soundEffects"
+            case .particle: return "particleEffects"
+            }
+        }
+    }
+
+    /// 무료 아이템 소유권을 Firestore에 추가
+    private func addFreeItemOwnership(soundId: String? = nil, particleId: String? = nil, type: ItemType, userManager: UserManager) async {
+        let itemId = soundId ?? particleId ?? ""
+
+        guard !itemId.isEmpty else {
+            print("❌ EffectManager: Item ID is empty")
+            return
+        }
+
+        guard let userId = userManager.currentUser?.id else {
+            print("❌ EffectManager: User ID not found for free \(type.firestoreField) ownership")
+            return
+        }
+
+        do {
+            try await Firestore.firestore()
+                .collection("User")
+                .document(userId)
+                .updateData([
+                    type.firestoreField: FieldValue.arrayUnion([itemId])
+                ])
+
+            // UserManager 업데이트
+            await refreshUserData(userManager: userManager)
+        } catch {
+            print("❌ EffectManager: Failed to add \(itemId) to Firestore: \(error.localizedDescription)")
+        }
+    }
 
     /// UserManager의 유저 데이터 새로고침
     private func refreshUserData(userManager: UserManager) async {
