@@ -18,7 +18,6 @@ struct HomeView: View {
         ZStack(alignment: .top) {
             // Bundle Scene - main bundle만 표시
             BundleDetailView(router: router, viewModel: collectionViewModel)
-                //.ignoresSafeArea()
             
             HStack(spacing: 10) {
                 Spacer()
@@ -45,7 +44,7 @@ struct HomeView: View {
                         }
                         .buttonStyle(.glassProminent)
                         .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-
+                        
                         Button {
                             router.push(.myPageView)
                         } label: {
@@ -70,7 +69,7 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - Main Bundle Loading  
+    // MARK: - Main Bundle Loading
     @MainActor
     private func loadMainBundle() async {
         let uid = UserManager.shared.userUID
