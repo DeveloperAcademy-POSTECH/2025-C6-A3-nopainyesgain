@@ -250,6 +250,7 @@ struct CollectionKeyringDetailView: View {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
                         .opacity(checkmarkOpacity)
                         .zIndex(101)
+                }
             }
         }
         .ignoresSafeArea()
