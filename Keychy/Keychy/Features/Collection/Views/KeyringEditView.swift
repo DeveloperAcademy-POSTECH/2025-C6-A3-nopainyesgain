@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SpriteKit
 
 struct KeyringEditView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
@@ -18,6 +19,9 @@ struct KeyringEditView: View {
     @State private var showAddTagAlert: Bool = false
     @State private var newTagName: String = ""
     @State private var showDuplicateTagError: Bool = false // 태그 중복검사용
+    
+    @State private var isLoading: Bool = true
+    @State private var scene: KeyringCellScene?
     
     @FocusState private var focusedField: Field?
     
@@ -168,9 +172,28 @@ extension KeyringEditView {
 extension KeyringEditView {
     private var keyringSection: some View {
         VStack {
-            Rectangle()
-                .fill(.gray200)
-                .frame(width: 100, height: 133)
+            ZStack {
+                SpriteView(
+                    scene: createMiniScene(keyring: keyring)
+                )
+                if isLoading {
+                    Color.black20
+                        .overlay {
+                            VStack(spacing: 8) {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                                    .scaleEffect(1.2)
+                                
+                                Text("키링을 가져오는 중...")
+                                    .typography(.suit12M)
+                                    .foregroundColor(.white)
+                            }
+                        }
+                }
+            }
+            .frame(width: 100, height: 133)  // 표시될 최종 크기
+            .cornerRadius(10)
+            .allowsHitTesting(false)
             
             Button {
                 // 디자인 수정 (이후 추가)
@@ -182,6 +205,28 @@ extension KeyringEditView {
             .opacity(0.0)
         }
         .padding(.top, 13)
+    }
+    
+    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
+        let ringType = RingType.fromID(keyring.selectedRing)
+        let chainType = ChainType.fromID(keyring.selectedChain)
+        
+        let scene = KeyringCellScene(
+            ringType: ringType,
+            chainType: chainType,
+            bodyImage: keyring.bodyImage,
+            targetSize: CGSize(width: 175, height: 233),
+            zoomScale: 2.0,
+            onLoadingComplete: {
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.isLoading = false
+                    }
+                }
+            }
+        )
+        scene.scaleMode = .aspectFill
+        return scene
     }
 }
 
