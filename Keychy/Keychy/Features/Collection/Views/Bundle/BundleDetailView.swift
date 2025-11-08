@@ -53,6 +53,7 @@ struct BundleDetailView: View {
                                     Color.clear
                                 }
                             }
+                            .padding(.top, 60)
                             
                             // 2층: 여러 키링을 하나의 씬에 표시
                             Group {
@@ -94,10 +95,12 @@ struct BundleDetailView: View {
                                     Color.clear
                                 }
                             }
+                            .padding(.top, 60)
                         }
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .ignoresSafeArea()
                 } else {
                     VStack(spacing: 12) {
                         Image(systemName: "tray")
@@ -109,6 +112,7 @@ struct BundleDetailView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
+                    
             }
         }
         .task {

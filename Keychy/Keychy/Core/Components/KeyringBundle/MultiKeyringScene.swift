@@ -2,7 +2,7 @@
 //  MultiKeyringScene.swift
 //  Keychy
 //
-//  Created by Assistant on 11/05/25.
+//  Created by rundo on 11/05/25.
 //
 
 import SwiftUI
@@ -147,7 +147,7 @@ class MultiKeyringScene: SKScene {
             // Ring 위치: Ring의 상단이 정확히 + 버튼 위치에 오도록 설정
             let ringCenterX = spriteKitPosition.x
             // 미세 조정: 필요시 오프셋 추가
-            let ringCenterY = spriteKitPosition.y - ringRadius + 2  // +2pt 오프셋으로 조정
+            let ringCenterY = spriteKitPosition.y - ringRadius  // +2pt 오프셋으로 조정
             ring.position = CGPoint(x: ringCenterX, y: ringCenterY)
             
             // Ring이 처음에는 물리 시뮬레이션 비활성화
