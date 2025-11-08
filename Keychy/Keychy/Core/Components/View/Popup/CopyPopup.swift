@@ -22,7 +22,7 @@ struct CopyPopup: View {
                     .foregroundColor(.black100)
                     .padding(.top, 8)
                 
-                Image("myCopyPass")
+                Image("copyVoucher")
                     .resizable()
                     .frame(width: 75, height: 45)
                 
