@@ -41,6 +41,9 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - 파티클 효과 콜백
     var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
+    
+    // MARK: - 씬 준비 완료 콜백
+    var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType = .basic
@@ -82,7 +85,8 @@ class MultiKeyringScene: SKScene {
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
         backgroundColor = customBackgroundColor
-        physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        // 물리 시뮬레이션을 처음에는 비활성화
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
         setupKeyrings()
     }
@@ -91,13 +95,25 @@ class MultiKeyringScene: SKScene {
 
     /// 모든 키링 설정
     private func setupKeyrings() {
+        // 모든 키링이 동기적으로 생성될 때까지 카운터 사용
+        let totalKeyrings = keyringDataList.count
+        var completedKeyrings = 0
+        
         for (order, data) in keyringDataList.enumerated() {
-            setupSingleKeyring(data: data, order: order)
+            setupSingleKeyring(data: data, order: order) { [weak self] in
+                completedKeyrings += 1
+                print("[MultiKeyringScene] Keyring \(completedKeyrings)/\(totalKeyrings) completed")
+                
+                if completedKeyrings == totalKeyrings {
+                    // 모든 키링 완성 후 물리 활성화
+                    self?.enablePhysics()
+                }
+            }
         }
     }
 
     /// 단일 키링 설정
-    private func setupSingleKeyring(data: KeyringData, order: Int) {
+    private func setupSingleKeyring(data: KeyringData, order: Int, completion: @escaping () -> Void) {
         // 사운드 정보 저장
         soundIdsByKeyring[data.index] = data.soundId
         if let customURL = data.customSoundURL {
@@ -134,6 +150,7 @@ class MultiKeyringScene: SKScene {
             let ringCenterY = spriteKitPosition.y - ringRadius + 2  // +2pt 오프셋으로 조정
             ring.position = CGPoint(x: ringCenterX, y: ringCenterY)
             
+            // Ring이 처음에는 물리 시뮬레이션 비활성화
             ring.physicsBody?.isDynamic = false
             ring.physicsBody?.categoryBitMask = categoryBitMask
             ring.physicsBody?.collisionBitMask = collisionBitMask
@@ -150,7 +167,8 @@ class MultiKeyringScene: SKScene {
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
                 index: data.index,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                completion: completion
             )
         }
     }
@@ -161,7 +179,8 @@ class MultiKeyringScene: SKScene {
         centerX: CGFloat,
         bodyImageURL: String,
         index: Int,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        completion: @escaping () -> Void
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
@@ -182,6 +201,8 @@ class MultiKeyringScene: SKScene {
 
             for (chainIndex, chain) in chains.enumerated() {
                 chain.zPosition = baseZPosition + 2 + CGFloat(chainIndex)  // Chain은 Body 위
+                // 체인도 처음에는 물리 비활성화
+                chain.physicsBody?.isDynamic = false
                 chain.physicsBody?.categoryBitMask = categoryBitMask
                 chain.physicsBody?.collisionBitMask = collisionBitMask
                 chain.physicsBody?.contactTestBitMask = 0
@@ -200,7 +221,8 @@ class MultiKeyringScene: SKScene {
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
                 index: index,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                completion: completion
             )
         }
     }
@@ -214,10 +236,14 @@ class MultiKeyringScene: SKScene {
         chainSpacing: CGFloat,
         bodyImageURL: String,
         index: Int,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        completion: @escaping () -> Void
     ) {
         KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
-            guard let self = self, let body = body else { return }
+            guard let self = self, let body = body else { 
+                completion()  // body 생성 실패 시에도 completion 호출
+                return 
+            }
 
             self.positionAndConnectBody(
                 body: body,
@@ -227,7 +253,8 @@ class MultiKeyringScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 index: index,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                completion: completion
             )
         }
     }
@@ -241,7 +268,8 @@ class MultiKeyringScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         index: Int,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        completion: @escaping () -> Void
     ) {
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
@@ -259,6 +287,8 @@ class MultiKeyringScene: SKScene {
         // Body에 고유한 물리 마스크 적용
         let categoryBitMask: UInt32 = UInt32(1 << index)
         let collisionBitMask: UInt32 = categoryBitMask
+        // Body도 처음에는 물리 비활성화
+        body.physicsBody?.isDynamic = false
         body.physicsBody?.categoryBitMask = categoryBitMask
         body.physicsBody?.collisionBitMask = collisionBitMask
         body.physicsBody?.contactTestBitMask = 0
@@ -270,6 +300,9 @@ class MultiKeyringScene: SKScene {
 
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
+        
+        // 키링 완성 완료
+        completion()
     }
 
     /// 키링 구성 요소들을 Joint로 연결
@@ -374,6 +407,36 @@ class MultiKeyringScene: SKScene {
             bodyPhysics.linearDamping = 0.5
             bodyPhysics.angularDamping = 0.5
         }
+        
+        // Ring을 static으로 유지 (조인트 연결 후에도)
+        ring.physicsBody?.isDynamic = false
+        print("[MultiKeyringScene] Ring kept static after joint connections")
+    }
+    
+    /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
+    private func enablePhysics() {
+        print("[MultiKeyringScene] Enabling physics for all keyrings...")
+        
+        // 중력 활성화
+        physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        
+        // 모든 체인과 바디의 물리 활성화 (링은 static 유지)
+        for (_, chains) in chainNodesByKeyring {
+            for chain in chains {
+                chain.physicsBody?.isDynamic = true
+                chain.physicsBody?.linearDamping = 0.5
+                chain.physicsBody?.angularDamping = 0.5
+            }
+        }
+        
+        for (_, body) in bodyNodes {
+            body.physicsBody?.isDynamic = true
+            body.physicsBody?.linearDamping = 0.5
+            body.physicsBody?.angularDamping = 0.5
+        }
+        
+        print("[MultiKeyringScene] Physics enabled for \(keyringDataList.count) keyrings")
+        onAllKeyringsReady?()
     }
 
     // MARK: - Helper Methods
