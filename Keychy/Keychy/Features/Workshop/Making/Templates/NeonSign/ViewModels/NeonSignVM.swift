@@ -124,7 +124,7 @@ class NeonSignVM: KeyringViewModelProtocol {
             template = try document.data(as: KeyringTemplate.self)
 
             // 네온사인 템플릿 전용 고정 이미지 (Assets)
-            bodyImage = UIImage(named: "fireworks")
+            bodyImage = UIImage(named: "bangMark")
 
         } catch {
             errorMessage = "템플릿을 불러오는데 실패했습니다."

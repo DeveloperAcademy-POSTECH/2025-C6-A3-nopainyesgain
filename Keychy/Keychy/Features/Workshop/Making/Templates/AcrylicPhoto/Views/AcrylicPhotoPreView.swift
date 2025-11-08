@@ -19,34 +19,14 @@ struct AcrylicPhotoPreView: View {
     @State private var hasAppearedBefore = false
     @State private var capturedImage: UIImage?
 
-    /// 템플릿 보유 여부 확인
-    private var isOwned: Bool {
-        guard let user = userManager.currentUser,
-              let templateId = viewModel.template?.id else { return false }
-        return user.templates.contains(templateId)
-    }
-
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                keyringPreivew
-                Spacer()
-                keyringInfo(template: viewModel.template)
-            }
-            .padding(.bottom, 120)
-
-            makeBtn
-        }
-        .padding(.horizontal, 35)
-        .toolbar(.hidden, for: .tabBar)
-        .task {
-            // 템플릿 데이터 가져오기
-            await viewModel.fetchTemplate()
-        }
-        .autoOwnFreeTemplate(
+        TemplatePreviewBody(
             template: viewModel.template,
-            isOwned: isOwned
+            fetchTemplate: { await viewModel.fetchTemplate() },
+            onMake: {
+                showGuide = true
+                selectedItem = nil
+            }
         )
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
@@ -97,52 +77,6 @@ struct AcrylicPhotoPreView: View {
                     viewModel.resetToCenter()
                     router.push(.acrylicPhotoCrop)
                 }
-            }
-        }
-    }
-}
-
-// MARK: - KeyringScene Section
-extension AcrylicPhotoPreView {
-    private var keyringPreivew: some View {
-        ItemDetailImage(
-            itemURL: viewModel.template?.previewURL ?? "")
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
-    }
-}
-
-// MARK: - Info Section
-extension AcrylicPhotoPreView {
-    @ViewBuilder
-    private func keyringInfo(template: KeyringTemplate?) -> some View {
-        if let template {
-            ItemDetailInfoSection(item: template)
-        } else {
-            Text("템플릿 정보 없음")
-        }
-    }
-}
-
-extension AcrylicPhotoPreView {
-    private var makeBtn: some View {
-        Group {
-            if let template = viewModel.template {
-                KeyringTemplateActionButton(
-                    template: template,
-                    isOwned: isOwned,
-                    onMake: {
-                        showGuide = true
-                        selectedItem = nil
-                    },
-                    onPurchase: {
-                        // TODO: 구매 로직 구현
-                        print("구매: \(template.name) - \(template.workshopPrice) 코인")
-                    }
-                )
-            } else {
-                // 템플릿 로딩 중
-                ProgressView()
             }
         }
     }

@@ -1031,7 +1031,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC62652EAE08DF0099ECEE /* AcrylicPhoto */,
-				C6C4027F2EB26BFB006B58DF /* TextPhoto */,
+				C6C4027F2EB26BFB006B58DF /* NeonSign */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -1195,13 +1195,13 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		C6C4027F2EB26BFB006B58DF /* TextPhoto */ = {
+		C6C4027F2EB26BFB006B58DF /* NeonSign */ = {
 			isa = PBXGroup;
 			children = (
 				C6B56F172EBF28170049F969 /* ViewModels */,
 				C6C402802EB26C10006B58DF /* Views */,
 			);
-			path = TextPhoto;
+			path = NeonSign;
 			sourceTree = "<group>";
 		};
 		C6C402802EB26C10006B58DF /* Views */ = {
