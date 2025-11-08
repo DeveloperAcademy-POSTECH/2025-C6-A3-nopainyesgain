@@ -185,13 +185,15 @@ extension BundleNameInputView {
                     return
                 }
                 
-                // 선택된 키링들을 인덱스 순서대로 [String]으로 변환 (ViewModel 매핑 사용)
-                let keyringIds: [String] = (0..<carabiner.maxKeyringCount).compactMap { idx in
+                // 선택된 키링들을 카라비너의 최대 개수 길이에 맞춰 직렬화
+                // 인덱스에 키링이 없으면 "none"을 저장
+                let keyringIds: [String] = (0..<carabiner.maxKeyringCount).map { idx in
                     if let kr = viewModel.selectedKeyringsForBundle[idx],
                        let docId = viewModel.keyringDocumentIdByLocalId[kr.id] {
                         return docId
+                    } else {
+                        return "none"
                     }
-                    return nil
                 }
                 
                 let maxKeyrings = carabiner.maxKeyringCount
@@ -273,4 +275,3 @@ extension BundleNameInputView {
         viewModel: CollectionViewModel()
     )
 }
-
