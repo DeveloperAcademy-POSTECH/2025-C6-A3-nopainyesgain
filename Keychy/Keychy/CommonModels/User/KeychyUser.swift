@@ -18,7 +18,6 @@ struct KeychyUser: Identifiable {
     var maxKeyringCount: Int = 100
     var coin: Int
     var copyVoucher: Int
-    var inventoryTicket: Int
     var templates: [String]
     var rings: [String]
     var chains: [String]
@@ -62,10 +61,9 @@ struct KeychyUser: Identifiable {
         self.nickname = nickname
         self.email = email
         self.createdAt = timestamp.dateValue()
-        self.maxKeyringCount = data["maxKeyringCount"] as? Int ?? 100
+        self.maxKeyringCount = data["maxKeyringCount"] as? Int ?? 50
         self.coin = data["coin"] as? Int ?? 0
         self.copyVoucher = data["copyVoucher"] as? Int ?? 0
-        self.inventoryTicket = data["inventoryTicket"] as? Int ?? 0
         self.templates = data["templates"] as? [String] ?? []
         self.rings = data["rings"] as? [String] ?? []
         self.chains = data["chains"] as? [String] ?? []
@@ -86,7 +84,6 @@ struct KeychyUser: Identifiable {
         self.maxKeyringCount = 100
         self.coin = 0
         self.copyVoucher = 0
-        self.inventoryTicket = 0
         self.templates = []
         self.rings = []
         self.chains = []

@@ -197,7 +197,7 @@ extension CoinChargeView {
                 .scaledToFit()
                 .frame(width: 24, height: 24)
             
-            HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)
                     .typography(.suit16M)
                     .foregroundStyle(.black100)
@@ -240,7 +240,7 @@ extension CoinChargeView {
                 Text("구매하기")
                     .typography(.suit15B25)
                     .foregroundStyle(.black100)
-
+                
                 HStack {
                     dismissButton
                         .padding(.leading, 20)
@@ -249,28 +249,28 @@ extension CoinChargeView {
             }
             .padding(.top, 30)
             .padding(.bottom, 22)
-
+            
             /// 구매 아이템 표시
             if let item = selectedItem {
                 purchaseItemRow(item: item)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 20)
             }
-
+            
             Spacer()
-
+            
             // 내 보유 포인트
             HStack(spacing: 4) {
                 Text("내 보유 :")
                     .typography(.suit15M25)
                     .foregroundStyle(.black100)
-
+                
                 Text("\(UserManager.shared.currentUser?.coin ?? 0)")
                     .typography(.nanum16EB)
                     .foregroundStyle(.main500)
             }
             .padding(.bottom, 16)
-
+            
             // 구매 버튼
             purchaseButton
                 .padding(.horizontal, 20)
@@ -303,7 +303,7 @@ extension CoinChargeView {
                 .foregroundStyle(.black100)
         }
     }
-
+    
     private func purchaseItemRow(item: OtherItem) -> some View {
         HStack(spacing: 0) {
             Image(item.icon)
@@ -311,13 +311,13 @@ extension CoinChargeView {
                 .scaledToFit()
                 .frame(width: 24, height: 24)
                 .padding(.trailing, 12)
-
+            
             Text(item.title)
                 .typography(.suit17B)
                 .foregroundStyle(.black100)
-
+            
             Spacer()
-
+            
             HStack(spacing: 4) {
                 Image("myCoin")
                     .resizable()
@@ -334,7 +334,7 @@ extension CoinChargeView {
         .background(Color.gray50)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
-
+    
     private var purchaseButton: some View {
         Button {
             Task {
@@ -343,10 +343,10 @@ extension CoinChargeView {
         } label: {
             HStack(spacing: 5) {
                 Image("purchaseSheet")
-
+                
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)
-
+                
                 Text("(1개)")
                     .typography(.suit17SB)
             }
@@ -374,7 +374,7 @@ extension CoinChargeView {
         
         var title: String {
             switch self {
-            case .inventoryExpansion: return "인벤토리 확장권"
+            case .inventoryExpansion: return "키링 보관함 10칸 업그레이드"
             case .copyVoucher10: return "내 키링 복사권 10개"
             }
         }
@@ -383,9 +383,12 @@ extension CoinChargeView {
             let user = UserManager.shared.currentUser
             switch self {
             case .inventoryExpansion:
-                return "내 보유 \(user?.inventoryTicket ?? 0)"
+                let maxCount = user?.maxKeyringCount ?? 0
+                let currentKeyringCount = user?.keyrings.count ?? 0
+                let remainingSlots = maxCount - currentKeyringCount
+                return "내 키링 보관함 \(remainingSlots)/\(maxCount)칸"
             case .copyVoucher10:
-                return "내 보유 \(user?.copyVoucher ?? 0)"
+                return "내 복사권 \(user?.copyVoucher ?? 0)개"
             }
         }
         

@@ -27,7 +27,7 @@ struct CurrentItemsCard: View {
             itemCard(
                 image: "myCopyPass",
                 title: "복사권",
-                count: "\(userManager.currentUser?.copyVoucher ?? 0)/10"
+                count: "\(userManager.currentUser?.copyVoucher ?? 0)"
             )
         }
         .frame(maxWidth: .infinity)

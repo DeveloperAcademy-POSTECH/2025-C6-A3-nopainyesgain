@@ -49,8 +49,8 @@ extension CoinChargeView {
             }
             
             let currentCoin = data["coin"] as? Int ?? 0
-            let currentInventoryTicket = data["inventoryTicket"] as? Int ?? 0
             let currentCopyVoucher = data["copyVoucher"] as? Int ?? 0
+            let currentMaxKeyringCount = data["maxKeyringCount"] as? Int ?? 0
             
             // 재화 확인
             guard currentCoin >= item.price else {
@@ -64,7 +64,7 @@ extension CoinChargeView {
             
             switch item {
             case .inventoryExpansion:
-                updateData["inventoryTicket"] = currentInventoryTicket + 1
+                updateData["maxKeyringCount"] = currentMaxKeyringCount + 10
                 
             case .copyVoucher10:
                 updateData["copyVoucher"] = currentCopyVoucher + 10
