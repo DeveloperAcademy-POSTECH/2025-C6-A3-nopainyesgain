@@ -17,31 +17,36 @@ struct BangmarkAlert: View {
 
     var body: some View {
         VStack(spacing: 23) {
-            Image("bangMark")
-
-            Text(text)
-                .typography(.suit17SB)
-                .multilineTextAlignment(.center)
-
+            VStack(spacing: 0) {
+                Image("bangMark")
+                    .padding(.vertical, 4)
+                
+                Text(text)
+                    .typography(.suit17SB)
+                    .multilineTextAlignment(.center)
+                
+            }
+            .padding(8)
+            
             // 버튼 영역
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 Button {
                     onCancel()
                 } label: {
                     Text(cancelText)
-                        .typography(.suit16B)
+                        .typography(.suit17B)
                         .foregroundStyle(.gray600)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.gray200)
-
+                
                 Button {
                     onConfirm()
                 } label: {
                     Text(confirmText)
-                        .typography(.suit16B)
+                        .typography(.suit17B)
                         .foregroundStyle(.white100)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
@@ -49,11 +54,8 @@ struct BangmarkAlert: View {
                 .buttonStyle(.glassProminent)
                 .tint(.main500)
             }
-            .padding(.horizontal, 16)
         }
-        .padding(.top, 42)
-        .padding(.horizontal, 24)
-        .padding(.bottom, 26)
+        .padding(14)
         .glassEffect(in: .rect(cornerRadius: 40))
         .frame(minWidth: 200)
         .scaleEffect(checkmarkScale)

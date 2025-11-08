@@ -71,7 +71,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             
             // MARK: - Purchase Alerts
             if showPurchaseSuccessAlert {
-                PerchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
+                PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
                     .padding(.bottom, 60)
                     .padding(.horizontal, 51)
             }

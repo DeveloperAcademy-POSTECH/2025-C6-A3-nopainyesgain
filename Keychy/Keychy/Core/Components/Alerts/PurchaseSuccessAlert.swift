@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PerchaseSuccessAlert: View {
+struct PurchaseSuccessAlert: View {
     let checkmarkScale: CGFloat
     
     var body: some View {
