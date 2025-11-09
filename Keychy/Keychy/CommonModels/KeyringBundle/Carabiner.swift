@@ -24,6 +24,11 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     /// - [2] : 앞 이미지
     let carabinerImage: [String]
     
+    /// 카라비너 타입
+    /// - .hamburger : 벽걸이 형
+    /// - .plain : 일반 카라비너 형
+    let carabinerType: String
+    
     /// 카라비너 설명
     let description: String
     
