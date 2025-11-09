@@ -87,8 +87,9 @@ struct WorkshopPreview: View {
                             deletePopupScale = 1.0
                         }
                     } label: {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
+                        Image("trashBlack")
+                            .resizable()
+                            .frame(width: 32, height: 32)
                     }
                 }
             }
