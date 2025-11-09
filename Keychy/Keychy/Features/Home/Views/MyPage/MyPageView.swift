@@ -429,7 +429,7 @@ extension MyPageView {
     }
 }
 
-// MARK: - 기타
+// MARK: - 로그아웃, 회원탈퇴
 extension MyPageView {
     private var guitar: some View {
         VStack(alignment: .leading, spacing: 0) {
