@@ -17,6 +17,8 @@
 		3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC12EBBC712003125BE /* KeyringEditView.swift */; };
 		3822DDC42EBBE108003125BE /* CopyPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC32EBBE108003125BE /* CopyPopup.swift */; };
 		3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC52EBBE252003125BE /* LackPopup.swift */; };
+		382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382800D02EC05D4E005F1332 /* PostOffice.swift */; };
+		382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */; };
 		38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */; };
 		38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A802EBF511C00BE45A5 /* PackagePopup.swift */; };
 		38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */; };
@@ -234,6 +236,8 @@
 		3822DDC32EBBE108003125BE /* CopyPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPopup.swift; sourceTree = "<group>"; };
 		3822DDC52EBBE252003125BE /* LackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LackPopup.swift; sourceTree = "<group>"; };
 		382800CD2EBFBE03005F1332 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
+		382800D02EC05D4E005F1332 /* PostOffice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostOffice.swift; sourceTree = "<group>"; };
+		382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Package.swift"; sourceTree = "<group>"; };
 		38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageCompleteView.swift; sourceTree = "<group>"; };
 		38283A802EBF511C00BE45A5 /* PackagePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackagePopup.swift; sourceTree = "<group>"; };
 		38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringReceiveView.swift; sourceTree = "<group>"; };
@@ -495,6 +499,7 @@
 			isa = PBXGroup;
 			children = (
 				38A596722EAFA8D20003D712 /* KeychyUser.swift */,
+				382800D02EC05D4E005F1332 /* PostOffice.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -850,6 +855,7 @@
 				385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */,
 				38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */,
 				38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */,
+				382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */,
 				4CEC62A42EAE0BA30099ECEE /* Bundle */,
 			);
 			path = ViewModels;
@@ -1390,6 +1396,7 @@
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
+				382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				385425C82EB3C3F300A06C02 /* KeyringDetailSceneView.swift in Sources */,
@@ -1402,6 +1409,7 @@
 				4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */,
 				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
+				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,

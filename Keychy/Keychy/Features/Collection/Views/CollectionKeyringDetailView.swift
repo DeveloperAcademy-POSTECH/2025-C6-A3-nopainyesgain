@@ -249,8 +249,18 @@ struct CollectionKeyringDetailView: View {
                                     
                                     print("포장하기")
                                     
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showPackingAlert = true
+                                    viewModel.packageKeyring(uid: uid, keyring: keyring) { success, postOfficeId in
+                                        if success {
+                                            print("포장 완료 - PostOffice ID: \(postOfficeId ?? "nil")")
+                                            
+                                            // 포장 중 팝업 표시
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                                showPackingAlert = true
+                                            }
+                                        } else {
+                                            print("포장 실패")
+                                            // TODO: 실패 알림 표시
+                                        }
                                     }
                                 }
                             }

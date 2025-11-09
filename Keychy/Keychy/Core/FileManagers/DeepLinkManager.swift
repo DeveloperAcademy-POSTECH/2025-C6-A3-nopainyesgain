@@ -38,7 +38,7 @@ class DeepLinkManager {
     
     // 환경에 따라 자동 선택
     static func createShareLink(keyringId: String) -> URL? {
-        return createTestLink(keyringId: keyringId)
-        //return createUniversalLink(keyringId: keyringId)
+        //return createTestLink(keyringId: keyringId)
+        return createUniversalLink(keyringId: keyringId)
     }
 }
