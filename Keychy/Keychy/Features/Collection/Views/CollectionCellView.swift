@@ -94,7 +94,12 @@ struct CollectionCellView: View {
 
     /// 캐시 확인 후 없으면 백그라운드에서 캡처만 수행 (위젯용)
     private func checkAndCaptureKeyring() {
-        let keyringID = keyring.id.uuidString
+        // Firestore documentId가 없으면 캐싱 불가
+        guard let keyringID = keyring.firestoreId else {
+            print("⚠️ [CollectionCell] firestoreId 없음, 캐시 스킵")
+            return
+        }
+
         print("🔍 [CollectionCell] 키링 캐시 확인: \(keyringID)")
 
         // 캐시가 이미 있으면 스킵
@@ -120,26 +125,63 @@ struct CollectionCellView: View {
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
 
-        // Scene 생성 (onLoadingComplete 없이)
-        let scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 175, height: 233),
-            zoomScale: 2.0
-        )
-        scene.scaleMode = .aspectFill
+        await withCheckedContinuation { continuation in
+            // 이미지 로딩 완료 콜백
+            var loadingCompleted = false
 
-        // PNG 캡처
-        if let pngData = await scene.captureToPNG() {
-            print("✅ [CollectionCell] 캡처 완료, 위젯용 이미지 저장 중: \(keyringID)")
+            // Scene 생성 (onLoadingComplete 콜백 추가, 투명 배경)
+            let scene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                targetSize: CGSize(width: 175, height: 233),
+                zoomScale: 2.0,
+                onLoadingComplete: {
+                    print("✅ [CollectionCell] Scene 로딩 완료: \(keyringID)")
+                    loadingCompleted = true
+                },
+                useTransparentBackground: true
+            )
+            scene.scaleMode = .aspectFill
 
-            // FileManager 캐시에 저장 (위젯에서 접근 가능)
-            KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+            // SKView 생성 및 Scene 표시 (렌더링 시작)
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
 
-            print("💾 [CollectionCell] 위젯용 이미지 저장 완료: \(keyringID)")
-        } else {
-            print("❌ [CollectionCell] 캡처 실패: \(keyringID)")
+            // 로딩 완료 대기 (최대 3초)
+            Task {
+                var waitTime = 0.0
+                let checkInterval = 0.1 // 100ms마다 체크
+                let maxWaitTime = 3.0   // 최대 3초
+
+                while !loadingCompleted && waitTime < maxWaitTime {
+                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+                    waitTime += checkInterval
+                }
+
+                if !loadingCompleted {
+                    print("⚠️ [CollectionCell] 타임아웃 - 로딩 미완료 상태에서 캡처: \(keyringID)")
+                } else {
+                    // 로딩 완료 후 추가 렌더링 대기 (200ms)
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    print("📸 [CollectionCell] 렌더링 완료, 캡처 시작: \(keyringID)")
+                }
+
+                // PNG 캡처
+                if let pngData = await scene.captureToPNG() {
+                    print("✅ [CollectionCell] 캡처 완료, 위젯용 이미지 저장 중: \(keyringID)")
+
+                    // FileManager 캐시에 저장 (위젯에서 접근 가능)
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+
+                    print("💾 [CollectionCell] 위젯용 이미지 저장 완료: \(keyringID)")
+                } else {
+                    print("❌ [CollectionCell] 캡처 실패: \(keyringID)")
+                }
+
+                continuation.resume()
+            }
         }
     }
 }

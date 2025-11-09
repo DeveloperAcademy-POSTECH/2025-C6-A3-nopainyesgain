@@ -12,7 +12,8 @@ import FirebaseFirestore
 // TODO: - 바디, 체인, 링타입 추가 필요함
 struct Keyring: Identifiable, Equatable, Hashable {
     let id = UUID()
-    
+    var firestoreId: String?  // Firestore documentId (위젯 캐시용)
+
     var name: String
     var bodyImage: String
     var soundId: String
@@ -78,7 +79,10 @@ struct Keyring: Identifiable, Equatable, Hashable {
               let selectedChain = data["selectedChain"] as? String else {
             return nil
         }
-        
+
+        // Firestore documentId 저장 (위젯 캐시 키로 사용)
+        self.firestoreId = documentId
+
         // 기본값이 있는 필드들
         self.name = name
         self.bodyImage = bodyImage
@@ -90,13 +94,13 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.selectedTemplate = selectedTemplate
         self.selectedRing = selectedRing
         self.selectedChain = selectedChain
-        
+
         // 기본값 제공 필드
         self.copyCount = data["copyCount"] as? Int ?? 0
         self.isEditable = data["isEditable"] as? Bool ?? true
         self.isPackaged = data["isPackaged"] as? Bool ?? false
         self.chainLength = data["chainLength"] as? Int ?? 5
-        
+
         // Optional 필드
         self.memo = data["memo"] as? String
         self.history = data["history"] as? [String]

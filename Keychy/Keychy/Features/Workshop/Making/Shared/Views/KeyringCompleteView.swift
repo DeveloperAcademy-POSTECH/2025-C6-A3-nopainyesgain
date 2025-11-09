@@ -205,7 +205,7 @@ extension KeyringCompleteView {
         } else {
             templateId = "AcrylicPhoto"
         }
-        
+
         self.createKeyring(
             uid: uid,
             name: self.viewModel.nameText,
@@ -221,6 +221,18 @@ extension KeyringCompleteView {
         ) { success, keyringId in
             // 키링 생성 완료
             completion()
+
+            // 백그라운드로 위젯용 이미지 캡처 및 저장
+            if success, let keyringId = keyringId {
+                Task.detached(priority: .utility) {
+                    await self.captureAndCacheKeyring(
+                        keyringId: keyringId,
+                        bodyImage: imageURL,
+                        ringType: .basic,
+                        chainType: .basic
+                    )
+                }
+            }
         }
     }
     
@@ -359,5 +371,74 @@ extension KeyringCompleteView {
                     completion(true)
                 }
             }
+    }
+
+    // MARK: - 위젯용 이미지 캡처 및 캐싱
+    private func captureAndCacheKeyring(
+        keyringId: String,
+        bodyImage: String,
+        ringType: RingType,
+        chainType: ChainType
+    ) async {
+        print("🎬 [KeyringComplete] 위젯용 이미지 캡처 시작: \(keyringId)")
+
+        await withCheckedContinuation { continuation in
+            // 이미지 로딩 완료 콜백
+            var loadingCompleted = false
+
+            // Scene 생성 (onLoadingComplete 콜백 추가, 투명 배경)
+            let scene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: bodyImage,
+                targetSize: CGSize(width: 175, height: 233),
+                zoomScale: 2.0,
+                onLoadingComplete: {
+                    print("✅ [KeyringComplete] Scene 로딩 완료: \(keyringId)")
+                    loadingCompleted = true
+                },
+                useTransparentBackground: true
+            )
+            scene.scaleMode = .aspectFill
+
+            // SKView 생성 및 Scene 표시 (렌더링 시작)
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+
+            // 로딩 완료 대기 (최대 3초)
+            Task {
+                var waitTime = 0.0
+                let checkInterval = 0.1 // 100ms마다 체크
+                let maxWaitTime = 3.0   // 최대 3초
+
+                while !loadingCompleted && waitTime < maxWaitTime {
+                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+                    waitTime += checkInterval
+                }
+
+                if !loadingCompleted {
+                    print("⚠️ [KeyringComplete] 타임아웃 - 로딩 미완료 상태에서 캡처: \(keyringId)")
+                } else {
+                    // 로딩 완료 후 추가 렌더링 대기 (200ms)
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    print("📸 [KeyringComplete] 렌더링 완료, 캡처 시작: \(keyringId)")
+                }
+
+                // PNG 캡처
+                if let pngData = await scene.captureToPNG() {
+                    print("✅ [KeyringComplete] 캡처 완료, 위젯용 이미지 저장 중: \(keyringId)")
+
+                    // FileManager 캐시에 저장 (위젯에서 접근 가능)
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringId)
+
+                    print("💾 [KeyringComplete] 위젯용 이미지 저장 완료: \(keyringId)")
+                } else {
+                    print("❌ [KeyringComplete] 캡처 실패: \(keyringId)")
+                }
+
+                continuation.resume()
+            }
+        }
     }
 }

@@ -13,17 +13,18 @@ class KeyringCellScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var onLoadingComplete: (() -> Void)?
-    
+    var useTransparentBackground: Bool
+
     // MARK: - 선택된 타입들
     var currentRingType: RingType
     var currentChainType: ChainType
-    
+
     // MARK: - 크기 조절용 컨테이너 노드
     var containerNode: SKNode!
     let scaleFactor: CGFloat // 크기 비율
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
-    
+
     // MARK: - Init / Deinit
     // zoomScale : 확대 비율
     init(
@@ -32,17 +33,19 @@ class KeyringCellScene: SKScene {
         bodyImage: String? = nil,
         targetSize: CGSize,
         zoomScale: CGFloat = 1.5,
-        onLoadingComplete: (() -> Void)? = nil
+        onLoadingComplete: (() -> Void)? = nil,
+        useTransparentBackground: Bool = false
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
         self.onLoadingComplete = onLoadingComplete
-        
+        self.useTransparentBackground = useTransparentBackground
+
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height
         self.scaleFactor = min(scaleX, scaleY) * zoomScale
-        
+
         super.init(size: targetSize)
     }
     
@@ -57,15 +60,22 @@ class KeyringCellScene: SKScene {
     
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
-        backgroundColor = .gray50
+        // 이미 초기화되었으면 스킵 (중복 렌더링 방지)
+        guard containerNode == nil else {
+            print("⚠️ [KeyringCellScene] didMove 중복 호출 방지")
+            return
+        }
+
+        // 투명 배경 옵션에 따라 배경색 설정
+        backgroundColor = useTransparentBackground ? .clear : .gray50
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        
+
         // 컨테이너 설정
         containerNode = SKNode()
         containerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         containerNode.setScale(scaleFactor)
         addChild(containerNode)
-        
+
         setupKeyring()
     }
 }

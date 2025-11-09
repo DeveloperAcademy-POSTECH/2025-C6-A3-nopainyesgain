@@ -2,14 +2,11 @@
 //  KeyringImageCache.swift
 //  Keychy
 //
-//  Created by Claude on 11/9/25.
+//  Created by Rundo on 11/9/25.
 //
 
 import Foundation
 import SwiftUI
-#if targetEnvironment(simulator)
-import AppKit
-#endif
 
 /// Keyring 썸네일 이미지를 FileManager 기반으로 캐싱
 class KeyringImageCache {
@@ -181,18 +178,5 @@ class KeyringImageCache {
         }
 
         print("📋 [KeyringCache] =====================================")
-    }
-
-    /// Finder에서 캐시 폴더 열기 (macOS 시뮬레이터 전용)
-    func openCacheDirectoryInFinder() {
-        #if targetEnvironment(simulator)
-        print("📂 [KeyringCache] Finder에서 캐시 폴더 열기...")
-        print("📂 [KeyringCache] 경로: \(cacheDirectory.path)")
-
-        NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: cacheDirectory.path)
-        #else
-        print("⚠️ [KeyringCache] Finder 열기는 시뮬레이터에서만 가능합니다")
-        print("📁 [KeyringCache] 경로: \(cacheDirectory.path)")
-        #endif
     }
 }
