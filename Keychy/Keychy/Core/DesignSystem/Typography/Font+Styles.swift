@@ -68,4 +68,7 @@ extension Font {
     
     // MARK: - Pretendard
     static let pretendard16M = Font.custom(.pretendardMedium, size: 16)
+    
+    // MARK: - NotosansKR
+    //static let notoSansKRBLK
 }

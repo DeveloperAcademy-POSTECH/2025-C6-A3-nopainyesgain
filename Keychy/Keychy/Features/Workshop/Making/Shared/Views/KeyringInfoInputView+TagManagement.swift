@@ -60,7 +60,7 @@ extension KeyringInfoInputView {
             
             // TextField
             TextField("태그 이름을 입력해주세요", text: $newTagName)
-                .typography(.suit16M)
+                .typography(.notosans15R)
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
                 .frame(height: 52)
@@ -193,7 +193,7 @@ struct ChipView: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .typography(isSelected ? .nanum15EB25 : .nanum15B25)
+                .typography(isSelected ? .malang15B : .malang15R)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .background(

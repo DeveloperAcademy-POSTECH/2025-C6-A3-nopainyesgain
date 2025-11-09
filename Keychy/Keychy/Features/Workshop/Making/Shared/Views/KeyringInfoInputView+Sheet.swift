@@ -75,6 +75,7 @@ extension KeyringInfoInputView {
                     "이름을 입력해주세요",
                     text: $viewModel.nameText
                 )
+                .foregroundStyle(viewModel.nameText.isEmpty ? .gray300 : .black100)
                 .focused($isFocused)
                 .onChange(of: viewModel.nameText) { _, newValue in
                     let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
@@ -90,9 +91,7 @@ extension KeyringInfoInputView {
 
                     textCount = viewModel.nameText.count
                 }
-                .typography(.pretendard16M)
-                .foregroundStyle(.black100)
-            
+                .typography(.notosans15M)
                 /// 커서 표시기 색상
                 .tint(.black70)
 
@@ -123,7 +122,7 @@ extension KeyringInfoInputView {
                     .focused($isFocused)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
-                    .typography(.pretendard16M)
+                    .typography(.notosans15M)
                     .foregroundStyle(.black100)
                 
                     /// 커서 표시기 색상
@@ -141,7 +140,7 @@ extension KeyringInfoInputView {
 
                 if viewModel.memoText.isEmpty {
                     Text("메모(선택)")
-                        .typography(.suit16M25)
+                        .typography(.notosans15M)
                         .foregroundColor(.gray300)
                         .padding(.top, 18)
                         .padding(.leading, 17)

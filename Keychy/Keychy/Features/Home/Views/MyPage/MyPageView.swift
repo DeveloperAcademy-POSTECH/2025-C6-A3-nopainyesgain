@@ -198,7 +198,7 @@ extension MyPageView {
     private var userInfo: some View {
         VStack(alignment: .center, spacing: 6) {
             Text(userManager.currentUser?.nickname ?? "알 수 없음")
-                .typography(.suit20B)
+                .typography(.notosans20M)
             Text(userManager.currentUser?.email ?? "알 수 없음")
                 .typography(.suit15R)
         }

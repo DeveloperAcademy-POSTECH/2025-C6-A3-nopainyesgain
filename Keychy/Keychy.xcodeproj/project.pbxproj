@@ -56,6 +56,8 @@
 		4C36880D2EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688052EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf */; };
 		4C36880E2EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688002EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf */; };
 		4C36880F2EC07C4E00C64E75 /* NotoSansKR-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688042EC07C4E00C64E75 /* NotoSansKR-Regular.ttf */; };
+		4C3688132EC08A3100C64E75 /* HancomMalangMalang-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688112EC08A3100C64E75 /* HancomMalangMalang-Bold.otf */; };
+		4C3688142EC08A3100C64E75 /* HancomMalangMalang-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688122EC08A3100C64E75 /* HancomMalangMalang-Regular.otf */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530402EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */; };
@@ -273,6 +275,8 @@
 		4C3688042EC07C4E00C64E75 /* NotoSansKR-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Regular.ttf"; sourceTree = "<group>"; };
 		4C3688052EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-SemiBold.ttf"; sourceTree = "<group>"; };
 		4C3688062EC07C4E00C64E75 /* NotoSansKR-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Thin.ttf"; sourceTree = "<group>"; };
+		4C3688112EC08A3100C64E75 /* HancomMalangMalang-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HancomMalangMalang-Bold.otf"; sourceTree = "<group>"; };
+		4C3688122EC08A3100C64E75 /* HancomMalangMalang-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HancomMalangMalang-Regular.otf"; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -560,6 +564,15 @@
 				4C3688062EC07C4E00C64E75 /* NotoSansKR-Thin.ttf */,
 			);
 			path = NotoSansKR;
+			sourceTree = "<group>";
+		};
+		4C3688102EC08A1D00C64E75 /* HancomMalangMalang */ = {
+			isa = PBXGroup;
+			children = (
+				4C3688112EC08A3100C64E75 /* HancomMalangMalang-Bold.otf */,
+				4C3688122EC08A3100C64E75 /* HancomMalangMalang-Regular.otf */,
+			);
+			path = HancomMalangMalang;
 			sourceTree = "<group>";
 		};
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
@@ -1143,6 +1156,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4C3688102EC08A1D00C64E75 /* HancomMalangMalang */,
 				4C3687FD2EC07C3800C64E75 /* NotoSansKR */,
 				4C3687F52EBFA86B00C64E75 /* pretendard */,
 				4C6622402EAF77AB001760B5 /* nanum-square-round */,
@@ -1341,6 +1355,8 @@
 				4CEC62932EAE08F70099ECEE /* Bark.mp3 in Resources */,
 				4CEC62942EAE08F70099ECEE /* Drum.mp3 in Resources */,
 				4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */,
+				4C3688132EC08A3100C64E75 /* HancomMalangMalang-Bold.otf in Resources */,
+				4C3688142EC08A3100C64E75 /* HancomMalangMalang-Regular.otf in Resources */,
 				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
 				4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */,
 				C6B56F0F2EBD8A2E0049F969 /* StoreKit.storekit in Resources */,

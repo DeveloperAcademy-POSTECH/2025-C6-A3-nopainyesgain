@@ -71,6 +71,16 @@ struct Typography {
     
     // MARK: - Pretendard
     static let pretendard16M  = Typography(font: .custom(.pretendardMedium, size: 16), lineSpacing: 0)
+    
+    // MARK: - NotoSans
+    static let notosans15M = Typography(font: .custom(.notoSansMedium, size: 15), lineSpacing: 0)
+    static let notosans15R = Typography(font: .custom(.notoSansRegular, size: 15), lineSpacing: 0)
+    static let notosans20M = Typography(font: .custom(.notoSansMedium, size: 20), lineSpacing: 0)
+    static let notosans24M = Typography(font: .custom(.notoSansMedium, size: 24), lineSpacing: 0)
+    
+    // MARK: - Malang
+    static let malang15R = Typography(font: .custom(.malangRegular, size: 15), lineSpacing: 0)
+    static let malang15B = Typography(font: .custom(.malangBold, size: 15), lineSpacing: 0)
 }
 
 // MARK: - View Extension
