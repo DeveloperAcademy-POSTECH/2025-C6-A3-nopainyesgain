@@ -24,6 +24,9 @@ struct CollectionKeyringDetailView: View {
     @State private var showDeleteCompleteAlert: Bool = false
     @State private var showCopyAlert: Bool = false
     @State private var showCopyCompleteAlert: Bool = false
+    @State private var showCopyLackAlert: Bool = false
+    @State private var showPackageAlert: Bool = false
+    @State private var showPackingAlert: Bool = false
     @State private var menuPosition: CGRect = .zero
 
     // 이미지 저장 관련
@@ -78,11 +81,7 @@ struct CollectionKeyringDetailView: View {
                         },
                         onCopy: {
                             showMenu = false
-                            if let docId = firestoreDocumentId {
-                                print("복사할 키링 Firestore ID: \(docId)")
-                            } else {
-                                print("복사 실패: Firestore ID 없음")
-                            }
+                            
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showCopyAlert = true
                             }
@@ -148,7 +147,7 @@ struct CollectionKeyringDetailView: View {
                     }
                 }
                 
-                if showCopyAlert || showCopyCompleteAlert {
+                if showCopyAlert || showCopyCompleteAlert || showCopyLackAlert {
                     Color.black20
                         .ignoresSafeArea()
                         .zIndex(99)
@@ -172,13 +171,24 @@ struct CollectionKeyringDetailView: View {
                                         return
                                     }
                                     
-                                    viewModel.copyKeyring(uid: uid, keyring: keyring) { success, newKeyringId in
-                                        if success {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                                showCopyCompleteAlert = true
+                                    if viewModel.copyVoucher > 0 {
+                                        viewModel.copyKeyring(uid: uid, keyring: keyring) { success, newKeyringId in
+                                            if success {
+                                                print("키링 복사 성공")
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                                    showCopyCompleteAlert = true
+                                                }
+                                            } else {
+                                                print("키링 복사 실패")
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                                    showCopyLackAlert = true
+                                                }
                                             }
-                                        } else {
-                                            print("키링 복사 실패")
+                                        }
+                                    } else {
+                                        print("복사권 부족")
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                            showCopyLackAlert = true
                                         }
                                     }
                                 }
@@ -192,15 +202,83 @@ struct CollectionKeyringDetailView: View {
                         CopyCompletePopup(isPresented: $showCopyCompleteAlert)
                             .zIndex(100)
                     }
+                    
+                    if showCopyLackAlert {
+                        LackPopup(
+                            title: "복사권이 부족합니다!",
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showCopyLackAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showCopyLackAlert = false
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    router.push(.coinCharge)
+                                }
+                            }
+                        )
+                        .zIndex(100)
+                    }
                 }
-
+                
+                if showPackageAlert || showPackingAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    if showPackageAlert {
+                        PackagePopup(
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showPackageAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showPackageAlert = false
+                                }
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                                        print("UID를 찾을 수 없습니다")
+                                        return
+                                    }
+                                    
+                                    print("포장하기")
+                                    
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showPackingAlert = true
+                                    }
+                                }
+                            }
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                        .zIndex(100)
+                    }
+                    
+                    if showPackingAlert {
+                        PackingPopup(isPresented: $showPackingAlert)
+                            .zIndex(100)
+                            .onDisappear {
+                                // PackingPopup이 사라진 후 화면 이동
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    isSheetPresented = false
+                                    isNavigatingDeeper = true
+                                    
+                                    router.push(.packageCompleteView(keyring))
+                                }
+                            }
+                    }
+                }
                 // 이미지 저장 완료 체크마크
                 if showImageSaved {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
                         .opacity(checkmarkOpacity)
                         .zIndex(101)
                 }
-
             }
         }
         .ignoresSafeArea()
@@ -221,7 +299,7 @@ struct CollectionKeyringDetailView: View {
             hideTabBar()
             fetchAuthorName()
         }
-        .onDisappear { // 일단 여기서 더 딥하게 들어가지는 않으니까 이렇게 해두겠음
+        .onDisappear {
             isSheetPresented = false
             // 화면 나갈 때 탭바 다시 보이기
             if !isNavigatingDeeper {
@@ -423,9 +501,10 @@ extension CollectionKeyringDetailView {
             
             Button(action: {
                 // TODO: 포장 로직 추가
-                isSheetPresented = false
-                isNavigatingDeeper = true
-                router.push(.packageCompleteView)
+
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPackageAlert = true
+                }
             }) {
                 Image("Present")
                     .resizable()

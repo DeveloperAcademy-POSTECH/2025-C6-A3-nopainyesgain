@@ -21,5 +21,7 @@ enum CollectionRoute: Hashable {
     case widgetSettingView
     
     // 포장 완료
-    case packageCompleteView
+    case packageCompleteView(Keyring)
+    
+    case coinCharge
 }

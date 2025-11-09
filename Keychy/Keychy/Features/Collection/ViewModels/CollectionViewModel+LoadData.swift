@@ -260,4 +260,101 @@ extension CollectionViewModel {
                 }
             }
     }
+    
+    // MARK: - 단일 키링 ID로 키링 데이터 로드
+    func fetchKeyringById(keyringId: String, completion: @escaping (Keyring?) -> Void) {
+        print("키링 데이터 로드 시작 - ID: \(keyringId)")
+        
+        db.collection("Keyring")
+            .document(keyringId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("키링 로드 에러: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                guard let document = snapshot,
+                      document.exists,
+                      let data = document.data() else {
+                    print("키링 문서가 존재하지 않습니다")
+                    completion(nil)
+                    return
+                }
+                
+                let keyring = Keyring(documentId: keyringId, data: data)
+                print("키링 로드 완료: \(keyring?.name ?? "이름 없음")")
+                completion(keyring)
+            }
+    }
+    
+    // MARK: - 작성자 닉네임 가져오기
+    func fetchAuthorName(authorId: String, completion: @escaping (String) -> Void) {
+        db.collection("User")
+            .document(authorId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("작성자 정보 로드 에러: \(error.localizedDescription)")
+                    completion("알 수 없음")
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let nickname = data["nickname"] as? String else {
+                    completion("알 수 없음")
+                    return
+                }
+                
+                completion(nickname)
+            }
+    }
+    
+    // MARK: - 인벤 확장
+    func purchaseInventoryExpansion(userManager: UserManager, expansionCost: Int = 100) async -> PurchaseResult {
+        guard let userId = userManager.currentUser?.id,
+              let userCoins = userManager.currentUser?.coin else {
+            return .failed("사용자 정보를 찾을 수 없습니다")
+        }
+        
+        // 코인 부족 시
+        guard userCoins >= expansionCost else {
+            return .insufficientCoins
+        }
+        
+        let db = Firestore.firestore()
+        let userRef = db.collection("User").document(userId)
+        
+        do {
+            let snapshot = try await userRef.getDocument()
+            guard let data = snapshot.data() else {
+                return .failed("사용자 정보를 찾을 수 없습니다")
+            }
+            
+            let currentCoin = data["coin"] as? Int ?? 0
+            let currentMaxCount = data["maxKeyringCount"] as? Int ?? 0
+            
+            guard currentCoin >= expansionCost else {
+                return .insufficientCoins
+            }
+            
+            // Firestore 업데이트
+            try await userRef.updateData([
+                "coin": currentCoin - expansionCost,
+                "maxKeyringCount": currentMaxCount + 10
+            ])
+            
+            // 로컬 UserManager 갱신
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                userManager.loadUserInfo(uid: userId) { _ in
+                    continuation.resume()
+                }
+            }
+            
+            return .success
+            
+        } catch {
+            print("인벤토리 확장 실패: \(error.localizedDescription)")
+            return .failed("인벤토리 확장 처리 중 오류가 발생했습니다")
+        }
+    }
 }

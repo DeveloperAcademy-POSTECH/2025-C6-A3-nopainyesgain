@@ -18,6 +18,9 @@
 		3822DDC42EBBE108003125BE /* CopyPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC32EBBE108003125BE /* CopyPopup.swift */; };
 		3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC52EBBE252003125BE /* LackPopup.swift */; };
 		38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */; };
+		38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A802EBF511C00BE45A5 /* PackagePopup.swift */; };
+		38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */; };
+		38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A842EBF794500BE45A5 /* DeepLinkManager.swift */; };
 		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */; };
 		385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */; };
@@ -230,7 +233,11 @@
 		3822DDC12EBBC712003125BE /* KeyringEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringEditView.swift; sourceTree = "<group>"; };
 		3822DDC32EBBE108003125BE /* CopyPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPopup.swift; sourceTree = "<group>"; };
 		3822DDC52EBBE252003125BE /* LackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LackPopup.swift; sourceTree = "<group>"; };
+		382800CD2EBFBE03005F1332 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageCompleteView.swift; sourceTree = "<group>"; };
+		38283A802EBF511C00BE45A5 /* PackagePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackagePopup.swift; sourceTree = "<group>"; };
+		38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringReceiveView.swift; sourceTree = "<group>"; };
+		38283A842EBF794500BE45A5 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Sort.swift"; sourceTree = "<group>"; };
 		385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
@@ -239,7 +246,6 @@
 		385425CB2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringDetailScene+Setup.swift"; sourceTree = "<group>"; };
 		386AECCA2EB45A640001A5CD /* ProfileSetupCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupCompleteView.swift; sourceTree = "<group>"; };
 		38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		38A5944B2EAE50F10003D712 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		38A596722EAFA8D20003D712 /* KeychyUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyUser.swift; sourceTree = "<group>"; };
 		38A596772EAFA9430003D712 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		38A596792EAFA94E0003D712 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
@@ -442,6 +448,7 @@
 				3822DDBD2EBAAC80003125BE /* PurchasePopup.swift */,
 				3822DDC32EBBE108003125BE /* CopyPopup.swift */,
 				3822DDC52EBBE252003125BE /* LackPopup.swift */,
+				38283A802EBF511C00BE45A5 /* PackagePopup.swift */,
 			);
 			path = Popup;
 			sourceTree = "<group>";
@@ -626,7 +633,7 @@
 			children = (
 				38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
-				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
+				382800CD2EBFBE03005F1332 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
 				4CEC61E42EAE08C00099ECEE /* CommonModels */,
 				4CEC62192EAE08DA0099ECEE /* Core */,
@@ -861,6 +868,7 @@
 				38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */,
 				38173D0B2EB8AD8800E36F7E /* CategoryContextMenu.swift */,
 				38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */,
+				38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */,
 				385425C12EB2C34D00A06C02 /* Widget */,
 				4CEC629D2EAE09990099ECEE /* Bundle */,
 			);
@@ -1163,6 +1171,7 @@
 			isa = PBXGroup;
 			children = (
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
+				38283A842EBF794500BE45A5 /* DeepLinkManager.swift */,
 			);
 			path = FileManagers;
 			sourceTree = "<group>";
@@ -1436,6 +1445,8 @@
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */,
+				38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */,
+				38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
 				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
@@ -1443,6 +1454,7 @@
 				4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */,
 				4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */,
 				AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */,
+				38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */,
 				4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */,
 				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
 				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
@@ -1613,6 +1625,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Keychy/Keychy.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;

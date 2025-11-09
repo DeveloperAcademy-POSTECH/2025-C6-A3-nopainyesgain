@@ -57,6 +57,62 @@ struct KeychyApp: App {
         WindowGroup {
             RootView()
                 .preferredColorScheme(.light)
+                .onOpenURL { url in
+                    print("onOpenURL 호출됨: \(url)")
+                    handleDeepLink(url)
+                }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { userActivity in
+                    print("onContinueUserActivity 호출됨")
+                    print("   activityType: \(userActivity.activityType)")
+                    print("   webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
+                    if let url = userActivity.webpageURL {
+                        handleDeepLink(url)
+                    }
+                }
+        }
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        print("   URL 수신: \(url)")
+        print("   scheme: \(url.scheme ?? "nil")")
+        print("   host: \(url.host ?? "nil")")
+        print("   path: \(url.path)")
+        
+        // Universal Link 처리
+        if url.scheme == "https" && url.host == "keychy-f6011.web.app" {
+            handleUniversalLink(url)
+            return
+        }
+        
+        // Custom URL Scheme 처리
+        if url.scheme == "keychy" {
+            guard url.host == "receive",
+                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let keyringId = components.queryItems?.first(where: { $0.name == "keyringId" })?.value else {
+                print("Custom URL Scheme 파싱 실패")
+                return
+            }
+            
+            print("Custom URL Scheme - keyringId: \(keyringId)")
+            DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
+        }
+    }
+    
+    // Universal Links (배포용)
+    private func handleUniversalLink(_ url: URL) {
+        print("Universal Link 수신: \(url)")
+        
+        guard url.host == "keychy-f6011.web.app" else { return }
+        
+        let path = url.path
+        
+        // https://keychy-f6011.web.app/receive/KEYRING_ID
+        if path.hasPrefix("/receive/") {
+            let keyringId = String(path.dropFirst("/receive/".count))
+            print("keyringId 추출 성공: \(keyringId)")
+            DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
+        } else {
+               print("경로 파싱 실패")
         }
     }
 }
