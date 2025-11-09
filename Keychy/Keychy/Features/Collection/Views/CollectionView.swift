@@ -11,12 +11,17 @@ import SpriteKit
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State var collectionViewModel: CollectionViewModel
+    @State private var userManager = UserManager.shared
     @State private var selectedCategory = "전체"
     @State private var showSortSheet: Bool = false
     @State private var showRenameAlert: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteAlert: Bool = false
     @State private var showInvenExpandAlert: Bool = false // 추후 인벤토리 확장용
+    @State private var showPurchaseSuccessAlert: Bool = false
+    @State private var showPurchaseFailAlert: Bool = false
+    @State private var purchaseSuccessScale: CGFloat = 0.3
+    @State private var purchaseFailScale: CGFloat = 0.3
     @State private var invenExpandAlertScale: CGFloat = 0.3
     @State private var renamingCategory: String = ""
     @State private var deletingCategory: String = ""
@@ -174,7 +179,47 @@ struct CollectionView: View {
                 .zIndex(100)
             }
             
-            if showInvenExpandAlert {
+            if showDeleteAlert || showDeleteCompleteAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(99)
+                
+                if showDeleteAlert {
+                    DeletePopup(
+                        title: "[\(deletingCategory)]\n정말 삭제하시겠어요?",
+                        message: "한 번 삭제하면 복구 할 수 없습니다.",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showDeleteAlert = false
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                deletingCategory = ""
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showDeleteAlert = false
+                            }
+
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                confirmDeleteCategory()
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteCompleteAlert = true
+                                }
+                            }
+                        }
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+                
+                if showDeleteCompleteAlert {
+                    DeleteCompletePopup(isPresented: $showDeleteCompleteAlert)
+                        .zIndex(100)
+                }
+            }
+            
+            if showInvenExpandAlert || showPurchaseSuccessAlert || showPurchaseFailAlert{
                 Color.black20
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
@@ -187,26 +232,52 @@ struct CollectionView: View {
                         }
                     }
 
-                PurchasePopup(
-                    title: "인벤토리 확장 [+100]",
-                    myCoin: collectionViewModel.coin,
-                    price: 100,
-                    scale: invenExpandAlertScale,
-                    onConfirm: {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                            invenExpandAlertScale = 0.3
+                if showInvenExpandAlert {
+                    PurchasePopup(
+                        title: "인벤토리 확장 [+100]",
+                        myCoin: collectionViewModel.coin,
+                        price: 100,
+                        scale: invenExpandAlertScale,
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                invenExpandAlertScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showInvenExpandAlert = false
+                                expandInventory()
+                            }
                         }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            showInvenExpandAlert = false
+                    )
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
+                    .transition(.scale.combined(with: .opacity))
+                }
+                
+                if showPurchaseSuccessAlert {
+                    PurchaseSuccessPopup(isPresented: $showPurchaseSuccessAlert)
+                        .zIndex(100)
+                }
+                
+                if showPurchaseFailAlert {
+                    LackPopup(
+                        title: "열쇠가 부족합니다!",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showPurchaseFailAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showPurchaseFailAlert = false
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                router.push(.coinCharge)
+                            }
                         }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                            //확장 로직
-                        }
-                    }
-                )
-                .padding(.horizontal, 40)
-                .padding(.bottom, 30)
-                .transition(.scale.combined(with: .opacity))
+                    )
+                    .zIndex(100)
+                }
+
             }
             
         }
@@ -486,6 +557,47 @@ extension CollectionView {
         }
     }
     
+    // 인벤 확장
+    private func expandInventory() {
+        Task {
+            let result = await collectionViewModel.purchaseInventoryExpansion(
+                userManager: userManager,
+                expansionCost: 100
+            )
+            
+            await MainActor.run {
+                switch result {
+                case .success:
+                    print("인벤토리 확장 성공")
+                    
+                    // 성공 알림 표시
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showPurchaseSuccessAlert = true
+                    }
+                    
+                    // 사용자 데이터 새로고침
+                    fetchUserData()
+                    
+                case .insufficientCoins:
+                    print("코인 부족")
+                    
+                    // 코인 부족 알림 표시
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showPurchaseFailAlert = true
+                    }
+                    
+                case .failed(let message):
+                    print("구매 실패: \(message)")
+                    
+                    // 실패 알림 표시
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showPurchaseFailAlert = true
+                    }
+                }
+            }
+        }
+    }
+    
     // 정렬 버튼
     private var sortButton: some View {
         Button(action: {
@@ -533,19 +645,14 @@ extension CollectionView {
                 CollectionCellView(keyring: keyring)
                     .frame(width: 175, height: 233)
                     .cornerRadius(10)
-                    .padding(.bottom, 10)
                 
                 Text(keyring.name)
-                    .typography(.suit14SB18)
+                    // MARK: - 이걸 본 시점에 여기 폰트 맞는지 피그마 봐주시길
+                    .typography(.notosans15M)
                     .foregroundColor(.black100)
             }
         }
         .buttonStyle(PlainButtonStyle())
         .frame(width: 175, height: 261)
     }
-}
-
-// MARK: - Preview
-#Preview {
-    CollectionView(router: NavigationRouter<CollectionRoute>(), collectionViewModel: CollectionViewModel())
 }

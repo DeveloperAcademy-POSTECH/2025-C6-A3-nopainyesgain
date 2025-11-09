@@ -119,7 +119,7 @@ extension KeyringCompleteView {
     private var keyringInfo: some View {
         VStack(spacing: 0) {
             Text(viewModel.nameText)
-                .typography(.suit24B)
+                .typography(.notosans24M)
                 .foregroundStyle(.black100)
             
             Text(formattedDate(date: viewModel.createdAt))
@@ -129,7 +129,7 @@ extension KeyringCompleteView {
             
             if let nickname = userManager.currentUser?.nickname {
                 Text("@\(nickname)")
-                    .typography(.suit15M25)
+                    .typography(.notosans15M)
                     .foregroundStyle(.black100)
                     .padding(.vertical, 1)
             }

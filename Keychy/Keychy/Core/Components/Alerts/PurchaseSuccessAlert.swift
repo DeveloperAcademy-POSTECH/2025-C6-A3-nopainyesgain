@@ -21,7 +21,7 @@ struct PurchaseSuccessAlert: View {
         .padding(.horizontal, 22)
         .padding(.bottom, 26)
         .glassEffect(in: .rect(cornerRadius: 15))
-        .frame(minWidth: 300)
+        .frame(width: 300, height: 214)
         .scaleEffect(checkmarkScale)
     }
 }
