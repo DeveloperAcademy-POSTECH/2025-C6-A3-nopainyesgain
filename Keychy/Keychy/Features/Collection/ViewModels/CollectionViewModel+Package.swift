@@ -219,4 +219,49 @@ extension CollectionViewModel {
         }
     }
     
+    // MARK: - 포장 풀기
+    func unpackKeyring(
+        uid: String,
+        keyring: Keyring,
+        postOfficeId: String,
+        completion: @escaping (Bool) -> Void
+    ) {
+        
+        guard let documentId = keyringDocumentIdByLocalId[keyring.id] else {
+            print("키링 문서 ID 없음")
+            completion(false)
+            return
+        }
+
+        let db = Firestore.firestore()
+        let batch = db.batch()
+
+        // isPackaged 상태 해제
+        let keyringRef = db.collection("Keyring").document(documentId)
+        batch.updateData(["isPackaged": false], forDocument: keyringRef)
+
+        // PostOffice 문서 삭제
+        let postOfficeRef = db.collection("PostOffice").document(postOfficeId)
+        batch.deleteDocument(postOfficeRef)
+        
+        batch.commit { [weak self] error in
+            if let error = error {
+                print("포장 풀기 실패: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+
+            print("포장 풀기 완료: \(keyring.name)")
+
+            // 로컬 상태 갱신
+            if let index = self?.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                self?.keyring[index].isPackaged = false
+                self?.keyring[index].isEditable = true
+            }
+
+            completion(true)
+        }
+
+
+    }
 }
