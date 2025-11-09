@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: - My Collection Section
 
 extension WorkshopView {
-    /// 내 창고 섹션 (보유한 템플릿)
+    /// 내 창고 섹션 (보유한 키링만 표시)
     var myCollectionSection: some View {
         VStack(spacing: 12) {
             // 헤더

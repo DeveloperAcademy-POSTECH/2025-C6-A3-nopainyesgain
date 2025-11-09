@@ -16,6 +16,7 @@ struct TemplatePreviewBody: View {
     let onMake: () -> Void
     var onPurchase: (() -> Void)? = nil
     var router: NavigationRouter<WorkshopRoute>? = nil
+    var showDeleteButton: Bool = false  // MyItemsView에서 올 때 true
 
     @Environment(UserManager.self) private var userManager
 
@@ -26,6 +27,11 @@ struct TemplatePreviewBody: View {
     @State private var purchaseSuccessScale: CGFloat = 0.3
     @State private var showPurchaseFailAlert = false
     @State private var purchaseFailScale: CGFloat = 0.3
+
+    // 삭제 관련 상태
+    @State private var showDeletePopup = false
+    @State private var deletePopupScale: CGFloat = 0.3
+    @State private var showDeleteCompletePopup = false
 
     /// 템플릿 보유 여부 확인
     private var isOwned: Bool {
@@ -54,6 +60,22 @@ struct TemplatePreviewBody: View {
         }
         .padding(.horizontal, 35)
         .toolbar(.hidden, for: .tabBar)
+        .toolbar {
+            if showDeleteButton {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showDeletePopup = true
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                            deletePopupScale = 1.0
+                        }
+                    } label: {
+                        Image("trashBlack")
+                            .resizable()
+                            .frame(width: 32, height: 32)
+                    }
+                }
+            }
+        }
         .task {
             await fetchTemplate()
         }
@@ -78,6 +100,43 @@ struct TemplatePreviewBody: View {
         }
         .overlay {
             ZStack(alignment: .center) {
+                // 삭제 확인 팝업
+                if showDeletePopup {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+
+                    if let template {
+                        DeletePopup(
+                            title: "[\(template.name)]\n정말 삭제하시겠어요?",
+                            message: "한 번 삭제하면 복구 할 수 없습니다.",
+                            onCancel: {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                    deletePopupScale = 0.3
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    showDeletePopup = false
+                                }
+                            },
+                            onConfirm: {
+                                Task {
+                                    await deleteTemplate()
+                                }
+                            }
+                        )
+                        .scaleEffect(deletePopupScale)
+                    }
+                }
+
+                // 삭제 완료 팝업
+                if showDeleteCompletePopup {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+
+                    DeleteCompletePopup(isPresented: $showDeleteCompletePopup)
+                }
+
                 // 구매 확인 팝업
                 if showPurchaseSheet {
                     Color.black20
@@ -112,22 +171,7 @@ struct TemplatePreviewBody: View {
                 if showPurchaseSuccessAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
-                        .onTapGesture {}
-
-                    BangmarkAlert(
-                        checkmarkScale: purchaseSuccessScale,
-                        text: "구매 완료!",
-                        cancelText: "닫기",
-                        confirmText: "확인",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        },
-                        onConfirm: {
+                        .onTapGesture {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 purchaseSuccessScale = 0.3
                             }
@@ -135,9 +179,11 @@ struct TemplatePreviewBody: View {
                                 showPurchaseSuccessAlert = false
                             }
                         }
+
+                    CheckmarkAlert(
+                        checkmarkScale: purchaseSuccessScale,
+                        text: "구매 완료!"
                     )
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
                 }
 
                 // 구매 실패 알림 (코인 부족)
@@ -252,6 +298,48 @@ extension TemplatePreviewBody {
         case .failed(let message):
             // 기타 실패 시 에러 출력
             print("구매 실패: \(message)")
+        }
+    }
+
+    /// 템플릿 삭제
+    private func deleteTemplate() async {
+        guard let templateId = template?.id,
+              let userId = userManager.currentUser?.id else { return }
+
+        // 삭제 확인 팝업 닫기 애니메이션
+        await MainActor.run {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                deletePopupScale = 0.3
+            }
+        }
+
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        await MainActor.run {
+            showDeletePopup = false
+        }
+
+        do {
+            try await Firestore.firestore()
+                .collection("User")
+                .document(userId)
+                .updateData([
+                    "templates": FieldValue.arrayRemove([templateId])
+                ])
+
+            // 삭제 완료 팝업 표시
+            await MainActor.run {
+                showDeleteCompletePopup = true
+            }
+
+            // 1초 후 뒤로 가기
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+
+            await MainActor.run {
+                router?.pop()
+            }
+        } catch {
+            print("템플릿 삭제 실패: \(error.localizedDescription)")
         }
     }
 }

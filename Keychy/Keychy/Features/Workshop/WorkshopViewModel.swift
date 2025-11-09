@@ -99,7 +99,11 @@ class WorkshopViewModel {
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    var hasLoadedOwnedItems: Bool = false
+
+    /// 보유 아이템 로딩 완료 여부 (templates가 로드되면 자동 계산 가능)
+    var hasLoadedOwnedItems: Bool {
+        !loadedCategories.isEmpty
+    }
 
     // 카테고리별 로딩 상태 추적
     private var loadedCategories: Set<String> = []
@@ -114,12 +118,46 @@ class WorkshopViewModel {
     var particles: [Particle] { dataManager.particles }
     var sounds: [Sound] { dataManager.sounds }
 
-    // 보유한 아이템 목록
-    var ownedTemplates: [KeyringTemplate] = []
-    var ownedBackgrounds: [Background] = []
-    var ownedCarabiners: [Carabiner] = []
-    var ownedParticles: [Particle] = []
-    var ownedSounds: [Sound] = []
+    // 보유한 아이템 목록 (실시간 반영)
+    var ownedTemplates: [KeyringTemplate] {
+        guard let user = userManager.currentUser else { return [] }
+        return templates.filter { template in
+            guard let id = template.id else { return false }
+            return user.templates.contains(id)
+        }
+    }
+
+    var ownedBackgrounds: [Background] {
+        guard let user = userManager.currentUser else { return [] }
+        return backgrounds.filter { background in
+            guard let id = background.id else { return false }
+            return user.backgrounds.contains(id)
+        }
+    }
+
+    var ownedCarabiners: [Carabiner] {
+        guard let user = userManager.currentUser else { return [] }
+        return carabiners.filter { carabiner in
+            guard let id = carabiner.id else { return false }
+            return user.carabiners.contains(id)
+        }
+    }
+
+    var ownedParticles: [Particle] {
+        guard let user = userManager.currentUser else { return [] }
+        return particles.filter { particle in
+            guard let id = particle.id else { return false }
+            return user.particleEffects.contains(id)
+        }
+    }
+
+    var ownedSounds: [Sound] {
+        guard let user = userManager.currentUser else { return [] }
+        return sounds.filter { sound in
+            guard let id = sound.id else { return false }
+            return user.soundEffects.contains(id)
+        }
+    }
 
     private var userManager: UserManager
 
@@ -283,37 +321,7 @@ class WorkshopViewModel {
     }
     
     // MARK: - Owned Items Methods (통합)
-    
-    /// 사용자가 보유한 아이템 목록 로드
-    func loadOwnedItems() async {
-        guard let user = userManager.currentUser else { return }
 
-        ownedTemplates = await loadOwnedItems(collection: "Template", ids: user.templates)
-        ownedBackgrounds = await loadOwnedItems(collection: "Background", ids: user.backgrounds)
-        ownedCarabiners = await loadOwnedItems(collection: "Carabiner", ids: user.carabiners)
-        ownedParticles = await loadOwnedItems(collection: "Particle", ids: user.particleEffects)
-        ownedSounds = await loadOwnedItems(collection: "Sound", ids: user.soundEffects)
-
-        hasLoadedOwnedItems = true
-    }
-    
-    /// 통합된 보유 아이템 로드 함수
-    private func loadOwnedItems<T: WorkshopItem>(collection: String, ids: [String]) async -> [T] {
-        guard !ids.isEmpty else { return [] }
-        
-        do {
-            let snapshot = try await Firestore.firestore()
-                .collection(collection)
-                .whereField(FieldPath.documentID(), in: ids)
-                .getDocuments()
-            
-            return try snapshot.documents.compactMap { try $0.data(as: T.self) }
-        } catch {
-            print("Failed to load owned \(collection): \(error)")
-            return []
-        }
-    }
-    
     /// 통합된 보유 여부 확인 함수
     private func isItemOwned<T: WorkshopItem>(_ item: T, userItems: [String]) -> Bool {
         guard let itemId = item.id else { return false }
