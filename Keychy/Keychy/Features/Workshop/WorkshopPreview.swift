@@ -172,22 +172,7 @@ struct WorkshopPreview: View {
                 if showPurchaseSuccessAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
-                        .onTapGesture {}
-
-                    BangmarkAlert(
-                        checkmarkScale: purchaseSuccessScale,
-                        text: "구매 완료!",
-                        cancelText: "닫기",
-                        confirmText: "확인",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        },
-                        onConfirm: {
+                        .onTapGesture {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 purchaseSuccessScale = 0.3
                             }
@@ -195,9 +180,11 @@ struct WorkshopPreview: View {
                                 showPurchaseSuccessAlert = false
                             }
                         }
+
+                    CheckmarkAlert(
+                        checkmarkScale: purchaseSuccessScale,
+                        text: "구매 완료!"
                     )
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
                 }
 
                 // 구매 실패 알림 (코인 부족)
