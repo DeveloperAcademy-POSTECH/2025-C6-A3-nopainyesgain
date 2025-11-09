@@ -135,12 +135,12 @@ struct CollectionCellView: View {
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
                 targetSize: CGSize(width: 175, height: 233),
+                customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 onLoadingComplete: {
                     print("✅ [CollectionCell] Scene 로딩 완료: \(keyringID)")
                     loadingCompleted = true
-                },
-                useTransparentBackground: true
+                }
             )
             scene.scaleMode = .aspectFill
 

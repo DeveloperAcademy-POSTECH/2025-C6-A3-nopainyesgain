@@ -392,12 +392,12 @@ extension KeyringCompleteView {
                 chainType: chainType,
                 bodyImage: bodyImage,
                 targetSize: CGSize(width: 175, height: 233),
+                customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 onLoadingComplete: {
                     print("✅ [KeyringComplete] Scene 로딩 완료: \(keyringId)")
                     loadingCompleted = true
-                },
-                useTransparentBackground: true
+                }
             )
             scene.scaleMode = .aspectFill
 

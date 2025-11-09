@@ -13,7 +13,7 @@ class KeyringCellScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var onLoadingComplete: (() -> Void)?
-    var useTransparentBackground: Bool
+    var customBackgroundColor: UIColor
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType
@@ -32,15 +32,15 @@ class KeyringCellScene: SKScene {
         chainType: ChainType,
         bodyImage: String? = nil,
         targetSize: CGSize,
+        customBackgroundColor: UIColor = .gray50,
         zoomScale: CGFloat = 1.5,
-        onLoadingComplete: (() -> Void)? = nil,
-        useTransparentBackground: Bool = false
+        onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
         self.onLoadingComplete = onLoadingComplete
-        self.useTransparentBackground = useTransparentBackground
+        self.customBackgroundColor = customBackgroundColor
 
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height
@@ -66,8 +66,8 @@ class KeyringCellScene: SKScene {
             return
         }
 
-        // 투명 배경 옵션에 따라 배경색 설정
-        backgroundColor = useTransparentBackground ? .clear : .gray50
+        // 커스텀 배경색 설정
+        backgroundColor = customBackgroundColor
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
         // 컨테이너 설정
