@@ -200,7 +200,9 @@ class MultiKeyringScene: SKScene {
             from: currentChainType,
             count: 5,
             startPosition: CGPoint(x: centerX, y: chainStartY),
-            spacing: chainSpacing
+            spacing: chainSpacing,
+            carabinerType: currentCarabinerType,
+            baseZPosition: baseZPosition
         ) { [weak self] chains in
             guard let self = self else { return }
 
@@ -209,7 +211,7 @@ class MultiKeyringScene: SKScene {
             let collisionBitMask: UInt32 = categoryBitMask
 
             for (chainIndex, chain) in chains.enumerated() {
-                chain.zPosition = baseZPosition + 2 + CGFloat(chainIndex)  // Chain은 Body 위
+                // zPosition은 KeyringChainComponent에서 이미 설정됨
                 // 체인도 처음에는 물리 비활성화
                 chain.physicsBody?.isDynamic = false
                 chain.physicsBody?.categoryBitMask = categoryBitMask
@@ -485,14 +487,11 @@ class MultiKeyringScene: SKScene {
                     if index == 0 {
                         // 첫 번째 체인: 완전히 고정 (물리 비활성화)
                         chain.physicsBody?.isDynamic = false
-                        print("[MultiKeyringScene] Plain: First chain completely fixed (static)")
                     } else {
                         // 나머지 체인들: 자유롭게 움직임
                         chain.physicsBody?.isDynamic = true
-                        chain.physicsBody?.linearDamping = 0.1  // 매우 낮은 감쇠로 자유로운 움직임
-                        chain.physicsBody?.angularDamping = 0.1
-                        chain.physicsBody?.mass = 0.3  // 적당한 질량
-                        print("[MultiKeyringScene] Plain: Chain \(index) free to move")
+                        chain.physicsBody?.linearDamping = 0.5  // 매우 낮은 감쇠로 자유로운 움직임
+                        chain.physicsBody?.angularDamping = 0.5
                     }
                 }
             } else {
@@ -511,18 +510,9 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
         }
-        
-        print("[MultiKeyringScene] Physics enabled for \(keyringDataList.count) keyrings")
         onAllKeyringsReady?()
     }
     
-    // MARK: - Ring Anchor System (Plain 타입에서 Ring 고정으로 더 이상 불필요)
-    
-    // createRingAnchor 함수 제거됨 - Ring이 완전 고정되므로 불필요
-
-    // Plain 타입에서는 경계 생성 함수를 제거 (Ring이 고정되므로 불필요)
-    // createCarabinerBoundary 함수는 더 이상 사용하지 않음
-
     // MARK: - Helper Methods
 
     /// 비율 좌표를 SpriteKit 절대 좌표로 변환
