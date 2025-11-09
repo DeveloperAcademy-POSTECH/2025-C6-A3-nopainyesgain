@@ -18,6 +18,15 @@
 		<string>NanumSquareRoundOTFL.otf</string>
 		<string>NanumSquareRoundOTFR.otf</string>
 		<string>Pretendard-Medium.ttf</string>
+		<string>NotoSansKR-Black.ttf</string>
+		<string>NotoSansKR-Bold.ttf</string>
+		<string>NotoSansKR-ExtraBold.ttf</string>
+		<string>NotoSansKR-ExtraLight.ttf</string>
+		<string>NotoSansKR-Light.ttf</string>
+		<string>NotoSansKR-Medium.ttf</string>
+		<string>NotoSansKR-Regular.ttf</string>
+		<string>NotoSansKR-SemiBold.ttf</string>
+		<string>NotoSansKR-Thin.ttf</string>
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>키링의 탭 사운드로 사용할 음성을 녹음하기 위해 마이크 접근 권한이 필요합니다.</string>

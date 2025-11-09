@@ -47,6 +47,15 @@
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
 		4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */; };
+		4C3688072EC07C4E00C64E75 /* NotoSansKR-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687FF2EC07C4E00C64E75 /* NotoSansKR-Bold.ttf */; };
+		4C3688082EC07C4E00C64E75 /* NotoSansKR-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687FE2EC07C4E00C64E75 /* NotoSansKR-Black.ttf */; };
+		4C3688092EC07C4E00C64E75 /* NotoSansKR-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688012EC07C4E00C64E75 /* NotoSansKR-ExtraLight.ttf */; };
+		4C36880A2EC07C4E00C64E75 /* NotoSansKR-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688022EC07C4E00C64E75 /* NotoSansKR-Light.ttf */; };
+		4C36880B2EC07C4E00C64E75 /* NotoSansKR-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688062EC07C4E00C64E75 /* NotoSansKR-Thin.ttf */; };
+		4C36880C2EC07C4E00C64E75 /* NotoSansKR-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688032EC07C4E00C64E75 /* NotoSansKR-Medium.ttf */; };
+		4C36880D2EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688052EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf */; };
+		4C36880E2EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688002EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf */; };
+		4C36880F2EC07C4E00C64E75 /* NotoSansKR-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3688042EC07C4E00C64E75 /* NotoSansKR-Regular.ttf */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530402EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */; };
@@ -255,6 +264,15 @@
 		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAlert.swift; sourceTree = "<group>"; };
+		4C3687FE2EC07C4E00C64E75 /* NotoSansKR-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Black.ttf"; sourceTree = "<group>"; };
+		4C3687FF2EC07C4E00C64E75 /* NotoSansKR-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Bold.ttf"; sourceTree = "<group>"; };
+		4C3688002EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-ExtraBold.ttf"; sourceTree = "<group>"; };
+		4C3688012EC07C4E00C64E75 /* NotoSansKR-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-ExtraLight.ttf"; sourceTree = "<group>"; };
+		4C3688022EC07C4E00C64E75 /* NotoSansKR-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Light.ttf"; sourceTree = "<group>"; };
+		4C3688032EC07C4E00C64E75 /* NotoSansKR-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Medium.ttf"; sourceTree = "<group>"; };
+		4C3688042EC07C4E00C64E75 /* NotoSansKR-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Regular.ttf"; sourceTree = "<group>"; };
+		4C3688052EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-SemiBold.ttf"; sourceTree = "<group>"; };
+		4C3688062EC07C4E00C64E75 /* NotoSansKR-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Thin.ttf"; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -526,6 +544,22 @@
 				4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */,
 			);
 			path = Notification;
+			sourceTree = "<group>";
+		};
+		4C3687FD2EC07C3800C64E75 /* NotoSansKR */ = {
+			isa = PBXGroup;
+			children = (
+				4C3687FE2EC07C4E00C64E75 /* NotoSansKR-Black.ttf */,
+				4C3687FF2EC07C4E00C64E75 /* NotoSansKR-Bold.ttf */,
+				4C3688002EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf */,
+				4C3688012EC07C4E00C64E75 /* NotoSansKR-ExtraLight.ttf */,
+				4C3688022EC07C4E00C64E75 /* NotoSansKR-Light.ttf */,
+				4C3688032EC07C4E00C64E75 /* NotoSansKR-Medium.ttf */,
+				4C3688042EC07C4E00C64E75 /* NotoSansKR-Regular.ttf */,
+				4C3688052EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf */,
+				4C3688062EC07C4E00C64E75 /* NotoSansKR-Thin.ttf */,
+			);
+			path = NotoSansKR;
 			sourceTree = "<group>";
 		};
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
@@ -1109,6 +1143,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4C3687FD2EC07C3800C64E75 /* NotoSansKR */,
 				4C3687F52EBFA86B00C64E75 /* pretendard */,
 				4C6622402EAF77AB001760B5 /* nanum-square-round */,
 				4C6622042EAE5FC3001760B5 /* SUIT */,
@@ -1319,6 +1354,15 @@
 				4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */,
 				4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */,
 				4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */,
+				4C3688072EC07C4E00C64E75 /* NotoSansKR-Bold.ttf in Resources */,
+				4C3688082EC07C4E00C64E75 /* NotoSansKR-Black.ttf in Resources */,
+				4C3688092EC07C4E00C64E75 /* NotoSansKR-ExtraLight.ttf in Resources */,
+				4C36880A2EC07C4E00C64E75 /* NotoSansKR-Light.ttf in Resources */,
+				4C36880B2EC07C4E00C64E75 /* NotoSansKR-Thin.ttf in Resources */,
+				4C36880C2EC07C4E00C64E75 /* NotoSansKR-Medium.ttf in Resources */,
+				4C36880D2EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf in Resources */,
+				4C36880E2EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf in Resources */,
+				4C36880F2EC07C4E00C64E75 /* NotoSansKR-Regular.ttf in Resources */,
 				4C6622462EAF7D63001760B5 /* LICENSE in Resources */,
 				4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */,
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
