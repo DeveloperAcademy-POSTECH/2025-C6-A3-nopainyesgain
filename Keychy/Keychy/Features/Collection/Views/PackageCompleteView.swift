@@ -31,7 +31,7 @@ struct PackageCompleteView: View {
                 .foregroundColor(.black100)
                 .padding(.bottom, 9)
             
-            Text("친구에게 공유하세요")
+            Text("링크나 QR로 바로 공유할 수 있어요.")
                 .typography(.suit16M)
                 .foregroundColor(.black100)
                 .padding(.bottom, 42)
@@ -88,23 +88,12 @@ struct PackageCompleteView: View {
                 .frame(height: 24)
             
             // 버튼들
-            HStack(spacing: 16) {
-                VStack(spacing: 9) {
-                    LinkSaveButton
-                    
-                    Text("링크 복사")
-                        .typography(.suit13SB)
-                        .foregroundColor(.black100)
-
-                }
+            VStack(spacing: 9) {
+                ImageSaveButton
                 
-                VStack(spacing: 9) {
-                    ImageSaveButton
-                    
-                    Text("이미지 저장")
-                        .typography(.suit13SB)
-                        .foregroundColor(.black100)
-                }
+                Text("이미지 저장")
+                    .typography(.suit13SB)
+                    .foregroundColor(.black100)
             }
         }
         .padding(.horizontal, 20)
@@ -182,11 +171,11 @@ struct PackageCompleteView: View {
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("의자자") //keyring.name
+                            Text(keyring.name) //keyring.name
                                 .typography(.nanum15EB25)
                                 .foregroundColor(.white100)
                             
-                            Text("@리에르") //authorName
+                            Text("@\(authorName)") //authorName
                                 .typography(.suit10SB)
                                 .foregroundColor(.white100)
                         }
@@ -202,15 +191,20 @@ struct PackageCompleteView: View {
             .padding(.bottom, 30)
             
             // 하단 버튼
-            HStack {
-                Image("LinkSimple")
-                    .resizable()
-                    .frame(width: 18, height: 18)
-                
-                Text("탭하여 복사")
-                    .typography(.suit15M25)
-                    .foregroundColor(.black100)
+            Button( action: {
+                copyLink()
+            }) {
+                HStack {
+                    Image("LinkSimple")
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                    
+                    Text("탭하여 복사")
+                        .typography(.suit15M25)
+                        .foregroundColor(.black100)
+                }
             }
+
         }
         .padding(.horizontal, 20)
     }
@@ -246,8 +240,7 @@ struct PackageCompleteView: View {
             }
             .padding(.bottom, 30)
             
-            // 하단 버튼
-            Text("QR 코드로 전달하기")
+            Text("") // 공백 맞추기용 빈스트링
                 .typography(.suit15M25)
                 .foregroundColor(.black100)
             
@@ -284,19 +277,19 @@ struct PackageCompleteView: View {
     }
     
     // MARK: - 하단 버튼
-    private var LinkSaveButton: some View {
-        Button(action: {
-            copyLink()
-        }) {
-            Image("Link")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 32, height: 32)
-        }
-        .frame(width: 65, height: 65)
-        .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
-    }
+//    private var LinkSaveButton: some View {
+//        Button(action: {
+//            copyLink()
+//        }) {
+//            Image("Link")
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 32, height: 32)
+//        }
+//        .frame(width: 65, height: 65)
+//        .buttonStyle(.plain)
+//        .glassEffect(.regular.interactive(), in: .circle)
+//    }
     
     private var ImageSaveButton: some View {
         Button(action: {

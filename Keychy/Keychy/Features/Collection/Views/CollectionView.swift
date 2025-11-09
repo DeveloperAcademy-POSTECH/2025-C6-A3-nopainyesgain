@@ -384,7 +384,6 @@ struct CollectionView: View {
     }
     
     // MARK: - 사용자 데이터 정렬 시트
-    // TODO: 디자인 확정되면 반영
     private var sortSheet: some View {
         VStack(spacing: 0) {
             HStack {

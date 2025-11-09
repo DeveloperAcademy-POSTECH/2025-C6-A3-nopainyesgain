@@ -60,7 +60,7 @@ struct CollectionKeyringDetailView: View {
                 .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
                 .allowsHitTesting(sheetDetent != .height(395))
                 
-                if showMenu { // 위치 조정 필요
+                if showMenu {
                     Color.clear
                         .ignoresSafeArea()
                         .contentShape(Rectangle())
@@ -286,8 +286,7 @@ struct CollectionKeyringDetailView: View {
                 }
                 // 이미지 저장 완료 체크마크
                 if showImageSaved {
-                    ImageSaveAlert(checkmarkScale: checkmarkScale)
-                        .opacity(checkmarkOpacity)
+                    ImageSavePopup(isPresented: $showImageSaved)
                         .zIndex(101)
                 }
             }
@@ -511,8 +510,6 @@ extension CollectionKeyringDetailView {
             Spacer()
             
             Button(action: {
-                // TODO: 포장 로직 추가
-
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     showPackageAlert = true
                 }

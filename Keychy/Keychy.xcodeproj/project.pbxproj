@@ -49,6 +49,9 @@
 		38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */; };
 		38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C62EB1F57F00A8E511 /* StorageManager.swift */; };
 		38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C27D2EC08794003C5DE1 /* PopupManager.swift */; };
+		38C3C2802EC0C94D003C5DE1 /* InvenLackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C27F2EC0C94D003C5DE1 /* InvenLackPopup.swift */; };
+		38C3C2822EC0CB6E003C5DE1 /* ImageSavePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2812EC0CB6E003C5DE1 /* ImageSavePopup.swift */; };
+		38C3C2842EC0D081003C5DE1 /* LinkCopiedPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
@@ -276,6 +279,9 @@
 		38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+LoadData.swift"; sourceTree = "<group>"; };
 		38C147C62EB1F57F00A8E511 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		38C3C27D2EC08794003C5DE1 /* PopupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupManager.swift; sourceTree = "<group>"; };
+		38C3C27F2EC0C94D003C5DE1 /* InvenLackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvenLackPopup.swift; sourceTree = "<group>"; };
+		38C3C2812EC0CB6E003C5DE1 /* ImageSavePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSavePopup.swift; sourceTree = "<group>"; };
+		38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCopiedPopup.swift; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -483,6 +489,9 @@
 				3822DDC32EBBE108003125BE /* CopyPopup.swift */,
 				3822DDC52EBBE252003125BE /* LackPopup.swift */,
 				38283A802EBF511C00BE45A5 /* PackagePopup.swift */,
+				38C3C27F2EC0C94D003C5DE1 /* InvenLackPopup.swift */,
+				38C3C2812EC0CB6E003C5DE1 /* ImageSavePopup.swift */,
+				38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */,
 			);
 			path = Popup;
 			sourceTree = "<group>";
@@ -1484,6 +1493,7 @@
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
+				38C3C2842EC0D081003C5DE1 /* LinkCopiedPopup.swift in Sources */,
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
@@ -1523,6 +1533,7 @@
 				C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
+				38C3C2802EC0C94D003C5DE1 /* InvenLackPopup.swift in Sources */,
 				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
 				38173D082EB8AD3900E36F7E /* CollectionViewModel+Tags.swift in Sources */,
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
@@ -1546,6 +1557,7 @@
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */,
 				38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */,
+				38C3C2822EC0CB6E003C5DE1 /* ImageSavePopup.swift in Sources */,
 				38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,

@@ -1,15 +1,14 @@
 //
-//  ImageSavedAlert.swift
+//  ImageSavePopup.swift
 //  Keychy
 //
-//  Created by 길지훈 on 11/5/25.
+//  Created by Jini on 11/9/25.
 //
 
 import SwiftUI
 
-/// 키링 이미지 저장 완료 Alert
-struct ImageSaveAlert: View {
-    let checkmarkScale: CGFloat
+struct ImageSavePopup: View {
+    @Binding var isPresented: Bool
     
     var body: some View {
         VStack(spacing: 15) {
@@ -28,6 +27,17 @@ struct ImageSaveAlert: View {
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
         .frame(width: 300, height: 214)
         .transition(.scale.combined(with: .opacity))
-        .scaleEffect(checkmarkScale)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isPresented = false
+                }
+            }
+        }
     }
+}
+
+
+#Preview {
+    ImageSavePopup(isPresented: .constant(true))
 }
