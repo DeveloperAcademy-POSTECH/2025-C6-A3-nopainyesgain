@@ -194,10 +194,11 @@ extension CollectionViewModel {
             "endedAt": Timestamp(date: Date())
         ], forDocument: postOfficeRef)
         
-        // 4. Keyring 문서 업데이트 (isPackaged false로 변경)
+        // 4. Keyring 문서 업데이트 (isPackaged false로 변경, 태그 비우기)
         let keyringRef = db.collection("Keyring").document(keyringId)
         batch.updateData([
-            "isPackaged": false
+            "isPackaged": false,
+            "tags": []
         ], forDocument: keyringRef)
         
         // Batch 실행
