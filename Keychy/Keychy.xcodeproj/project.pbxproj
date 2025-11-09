@@ -48,6 +48,7 @@
 		38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */; };
 		38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */; };
 		38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C147C62EB1F57F00A8E511 /* StorageManager.swift */; };
+		38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C27D2EC08794003C5DE1 /* PopupManager.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
@@ -260,6 +261,7 @@
 		38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringDetailView.swift; sourceTree = "<group>"; };
 		38C147C42EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+LoadData.swift"; sourceTree = "<group>"; };
 		38C147C62EB1F57F00A8E511 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		38C3C27D2EC08794003C5DE1 /* PopupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupManager.swift; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
@@ -1178,6 +1180,7 @@
 			children = (
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
 				38283A842EBF794500BE45A5 /* DeepLinkManager.swift */,
+				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
 			);
 			path = FileManagers;
 			sourceTree = "<group>";
@@ -1395,6 +1398,7 @@
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
+				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
 				382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
