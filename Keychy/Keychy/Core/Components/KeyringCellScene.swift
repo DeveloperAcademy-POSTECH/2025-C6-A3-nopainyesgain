@@ -13,7 +13,6 @@ class KeyringCellScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var onLoadingComplete: (() -> Void)?
-    var customBackgroundColor: UIColor
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType
@@ -24,7 +23,9 @@ class KeyringCellScene: SKScene {
     let scaleFactor: CGFloat // 크기 비율
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
-
+    
+    var customBackgroundColor: UIColor = .gray50
+    
     // MARK: - Init / Deinit
     // zoomScale : 확대 비율
     init(
@@ -41,7 +42,7 @@ class KeyringCellScene: SKScene {
         self.bodyImage = bodyImage
         self.onLoadingComplete = onLoadingComplete
         self.customBackgroundColor = customBackgroundColor
-
+        
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height
         self.scaleFactor = min(scaleX, scaleY) * zoomScale
