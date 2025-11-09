@@ -12,33 +12,33 @@ import Foundation
 class DeepLinkManager {
     static let shared = DeepLinkManager()
     
-    var pendingKeyringId: String?
+    var pendingPostOfficeId: String?
     
     private init() {}
     
-    func handleDeepLink(keyringId: String) {
-        print("딥링크 저장: \(keyringId)")
-        self.pendingKeyringId = keyringId
+    func handleDeepLink(postOfficeId: String) {
+        print("딥링크 저장: \(postOfficeId)")
+        self.pendingPostOfficeId = postOfficeId
     }
     
     func consumePendingDeepLink() -> String? {
-        let keyringId = pendingKeyringId
-        pendingKeyringId = nil
-        return keyringId
+        let postOfficeId = pendingPostOfficeId
+        pendingPostOfficeId = nil
+        return postOfficeId
     }
     
-    static func createTestLink(keyringId: String) -> URL? {
-        return URL(string: "keychy://receive?keyringId=\(keyringId)")
+    static func createTestLink(postOfficeId: String) -> URL? {
+        return URL(string: "keychy://receive?keyringId=\(postOfficeId)")
     }
     
     // 배포용 Universal Link
-    static func createUniversalLink(keyringId: String) -> URL? {
-        return URL(string: "https://keychy-f6011.web.app/receive/\(keyringId)")
+    static func createUniversalLink(postOfficeId: String) -> URL? {
+        return URL(string: "https://keychy-f6011.web.app/receive/\(postOfficeId)")
     }
     
     // 환경에 따라 자동 선택
-    static func createShareLink(keyringId: String) -> URL? {
+    static func createShareLink(postOfficeId: String) -> URL? {
         //return createTestLink(keyringId: keyringId)
-        return createUniversalLink(keyringId: keyringId)
+        return createUniversalLink(postOfficeId: postOfficeId)
     }
 }

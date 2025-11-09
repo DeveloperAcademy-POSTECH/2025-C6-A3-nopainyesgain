@@ -12,14 +12,18 @@ struct KeyringReceiveView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: CollectionViewModel
     @State private var keyring: Keyring?
+    @State private var keyringId: String?
+    @State private var senderId: String?
     @State private var isLoading: Bool = true
+    @State private var senderName: String = ""
     @State private var authorName: String = ""
+    @State private var isAccepting: Bool = false
     
-    let keyringId: String
+    let postOfficeId: String
     
-    init(viewModel: CollectionViewModel, keyringId: String) {
+    init(viewModel: CollectionViewModel, postOfficeId: String) {
         self.viewModel = viewModel
-        self.keyringId = keyringId
+        self.postOfficeId = postOfficeId
     }
     
     var body: some View {
@@ -62,18 +66,40 @@ struct KeyringReceiveView: View {
     
     // MARK: - 데이터 로드
     private func loadKeyringData() {
-        viewModel.fetchKeyringById(keyringId: keyringId) { fetchedKeyring in
-            guard let keyring = fetchedKeyring else {
+        print("PostOffice 데이터 로드 시작")
+        
+        viewModel.fetchPostOfficeData(postOfficeId: postOfficeId) { postOfficeData in
+            guard let postOfficeData = postOfficeData,
+                  let senderId = postOfficeData["senderId"] as? String,
+                  let keyringId = postOfficeData["keyringId"] as? String else { 
+                print("PostOffice 데이터 로드 실패")
                 isLoading = false
                 return
             }
             
-            self.keyring = keyring
+            self.senderId = senderId
+            self.keyringId = keyringId
             
-            // 작성자 이름 로드
-            viewModel.fetchAuthorName(authorId: keyring.authorId) { name in
-                self.authorName = name
-                self.isLoading = false
+            // keyringId로 키링 정보 가져오기
+            viewModel.fetchKeyringById(keyringId: keyringId) { fetchedKeyring in
+                guard let keyring = fetchedKeyring else {
+                    print("키링 로드 실패")
+                    isLoading = false
+                    return
+                }
+                
+                self.keyring = keyring
+                
+                // authorId로 제작자 이름 로드
+                viewModel.fetchAuthorName(authorId: keyring.authorId) { name in
+                    self.authorName = name
+                }
+                
+                // senderId로 발신자 이름 로드
+                viewModel.fetchAuthorName(authorId: senderId) { name in
+                    self.senderName = name
+                    self.isLoading = false
+                }
             }
         }
     }
@@ -159,7 +185,7 @@ extension KeyringReceiveView {
     
     private func messageSection(keyring: Keyring) -> some View {
         VStack(spacing: 10) {
-            Text("[\(authorName)]가 키링을 선물했어요!")
+            Text("[\(senderName)]님이 키링을 선물했어요!")
                 .typography(.suit20B)
                 .foregroundColor(.black100)
             
@@ -175,9 +201,7 @@ extension KeyringReceiveView {
 extension KeyringReceiveView {
     private var receiveButton: some View {
         Button {
-            // action
-            print("키링 수락: \(keyringId)")
-            dismiss()
+            acceptKeyring()
         } label: {
             Text("수락하기")
                 .typography(.suit17B)
@@ -194,8 +218,33 @@ extension KeyringReceiveView {
         )
         .padding(.horizontal, 34)
     }
+    
+    // 수락
+    private func acceptKeyring() {
+        guard let receiverId = UserDefaults.standard.string(forKey: "userUID"),
+              let keyringId = keyringId,
+              let senderId = senderId else {
+            print("필요한 정보 누락")
+            return
+        }
+        
+        isAccepting = true
+        
+        viewModel.acceptKeyring(
+            postOfficeId: postOfficeId,
+            keyringId: keyringId,
+            senderId: senderId,
+            receiverId: receiverId
+        ) { success in
+            isAccepting = false
+            
+            if success {
+                print("키링 수락 완료!")
+                dismiss()
+            } else {
+                print("키링 수락 실패")
+                // TODO: 실패 알림 표시
+            }
+        }
+    }
 }
-
-//#Preview {
-//    KeyringReceiveView(name: "싱싱이")
-//}

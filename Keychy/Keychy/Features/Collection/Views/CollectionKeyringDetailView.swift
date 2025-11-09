@@ -34,6 +34,7 @@ struct CollectionKeyringDetailView: View {
     @State var checkmarkScale: CGFloat = 0.0
     @State var checkmarkOpacity: Double = 0.0
     @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
+    @State var postOfficeId: String = ""
 
     let keyring: Keyring
     
@@ -252,7 +253,7 @@ struct CollectionKeyringDetailView: View {
                                     viewModel.packageKeyring(uid: uid, keyring: keyring) { success, postOfficeId in
                                         if success {
                                             print("포장 완료 - PostOffice ID: \(postOfficeId ?? "nil")")
-                                            
+                                            self.postOfficeId = postOfficeId ?? ""
                                             // 포장 중 팝업 표시
                                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                                 showPackingAlert = true
@@ -278,7 +279,7 @@ struct CollectionKeyringDetailView: View {
                                     isSheetPresented = false
                                     isNavigatingDeeper = true
                                     
-                                    router.push(.packageCompleteView(keyring))
+                                    router.push(.packageCompleteView(keyring: keyring, postOffice: postOfficeId))
                                 }
                             }
                     }
