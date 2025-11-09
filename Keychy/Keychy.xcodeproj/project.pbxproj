@@ -200,6 +200,9 @@
 		C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */; };
 		C6B56F2B2EC039D30049F969 /* KeyringCellScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F2A2EC039D30049F969 /* KeyringCellScene+Capture.swift */; };
 		C6B56F2D2EC03A000049F969 /* CachedImagesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F2C2EC03A000049F969 /* CachedImagesDebugView.swift */; };
+		C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B56F332EC061BB0049F969 /* WidgetKit.framework */; };
+		C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B56F352EC061BB0049F969 /* SwiftUI.framework */; };
+		C6B56F472EC061BC0049F969 /* WidgetKeychyExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -208,6 +211,16 @@
 		C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A22EB40ACA006B58DF /* AlarmView.swift */; };
 		C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6EE7AD62EB445F6002B5669 /* MyPageView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C6B56F452EC061BC0049F969 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CEC61A92EAE071B0099ECEE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6B56F312EC061BB0049F969;
+			remoteInfo = WidgetKeychyExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */ = {
@@ -218,6 +231,17 @@
 			files = (
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6B56F482EC061BC0049F969 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C6B56F472EC061BC0049F969 /* WidgetKeychyExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -409,6 +433,11 @@
 		C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringImageCache.swift; sourceTree = "<group>"; };
 		C6B56F2A2EC039D30049F969 /* KeyringCellScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCellScene+Capture.swift"; sourceTree = "<group>"; };
 		C6B56F2C2EC03A000049F969 /* CachedImagesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedImagesDebugView.swift; sourceTree = "<group>"; };
+		C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetKeychyExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6B56F332EC061BB0049F969 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C6B56F352EC061BB0049F969 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeychyRelease.entitlements; sourceTree = "<group>"; };
+		C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetKeychyExtension.entitlements; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -417,6 +446,27 @@
 		C6C402A22EB40ACA006B58DF /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 		C6EE7AD62EB445F6002B5669 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C6B56F372EC061BB0049F969 /* WidgetKeychy */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
+			);
+			path = WidgetKeychy;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
@@ -434,6 +484,15 @@
 				4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */,
 				38A594442EAE4EE20003D712 /* FirebaseFirestore in Frameworks */,
 				4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6B56F2F2EC061BB0049F969 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */,
+				C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,7 +672,9 @@
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
+				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
+				C6B56F372EC061BB0049F969 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
@@ -623,6 +684,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61B12EAE071B0099ECEE /* Keychy.app */,
+				C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -630,6 +692,7 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */,
 				38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
 				38A5944B2EAE50F10003D712 /* Keychy.entitlements */,
@@ -1164,6 +1227,8 @@
 				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
 				C6B56F082EBC3D670049F969 /* StoreKit1.storekit */,
 				C6B56F0E2EBD8A2E0049F969 /* StoreKit.storekit */,
+				C6B56F332EC061BB0049F969 /* WidgetKit.framework */,
+				C6B56F352EC061BB0049F969 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1234,10 +1299,12 @@
 				4CEC61AE2EAE071B0099ECEE /* Frameworks */,
 				4CEC61AF2EAE071B0099ECEE /* Resources */,
 				4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */,
+				C6B56F482EC061BC0049F969 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C6B56F462EC061BC0049F969 /* PBXTargetDependency */,
 			);
 			name = Keychy;
 			packageProductDependencies = (
@@ -1256,6 +1323,28 @@
 			productReference = 4CEC61B12EAE071B0099ECEE /* Keychy.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6B56F4C2EC061BC0049F969 /* Build configuration list for PBXNativeTarget "WidgetKeychyExtension" */;
+			buildPhases = (
+				C6B56F2E2EC061BB0049F969 /* Sources */,
+				C6B56F2F2EC061BB0049F969 /* Frameworks */,
+				C6B56F302EC061BB0049F969 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C6B56F372EC061BB0049F969 /* WidgetKeychy */,
+			);
+			name = WidgetKeychyExtension;
+			packageProductDependencies = (
+			);
+			productName = WidgetKeychyExtension;
+			productReference = C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1267,6 +1356,9 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					4CEC61B02EAE071B0099ECEE = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					C6B56F312EC061BB0049F969 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
@@ -1292,6 +1384,7 @@
 			projectRoot = "";
 			targets = (
 				4CEC61B02EAE071B0099ECEE /* Keychy */,
+				C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -1323,6 +1416,13 @@
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
 				38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6B56F302EC061BB0049F969 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1503,7 +1603,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C6B56F2E2EC061BB0049F969 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C6B56F462EC061BC0049F969 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
+			targetProxy = C6B56F452EC061BC0049F969 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4CEC61BA2EAE071C0099ECEE /* Debug */ = {
@@ -1633,6 +1748,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Keychy/Keychy.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1673,7 +1789,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Keychy/Keychy.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Keychy/KeychyRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -1710,6 +1826,77 @@
 			};
 			name = Release;
 		};
+		C6B56F492EC061BC0049F969 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WidgetKeychy/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetKeychy;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.KeychyOfficial.app.WidgetKeychy;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "keychy-widget";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C6B56F4A2EC061BC0049F969 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WidgetKeychy/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetKeychy;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.KeychyOfficial.app.WidgetKeychy;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "keychy-widget";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1727,6 +1914,15 @@
 			buildConfigurations = (
 				4CEC61BD2EAE071C0099ECEE /* Debug */,
 				4CEC61BE2EAE071C0099ECEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C6B56F4C2EC061BC0049F969 /* Build configuration list for PBXNativeTarget "WidgetKeychyExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6B56F492EC061BC0049F969 /* Debug */,
+				C6B56F4A2EC061BC0049F969 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
