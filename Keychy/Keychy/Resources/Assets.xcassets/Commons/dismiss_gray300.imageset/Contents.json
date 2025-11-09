@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "dismiss_gray300.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

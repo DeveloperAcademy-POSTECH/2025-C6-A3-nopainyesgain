@@ -12,7 +12,7 @@ struct HomeTab: View {
     @Bindable var userManager: UserManager
     @State private var collectionViewModel = CollectionViewModel()
     @Bindable private var introViewModel = IntroViewModel()
-    
+
     var body: some View {
         NavigationStack(path: $router.path) {
             HomeView(router: router, userManager: userManager, collectionViewModel: collectionViewModel)

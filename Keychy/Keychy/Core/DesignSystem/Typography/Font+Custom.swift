@@ -40,6 +40,25 @@ enum FontFamily: String, CaseIterable, Identifiable {
     case nanumExtraBold = "NanumSquareRoundOTFEB"
     case nanumLight = "NanumSquareRoundOTFL"
     case nanumRegular = "NanumSquareRoundOTFR"
+    
+    /// pretendard 폰트
+    case pretendardMedium = "Pretendard-Medium"
+    
+    /// NotoSansKR 폰트
+    case notoSansBLK = "NotoSansKR-Black"
+    case notoSansBold = "NotoSansKR-Bold"
+    case notoSansExtraBold = "NotoSansKR-ExtraBold"
+    case notoSansExtraLight = "NotoSansKR-ExtraLight"
+    case notoSansLight = "NotoSansKR-Light"
+    case notoSansMedium = "NotoSansKR-Medium"
+    case notoSansRegular = "NotoSansKR-Regular"
+    case notoSansSemiBold = "NotoSansKR-SemiBold"
+    case notoSansThin = "NotoSansKR-Thin"
+    
+    /// HancomMalangMalang 폰트
+    case malangBold = "HancomMalangMalang-Bold"
+    case malangRegular = "HancomMalangMalang-Regular"
+    
 
     /// 화면 표시용
     var displayName: String {
@@ -57,6 +76,18 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .nanumExtraBold: return "나눔 엑스트라볼드"
         case .nanumLight: return "나눔 라이트"
         case .nanumRegular: return "나눔 레귤러"
+        case .pretendardMedium: return "프리텐다드 미디움"
+        case .notoSansBLK: return "NotoSansKR Black"
+        case .notoSansBold: return "NotoSansKR Bold"
+        case .notoSansExtraBold: return "NotoSansKR ExtraBold"
+        case .notoSansExtraLight: return "NotoSansKR ExtraLight"
+        case .notoSansLight: return "NotoSansKR Light"
+        case .notoSansMedium: return "NotoSansKR Medium"
+        case .notoSansRegular: return "NotoSansKR Regular"
+        case .notoSansSemiBold: return "NotoSansKR SemiBold"
+        case .notoSansThin: return "NotoSansKR Thin"
+        case .malangBold: return "HancomMalangMalang Bold"
+        case .malangRegular: return "HancomMalangMalang Regular"
         }
     }
 }

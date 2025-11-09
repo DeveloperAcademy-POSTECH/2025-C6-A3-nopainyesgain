@@ -7,7 +7,6 @@
 
 import SwiftUI
 import FirebaseAuth
-import UserNotifications
 import AuthenticationServices
 import CryptoKit
 
@@ -15,6 +14,7 @@ struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
     @Environment(IntroViewModel.self) private var introViewModel
     @Bindable var router: NavigationRouter<HomeRoute>
+    @State private var notificationManager = NotificationManager.shared
     @State private var isPushNotificationEnabled = false
     @State private var showSettingsAlert = false
     @State private var alertType: AlertType = .turnOn
@@ -57,18 +57,24 @@ struct MyPageView: View {
             }
             .scrollIndicators(.never)
             .onAppear {
-                checkNotificationPermission()
+                notificationManager.checkPermission { isAuthorized in
+                    isPushNotificationEnabled = isAuthorized
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                checkNotificationPermission()
+                notificationManager.checkPermission { isAuthorized in
+                    isPushNotificationEnabled = isAuthorized
+                }
             }
             .alert(alertType.title, isPresented: $showSettingsAlert) {
                 Button("취소", role: .cancel) {
                     // 토글 원위치
-                    checkNotificationPermission()
+                    notificationManager.checkPermission { isAuthorized in
+                        isPushNotificationEnabled = isAuthorized
+                    }
                 }
                 Button("설정으로 이동") {
-                    openSettings()
+                    notificationManager.openSettings()
                 }
             } message: {
                 Text(alertType.message)
@@ -93,11 +99,13 @@ struct MyPageView: View {
                             // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
                         }
                     
-                    BangmarkAlert(
+                    AccountAlert(
                         checkmarkScale: logoutAlertScale,
-                        text: "로그아웃 하시겠어요?",
+                        title: "로그아웃",
+                        text: "로그아웃 하시겠습니까?",
                         cancelText: "취소",
                         confirmText: "로그아웃",
+                        confirmBtnColor: .main500,
                         onCancel: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 logoutAlertScale = 0.3
@@ -116,7 +124,7 @@ struct MyPageView: View {
                             }
                         }
                     )
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 51)
                     .padding(.bottom, 30)
                 }
             }
@@ -130,11 +138,19 @@ struct MyPageView: View {
                             // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
                         }
                     
-                    BangmarkAlert(
+                    AccountAlert( 
                         checkmarkScale: deleteAccountAlertScale,
-                        text: "정말 탈퇴하시겠어요?",
+                        title: "회원 탈퇴",
+                        text: """
+                            탈퇴 시 보유중인 아이템과
+                            키링 및 계정 정보는 즉시 삭제되어
+                            복구가 불가해요.
+                            
+                            정말 탈퇴하시겠어요?
+                            """,
                         cancelText: "취소",
                         confirmText: "탈퇴하기",
+                        confirmBtnColor: .pink100,
                         onCancel: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 deleteAccountAlertScale = 0.3
@@ -153,7 +169,7 @@ struct MyPageView: View {
                             }
                         }
                     )
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 51)
                     .padding(.bottom, 30)
                 }
             }
@@ -182,7 +198,7 @@ extension MyPageView {
     private var userInfo: some View {
         VStack(alignment: .center, spacing: 6) {
             Text(userManager.currentUser?.nickname ?? "알 수 없음")
-                .typography(.suit20B)
+                .typography(.notosans20M)
             Text(userManager.currentUser?.email ?? "알 수 없음")
                 .typography(.suit15R)
         }
@@ -331,61 +347,35 @@ extension MyPageView {
     
     /// 토글 변경 처리
     private func handleToggleChange(newValue: Bool) {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                if newValue {
-                    // 토글 ON 시도
-                    switch settings.authorizationStatus {
-                    case .notDetermined:
-                        // 권한 미결정 -> 권한 요청
-                        requestNotificationPermission()
-                    case .denied:
-                        // 권한 거부됨 -> 설정 이동 Alert (켜기)
-                        alertType = .turnOn
-                        showSettingsAlert = true
-                    case .authorized:
-                        // 이미 허용됨
-                        isPushNotificationEnabled = true
-                    default:
-                        isPushNotificationEnabled = false
-                    }
+        notificationManager.checkPermission { isAuthorized in
+            if newValue {
+                // 토글 ON 시도
+                if isAuthorized {
+                    // 이미 허용됨
+                    isPushNotificationEnabled = true
                 } else {
-                    // 토글 OFF 시도
-                    if settings.authorizationStatus == .authorized {
-                        // 현재 권한이 있는 상태에서 끄려고 함 -> 설정으로 안내 (끄기)
-                        alertType = .turnOff
-                        showSettingsAlert = true
-                    } else {
-                        // 이미 꺼진 상태 -> 그대로 유지
-                        isPushNotificationEnabled = false
+                    // 권한 없음 -> 권한 요청
+                    notificationManager.requestPermission { granted in
+                        if granted {
+                            isPushNotificationEnabled = true
+                        } else {
+                            // 권한 거부됨 -> 설정 이동 Alert
+                            alertType = .turnOn
+                            showSettingsAlert = true
+                        }
                     }
                 }
+            } else {
+                // 토글 OFF 시도
+                if isAuthorized {
+                    // 현재 권한이 있는 상태에서 끄려고 함 -> 설정으로 안내 (끄기)
+                    alertType = .turnOff
+                    showSettingsAlert = true
+                } else {
+                    // 이미 꺼진 상태 -> 그대로 유지
+                    isPushNotificationEnabled = false
+                }
             }
-        }
-    }
-    
-    /// 현재 푸시 알림 권한 상태 확인
-    private func checkNotificationPermission() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                isPushNotificationEnabled = settings.authorizationStatus == .authorized
-            }
-        }
-    }
-    
-    /// 푸시 알림 권한 요청
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
-                isPushNotificationEnabled = granted
-            }
-        }
-    }
-    
-    /// 설정 앱 열기
-    private func openSettings() {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url)
         }
     }
 }
@@ -449,7 +439,7 @@ extension MyPageView {
     }
 }
 
-// MARK: - 기타
+// MARK: - 로그아웃, 회원탈퇴
 extension MyPageView {
     private var guitar: some View {
         VStack(alignment: .leading, spacing: 0) {

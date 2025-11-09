@@ -620,19 +620,14 @@ extension CollectionView {
                 CollectionCellView(keyring: keyring)
                     .frame(width: 175, height: 233)
                     .cornerRadius(10)
-                    .padding(.bottom, 10)
                 
                 Text(keyring.name)
-                    .typography(.suit14SB18)
+                    // MARK: - 이걸 본 시점에 여기 폰트 맞는지 피그마 봐주시길
+                    .typography(.notosans15M)
                     .foregroundColor(.black100)
             }
         }
         .buttonStyle(PlainButtonStyle())
         .frame(width: 175, height: 261)
     }
-}
-
-// MARK: - Preview
-#Preview {
-    CollectionView(router: NavigationRouter<CollectionRoute>(), collectionViewModel: CollectionViewModel())
 }

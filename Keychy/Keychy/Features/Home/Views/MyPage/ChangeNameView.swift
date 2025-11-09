@@ -35,7 +35,7 @@ struct ChangeNameView: View {
                     
                     HStack {
                         TextField("닉네임을 적어주세요.", text: $nickname)
-                            .typography(.suit16M25)
+                            .typography(.notosans15M)
                             .textFieldStyle(.plain)
                             .onChange(of: nickname) { oldValue, newValue in
                                 
