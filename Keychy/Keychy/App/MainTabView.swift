@@ -18,7 +18,7 @@ struct MainTabView: View {
     @State private var collectionViewModel = CollectionViewModel()
 
     @State private var showReceiveSheet = false
-    @State private var receivedKeyringId: String?
+    @State private var receivedPostOfficeId: String?
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -62,19 +62,19 @@ struct MainTabView: View {
         .onAppear {
             checkPendingDeepLink()
         }
-        .onChange(of: deepLinkManager.pendingKeyringId) { oldValue, newValue in
+        .onChange(of: deepLinkManager.pendingPostOfficeId) { oldValue, newValue in
             if newValue != nil {
                 checkPendingDeepLink()
             }
         }
         .fullScreenCover(isPresented: $showReceiveSheet) {
-            if let keyringId = receivedKeyringId {
+            if let postOfficeId = receivedPostOfficeId {
                 KeyringReceiveView(
                     viewModel: collectionViewModel,
-                    keyringId: keyringId
+                    postOfficeId: postOfficeId
                 )
                 .onDisappear {
-                    receivedKeyringId = nil
+                    receivedPostOfficeId = nil
                 }
             }
         }
@@ -83,18 +83,18 @@ struct MainTabView: View {
     
     private func checkPendingDeepLink() {
         // 저장된 딥링크가 있는지 확인
-        if let keyringId = deepLinkManager.consumePendingDeepLink() {
-            print("저장된 딥링크 처리: \(keyringId)")
-            handleDeepLink(keyringId: keyringId)
+        if let postOfficeId = deepLinkManager.consumePendingDeepLink() {
+            print("저장된 딥링크 처리: \(postOfficeId)")
+            handleDeepLink(postOfficeId: postOfficeId)
         }
     }
     
-    private func handleDeepLink(keyringId: String) {
-        print("키링 수신 처리 시작: \(keyringId)")
+    private func handleDeepLink(postOfficeId: String) {
+        print("키링 수신 처리 시작: \(postOfficeId)")
         
         selectedTab = 1
         
-        receivedKeyringId = keyringId
+        receivedPostOfficeId = postOfficeId
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             showReceiveSheet = true

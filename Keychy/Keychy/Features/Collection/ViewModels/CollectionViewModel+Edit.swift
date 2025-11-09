@@ -114,6 +114,9 @@ extension CollectionViewModel {
         
         let db = Firestore.firestore()
         
+        // originalId 이미 존재하면 그걸로, 비어있으면 선택된 키링 Id
+        let baseOriginalId = keyring.originalId ?? originalDocumentId
+        
         // 새 키링 생성 (원본 키링의 데이터 복사, originalId에 원본 ID 저장)
         let copiedKeyring = Keyring(
             name: keyring.name,
@@ -127,7 +130,7 @@ extension CollectionViewModel {
             selectedTemplate: keyring.selectedTemplate,
             selectedRing: keyring.selectedRing,
             selectedChain: keyring.selectedChain,
-            originalId: originalDocumentId,
+            originalId: baseOriginalId,
             chainLength: keyring.chainLength
         )
         

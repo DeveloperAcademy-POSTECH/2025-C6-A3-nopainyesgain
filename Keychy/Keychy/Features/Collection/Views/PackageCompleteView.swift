@@ -22,6 +22,7 @@ struct PackageCompleteView: View {
     private let totalPages = 2
     
     let keyring: Keyring
+    let postOfficeId: String
     
     var body: some View {
         VStack(spacing: 0) {
@@ -313,7 +314,7 @@ struct PackageCompleteView: View {
     
     // MARK: - 링크 관련
     private func copyLink() {
-        guard let url = DeepLinkManager.createShareLink(keyringId: firestoreDocumentId!) else {
+        guard let url = DeepLinkManager.createShareLink(postOfficeId: postOfficeId) else {
             print("링크 생성 실패")
             return
         }
@@ -323,7 +324,7 @@ struct PackageCompleteView: View {
     }
 
     private func shareLink() {
-        guard let url = DeepLinkManager.createShareLink(keyringId: firestoreDocumentId!) else {
+        guard let url = DeepLinkManager.createShareLink(postOfficeId: postOfficeId) else {
             return
         }
         
@@ -340,7 +341,7 @@ struct PackageCompleteView: View {
     
     // MARK: - QR 코드 생성
     private func generateQRCodeImage() {
-        guard let url = DeepLinkManager.createShareLink(keyringId: firestoreDocumentId!) else {
+        guard let url = DeepLinkManager.createShareLink(postOfficeId: postOfficeId) else {
             print("링크 생성 실패")
             return
         }
@@ -388,8 +389,4 @@ extension PackageCompleteView {
             }
         }
     }
-}
-
-#Preview {
-    PackageCompleteView(router: NavigationRouter<CollectionRoute>(), viewModel: CollectionViewModel(), keyring: Keyring(name: "", bodyImage: "", soundId: "", particleId: "", memo: "", tags: [""], createdAt: Date(), authorId: "", selectedTemplate: "", selectedRing: "", selectedChain: "", originalId: "", chainLength: 6))
 }
