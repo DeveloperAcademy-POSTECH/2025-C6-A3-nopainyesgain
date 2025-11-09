@@ -43,15 +43,30 @@ struct BundleRingComponent{
         ringType: RingType
     ) -> SKSpriteNode {
         let ringSize = ringType.size
-        let outerRadius = ringSize / 2
-        let innerRadius = outerRadius * 0.84 // 비율은 추후 고리가 더 추가되면 따로 설정할 가능성 높음
-        let thickness = outerRadius - innerRadius
         
         // 이미지로 스프라이트 노드 생성
         let texture = SKTexture(image: image)
         let node = SKSpriteNode(texture: texture)
-        node.size = CGSize(width: ringSize, height: ringSize)
+        
+        // 원본 비율 유지하면서 크기 조절
+        let originalSize = texture.size()
+        let aspectRatio = originalSize.width / originalSize.height
+        
+        if aspectRatio >= 1.0 {
+            // 가로가 더 긴 경우: 가로를 ringSize에 맞춤
+            node.size = CGSize(width: ringSize, height: ringSize / aspectRatio)
+        } else {
+            // 세로가 더 긴 경우: 세로를 ringSize에 맞춤
+            node.size = CGSize(width: ringSize * aspectRatio, height: ringSize)
+        }
 
+        // 물리 바디 계산을 실제 크기 기준으로
+        let actualWidth = node.size.width
+        let actualHeight = node.size.height
+        let outerRadius = max(actualWidth, actualHeight) / 2
+        let innerRadius = outerRadius * 0.84
+        let thickness = outerRadius - innerRadius
+        
         // 물리 바디를 도넛 형태로 근사
         // 여러 개의 작은 원으로 도넛 형태를 만듦
         let segments = 32
@@ -79,13 +94,40 @@ struct BundleRingComponent{
     }
     
     //MARK: - plain 타입 카라비너의 ring 노드 생성
-    // plain 카라비너의 ring은 노드가 한 군데만 고정되면 되기 때문에 다른 물리속성들은 설정 x
+    // plain 카라비너의 ring은 고정점 역할 (static physics body)
     private static func createPlainRingNode(
         image: UIImage,
         ringType: RingType
     ) -> SKSpriteNode {
         let texture = SKTexture(image: image)
         let node = SKSpriteNode(texture: texture)
+        
+        // 원본 비율 유지하면서 크기 조절
+        let originalSize = texture.size()
+        let aspectRatio = originalSize.width / originalSize.height
+        let ringSize = ringType.size
+        
+        if aspectRatio >= 1.0 {
+            // 가로가 더 긴 경우: 가로를 ringSize에 맞춤
+            node.size = CGSize(width: ringSize, height: ringSize / aspectRatio)
+        } else {
+            // 세로가 더 긴 경우: 세로를 ringSize에 맞춤
+            node.size = CGSize(width: ringSize * aspectRatio, height: ringSize)
+        }
+        
+        // Plain 타입도 physicsBody 필요 (조인트 연결용, 하지만 static)
+        let actualWidth = node.size.width
+        let actualHeight = node.size.height
+        let physicsRadius = max(actualWidth, actualHeight) / 2
+        
+        let physicsBody = SKPhysicsBody(circleOfRadius: physicsRadius)
+        physicsBody.isDynamic = false  // Static으로 고정 (절대 움직이지 않음)
+        physicsBody.mass = 0.1
+        physicsBody.friction = 0.4
+        physicsBody.restitution = 0.3
+        physicsBody.linearDamping = 0.5
+        physicsBody.angularDamping = 0.8
+        node.physicsBody = physicsBody
         
         return node
     }
