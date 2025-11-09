@@ -44,8 +44,8 @@ struct WorkshopTab: View {
                         )
 
                     // MARK: - AcrylicPhoto
-                    case .acrylicPhotoPreview:
-                        AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM())
+                    case .acrylicPhotoPreview(let showDeleteButton):
+                        AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM(), showDeleteButton: showDeleteButton)
                     case .acrylicPhotoCrop:
                         AcrylicPhotoCropView(router: router, viewModel: getAcrylicPhotoVM())
                     case .acrylicPhotoEdited:
@@ -70,8 +70,8 @@ struct WorkshopTab: View {
                         )
 
                     // MARK: - NeonSign
-                    case .NeonSignPreView:
-                        NeonSignPreView(router: router, viewModel: getNeonSignVM())
+                    case .NeonSignPreView(let showDeleteButton):
+                        NeonSignPreView(router: router, viewModel: getNeonSignVM(), showDeleteButton: showDeleteButton)
                     case .neonSignCustomizing:
                         KeyringCustomizingView(
                             router: router,

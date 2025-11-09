@@ -195,7 +195,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId) {
+           let route = WorkshopRoute.from(string: templateId, showDeleteButton: showDeleteButton) {
             router.push(route)
         }
         // 나머지 아이템들은 WorkshopPreview로 이동
@@ -257,7 +257,7 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId) {
+           let route = WorkshopRoute.from(string: templateId, showDeleteButton: showDeleteButton) {
             router.push(route)
         }
         // 나머지 아이템들은 WorkshopPreview로 이동
