@@ -14,7 +14,9 @@ struct WorkshopPreview: View {
     @Environment(UserManager.self) private var userManager
     @State private var effectManager = EffectManager.shared
     @State private var isParticleReady = false
-    @State private var showDeleteAlert = false
+    @State private var showDeletePopup = false
+    @State private var deletePopupScale: CGFloat = 0.3
+    @State private var showDeleteCompletePopup = false
 
     // 구매 관련 상태
     @State private var showPurchaseSheet = false
@@ -80,7 +82,10 @@ struct WorkshopPreview: View {
             if showDeleteButton {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        showDeleteAlert = true
+                        showDeletePopup = true
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                            deletePopupScale = 1.0
+                        }
                     } label: {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
@@ -98,18 +103,43 @@ struct WorkshopPreview: View {
                 await viewModel.addFreeCarabinerIfNeeded(carabiner)
             }
         }
-        .alert("아이템 삭제", isPresented: $showDeleteAlert) {
-            Button("취소", role: .cancel) {}
-            Button("삭제", role: .destructive) {
-                Task {
-                    await deleteItem()
-                }
-            }
-        } message: {
-            Text("이 아이템을 삭제하시겠어요?\n삭제된 아이템은 복구할 수 없습니다.")
-        }
         .overlay {
             ZStack(alignment: .center) {
+                // 삭제 확인 팝업
+                if showDeletePopup {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+
+                    DeletePopup(
+                        title: "[\(item.name)]\n정말 삭제하시겠어요?",
+                        message: "한 번 삭제하면 복구 할 수 없습니다.",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                deletePopupScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showDeletePopup = false
+                            }
+                        },
+                        onConfirm: {
+                            Task {
+                                await deleteItem()
+                            }
+                        }
+                    )
+                    .scaleEffect(deletePopupScale)
+                }
+
+                // 삭제 완료 팝업
+                if showDeleteCompletePopup {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {}
+
+                    DeleteCompletePopup(isPresented: $showDeleteCompletePopup)
+                }
+
                 // 구매 확인 팝업
                 if showPurchaseSheet {
                     Color.black20
@@ -211,6 +241,19 @@ struct WorkshopPreview: View {
         guard let itemId = item.id,
               let userId = userManager.currentUser?.id else { return }
 
+        // 삭제 확인 팝업 닫기 애니메이션
+        await MainActor.run {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                deletePopupScale = 0.3
+            }
+        }
+
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        await MainActor.run {
+            showDeletePopup = false
+        }
+
         do {
             let field: String
             if item is KeyringTemplate {
@@ -234,7 +277,14 @@ struct WorkshopPreview: View {
                     field: FieldValue.arrayRemove([itemId])
                 ])
 
-            // 뒤로 가기
+            // 삭제 완료 팝업 표시
+            await MainActor.run {
+                showDeleteCompletePopup = true
+            }
+
+            // 1초 후 뒤로 가기
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+
             await MainActor.run {
                 router.pop()
             }
