@@ -46,6 +46,7 @@ class MultiKeyringScene: SKScene {
     var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
 
     // MARK: - 선택된 타입들
+    var currentCarabinerType: CarabinerType?
     var currentRingType: RingType = .basic
     var currentChainType: ChainType = .basic
 
@@ -133,10 +134,18 @@ class MultiKeyringScene: SKScene {
 
         // zPosition 계산: 생성 순서대로 레이어링 (나중에 생성된 것이 위에)
         let baseZPosition = CGFloat(order * 10)
+        
+        guard let carabinerType = currentCarabinerType else {
+            completion()
+            return
+        }
 
-        // 1. Ring 생성 (KeyringScene과 동일하게 직접 씬에 추가)
-        KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
-            guard let self = self, let ring = ring else {
+        BundleRingComponent.createCarabinerRingNode(
+            carabinerType: carabinerType,
+            ringType: currentRingType
+        ) { [weak self] createdRing in
+            guard let self = self, let ring = createdRing else {
+                completion()
                 return
             }
             ring.zPosition = baseZPosition  // Ring이 가장 뒤
