@@ -20,16 +20,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        print("   AppDelegate continue userActivity 호출됨")
-        print("   activityType: \(userActivity.activityType)")
-        print("   webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
-        
-        return true
-    }
-    
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
@@ -76,22 +66,34 @@ struct KeychyApp: App {
                     print("   activityType: \(userActivity.activityType)")
                     print("   webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
                     if let url = userActivity.webpageURL {
-                        handleUniversalLink(url)
+                        handleDeepLink(url)
                     }
                 }
         }
     }
 
-    // Custom URL Scheme (테스트용)
     private func handleDeepLink(_ url: URL) {
-        print("Custom URL Scheme 수신: \(url)")
+        print("   URL 수신: \(url)")
+        print("   scheme: \(url.scheme ?? "nil")")
+        print("   host: \(url.host ?? "nil")")
+        print("   path: \(url.path)")
         
-        guard url.scheme == "keychy" else { return }
+        // Universal Link 처리
+        if url.scheme == "https" && url.host == "keychy-f6011.web.app" {
+            handleUniversalLink(url)
+            return
+        }
         
-        if url.host == "receive",
-           let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-           let keyringId = components.queryItems?.first(where: { $0.name == "keyringId" })?.value {
+        // Custom URL Scheme 처리
+        if url.scheme == "keychy" {
+            guard url.host == "receive",
+                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let keyringId = components.queryItems?.first(where: { $0.name == "keyringId" })?.value else {
+                print("Custom URL Scheme 파싱 실패")
+                return
+            }
             
+            print("Custom URL Scheme - keyringId: \(keyringId)")
             DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
         }
     }
