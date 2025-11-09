@@ -68,10 +68,6 @@ struct WidgetKeychyEntryView : View {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFit()
-
-                    Text(availableKeyring.name)
-                        .font(.caption)
-                        .lineLimit(1)
                 }
             } else {
                 // 이미지 로드 실패

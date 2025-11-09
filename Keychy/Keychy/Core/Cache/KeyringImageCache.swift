@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import WidgetKit
 
 /// Keyring 썸네일 이미지를 FileManager 기반으로 캐싱 (App Group 사용)
 class KeyringImageCache {
@@ -15,6 +16,7 @@ class KeyringImageCache {
     private let fileManager = FileManager.default
     private let appGroupIdentifier = "group.keychy.app"
     private let metadataFileName = "available_keyrings.json"
+    private let widgetKind = "WidgetKeychy"
 
     /// App Group Container URL
     private var containerURL: URL? {
@@ -249,6 +251,9 @@ class KeyringImageCache {
         }
 
         saveAvailableKeyrings(keyrings)
+
+        // 3. 위젯 타임라인 새로고침
+        reloadWidgets()
     }
 
     /// 키링 삭제 (이미지 + 메타데이터)
@@ -262,6 +267,9 @@ class KeyringImageCache {
         saveAvailableKeyrings(keyrings)
 
         print("✅ [KeyringCache] 키링 완전 삭제: \(id)")
+
+        // 3. 위젯 타임라인 새로고침
+        reloadWidgets()
     }
 
     /// 이미지 경로로 이미지 로드 (위젯용)
@@ -279,5 +287,13 @@ class KeyringImageCache {
             print("❌ [KeyringCache] 이미지 로드 실패: \(imagePath) - \(error.localizedDescription)")
             return nil
         }
+    }
+
+    // MARK: - 위젯 업데이트
+
+    /// 위젯 타임라인 새로고침
+    private func reloadWidgets() {
+        WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+        print("🔄 [KeyringCache] 위젯 타임라인 새로고침 요청")
     }
 }

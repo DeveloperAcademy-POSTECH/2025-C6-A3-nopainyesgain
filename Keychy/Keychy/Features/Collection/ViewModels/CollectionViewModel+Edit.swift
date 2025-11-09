@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestore
+import WidgetKit
 
 extension CollectionViewModel {
     
@@ -57,6 +58,9 @@ extension CollectionViewModel {
                                 imagePath: keyrings[keyringIndex].imagePath
                             )
                             KeyringImageCache.shared.saveAvailableKeyrings(keyrings)
+
+                            // 위젯 타임라인 새로고침
+                            WidgetCenter.shared.reloadTimelines(ofKind: "WidgetKeychy")
                         }
                     }
                 }
