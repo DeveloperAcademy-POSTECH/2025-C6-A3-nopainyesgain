@@ -15,28 +15,53 @@ struct IntroView: View {
     @Bindable var viewModel: IntroViewModel
     
     var body: some View {
-        loginSection
+        ZStack {
+            logoSection
+            
+            VStack(spacing: 0) {
+                Spacer()
+                
+                loadingAndError
+                
+                /// 애플 로그인 버튼
+                appleLoginBtn
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.gray800)
     }
-        
 }
 
 // MARK: - Login Section
 extension IntroView {
-    private var loginSection: some View {
-        
+    /// 로고
+    private var logoSection: some View {
         VStack(spacing: 20) {
-            Spacer()
-            
+            Image("introIcon")
+            Image("introTypo")
+        }
+    }
+    
+    /// 로그인 로딩
+    private var loadingAndError: some View {
+        VStack(spacing: 20) {
             if viewModel.isLoading {
                 ProgressView("로그인 중")
                     .typography(.suit13M)
             }
-            
             if viewModel.errorMessage != nil {
-                Text("서버 오류: 다시 시도해주세요.")
+                Text("다시 시도해주세요.")
                     .foregroundColor(.red)
                     .font(.caption)
             }
+        }
+    }
+    
+    /// 애플 로그인 버튼 (커스텀)
+    private var appleLoginBtn: some View {
+        Button {
+            viewModel.startAppleSignIn()
+        } label: {
             HStack(spacing: 12) {
                 Image(systemName: "apple.logo")
                     .font(.system(size: 20, weight: .semibold))
@@ -44,38 +69,18 @@ extension IntroView {
                 Text("Sign in with Apple")
                     .font(.system(size: 16, weight: .semibold))
             }
-            .foregroundColor(.black100)
-            .overlay {
-                SignInWithAppleButton(
-                    onRequest: { request in
-                        viewModel.configureRequest(request)
-                    },
-                    onCompletion: { result in
-                        switch result {
-                        case .success(let authorization):
-                            viewModel.handleSignInWithApple(authorization: authorization)
-                        case .failure(let error):
-                            viewModel.handleSignInFailure(error)
-                        }
-                    }
-                )
-                .blendMode(.overlay)
-            }
             .frame(width: 334, height: 48)
-            .background(.white100)
-            .cornerRadius(256)
-            .padding(.horizontal, 34)
+            .cornerRadius(24)
         }
-        .overlay(
-            VStack(spacing: 20) {
-                Image("introIcon")
-                Image("introTypo")
-            }
-        )
-        .background(.gray800)
+        .buttonStyle(.glassProminent)
+        .tint(.white)
+        .foregroundStyle(.black)
     }
+    
+    /// 이용약관 동의 시트
+//    private var termsSheet: some View {
+//        
+//    }
 }
 
-#Preview {
-    IntroView(viewModel: IntroViewModel())
-}
+

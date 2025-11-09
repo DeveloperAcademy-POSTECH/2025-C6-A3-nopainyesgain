@@ -12,7 +12,7 @@ import FirebaseFirestore
 import CryptoKit
 
 @Observable
-class IntroViewModel {
+class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 로그인 관련
     var isLoggedIn = false
     var isLoading = false
@@ -25,7 +25,9 @@ class IntroViewModel {
     var tempUserEmail: String = ""
     
     // MARK: - 초기화
-    init() { }
+    override init() {
+        super.init()
+    }
     
     // MARK: - Auth 상태 확인
     func checkAuthStatus() {
@@ -73,14 +75,29 @@ class IntroViewModel {
         }
     }
 
-    // MARK: - Apple 로그인 요청 설정
+    // MARK: - Apple 로그인 시작 (커스텀 버튼용)
+    func startAppleSignIn() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.email]
+        request.nonce = sha256(nonce)
+
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.performRequests()
+    }
+
+    // MARK: - Apple 로그인 요청 설정 (기존 - 사용 안함)
     func configureRequest(_ request: ASAuthorizationAppleIDRequest) {
         let nonce = randomNonceString()
         currentNonce = nonce
         request.requestedScopes = [.email]
         request.nonce = sha256(nonce)
     }
-    
+
     // MARK: - 로그인 실패 처리
     func handleSignInFailure(_ error: Error) {
         // TODO: 이후 로그인 화면 나오면 UI & 로직 수정 필요
@@ -111,7 +128,20 @@ class IntroViewModel {
         let hashString = hashedData.compactMap {
             String(format: "%02x", $0)
         }.joined()
-        
+
         return hashString
+    }
+}
+
+// MARK: - ASAuthorizationControllerDelegate
+extension IntroViewModel {
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        // 로그인 성공
+        handleSignInWithApple(authorization: authorization)
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        // 로그인 실패
+        handleSignInFailure(error)
     }
 }
