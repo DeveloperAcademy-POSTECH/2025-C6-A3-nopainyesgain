@@ -99,11 +99,13 @@ struct MyPageView: View {
                             // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
                         }
                     
-                    BangmarkAlert(
+                    AccountAlert(
                         checkmarkScale: logoutAlertScale,
-                        text: "로그아웃 하시겠어요?",
+                        title: "로그아웃",
+                        text: "로그아웃 하시겠습니까?",
                         cancelText: "취소",
                         confirmText: "로그아웃",
+                        confirmBtnColor: .main500,
                         onCancel: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 logoutAlertScale = 0.3
@@ -122,7 +124,7 @@ struct MyPageView: View {
                             }
                         }
                     )
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 51)
                     .padding(.bottom, 30)
                 }
             }
@@ -136,11 +138,19 @@ struct MyPageView: View {
                             // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
                         }
                     
-                    BangmarkAlert(
+                    AccountAlert( 
                         checkmarkScale: deleteAccountAlertScale,
-                        text: "정말 탈퇴하시겠어요?",
+                        title: "회원 탈퇴",
+                        text: """
+                            탈퇴 시 보유중인 아이템과
+                            키링 및 계정 정보는 즉시 삭제되어
+                            복구가 불가해요.
+                            
+                            정말 탈퇴하시겠어요?
+                            """,
                         cancelText: "취소",
                         confirmText: "탈퇴하기",
+                        confirmBtnColor: .pink100,
                         onCancel: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 deleteAccountAlertScale = 0.3
@@ -159,7 +169,7 @@ struct MyPageView: View {
                             }
                         }
                     )
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 51)
                     .padding(.bottom, 30)
                 }
             }
