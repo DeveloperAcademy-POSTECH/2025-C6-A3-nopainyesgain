@@ -48,6 +48,7 @@ extension IntroView {
             if viewModel.isLoading {
                 ProgressView("로그인 중")
                     .typography(.suit13M)
+                    .foregroundStyle(.white)
             }
             if viewModel.errorMessage != nil {
                 Text("다시 시도해주세요.")
@@ -55,6 +56,7 @@ extension IntroView {
                     .font(.caption)
             }
         }
+        .padding(.bottom, 20)
     }
     
     /// 애플 로그인 버튼 (커스텀)

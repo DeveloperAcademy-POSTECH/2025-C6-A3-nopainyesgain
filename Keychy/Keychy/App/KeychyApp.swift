@@ -155,9 +155,13 @@ struct RootView: View {
     private func checkAuthAndNavigate() {
         let minimumSplashTime: TimeInterval = 1.5 // 최소 1.5초 스플래시 표시
         let startTime = Date()
-        
-        if let user = Auth.auth().currentUser {
-            print("로그인된 사용자 발견: \(user.uid)")
+
+        // 첫 설치 여부 확인
+        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
+
+        if let user = Auth.auth().currentUser, hasLaunchedBefore {
+            // 기존 사용자 + 로그인 세션 있음 → 자동 로그인
+            print("로그인된 사용자 발견 (자동 로그인): \(user.uid)")
             
             // Firebase에서 유저 프로필 확인
             UserManager.shared.loadUserInfo(uid: user.uid) { hasProfile in
@@ -180,13 +184,22 @@ struct RootView: View {
                 }
             }
         } else {
-            print("로그인된 사용자 없음")
-            
-            // 로그인 안 됨 → 로그인 화면
+            // 첫 설치 또는 로그인 세션 없음 → 로그인 화면
+            if !hasLaunchedBefore {
+                print("첫 설치: 로그인 화면으로 이동")
+            } else {
+                print("로그인 세션 없음: 로그인 화면으로 이동")
+            }
+
             let elapsed = Date().timeIntervalSince(startTime)
             let remainingTime = max(0, minimumSplashTime - elapsed)
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
+                // 첫 실행 플래그 저장 (이후부턴 자동 로그인 가능)
+                if !hasLaunchedBefore {
+                    UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+                }
+
                 introViewModel.isLoggedIn = false
                 introViewModel.needsProfileSetup = false
                 isCheckingAuth = false

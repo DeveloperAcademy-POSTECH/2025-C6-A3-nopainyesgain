@@ -611,8 +611,9 @@ extension MyPageView {
                         showLoadingAlert = false
                     }
 
-                    // 3. 로그인 화면으로 이동
+                    // 3. UserManager 초기화 및 로그인 화면으로 이동
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        userManager.clearUserInfo()  // 로컬 캐시 정리
                         introViewModel.isLoggedIn = false
                         introViewModel.needsProfileSetup = false
                     }
@@ -620,7 +621,7 @@ extension MyPageView {
             }
         }
     }
-    
+
     // 재인증 후 회원탈퇴 진행
     private func deleteAccountAfterReauth(user: FirebaseAuth.User) {
         let uid = user.uid
@@ -646,8 +647,9 @@ extension MyPageView {
                         showLoadingAlert = false
                     }
 
-                    // 3. 로그인 화면으로 이동
+                    // 3. UserManager 초기화 및 로그인 화면으로 이동
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        userManager.clearUserInfo()  // 로컬 캐시 정리
                         introViewModel.isLoggedIn = false
                         introViewModel.needsProfileSetup = false
                     }
