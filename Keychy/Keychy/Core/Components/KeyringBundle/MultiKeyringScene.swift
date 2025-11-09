@@ -194,11 +194,11 @@ class MultiKeyringScene: SKScene {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 16
+        let chainSpacing: CGFloat = 20
 
         KeyringChainComponent.createLinks(
             from: currentChainType,
-            count: 5,
+            count: 6,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing,
             carabinerType: currentCarabinerType,
