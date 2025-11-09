@@ -467,18 +467,9 @@ class MultiKeyringScene: SKScene {
         // 카라비너 타입별 Ring 물리 설정
         for (index, ring) in ringNodes {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
-                // Plain 타입: Ring의 상단은 고정되고, 하단은 자연스럽게 움직임
-                ring.physicsBody?.isDynamic = true
-                ring.physicsBody?.mass = 0.15  // 가벼운 질량으로 자연스러운 움직임
-                ring.physicsBody?.linearDamping = 0.4  // 적당한 감쇠
-                ring.physicsBody?.angularDamping = 0.5
-                ring.physicsBody?.friction = 0.3
-                ring.physicsBody?.restitution = 0.1
-                
-                // Ring의 상단을 고정하는 anchor 생성
-                createRingAnchor(for: ring, at: index)
-                
-                print("[MultiKeyringScene] Plain: Ring top fixed, bottom swings naturally like hamburger chains")
+                // Plain 타입: Ring 완전히 고정
+                ring.physicsBody?.isDynamic = false
+                print("[MultiKeyringScene] Plain: Ring completely fixed (static)")
             } else {
                 // Hamburger 타입: Ring은 완전히 고정
                 ring.physicsBody?.isDynamic = false
@@ -489,17 +480,15 @@ class MultiKeyringScene: SKScene {
         // 카라비너 타입별 체인 물리 활성화
         for (_, chains) in chainNodesByKeyring {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
-                // Plain 타입: 첫 번째 체인은 거의 고정, 나머지는 자유롭게 움직임
+                // Plain 타입: 첫 번째 체인 완전 고정, 나머지는 자유롭게 움직임
                 for (index, chain) in chains.enumerated() {
-                    chain.physicsBody?.isDynamic = true  // 모든 체인 동적 유지
                     if index == 0 {
-                        // 첫 번째 체인: 극도로 높은 감쇠로 거의 움직이지 않게
-                        chain.physicsBody?.linearDamping = 15.0  // 극도로 높은 선형 감쇠
-                        chain.physicsBody?.angularDamping = 20.0 // 극도로 높은 회전 감쇠
-                        chain.physicsBody?.mass = 0.01  // 매우 가벼운 질량
-                        print("[MultiKeyringScene] Plain: First chain heavily damped but dynamic")
+                        // 첫 번째 체인: 완전히 고정 (물리 비활성화)
+                        chain.physicsBody?.isDynamic = false
+                        print("[MultiKeyringScene] Plain: First chain completely fixed (static)")
                     } else {
                         // 나머지 체인들: 자유롭게 움직임
+                        chain.physicsBody?.isDynamic = true
                         chain.physicsBody?.linearDamping = 0.1  // 매우 낮은 감쇠로 자유로운 움직임
                         chain.physicsBody?.angularDamping = 0.1
                         chain.physicsBody?.mass = 0.3  // 적당한 질량
@@ -527,39 +516,9 @@ class MultiKeyringScene: SKScene {
         onAllKeyringsReady?()
     }
     
-    // MARK: - Ring Anchor System
+    // MARK: - Ring Anchor System (Plain 타입에서 Ring 고정으로 더 이상 불필요)
     
-    /// Plain 타입 Ring의 상단을 고정하는 anchor 생성 (상단 고정, 하단은 자연스러운 움직임)
-    private func createRingAnchor(for ring: SKSpriteNode, at index: Int) {
-        let ringFrame = ring.calculateAccumulatedFrame()
-        let ringTopY = ring.position.y + ringFrame.height / 2  // Ring의 상단 Y 좌표
-        
-        // Ring의 상단 위치에 invisible anchor 생성
-        let anchor = SKSpriteNode()
-        anchor.size = CGSize(width: 2, height: 2)
-        anchor.position = CGPoint(x: ring.position.x, y: ringTopY)  // Ring의 상단에 위치
-        anchor.physicsBody = SKPhysicsBody(rectangleOf: anchor.size)
-        anchor.physicsBody?.isDynamic = false  // 완전 고정
-        anchor.physicsBody?.categoryBitMask = UInt32(1 << (index + 24))
-        anchor.physicsBody?.collisionBitMask = 0  // 충돌 없음
-        anchor.physicsBody?.contactTestBitMask = 0
-        anchor.alpha = 0.0  // 완전 투명
-        addChild(anchor)
-        
-        // Ring의 상단과 anchor를 Pin Joint로 완전히 고정 연결
-        if let ringPhysics = ring.physicsBody, let anchorPhysics = anchor.physicsBody {
-            let anchorJoint = SKPhysicsJointPin.joint(
-                withBodyA: ringPhysics,
-                bodyB: anchorPhysics,
-                anchor: CGPoint(x: ring.position.x, y: ringTopY)  // Ring의 상단에서 연결
-            )
-            anchorJoint.shouldEnableLimits = false
-            anchorJoint.frictionTorque = 0.2  // 적당한 마찰로 자연스러운 회전
-            physicsWorld.add(anchorJoint)
-            
-            print("[MultiKeyringScene] Plain: Ring top anchor created - top fixed, bottom swings naturally")
-        }
-    }
+    // createRingAnchor 함수 제거됨 - Ring이 완전 고정되므로 불필요
 
     // Plain 타입에서는 경계 생성 함수를 제거 (Ring이 고정되므로 불필요)
     // createCarabinerBoundary 함수는 더 이상 사용하지 않음
