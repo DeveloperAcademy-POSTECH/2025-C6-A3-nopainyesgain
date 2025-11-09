@@ -49,16 +49,19 @@ struct BundleDetailView: View {
             
             isLoading = false
             didPrefetch = true
-            
-            // BundleAddKeyringView와 동일한 씬 준비 과정 추가
             if let bundle = viewModel.selectedBundle, let carabiner = resolveCarabiner(from: bundle.selectedCarabiner) {
-                let backImageURL = carabiner.carabinerImage[1]
                 // 카라비너 이미지와 키링 바디 이미지들을 모두 프리로드
                 Task {
                     do {
-                        // 1. 카라비너 이미지 로드
-                        let _ = try await StorageManager.shared.getImage(path: backImageURL)
-                        print("[BundleDetailView] Carabiner image loaded")
+                        // 1. 카라비너 이미지들 로드
+                        let _ = try await StorageManager.shared.getImage(path: carabiner.backImageURL)
+                        
+                        // 햄버거 타입이면 앞면 이미지도 로드
+                        if let frontURL = carabiner.frontImageURL {
+                            let _ = try await StorageManager.shared.getImage(path: frontURL)
+                        }
+                        
+                        print("[BundleDetailView] Carabiner images loaded")
                         
                         // 2. 모든 키링 바디 이미지들 프리로드
                         let dataList = createKeyringDataList(carabiner: carabiner, geometry: CGSize(width: 400, height: 800))
@@ -157,7 +160,7 @@ extension BundleDetailView {
     /// 씬 레이어 뷰 (카라비너와 키링들)
     private func sceneLayerView(carabiner: Carabiner, geometry: GeometryProxy) -> some View {
         ZStack(alignment: .top) {
-            switch CarabinerType.from(carabiner.carabinerType) {
+            switch carabiner.type {
             case .hamburger:
                 // 1층: 뒷 카라비너 이미지
                 backCarabinerImage(carabiner: carabiner)
@@ -171,7 +174,7 @@ extension BundleDetailView {
                             ringType: .basic,
                             chainType: .basic,
                             backgroundColor: .clear,
-                            currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
+                            currentCarabinerType: carabiner.type
                         )
                         .id(dataList.map { $0.index }.sorted())
                         .opacity(allKeyringsStabilized ? 1.0 : 0.0)
@@ -194,7 +197,7 @@ extension BundleDetailView {
                         let dataList = createKeyringDataList(carabiner: carabiner, geometry: geometry.size)
                         MultiKeyringSceneView(
                             keyringDataList: dataList,
-                            currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
+                            currentCarabinerType: carabiner.type
                         )
                         .id(dataList.map { $0.index }.sorted())
                         .opacity(allKeyringsStabilized ? 1.0 : 0.0)
@@ -208,41 +211,37 @@ extension BundleDetailView {
         .padding(.top, 60)
     }
     
-    /// 뒷 카라비너 이미지
+    /// 뒷 카라비너 이미지 (또는 단일 카라비너 이미지)
     private func backCarabinerImage(carabiner: Carabiner) -> some View {
-            switch CarabinerType.from(carabiner.carabinerType) {
-            case .hamburger:
-                LazyImage(url: URL(string: carabiner.carabinerImage[1])) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    }
-                }
-            case .plain:
-                LazyImage(url: URL(string: carabiner.carabinerImage[0])) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    }
-                }
+        LazyImage(url: URL(string: carabiner.backImageURL)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            } else if state.isLoading {
+                ProgressView()
+            } else {
+                Color.clear
             }
+        }
     }
     
-    /// 앞 카라비너 이미지
+    /// 앞 카라비너 이미지 (햄버거 타입만)
     private func frontCarabinerImage(carabiner: Carabiner) -> some View {
         Group {
-            switch CarabinerType.from(carabiner.carabinerType) {
-            case .hamburger:
-                LazyImage(url: URL(string: carabiner.carabinerImage[2])) { state in
+            if let frontURL = carabiner.frontImageURL {
+                LazyImage(url: URL(string: frontURL)) { state in
                     if let image = state.image {
                         image
                             .resizable()
                             .scaledToFit()
+                    } else if state.isLoading {
+                        ProgressView()
+                    } else {
+                        Color.clear
                     }
                 }
-            case .plain:
+            } else {
                 Color.clear
             }
         }
