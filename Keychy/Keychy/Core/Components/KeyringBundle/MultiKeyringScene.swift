@@ -322,33 +322,62 @@ class MultiKeyringScene: SKScene {
         if let firstChain = chains.first {
             let anchorY = previousNode.position.y
 
-            let joint = SKPhysicsJointPin.joint(
-                withBodyA: ring.physicsBody!,
-                bodyB: firstChain.physicsBody!,
-                anchor: CGPoint(
-                    x: (ring.position.x + firstChain.position.x) / 2,
-                    y: anchorY
+            // physicsBody 존재 확인 (안전한 코딩)
+            guard let ringPhysics = ring.physicsBody,
+                  let chainPhysics = firstChain.physicsBody else {
+                print("[MultiKeyringScene] Warning: Missing physics body for joint connection")
+                return
+            }
+
+            // Plain 타입일 때는 첫 번째 체인을 고정하는 조인트 설정
+            if let carabinerType = currentCarabinerType, carabinerType == .plain {
+                // Ring의 하단에서 체인과 연결 (Ring 상단은 anchor로 고정됨)
+                let ringFrame = ring.calculateAccumulatedFrame()
+                let connectionPoint = CGPoint(
+                    x: ring.position.x,
+                    y: ring.position.y - ringFrame.height/2  // Ring의 하단
                 )
-            )
-            joint.shouldEnableLimits = false
-            joint.frictionTorque = 0.1
-            physicsWorld.add(joint)
+                
+                let joint = SKPhysicsJointPin.joint(
+                    withBodyA: ringPhysics,
+                    bodyB: chainPhysics,
+                    anchor: connectionPoint
+                )
+                joint.shouldEnableLimits = false
+                joint.frictionTorque = 5.0  // 첫 번째 체인을 거의 고정시키는 높은 마찰
+                physicsWorld.add(joint)
+                
+                print("[MultiKeyringScene] Plain: First chain fixed with high friction")
+            } else {
+                // Hamburger 타입은 기존 핀 조인트 유지
+                let joint = SKPhysicsJointPin.joint(
+                    withBodyA: ringPhysics,
+                    bodyB: chainPhysics,
+                    anchor: CGPoint(
+                        x: (ring.position.x + firstChain.position.x) / 2,
+                        y: anchorY
+                    )
+                )
+                joint.shouldEnableLimits = false
+                joint.frictionTorque = 0.1
+                physicsWorld.add(joint)
 
-            let distance = hypot(
-                firstChain.position.x - ring.position.x,
-                firstChain.position.y - ring.position.y
-            )
-            let limitJoint = SKPhysicsJointLimit.joint(
-                withBodyA: ring.physicsBody!,
-                bodyB: firstChain.physicsBody!,
-                anchorA: CGPoint.zero,
-                anchorB: CGPoint.zero
-            )
-            limitJoint.maxLength = distance * 1.05
-            physicsWorld.add(limitJoint)
+                let distance = hypot(
+                    firstChain.position.x - ring.position.x,
+                    firstChain.position.y - ring.position.y
+                )
+                let limitJoint = SKPhysicsJointLimit.joint(
+                    withBodyA: ringPhysics,
+                    bodyB: chainPhysics,
+                    anchorA: CGPoint.zero,
+                    anchorB: CGPoint.zero
+                )
+                limitJoint.maxLength = distance * 1.05
+                physicsWorld.add(limitJoint)
+            }
 
-            firstChain.physicsBody?.linearDamping = 0.5
-            firstChain.physicsBody?.angularDamping = 0.5
+            firstChain.physicsBody?.linearDamping = 2.0  // 첫 번째 체인을 거의 고정
+            firstChain.physicsBody?.angularDamping = 3.0
 
             previousNode = firstChain
         }
@@ -417,27 +446,77 @@ class MultiKeyringScene: SKScene {
             bodyPhysics.angularDamping = 0.5
         }
         
-        // Ring을 static으로 유지 (조인트 연결 후에도)
-        ring.physicsBody?.isDynamic = false
-        print("[MultiKeyringScene] Ring kept static after joint connections")
+        // Plain 타입에서는 Ring을 dynamic으로 유지하되 위치 제한 (anchor에 의해 제어됨)
+        if let carabinerType = currentCarabinerType, carabinerType == .plain {
+            // Ring은 dynamic 상태 유지하되 anchor가 위치 제어
+            print("[MultiKeyringScene] Plain: Ring kept dynamic for natural swing with anchor")
+        } else {
+            // Hamburger 타입에서만 Ring을 static으로 설정
+            ring.physicsBody?.isDynamic = false
+            print("[MultiKeyringScene] Hamburger: Ring kept static after joint connections")
+        }
     }
     
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
     private func enablePhysics() {
         print("[MultiKeyringScene] Enabling physics for all keyrings...")
         
-        // 중력 활성화
+        // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
         
-        // 모든 체인과 바디의 물리 활성화 (링은 static 유지)
-        for (_, chains) in chainNodesByKeyring {
-            for chain in chains {
-                chain.physicsBody?.isDynamic = true
-                chain.physicsBody?.linearDamping = 0.5
-                chain.physicsBody?.angularDamping = 0.5
+        // 카라비너 타입별 Ring 물리 설정
+        for (index, ring) in ringNodes {
+            if let carabinerType = currentCarabinerType, carabinerType == .plain {
+                // Plain 타입: Ring의 상단은 고정되고, 하단은 자연스럽게 움직임
+                ring.physicsBody?.isDynamic = true
+                ring.physicsBody?.mass = 0.15  // 가벼운 질량으로 자연스러운 움직임
+                ring.physicsBody?.linearDamping = 0.4  // 적당한 감쇠
+                ring.physicsBody?.angularDamping = 0.5
+                ring.physicsBody?.friction = 0.3
+                ring.physicsBody?.restitution = 0.1
+                
+                // Ring의 상단을 고정하는 anchor 생성
+                createRingAnchor(for: ring, at: index)
+                
+                print("[MultiKeyringScene] Plain: Ring top fixed, bottom swings naturally like hamburger chains")
+            } else {
+                // Hamburger 타입: Ring은 완전히 고정
+                ring.physicsBody?.isDynamic = false
+                print("[MultiKeyringScene] Hamburger: Ring kept static")
             }
         }
         
+        // 카라비너 타입별 체인 물리 활성화
+        for (_, chains) in chainNodesByKeyring {
+            if let carabinerType = currentCarabinerType, carabinerType == .plain {
+                // Plain 타입: 첫 번째 체인은 거의 고정, 나머지는 자유롭게 움직임
+                for (index, chain) in chains.enumerated() {
+                    chain.physicsBody?.isDynamic = true  // 모든 체인 동적 유지
+                    if index == 0 {
+                        // 첫 번째 체인: 극도로 높은 감쇠로 거의 움직이지 않게
+                        chain.physicsBody?.linearDamping = 15.0  // 극도로 높은 선형 감쇠
+                        chain.physicsBody?.angularDamping = 20.0 // 극도로 높은 회전 감쇠
+                        chain.physicsBody?.mass = 0.01  // 매우 가벼운 질량
+                        print("[MultiKeyringScene] Plain: First chain heavily damped but dynamic")
+                    } else {
+                        // 나머지 체인들: 자유롭게 움직임
+                        chain.physicsBody?.linearDamping = 0.1  // 매우 낮은 감쇠로 자유로운 움직임
+                        chain.physicsBody?.angularDamping = 0.1
+                        chain.physicsBody?.mass = 0.3  // 적당한 질량
+                        print("[MultiKeyringScene] Plain: Chain \(index) free to move")
+                    }
+                }
+            } else {
+                // Hamburger 타입: 모든 체인 활성화
+                for chain in chains {
+                    chain.physicsBody?.isDynamic = true
+                    chain.physicsBody?.linearDamping = 0.5
+                    chain.physicsBody?.angularDamping = 0.5
+                }
+            }
+        }
+        
+        // 모든 바디의 물리 활성화
         for (_, body) in bodyNodes {
             body.physicsBody?.isDynamic = true
             body.physicsBody?.linearDamping = 0.5
@@ -447,6 +526,43 @@ class MultiKeyringScene: SKScene {
         print("[MultiKeyringScene] Physics enabled for \(keyringDataList.count) keyrings")
         onAllKeyringsReady?()
     }
+    
+    // MARK: - Ring Anchor System
+    
+    /// Plain 타입 Ring의 상단을 고정하는 anchor 생성 (상단 고정, 하단은 자연스러운 움직임)
+    private func createRingAnchor(for ring: SKSpriteNode, at index: Int) {
+        let ringFrame = ring.calculateAccumulatedFrame()
+        let ringTopY = ring.position.y + ringFrame.height / 2  // Ring의 상단 Y 좌표
+        
+        // Ring의 상단 위치에 invisible anchor 생성
+        let anchor = SKSpriteNode()
+        anchor.size = CGSize(width: 2, height: 2)
+        anchor.position = CGPoint(x: ring.position.x, y: ringTopY)  // Ring의 상단에 위치
+        anchor.physicsBody = SKPhysicsBody(rectangleOf: anchor.size)
+        anchor.physicsBody?.isDynamic = false  // 완전 고정
+        anchor.physicsBody?.categoryBitMask = UInt32(1 << (index + 24))
+        anchor.physicsBody?.collisionBitMask = 0  // 충돌 없음
+        anchor.physicsBody?.contactTestBitMask = 0
+        anchor.alpha = 0.0  // 완전 투명
+        addChild(anchor)
+        
+        // Ring의 상단과 anchor를 Pin Joint로 완전히 고정 연결
+        if let ringPhysics = ring.physicsBody, let anchorPhysics = anchor.physicsBody {
+            let anchorJoint = SKPhysicsJointPin.joint(
+                withBodyA: ringPhysics,
+                bodyB: anchorPhysics,
+                anchor: CGPoint(x: ring.position.x, y: ringTopY)  // Ring의 상단에서 연결
+            )
+            anchorJoint.shouldEnableLimits = false
+            anchorJoint.frictionTorque = 0.2  // 적당한 마찰로 자연스러운 회전
+            physicsWorld.add(anchorJoint)
+            
+            print("[MultiKeyringScene] Plain: Ring top anchor created - top fixed, bottom swings naturally")
+        }
+    }
+
+    // Plain 타입에서는 경계 생성 함수를 제거 (Ring이 고정되므로 불필요)
+    // createCarabinerBoundary 함수는 더 이상 사용하지 않음
 
     // MARK: - Helper Methods
 
@@ -601,9 +717,22 @@ class MultiKeyringScene: SKScene {
                     dy: velocity.dy * 0.3
                 )
 
-                // 각 체인에 힘 적용
-                for chain in chains {
-                    chain.physicsBody?.applyImpulse(force)
+                // Plain 타입일 때는 Ring과 체인이 모두 찰랑거림
+                if let carabinerType = currentCarabinerType, carabinerType == .plain {
+                    // Ring도 체인처럼 부드럽게 힘 적용
+                    if let ring = ringNodes[index] {
+                        ring.physicsBody?.applyImpulse(CGVector(dx: force.dx * 0.4, dy: force.dy * 0.4))
+                    }
+                    
+                    // 모든 체인에도 힘 적용
+                    for chain in chains {
+                        chain.physicsBody?.applyImpulse(force)
+                    }
+                } else {
+                    // Hamburger 타입: 모든 체인에 힘 적용
+                    for chain in chains {
+                        chain.physicsBody?.applyImpulse(force)
+                    }
                 }
 
                 // Body에도 힘 적용
