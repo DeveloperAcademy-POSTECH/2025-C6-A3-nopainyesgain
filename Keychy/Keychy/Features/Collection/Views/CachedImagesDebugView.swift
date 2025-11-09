@@ -114,7 +114,7 @@ struct CachedImagesDebugView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 200)
-                        .background(Color(.systemGray5))
+                        .background(Color.main500)
                         .cornerRadius(10)
 
                     VStack(spacing: 4) {
