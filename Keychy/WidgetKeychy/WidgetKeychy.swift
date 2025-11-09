@@ -45,12 +45,55 @@ struct WidgetKeychyEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+        if let selectedKeyring = entry.configuration.selectedKeyring {
+            // 키링이 선택된 경우
+            keyringView(keyring: selectedKeyring)
+        } else {
+            // 키링이 선택되지 않은 경우
+            placeholderView
+        }
+    }
 
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+    // MARK: - 키링 이미지 뷰
+    @ViewBuilder
+    private func keyringView(keyring: KeyringEntity) -> some View {
+        // App Group에서 키링 메타데이터 확인
+        let availableKeyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+
+        if let availableKeyring = availableKeyrings.first(where: { $0.id == keyring.id }) {
+            // 키링이 존재하고 이미지 로드 가능
+            if let imageData = KeyringImageCache.shared.loadImageByPath(availableKeyring.imagePath),
+               let uiImage = UIImage(data: imageData) {
+                VStack {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+
+                    Text(availableKeyring.name)
+                        .font(.caption)
+                        .lineLimit(1)
+                }
+            } else {
+                // 이미지 로드 실패
+                placeholderView
+            }
+        } else {
+            // 선택된 키링이 삭제됨
+            placeholderView
+        }
+    }
+
+    // MARK: - 플레이스홀더 뷰
+    private var placeholderView: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "hand.tap.fill")
+                .font(.largeTitle)
+                .foregroundColor(.gray)
+
+            Text("꾹눌러서\n키링을 선택하세요")
+                .font(.caption)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.gray)
         }
     }
 }
@@ -67,15 +110,15 @@ struct WidgetKeychy: Widget {
 }
 
 extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
+    fileprivate static var noSelection: ConfigurationAppIntent {
         let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
+        intent.selectedKeyring = nil
         return intent
     }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
+
+    fileprivate static var withKeyring: ConfigurationAppIntent {
         let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
+        intent.selectedKeyring = KeyringEntity(id: "sample-id", name: "샘플 키링")
         return intent
     }
 }
@@ -83,6 +126,6 @@ extension ConfigurationAppIntent {
 #Preview(as: .systemSmall) {
     WidgetKeychy()
 } timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
+    SimpleEntry(date: .now, configuration: .noSelection)
+    SimpleEntry(date: .now, configuration: .withKeyring)
 }

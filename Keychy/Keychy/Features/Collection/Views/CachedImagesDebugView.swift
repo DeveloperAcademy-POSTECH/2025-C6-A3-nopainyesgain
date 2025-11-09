@@ -10,7 +10,7 @@ import SwiftUI
 /// 캐시된 키링 이미지를 확인하는 디버그 뷰
 struct CachedImagesDebugView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var cachedImages: [(id: String, image: Image, size: String)] = []
+    @State private var cachedImages: [(id: String, name: String, image: Image, size: String)] = []
 
     var body: some View {
         NavigationView {
@@ -118,6 +118,11 @@ struct CachedImagesDebugView: View {
                         .cornerRadius(10)
 
                     VStack(spacing: 4) {
+                        Text(item.name)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+
                         Text(item.id)
                             .font(.caption2)
                             .foregroundColor(.secondary)
@@ -147,46 +152,35 @@ struct CachedImagesDebugView: View {
     private func loadCachedImages() {
         print("🔍 [DebugView] 캐시 이미지 로드 시작")
 
-        let fileManager = FileManager.default
-        let cacheURL = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("KeyringThumbnails", isDirectory: true)
+        // App Group의 메타데이터 로드
+        let availableKeyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+        var loadedImages: [(id: String, name: String, image: Image, size: String)] = []
 
-        do {
-            let files = try fileManager.contentsOfDirectory(at: cacheURL, includingPropertiesForKeys: [.fileSizeKey])
-                .filter { $0.pathExtension == "png" }
-                .sorted { $0.lastPathComponent < $1.lastPathComponent }
+        for keyring in availableKeyrings {
+            // 이미지 데이터 로드
+            if let imageData = KeyringImageCache.shared.loadImageByPath(keyring.imagePath),
+               let uiImage = UIImage(data: imageData) {
+                let sizeString = String(format: "%.1f KB", Double(imageData.count) / 1024.0)
 
-            var loadedImages: [(id: String, image: Image, size: String)] = []
-
-            for file in files {
-                let keyringID = file.deletingPathExtension().lastPathComponent
-
-                if let data = try? Data(contentsOf: file),
-                   let uiImage = UIImage(data: data) {
-                    let fileSize = (try? fileManager.attributesOfItem(atPath: file.path)[.size] as? Int64) ?? 0
-                    let sizeString = String(format: "%.1f KB", Double(fileSize) / 1024.0)
-
-                    loadedImages.append((
-                        id: keyringID,
-                        image: Image(uiImage: uiImage),
-                        size: sizeString
-                    ))
-                }
+                loadedImages.append((
+                    id: keyring.id,
+                    name: keyring.name,
+                    image: Image(uiImage: uiImage),
+                    size: sizeString
+                ))
             }
-
-            cachedImages = loadedImages
-            print("✅ [DebugView] \(cachedImages.count)개 이미지 로드 완료")
-
-        } catch {
-            print("❌ [DebugView] 이미지 로드 실패: \(error.localizedDescription)")
         }
+
+        cachedImages = loadedImages
+        print("✅ [DebugView] \(cachedImages.count)개 이미지 로드 완료")
     }
 
     // MARK: - Delete Image
 
     private func deleteImage(id: String) {
         print("🗑️ [DebugView] 이미지 삭제: \(id)")
-        KeyringImageCache.shared.delete(for: id)
+        // 이미지와 메타데이터 모두 삭제
+        KeyringImageCache.shared.removeKeyring(id: id)
         loadCachedImages()
     }
 
@@ -194,7 +188,16 @@ struct CachedImagesDebugView: View {
 
     private func clearAllCache() {
         print("🗑️ [DebugView] 전체 캐시 삭제")
+
+        // 모든 키링 메타데이터 삭제
+        let keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+        for keyring in keyrings {
+            KeyringImageCache.shared.removeKeyring(id: keyring.id)
+        }
+
+        // 혹시 남은 이미지 파일도 삭제
         KeyringImageCache.shared.clearAll()
+
         loadCachedImages()
     }
 }

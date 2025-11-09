@@ -46,8 +46,21 @@ extension CollectionViewModel {
                     self.keyring[index].name = name
                     self.keyring[index].memo = memo
                     self.keyring[index].tags = tags
+
+                    // 이름이 변경된 경우 App Group 메타데이터 업데이트
+                    if keyring.name != name {
+                        var keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+                        if let keyringIndex = keyrings.firstIndex(where: { $0.id == documentId }) {
+                            keyrings[keyringIndex] = AvailableKeyring(
+                                id: documentId,
+                                name: name,
+                                imagePath: keyrings[keyringIndex].imagePath
+                            )
+                            KeyringImageCache.shared.saveAvailableKeyrings(keyrings)
+                        }
+                    }
                 }
-                
+
                 completion(true)
             }
     }
@@ -89,9 +102,12 @@ extension CollectionViewModel {
                         if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
                             self.keyring.remove(at: index)
                         }
-                        
+
                         // 매핑 Dictionary에서도 제거
                         self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
+
+                        // App Group 위젯용 캐시에서도 제거
+                        KeyringImageCache.shared.removeKeyring(id: documentId)
 
                         completion(true)
                     }

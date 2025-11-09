@@ -8,16 +8,28 @@
 import Foundation
 import SwiftUI
 
-/// Keyring 썸네일 이미지를 FileManager 기반으로 캐싱
+/// Keyring 썸네일 이미지를 FileManager 기반으로 캐싱 (App Group 사용)
 class KeyringImageCache {
     static let shared = KeyringImageCache()
 
     private let fileManager = FileManager.default
+    private let appGroupIdentifier = "group.keychy.app"
+    private let metadataFileName = "available_keyrings.json"
 
-    /// 캐시 디렉토리 경로
+    /// App Group Container URL
+    private var containerURL: URL? {
+        fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
+    }
+
+    /// 캐시 디렉토리 경로 (App Group)
     private var cacheDirectory: URL {
-        let urls = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
-        let keyringCache = urls[0].appendingPathComponent("KeyringThumbnails", isDirectory: true)
+        guard let container = containerURL else {
+            // Fallback to local cache if App Group is not available
+            let urls = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+            return urls[0].appendingPathComponent("KeyringThumbnails", isDirectory: true)
+        }
+
+        let keyringCache = container.appendingPathComponent("KeyringThumbnails", isDirectory: true)
 
         // 디렉토리가 없으면 생성
         if !fileManager.fileExists(atPath: keyringCache.path) {
@@ -29,6 +41,11 @@ class KeyringImageCache {
         }
 
         return keyringCache
+    }
+
+    /// 메타데이터 파일 URL
+    private var metadataFileURL: URL? {
+        containerURL?.appendingPathComponent(metadataFileName)
     }
 
     private init() {
@@ -164,5 +181,103 @@ class KeyringImageCache {
         }
 
         print("📋 [KeyringCache] =====================================")
+    }
+
+    // MARK: - 메타데이터 관리 (위젯용)
+
+    /// 사용 가능한 키링 목록 저장
+    func saveAvailableKeyrings(_ keyrings: [AvailableKeyring]) {
+        guard let fileURL = metadataFileURL else {
+            print("❌ [KeyringCache] 메타데이터 파일 URL을 찾을 수 없습니다.")
+            return
+        }
+
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let data = try encoder.encode(keyrings)
+            try data.write(to: fileURL, options: .atomic)
+            print("✅ [KeyringCache] \(keyrings.count)개 키링 메타데이터 저장 완료")
+        } catch {
+            print("❌ [KeyringCache] 메타데이터 저장 실패: \(error.localizedDescription)")
+        }
+    }
+
+    /// 사용 가능한 키링 목록 로드
+    func loadAvailableKeyrings() -> [AvailableKeyring] {
+        guard let fileURL = metadataFileURL else {
+            print("❌ [KeyringCache] 메타데이터 파일 URL을 찾을 수 없습니다.")
+            return []
+        }
+
+        guard fileManager.fileExists(atPath: fileURL.path) else {
+            print("⚠️ [KeyringCache] 메타데이터 파일이 없습니다.")
+            return []
+        }
+
+        do {
+            let data = try Data(contentsOf: fileURL)
+            let decoder = JSONDecoder()
+            let keyrings = try decoder.decode([AvailableKeyring].self, from: data)
+            print("✅ [KeyringCache] \(keyrings.count)개 키링 메타데이터 로드 완료")
+            return keyrings
+        } catch {
+            print("❌ [KeyringCache] 메타데이터 로드 실패: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    // MARK: - 동기화 메서드
+
+    /// 키링 추가 또는 업데이트 (이미지 + 메타데이터)
+    func syncKeyring(id: String, name: String, imageData: Data) {
+        // 1. 이미지 저장
+        save(pngData: imageData, for: id)
+
+        // 2. 메타데이터 업데이트
+        var keyrings = loadAvailableKeyrings()
+        let imagePath = "\(id).png"
+
+        if let index = keyrings.firstIndex(where: { $0.id == id }) {
+            // 기존 키링 업데이트
+            keyrings[index] = AvailableKeyring(id: id, name: name, imagePath: imagePath)
+            print("✅ [KeyringCache] 키링 업데이트: \(name)")
+        } else {
+            // 새 키링 추가
+            keyrings.append(AvailableKeyring(id: id, name: name, imagePath: imagePath))
+            print("✅ [KeyringCache] 새 키링 추가: \(name)")
+        }
+
+        saveAvailableKeyrings(keyrings)
+    }
+
+    /// 키링 삭제 (이미지 + 메타데이터)
+    func removeKeyring(id: String) {
+        // 1. 이미지 삭제
+        delete(for: id)
+
+        // 2. 메타데이터에서 제거
+        var keyrings = loadAvailableKeyrings()
+        keyrings.removeAll { $0.id == id }
+        saveAvailableKeyrings(keyrings)
+
+        print("✅ [KeyringCache] 키링 완전 삭제: \(id)")
+    }
+
+    /// 이미지 경로로 이미지 로드 (위젯용)
+    func loadImageByPath(_ imagePath: String) -> Data? {
+        let fileURL = cacheDirectory.appendingPathComponent(imagePath)
+
+        guard fileManager.fileExists(atPath: fileURL.path) else {
+            return nil
+        }
+
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return data
+        } catch {
+            print("❌ [KeyringCache] 이미지 로드 실패: \(imagePath) - \(error.localizedDescription)")
+            return nil
+        }
     }
 }
