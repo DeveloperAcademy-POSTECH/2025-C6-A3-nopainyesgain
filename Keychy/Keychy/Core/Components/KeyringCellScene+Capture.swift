@@ -12,8 +12,6 @@ extension KeyringCellScene {
     /// Scene을 PNG 이미지로 캡처
     @MainActor
     func captureToPNG() async -> Data? {
-        print("📸 [KeyringCapture] 캡처 시작")
-
         // 캡처용 SKView 생성
         let view = SKView(frame: CGRect(origin: .zero, size: self.size))
 
@@ -24,7 +22,6 @@ extension KeyringCellScene {
         view.presentScene(self)
 
         // SpriteKit 렌더링 대기
-        print("📸 [KeyringCapture] 렌더링 대기 중 (150ms)...")
         try? await Task.sleep(nanoseconds: 150_000_000) // 150ms
 
         // 텍스처 캡처
@@ -42,9 +39,6 @@ extension KeyringCellScene {
             print("❌ [KeyringCapture] PNG 데이터 변환 실패")
             return nil
         }
-
-        let fileSize = ByteCountFormatter.string(fromByteCount: Int64(pngData.count), countStyle: .file)
-        print("✅ [KeyringCapture] 캡처 완료: \(fileSize)")
 
         return pngData
     }

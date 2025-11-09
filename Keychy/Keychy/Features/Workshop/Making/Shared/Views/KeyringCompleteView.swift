@@ -380,8 +380,6 @@ extension KeyringCompleteView {
         ringType: RingType,
         chainType: ChainType
     ) async {
-        print("🎬 [KeyringComplete] 위젯용 이미지 캡처 시작: \(keyringId)")
-
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
             var loadingCompleted = false
@@ -395,7 +393,6 @@ extension KeyringCompleteView {
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 onLoadingComplete: {
-                    print("✅ [KeyringComplete] Scene 로딩 완료: \(keyringId)")
                     loadingCompleted = true
                 }
             )
@@ -418,21 +415,16 @@ extension KeyringCompleteView {
                 }
 
                 if !loadingCompleted {
-                    print("⚠️ [KeyringComplete] 타임아웃 - 로딩 미완료 상태에서 캡처: \(keyringId)")
+                    print("⚠️ [KeyringComplete] 타임아웃 - 로딩 미완료: \(keyringId)")
                 } else {
                     // 로딩 완료 후 추가 렌더링 대기 (200ms)
                     try? await Task.sleep(nanoseconds: 200_000_000)
-                    print("📸 [KeyringComplete] 렌더링 완료, 캡처 시작: \(keyringId)")
                 }
 
                 // PNG 캡처
                 if let pngData = await scene.captureToPNG() {
-                    print("✅ [KeyringComplete] 캡처 완료, 위젯용 이미지 저장 중: \(keyringId)")
-
                     // FileManager 캐시에 저장 (위젯에서 접근 가능)
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringId)
-
-                    print("💾 [KeyringComplete] 위젯용 이미지 저장 완료: \(keyringId)")
                 } else {
                     print("❌ [KeyringComplete] 캡처 실패: \(keyringId)")
                 }

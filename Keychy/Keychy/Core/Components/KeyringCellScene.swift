@@ -63,7 +63,6 @@ class KeyringCellScene: SKScene {
     override func didMove(to view: SKView) {
         // 이미 초기화되었으면 스킵 (중복 렌더링 방지)
         guard containerNode == nil else {
-            print("⚠️ [KeyringCellScene] didMove 중복 호출 방지")
             return
         }
 

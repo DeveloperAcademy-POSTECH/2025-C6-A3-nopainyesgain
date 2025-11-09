@@ -372,7 +372,7 @@ extension CollectionView {
 
             Spacer()
 
-            // 디버그 버튼 (개발 중에만 표시)
+            // 디버그 버튼 (빌드앱일 때만 표시)
             #if DEBUG
             Button {
                 showCachedImagesDebug = true

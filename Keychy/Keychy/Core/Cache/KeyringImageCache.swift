@@ -23,7 +23,6 @@ class KeyringImageCache {
         if !fileManager.fileExists(atPath: keyringCache.path) {
             do {
                 try fileManager.createDirectory(at: keyringCache, withIntermediateDirectories: true)
-                print("✅ [KeyringCache] 캐시 디렉토리 생성 완료: \(keyringCache.path)")
             } catch {
                 print("❌ [KeyringCache] 캐시 디렉토리 생성 실패: \(error.localizedDescription)")
             }
@@ -33,8 +32,7 @@ class KeyringImageCache {
     }
 
     private init() {
-        print("📁 [KeyringCache] 초기화 완료")
-        print("📁 [KeyringCache] 캐시 경로: \(cacheDirectory.path)")
+        // 초기화
     }
 
     // MARK: - 저장
@@ -45,8 +43,6 @@ class KeyringImageCache {
 
         do {
             try pngData.write(to: fileURL)
-            let fileSize = ByteCountFormatter.string(fromByteCount: Int64(pngData.count), countStyle: .file)
-            print("💾 [KeyringCache] 저장 완료: \(keyringID) (\(fileSize))")
         } catch {
             print("❌ [KeyringCache] 저장 실패: \(keyringID) - \(error.localizedDescription)")
         }
@@ -59,14 +55,11 @@ class KeyringImageCache {
         let fileURL = cacheDirectory.appendingPathComponent("\(keyringID).png")
 
         guard fileManager.fileExists(atPath: fileURL.path) else {
-            print("📭 [KeyringCache] 캐시 없음: \(keyringID)")
             return nil
         }
 
         do {
             let data = try Data(contentsOf: fileURL)
-            let fileSize = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .file)
-            print("📂 [KeyringCache] 로드 완료: \(keyringID) (\(fileSize))")
             return data
         } catch {
             print("❌ [KeyringCache] 로드 실패: \(keyringID) - \(error.localizedDescription)")
@@ -81,13 +74,11 @@ class KeyringImageCache {
         let fileURL = cacheDirectory.appendingPathComponent("\(keyringID).png")
 
         guard fileManager.fileExists(atPath: fileURL.path) else {
-            print("📭 [KeyringCache] 삭제할 파일 없음: \(keyringID)")
             return
         }
 
         do {
             try fileManager.removeItem(at: fileURL)
-            print("🗑️ [KeyringCache] 삭제 완료: \(keyringID)")
         } catch {
             print("❌ [KeyringCache] 삭제 실패: \(keyringID) - \(error.localizedDescription)")
         }
@@ -103,8 +94,6 @@ class KeyringImageCache {
             for file in files where file.pathExtension == "png" {
                 try fileManager.removeItem(at: file)
             }
-
-            print("🗑️ [KeyringCache] 전체 캐시 삭제 완료 (\(files.count)개)")
         } catch {
             print("❌ [KeyringCache] 전체 캐시 삭제 실패: \(error.localizedDescription)")
         }
@@ -132,9 +121,6 @@ class KeyringImageCache {
                     totalSize += fileSize
                 }
             }
-
-            let sizeString = ByteCountFormatter.string(fromByteCount: totalSize, countStyle: .file)
-            print("📊 [KeyringCache] 캐시 정보: \(files.count)개 파일, 총 용량 \(sizeString)")
 
             return (files.count, totalSize)
         } catch {
