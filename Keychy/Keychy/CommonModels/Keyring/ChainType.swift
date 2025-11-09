@@ -63,9 +63,27 @@ enum ChainType {
         return index % 2 == 0 ? evenLink : oddLink
     }
     
+    /// 카라비너 타입에 따라 체인 링크 반환
+    func getLink(at index: Int, for carabinerType: CarabinerType?) -> ChainLink {
+        if let carabinerType = carabinerType, carabinerType == .plain {
+            // Plain: odd-even-odd-even (홀수부터 시작)
+            return index % 2 == 0 ? oddLink : evenLink
+        } else {
+            // Hamburger: even-odd-even-odd (짝수부터 시작)
+            return index % 2 == 0 ? evenLink : oddLink
+        }
+    }
+    
     func createChainLinks(length: Int) -> [ChainLink] {
         return (0..<length).map { index in
             getLink(at: index)
+        }
+    }
+    
+    /// 카라비너 타입에 따라 체인 링크 생성
+    func createChainLinks(length: Int, for carabinerType: CarabinerType?) -> [ChainLink] {
+        return (0..<length).map { index in
+            getLink(at: index, for: carabinerType)
         }
     }
     
