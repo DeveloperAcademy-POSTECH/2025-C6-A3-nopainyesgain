@@ -13,13 +13,8 @@ struct SplashView: View {
         
         ZStack() {
             VStack(spacing: 20) {
-                Image("appIcon")
-                    .resizable()
-                    .frame(width: 100, height: 100)
-                
-                Image("logoType")
-                    .resizable()
-                    .frame(width: 98, height: 20)
+                Image("introIcon")
+                Image("introTypo")
             }
         }
     }

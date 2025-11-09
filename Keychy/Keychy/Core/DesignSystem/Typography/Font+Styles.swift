@@ -65,4 +65,10 @@ extension Font {
     static let nanum10EB12 = Font.custom(.nanumExtraBold, size: 10)
     
     static let nanum14EB18 = Font.custom(.nanumExtraBold, size: 14)
+    
+    // MARK: - Pretendard
+    static let pretendard16M = Font.custom(.pretendardMedium, size: 16)
+    
+    // MARK: - NotosansKR
+    //static let notoSansKRBLK
 }

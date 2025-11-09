@@ -17,37 +17,34 @@ struct IntroView: View {
     var body: some View {
         loginSection
     }
+        
 }
 
 // MARK: - Login Section
 extension IntroView {
     private var loginSection: some View {
         
-        // TODO: Hi-fi 나오면 디자인 반영할 것
         VStack(spacing: 20) {
             Spacer()
             
             if viewModel.isLoading {
-                ProgressView("로그인 중...")
+                ProgressView("로그인 중")
+                    .typography(.suit13M)
             }
             
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
+            if viewModel.errorMessage != nil {
+                Text("서버 오류: 다시 시도해주세요.")
                     .foregroundColor(.red)
                     .font(.caption)
             }
-            
-            // TODO: HIG 맞춰서 버튼 디자인 수정 필요
             HStack(spacing: 12) {
-                
                 Image(systemName: "apple.logo")
                     .font(.system(size: 20, weight: .semibold))
                 
                 Text("Sign in with Apple")
                     .font(.system(size: 16, weight: .semibold))
             }
-            .foregroundColor(.white)
-            .frame(width: 334, height: 48)
+            .foregroundColor(.black100)
             .overlay {
                 SignInWithAppleButton(
                     onRequest: { request in
@@ -65,23 +62,17 @@ extension IntroView {
                 .blendMode(.overlay)
             }
             .frame(width: 334, height: 48)
-            .background(Color.black)
+            .background(.white100)
             .cornerRadius(256)
             .padding(.horizontal, 34)
-            .padding(.bottom, 32)
-
         }
         .overlay(
             VStack(spacing: 20) {
-                Image("appIcon")
-                    .resizable()
-                    .frame(width: 100, height: 100)
-                
-                Image("logoType")
-                    .resizable()
-                    .frame(width: 98, height: 20)
+                Image("introIcon")
+                Image("introTypo")
             }
         )
+        .background(.gray800)
     }
 }
 
