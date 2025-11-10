@@ -27,44 +27,53 @@ struct BundleDetailView: View {
             ZStack {
                 contentView(geometry: geometry)
                 
+                // 하단 섹션을 ZStack 안에서 직접 배치
+                VStack {
+                    Spacer()
+                    bottomSection
+                }
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+                
                 if showMenu {
-                    Color.clear
-                        .ignoresSafeArea()
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showMenu = false
-                            }
-                        }
-                    
-                    VStack(alignment: .trailing) {
-                        BundleMenu(
-                            onNameEdit: {
-                                showMenu = false
-                                router.push(.bundleNameEditView)
-                            },
-                            onEdit: {
-                                showMenu = false
-                            },
-                            onDelete: {
-                                showMenu = false
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showDeleteAlert = true
-                                }
-                            }
-                        )
-                        .padding(.trailing, 16)
-                        .padding(.top, 8)
-                        
+                    HStack {
                         Spacer()
+                        VStack {
+                            BundleMenu(
+                                onNameEdit: {
+                                    showMenu = false
+                                    router.push(.bundleNameEditView)
+                                },
+                                onEdit: {
+                                    showMenu = false
+                                },
+                                onDelete: {
+                                    showMenu = false
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showDeleteAlert = true
+                                    }
+                                }
+                            )
+                            .padding(.trailing, 16)
+                            .padding(.top, 8)
+                            
+                            Spacer()
+                        }
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                     .zIndex(50)
+                    .allowsHitTesting(true)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMenu = false
+                        }
+                    }
                 }
             }
         }
-        .background(viewModel.backgroundImage)
-        .safeAreaInset(edge: .bottom) { bottomSection }
+        .background(
+            viewModel.backgroundImage
+                .ignoresSafeArea()
+        )
         .toolbar {
             backToolbarItem
             menuToolbarItem
