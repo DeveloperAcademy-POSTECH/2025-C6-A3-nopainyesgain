@@ -460,13 +460,17 @@ extension CollectionView {
             }
             .padding(.trailing, 10)
             #endif
-
+            
             CircleGlassButton(imageName: "Widget",
                               action: { router.push(.widgetSettingView) })
             .padding(.trailing, 10)
 
             CircleGlassButton(imageName: "Bundle",
                               action: { router.push(.bundleInventoryView) })
+            .padding(.trailing, 10)
+            
+            CircleGlassButton(imageName: "Search",
+                              action: { })
         }
         .padding(.top, 60)
         .sheet(isPresented: $showCachedImagesDebug) {
