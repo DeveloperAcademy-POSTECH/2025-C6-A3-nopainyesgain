@@ -495,22 +495,9 @@
 		C6EE7AD62EB445F6002B5669 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C6B56F372EC061BB0049F969 /* WidgetKeychy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
-			);
 			path = WidgetKeychy;
 			sourceTree = "<group>";
 		};
