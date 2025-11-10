@@ -228,6 +228,10 @@
 		C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
 		C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */; };
 		C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
+		C6B5706B2EC202350049F969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6B570662EC202350049F969 /* Assets.xcassets */; };
+		C6B5706D2EC202350049F969 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570652EC202350049F969 /* AppIntent.swift */; };
+		C6B5706E2EC202350049F969 /* WidgetKeychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570682EC202350049F969 /* WidgetKeychy.swift */; };
+		C6B5706F2EC202350049F969 /* WidgetKeychyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -486,6 +490,11 @@
 		C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeychyRelease.entitlements; sourceTree = "<group>"; };
 		C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetKeychyExtension.entitlements; sourceTree = "<group>"; };
 		C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableKeyring.swift; sourceTree = "<group>"; };
+		C6B570652EC202350049F969 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		C6B570662EC202350049F969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C6B570672EC202350049F969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C6B570682EC202350049F969 /* WidgetKeychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychy.swift; sourceTree = "<group>"; };
+		C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychyBundle.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -494,27 +503,6 @@
 		C6C402A22EB40ACA006B58DF /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 		C6EE7AD62EB445F6002B5669 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C6B56F372EC061BB0049F969 /* WidgetKeychy */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
-			);
-			path = WidgetKeychy;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
@@ -766,7 +754,7 @@
 			children = (
 				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
-				C6B56F372EC061BB0049F969 /* WidgetKeychy */,
+				C6B5706A2EC202350049F969 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
@@ -1374,6 +1362,18 @@
 			path = Cache;
 			sourceTree = "<group>";
 		};
+		C6B5706A2EC202350049F969 /* WidgetKeychy */ = {
+			isa = PBXGroup;
+			children = (
+				C6B570652EC202350049F969 /* AppIntent.swift */,
+				C6B570662EC202350049F969 /* Assets.xcassets */,
+				C6B570672EC202350049F969 /* Info.plist */,
+				C6B570682EC202350049F969 /* WidgetKeychy.swift */,
+				C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */,
+			);
+			path = WidgetKeychy;
+			sourceTree = "<group>";
+		};
 		C6C4027F2EB26BFB006B58DF /* NeonSign */ = {
 			isa = PBXGroup;
 			children = (
@@ -1437,9 +1437,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				C6B56F372EC061BB0049F969 /* WidgetKeychy */,
 			);
 			name = WidgetKeychyExtension;
 			packageProductDependencies = (
@@ -1538,6 +1535,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6B5706B2EC202350049F969 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1733,6 +1731,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6B5706D2EC202350049F969 /* AppIntent.swift in Sources */,
+				C6B5706E2EC202350049F969 /* WidgetKeychy.swift in Sources */,
+				C6B5706F2EC202350049F969 /* WidgetKeychyBundle.swift in Sources */,
 				C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */,
 				C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */,
 			);
