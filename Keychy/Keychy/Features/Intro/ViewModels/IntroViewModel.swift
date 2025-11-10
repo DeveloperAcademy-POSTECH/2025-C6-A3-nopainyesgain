@@ -18,11 +18,21 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     var isLoading = false
     var errorMessage: String?
     var currentNonce: String?
-    
+
     // 프로필 설정 관련
     var needsProfileSetup = false
     var tempUserUID: String = ""
     var tempUserEmail: String = ""
+
+    // 약관 동의 관련
+    var showTermsSheet = false
+
+    // MARK: - 약관 동의 완료
+    func completeTermsAgreement() {
+        showTermsSheet = false
+        isLoggedIn = true
+        // TODO: 나중에 Firestore에 약관 동의 여부 저장 필요
+    }
     
     // MARK: - 초기화
     override init() {

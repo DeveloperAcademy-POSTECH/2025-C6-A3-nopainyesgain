@@ -25,8 +25,3 @@ struct CircleGlassButton: View {
         .glassEffect(.regular.interactive(), in: .circle)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    CollectionView(router: NavigationRouter<CollectionRoute>(), collectionViewModel: CollectionViewModel())
-}

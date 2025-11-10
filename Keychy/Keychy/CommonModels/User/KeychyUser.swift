@@ -27,6 +27,7 @@ struct KeychyUser: Identifiable {
     var carabiners: [String]
     var tags: [String]
     var keyrings: [String]
+    var marketingAgreed: Bool
 
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -45,7 +46,8 @@ struct KeychyUser: Identifiable {
             "backgrounds": backgrounds,
             "carabiners": carabiners,
             "tags": tags,
-            "keyrings": keyrings
+            "keyrings": keyrings,
+            "marketingAgreed" : marketingAgreed
         ]
     }
 
@@ -73,6 +75,7 @@ struct KeychyUser: Identifiable {
         self.carabiners = data["carabiners"] as? [String] ?? []
         self.tags = data["tags"] as? [String] ?? []
         self.keyrings = data["keyrings"] as? [String] ?? []
+        self.marketingAgreed = data["marketingAgreed"] as? Bool ?? false
     }
 
     // 일반 초기화 (새 유저 생성용)
@@ -93,5 +96,6 @@ struct KeychyUser: Identifiable {
         self.carabiners = []
         self.tags = []
         self.keyrings = []
+        self.marketingAgreed = false
     }
 }

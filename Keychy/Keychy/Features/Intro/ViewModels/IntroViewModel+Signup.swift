@@ -56,7 +56,9 @@ extension IntroViewModel {
 
                 if success {
                     self.needsProfileSetup = false
-                    self.isLoggedIn = true
+                    // 약관 동의 시트 표시 (신규 사용자)
+                    self.showTermsSheet = true
+                    // 약관 동의 완료 후 isLoggedIn = true 설정 (IntroView에서 처리)
                     self.tempUserUID = ""
                     self.tempUserEmail = ""
                 } else {

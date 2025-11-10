@@ -70,14 +70,16 @@ extension IntroViewModel {
     // MARK: - 기존 사용자 로그인 처리
     private func handleExistingUserLogin(user: FirebaseAuth.User) {
         print("기존 사용자 로그인 처리")
-        
+
         UserManager.shared.loadUserInfo(uid: user.uid) { [weak self] hasProfile in
             guard let self = self else { return }
-            
+
             DispatchQueue.main.async {
                 if hasProfile {
-                    self.isLoggedIn = true
-                    self.needsProfileSetup = false
+                    // TODO: 나중에 약관 동의 여부 체크 (KeychyUser에 필드 추가 필요)
+                    // 현재는 무조건 약관 시트 표시
+                    self.showTermsSheet = true
+                    // 약관 동의 완료 후 isLoggedIn = true 설정 (IntroView에서 처리)
                 } else {
                     self.handleIncompleteProfile(uid: user.uid)
                 }

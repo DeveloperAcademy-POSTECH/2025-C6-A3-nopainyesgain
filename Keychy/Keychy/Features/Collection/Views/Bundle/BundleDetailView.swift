@@ -36,7 +36,7 @@ struct BundleDetailView: View {
                             // 1층: 뒷 카라비너 이미지 표시
                             Group {
                                 if let carabiner = resolveCarabiner(from: bundle.selectedCarabiner) {
-                                    LazyImage(url: URL(string: carabiner.carabinerImage[1] ?? "")) { state in
+                                    LazyImage(url: URL(string: carabiner.carabinerImage[1])) { state in
                                         if let image = state.image {
                                             image
                                                 .resizable()
@@ -78,7 +78,7 @@ struct BundleDetailView: View {
                             // 3층 : 앞 카라비너 이미지 표시 (햄버거 구조)
                             Group {
                                 if let carabiner = resolveCarabiner(from: bundle.selectedCarabiner) {
-                                    LazyImage(url: URL(string: carabiner.carabinerImage[2] ?? "")) { state in
+                                    LazyImage(url: URL(string: carabiner.carabinerImage[2])) { state in
                                         if let image = state.image {
                                             image
                                                 .resizable()
@@ -251,7 +251,7 @@ extension BundleDetailView {
         // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
         for index in 0..<carabiner.maxKeyringCount {
             // 번들에 저장된 문서 id (없으면 "none")
-            let docId = bundle.keyrings[index] ?? "none"
+            let docId = bundle.keyrings[index]
             if docId == "none" || docId.isEmpty {
                 print("[BundleDetailView] dataList skip carabinerPos=\(index) (no keyring)")
                 continue
@@ -319,8 +319,4 @@ extension BundleDetailView {
             }
         }
     }
-}
-
-#Preview {
-    BundleDetailView(router: NavigationRouter(), viewModel: CollectionViewModel())
 }

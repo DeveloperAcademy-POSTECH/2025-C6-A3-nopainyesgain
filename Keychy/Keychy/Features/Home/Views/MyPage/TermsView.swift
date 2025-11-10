@@ -1,5 +1,5 @@
 //
-//  TermsWebView.swift
+//  TermsView.swift
 //  Keychy
 //
 //  Created by Rundo on 11/6/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// 개인정보 처리 방침 및 이용약관
-struct TermsWebView: View {
+struct TermsView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State private var isEnglish = false
 
@@ -47,7 +47,7 @@ struct TermsWebView: View {
 }
 
 // MARK: - Privacy Policy
-extension TermsWebView {
+extension TermsView {
     private var privacyPolicySection: some View {
         VStack(alignment: .leading, spacing: 16) {
             sectionTitle(isEnglish ? "Privacy Policy" : "개인정보 처리방침")
@@ -187,7 +187,7 @@ extension TermsWebView {
 }
 
 // MARK: - Terms & Conditions
-extension TermsWebView {
+extension TermsView {
     private var termsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             sectionTitle(isEnglish ? "Terms & Conditions" : "이용약관")
@@ -299,7 +299,7 @@ extension TermsWebView {
 }
 
 // MARK: - Style Components
-extension TermsWebView {
+extension TermsView {
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
             .typography(.suit18B)
