@@ -45,6 +45,8 @@ struct CollectionKeyringDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                Color.gray50
+                    .ignoresSafeArea()
                 
                 keyringScene
                 
