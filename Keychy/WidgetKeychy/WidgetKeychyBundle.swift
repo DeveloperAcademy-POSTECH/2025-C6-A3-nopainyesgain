@@ -12,7 +12,5 @@ import SwiftUI
 struct WidgetKeychyBundle: WidgetBundle {
     var body: some Widget {
         WidgetKeychy()
-        WidgetKeychyControl()
-        WidgetKeychyLiveActivity()
     }
 }
