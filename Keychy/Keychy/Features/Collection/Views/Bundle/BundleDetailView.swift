@@ -26,9 +26,9 @@ struct BundleDetailView: View {
             ZStack {
                 viewModel.backgroundImage
                 contentView(geometry: geometry)
-                bottomSection()
             }
         }
+        .safeAreaInset(edge: .bottom) { bottomSection }
         .toolbar {
             backToolbarItem
             menuToolbarItem
@@ -150,7 +150,23 @@ extension BundleDetailView {
             }
         }
     }
-    
+}
+
+//MARK: - 하단 섹션
+extension BundleDetailView {
+    private var bottomSection: some View {
+        VStack {
+            Spacer()
+            HStack {
+                downloadImageButton
+                Text("\(viewModel.selectedBundle!.name)\n\(viewModel.selectedBundle!.keyrings.count) / \(viewModel.selectedBundle!.maxKeyrings)")
+                    .foregroundStyle(.gray600)
+                    .typography(.notosans15M)
+                pinButton
+            }
+        }
+        .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
+    }
     
     private var downloadImageButton: some View {
         Button(action: {
@@ -165,29 +181,24 @@ extension BundleDetailView {
     }
     
     private var pinButton: some View {
-        Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showMenu.toggle()
-            }
-        }) {
-            Image(systemName: "pin.fill")
-                .foregroundStyle(.gray600)
-        }
-        .buttonStyle(.glassProminent)
-    }
-}
-
-//MARK: - 하단 섹션
-extension BundleDetailView {
-    private func bottomSection() -> some View {
-        VStack {
-            Spacer()
-            HStack {
-                downloadImageButton
-                Text("\(viewModel.selectedBundle!.name)\n\(viewModel.selectedBundle!.keyrings.count) / \(viewModel.selectedBundle!.maxKeyrings)")
-                    .foregroundStyle(.gray600)
-                    .typography(.notosans15M)
-                pinButton
+        // 메인 설정이 되어있을 때는 이미지만 선택합니다.
+        Group {
+            if viewModel.selectedBundle!.isMain {
+                Text("안녕하세여")
+            } else {
+                Button(action: {
+                    viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { success in
+                        if success {
+                            print("메인 번들 설정 완료")
+                        } else {
+                            print("메인 번들 설정 실패")
+                        }
+                    }
+                }) {
+                    Image(.pinButton)
+                        .foregroundStyle(.gray600)
+                }
+                .buttonStyle(.glassProminent)
             }
         }
     }
