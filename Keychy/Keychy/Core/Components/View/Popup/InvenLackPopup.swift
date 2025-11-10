@@ -20,7 +20,7 @@ struct InvenLackPopup: View {
                 .padding(.top, 14)
             
             // 제목
-            Text("보관함이 가득 찼어요.") // ~~가 부족합니다!
+            Text("보관함이 가득 찼어요.")
                 .typography(.suit20B)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
