@@ -172,11 +172,11 @@ struct PackageCompleteView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(keyring.name) //keyring.name
-                                .typography(.nanum15EB25)
+                                .typography(.notosans15B)
                                 .foregroundColor(.white100)
                             
                             Text("@\(authorName)") //authorName
-                                .typography(.suit10SB)
+                                .typography(.notosans10M)
                                 .foregroundColor(.white100)
                         }
                         

@@ -286,7 +286,7 @@ struct CollectionKeyringDetailView: View {
                 }
                 // 이미지 저장 완료 체크마크
                 if showImageSaved {
-                    ImageSavePopup(isPresented: $showImageSaved)
+                    SavedPopup(isPresented: $showImageSaved, message: "이미지가 저장되었습니다.")
                         .zIndex(101)
                 }
             }
@@ -573,7 +573,7 @@ extension CollectionKeyringDetailView {
                     // 4줄 이상일 때 스크롤 가능
                     ScrollView {
                         Text(memo)
-                            .typography(.suit16M25)
+                            .typography(.notosans16R25)
                             .foregroundColor(.black100)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
