@@ -376,7 +376,3 @@ extension BundleAddKeyringView {
         return dataList
     }
 }
-
-#Preview {
-    BundleAddKeyringView(router: NavigationRouter(), viewModel: CollectionViewModel())
-}

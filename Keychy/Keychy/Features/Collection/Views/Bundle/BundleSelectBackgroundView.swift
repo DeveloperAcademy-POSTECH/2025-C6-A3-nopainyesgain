@@ -55,7 +55,3 @@ extension BundleSelectBackgroundView {
         }
     }
 }
-
-#Preview {
-    BundleSelectBackgroundView(router: NavigationRouter(), viewModel: CollectionViewModel())
-}
