@@ -13,14 +13,18 @@ import CryptoKit
 // 로그인 뷰
 struct IntroView: View {
     @Bindable var viewModel: IntroViewModel
-    @State var isChecked: Bool = false
-    @State var isInitialTerm: Bool = false
-    @State var CanGoNext: Bool = false
+    @State private var isAllChecked: Bool = false
+    @State private var isTermsChecked: Bool = false      // 개인정보 처리방침 (필수)
+    @State private var isMarketingChecked: Bool = false  // 마케팅 수신 동의 (선택)
+
+    // 필수 항목 모두 동의 여부 (버튼 활성화 조건)
+    private var canProceed: Bool {
+        isTermsChecked  // 필수만 체크하면 됨
+    }
 
     var body: some View {
         ZStack {
             logoSection
-
             VStack(spacing: 0) {
                 Spacer()
 
@@ -57,9 +61,10 @@ extension IntroView {
                     .foregroundStyle(.white)
             }
             if viewModel.errorMessage != nil {
-                Text("다시 시도해주세요.")
-                    .foregroundColor(.red)
-                    .font(.caption)
+                Text("로그인에 실패했습니다. 다시 시도해주세요.")
+                    .typography(.suit14M)
+                    .foregroundColor(.white100)
+                    
             }
         }
         .padding(.bottom, 20)
@@ -113,7 +118,7 @@ extension IntroView {
     /// 약관 전체 동의 row
     private var termRowAll: some View {
         HStack(spacing: 0) {
-            Image("uncheckedBox")
+            Image(isAllChecked ? "checkedBox" : "uncheckedBox")
                 .padding(.trailing, 15)
             Text("모두 동의합니다.")
                 .typography(.suit15SB25)
@@ -127,28 +132,41 @@ extension IntroView {
         .padding(.vertical, 16)
         .background(.gray50)
         .clipShape(.rect(cornerRadius: 12))
-        
+        .onTapGesture {
+            toggleAll()
+        }
     }
     
     /// 약관 동의 개별 row
     private func termRow(text: String, initial: Bool) -> some View {
-        HStack(spacing: 0) {
-            Image("uncheckedBox")
-                .padding(.trailing, 15)
+        let isChecked = initial ? isTermsChecked : isMarketingChecked
+
+        return HStack(spacing: 0) {
+            Button {
+                if initial {
+                    isTermsChecked.toggle()
+                } else {
+                    isMarketingChecked.toggle()
+                }
+                updateAllChecked()
+            } label: {
+                Image(isChecked ? "checkedBox" : "uncheckedBox")
+            }
+            .padding(.trailing, 15)
+
             Text(text)
                 .typography(.suit15M25)
                 .foregroundStyle(.gray700)
                 .padding(.vertical, 4.5)
                 .padding(.trailing, 5)
-            
+
             Text(initial ? "(필수)" : "(선택)")
                 .typography(.suit15M25)
                 .foregroundStyle(initial ? .main500 : .gray700)
-            
+
             if initial {
                 Button {
-                    // 현재는 개인정보 처리방침 동의밖에 없어서 바로 연결
-                    
+                    // 약관 웹뷰 열기 (TODO)
                 } label: {
                     Image("greaterthan")
                         .padding(.leading, 5)
@@ -162,7 +180,8 @@ extension IntroView {
     /// nextBtn
     private var agreeBtn: some View {
         Button {
-            // MARK: - 동의하자!
+            // 마케팅 동의 저장 및 로그인 완료
+            viewModel.completeTermsAgreement(marketingAgreed: isMarketingChecked)
         } label: {
             Text("동의합니다")
                 .frame(maxWidth: .infinity)
@@ -170,10 +189,31 @@ extension IntroView {
         }
         .typography(.suit17B)
         .buttonStyle(.glassProminent)
-        .disabled(CanGoNext ? true : false)
+        .tint(canProceed ? .main500 : .black20)
+        .foregroundStyle(canProceed ? .white100 : .black40)
+        .disabled(!canProceed)
     }
-    
-    
+
+    // MARK: - Helper Functions
+    /// 모두 동의 토글
+    private func toggleAll() {
+        if isAllChecked {
+            // 모두 해제
+            isTermsChecked = false
+            isMarketingChecked = false
+            isAllChecked = false
+        } else {
+            // 모두 선택
+            isTermsChecked = true
+            isMarketingChecked = true
+            isAllChecked = true
+        }
+    }
+
+    /// 개별 항목 변경 시 "모두 동의" 상태 업데이트
+    private func updateAllChecked() {
+        isAllChecked = isTermsChecked && isMarketingChecked
+    }
 }
 
 

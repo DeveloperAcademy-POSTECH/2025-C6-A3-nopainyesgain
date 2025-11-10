@@ -76,10 +76,17 @@ extension IntroViewModel {
 
             DispatchQueue.main.async {
                 if hasProfile {
-                    // TODO: 나중에 약관 동의 여부 체크 (KeychyUser에 필드 추가 필요)
-                    // 현재는 무조건 약관 시트 표시
-                    self.showTermsSheet = true
-                    // 약관 동의 완료 후 isLoggedIn = true 설정 (IntroView에서 처리)
+                    // 약관 동의 여부 체크
+                    if let currentUser = UserManager.shared.currentUser, currentUser.termsAgreed {
+                        // 이미 약관 동의함 → 바로 메인 화면
+                        print("약관 동의 완료 → 메인 화면")
+                        self.isLoggedIn = true
+                        self.needsProfileSetup = false
+                    } else {
+                        // 약관 동의 안했음 → 약관 시트 표시
+                        print("약관 동의 필요 → 약관 시트 표시")
+                        self.showTermsSheet = true
+                    }
                 } else {
                     self.handleIncompleteProfile(uid: user.uid)
                 }

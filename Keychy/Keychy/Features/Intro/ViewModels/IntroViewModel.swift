@@ -28,10 +28,31 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     var showTermsSheet = false
 
     // MARK: - 약관 동의 완료
-    func completeTermsAgreement() {
+    func completeTermsAgreement(marketingAgreed: Bool) {
+        // Firestore에 약관 동의 저장
+        saveTermsAgreement(marketingAgreed: marketingAgreed)
+
         showTermsSheet = false
         isLoggedIn = true
-        // TODO: 나중에 Firestore에 약관 동의 여부 저장 필요
+    }
+
+    // MARK: - 약관 동의 저장
+    private func saveTermsAgreement(marketingAgreed: Bool) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        Firestore.firestore()
+            .collection("User")
+            .document(uid)
+            .updateData([
+                "termsAgreed": true,              // 필수 약관 동의
+                "marketingAgreed": marketingAgreed // 마케팅 수신 동의
+            ]) { error in
+                if let error = error {
+                    print("약관 동의 저장 실패: \(error.localizedDescription)")
+                } else {
+                    print("약관 동의 저장 성공 - 마케팅: \(marketingAgreed)")
+                }
+            }
     }
     
     // MARK: - 초기화

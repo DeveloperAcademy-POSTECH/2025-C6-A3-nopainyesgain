@@ -27,7 +27,8 @@ struct KeychyUser: Identifiable {
     var carabiners: [String]
     var tags: [String]
     var keyrings: [String]
-    var marketingAgreed: Bool
+    var termsAgreed: Bool         // 필수 약관 동의 여부
+    var marketingAgreed: Bool     // 마케팅 수신 동의 여부
 
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -47,7 +48,8 @@ struct KeychyUser: Identifiable {
             "carabiners": carabiners,
             "tags": tags,
             "keyrings": keyrings,
-            "marketingAgreed" : marketingAgreed
+            "termsAgreed": termsAgreed,
+            "marketingAgreed": marketingAgreed
         ]
     }
 
@@ -75,6 +77,7 @@ struct KeychyUser: Identifiable {
         self.carabiners = data["carabiners"] as? [String] ?? []
         self.tags = data["tags"] as? [String] ?? []
         self.keyrings = data["keyrings"] as? [String] ?? []
+        self.termsAgreed = data["termsAgreed"] as? Bool ?? false
         self.marketingAgreed = data["marketingAgreed"] as? Bool ?? false
     }
 
@@ -96,6 +99,7 @@ struct KeychyUser: Identifiable {
         self.carabiners = []
         self.tags = []
         self.keyrings = []
+        self.termsAgreed = false
         self.marketingAgreed = false
     }
 }
