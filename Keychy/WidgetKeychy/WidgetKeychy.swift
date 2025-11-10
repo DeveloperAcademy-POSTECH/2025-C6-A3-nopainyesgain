@@ -34,8 +34,7 @@ struct WidgetKeychy: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             WidgetKeychyEntryView(entry: entry)
-                .containerBackground(.clear, for: .widget)
-        }
+          }
         .containerBackgroundRemovable(true)
         .contentMarginsDisabled()
     }

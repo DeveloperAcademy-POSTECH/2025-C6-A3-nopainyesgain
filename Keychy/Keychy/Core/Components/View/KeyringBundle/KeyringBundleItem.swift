@@ -10,14 +10,13 @@ import SwiftUI
 
 struct KeyringBundleItem: View {
     let bundle: KeyringBundle
-    
+    @State private var cachedImage: Image?
+
     var body: some View {
         VStack(spacing: 5) {
             ZStack(alignment: .top) {
-                //TODO: 실제 뭉치 씬으로 변경 필요
-                Image(.ddochi)
-                    .resizable()
-                    .scaledToFit()
+                // 캐시된 번들 이미지 표시
+                bundleImageView
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.gray.opacity(0.2))
@@ -52,6 +51,44 @@ struct KeyringBundleItem: View {
                     .foregroundStyle(.main500)
             }
         }
-        
+        .onAppear {
+            loadBundleImage()
+        }
+    }
+
+    // MARK: - Bundle Image View
+
+    private var bundleImageView: some View {
+        return Group {
+            if let cachedImage = cachedImage {
+                cachedImage
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                // 캐시 로딩 중 또는 실패 시 플레이스홀더
+                Image(.ddochi)
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
+    }
+
+    // MARK: - Load Bundle Image
+
+    /// 캐시에서 번들 이미지 로드
+    private func loadBundleImage() {
+        guard let firestoreId = bundle.firestoreId else {
+            print("⚠️ [BundleItem] firestoreId 없음")
+            return
+        }
+
+        // 캐시에서 이미지 로드
+        if let imageData = BundleImageCache.shared.load(for: firestoreId),
+           let uiImage = UIImage(data: imageData) {
+            cachedImage = Image(uiImage: uiImage)
+//            print("✅ [BundleItem] 캐시 이미지 로드: \(bundle.name)")
+        } else {
+            print("⚠️ [BundleItem] 캐시 이미지 없음: \(bundle.name)")
+        }
     }
 }

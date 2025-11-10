@@ -28,10 +28,11 @@ struct BundleInventoryView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             backToolbarItem
-            nextToolbarItem
             #if DEBUG
             debugToolbarItem
             #endif
+            nextToolbarItem
+
         }
         .navigationBarBackButtonHidden(true)
         #if DEBUG
