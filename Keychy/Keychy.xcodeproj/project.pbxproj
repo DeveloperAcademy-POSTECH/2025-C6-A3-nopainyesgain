@@ -87,7 +87,7 @@
 		4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */; };
 		4C6530502EBB2A90000F8154 /* LoadingAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */; };
 		4C65306C2EBC889B000F8154 /* ChangeNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65306B2EBC889B000F8154 /* ChangeNameView.swift */; };
-		4C65306E2EBCF157000F8154 /* TermsWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65306D2EBCF157000F8154 /* TermsWebView.swift */; };
+		4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65306D2EBCF157000F8154 /* TermsView.swift */; };
 		4C6530722EBCFD10000F8154 /* BangmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530712EBCFD10000F8154 /* BangmarkAlert.swift */; };
 		4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 4C6621DA2EAE0D93001760B5 /* Lottie */; };
 		4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */; };
@@ -190,13 +190,14 @@
 		4CEC62952EAE08F70099ECEE /* Confetti.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62892EAE08F70099ECEE /* Confetti.json */; };
 		4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62872EAE08F70099ECEE /* Assets.xcassets */; };
 		4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62882EAE08F70099ECEE /* Birthday.json */; };
-		4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62992EAE09990099ECEE /* BundleCreateView.swift */; };
 		4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */; };
 		4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */; };
 		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
+		AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B62EC053E4007B5413 /* CarabinerType.swift */; };
+		AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */; };
 		AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */; };
 		AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
@@ -204,6 +205,8 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
+		AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */; };
+		AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
 		C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
@@ -229,6 +232,15 @@
 		C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */; };
 		C6B56F1C2EBF2A960049F969 /* NeonSignVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */; };
 		C6B56F202EBF72130049F969 /* ItemPurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F1F2EBF72130049F969 /* ItemPurchaseManager.swift */; };
+		C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */; };
+		C6B56F2B2EC039D30049F969 /* KeyringCellScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F2A2EC039D30049F969 /* KeyringCellScene+Capture.swift */; };
+		C6B56F2D2EC03A000049F969 /* CachedImagesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F2C2EC03A000049F969 /* CachedImagesDebugView.swift */; };
+		C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B56F332EC061BB0049F969 /* WidgetKit.framework */; };
+		C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B56F352EC061BB0049F969 /* SwiftUI.framework */; };
+		C6B56F472EC061BC0049F969 /* WidgetKeychyExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
+		C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */; };
+		C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -237,6 +249,16 @@
 		C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402A22EB40ACA006B58DF /* AlarmView.swift */; };
 		C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6EE7AD62EB445F6002B5669 /* MyPageView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C6B56F452EC061BC0049F969 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CEC61A92EAE071B0099ECEE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6B56F312EC061BB0049F969;
+			remoteInfo = WidgetKeychyExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */ = {
@@ -247,6 +269,17 @@
 			files = (
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6B56F482EC061BC0049F969 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C6B56F472EC061BC0049F969 /* WidgetKeychyExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -326,7 +359,7 @@
 		4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCustomizingView+Cart.swift"; sourceTree = "<group>"; };
 		4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAlert.swift; sourceTree = "<group>"; };
 		4C65306B2EBC889B000F8154 /* ChangeNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeNameView.swift; sourceTree = "<group>"; };
-		4C65306D2EBCF157000F8154 /* TermsWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsWebView.swift; sourceTree = "<group>"; };
+		4C65306D2EBCF157000F8154 /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
 		4C6530712EBCFD10000F8154 /* BangmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BangmarkAlert.swift; sourceTree = "<group>"; };
 		4C6621FB2EAE5FC3001760B5 /* SUIT-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Bold.otf"; sourceTree = "<group>"; };
 		4C6621FC2EAE5FC3001760B5 /* SUIT-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-ExtraBold.otf"; sourceTree = "<group>"; };
@@ -428,13 +461,14 @@
 		4CEC62892EAE08F70099ECEE /* Confetti.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Confetti.json; sourceTree = "<group>"; };
 		4CEC628B2EAE08F70099ECEE /* Bark.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Bark.mp3; sourceTree = "<group>"; };
 		4CEC628C2EAE08F70099ECEE /* Drum.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Drum.mp3; sourceTree = "<group>"; };
-		4CEC62992EAE09990099ECEE /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
 		4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDetailView.swift; sourceTree = "<group>"; };
 		4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleInventoryView.swift; sourceTree = "<group>"; };
 		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameInputView.swift; sourceTree = "<group>"; };
+		AA0A54B62EC053E4007B5413 /* CarabinerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerType.swift; sourceTree = "<group>"; };
+		AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleRingComponent.swift; sourceTree = "<group>"; };
 		AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleAddKeyringView.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerItemTile.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
@@ -442,6 +476,8 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleMenu.swift; sourceTree = "<group>"; };
+		AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameEditView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
 		C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateInitializer.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
@@ -467,6 +503,15 @@
 		C6B56F192EBF284F0049F969 /* TemplatePreviewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatePreviewComponents.swift; sourceTree = "<group>"; };
 		C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NeonSignVM+Effect.swift"; sourceTree = "<group>"; };
 		C6B56F1F2EBF72130049F969 /* ItemPurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPurchaseManager.swift; sourceTree = "<group>"; };
+		C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringImageCache.swift; sourceTree = "<group>"; };
+		C6B56F2A2EC039D30049F969 /* KeyringCellScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCellScene+Capture.swift"; sourceTree = "<group>"; };
+		C6B56F2C2EC03A000049F969 /* CachedImagesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedImagesDebugView.swift; sourceTree = "<group>"; };
+		C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetKeychyExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6B56F332EC061BB0049F969 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C6B56F352EC061BB0049F969 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeychyRelease.entitlements; sourceTree = "<group>"; };
+		C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetKeychyExtension.entitlements; sourceTree = "<group>"; };
+		C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableKeyring.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -475,6 +520,27 @@
 		C6C402A22EB40ACA006B58DF /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 		C6EE7AD62EB445F6002B5669 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C6B56F372EC061BB0049F969 /* WidgetKeychy */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
+			);
+			path = WidgetKeychy;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
@@ -492,6 +558,15 @@
 				4CBBEF1C2EB2565900252590 /* NukeUI in Frameworks */,
 				38A594442EAE4EE20003D712 /* FirebaseFirestore in Frameworks */,
 				4CBBEF1A2EB2565900252590 /* Nuke in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6B56F2F2EC061BB0049F969 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */,
+				C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,7 +716,7 @@
 			children = (
 				C6EE7AD62EB445F6002B5669 /* MyPageView.swift */,
 				4C65306B2EBC889B000F8154 /* ChangeNameView.swift */,
-				4C65306D2EBCF157000F8154 /* TermsWebView.swift */,
+				4C65306D2EBCF157000F8154 /* TermsView.swift */,
 			);
 			path = MyPage;
 			sourceTree = "<group>";
@@ -719,7 +794,9 @@
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
+				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
+				C6B56F372EC061BB0049F969 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
@@ -729,6 +806,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61B12EAE071B0099ECEE /* Keychy.app */,
+				C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -736,6 +814,7 @@
 		4CEC61C22EAE079C0099ECEE /* Keychy */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */,
 				38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
 				382800CD2EBFBE03005F1332 /* Keychy.entitlements */,
@@ -772,8 +851,10 @@
 		4CEC61E32EAE08C00099ECEE /* Keyring */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */,
 				4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */,
 				4CEC61DF2EAE08C00099ECEE /* Keyring.swift */,
+				AA0A54B62EC053E4007B5413 /* CarabinerType.swift */,
 				4CEC61E02EAE08C00099ECEE /* RingType.swift */,
 				4CEC61E12EAE08C00099ECEE /* ChainType.swift */,
 				4CEC61E22EAE08C00099ECEE /* BodyType.swift */,
@@ -859,6 +940,7 @@
 				AADD2AB52EB3AF520051478E /* KeyringBundle */,
 				4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */,
 				4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */,
+				C6B56F2A2EC039D30049F969 /* KeyringCellScene+Capture.swift */,
 				C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */,
 				4CEC61F82EAE08DA0099ECEE /* View */,
 				4CEC62022EAE08DA0099ECEE /* Keyring */,
@@ -928,6 +1010,7 @@
 		4CEC62192EAE08DA0099ECEE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F222EC0341B0049F969 /* Cache */,
 				4C3687F92EBFC0FB00C64E75 /* Notification */,
 				C68931CD2EB7B94B00C5F083 /* FileManagers */,
 				4CEC62062EAE08DA0099ECEE /* Components */,
@@ -965,6 +1048,7 @@
 		4CEC623F2EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C6B56F2C2EC03A000049F969 /* CachedImagesDebugView.swift */,
 				4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */,
 				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
 				385425BD2EB2989400A06C02 /* CollectionCellView.swift */,
@@ -1237,13 +1321,14 @@
 		4CEC629D2EAE09990099ECEE /* Bundle */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62992EAE09990099ECEE /* BundleCreateView.swift */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */,
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
+				AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */,
+				AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -1261,6 +1346,7 @@
 			children = (
 				C6830F152EBB08380059379A /* MultiKeyringScene.swift */,
 				C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */,
+				AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */,
 			);
 			path = KeyringBundle;
 			sourceTree = "<group>";
@@ -1281,6 +1367,8 @@
 				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
 				C6B56F082EBC3D670049F969 /* StoreKit1.storekit */,
 				C6B56F0E2EBD8A2E0049F969 /* StoreKit.storekit */,
+				C6B56F332EC061BB0049F969 /* WidgetKit.framework */,
+				C6B56F352EC061BB0049F969 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1317,6 +1405,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		C6B56F222EC0341B0049F969 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
 		C6C4027F2EB26BFB006B58DF /* NeonSign */ = {
 			isa = PBXGroup;
 			children = (
@@ -1345,10 +1441,12 @@
 				4CEC61AE2EAE071B0099ECEE /* Frameworks */,
 				4CEC61AF2EAE071B0099ECEE /* Resources */,
 				4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */,
+				C6B56F482EC061BC0049F969 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C6B56F462EC061BC0049F969 /* PBXTargetDependency */,
 			);
 			name = Keychy;
 			packageProductDependencies = (
@@ -1367,6 +1465,28 @@
 			productReference = 4CEC61B12EAE071B0099ECEE /* Keychy.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6B56F4C2EC061BC0049F969 /* Build configuration list for PBXNativeTarget "WidgetKeychyExtension" */;
+			buildPhases = (
+				C6B56F2E2EC061BB0049F969 /* Sources */,
+				C6B56F2F2EC061BB0049F969 /* Frameworks */,
+				C6B56F302EC061BB0049F969 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C6B56F372EC061BB0049F969 /* WidgetKeychy */,
+			);
+			name = WidgetKeychyExtension;
+			packageProductDependencies = (
+			);
+			productName = WidgetKeychyExtension;
+			productReference = C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1378,6 +1498,9 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					4CEC61B02EAE071B0099ECEE = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					C6B56F312EC061BB0049F969 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
@@ -1403,6 +1526,7 @@
 			projectRoot = "";
 			targets = (
 				4CEC61B02EAE071B0099ECEE /* Keychy */,
+				C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -1449,6 +1573,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C6B56F302EC061BB0049F969 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1458,6 +1589,7 @@
 			files = (
 				AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */,
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
+				AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */,
 				AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
 				C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */,
@@ -1474,6 +1606,7 @@
 				4C6530482EBA8886000F8154 /* EffectItem.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
+				C6B56F2B2EC039D30049F969 /* KeyringCellScene+Capture.swift in Sources */,
 				4CBBEF2A2EB7DB9800252590 /* RecordingSheet.swift in Sources */,
 				4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */,
 				3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */,
@@ -1531,6 +1664,7 @@
 				382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */,
 				38C3C28E2EC1F56B003C5DE1 /* CollectionKeyringDetailView+Sheet.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
+				C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				385425C82EB3C3F300A06C02 /* KeyringDetailSceneView.swift in Sources */,
 				38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */,
@@ -1561,6 +1695,7 @@
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
+				C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */,
 				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
 				C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */,
@@ -1581,7 +1716,7 @@
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
-				4CEC629E2EAE09990099ECEE /* BundleCreateView.swift in Sources */,
+				AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */,
 				C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* ItemDetailImage.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
@@ -1602,17 +1737,19 @@
 				AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */,
 				38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */,
 				4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */,
+				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
 				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
 				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
 				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,
 				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
-				4C65306E2EBCF157000F8154 /* TermsWebView.swift in Sources */,
+				4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
+				AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
 				38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */,
@@ -1639,11 +1776,29 @@
 				C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */,
 				4C6530422EBA7D12000F8154 /* KeyringCustomizingView+PurchaseSheet.swift in Sources */,
 				4CEC61ED2EAE08C00099ECEE /* Interaction.swift in Sources */,
+				C6B56F2D2EC03A000049F969 /* CachedImagesDebugView.swift in Sources */,
 				386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C6B56F2E2EC061BB0049F969 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */,
+				C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C6B56F462EC061BC0049F969 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
+			targetProxy = C6B56F452EC061BC0049F969 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4CEC61BA2EAE071C0099ECEE /* Debug */ = {
@@ -1814,7 +1969,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Keychy/Keychy.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Keychy/KeychyRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -1851,6 +2006,77 @@
 			};
 			name = Release;
 		};
+		C6B56F492EC061BC0049F969 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WidgetKeychy/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetKeychy;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.KeychyOfficial.app.WidgetKeychy;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "keychy-widget";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C6B56F4A2EC061BC0049F969 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WidgetKeychy/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetKeychy;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.KeychyOfficial.app.WidgetKeychy;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "keychy-widget";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1868,6 +2094,15 @@
 			buildConfigurations = (
 				4CEC61BD2EAE071C0099ECEE /* Debug */,
 				4CEC61BE2EAE071C0099ECEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C6B56F4C2EC061BC0049F969 /* Build configuration list for PBXNativeTarget "WidgetKeychyExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6B56F492EC061BC0049F969 /* Debug */,
+				C6B56F4A2EC061BC0049F969 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

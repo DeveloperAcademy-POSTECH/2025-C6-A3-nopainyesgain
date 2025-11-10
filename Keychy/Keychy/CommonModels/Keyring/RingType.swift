@@ -34,6 +34,14 @@ enum RingType {
         }
     }
     
+    // MARK: - 링 옆면 이미지 다운로드 URL
+    var sideImageURL: String {
+        switch self {
+        case .basic:
+            return "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Rings%2FbasicRingSide.png?alt=media&token=4dac9a62-8dee-43c8-9428-7ca2b2d71d82"
+        }
+    }
+    
     // MARK: - Storage 경로
     var storagePath: String {
         switch self {

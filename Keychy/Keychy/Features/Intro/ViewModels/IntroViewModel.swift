@@ -12,20 +12,61 @@ import FirebaseFirestore
 import CryptoKit
 
 @Observable
-class IntroViewModel {
+class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 로그인 관련
     var isLoggedIn = false
     var isLoading = false
     var errorMessage: String?
     var currentNonce: String?
-    
+
     // 프로필 설정 관련
     var needsProfileSetup = false
     var tempUserUID: String = ""
     var tempUserEmail: String = ""
+    var tempMarketingAgreed: Bool = false
+
+    // 약관 동의 관련
+    var showTermsSheet = false
+
+    // MARK: - 약관 동의 완료
+    func completeTermsAgreement(marketingAgreed: Bool) {
+        showTermsSheet = false
+
+        // 신규 사용자인지 확인 (tempUserUID가 있으면 신규)
+        if !tempUserUID.isEmpty {
+            // 신규 사용자 → 약관 동의 정보 저장하고 닉네임 입력으로
+            tempMarketingAgreed = marketingAgreed
+            needsProfileSetup = true
+        } else {
+            // 기존 사용자 → Firestore에 약관 동의 저장하고 메인으로
+            saveTermsAgreement(marketingAgreed: marketingAgreed)
+            isLoggedIn = true
+        }
+    }
+
+    // MARK: - 약관 동의 저장
+    func saveTermsAgreement(marketingAgreed: Bool) {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        Firestore.firestore()
+            .collection("User")
+            .document(uid)
+            .updateData([
+                "termsAgreed": true,              // 필수 약관 동의
+                "marketingAgreed": marketingAgreed // 마케팅 수신 동의
+            ]) { error in
+                if let error = error {
+                    print("약관 동의 저장 실패: \(error.localizedDescription)")
+                } else {
+                    print("약관 동의 저장 성공 - 마케팅: \(marketingAgreed)")
+                }
+            }
+    }
     
     // MARK: - 초기화
-    init() { }
+    override init() {
+        super.init()
+    }
     
     // MARK: - Auth 상태 확인
     func checkAuthStatus() {
@@ -73,14 +114,29 @@ class IntroViewModel {
         }
     }
 
-    // MARK: - Apple 로그인 요청 설정
+    // MARK: - Apple 로그인 시작 (커스텀 버튼용)
+    func startAppleSignIn() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.email]
+        request.nonce = sha256(nonce)
+
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.performRequests()
+    }
+
+    // MARK: - Apple 로그인 요청 설정 (기존 - 사용 안함)
     func configureRequest(_ request: ASAuthorizationAppleIDRequest) {
         let nonce = randomNonceString()
         currentNonce = nonce
         request.requestedScopes = [.email]
         request.nonce = sha256(nonce)
     }
-    
+
     // MARK: - 로그인 실패 처리
     func handleSignInFailure(_ error: Error) {
         // TODO: 이후 로그인 화면 나오면 UI & 로직 수정 필요
@@ -111,7 +167,20 @@ class IntroViewModel {
         let hashString = hashedData.compactMap {
             String(format: "%02x", $0)
         }.joined()
-        
+
         return hashString
+    }
+}
+
+// MARK: - ASAuthorizationControllerDelegate
+extension IntroViewModel {
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        // 로그인 성공
+        handleSignInWithApple(authorization: authorization)
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        // 로그인 실패
+        handleSignInFailure(error)
     }
 }

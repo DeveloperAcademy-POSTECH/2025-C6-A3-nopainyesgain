@@ -24,6 +24,11 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     /// - [2] : 앞 이미지
     let carabinerImage: [String]
     
+    /// 카라비너 타입
+    /// - .hamburger : 벽걸이 형
+    /// - .plain : 일반 카라비너 형
+    let carabinerType: String
+    
     /// 카라비너 설명
     let description: String
     
@@ -54,5 +59,33 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     /// 무료 카라비너 여부
     var isFree: Bool {
         return price == 0
+    }
+    
+    /// 카라비너 타입 enum
+    var type: CarabinerType {
+        return CarabinerType.from(carabinerType)
+    }
+    
+    /// 뒷면(또는 단일) 카라비너 이미지 URL
+    var backImageURL: String {
+        switch type {
+        case .hamburger:
+            return carabinerImage.count > 1 ? carabinerImage[1] : ""
+        case .plain:
+            return carabinerImage.count > 0 ? carabinerImage[0] : ""
+        }
+    }
+    
+    /// 앞면 카라비너 이미지 URL (햄버거 타입만)
+    var frontImageURL: String? {
+        guard type == .hamburger, carabinerImage.count > 2 else {
+            return nil
+        }
+        return carabinerImage[2]
+    }
+    
+    /// 썸네일 이미지 URL
+    var thumbnailImageURL: String {
+        return carabinerImage.first ?? ""
     }
 }

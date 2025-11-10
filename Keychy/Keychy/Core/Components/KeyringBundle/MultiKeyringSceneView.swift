@@ -15,6 +15,7 @@ struct MultiKeyringSceneView: View {
     let ringType: RingType
     let chainType: ChainType
     let backgroundColor: UIColor
+    let currentCarabinerType: CarabinerType
 
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []  // 로티 효과 리스트
@@ -31,12 +32,14 @@ struct MultiKeyringSceneView: View {
         keyringDataList: [MultiKeyringScene.KeyringData],
         ringType: RingType = .basic,
         chainType: ChainType = .basic,
-        backgroundColor: UIColor = .clear
+        backgroundColor: UIColor = .clear,
+        currentCarabinerType: CarabinerType
     ) {
         self.keyringDataList = keyringDataList
         self.ringType = ringType
         self.chainType = chainType
         self.backgroundColor = backgroundColor
+        self.currentCarabinerType = currentCarabinerType
     }
 
     var body: some View {
@@ -61,6 +64,9 @@ struct MultiKeyringSceneView: View {
             .onChange(of: keyringDataList) { _, _ in
                 setupScene(size: geometry.size)
             }
+            .onChange(of: currentCarabinerType) { _, _ in
+                setupScene(size: geometry.size)
+            }
         }
     }
 
@@ -74,6 +80,9 @@ struct MultiKeyringSceneView: View {
 
         newScene.size = size
         newScene.scaleMode = .resizeFill
+
+        // 주입: 카라비너 타입
+        newScene.currentCarabinerType = currentCarabinerType
 
         // 파티클 효과 콜백 설정
         newScene.onPlayParticleEffect = { [self] keyringIndex, effectName, spriteKitPosition in

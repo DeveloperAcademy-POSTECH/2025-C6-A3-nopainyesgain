@@ -36,7 +36,7 @@ enum ChainType {
         switch self {
         case .basic:
             return ChainLink(
-                imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain1.png?alt=media&token=359912fe-eb2b-43c0-a882-18c07bd25382",
+                imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain1.png?alt=media&token=97ce479e-84dd-43ee-8c06-42e469468451",
                 storagePath: "Chains/basicChain1.png",
                 width: 5,
                 height: 22
@@ -49,7 +49,7 @@ enum ChainType {
         switch self {
         case .basic:
             return ChainLink(
-                imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain2.png?alt=media&token=9462c923-979a-4aa0-98c5-bbd626bcaf30",
+                imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain2.png?alt=media&token=d12afa09-c0cf-4fe4-b53c-cc459afd7e7b",
                 storagePath: "Chains/basicChain2.png",
                 width: 18,
                 height: 26
@@ -63,9 +63,27 @@ enum ChainType {
         return index % 2 == 0 ? evenLink : oddLink
     }
     
+    /// 카라비너 타입에 따라 체인 링크 반환
+    func getLink(at index: Int, for carabinerType: CarabinerType?) -> ChainLink {
+        if let carabinerType = carabinerType, carabinerType == .plain {
+            // Plain: odd-even-odd-even (홀수부터 시작)
+            return index % 2 == 0 ? oddLink : evenLink
+        } else {
+            // Hamburger: even-odd-even-odd (짝수부터 시작)
+            return index % 2 == 0 ? evenLink : oddLink
+        }
+    }
+    
     func createChainLinks(length: Int) -> [ChainLink] {
         return (0..<length).map { index in
             getLink(at: index)
+        }
+    }
+    
+    /// 카라비너 타입에 따라 체인 링크 생성
+    func createChainLinks(length: Int, for carabinerType: CarabinerType?) -> [ChainLink] {
+        return (0..<length).map { index in
+            getLink(at: index, for: carabinerType)
         }
     }
     
