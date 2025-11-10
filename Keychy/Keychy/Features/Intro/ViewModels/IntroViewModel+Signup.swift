@@ -44,12 +44,14 @@ extension IntroViewModel {
         isLoading = true
         errorMessage = nil
 
-        // KeychyUser 객체 생성
-        let newUser = KeychyUser(
+        // KeychyUser 객체 생성 (약관 동의 정보 포함)
+        var newUser = KeychyUser(
             id: tempUserUID,
             nickname: nickname,
             email: tempUserEmail
         )
+        newUser.termsAgreed = true
+        newUser.marketingAgreed = tempMarketingAgreed
 
         UserManager.shared.saveProfile(user: newUser) { [weak self] success in
             guard let self = self else { return }
@@ -58,9 +60,6 @@ extension IntroViewModel {
                 self.isLoading = false
 
                 if success {
-                    // 약관 동의 정보 저장
-                    self.saveTermsAgreement(marketingAgreed: self.tempMarketingAgreed)
-
                     // 임시 정보 초기화 및 메인으로 이동
                     self.needsProfileSetup = false
                     self.isLoggedIn = true

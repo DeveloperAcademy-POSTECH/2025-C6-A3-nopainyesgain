@@ -28,6 +28,11 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 약관 동의 관련
     var showTermsSheet = false
 
+    // 닉네임 유효성 검사 관련
+    var validationMessage: String = "영문, 숫자, 한글, _, .만 입력 가능해요."
+    var isValidationPositive: Bool = false
+    var isCheckingDuplicate: Bool = false
+
     // MARK: - 약관 동의 완료
     func completeTermsAgreement(marketingAgreed: Bool) {
         showTermsSheet = false

@@ -133,20 +133,24 @@ class UserManager {
         UserDefaults.standard.set(user.id, forKey: "userUID")
         UserDefaults.standard.set(user.nickname, forKey: "userNickname")
         UserDefaults.standard.set(user.email, forKey: "userEmail")
+        UserDefaults.standard.set(user.marketingAgreed, forKey: "userMarketingAgreed")
     }
 
     private func loadFromCache() {
         let uid = UserDefaults.standard.string(forKey: "userUID") ?? ""
         let nickname = UserDefaults.standard.string(forKey: "userNickname") ?? ""
         let email = UserDefaults.standard.string(forKey: "userEmail") ?? ""
+        let marketingAgreed = UserDefaults.standard.bool(forKey: "userMarketingAgreed")
 
         if !uid.isEmpty {
             // 캐시에서 임시 유저 생성 (전체 데이터는 Firestore에서 로드 필요)
-            currentUser = KeychyUser(
+            var user = KeychyUser(
                 id: uid,
                 nickname: nickname,
                 email: email
             )
+            user.marketingAgreed = marketingAgreed
+            currentUser = user
             isLoaded = true
         }
     }
@@ -180,6 +184,7 @@ class UserManager {
         UserDefaults.standard.removeObject(forKey: "userNickname")
         UserDefaults.standard.removeObject(forKey: "userEmail")
         UserDefaults.standard.removeObject(forKey: "userUID")
+        UserDefaults.standard.removeObject(forKey: "userMarketingAgreed")
     }
 
     // MARK: - 회원탈퇴

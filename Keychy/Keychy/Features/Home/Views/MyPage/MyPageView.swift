@@ -65,6 +65,10 @@ struct MyPageView: View {
                 // Firestore에서 마케팅 알림 설정 불러오기
                 isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
             }
+            .onChange(of: userManager.currentUser?.marketingAgreed) { oldValue, newValue in
+                // UserManager의 marketingAgreed가 변경되면 토글 상태도 동기화
+                isMarketingNotificationEnabled = newValue ?? false
+            }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 notificationManager.checkPermission { isAuthorized in
                     isPushNotificationEnabled = isAuthorized
@@ -414,7 +418,7 @@ extension MyPageView {
         Firestore.firestore()
             .collection("User")
             .document(uid)
-            .updateData(["marketingAgreed": newValue]) { error in
+            .updateData(["marketingAgreed": newValue]) { [weak userManager] error in
                 if let error = error {
                     print("마케팅 알림 설정 저장 실패: \(error.localizedDescription)")
                     // 실패 시 원래대로 되돌리기
@@ -423,6 +427,14 @@ extension MyPageView {
                     }
                 } else {
                     print("마케팅 알림 설정 저장 성공: \(newValue)")
+                    // UserManager의 currentUser도 즉시 업데이트
+                    DispatchQueue.main.async {
+                        if var user = userManager?.currentUser {
+                            user.marketingAgreed = newValue
+                            userManager?.currentUser = user
+                            userManager?.saveToCache()
+                        }
+                    }
                 }
             }
     }
