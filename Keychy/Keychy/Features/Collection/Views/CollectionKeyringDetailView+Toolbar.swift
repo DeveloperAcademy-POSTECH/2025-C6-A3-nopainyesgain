@@ -15,8 +15,9 @@ extension CollectionKeyringDetailView {
                 isSheetPresented = false
                 router.pop()
             } label: {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.primary)
+                Image("BackIcon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
             .opacity(showUIForCapture ? 1 : 0)
         }
@@ -29,8 +30,9 @@ extension CollectionKeyringDetailView {
                     showMenu.toggle()
                 }
             }) {
-                Image(systemName: "ellipsis")
-                    .foregroundColor(.primary)
+                Image("MenuIcon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
                     .background(
                         GeometryReader { geometry in
