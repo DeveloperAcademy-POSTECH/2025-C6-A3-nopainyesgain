@@ -20,14 +20,49 @@ struct BundleDetailView: View {
     @State private var physicsEnabled: Bool = false  // 물리 시뮬레이션 활성화 상태
     @State private var allKeyringsStabilized: Bool = false  // 모든 키링 안정화 완료
     @State private var showMenu: Bool = false
+    @State private var showDeleteAlert: Bool = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                viewModel.backgroundImage
                 contentView(geometry: geometry)
+                
+                if showMenu {
+                    Color.clear
+                        .ignoresSafeArea()
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showMenu = false
+                            }
+                        }
+                    
+                    VStack(alignment: .trailing) {
+                        BundleMenu(
+                            onNameEdit: {
+                                showMenu = false
+                            },
+                            onEdit: {
+                                showMenu = false
+                            },
+                            onDelete: {
+                                showMenu = false
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteAlert = true
+                                }
+                            }
+                        )
+                        .padding(.trailing, 16)
+                        .padding(.top, 8)
+                        
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .zIndex(50)
+                }
             }
         }
+        .background(viewModel.backgroundImage)
         .safeAreaInset(edge: .bottom) { bottomSection }
         .toolbar {
             backToolbarItem
