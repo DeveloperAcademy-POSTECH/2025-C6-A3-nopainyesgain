@@ -88,7 +88,13 @@ extension IntroViewModel {
                         self.showTermsSheet = true
                     }
                 } else {
-                    self.handleIncompleteProfile(uid: user.uid)
+                    // Firestore 문서 없음 → 신규 가입 플로우 (약관 동의부터)
+                    print("Firestore 문서 없음 → 약관 동의부터 시작")
+                    self.tempUserUID = user.uid
+                    self.tempUserEmail = user.email ?? ""
+                    self.showTermsSheet = true
+                    self.needsProfileSetup = false
+                    self.isLoggedIn = false
                 }
             }
         }
