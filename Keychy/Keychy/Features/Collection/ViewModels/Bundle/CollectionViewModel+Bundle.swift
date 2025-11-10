@@ -63,10 +63,11 @@ extension CollectionViewModel {
         
         let bundleData = newBundle.toDictionary()
         
+        // Firestore가 자동 생성한 문서 ID 사용
         let docRef = db.collection("KeyringBundle").document()
         
         docRef.setData(bundleData) { [weak self] error in
-            guard self != nil else { return }
+            guard let self = self else { return }
             
             if let error = error {
                 print("뭉치 생성 에러 : \(error.localizedDescription)")
@@ -75,6 +76,14 @@ extension CollectionViewModel {
             }
             
             let bundleId = docRef.documentID
+            
+            // 로컬 번들 목록에 추가 (documentId 포함)
+            DispatchQueue.main.async {
+                var updatedBundle = newBundle
+                updatedBundle.documentId = bundleId
+                self.bundles.append(updatedBundle)
+            }
+            
             print("뭉치 생성 완료: \(bundleId)")
             completion(true, bundleId)
         }
@@ -225,6 +234,110 @@ extension CollectionViewModel {
         }
         
         return dataList
+    }
+    
+    //MARK: - 메인 번들 업데이트 (기존 메인 해제 포함)
+    func updateBundleMainStatus(bundle: KeyringBundle, isMain: Bool, completion: @escaping (Bool) -> Void) {
+        guard let documentId = bundle.documentId else {
+            print("번들 문서 ID를 찾을 수 없습니다.")
+            completion(false)
+            return
+        }
+        
+        // 새로운 번들을 메인으로 설정하는 경우, 기존 메인 번들을 먼저 해제
+        if isMain {
+            // 현재 메인인 다른 번들들을 찾아서 해제
+            let currentMainBundles = bundles.filter { $0.isMain && $0.documentId != bundle.documentId }
+            
+            let dispatchGroup = DispatchGroup()
+            var hasError = false
+            
+            // 기존 메인 번들들을 모두 해제
+            for mainBundle in currentMainBundles {
+                guard let mainDocId = mainBundle.documentId else { continue }
+                
+                dispatchGroup.enter()
+                db.collection("KeyringBundle").document(mainDocId).updateData([
+                    "isMain": false
+                ]) { error in
+                    if let error = error {
+                        print("기존 메인 번들 해제 에러: \(error.localizedDescription)")
+                        hasError = true
+                    }
+                    dispatchGroup.leave()
+                }
+            }
+            
+            // 모든 기존 메인 번들 해제 완료 후, 새로운 메인 번들 설정
+            dispatchGroup.notify(queue: .main) {
+                if hasError {
+                    completion(false)
+                    return
+                }
+                
+                // 새로운 번들을 메인으로 설정
+                self.db.collection("KeyringBundle").document(documentId).updateData([
+                    "isMain": isMain
+                ]) { [weak self] error in
+                    self?.handleMainBundleUpdateCompletion(
+                        error: error,
+                        bundle: bundle,
+                        isMain: isMain,
+                        currentMainBundles: currentMainBundles,
+                        completion: completion
+                    )
+                }
+            }
+        } else {
+            // 메인 해제하는 경우는 단순히 업데이트
+            db.collection("KeyringBundle").document(documentId).updateData([
+                "isMain": isMain
+            ]) { [weak self] error in
+                self?.handleMainBundleUpdateCompletion(
+                    error: error,
+                    bundle: bundle,
+                    isMain: isMain,
+                    currentMainBundles: [],
+                    completion: completion
+                )
+            }
+        }
+    }
+    
+    private func handleMainBundleUpdateCompletion(
+        error: Error?,
+        bundle: KeyringBundle,
+        isMain: Bool,
+        currentMainBundles: [KeyringBundle],
+        completion: @escaping (Bool) -> Void
+    ) {
+        if let error = error {
+            print("메인 번들 업데이트 에러: \(error.localizedDescription)")
+            completion(false)
+            return
+        }
+        
+        print("메인 번들 상태 업데이트 완료")
+        
+        // 로컬 상태 업데이트
+        DispatchQueue.main.async {
+            // 기존 메인 번들들을 로컬에서도 해제
+            for mainBundle in currentMainBundles {
+                if let index = self.bundles.firstIndex(where: { $0.documentId == mainBundle.documentId }) {
+                    self.bundles[index].isMain = false
+                }
+            }
+            
+            // 현재 번들 상태 업데이트
+            if let index = self.bundles.firstIndex(where: { $0.documentId == bundle.documentId }) {
+                self.bundles[index].isMain = isMain
+                // selectedBundle도 같은 번들이면 업데이트
+                if self.selectedBundle?.documentId == bundle.documentId {
+                    self.selectedBundle?.isMain = isMain
+                }
+            }
+            completion(true)
+        }
     }
     
     /// 뒷 카라비너 이미지 (또는 단일 카라비너 이미지)
