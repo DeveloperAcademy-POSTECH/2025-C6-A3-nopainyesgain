@@ -12,7 +12,7 @@ import FirebaseFirestore
 // TODO: - 바디, 체인, 링타입 추가 필요함
 struct Keyring: Identifiable, Equatable, Hashable {
     let id = UUID()
-    var firestoreId: String?  // Firestore documentId (위젯 캐시용)
+    var documentId: String?  // Firestore documentId (위젯 캐시용)
 
     var name: String
     var bodyImage: String
@@ -81,7 +81,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
         }
 
         // Firestore documentId 저장 (위젯 캐시 키로 사용)
-        self.firestoreId = documentId
+        self.documentId = documentId
 
         // 기본값이 있는 필드들
         self.name = name

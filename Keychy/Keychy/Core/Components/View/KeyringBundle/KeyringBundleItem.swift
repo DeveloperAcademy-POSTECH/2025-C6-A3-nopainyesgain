@@ -77,13 +77,13 @@ struct KeyringBundleItem: View {
 
     /// 캐시에서 번들 이미지 로드
     private func loadBundleImage() {
-        guard let firestoreId = bundle.firestoreId else {
-            print("⚠️ [BundleItem] firestoreId 없음")
+        guard let documentId = bundle.documentId else {
+            print("⚠️ [BundleItem] documentId 없음")
             return
         }
 
         // 캐시에서 이미지 로드
-        if let imageData = BundleImageCache.shared.load(for: firestoreId),
+        if let imageData = BundleImageCache.shared.load(for: documentId),
            let uiImage = UIImage(data: imageData) {
             cachedImage = Image(uiImage: uiImage)
 //            print("✅ [BundleItem] 캐시 이미지 로드: \(bundle.name)")

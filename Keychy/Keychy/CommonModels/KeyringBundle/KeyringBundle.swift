@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 struct KeyringBundle: Identifiable, Equatable, Hashable {
     let id = UUID()
-    var firestoreId: String?  // Firestore documentId (번들 이미지 캐시용)
+    var documentId: String? // Firestore 문서 ID
 
     var userId: String
     var name: String
@@ -51,7 +51,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
         }
 
         // Firestore documentId 저장 (번들 이미지 캐시 키로 사용)
-        self.firestoreId = documentId
+        self.documentId = documentId
 
         self.userId = userId
         self.name = name

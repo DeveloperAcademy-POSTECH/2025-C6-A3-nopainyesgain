@@ -95,7 +95,7 @@ struct CollectionCellView: View {
     /// 캐시 확인 후 없으면 백그라운드에서 캡처만 수행 (위젯용)
     private func checkAndCaptureKeyring() {
         // Firestore documentId가 없으면 캐싱 불가
-        guard let keyringID = keyring.firestoreId else {
+        guard let keyringID = keyring.documentId else {
             return
         }
 
