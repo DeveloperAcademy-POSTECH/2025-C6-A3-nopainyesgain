@@ -11,6 +11,7 @@ import FirebaseFirestore
 
 struct KeyringBundle: Identifiable, Equatable, Hashable {
     let id = UUID()
+    var documentId: String? // Firestore 문서 ID
     
     var userId: String
     var name: String
@@ -48,6 +49,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
               let createdAtTimestamp = data["createdAt"] as? Timestamp else {
             return nil
         }
+        self.documentId = documentId
         self.userId = userId
         self.name = name
         self.selectedBackground = selectedBackground
@@ -68,6 +70,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
          isMain: Bool,
          createdAt: Date
     ) {
+        self.documentId = nil // 새 번들이므로 아직 문서 ID 없음
         self.userId = userId
         self.name = name
         self.selectedBackground = selectedBackground

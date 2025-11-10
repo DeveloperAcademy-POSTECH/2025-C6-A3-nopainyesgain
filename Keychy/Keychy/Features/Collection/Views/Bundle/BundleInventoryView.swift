@@ -80,7 +80,3 @@ extension BundleInventoryView {
         }
     }
 }
-
-#Preview {
-    BundleInventoryView(router: NavigationRouter(), viewModel: CollectionViewModel())
-}

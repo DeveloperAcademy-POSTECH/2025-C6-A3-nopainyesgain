@@ -268,10 +268,3 @@ extension BundleNameInputView {
         router.reset()
     }
 }
-
-#Preview {
-    BundleNameInputView(
-        router: NavigationRouter(),
-        viewModel: CollectionViewModel()
-    )
-}
