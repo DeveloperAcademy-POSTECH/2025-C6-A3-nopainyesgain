@@ -135,7 +135,10 @@ struct RootView: View {
                     }
             } else {
                 // 유저 상태에 따라 화면 전환
-                if introViewModel.needsProfileSetup {
+                if introViewModel.showProfileComplete {
+                    // 프로필 완료 화면
+                    ProfileSetupCompleteView(viewModel: introViewModel)
+                } else if introViewModel.needsProfileSetup {
                     // 프로필 설정 필요
                     ProfileSetupView(viewModel: introViewModel)
                 } else if introViewModel.isLoggedIn {
