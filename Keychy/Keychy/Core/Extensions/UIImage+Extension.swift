@@ -317,4 +317,25 @@ extension UIImage {
             height: CGFloat(maxY - minY + 1)
         )
     }
+
+    static func createWelcomeBody(nickname: String) -> UIImage? {
+        guard let baseImage = UIImage(named: "welcomeBody") else { return nil }
+
+        let renderer = UIGraphicsImageRenderer(size: baseImage.size)
+        return renderer.image { context in
+            baseImage.draw(at: .zero)
+
+            let text = "@\(nickname)"
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont(name: "NotoSansKR-Black", size: 15) ?? UIFont.systemFont(ofSize: 35, weight: .black),
+                .foregroundColor: UIColor.black
+            ]
+
+            let textSize = text.size(withAttributes: attributes)
+            let x = (baseImage.size.width - textSize.width) / 2 - 2
+            let y = baseImage.size.height * 0.67
+
+            text.draw(at: CGPoint(x: x, y: y), withAttributes: attributes)
+        }
+    }
 }
