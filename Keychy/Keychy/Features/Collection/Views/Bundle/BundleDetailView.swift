@@ -41,6 +41,7 @@ struct BundleDetailView: View {
                         BundleMenu(
                             onNameEdit: {
                                 showMenu = false
+                                router.push(.bundleNameEditView)
                             },
                             onEdit: {
                                 showMenu = false
