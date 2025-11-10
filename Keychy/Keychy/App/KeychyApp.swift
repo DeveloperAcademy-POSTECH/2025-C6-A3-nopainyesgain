@@ -149,7 +149,7 @@ struct RootView: View {
                 }
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: isCheckingAuth)
+        .background(.gray800)
     }
     
     private func checkAuthAndNavigate() {
