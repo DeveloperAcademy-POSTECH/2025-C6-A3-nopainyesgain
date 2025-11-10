@@ -158,11 +158,13 @@ extension BundleDetailView {
         VStack {
             Spacer()
             HStack {
-                downloadImageButton
+                pinButton
+                Spacer()
                 Text("\(viewModel.selectedBundle!.name)\n\(viewModel.selectedBundle!.keyrings.count) / \(viewModel.selectedBundle!.maxKeyrings)")
                     .foregroundStyle(.gray600)
                     .typography(.notosans15M)
-                pinButton
+                Spacer()
+                downloadImageButton
             }
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
@@ -184,7 +186,7 @@ extension BundleDetailView {
         // 메인 설정이 되어있을 때는 이미지만 선택합니다.
         Group {
             if viewModel.selectedBundle!.isMain {
-                Text("안녕하세여")
+                Image(.pinButtonFill)
             } else {
                 Button(action: {
                     viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { success in
