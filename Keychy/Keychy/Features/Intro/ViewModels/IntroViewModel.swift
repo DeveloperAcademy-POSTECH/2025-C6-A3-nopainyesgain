@@ -23,21 +23,29 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     var needsProfileSetup = false
     var tempUserUID: String = ""
     var tempUserEmail: String = ""
+    var tempMarketingAgreed: Bool = false
 
     // 약관 동의 관련
     var showTermsSheet = false
 
     // MARK: - 약관 동의 완료
     func completeTermsAgreement(marketingAgreed: Bool) {
-        // Firestore에 약관 동의 저장
-        saveTermsAgreement(marketingAgreed: marketingAgreed)
-
         showTermsSheet = false
-        isLoggedIn = true
+
+        // 신규 사용자인지 확인 (tempUserUID가 있으면 신규)
+        if !tempUserUID.isEmpty {
+            // 신규 사용자 → 약관 동의 정보 저장하고 닉네임 입력으로
+            tempMarketingAgreed = marketingAgreed
+            needsProfileSetup = true
+        } else {
+            // 기존 사용자 → Firestore에 약관 동의 저장하고 메인으로
+            saveTermsAgreement(marketingAgreed: marketingAgreed)
+            isLoggedIn = true
+        }
     }
 
     // MARK: - 약관 동의 저장
-    private func saveTermsAgreement(marketingAgreed: Bool) {
+    func saveTermsAgreement(marketingAgreed: Bool) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
         Firestore.firestore()

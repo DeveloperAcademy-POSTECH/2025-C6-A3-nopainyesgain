@@ -9,7 +9,7 @@ import SwiftUI
 
 /// 개인정보 처리 방침 및 이용약관
 struct TermsView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+    var router: NavigationRouter<HomeRoute>?
     @State private var isEnglish = false
 
     var body: some View {

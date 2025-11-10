@@ -16,6 +16,7 @@ struct IntroView: View {
     @State private var isAllChecked: Bool = false
     @State private var isTermsChecked: Bool = false      // 개인정보 처리방침 (필수)
     @State private var isMarketingChecked: Bool = false  // 마케팅 수신 동의 (선택)
+    @State private var showTermsDetail: Bool = false     // 약관 상세보기 시트
 
     // 필수 항목 모두 동의 여부 (버튼 활성화 조건)
     private var canProceed: Bool {
@@ -35,6 +36,9 @@ struct IntroView: View {
             }
             .sheet(isPresented: $viewModel.showTermsSheet) {
                 termsSheet
+                    .sheet(isPresented: $showTermsDetail) {
+                        TermsView(router: nil)
+                    }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -166,7 +170,7 @@ extension IntroView {
 
             if initial {
                 Button {
-                    // 약관 웹뷰 열기 (TODO)
+                    showTermsDetail = true
                 } label: {
                     Image("greaterthan")
                         .padding(.leading, 5)
