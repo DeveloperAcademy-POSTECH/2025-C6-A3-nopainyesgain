@@ -13,7 +13,6 @@ struct BundleNameEditView: View {
     
     @State private var bundleName: String = ""
     @FocusState private var isTextFieldFocused: Bool
-    @State private var keyboardHeight: CGFloat = 0
     @State private var textColor: UIColor = .gray300
     
     @State private var isUpdating: Bool = false
@@ -23,10 +22,12 @@ struct BundleNameEditView: View {
                 // 뭉치 캡쳐 씬으로 수정 필요
                 Rectangle()
                     .fill(.gray100)
-                    .frame(height: geo.size.height / 4)
+                    .aspectRatio(5/7, contentMode: .fit)
                 bundleNameTextField
+                Spacer()
             }
-            .padding(.bottom, max(380 - keyboardHeight, 20))
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
         }
         .onAppear {
             if let bundle = viewModel.selectedBundle {
@@ -36,16 +37,12 @@ struct BundleNameEditView: View {
                 isTextFieldFocused = true
             }
         }
-        // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
-            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                keyboardHeight = keyboardFrame.height
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            keyboardHeight = 0
-        }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .toolbar {
+            backButton
+            checkButton
+        }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -89,5 +86,48 @@ extension BundleNameEditView {
             RoundedRectangle(cornerRadius: 12)
                 .fill(.gray50)
         )
+    }
+}
+
+// MARK: - 툴바
+
+extension BundleNameEditView {
+    private var backButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                //TODO: 에셋 이미지로 변경 필요
+                Image(systemName: "chevron.left")
+            }
+            .buttonStyle(.glass)
+        }
+    }
+    
+    private var checkButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                viewModel.updateBundleName(bundle: viewModel.selectedBundle!, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
+                    DispatchQueue.main.async {
+                        self.isUpdating = false
+                        if success {
+                            viewModel?.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+                            router.pop()
+                        }
+                    }
+                }
+            } label: {
+                if isUpdating {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white100))
+                        .scaleEffect(0.8)
+                } else {
+                    Image(.recCheck)
+                        .foregroundStyle(.white100)
+                }
+            }
+            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .buttonStyle(.glassProminent)
+        }
     }
 }
