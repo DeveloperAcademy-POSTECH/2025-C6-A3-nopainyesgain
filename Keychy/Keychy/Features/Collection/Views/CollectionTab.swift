@@ -25,8 +25,8 @@ struct CollectionTab: View {
                         EmptyView()
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
-                    case .packageCompleteView(let keyring):
-                        PackageCompleteView(router: router, viewModel: collectionViewModel, keyring: keyring)
+                    case .packageCompleteView(let keyring, let postOfficeId):
+                        PackageCompleteView(router: router, viewModel: collectionViewModel, keyring: keyring, postOfficeId: postOfficeId)
                         
                     case .coinCharge:
                         CoinChargeView(router: router)

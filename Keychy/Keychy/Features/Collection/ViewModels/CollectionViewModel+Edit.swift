@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestore
+import WidgetKit
 
 extension CollectionViewModel {
     
@@ -46,8 +47,24 @@ extension CollectionViewModel {
                     self.keyring[index].name = name
                     self.keyring[index].memo = memo
                     self.keyring[index].tags = tags
+
+                    // 이름이 변경된 경우 App Group 메타데이터 업데이트
+                    if keyring.name != name {
+                        var keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+                        if let keyringIndex = keyrings.firstIndex(where: { $0.id == documentId }) {
+                            keyrings[keyringIndex] = AvailableKeyring(
+                                id: documentId,
+                                name: name,
+                                imagePath: keyrings[keyringIndex].imagePath
+                            )
+                            KeyringImageCache.shared.saveAvailableKeyrings(keyrings)
+
+                            // 위젯 타임라인 새로고침
+                            WidgetCenter.shared.reloadTimelines(ofKind: "WidgetKeychy")
+                        }
+                    }
                 }
-                
+
                 completion(true)
             }
     }
@@ -89,9 +106,12 @@ extension CollectionViewModel {
                         if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
                             self.keyring.remove(at: index)
                         }
-                        
+
                         // 매핑 Dictionary에서도 제거
                         self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
+
+                        // App Group 위젯용 캐시에서도 제거
+                        KeyringImageCache.shared.removeKeyring(id: documentId)
 
                         completion(true)
                     }
@@ -114,6 +134,9 @@ extension CollectionViewModel {
         
         let db = Firestore.firestore()
         
+        // originalId 이미 존재하면 그걸로, 비어있으면 선택된 키링 Id
+        let baseOriginalId = keyring.originalId ?? originalDocumentId
+        
         // 새 키링 생성 (원본 키링의 데이터 복사, originalId에 원본 ID 저장)
         let copiedKeyring = Keyring(
             name: keyring.name,
@@ -127,7 +150,7 @@ extension CollectionViewModel {
             selectedTemplate: keyring.selectedTemplate,
             selectedRing: keyring.selectedRing,
             selectedChain: keyring.selectedChain,
-            originalId: originalDocumentId,
+            originalId: baseOriginalId,
             chainLength: keyring.chainLength
         )
         

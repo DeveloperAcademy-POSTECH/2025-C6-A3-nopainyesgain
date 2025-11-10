@@ -38,7 +38,11 @@ struct KeyringEditView: View {
     }
     
     private var canEdit: Bool {
-        keyring.isEditable
+        //keyring.isEditable
+        guard let currentUserId = UserDefaults.standard.string(forKey: "userUID") else {
+            return false
+        }
+        return keyring.authorId == currentUserId
     }
     
     enum Field: Hashable {

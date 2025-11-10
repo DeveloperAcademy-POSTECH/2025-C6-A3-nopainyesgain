@@ -26,9 +26,12 @@ struct CollectionView: View {
     @State private var renamingCategory: String = ""
     @State private var deletingCategory: String = ""
     @State private var newCategoryName: String = ""
-    
+
     @State private var showingMenuFor: String?
     @State private var menuPosition: CGRect = .zero
+
+    // 디버그용
+    @State private var showCachedImagesDebug: Bool = false
     
     private var categories: [String] {
         var allCategories = ["전체"]
@@ -437,17 +440,39 @@ extension CollectionView {
             Text("보관함")
                 .typography(.suit32B)
                 .padding(.leading, Spacing.sm)
-            
+
             Spacer()
-            
+
+            // 디버그 버튼 (빌드앱일 때만 표시)
+            #if DEBUG
+            Button {
+                showCachedImagesDebug = true
+                KeyringImageCache.shared.printAllCachedFiles()
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 40, height: 40)
+
+                    Image(systemName: "photo.stack")
+                        .font(.system(size: 18))
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding(.trailing, 10)
+            #endif
+
             CircleGlassButton(imageName: "Widget",
                               action: { router.push(.widgetSettingView) })
             .padding(.trailing, 10)
-            
+
             CircleGlassButton(imageName: "Bundle",
                               action: { router.push(.bundleInventoryView) })
         }
         .padding(.top, 60)
+        .sheet(isPresented: $showCachedImagesDebug) {
+            CachedImagesDebugView()
+        }
     }
 }
 

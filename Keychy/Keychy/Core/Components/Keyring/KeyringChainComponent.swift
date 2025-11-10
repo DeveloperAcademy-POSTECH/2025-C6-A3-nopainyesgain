@@ -16,10 +16,12 @@ struct KeyringChainComponent {
         count: Int,
         startPosition: CGPoint,
         spacing: CGFloat,
+        carabinerType: CarabinerType? = nil,
+        baseZPosition: CGFloat = 0,
         completion: @escaping ([SKSpriteNode]) -> Void
     ) {
         
-        let chainLinks = chainType.createChainLinks(length: count)
+        let chainLinks = chainType.createChainLinks(length: count, for: carabinerType)
         var nodesDictionary: [Int: SKSpriteNode] = [:]
         let group = DispatchGroup()
         
@@ -38,7 +40,9 @@ struct KeyringChainComponent {
                             image: image,
                             link: link,
                             position: CGPoint(x: startPosition.x, y: yPosition),
-                            index: index
+                            index: index,
+                            carabinerType: carabinerType,
+                            baseZPosition: baseZPosition
                         )
                         
                         nodesDictionary[index] = node
@@ -70,14 +74,26 @@ struct KeyringChainComponent {
         image: UIImage,
         link: ChainType.ChainLink,
         position: CGPoint,
-        index: Int
+        index: Int,
+        carabinerType: CarabinerType? = nil,
+        baseZPosition: CGFloat = 0
     ) -> SKSpriteNode {
         let texture = SKTexture(image: image)
         
         let node = SKSpriteNode(texture: texture)
         node.size = link.size
         node.position = position
-        node.zPosition = (index % 2 == 0) ? 1 : 0 // 짝수번째 노드가 위에 보이도록
+        
+        // 카라비너 타입에 따라 zPosition 조정
+        if let carabinerType = carabinerType, carabinerType == .plain {
+            // Plain: 체인이 링 뒤로 가도록 (Ring이 baseZPosition이면 체인은 더 낮게)
+            node.zPosition = baseZPosition - 1 - CGFloat(index) * 0.1
+            print("[KeyringChainComponent] Plain: Chain \(index) zPosition = \(node.zPosition) (behind ring)")
+        } else {
+            // Hamburger: 체인이 링 앞으로 (기존 방식)
+            node.zPosition = baseZPosition + 2 + CGFloat(index) * 0.1
+            print("[KeyringChainComponent] Hamburger: Chain \(index) zPosition = \(node.zPosition) (front of ring)")
+        }
         
         // 물리 바디 추가 (기본값으로 설정, 씬에서 조정됨)
         let physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: link.width - 4, height: link.height - 4))

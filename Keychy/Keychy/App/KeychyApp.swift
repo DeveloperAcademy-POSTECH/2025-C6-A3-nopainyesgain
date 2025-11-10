@@ -88,13 +88,13 @@ struct KeychyApp: App {
         if url.scheme == "keychy" {
             guard url.host == "receive",
                   let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                  let keyringId = components.queryItems?.first(where: { $0.name == "keyringId" })?.value else {
+                  let postOfficeId = components.queryItems?.first(where: { $0.name == "postOfficeId" })?.value else {
                 print("Custom URL Scheme 파싱 실패")
                 return
             }
             
-            print("Custom URL Scheme - keyringId: \(keyringId)")
-            DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
+            print("Custom URL Scheme - postOfficeId: \(postOfficeId)")
+            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId)
         }
     }
     
@@ -106,11 +106,11 @@ struct KeychyApp: App {
         
         let path = url.path
         
-        // https://keychy-f6011.web.app/receive/KEYRING_ID
+        // https://keychy-f6011.web.app/receive/POSTOFFICE_ID
         if path.hasPrefix("/receive/") {
-            let keyringId = String(path.dropFirst("/receive/".count))
-            print("keyringId 추출 성공: \(keyringId)")
-            DeepLinkManager.shared.handleDeepLink(keyringId: keyringId)
+            let postOfficeId = String(path.dropFirst("/receive/".count))
+            print("keyringId 추출 성공: \(postOfficeId)")
+            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId)
         } else {
                print("경로 파싱 실패")
         }
