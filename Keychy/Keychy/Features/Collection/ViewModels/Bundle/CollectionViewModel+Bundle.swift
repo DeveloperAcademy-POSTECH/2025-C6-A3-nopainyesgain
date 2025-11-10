@@ -239,7 +239,6 @@ extension CollectionViewModel {
     //MARK: - 메인 번들 업데이트 (기존 메인 해제 포함)
     func updateBundleMainStatus(bundle: KeyringBundle, isMain: Bool, completion: @escaping (Bool) -> Void) {
         guard let documentId = bundle.documentId else {
-            print("번들 문서 ID를 찾을 수 없습니다.")
             completion(false)
             return
         }
@@ -261,7 +260,6 @@ extension CollectionViewModel {
                     "isMain": false
                 ]) { error in
                     if let error = error {
-                        print("기존 메인 번들 해제 에러: \(error.localizedDescription)")
                         hasError = true
                     }
                     dispatchGroup.leave()
@@ -304,6 +302,38 @@ extension CollectionViewModel {
         }
     }
     
+    //MARK: - 번들 이름 업데이트
+    func updateBundleName(bundle: KeyringBundle, newName: String, completion: @escaping (Bool) -> Void) {
+        guard let documentId = bundle.documentId else {
+            completion(false)
+            return
+        }
+        
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        db.collection("KeyringBundle").document(documentId).updateData([
+            "name": trimmedName
+        ]) { [weak self] error in
+            if let error = error {
+                completion(false)
+                return
+            }
+            
+            // 로컬 상태 업데이트
+            DispatchQueue.main.async {
+                if let index = self?.bundles.firstIndex(where: { $0.documentId == bundle.documentId }) {
+                    self?.bundles[index].name = trimmedName
+                }
+                
+                // selectedBundle도 같은 번들이면 업데이트
+                if self?.selectedBundle?.documentId == bundle.documentId {
+                    self?.selectedBundle?.name = trimmedName
+                }
+                completion(true)
+            }
+        }
+    }
+    
     private func handleMainBundleUpdateCompletion(
         error: Error?,
         bundle: KeyringBundle,
@@ -316,8 +346,6 @@ extension CollectionViewModel {
             completion(false)
             return
         }
-        
-        print("메인 번들 상태 업데이트 완료")
         
         // 로컬 상태 업데이트
         DispatchQueue.main.async {
@@ -396,6 +424,5 @@ extension CollectionViewModel {
                 Color.clear
             }
         }
-        .ignoresSafeArea()
     }
 }
