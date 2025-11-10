@@ -25,78 +25,86 @@ struct PackageCompleteView: View {
     let postOfficeId: String
     
     var body: some View {
-        VStack(spacing: 0) {
-            Text("키링 포장이 완료되었어요!")
-                .typography(.suit20B)
-                .foregroundColor(.black100)
-                .padding(.bottom, 9)
+        ZStack {
+            Image("GreenBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
             
-            Text("링크나 QR로 바로 공유할 수 있어요.")
-                .typography(.suit16M)
-                .foregroundColor(.black100)
-                .padding(.bottom, 42)
-            
-            
-            GeometryReader { geometry in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 38) {
-                        // 첫 번째 페이지
-                        packagePreviewPage
-                            .frame(width: 240)
-                            .offset(x: -10)
-                        
-                        // 두 번째 페이지
-                        keyringOnlyPage
-                            .frame(width: 240)
-                            .offset(x: -10)
+            VStack(spacing: 0) {
+                Text("키링 포장이 완료되었어요!")
+                    .typography(.suit20B)
+                    .foregroundColor(.black100)
+                    .padding(.top, 16)
+                    .padding(.bottom, 9)
+                
+                Text("링크나 QR로 바로 공유할 수 있어요.")
+                    .typography(.suit16M)
+                    .foregroundColor(.black100)
+                    .padding(.bottom, 42)
+                
+                
+                GeometryReader { geometry in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 38) {
+                            // 첫 번째 페이지
+                            packagePreviewPage
+                                .frame(width: 240)
+                                .offset(x: -10)
+                            
+                            // 두 번째 페이지
+                            keyringOnlyPage
+                                .frame(width: 240)
+                                .offset(x: -10)
+                        }
+                        .padding(.horizontal, (geometry.size.width - 240) / 2)
                     }
-                    .padding(.horizontal, (geometry.size.width - 240) / 2)
-                }
-                .content.offset(x: -CGFloat(currentPage) * (240 + 38))
-                .padding(.leading, 10)
-                .frame(width: geometry.size.width, alignment: .leading)
-                .gesture(
-                    DragGesture()
-                        .onEnded { value in
-                            let threshold: CGFloat = 38
-                            if value.translation.width < -threshold && currentPage < totalPages - 1 {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    currentPage += 1
-                                }
-                            } else if value.translation.width > threshold && currentPage > 0 {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    currentPage -= 1
+                    .content.offset(x: -CGFloat(currentPage) * (240 + 38))
+                    .padding(.leading, 10)
+                    .frame(width: geometry.size.width, alignment: .leading)
+                    .gesture(
+                        DragGesture()
+                            .onEnded { value in
+                                let threshold: CGFloat = 38
+                                if value.translation.width < -threshold && currentPage < totalPages - 1 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        currentPage += 1
+                                    }
+                                } else if value.translation.width > threshold && currentPage > 0 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        currentPage -= 1
+                                    }
                                 }
                             }
-                        }
-                )
-            }
-            .frame(height: 460)
-            
-            // 페이지 인디케이터
-            HStack(spacing: 8) {
-                ForEach(0..<totalPages, id: \.self) { index in
-                    Circle()
-                        .fill(index == currentPage ? Color.black100 : Color.gray200)
-                        .frame(width: 8, height: 8)
-                        .animation(.easeInOut(duration: 0.3), value: currentPage)
+                    )
+                }
+                .frame(height: 460)
+                
+                // 페이지 인디케이터
+                HStack(spacing: 8) {
+                    ForEach(0..<totalPages, id: \.self) { index in
+                        Circle()
+                            .fill(index == currentPage ? Color.black100 : Color.gray200)
+                            .frame(width: 8, height: 8)
+                            .animation(.easeInOut(duration: 0.3), value: currentPage)
+                    }
+                }
+                .padding(.top, 8)
+                
+                Spacer()
+                    .frame(height: 24)
+                
+                // 버튼들
+                VStack(spacing: 9) {
+                    ImageSaveButton
+                    
+                    Text("이미지 저장")
+                        .typography(.suit13SB)
+                        .foregroundColor(.black100)
                 }
             }
-            .padding(.top, 8)
-            
-            Spacer()
-                .frame(height: 24)
-            
-            // 버튼들
-            VStack(spacing: 9) {
-                ImageSaveButton
-                
-                Text("이미지 저장")
-                    .typography(.suit13SB)
-                    .foregroundColor(.black100)
-            }
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -375,7 +383,7 @@ extension PackageCompleteView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
-                router.pop()
+                router.reset()
             } label: {
                 Image("dismiss")
                     .foregroundColor(.primary)
