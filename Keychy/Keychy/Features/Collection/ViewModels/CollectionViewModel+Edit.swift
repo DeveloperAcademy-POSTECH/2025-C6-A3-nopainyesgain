@@ -83,38 +83,82 @@ extension CollectionViewModel {
         
         let db = Firestore.firestore()
 
-        // Keyring 컬렉션에서 해당 키링 문서 삭제
-        db.collection("Keyring")
-            .document(documentId)
-            .delete { [weak self] error in
+        // 1. Bundle 정보 조회
+        db.collection("KeyringBundle")
+            .whereField("userId", isEqualTo: uid)
+            .getDocuments { [weak self] snapshot, error in
                 guard let self = self else {
                     completion(false)
                     return
                 }
                 
-                guard error == nil else { completion(false); return }
+                if let error = error {
+                    completion(false)
+                    return
+                }
                 
-                // User 컬렉션에서 keyrings 배열에서 해당 키링 ID 제거
-                db.collection("User")
-                    .document(uid)
-                    .updateData([
-                        "keyrings": FieldValue.arrayRemove([documentId])
-                    ]) { error in
-                        guard error == nil else { completion(false); return }
-                        
-                        // 로컬 데이터에서도 제거
-                        if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
-                            self.keyring.remove(at: index)
+                // 2. Batch 생성 - 모든 작업을 원자적으로 처리
+                let batch = db.batch()
+                
+                // 2-1. Keyring 문서 삭제
+                let keyringRef = db.collection("Keyring").document(documentId)
+                batch.deleteDocument(keyringRef)
+                
+                // 2-2. User의 keyrings 배열에서 제거
+                let userRef = db.collection("User").document(uid)
+                batch.updateData([
+                    "keyrings": FieldValue.arrayRemove([documentId])
+                ], forDocument: userRef)
+                
+                // 2-3. Bundle에서 키링을 "none"으로 변경
+                if let documents = snapshot?.documents, !documents.isEmpty {
+                    for document in documents {
+                        guard var keyrings = document.data()["keyrings"] as? [String] else {
+                            continue
                         }
-
-                        // 매핑 Dictionary에서도 제거
-                        self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
-
-                        // App Group 위젯용 캐시에서도 제거
-                        KeyringImageCache.shared.removeKeyring(id: documentId)
-
-                        completion(true)
+                        
+                        var needsUpdate = false
+                        
+                        // 배열을 순회하면서 keyringId를 "none"으로 변경
+                        for (index, keyring) in keyrings.enumerated() {
+                            if keyring == documentId {
+                                keyrings[index] = "none"
+                                needsUpdate = true
+                            }
+                        }
+                        
+                        if needsUpdate {
+                            let bundleRef = db.collection("KeyringBundle").document(document.documentID)
+                            batch.updateData(["keyrings": keyrings], forDocument: bundleRef)
+                        }
                     }
+                }
+                
+                // 3. Batch 커밋 - 모든 작업이 성공하거나 모두 실패
+                batch.commit { [weak self] error in
+                    guard let self = self else {
+                        completion(false)
+                        return
+                    }
+                    
+                    if let error = error {
+                        completion(false)
+                        return
+                    }
+                    
+                    // 4. 로컬 데이터 정리
+                    if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                        self.keyring.remove(at: index)
+                    }
+
+                    // 5. 매핑 Dictionary에서도 제거
+                    self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
+
+                    // 6. App Group 위젯용 캐시에서도 제거
+                    KeyringImageCache.shared.removeKeyring(id: documentId)
+
+                    completion(true)
+                }
             }
     }
     
