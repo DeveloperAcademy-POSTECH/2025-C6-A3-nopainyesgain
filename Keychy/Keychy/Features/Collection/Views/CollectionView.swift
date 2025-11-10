@@ -11,6 +11,7 @@ import SpriteKit
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State var collectionViewModel: CollectionViewModel
+    @Binding var shouldRefresh: Bool
     @State private var userManager = UserManager.shared
     @State private var selectedCategory = "전체"
     @State private var showSortSheet: Bool = false
@@ -286,6 +287,11 @@ struct CollectionView: View {
         }
         .onAppear {
             fetchUserData()
+        }
+        .onChange(of: shouldRefresh) { oldValue, newValue in
+            if newValue {
+                fetchUserData()
+                shouldRefresh = false            }
         }
     }
     
