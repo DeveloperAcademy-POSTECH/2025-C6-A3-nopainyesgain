@@ -25,7 +25,6 @@ struct HomeView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .top) {
-                collectionViewModel.backgroundImage
                 contentView(geometry: geo)
                 HStack(spacing: 10) {
                     Spacer()
@@ -71,6 +70,7 @@ struct HomeView: View {
                 .tint(.white.opacity(0.8))
             }
         }
+        .background(collectionViewModel.backgroundImage)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
             // 홈 진입 시 main bundle 로드 및 설정
