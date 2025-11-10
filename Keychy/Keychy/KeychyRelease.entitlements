@@ -10,10 +10,5 @@
 	<array>
 		<string>group.keychy.app</string>
 	</array>
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:keychy-f6011.web.app?mode=developer</string>
-		<string>applinks:keychy-f6011.web.app</string>
-	</array>
 </dict>
 </plist>

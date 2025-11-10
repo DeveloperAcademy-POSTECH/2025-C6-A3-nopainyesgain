@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 import AuthenticationServices
 import CryptoKit
 
@@ -16,6 +17,7 @@ struct MyPageView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State private var notificationManager = NotificationManager.shared
     @State private var isPushNotificationEnabled = false
+    @State private var isMarketingNotificationEnabled = false
     @State private var showSettingsAlert = false
     @State private var alertType: AlertType = .turnOn
     
@@ -60,6 +62,8 @@ struct MyPageView: View {
                 notificationManager.checkPermission { isAuthorized in
                     isPushNotificationEnabled = isAuthorized
                 }
+                // Firestore에서 마케팅 알림 설정 불러오기
+                isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 notificationManager.checkPermission { isAuthorized in
@@ -329,9 +333,10 @@ extension MyPageView {
     private var managaNotificaiton: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("알림 설정")
-            
+
+            // 전체 알림
             HStack {
-                menuItemText("푸시 알림")
+                menuItemText("알림 설정")
                 Spacer()
                 Toggle("", isOn: $isPushNotificationEnabled)
                     .labelsHidden()
@@ -340,12 +345,29 @@ extension MyPageView {
                         handleToggleChange(newValue: newValue)
                     }
             }
+            .padding(.bottom, 15)
+
+            // 마케팅 정보 알림
+            HStack {
+                menuItemText("마케팅 정보 알림")
+                    .opacity(isPushNotificationEnabled ? 1.0 : 0.3)
+                Spacer()
+                Toggle("", isOn: $isMarketingNotificationEnabled)
+                    .labelsHidden()
+                    .tint(.gray700)
+                    .disabled(!isPushNotificationEnabled)
+                    .opacity(isPushNotificationEnabled ? 1.0 : 0.3)
+                    .onChange(of: isMarketingNotificationEnabled) { oldValue, newValue in
+                        handleMarketingToggleChange(newValue: newValue)
+                    }
+            }
+
             Divider()
                 .padding(.top, 20)
         }
     }
     
-    /// 토글 변경 처리
+    /// 전체 알림 토글 변경 처리
     private func handleToggleChange(newValue: Bool) {
         notificationManager.checkPermission { isAuthorized in
             if newValue {
@@ -377,6 +399,32 @@ extension MyPageView {
                 }
             }
         }
+    }
+
+    /// 마케팅 정보 알림 토글 변경 처리
+    private func handleMarketingToggleChange(newValue: Bool) {
+        // 전체 알림이 꺼져있으면 아무것도 안함
+        guard isPushNotificationEnabled else {
+            return
+        }
+
+        // Firestore에 마케팅 동의 저장
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        Firestore.firestore()
+            .collection("User")
+            .document(uid)
+            .updateData(["marketingAgreed": newValue]) { error in
+                if let error = error {
+                    print("마케팅 알림 설정 저장 실패: \(error.localizedDescription)")
+                    // 실패 시 원래대로 되돌리기
+                    DispatchQueue.main.async {
+                        isMarketingNotificationEnabled = !newValue
+                    }
+                } else {
+                    print("마케팅 알림 설정 저장 성공: \(newValue)")
+                }
+            }
     }
 }
 
@@ -611,8 +659,9 @@ extension MyPageView {
                         showLoadingAlert = false
                     }
 
-                    // 3. 로그인 화면으로 이동
+                    // 3. UserManager 초기화 및 로그인 화면으로 이동
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        userManager.clearUserInfo()  // 로컬 캐시 정리
                         introViewModel.isLoggedIn = false
                         introViewModel.needsProfileSetup = false
                     }
@@ -620,7 +669,7 @@ extension MyPageView {
             }
         }
     }
-    
+
     // 재인증 후 회원탈퇴 진행
     private func deleteAccountAfterReauth(user: FirebaseAuth.User) {
         let uid = user.uid
@@ -646,8 +695,9 @@ extension MyPageView {
                         showLoadingAlert = false
                     }
 
-                    // 3. 로그인 화면으로 이동
+                    // 3. UserManager 초기화 및 로그인 화면으로 이동
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        userManager.clearUserInfo()  // 로컬 캐시 정리
                         introViewModel.isLoggedIn = false
                         introViewModel.needsProfileSetup = false
                     }

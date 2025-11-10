@@ -45,7 +45,7 @@ struct HomeTab: View {
                     case .introView:
                         IntroView(viewModel: introViewModel)
                     case .termsAndPolicy:
-                        TermsWebView(router: router)
+                        TermsView(router: router)
                 }
             }
         }
