@@ -133,16 +133,21 @@ extension CollectionViewModel {
                         continue
                     }
                     
-                    // 키링 ID가 포함되어 있는 경우에만 업데이트
-                    if keyrings.contains(keyringId) {
+                    var needsUpdate = false
+                    
+                    // 배열을 순회하면서 keyringId를 "none"으로 변경
+                    for (index, keyring) in keyrings.enumerated() {
+                        if keyring == keyringId {
+                            keyrings[index] = "none"
+                            needsUpdate = true
+                            print("Bundle '\(document.documentID)'의 인덱스 \(index)를 'none'으로 변경 예정")
+                        }
+                    }
+                    
+                    if needsUpdate {
                         let bundleRef = db.collection("KeyringBundle").document(document.documentID)
-                        
-                        batch.updateData([
-                            "keyrings": FieldValue.arrayRemove([keyringId])
-                        ], forDocument: bundleRef)
-                        
+                        batch.updateData(["keyrings": keyrings], forDocument: bundleRef)
                         updatedCount += 1
-                        print("Bundle '\(document.documentID)'에서 키링 제거 예정")
                     }
                 }
                 
