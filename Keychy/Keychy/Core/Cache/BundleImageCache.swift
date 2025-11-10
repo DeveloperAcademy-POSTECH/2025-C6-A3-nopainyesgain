@@ -49,7 +49,7 @@ class BundleImageCache {
 
         do {
             try pngData.write(to: fileURL)
-//            print("✅ [BundleCache] 이미지 저장: \(bundleID)")
+            
         } catch {
             print("❌ [BundleCache] 저장 실패: \(bundleID) - \(error.localizedDescription)")
         }
@@ -86,7 +86,6 @@ class BundleImageCache {
 
         do {
             try fileManager.removeItem(at: fileURL)
-//            print("✅ [BundleCache] 이미지 삭제: \(bundleID)")
         } catch {
             print("❌ [BundleCache] 삭제 실패: \(bundleID) - \(error.localizedDescription)")
         }
@@ -102,7 +101,6 @@ class BundleImageCache {
             for file in files where file.pathExtension == "png" {
                 try fileManager.removeItem(at: file)
             }
-//            print("✅ [BundleCache] 전체 캐시 삭제 완료")
         } catch {
             print("❌ [BundleCache] 전체 캐시 삭제 실패: \(error.localizedDescription)")
         }
@@ -125,7 +123,6 @@ class BundleImageCache {
             encoder.outputFormatting = .prettyPrinted
             let data = try encoder.encode(bundles)
             try data.write(to: metadataFileURL, options: .atomic)
-//            print("✅ [BundleCache] \(bundles.count)개 번들 메타데이터 저장 완료")
         } catch {
             print("❌ [BundleCache] 메타데이터 저장 실패: \(error.localizedDescription)")
         }
@@ -142,7 +139,6 @@ class BundleImageCache {
             let data = try Data(contentsOf: metadataFileURL)
             let decoder = JSONDecoder()
             let bundles = try decoder.decode([AvailableBundle].self, from: data)
-//            print("✅ [BundleCache] \(bundles.count)개 번들 메타데이터 로드 완료")
             return bundles
         } catch {
             print("❌ [BundleCache] 메타데이터 로드 실패: \(error.localizedDescription)")
@@ -164,11 +160,9 @@ class BundleImageCache {
         if let index = bundles.firstIndex(where: { $0.id == id }) {
             // 기존 번들 업데이트
             bundles[index] = AvailableBundle(id: id, name: name, imagePath: imagePath)
-//            print("✅ [BundleCache] 번들 업데이트: \(name)")
         } else {
             // 새 번들 추가
             bundles.append(AvailableBundle(id: id, name: name, imagePath: imagePath))
-//            print("✅ [BundleCache] 새 번들 추가: \(name)")
         }
 
         saveAvailableBundles(bundles)
@@ -184,7 +178,6 @@ class BundleImageCache {
         bundles.removeAll { $0.id == id }
         saveAvailableBundles(bundles)
 
-//        print("✅ [BundleCache] 번들 완전 삭제: \(id)")
     }
 
     /// 이미지 경로로 이미지 로드
@@ -228,16 +221,12 @@ class BundleImageCache {
 
     /// 모든 캐시 파일 목록 출력 (디버깅용)
     func printAllCachedFiles() {
-        print("📋 [BundleCache] ========== 캐시 파일 목록 ==========")
-        print("📁 [BundleCache] 경로: \(cacheDirectory.path)")
-
         do {
             let files = try fileManager.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: [.fileSizeKey, .creationDateKey])
                 .filter { $0.pathExtension == "png" }
                 .sorted { $0.lastPathComponent < $1.lastPathComponent }
 
             if files.isEmpty {
-                print("📭 [BundleCache] 캐시 파일 없음")
                 return
             }
 
@@ -246,7 +235,6 @@ class BundleImageCache {
                 let fileSize = (try? fileManager.attributesOfItem(atPath: file.path)[.size] as? Int64) ?? 0
                 let sizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
 
-                print("📄 [BundleCache] \(index + 1). \(fileName) - \(sizeString)")
             }
 
             let totalSize = files.reduce(Int64(0)) { sum, file in
@@ -255,12 +243,9 @@ class BundleImageCache {
             }
             let totalSizeString = ByteCountFormatter.string(fromByteCount: totalSize, countStyle: .file)
 
-            print("📊 [BundleCache] 총 \(files.count)개 파일, 총 용량 \(totalSizeString)")
         } catch {
             print("❌ [BundleCache] 파일 목록 조회 실패: \(error.localizedDescription)")
         }
-
-        print("📋 [BundleCache] =====================================")
     }
 }
 

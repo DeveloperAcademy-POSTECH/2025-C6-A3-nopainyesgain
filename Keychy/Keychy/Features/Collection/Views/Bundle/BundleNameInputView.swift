@@ -199,22 +199,36 @@ extension BundleNameInputView {
                 let maxKeyrings = carabiner.maxKeyringCount
                 let isMain = viewModel.bundles.isEmpty
                 
+                // 번들 이름을 미리 캡처 (async 작업 전)
+                let bundleNameToSave = bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                isUploading = true
+
                 viewModel.createBundle(
                     userId: UserManager.shared.userUID,
-                    name: bundleName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    name: bundleNameToSave,
                     selectedBackground: backgroundId,
                     selectedCarabiner: carabinerId,
                     keyrings: keyringIds,
                     maxKeyrings: maxKeyrings,
                     isMain: isMain
                 ) { success, bundleId in
-                    if success {
-                        // 성공 후 초기화/네비게이션은 프로젝트 정책에 맞게 처리
-                        print("저장한 background: \(viewModel.selectedBackground?.backgroundName ?? "babo")")
-                        print("저장한 carabiner: \(viewModel.selectedCarabiner?.carabinerName ?? "merong")")
-                        router.reset()
+                    if success, let bundleId = bundleId {
+                        // Firebase 저장 성공 후 번들 이미지 캡처 및 캐싱
+                        Task {
+                            await captureAndCacheBundleImage(
+                                bundleId: bundleId,
+                                bundleName: bundleNameToSave
+                            )
+
+                            await MainActor.run {
+                                isUploading = false
+                                router.reset()
+                            }
+                        }
                     } else {
-                        // 실패 처리 (필요 시 상태값 사용)
+                        // 실패 처리
+                        isUploading = false
                         uploadError = "뭉치 저장에 실패했어요. 잠시 후 다시 시도해 주세요."
                     }
                 }
@@ -229,43 +243,90 @@ extension BundleNameInputView {
     }
 }
 
-// MARK: - 번들 저장 로직
+// MARK: - 번들 이미지 캡처 및 캐싱
 extension BundleNameInputView {
-    private func createNewBundleModel() -> KeyringBundle? {
-        guard let carabiner = viewModel.selectedCarabiner else { return nil }
-        
-        // 선택된 키링들을 인덱스 순서대로 배열로 변환 (딕셔너리 키 순서 보장)
-        var keyringArray: [Keyring] = []
-        
-        // 카라비너의 최대 키링 수만큼 순서대로 처리
-        for index in 0..<carabiner.maxKeyringCount {
-            if let keyring = selectedKeyrings[index] {
-                keyringArray.append(keyring)
+    /// 번들 이미지 캡처 및 BundleImageCache에 저장
+    private func captureAndCacheBundleImage(
+        bundleId: String,
+        bundleName: String
+    ) async {
+        guard let carabiner = viewModel.selectedCarabiner,
+              let background = viewModel.selectedBackground else {
+            print("⚠️ [BundleNameInput] 카라비너 또는 배경이 없습니다")
+            return
+        }
+
+        await withCheckedContinuation { continuation in
+            var loadingCompleted = false
+
+            // 키링 데이터 생성
+            var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
+
+            for (index, keyring) in viewModel.selectedKeyringsForBundle.sorted(by: { $0.key < $1.key }) {
+                let data = MultiKeyringCaptureScene.KeyringData(
+                    index: index,
+                    position: CGPoint(
+                        x: carabiner.keyringXPosition[index],
+                        y: carabiner.keyringYPosition[index]
+                    ),
+                    bodyImageURL: keyring.bodyImage
+                )
+                keyringDataList.append(data)
+            }
+
+            // MultiKeyringCaptureScene 생성 (캡처 전용, 물리 없음)
+            let scene = MultiKeyringCaptureScene(
+                keyringDataList: keyringDataList,
+                ringType: .basic,
+                chainType: .basic,
+                backgroundColor: .clear,
+                backgroundImageURL: background.backgroundImage,
+                onLoadingComplete: {
+                    loadingCompleted = true
+                }
+            )
+            scene.size = CGSize(width: 350, height: 466)  // 번들 썸네일 사이즈
+            scene.scaleMode = .aspectFill
+
+            // SKView 생성 및 씬 표시
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+
+            // 로딩 완료 대기
+            Task {
+                var waitTime = 0.0
+                let checkInterval = 0.1
+                let maxWaitTime = 3.0
+
+                while !loadingCompleted && waitTime < maxWaitTime {
+                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+                    waitTime += checkInterval
+                }
+
+                if !loadingCompleted {
+                    print("⚠️ [BundleNameInput] 타임아웃 - 로딩 미완료: \(bundleId)")
+                } else {
+                    // 로딩 완료 후 추가 렌더링 대기
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                }
+
+                // PNG 캡처
+                if let pngData = await scene.captureToPNG() {
+                    // BundleImageCache에 저장
+                    BundleImageCache.shared.syncBundle(
+                        id: bundleId,
+                        name: bundleName,
+                        imageData: pngData
+                    )
+                    print("✅ [BundleNameInput] 번들 이미지 캐시 저장 완료: \(bundleName)")
+                } else {
+                    print("❌ [BundleNameInput] 캡처 실패: \(bundleId)")
+                }
+
+                continuation.resume()
             }
         }
-        
-        // Firestore 문서 ID 배열
-        let keyringIds = keyringArray.compactMap { viewModel.keyringDocumentIdByLocalId[$0.id] }
-        
-        // 새로운 KeyringBundle 생성
-        let newBundle = KeyringBundle(
-            userId: UserManager.shared.userUID,
-            name: bundleName.trimmingCharacters(in: .whitespacesAndNewlines),
-            selectedBackground: "cherries", // 임시로 체리 배경
-            selectedCarabiner: carabiner.carabinerImage[0],
-            keyrings: keyringArray.map { $0.id.uuidString }, // UUID를 String으로 변환
-            maxKeyrings: carabiner.maxKeyringCount,
-            isMain: viewModel.bundles.isEmpty,
-            createdAt: Date()
-        )
-        return newBundle
-    }
-    
-    private func resetAfterSuccess() {
-        // 저장 완료 후 씬 정리
-        viewModel.bundlePreviewScene = nil
-        viewModel.selectedKeyringsForBundle = [:]
-        router.reset()
     }
 }
 

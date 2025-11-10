@@ -150,7 +150,6 @@ struct CachedBundlesDebugView: View {
     // MARK: - Load Cached Images
 
     private func loadCachedImages() {
-        print("🔍 [BundleDebugView] 캐시 이미지 로드 시작")
 
         // 앱 샌드박스의 메타데이터 로드
         let availableBundles = BundleImageCache.shared.loadAvailableBundles()
@@ -172,13 +171,11 @@ struct CachedBundlesDebugView: View {
         }
 
         cachedImages = loadedImages
-        print("✅ [BundleDebugView] \(cachedImages.count)개 이미지 로드 완료")
     }
 
     // MARK: - Delete Image
 
     private func deleteImage(id: String) {
-        print("🗑️ [BundleDebugView] 이미지 삭제: \(id)")
         // 이미지와 메타데이터 모두 삭제
         BundleImageCache.shared.removeBundle(id: id)
         loadCachedImages()
@@ -187,8 +184,6 @@ struct CachedBundlesDebugView: View {
     // MARK: - Clear All Cache
 
     private func clearAllCache() {
-        print("🗑️ [BundleDebugView] 전체 캐시 삭제")
-
         // 모든 번들 메타데이터 삭제
         let bundles = BundleImageCache.shared.loadAvailableBundles()
         for bundle in bundles {
