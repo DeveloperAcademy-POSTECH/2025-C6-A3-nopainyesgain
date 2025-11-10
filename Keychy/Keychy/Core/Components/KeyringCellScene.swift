@@ -13,11 +13,11 @@ class KeyringCellScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var onLoadingComplete: (() -> Void)?
-    
+
     // MARK: - 선택된 타입들
     var currentRingType: RingType
     var currentChainType: ChainType
-    
+
     // MARK: - 크기 조절용 컨테이너 노드
     var containerNode: SKNode!
     let scaleFactor: CGFloat // 크기 비율
@@ -46,7 +46,7 @@ class KeyringCellScene: SKScene {
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height
         self.scaleFactor = min(scaleX, scaleY) * zoomScale
-        
+
         super.init(size: targetSize)
     }
     
@@ -61,15 +61,21 @@ class KeyringCellScene: SKScene {
     
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
+        // 이미 초기화되었으면 스킵 (중복 렌더링 방지)
+        guard containerNode == nil else {
+            return
+        }
+
+        // 커스텀 배경색 설정
         backgroundColor = customBackgroundColor
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        
+
         // 컨테이너 설정
         containerNode = SKNode()
         containerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         containerNode.setScale(scaleFactor)
         addChild(containerNode)
-        
+
         setupKeyring()
     }
 }
