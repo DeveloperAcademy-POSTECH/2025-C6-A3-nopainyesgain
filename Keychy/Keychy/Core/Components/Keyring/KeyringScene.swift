@@ -84,6 +84,10 @@ class KeyringScene: SKScene {
         // 커스텀 사운드 URL 전달
         self.customSoundURL = viewModel.customSoundURL
 
+        // 초기값 설정 (effectSubject 이벤트 없이도 currentSoundId/currentParticleId 설정)
+        self.currentSoundId = viewModel.soundId
+        self.currentParticleId = viewModel.particleId
+
         viewModel.effectSubject
             .sink { [weak self] (soundId, particleId, type) in
                 guard let self = self else { return }

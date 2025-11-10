@@ -118,6 +118,8 @@
 		4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF272EB7DB9800252590 /* AudioRecorderManager.swift */; };
 		4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */; };
 		4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */; };
+		4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */; };
+		4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -376,6 +378,8 @@
 		4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSheet.swift; sourceTree = "<group>"; };
 		4CBBEF2C2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringViewModelProtocol+Reset.swift"; sourceTree = "<group>"; };
 		4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicAppearanceModifier.swift; sourceTree = "<group>"; };
+		4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+WelcomeKeyring.swift"; sourceTree = "<group>"; };
+		4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeKeyringViewModel.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -740,6 +744,8 @@
 				4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */,
 				4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */,
 				4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */,
+				4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */,
+				4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1650,6 +1656,8 @@
 				4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */,
 				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
+				4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */,
+				4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */,
 				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
 				C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */,

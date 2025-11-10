@@ -37,4 +37,19 @@ extension KeyringScene {
 
         body.physicsBody?.applyImpulse(bodyForce)
     }
+
+    // 씬 로딩 완료 시 자동으로 힘을 가해서 파티클 효과 발생 (환영 효과)
+    func applyWelcomeImpulse() {
+        guard bodyNode != nil else { return }
+
+        // 파티클이 터질 정도의 속도 (speed > 1250)
+        let welcomeVelocity = CGVector(dx: 2000, dy: 0)
+
+        // 중앙 위치에서 스와이프 시뮬레이션
+        let centerLocation = CGPoint(x: size.width / 3, y: size.height / 2)
+        applySwipeForceToNearbyChains(at: centerLocation, velocity: welcomeVelocity)
+
+        // 파티클 효과 발생
+        applyParticleEffect(particleId: currentParticleId)
+    }
 }
