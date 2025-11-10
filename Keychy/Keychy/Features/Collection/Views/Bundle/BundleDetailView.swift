@@ -25,15 +25,8 @@ struct BundleDetailView: View {
         GeometryReader { geometry in
             ZStack {
                 viewModel.backgroundImage
-                    VStack {
-                        Spacer()
-                        HStack {
-                            downloadImageButton
-                            Spacer()
-                            pinButton
-                        }
-                    }
                 contentView(geometry: geometry)
+                bottomSection()
             }
         }
         .toolbar {
@@ -75,7 +68,7 @@ struct BundleDetailView: View {
                         if let frontURL = carabiner.frontImageURL {
                             let _ = try await StorageManager.shared.getImage(path: frontURL)
                         }
-
+                        
                         // 2. 모든 키링 바디 이미지들 프리로드
                         let dataList = viewModel.createKeyringDataList(carabiner: carabiner, geometry: CGSize(width: 400, height: 800))
                         for keyringData in dataList {
@@ -91,7 +84,7 @@ struct BundleDetailView: View {
                         
                         await MainActor.run {
                             self.isSceneReady = true
-                                                        
+                            
                             // 모든 이미지가 로드된 후 짧은 안정화 시간
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                                 withAnimation(.easeInOut(duration: 0.5)) {
@@ -168,6 +161,7 @@ extension BundleDetailView {
             Image(.imageDownload)
                 .foregroundStyle(.gray600)
         }
+        .buttonStyle(.glassProminent)
     }
     
     private var pinButton: some View {
@@ -178,6 +172,23 @@ extension BundleDetailView {
         }) {
             Image(systemName: "pin.fill")
                 .foregroundStyle(.gray600)
+        }
+        .buttonStyle(.glassProminent)
+    }
+}
+
+//MARK: - 하단 섹션
+extension BundleDetailView {
+    private func bottomSection() -> some View {
+        VStack {
+            Spacer()
+            HStack {
+                downloadImageButton
+                Text("\(viewModel.selectedBundle!.name)\n\(viewModel.selectedBundle!.keyrings.count) / \(viewModel.selectedBundle!.maxKeyrings)")
+                    .foregroundStyle(.gray600)
+                    .typography(.notosans15M)
+                pinButton
+            }
         }
     }
 }
