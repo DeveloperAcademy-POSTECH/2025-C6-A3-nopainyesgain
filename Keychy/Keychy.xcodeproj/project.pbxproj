@@ -193,6 +193,7 @@
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
+		AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
 		C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
@@ -420,6 +421,7 @@
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleMenu.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
 		C645AEA22EB1B8FC004BFE69 /* TemplateInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateInitializer.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
@@ -1210,6 +1212,7 @@
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
+				AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -1541,6 +1544,7 @@
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
+				AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */,
 				C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* ItemDetailImage.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
