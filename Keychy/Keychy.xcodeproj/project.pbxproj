@@ -52,6 +52,8 @@
 		38C3C2802EC0C94D003C5DE1 /* InvenLackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C27F2EC0C94D003C5DE1 /* InvenLackPopup.swift */; };
 		38C3C2822EC0CB6E003C5DE1 /* SavedPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2812EC0CB6E003C5DE1 /* SavedPopup.swift */; };
 		38C3C2842EC0D081003C5DE1 /* LinkCopiedPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */; };
+		38C3C2882EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2872EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift */; };
+		38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2892EC1D879003C5DE1 /* UnpackPopup.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
@@ -282,6 +284,8 @@
 		38C3C27F2EC0C94D003C5DE1 /* InvenLackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvenLackPopup.swift; sourceTree = "<group>"; };
 		38C3C2812EC0CB6E003C5DE1 /* SavedPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPopup.swift; sourceTree = "<group>"; };
 		38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCopiedPopup.swift; sourceTree = "<group>"; };
+		38C3C2872EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Menu.swift"; sourceTree = "<group>"; };
+		38C3C2892EC1D879003C5DE1 /* UnpackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnpackPopup.swift; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -492,6 +496,7 @@
 				38C3C27F2EC0C94D003C5DE1 /* InvenLackPopup.swift */,
 				38C3C2812EC0CB6E003C5DE1 /* SavedPopup.swift */,
 				38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */,
+				38C3C2892EC1D879003C5DE1 /* UnpackPopup.swift */,
 			);
 			path = Popup;
 			sourceTree = "<group>";
@@ -950,6 +955,7 @@
 				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
 				385425BD2EB2989400A06C02 /* CollectionCellView.swift */,
 				38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */,
+				38C3C2872EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift */,
 				4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */,
 				3822DDC12EBBC712003125BE /* KeyringEditView.swift */,
 				3822DDBF2EBB2353003125BE /* KeyringMenu.swift */,
@@ -1465,6 +1471,7 @@
 				4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */,
 				4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */,
 				4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */,
+				38C3C2882EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift in Sources */,
 				4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */,
 				4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */,
 				38A5967A2EAFA94E0003D712 /* IntroView.swift in Sources */,
@@ -1572,6 +1579,7 @@
 				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
 				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,
+				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
 				4C65306E2EBCF157000F8154 /* TermsWebView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
