@@ -33,6 +33,8 @@ struct HomeTab: View {
                         BundleNameInputView(router: router, viewModel: collectionViewModel)
                     case .bundleNameEditView:
                         BundleNameEditView(router: router, viewModel: collectionViewModel)
+                    case .bundleEditView:
+                        BundleEditView(router: router, viewModel: collectionViewModel)
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)

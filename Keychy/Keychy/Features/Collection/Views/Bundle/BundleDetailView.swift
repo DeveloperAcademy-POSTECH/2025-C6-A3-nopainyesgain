@@ -45,6 +45,7 @@ struct BundleDetailView: View {
                                 },
                                 onEdit: {
                                     showMenu = false
+                                    router.push(.bundleEditView)
                                 },
                                 onDelete: {
                                     showMenu = false
