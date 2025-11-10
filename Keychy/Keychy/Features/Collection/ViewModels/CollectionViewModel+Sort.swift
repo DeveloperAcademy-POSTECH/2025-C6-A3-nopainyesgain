@@ -54,7 +54,7 @@ extension CollectionViewModel {
 //        }
 //        
 //        // 3. newKeyrings를 맨 앞에 배치하고 뒤에 normalKeyrings 추가
-//        // newKeyrings는 최신순으로 정렬 (받은 순서대로)
+//        // newKeyrings는 최신순으로 정렬 (생성된 순서대로)
 //        let sortedNewKeyrings = newKeyrings.sorted { $0.createdAt > $1.createdAt }
 //        keyring = sortedNewKeyrings + normalKeyrings
 //    }
