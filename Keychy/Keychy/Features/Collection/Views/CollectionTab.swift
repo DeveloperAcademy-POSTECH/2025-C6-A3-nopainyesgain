@@ -19,6 +19,8 @@ struct CollectionTab: View {
                         
                     case .collectionKeyringDetailView(let keyring):
                         CollectionKeyringDetailView(router: router, viewModel: collectionViewModel, keyring: keyring)
+                    case .collectionKeyringPackageView(let keyring):
+                        CollectionKeyringPackageView(router: router, viewModel: collectionViewModel, keyring: keyring)
                     case .keyringEditView(let keyring):
                         KeyringEditView(router: router, viewModel: collectionViewModel, keyring: keyring)
                     case .bundleInventoryView:

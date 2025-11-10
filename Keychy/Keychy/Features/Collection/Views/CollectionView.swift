@@ -387,7 +387,6 @@ struct CollectionView: View {
     }
     
     // MARK: - 사용자 데이터 정렬 시트
-    // TODO: 디자인 확정되면 반영
     private var sortSheet: some View {
         VStack(spacing: 0) {
             HStack {
@@ -639,7 +638,11 @@ extension CollectionView {
     
     private func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
-            router.push(.collectionKeyringDetailView(keyring))
+            if keyring.isPackaged {
+                router.push(.collectionKeyringPackageView(keyring))
+            } else {
+                router.push(.collectionKeyringDetailView(keyring))
+            }
         }) {
             VStack {
                 CollectionCellView(keyring: keyring)

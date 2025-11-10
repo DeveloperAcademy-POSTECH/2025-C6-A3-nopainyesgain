@@ -1,39 +1,36 @@
 //
-//  PackagePopup.swift
+//  UnpackPopup.swift
 //  Keychy
 //
-//  Created by Jini on 11/8/25.
+//  Created by Jini on 11/10/25.
 //
 
 import SwiftUI
 
-struct PackagePopup: View {
+struct UnpackPopup: View {
     let onCancel: () -> Void
     let onConfirm: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             // 아이콘
-            Image("PresentImg")
+            Image("Unpack")
                 .resizable()
-                .frame(width: 61, height: 72)
-                .padding(.top, 8)
+                .frame(width: 57, height: 54)
+                .padding(.top, 14)
             
             // 제목
-            Text("키링을 포장할까요?")
+            Text("포장을 해제하시겠어요?")
                 .typography(.suit20B)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
             
             // 메시지
-            Text("포장하면 선물 링크가 만들어집니다.\n보관함과 뭉치에 있는 키링이 비활성화돼요.")
+            Text("선물하기가 취소되고\n키링이 다시 보관함으로 이동합니다.")
                 .typography(.suit15R)
+                .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
-            
-            Text("수락 시 상대방의 보관함으로 이동합니다.\n포장은 언제든 직접 풀 수 있어요.")
-                .typography(.suit15R)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 16)
+                .padding(.bottom, 24)
             
             // 버튼들
             HStack(spacing: 16) {
@@ -70,26 +67,37 @@ struct PackagePopup: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 321)
+        .frame(width: 300, height: 263)
     }
 }
 
-struct PackingPopup: View {
+struct UnpackCompletePopup: View {
     @Binding var isPresented: Bool
     
     var body: some View {
-        Text("키링 포장 중...")
-            .typography(.suit17SB)
-            .foregroundColor(.black100)
-            .frame(width: 300, height: 94)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-            .transition(.scale.combined(with: .opacity))
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        isPresented = false
-                    }
+        VStack(spacing: 15) {
+            Image("Unpacked")
+                .resizable()
+                .frame(width: 210, height: 110)
+                .padding(.vertical, 7)
+                .padding(.top, 20)
+            
+            Text("선물 포장을 풀었습니다.")
+                .typography(.suit17SB)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 12)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+        .frame(width: 300, height: 220)
+        .transition(.scale.combined(with: .opacity))
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isPresented = false
                 }
             }
+        }
     }
 }

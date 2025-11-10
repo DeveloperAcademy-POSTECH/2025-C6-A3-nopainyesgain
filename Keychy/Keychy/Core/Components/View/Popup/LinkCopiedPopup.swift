@@ -1,24 +1,23 @@
 //
-//  ImageSavedAlert.swift
+//  LinkCopiedPopup.swift
 //  Keychy
 //
-//  Created by 길지훈 on 11/5/25.
+//  Created by Jini on 11/9/25.
 //
 
 import SwiftUI
 
-/// 키링 이미지 저장 완료 Alert
-struct ImageSaveAlert: View {
-    let checkmarkScale: CGFloat
+struct LinkCopiedPopup: View {
+    @Binding var isPresented: Bool
     
     var body: some View {
         VStack(spacing: 15) {
             Image("imageSave")
                 .resizable()
-                .frame(width: 161, height: 102)
+                .frame(width: 210, height: 110)
                 .padding(.top, 20)
             
-            Text("이미지가 저장되었습니다.")
+            Text("링크가 복사되었습니다.")
                 .typography(.suit17SB)
                 .frame(maxWidth: .infinity)
                 .padding(.bottom, 12)
@@ -26,8 +25,15 @@ struct ImageSaveAlert: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 214)
+        .frame(width: 300, height: 220)
         .transition(.scale.combined(with: .opacity))
-        .scaleEffect(checkmarkScale)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isPresented = false
+                }
+            }
+        }
     }
 }
+

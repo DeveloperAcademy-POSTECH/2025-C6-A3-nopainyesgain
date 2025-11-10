@@ -1,39 +1,36 @@
 //
-//  PackagePopup.swift
+//  InvenLackPopup.swift
 //  Keychy
 //
-//  Created by Jini on 11/8/25.
+//  Created by Jini on 11/9/25.
 //
 
 import SwiftUI
 
-struct PackagePopup: View {
+struct InvenLackPopup: View {
     let onCancel: () -> Void
     let onConfirm: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             // 아이콘
-            Image("PresentImg")
+            Image("bangMark")
                 .resizable()
-                .frame(width: 61, height: 72)
-                .padding(.top, 8)
+                .frame(width: 57, height: 54)
+                .padding(.top, 14)
             
             // 제목
-            Text("키링을 포장할까요?")
+            Text("보관함이 가득 찼어요.")
                 .typography(.suit20B)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
             
             // 메시지
-            Text("포장하면 선물 링크가 만들어집니다.\n보관함과 뭉치에 있는 키링이 비활성화돼요.")
-                .typography(.suit15R)
+            Text("새로운 키링을 받으려면\n보관함을 비우거나 확장해주세요.")
+                .typography(.suit17SB)
+                .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
-            
-            Text("수락 시 상대방의 보관함으로 이동합니다.\n포장은 언제든 직접 풀 수 있어요.")
-                .typography(.suit15R)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 16)
+                .padding(.bottom, 24)
             
             // 버튼들
             HStack(spacing: 16) {
@@ -53,7 +50,7 @@ struct PackagePopup: View {
                 
                 // 확인 버튼
                 Button(action: onConfirm) {
-                    Text("확인")
+                    Text("상점가기")
                         .typography(.suit17B)
                         .foregroundColor(.white100)
                         .frame(maxWidth: .infinity)
@@ -70,26 +67,6 @@ struct PackagePopup: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 321)
-    }
-}
-
-struct PackingPopup: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        Text("키링 포장 중...")
-            .typography(.suit17SB)
-            .foregroundColor(.black100)
-            .frame(width: 300, height: 94)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-            .transition(.scale.combined(with: .opacity))
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        isPresented = false
-                    }
-                }
-            }
+        .frame(width: 300, height: 267)
     }
 }

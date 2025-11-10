@@ -9,7 +9,8 @@
 enum CollectionRoute: Hashable {
 
     // 키링 상세보기
-    case collectionKeyringDetailView(Keyring)
+    case collectionKeyringDetailView(Keyring) // 평소
+    case collectionKeyringPackageView(Keyring) // 포장된 상태
     
     // 키링 수정하기
     case keyringEditView(Keyring)

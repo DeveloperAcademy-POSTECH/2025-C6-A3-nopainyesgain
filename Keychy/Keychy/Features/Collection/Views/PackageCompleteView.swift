@@ -25,79 +25,76 @@ struct PackageCompleteView: View {
     let postOfficeId: String
     
     var body: some View {
-        VStack(spacing: 0) {
-            Text("키링 포장이 완료되었어요!")
-                .typography(.suit20B)
-                .foregroundColor(.black100)
-                .padding(.bottom, 9)
+        ZStack {
+            Image("GreenBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
             
-            Text("친구에게 공유하세요")
-                .typography(.suit16M)
-                .foregroundColor(.black100)
-                .padding(.bottom, 42)
-            
-            
-            GeometryReader { geometry in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 38) {
-                        // 첫 번째 페이지
-                        packagePreviewPage
-                            .frame(width: 240)
-                            .offset(x: -10)
-                        
-                        // 두 번째 페이지
-                        keyringOnlyPage
-                            .frame(width: 240)
-                            .offset(x: -10)
+            VStack(spacing: 0) {
+                Text("키링 포장이 완료되었어요!")
+                    .typography(.suit20B)
+                    .foregroundColor(.black100)
+                    .padding(.top, 16)
+                    .padding(.bottom, 9)
+                
+                Text("링크나 QR로 바로 공유할 수 있어요.")
+                    .typography(.suit16M)
+                    .foregroundColor(.black100)
+                    .padding(.bottom, 42)
+                
+                
+                GeometryReader { geometry in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 38) {
+                            // 첫 번째 페이지
+                            packagePreviewPage
+                                .frame(width: 240)
+                                .offset(x: -10)
+                            
+                            // 두 번째 페이지
+                            keyringOnlyPage
+                                .frame(width: 240)
+                                .offset(x: -10)
+                        }
+                        .padding(.horizontal, (geometry.size.width - 240) / 2)
                     }
-                    .padding(.horizontal, (geometry.size.width - 240) / 2)
-                }
-                .content.offset(x: -CGFloat(currentPage) * (240 + 38))
-                .padding(.leading, 10)
-                .frame(width: geometry.size.width, alignment: .leading)
-                .gesture(
-                    DragGesture()
-                        .onEnded { value in
-                            let threshold: CGFloat = 38
-                            if value.translation.width < -threshold && currentPage < totalPages - 1 {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    currentPage += 1
-                                }
-                            } else if value.translation.width > threshold && currentPage > 0 {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    currentPage -= 1
+                    .content.offset(x: -CGFloat(currentPage) * (240 + 38))
+                    .padding(.leading, 10)
+                    .frame(width: geometry.size.width, alignment: .leading)
+                    .gesture(
+                        DragGesture()
+                            .onEnded { value in
+                                let threshold: CGFloat = 38
+                                if value.translation.width < -threshold && currentPage < totalPages - 1 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        currentPage += 1
+                                    }
+                                } else if value.translation.width > threshold && currentPage > 0 {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        currentPage -= 1
+                                    }
                                 }
                             }
-                        }
-                )
-            }
-            .frame(height: 460)
-            
-            // 페이지 인디케이터
-            HStack(spacing: 8) {
-                ForEach(0..<totalPages, id: \.self) { index in
-                    Circle()
-                        .fill(index == currentPage ? Color.black100 : Color.gray200)
-                        .frame(width: 8, height: 8)
-                        .animation(.easeInOut(duration: 0.3), value: currentPage)
+                    )
                 }
-            }
-            .padding(.top, 8)
-            
-            Spacer()
-                .frame(height: 24)
-            
-            // 버튼들
-            HStack(spacing: 16) {
-                VStack(spacing: 9) {
-                    LinkSaveButton
-                    
-                    Text("링크 복사")
-                        .typography(.suit13SB)
-                        .foregroundColor(.black100)
-
-                }
+                .frame(height: 460)
                 
+                // 페이지 인디케이터
+                HStack(spacing: 8) {
+                    ForEach(0..<totalPages, id: \.self) { index in
+                        Circle()
+                            .fill(index == currentPage ? Color.black100 : Color.gray200)
+                            .frame(width: 8, height: 8)
+                            .animation(.easeInOut(duration: 0.3), value: currentPage)
+                    }
+                }
+                .padding(.top, 8)
+                
+                Spacer()
+                    .frame(height: 24)
+                
+                // 버튼들
                 VStack(spacing: 9) {
                     ImageSaveButton
                     
@@ -106,8 +103,8 @@ struct PackageCompleteView: View {
                         .foregroundColor(.black100)
                 }
             }
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -182,12 +179,12 @@ struct PackageCompleteView: View {
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("의자자") //keyring.name
-                                .typography(.nanum15EB25)
+                            Text(keyring.name) //keyring.name
+                                .typography(.notosans15B)
                                 .foregroundColor(.white100)
                             
-                            Text("@리에르") //authorName
-                                .typography(.suit10SB)
+                            Text("@\(authorName)") //authorName
+                                .typography(.notosans10M)
                                 .foregroundColor(.white100)
                         }
                         
@@ -202,15 +199,20 @@ struct PackageCompleteView: View {
             .padding(.bottom, 30)
             
             // 하단 버튼
-            HStack {
-                Image("LinkSimple")
-                    .resizable()
-                    .frame(width: 18, height: 18)
-                
-                Text("탭하여 복사")
-                    .typography(.suit15M25)
-                    .foregroundColor(.black100)
+            Button( action: {
+                copyLink()
+            }) {
+                HStack {
+                    Image("LinkSimple")
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                    
+                    Text("탭하여 복사")
+                        .typography(.suit15M25)
+                        .foregroundColor(.black100)
+                }
             }
+
         }
         .padding(.horizontal, 20)
     }
@@ -246,8 +248,7 @@ struct PackageCompleteView: View {
             }
             .padding(.bottom, 30)
             
-            // 하단 버튼
-            Text("QR 코드로 전달하기")
+            Text("") // 공백 맞추기용 빈스트링
                 .typography(.suit15M25)
                 .foregroundColor(.black100)
             
@@ -284,19 +285,19 @@ struct PackageCompleteView: View {
     }
     
     // MARK: - 하단 버튼
-    private var LinkSaveButton: some View {
-        Button(action: {
-            copyLink()
-        }) {
-            Image("Link")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 32, height: 32)
-        }
-        .frame(width: 65, height: 65)
-        .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
-    }
+//    private var LinkSaveButton: some View {
+//        Button(action: {
+//            copyLink()
+//        }) {
+//            Image("Link")
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 32, height: 32)
+//        }
+//        .frame(width: 65, height: 65)
+//        .buttonStyle(.plain)
+//        .glassEffect(.regular.interactive(), in: .circle)
+//    }
     
     private var ImageSaveButton: some View {
         Button(action: {
@@ -382,7 +383,7 @@ extension PackageCompleteView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
-                router.pop()
+                router.reset()
             } label: {
                 Image("dismiss")
                     .foregroundColor(.primary)

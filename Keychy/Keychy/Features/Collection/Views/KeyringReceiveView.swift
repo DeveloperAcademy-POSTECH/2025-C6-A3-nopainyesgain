@@ -18,6 +18,9 @@ struct KeyringReceiveView: View {
     @State private var senderName: String = ""
     @State private var authorName: String = ""
     @State private var isAccepting: Bool = false
+    @State private var isAccepted: Bool = false
+    @State private var showAcceptCompleteAlert: Bool = false
+    @State private var showInvenFullAlert: Bool = false
     
     let postOfficeId: String
     
@@ -27,38 +30,67 @@ struct KeyringReceiveView: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
-            if isLoading {
-                // 로딩 상태
-                ProgressView("로딩 중...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let keyring = keyring {
-                // 키링 로드 성공
-                headerSection
-                
-                messageSection(keyring: keyring)
-                
-                keyringImage(keyring: keyring)
-                
-                Spacer()
-                
-                receiveButton
-            } else {
-                // 에러 상태
-                VStack(spacing: 20) {
-                    Text("키링을 불러올 수 없습니다")
-                        .typography(.suit16M)
-                        .foregroundColor(.gray500)
+        ZStack {
+            VStack(spacing: 10) {
+                if isLoading {
+                    // 로딩 상태
+                    ProgressView("로딩 중...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let keyring = keyring {
+                    // 키링 로드 성공
+                    headerSection
                     
-                    Button("닫기") {
-                        dismiss()
+                    messageSection(keyring: keyring)
+                    
+                    keyringImage(keyring: keyring)
+                    
+                    Spacer()
+                    
+                    receiveButton
+                } else {
+                    // 에러 상태
+                    VStack(spacing: 20) {
+                        Text("키링을 불러올 수 없습니다")
+                            .typography(.suit16M)
+                            .foregroundColor(.gray500)
+                        
+                        Button("닫기") {
+                            dismiss()
+                        }
+                        .padding()
                     }
-                    .padding()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .background(.white100)
+            
+            if showAcceptCompleteAlert || showInvenFullAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(99)
+                
+                if showAcceptCompleteAlert {
+                    SavedPopup(isPresented: $showAcceptCompleteAlert, message: "키링이 내 보관함에 추가되었어요.")
+                        .zIndex(100)
+                }
+                
+                if showInvenFullAlert {
+                    InvenLackPopup(
+                        onCancel: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showInvenFullAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                //router.push(.coinCharge) 라우터 연결 필요
+                            }
+                        }
+                    )
+                    .zIndex(100)
+                }
             }
         }
-        .background(.white100)
         .onAppear {
             loadKeyringData()
         }
@@ -185,11 +217,17 @@ extension KeyringReceiveView {
     
     private func messageSection(keyring: Keyring) -> some View {
         VStack(spacing: 10) {
-            Text("[\(senderName)]님이 키링을 선물했어요!")
-                .typography(.suit20B)
-                .foregroundColor(.black100)
+            HStack(spacing: 0) {
+                Text(senderName)
+                    .typography(.suit20EB)
+                    .foregroundColor(.main500)
+                
+                Text("님이 키링을 선물했어요!")
+                    .typography(.suit20B)
+                    .foregroundColor(.black100)
+            }
             
-            Text("수락하시겠어요?")
+            Text("수락하면 보관함에 키링이 저장돼요.")
                 .typography(.suit16M)
                 .foregroundColor(.black100)
                 .padding(.bottom, 30)
@@ -201,22 +239,25 @@ extension KeyringReceiveView {
 extension KeyringReceiveView {
     private var receiveButton: some View {
         Button {
-            acceptKeyring()
+            if !isAccepted {
+                acceptKeyring()
+            }
         } label: {
-            Text("수락하기")
+            Text(isAccepted ? "수락됨" : "수락하기")
                 .typography(.suit17B)
                 .padding(.vertical, 7.5)
-                .foregroundStyle(.white100)
+                .foregroundStyle(isAccepted ? .black40 : .white100)
 
         }
         .frame(maxWidth: .infinity)
         .frame(height: 48)
         .background(
             RoundedRectangle(cornerRadius: 1000)
-                .fill(.black80)
+                .fill(isAccepted ? .black20 : .black70)
                 .frame(maxWidth: .infinity)
         )
         .padding(.horizontal, 34)
+        .disabled(isAccepted)
     }
     
     // 수락
@@ -230,20 +271,34 @@ extension KeyringReceiveView {
         
         isAccepting = true
         
-        viewModel.acceptKeyring(
-            postOfficeId: postOfficeId,
-            keyringId: keyringId,
-            senderId: senderId,
-            receiverId: receiverId
-        ) { success in
-            isAccepting = false
+        viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
+            if !hasSpace {
+                // 보관함 가득 참
+                self.isAccepting = false
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    self.showInvenFullAlert = true
+                }
+                return
+            }
             
-            if success {
-                print("키링 수락 완료!")
-                dismiss()
-            } else {
-                print("키링 수락 실패")
-                // TODO: 실패 알림 표시
+            // 보관함 여유 있음 - 수락 진행
+            self.viewModel.acceptKeyring(
+                postOfficeId: self.postOfficeId,
+                keyringId: keyringId,
+                senderId: senderId,
+                receiverId: receiverId
+            ) { success in
+                self.isAccepting = false
+                
+                if success {
+                    self.isAccepted = true
+                    
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showAcceptCompleteAlert = true
+                    }
+                } else {
+                    print("키링 수락 실패")
+                }
             }
         }
     }
