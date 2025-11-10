@@ -19,6 +19,13 @@ struct CollectionKeyringPackageView: View {
     @State var shareLink: String = ""
     @State var showUnpackAlert: Bool = false
     @State var showUnpackCompleteAlert: Bool = false
+    @State var showLinkCopied: Bool = false
+    
+    // 이미지 저장 관련
+    @State var showImageSaved: Bool = false
+    @State var checkmarkScale: CGFloat = 0.0
+    @State var checkmarkOpacity: Double = 0.0
+    @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
     
     let keyring: Keyring
     
@@ -55,6 +62,14 @@ struct CollectionKeyringPackageView: View {
                         .zIndex(100)
                 }
             }
+            
+            if showImageSaved {
+                imageSaveAlert
+            }
+            
+            if showLinkCopied {
+                linkCopiedAlert
+            }
         }
         .navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
@@ -77,6 +92,16 @@ struct CollectionKeyringPackageView: View {
                 tabBarController.tabBar.isHidden = true
             }
         }
+    }
+    
+    private var imageSaveAlert: some View {
+        SavedPopup(isPresented: $showImageSaved, message: "이미지가 저장되었습니다.")
+            .zIndex(101)
+    }
+    
+    private var linkCopiedAlert: some View {
+        LinkCopiedPopup(isPresented: $showLinkCopied)
+            .zIndex(101)
     }
 }
 
@@ -102,7 +127,17 @@ extension CollectionKeyringPackageView {
                     keyring: keyring,
                     postOfficeId: loadedPostOfficeId,
                     shareLink: shareLink,
-                    authorName: packageAuthorName
+                    authorName: packageAuthorName,
+                    onImageSaved: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showImageSaved = true
+                        }
+                    },
+                    onLinkCopied: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showLinkCopied = true
+                        }
+                    }
                 )
             }
         }

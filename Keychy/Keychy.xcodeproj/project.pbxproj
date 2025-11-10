@@ -33,6 +33,7 @@
 		386AECC92EB445F80001A5CD /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596772EAFA9430003D712 /* SplashView.swift */; };
 		386AECCB2EB45A640001A5CD /* ProfileSetupCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AECCA2EB45A640001A5CD /* ProfileSetupCompleteView.swift */; };
 		38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */; };
+		38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */; };
 		38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */; };
 		38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943B2EAE4EE20003D712 /* FirebaseAnalytics */; };
 		38A5943E2EAE4EE20003D712 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943D2EAE4EE20003D712 /* FirebaseAuth */; };
@@ -310,6 +311,7 @@
 		385425CB2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringDetailScene+Setup.swift"; sourceTree = "<group>"; };
 		386AECCA2EB45A640001A5CD /* ProfileSetupCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupCompleteView.swift; sourceTree = "<group>"; };
 		38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringPackageView.swift; sourceTree = "<group>"; };
+		38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringPackageView+SaveImage.swift"; sourceTree = "<group>"; };
 		38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		38A596722EAFA8D20003D712 /* KeychyUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyUser.swift; sourceTree = "<group>"; };
 		38A596772EAFA9430003D712 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -1065,6 +1067,7 @@
 				4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */,
 				38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */,
 				38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */,
+				38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */,
 				3822DDC12EBBC712003125BE /* KeyringEditView.swift */,
 				3822DDBF2EBB2353003125BE /* KeyringMenu.swift */,
 				38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */,
@@ -1734,6 +1737,7 @@
 				38C3C2962EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
 				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
+				38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */,
 				4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */,
 				4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */,
 				4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */,
