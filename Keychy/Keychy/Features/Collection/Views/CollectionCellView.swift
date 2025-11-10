@@ -99,6 +99,15 @@ struct CollectionCellView: View {
             return
         }
 
+        // 포장된 키링이면 캐시 삭제 (위젯 목록에서 제거)
+        if keyring.isPackaged {
+            if KeyringImageCache.shared.exists(for: keyringID) {
+                KeyringImageCache.shared.removeKeyring(id: keyringID)
+                print("🗑️ [CollectionCell] 포장된 키링 캐시 삭제: \(keyring.name) (\(keyringID))")
+            }
+            return
+        }
+
         // 캐시가 이미 있으면 스킵
         if KeyringImageCache.shared.exists(for: keyringID) {
             return
