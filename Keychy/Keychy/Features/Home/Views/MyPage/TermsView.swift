@@ -50,8 +50,19 @@ struct TermsView: View {
 extension TermsView {
     private var privacyPolicySection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionTitle(isEnglish ? "Privacy Policy" : "개인정보 처리방침")
-
+            HStack {
+                sectionTitle(isEnglish ? "Privacy Policy" : "개인정보 처리방침")
+                Spacer()
+                if router == nil {
+                    Button {
+                        isEnglish.toggle()
+                    } label: {
+                        Text(isEnglish ? "KOR" : "ENG")
+                            .typography(.suit14B)
+                            .foregroundStyle(.main500)
+                    }
+                }
+            }
             intro
             informationCollection
             thirdPartyAccess

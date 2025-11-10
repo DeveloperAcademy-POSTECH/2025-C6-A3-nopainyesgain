@@ -198,7 +198,6 @@ extension IntroView {
         .disabled(!canProceed)
     }
 
-    // MARK: - Helper Functions
     /// 모두 동의 토글
     private func toggleAll() {
         if isAllChecked {

@@ -174,11 +174,12 @@ struct RootView: View {
                         introViewModel.isLoggedIn = true
                         introViewModel.needsProfileSetup = false
                     } else {
-                        // 프로필 없음 → 닉네임 설정 화면
+                        // 프로필 없음 → 약관 동의부터 시작 (신규 가입 플로우)
                         introViewModel.tempUserUID = user.uid
                         introViewModel.tempUserEmail = user.email ?? ""
                         introViewModel.isLoggedIn = false
-                        introViewModel.needsProfileSetup = true
+                        introViewModel.needsProfileSetup = false
+                        introViewModel.showTermsSheet = true  // 약관 동의 시트 표시
                     }
                     isCheckingAuth = false
                 }
