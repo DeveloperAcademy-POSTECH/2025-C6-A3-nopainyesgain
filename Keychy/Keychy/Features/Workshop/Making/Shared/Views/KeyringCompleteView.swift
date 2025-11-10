@@ -219,19 +219,29 @@ extension KeyringCompleteView {
             selectedChain: "basic",
             chainLength: 5
         ) { success, keyringId in
-            // 키링 생성 완료
-            completion()
-
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
-                Task.detached(priority: .utility) {
+                // viewModel이 reset되기 전에 이름을 미리 캡처
+                let keyringName = self.viewModel.nameText
+
+                Task {
+                    // 위젯 캐싱 완료 대기
                     await self.captureAndCacheKeyring(
                         keyringId: keyringId,
+                        keyringName: keyringName,  // 캡처된 이름 전달
                         bodyImage: imageURL,
                         ringType: .basic,
                         chainType: .basic
                     )
+
+                    // 모든 작업 완료 후 dismiss 버튼 표시
+                    await MainActor.run {
+                        completion()
+                    }
                 }
+            } else {
+                // 실패 시 바로 completion
+                completion()
             }
         }
     }
@@ -376,6 +386,7 @@ extension KeyringCompleteView {
     // MARK: - 위젯용 이미지 캡처 및 캐싱
     private func captureAndCacheKeyring(
         keyringId: String,
+        keyringName: String,  // 파라미터로 이름 받기
         bodyImage: String,
         ringType: RingType,
         chainType: ChainType
@@ -429,9 +440,10 @@ extension KeyringCompleteView {
                     // App Group에 위젯용 이미지 및 메타데이터 동기화
                     KeyringImageCache.shared.syncKeyring(
                         id: keyringId,
-                        name: self.viewModel.nameText,
+                        name: keyringName,
                         imageData: pngData
                     )
+                    
                 } else {
                     print("❌ [KeyringComplete] 캡처 실패: \(keyringId)")
                 }
