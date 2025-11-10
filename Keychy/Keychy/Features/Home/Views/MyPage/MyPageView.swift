@@ -62,8 +62,12 @@ struct MyPageView: View {
                 notificationManager.checkPermission { isAuthorized in
                     isPushNotificationEnabled = isAuthorized
                 }
-                // Firestore에서 마케팅 알림 설정 불러오기
                 isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
+
+                // Firestore에서 사용자 정보 새로 로드
+                if let uid = Auth.auth().currentUser?.uid {
+                    userManager.loadUserInfo(uid: uid) { _ in }
+                }
             }
             .onChange(of: userManager.currentUser?.marketingAgreed) { oldValue, newValue in
                 // UserManager의 marketingAgreed가 변경되면 토글 상태도 동기화
@@ -195,6 +199,7 @@ struct MyPageView: View {
         
         // 각 alert가 뜰 때, backBtn 숨기기
         .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert)
+        .toolbar(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert ? .hidden : .visible, for: .navigationBar)
         .navigationTitle("마이페이지")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
