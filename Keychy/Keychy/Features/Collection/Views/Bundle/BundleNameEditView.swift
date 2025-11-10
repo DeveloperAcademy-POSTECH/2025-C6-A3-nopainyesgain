@@ -24,7 +24,7 @@ struct BundleNameEditView: View {
                     .fill(.gray100)
                     .aspectRatio(5/7, contentMode: .fit)
                 bundleNameTextField
-                Spacer()
+                Spacer().frame(height: geo.size.height * 0.3)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
