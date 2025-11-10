@@ -613,7 +613,11 @@ extension CollectionView {
     
     private func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
-            router.push(.collectionKeyringDetailView(keyring))
+            if keyring.isPackaged {
+                router.push(.collectionKeyringPackageView(keyring))
+            } else {
+                router.push(.collectionKeyringDetailView(keyring))
+            }
         }) {
             VStack {
                 CollectionCellView(keyring: keyring)

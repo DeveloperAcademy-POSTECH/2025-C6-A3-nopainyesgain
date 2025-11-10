@@ -35,6 +35,8 @@ struct CollectionKeyringDetailView: View {
     @State var checkmarkScale: CGFloat = 0.0
     @State var checkmarkOpacity: Double = 0.0
     @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
+    
+    // 포장 관련
     @State var postOfficeId: String = ""
 
     let keyring: Keyring
@@ -93,6 +95,9 @@ struct CollectionKeyringDetailView: View {
                                     showCopyLackAlert = false
                                 }
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    isSheetPresented = false
+                                    isNavigatingDeeper = true
+                                    
                                     router.push(.coinCharge)
                                 }
                             }
@@ -126,7 +131,6 @@ struct CollectionKeyringDetailView: View {
         }
         .toolbar(showUIForCapture ? .visible : .hidden, for: .navigationBar)
         .toolbar(.hidden, for: .tabBar)
-        
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
         }
