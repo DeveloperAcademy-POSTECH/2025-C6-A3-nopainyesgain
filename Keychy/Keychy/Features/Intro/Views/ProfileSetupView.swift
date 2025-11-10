@@ -29,11 +29,6 @@ struct ProfileSetupView: View {
         .dismissKeyboardOnTap()
         .ignoresSafeArea(.keyboard)
     }
-
-    // 닉네임 유효성 검사
-    private var isNicknameValid: Bool {
-        !nickname.isEmpty && viewModel.isValidationPositive
-    }
 }
 
 extension ProfileSetupView {
@@ -66,6 +61,11 @@ extension ProfileSetupView {
             .padding(.top, 153)
         }
         .padding(.top, 62)
+    }
+    
+    // 닉네임 유효성 검사
+    private var isNicknameValid: Bool {
+        !nickname.isEmpty && viewModel.isValidationPositive
     }
     
     /// 닉네임 입력 필드

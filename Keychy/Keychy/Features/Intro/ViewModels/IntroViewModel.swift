@@ -10,6 +10,7 @@ import AuthenticationServices
 import FirebaseAuth
 import FirebaseFirestore
 import CryptoKit
+import UserNotifications
 
 @Observable
 class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
@@ -21,6 +22,8 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
 
     // 프로필 설정 관련
     var needsProfileSetup = false
+    var showProfileComplete = false
+    var welcomeNickname: String = ""
     var tempUserUID: String = ""
     var tempUserEmail: String = ""
     var tempMarketingAgreed: Bool = false
@@ -37,6 +40,11 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     func completeTermsAgreement(marketingAgreed: Bool) {
         showTermsSheet = false
 
+        // 마케팅 동의 시 푸시 알림 권한 요청
+        if marketingAgreed {
+            requestPushNotificationPermission()
+        }
+
         // 신규 사용자인지 확인 (tempUserUID가 있으면 신규)
         if !tempUserUID.isEmpty {
             // 신규 사용자 → 약관 동의 정보 저장하고 닉네임 입력으로
@@ -47,6 +55,32 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
             saveTermsAgreement(marketingAgreed: marketingAgreed)
             isLoggedIn = true
         }
+    }
+
+    // MARK: - 푸시 알림 권한 요청
+    private func requestPushNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("푸시 알림 권한 요청 실패: \(error.localizedDescription)")
+                return
+            }
+
+            if granted {
+                print("푸시 알림 권한 허용됨")
+                // 메인 스레드에서 원격 알림 등록
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            } else {
+                print("푸시 알림 권한 거부됨")
+            }
+        }
+    }
+
+    // MARK: - 온보딩 완료 (프로필 완료 화면에서 메인으로)
+    func completeOnboarding() {
+        showProfileComplete = false
+        isLoggedIn = true
     }
 
     // MARK: - 약관 동의 저장
