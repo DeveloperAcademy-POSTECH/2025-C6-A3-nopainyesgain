@@ -23,50 +23,53 @@ struct HomeView: View {
     @State private var allKeyringsStabilized: Bool = false  // 모든 키링 안정화 완료
     
     var body: some View {
-        ZStack(alignment: .top) {
-            
-            HStack(spacing: 10) {
-                Spacer()
-                
-                Button {
-                    router.push(.bundleInventoryView)
-                } label: {
-                    Image(.bundleIcon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 36, height: 36)
-                }
-                .buttonStyle(.glassProminent)
-                
-                GlassEffectContainer {
-                    HStack(spacing: 0) {
-                        Button {
-                            router.push(.alarmView)
-                        } label: {
-                            Image(.alarmIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 36, height: 36)
+        GeometryReader { geo in
+            ZStack(alignment: .top) {
+                collectionViewModel.backgroundImage
+                contentView(geometry: geo)
+                HStack(spacing: 10) {
+                    Spacer()
+                    
+                    Button {
+                        router.push(.bundleInventoryView)
+                    } label: {
+                        Image(.bundleIcon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                    }
+                    .buttonStyle(.glassProminent)
+                    
+                    GlassEffectContainer {
+                        HStack(spacing: 0) {
+                            Button {
+                                router.push(.alarmView)
+                            } label: {
+                                Image(.alarmIcon)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 36, height: 36)
+                            }
+                            .buttonStyle(.glassProminent)
+                            .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                            
+                            Button {
+                                router.push(.myPageView)
+                            } label: {
+                                Image(.myPageIcon)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 36, height: 36)
+                            }
+                            
+                            .buttonStyle(.glassProminent)
+                            .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                         }
-                        .buttonStyle(.glassProminent)
-                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                        
-                        Button {
-                            router.push(.myPageView)
-                        } label: {
-                            Image(.myPageIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 36, height: 36)
-                        }
-                        
-                        .buttonStyle(.glassProminent)
-                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                     }
                 }
+                .padding(.horizontal, 16)
+                .tint(.white.opacity(0.8))
             }
-            .padding(.horizontal, 16)
-            .tint(.white.opacity(0.8))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
