@@ -90,7 +90,3 @@ struct DeleteCompletePopup: View {
             }
     }
 }
-
-#Preview {
-    DeletePopup(title: "[태그 1]\n정말 삭제하시겠어요?", message: "한 번 삭제하면 복구 할 수 없습니다.", onCancel: {}, onConfirm: {})
-}

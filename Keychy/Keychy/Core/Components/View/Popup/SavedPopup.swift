@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct ImageSavePopup: View {
+struct SavedPopup: View {
     @Binding var isPresented: Bool
+    let message: String
     
     var body: some View {
         VStack(spacing: 15) {
@@ -17,7 +18,7 @@ struct ImageSavePopup: View {
                 .frame(width: 161, height: 102)
                 .padding(.top, 20)
             
-            Text("이미지가 저장되었습니다.")
+            Text(message)
                 .typography(.suit17SB)
                 .frame(maxWidth: .infinity)
                 .padding(.bottom, 12)
@@ -35,9 +36,4 @@ struct ImageSavePopup: View {
             }
         }
     }
-}
-
-
-#Preview {
-    ImageSavePopup(isPresented: .constant(true))
 }

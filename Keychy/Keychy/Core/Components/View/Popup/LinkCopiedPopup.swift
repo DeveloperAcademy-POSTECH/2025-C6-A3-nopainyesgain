@@ -37,7 +37,3 @@ struct LinkCopiedPopup: View {
     }
 }
 
-
-#Preview {
-    ImageSavePopup(isPresented: .constant(true))
-}

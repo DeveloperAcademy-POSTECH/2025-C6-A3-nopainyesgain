@@ -93,7 +93,3 @@ struct PackingPopup: View {
             }
     }
 }
-
-#Preview {
-    PackingPopup(isPresented: .constant(true))
-}

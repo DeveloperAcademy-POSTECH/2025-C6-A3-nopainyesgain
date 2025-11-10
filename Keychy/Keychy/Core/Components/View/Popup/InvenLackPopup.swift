@@ -70,7 +70,3 @@ struct InvenLackPopup: View {
         .frame(width: 300, height: 267)
     }
 }
-
-#Preview {
-    InvenLackPopup(onCancel: {}, onConfirm: {})
-}
