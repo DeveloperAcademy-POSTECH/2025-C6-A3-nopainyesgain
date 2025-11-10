@@ -78,13 +78,90 @@ extension CollectionViewModel {
                     
                     print("PostOffice 문서 생성 완료: \(postOfficeId)")
                     
-                    // 로컬 상태 업데이트
-                    if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
-                        self.keyring[index].isPackaged = true
-                        self.keyring[index].isEditable = false
+                    // 5. Bundle에서 키링 제거
+                    self.removeKeyringFromBundles(
+                        uid: uid,
+                        keyringId: documentId
+                    ) { bundleSuccess in
+                        if bundleSuccess {
+                            print("Bundle에서 키링 제거 완료")
+                        } else {
+                            print("Bundle에서 키링 제거 실패 (Bundle 없음)")
+                        }
+                        
+                        // 로컬 상태 업데이트
+                        if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                            self.keyring[index].isPackaged = true
+                            self.keyring[index].isEditable = false
+                        }
+                        
+                        completion(true, postOfficeId)
+                    }
+                }
+            }
+    }
+    
+    // MARK: - Bundle에서 키링 제거
+    private func removeKeyringFromBundles(
+        uid: String,
+        keyringId: String,
+        completion: @escaping (Bool) -> Void
+    ) {
+        let db = Firestore.firestore()
+        
+        // 해당 사용자의 모든 Bundle 조회
+        db.collection("KeyringBundle")
+            .whereField("userId", isEqualTo: uid)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    completion(false)
+                    return
+                }
+                
+                guard let documents = snapshot?.documents, !documents.isEmpty else {
+                    print("Bundle 없음")
+                    completion(true)
+                    return
+                }
+                
+                let batch = db.batch()
+                var updatedCount = 0
+                
+                // 각 Bundle에서 해당 키링 ID 제거
+                for document in documents {
+                    guard var keyrings = document.data()["keyrings"] as? [String] else {
+                        continue
                     }
                     
-                    completion(true, postOfficeId)
+                    // 키링 ID가 포함되어 있는 경우에만 업데이트
+                    if keyrings.contains(keyringId) {
+                        let bundleRef = db.collection("KeyringBundle").document(document.documentID)
+                        
+                        batch.updateData([
+                            "keyrings": FieldValue.arrayRemove([keyringId])
+                        ], forDocument: bundleRef)
+                        
+                        updatedCount += 1
+                        print("Bundle '\(document.documentID)'에서 키링 제거 예정")
+                    }
+                }
+                
+                if updatedCount == 0 {
+                    print("키링이 포함된 Bundle 없음")
+                    completion(true)
+                    return
+                }
+                
+                // Batch 커밋
+                batch.commit { error in
+                    if let error = error {
+                        print("Bundle 업데이트 실패: \(error.localizedDescription)")
+                        completion(false)
+                        return
+                    }
+                    
+                    print("\(updatedCount)개 Bundle에서 키링 제거 완료")
+                    completion(true)
                 }
             }
     }
