@@ -34,11 +34,9 @@ struct WidgetKeychy: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             WidgetKeychyEntryView(entry: entry)
-                .containerBackground(for: .widget) {
-                    Color.black.opacity(0.001)
-                }
+                .containerBackground(.clear, for: .widget)
         }
-//        .containerBackgroundRemovable(true)
+        .containerBackgroundRemovable(true)
         .contentMarginsDisabled()
     }
 }
@@ -90,15 +88,17 @@ struct WidgetKeychyEntryView : View {
     // MARK: - 플레이스홀더 뷰
     private var placeholderView: some View {
         VStack(spacing: 8) {
-//            Image(systemName: "hand.tap.fill")
-//                .font(.largeTitle)
-//                .foregroundColor(.gray)
-//
-//            Text("꾹눌러서\n키링을 선택하세요")
-//                .font(.caption)
-//                .multilineTextAlignment(.center)
-//                .foregroundColor(.gray)
+            Image(systemName: "hand.tap.fill")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+
+            Text("꾹눌러서\n키링을 선택하세요")
+                .font(.caption)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.widgetBackground)
     }
 }
 
