@@ -13,7 +13,7 @@ struct ProfileSetupView: View {
     @Bindable var viewModel: IntroViewModel
     
     @State private var nickname: String = ""
-    @State private var validationMessage: String = "영문, 숫자만 입력 가능해요."
+    @State private var validationMessage: String = "영문, 숫자, 한글, _, .만 입력 가능해요."
     @State private var isValidationPositive: Bool = false
     @State private var validationTask: Task<Void, Never>?
     @State private var isCheckingDuplicate: Bool = false
@@ -47,51 +47,54 @@ struct ProfileSetupView: View {
         if nickname.isEmpty {
             return false
         }
-        
+
         // 1-10자 제한
         if nickname.count > maxNicknameLength {
             return false
         }
-        
+
         // 공백 포함 체크
         if nickname.contains(" ") {
             return false
         }
-        
-        // 영문, 숫자만 허용
+
+        // 영문, 숫자, 한글, 언더바(_), 온점(.) 허용
         let allowedCharacters = CharacterSet.alphanumerics
-        
+            .union(CharacterSet(charactersIn: "가-힣ㄱ-ㅎㅏ-ㅣ_."))
+
         if nickname.unicodeScalars.contains(where: { !allowedCharacters.contains($0) }) {
             return false
         }
-        
+
         return true
     }
     
     // 유효성 검사 및 메시지 업데이트
     private func validateNickname(_ nickname: String) {
+        // 빈 문자열
         if nickname.isEmpty {
-            validationMessage = "영문, 숫자만 입력 가능해요."
+            validationMessage = "영문, 숫자, 한글, _, .만 입력 가능해요."
             isValidationPositive = false
             return
         }
-        
+
         // 공백 체크
         if nickname.contains(" ") {
             validationMessage = "공백은 사용할 수 없어요"
             isValidationPositive = false
             return
         }
-        
-        // 특수문자 체크 (영문, 숫자만)
+
+        // 특수문자 체크 (영문, 숫자, 한글, 언더바, 온점만 허용)
         let allowedCharacters = CharacterSet.alphanumerics
-        
+            .union(CharacterSet(charactersIn: "가-힣ㄱ-ㅎㅏ-ㅣ_."))
+
         if nickname.unicodeScalars.contains(where: { !allowedCharacters.contains($0) }) {
-            validationMessage = "영문, 숫자만 입력 가능해요."
+            validationMessage = "특수 문자는 _(언더바), .만 가능해요"
             isValidationPositive = false
             return
         }
-        
+
         // Firebase 중복 확인
         checkNicknameDuplicate(nickname)
     }
@@ -171,7 +174,7 @@ extension ProfileSetupView {
         VStack(spacing: 8) {
             HStack {
                 TextField("닉네임을 입력해주세요.", text: $nickname)
-                    .typography(.suit16M)
+                    .typography(.notosans16R)
                     .foregroundStyle(.black100)
                     .textFieldStyle(.plain)
                     .onChange(of: nickname) { oldValue, newValue in
@@ -185,10 +188,10 @@ extension ProfileSetupView {
                         
                         // 입력 중일 때는 기본 메시지
                         if !newValue.isEmpty {
-                            validationMessage = "영문, 숫자만 입력 가능해요."
+                            validationMessage = "영문, 숫자, 한글, _, .만 입력 가능해요."
                             isValidationPositive = false
                         } else {
-                            validationMessage = "영문, 숫자만 입력 가능해요."
+                            validationMessage = "영문, 숫자, 한글, _, .만 입력 가능해요."
                             isValidationPositive = false
                         }
                         
@@ -218,20 +221,15 @@ extension ProfileSetupView {
                     .typography(.suit13M)
                     .foregroundColor(
                         isValidationPositive ? .gray300 :
-                            (validationMessage == "영문, 숫자만 입력 가능해요." ? .gray300 : .red)
+                            (validationMessage == "영문, 숫자, 한글, _, .만 입력 가능해요." ? .gray300 : .red)
                     )
                 
                 Spacer()
                 
                 // 글자수 표시
-                if isCheckingDuplicate {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                } else {
-                    Text("\(nickname.count)/\(maxNicknameLength)")
-                        .typography(.suit13M)
-                        .foregroundColor(.gray300)
-                }
+                Text("\(nickname.count)/\(maxNicknameLength)")
+                    .typography(.suit13M)
+                    .foregroundColor(.gray300)
             }
         }
     }
