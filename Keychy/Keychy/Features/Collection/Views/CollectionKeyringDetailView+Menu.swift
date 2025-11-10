@@ -59,8 +59,9 @@ extension CollectionKeyringDetailView {
     private func handleMenuCopy() {
         showMenu = false
         
+        refreshCopyVoucher()
+        
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            
             showCopyAlert = true
         }
     }
