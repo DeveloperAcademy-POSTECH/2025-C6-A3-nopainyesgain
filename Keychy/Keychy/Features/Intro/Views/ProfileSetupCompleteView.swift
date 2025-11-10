@@ -12,7 +12,3 @@ struct ProfileSetupCompleteView: View {
         Text("프로필 완성뷰")
     }
 }
-
-#Preview {
-    ProfileSetupCompleteView()
-}

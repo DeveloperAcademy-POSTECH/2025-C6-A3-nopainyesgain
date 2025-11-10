@@ -19,11 +19,14 @@ extension IntroViewModel {
         // 이메일 추출
         let email = appleIDCredential.email ?? user.email ?? ""
         print("이메일: \(email.isEmpty ? "없음" : email)")
-        
+
         DispatchQueue.main.async { [weak self] in
             self?.tempUserUID = user.uid
             self?.tempUserEmail = email
-            self?.needsProfileSetup = true
+            // 신규 가입 시 약관 동의 먼저 표시
+            self?.showTermsSheet = true
+            self?.needsProfileSetup = false
+            self?.isLoggedIn = false
         }
     }
     
@@ -55,10 +58,15 @@ extension IntroViewModel {
                 self.isLoading = false
 
                 if success {
+                    // 약관 동의 정보 저장
+                    self.saveTermsAgreement(marketingAgreed: self.tempMarketingAgreed)
+
+                    // 임시 정보 초기화 및 메인으로 이동
                     self.needsProfileSetup = false
                     self.isLoggedIn = true
                     self.tempUserUID = ""
                     self.tempUserEmail = ""
+                    self.tempMarketingAgreed = false
                 } else {
                     self.errorMessage = "프로필 저장 실패"
                 }

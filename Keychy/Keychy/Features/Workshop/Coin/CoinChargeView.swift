@@ -411,9 +411,3 @@ extension CoinChargeView {
     }
 }
 
-// MARK: - 프리뷰
-#Preview {
-    NavigationStack {
-        CoinChargeView(router: NavigationRouter<HomeRoute>())
-    }
-}

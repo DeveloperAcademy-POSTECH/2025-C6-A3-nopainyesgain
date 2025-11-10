@@ -46,7 +46,7 @@ class UserManager {
                 return
             }
 
-            if let error = error {
+            if error != nil {
                 completion(false)
             } else {
                 // 저장 성공 시 로컬 상태 업데이트
@@ -66,7 +66,7 @@ class UserManager {
                 return
             }
 
-            if let error = error {
+            if error != nil {
                 completion(false)
                 return
             }
@@ -103,7 +103,7 @@ class UserManager {
         userListener = db.collection("User").document(uid).addSnapshotListener { [weak self] snapshot, error in
             guard let self = self else { return }
 
-            if let error = error {
+            if error != nil {
                 return
             }
 

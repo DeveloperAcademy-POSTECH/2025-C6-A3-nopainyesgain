@@ -10,7 +10,6 @@ import SwiftUI
 // 스플래쉬 뷰
 struct SplashView: View {
     var body: some View {
-        
         ZStack() {
             VStack(spacing: 20) {
                 Image("introIcon")
@@ -18,8 +17,4 @@ struct SplashView: View {
             }
         }
     }
-}
-
-#Preview {
-    SplashView()
 }

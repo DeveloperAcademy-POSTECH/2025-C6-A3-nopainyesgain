@@ -70,16 +70,31 @@ extension IntroViewModel {
     // MARK: - 기존 사용자 로그인 처리
     private func handleExistingUserLogin(user: FirebaseAuth.User) {
         print("기존 사용자 로그인 처리")
-        
+
         UserManager.shared.loadUserInfo(uid: user.uid) { [weak self] hasProfile in
             guard let self = self else { return }
-            
+
             DispatchQueue.main.async {
                 if hasProfile {
-                    self.isLoggedIn = true
-                    self.needsProfileSetup = false
+                    // 약관 동의 여부 체크
+                    if let currentUser = UserManager.shared.currentUser, currentUser.termsAgreed {
+                        // 이미 약관 동의함 → 바로 메인 화면
+                        print("약관 동의 완료 → 메인 화면")
+                        self.isLoggedIn = true
+                        self.needsProfileSetup = false
+                    } else {
+                        // 약관 동의 안했음 → 약관 시트 표시
+                        print("약관 동의 필요 → 약관 시트 표시")
+                        self.showTermsSheet = true
+                    }
                 } else {
-                    self.handleIncompleteProfile(uid: user.uid)
+                    // Firestore 문서 없음 → 신규 가입 플로우 (약관 동의부터)
+                    print("Firestore 문서 없음 → 약관 동의부터 시작")
+                    self.tempUserUID = user.uid
+                    self.tempUserEmail = user.email ?? ""
+                    self.showTermsSheet = true
+                    self.needsProfileSetup = false
+                    self.isLoggedIn = false
                 }
             }
         }
