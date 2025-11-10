@@ -31,6 +31,8 @@ struct HomeTab: View {
                         BundleAddKeyringView(router: router, viewModel: collectionViewModel)
                     case .bundleNameInputView:
                         BundleNameInputView(router: router, viewModel: collectionViewModel)
+                    case .bundleNameEditView:
+                        BundleNameEditView(router: router, viewModel: collectionViewModel)
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)
