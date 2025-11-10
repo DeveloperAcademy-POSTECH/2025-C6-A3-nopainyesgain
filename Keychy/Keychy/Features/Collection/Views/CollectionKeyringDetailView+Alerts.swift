@@ -199,7 +199,7 @@ extension CollectionKeyringDetailView {
     // MARK: - Package Alerts
     private var packageAlertOverlay: some View {
         ZStack {
-            Color.black20
+            (showPackingAlert ? Color.black60 : Color.black20)
                 .ignoresSafeArea()
                 .zIndex(99)
             
