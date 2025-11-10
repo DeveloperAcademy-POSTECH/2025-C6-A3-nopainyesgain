@@ -232,6 +232,9 @@
 		C6B5706D2EC202350049F969 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570652EC202350049F969 /* AppIntent.swift */; };
 		C6B5706E2EC202350049F969 /* WidgetKeychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570682EC202350049F969 /* WidgetKeychy.swift */; };
 		C6B5706F2EC202350049F969 /* WidgetKeychyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */; };
+		C6B5707B2EC2036C0049F969 /* MultiKeyringCaptureScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */; };
+		C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
+		C6B570812EC20AF60049F969 /* CachedBundlesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -495,6 +498,9 @@
 		C6B570672EC202350049F969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6B570682EC202350049F969 /* WidgetKeychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychy.swift; sourceTree = "<group>"; };
 		C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychyBundle.swift; sourceTree = "<group>"; };
+		C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringCaptureScene.swift; sourceTree = "<group>"; };
+		C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleImageCache.swift; sourceTree = "<group>"; };
+		C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBundlesDebugView.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1273,6 +1279,7 @@
 			children = (
 				4CEC62992EAE09990099ECEE /* BundleCreateView.swift */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
+				C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */,
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
@@ -1293,6 +1300,7 @@
 		AADD2AB52EB3AF520051478E /* KeyringBundle */ = {
 			isa = PBXGroup;
 			children = (
+				C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */,
 				C6830F152EBB08380059379A /* MultiKeyringScene.swift */,
 				C6830F162EBB08380059379A /* MultiKeyringSceneView.swift */,
 				AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */,
@@ -1357,6 +1365,7 @@
 		C6B56F222EC0341B0049F969 /* Cache */ = {
 			isa = PBXGroup;
 			children = (
+				C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */,
 				C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */,
 			);
 			path = Cache;
@@ -1582,6 +1591,7 @@
 				C6B56F132EBD962E0049F969 /* CurrentItemsCard.swift in Sources */,
 				38A596802EAFCF5F0003D712 /* UserManager.swift in Sources */,
 				4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */,
+				C6B5707B2EC2036C0049F969 /* MultiKeyringCaptureScene.swift in Sources */,
 				4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */,
 				4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */,
 				4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */,
@@ -1611,6 +1621,7 @@
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
+				C6B570812EC20AF60049F969 /* CachedBundlesDebugView.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
@@ -1703,6 +1714,7 @@
 				4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
 				4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */,
+				C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */,
 				C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */,
 				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
 				4C6530502EBB2A90000F8154 /* LoadingAlert.swift in Sources */,

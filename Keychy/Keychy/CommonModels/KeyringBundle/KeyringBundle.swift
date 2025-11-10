@@ -11,7 +11,8 @@ import FirebaseFirestore
 
 struct KeyringBundle: Identifiable, Equatable, Hashable {
     let id = UUID()
-    
+    var firestoreId: String?  // Firestore documentId (번들 이미지 캐시용)
+
     var userId: String
     var name: String
     var selectedBackground: String
@@ -48,6 +49,10 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
               let createdAtTimestamp = data["createdAt"] as? Timestamp else {
             return nil
         }
+
+        // Firestore documentId 저장 (번들 이미지 캐시 키로 사용)
+        self.firestoreId = documentId
+
         self.userId = userId
         self.name = name
         self.selectedBackground = selectedBackground

@@ -11,11 +11,15 @@ struct BundleInventoryView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
 
+    #if DEBUG
+    @State private var showCachedBundlesDebug = false
+    #endif
+
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 13),
         GridItem(.flexible(), spacing: 13)
     ]
-    
+
     var body: some View {
         VStack {
             bundleGrid
@@ -25,8 +29,16 @@ struct BundleInventoryView: View {
         .toolbar {
             backToolbarItem
             nextToolbarItem
+            #if DEBUG
+            debugToolbarItem
+            #endif
         }
         .navigationBarBackButtonHidden(true)
+        #if DEBUG
+        .sheet(isPresented: $showCachedBundlesDebug) {
+            CachedBundlesDebugView()
+        }
+        #endif
         .navigationTitle("뭉치함")
         .scrollIndicators(.hidden)
         .onAppear {
@@ -61,6 +73,26 @@ extension BundleInventoryView {
             }
         }
     }
+
+    #if DEBUG
+    private var debugToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                showCachedBundlesDebug = true
+                BundleImageCache.shared.printAllCachedFiles()
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 40, height: 40)
+                    Image(systemName: "photo.stack")
+                        .font(.system(size: 18))
+                        .foregroundColor(.blue)
+                }
+            }
+        }
+    }
+    #endif
 }
 
 // MARK: - 그리드 뷰
