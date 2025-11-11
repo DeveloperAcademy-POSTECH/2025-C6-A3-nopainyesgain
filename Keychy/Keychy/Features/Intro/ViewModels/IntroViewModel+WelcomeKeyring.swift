@@ -2,7 +2,7 @@
 //  IntroViewModel+WelcomeKeyring.swift
 //  Keychy
 //
-//  Created by Claude on 11/11/25.
+//  Created by 길지훈 on 11/11/25.
 //
 
 import Foundation
