@@ -34,7 +34,7 @@ struct KeyringMenu: View {
                                 .resizable()
                                 .frame(width: 25, height: 25)
                             
-                            Text("키링 편집")
+                            Text("정보 수정")
                                 .typography(.suit16M)
                                 .foregroundColor(.gray600)
                         }
