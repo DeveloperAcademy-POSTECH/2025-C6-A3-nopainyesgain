@@ -50,7 +50,73 @@ extension MultiKeyringCaptureScene {
 
     // MARK: - Static Helper Methods
 
-    /// 번들 이미지 캡처
+    /// 번들 이미지 캡처 (GeometryReader 기반)
+    /// - Parameters:
+    ///   - keyringDataList: 키링 데이터 리스트
+    ///   - backgroundImageURL: 배경 이미지 URL
+    ///   - viewSize: View 크기 (GeometryReader에서 가져온 크기)
+    /// - Returns: 캡처된 PNG 데이터
+    @MainActor
+    static func captureBundleImageWithGeometry(
+        keyringDataList: [MultiKeyringCaptureScene.KeyringData],
+        backgroundImageURL: String,
+        viewSize: CGSize
+    ) async -> Data? {
+        print("📐 [BundleCapture] 캡처 사이즈 (GeometryReader): \(viewSize.width) x \(viewSize.height)")
+
+        return await withCheckedContinuation { continuation in
+            var loadingCompleted = false
+
+            // MultiKeyringCaptureScene 생성 (캡처 전용, 물리 없음)
+            let scene = MultiKeyringCaptureScene(
+                keyringDataList: keyringDataList,
+                ringType: .basic,
+                chainType: .basic,
+                backgroundColor: .clear,
+                backgroundImageURL: backgroundImageURL,
+                onLoadingComplete: {
+                    loadingCompleted = true
+                }
+            )
+            scene.size = viewSize
+            scene.scaleMode = .aspectFill
+
+            // SKView 생성 및 씬 표시
+            let view = SKView(frame: CGRect(origin: .zero, size: viewSize))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+
+            // 로딩 완료 대기
+            Task {
+                var waitTime = 0.0
+                let checkInterval = 0.1
+                let maxWaitTime = 3.0
+
+                while !loadingCompleted && waitTime < maxWaitTime {
+                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+                    waitTime += checkInterval
+                }
+
+                if !loadingCompleted {
+                    print("⚠️ [BundleCapture] 타임아웃 - 로딩 미완료")
+                } else {
+                    // 로딩 완료 후 추가 렌더링 대기
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                }
+
+                // PNG 캡처
+                let pngData = await scene.captureToPNG()
+
+                if pngData == nil {
+                    print("❌ [BundleCapture] 캡처 실패")
+                }
+
+                continuation.resume(returning: pngData)
+            }
+        }
+    }
+
+    /// 번들 이미지 캡처 (고정 크기 - 하위 호환성)
     /// - Parameters:
     ///   - keyringDataList: 키링 데이터 리스트
     ///   - backgroundImageURL: 배경 이미지 URL
@@ -64,7 +130,7 @@ extension MultiKeyringCaptureScene {
         // 고정 캡처 사이즈 (iPhone 13 Pro 비율 기준)
         let captureSize = customSize ?? CGSize(width: 195, height: 422)
 
-        print("📐 [BundleCapture] 캡처 사이즈: \(captureSize.width) x \(captureSize.height)")
+        print("📐 [BundleCapture] 캡처 사이즈 (고정): \(captureSize.width) x \(captureSize.height)")
 
         return await withCheckedContinuation { continuation in
             var loadingCompleted = false

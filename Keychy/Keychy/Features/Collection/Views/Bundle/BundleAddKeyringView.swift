@@ -22,6 +22,7 @@ struct BundleAddKeyringView: View {
     @State private var selectedPosition: Int = 0
     @State private var isDeleteButtonSelected: Bool = false
     @State private var isCapturing: Bool = false // 캡처 진행 상태
+    @State private var viewSize: CGSize = .zero // GeometryReader에서 가져온 뷰 크기
 
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 16),
@@ -64,6 +65,10 @@ struct BundleAddKeyringView: View {
             .background(backgroundImage)
             .onAppear {
                 fetchData()
+                viewSize = geometry.size
+            }
+            .onChange(of: geometry.size) { _, newSize in
+                viewSize = newSize
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -352,10 +357,12 @@ extension BundleAddKeyringView {
             keyringDataList.append(data)
         }
 
-        // 정적 메서드를 사용하여 캡처 (고정 크기 195x422)
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        // GeometryReader 크기로 캡처
+        let captureSize = await MainActor.run { viewSize }
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImageWithGeometry(
             keyringDataList: keyringDataList,
-            backgroundImageURL: background.backgroundImage
+            backgroundImageURL: background.backgroundImage,
+            viewSize: captureSize
         ) {
             await MainActor.run {
                 viewModel.bundleCapturedImage = pngData
