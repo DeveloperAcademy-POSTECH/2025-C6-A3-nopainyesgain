@@ -105,7 +105,6 @@ struct CachedBundlesDebugView: View {
 
     private var imagesGridSection: some View {
         LazyVGrid(columns: [
-            GridItem(.flexible()),
             GridItem(.flexible())
         ], spacing: 16) {
             ForEach(cachedImages, id: \.id) { item in

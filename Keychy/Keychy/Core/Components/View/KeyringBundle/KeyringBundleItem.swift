@@ -145,6 +145,17 @@ struct KeyringBundleItem: View {
             keyringDataList.append(data)
         }
 
+        // 배경 이미지 미리 로드 (캡처 전 확인)
+        print("🔄 [BundleItem] 배경 이미지 미리 로드 시작: \(background.backgroundImage)")
+        guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
+            print("❌ [BundleItem] 배경 이미지 미리 로드 실패")
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
+        print("✅ [BundleItem] 배경 이미지 미리 로드 완료")
+
         // 정적 메서드를 사용하여 캡처 (고정 크기 195x422)
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
