@@ -14,9 +14,12 @@ struct PackagedKeyringView: View {
     let postOfficeId: String
     let shareLink: String
     let authorName: String
-    @State private var currentPage: Int = 0
+    @State var currentPage: Int = 0
     @State private var qrCodeImage: UIImage?
     @State private var isLoading: Bool = true
+    
+    var onImageSaved: (() -> Void)?
+    var onLinkCopied: (() -> Void)?
     
     private let totalPages = 2
     
@@ -121,7 +124,7 @@ extension PackagedKeyringView {
         .padding(.horizontal, 20)
     }
     
-    private var packageImageStack: some View {
+    var packageImageStack: some View {
         ZStack(alignment: .bottom) {
             packageBackground
             packageForeground
@@ -176,6 +179,7 @@ extension PackagedKeyringView {
     private var copyLinkButton: some View {
         Button(action: {
             copyLink()
+            onLinkCopied?()
         }) {
             HStack {
                 Image("LinkSimple")
@@ -203,7 +207,7 @@ extension PackagedKeyringView {
         .padding(.horizontal, 20)
     }
     
-    private var qrCodeImageStack: some View {
+    var qrCodeImageStack: some View {
         ZStack(alignment: .bottom) {
             Image("QRKeyring")
                 .resizable()
@@ -322,6 +326,10 @@ extension PackagedKeyringView {
     
     func saveImage() {
         print("이미지 저장 - 현재 페이지: \(currentPage)")
-        // TODO: 이미지 저장 로직
+        captureAndSaveCurrentPage { success in
+            if success {
+                print("✅ 저장 완료")
+            }
+        }
     }
 }

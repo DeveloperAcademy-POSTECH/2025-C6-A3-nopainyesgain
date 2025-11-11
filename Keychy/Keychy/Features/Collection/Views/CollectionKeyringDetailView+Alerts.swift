@@ -150,19 +150,47 @@ extension CollectionKeyringDetailView {
                 return
             }
             
-            if viewModel.copyVoucher > 0 {
-                viewModel.copyKeyring(uid: uid, keyring: keyring) { success, newKeyringId in
-                    if success {
-                        print("키링 복사 성공")
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showCopyCompleteAlert = true
-                        }
-                    }
-                }
-            } else {
+            // 1. 복사권 개수 확인
+            if self.viewModel.copyVoucher <= 0 {
                 print("복사권 부족")
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showCopyLackAlert = true
+                    self.showCopyLackAlert = true
+                }
+                return
+            }
+            
+            // 2. 인벤토리 용량 확인
+            self.viewModel.checkInventoryCapacity(userId: uid) { hasSpace in
+                DispatchQueue.main.async {
+                    if !hasSpace {
+                        // 보관함 가득 찬 경우
+                        print("보관함 가득 찬")
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            self.showInvenFullAlert = true
+                        }
+                        return
+                    }
+                    
+                    // 3. 복사권 있고, 인벤토리 여유 있음 -> 복사 진행
+                    self.viewModel.copyKeyring(uid: uid, keyring: self.keyring) { success, newKeyringId in
+                        DispatchQueue.main.async {
+                            if success {
+                                print("키링 복사 성공")
+                                
+                                // 복사권 개수 새로고침
+                                self.refreshCopyVoucher()
+                                
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    self.showCopyCompleteAlert = true
+                                }
+                            } else {
+                                print("키링 복사 실패")
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    self.showCopyLackAlert = true
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -171,7 +199,7 @@ extension CollectionKeyringDetailView {
     // MARK: - Package Alerts
     private var packageAlertOverlay: some View {
         ZStack {
-            Color.black20
+            (showPackingAlert ? Color.black60 : Color.black20)
                 .ignoresSafeArea()
                 .zIndex(99)
             

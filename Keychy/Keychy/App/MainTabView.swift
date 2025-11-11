@@ -19,6 +19,7 @@ struct MainTabView: View {
 
     @State private var showReceiveSheet = false
     @State private var receivedPostOfficeId: String?
+    @State private var shouldRefreshCollection = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -32,7 +33,7 @@ struct MainTabView: View {
                 .tag(0)
 
             // 보관함
-            CollectionTab(router: collectionRouter)
+            CollectionTab(router: collectionRouter, shouldRefresh: $shouldRefreshCollection)
                 .tabItem {
                     Image("collection")
                         .renderingMode(.template)
@@ -68,6 +69,12 @@ struct MainTabView: View {
             }
         }
         .fullScreenCover(isPresented: $showReceiveSheet) {
+            // 시트가 닫힐 때 새로고침 플래그 활성화
+            if receivedPostOfficeId != nil {
+                shouldRefreshCollection = true
+            }
+            receivedPostOfficeId = nil
+        } content: {
             if let postOfficeId = receivedPostOfficeId {
                 KeyringReceiveView(
                     viewModel: collectionViewModel,
@@ -101,4 +108,3 @@ struct MainTabView: View {
         }
     }
 }
-//keychy://receive?keyringId=QK173zLjUXMlwII228Mn

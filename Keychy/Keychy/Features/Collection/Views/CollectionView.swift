@@ -11,13 +11,14 @@ import SpriteKit
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State var collectionViewModel: CollectionViewModel
+    @Binding var shouldRefresh: Bool
     @State private var userManager = UserManager.shared
     @State private var selectedCategory = "전체"
     @State private var showSortSheet: Bool = false
     @State private var showRenameAlert: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteAlert: Bool = false
-    @State private var showInvenExpandAlert: Bool = false // 추후 인벤토리 확장용
+    @State private var showInvenExpandAlert: Bool = false
     @State private var showPurchaseSuccessAlert: Bool = false
     @State private var showPurchaseFailAlert: Bool = false
     @State private var purchaseSuccessScale: CGFloat = 0.3
@@ -32,6 +33,11 @@ struct CollectionView: View {
 
     // 디버그용
     @State private var showCachedImagesDebug: Bool = false
+    
+    // 검색 관련
+    @State private var isSearching: Bool = false
+    @State private var searchText: String = ""
+    @FocusState private var isSearchFieldFocused: Bool
     
     private var categories: [String] {
         var allCategories = ["전체"]
@@ -57,6 +63,13 @@ struct CollectionView: View {
             keyrings = keyrings.filter { $0.tags.contains(selectedCategory) }
         }
         
+//        // 검색 필터링
+//        if !searchText.isEmpty {
+//            keyrings = keyrings.filter { keyring in
+//                keyring.name.localizedCaseInsensitiveContains(searchText)
+//            }
+//        }
+//
         return keyrings
     }
     
@@ -72,6 +85,10 @@ struct CollectionView: View {
                 
                 collectionSection
                     .padding(.horizontal, Spacing.padding)
+                
+                if isSearching {
+                    searchBarOverlay
+                }
             }
             .ignoresSafeArea()
             
@@ -287,6 +304,17 @@ struct CollectionView: View {
         .onAppear {
             fetchUserData()
         }
+        .onChange(of: shouldRefresh) { oldValue, newValue in
+            if newValue {
+                fetchUserData()
+                shouldRefresh = false            }
+        }
+        // 검색 종료 시 검색어 초기화
+//        .onChange(of: isSearching) { oldValue, newValue in
+//            if !newValue {
+//                searchText = ""
+//            }
+//        }
     }
     
     // MARK: - 사용자 데이터 로드
@@ -460,18 +488,91 @@ extension CollectionView {
             }
             .padding(.trailing, 10)
             #endif
-
+            
             CircleGlassButton(imageName: "Widget",
                               action: { router.push(.widgetSettingView) })
             .padding(.trailing, 10)
 
             CircleGlassButton(imageName: "Bundle",
                               action: { router.push(.bundleInventoryView) })
+            .padding(.trailing, 10)
+            
+            CircleGlassButton(
+                imageName: "Search",
+                action: {
+//                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+//                        isSearching = true
+//                    }
+//                    // 키보드 올리기
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                        isSearchFieldFocused = true
+//                    }
+                }
+            )
         }
         .padding(.top, 60)
         .sheet(isPresented: $showCachedImagesDebug) {
             CachedImagesDebugView()
         }
+    }
+    
+    // 검색바 (임시 임시)
+    private var searchBarOverlay: some View {
+        HStack(spacing: 12) {
+            //TODO: 교체
+            Image("Search")
+                .foregroundColor(.gray500)
+                .frame(width: 20, height: 20)
+            
+            // 검색 텍스트 필드
+            TextField("키링", text: $searchText)
+                .focused($isSearchFieldFocused)
+                .textFieldStyle(.plain)
+                .typography(.suit15M25)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+            
+            // 텍스트 지우기 버튼
+            if !searchText.isEmpty {
+                Button(action: {
+                    searchText = ""
+                }) {
+                    Image("dismiss")
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                }
+                .transition(.scale.combined(with: .opacity))
+            }
+            
+            // 구분선
+            Rectangle()
+                .fill(Color.gray200)
+                .frame(width: 1, height: 20)
+            
+            // 닫기 버튼
+            Button(action: {
+                // 키보드 먼저 내리기
+                isSearchFieldFocused = false
+                
+                // 애니메이션과 함께 검색 모드 종료
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isSearching = false
+                    }
+                }
+            }) {
+                Image("dismiss")
+                    .resizable()
+                    .frame(width: 18, height: 18)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(
+            Rectangle()
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: -2)
+        )
     }
 }
 
@@ -650,8 +751,7 @@ extension CollectionView {
                     .cornerRadius(10)
                 
                 Text(keyring.name)
-                    // MARK: - 이걸 본 시점에 여기 폰트 맞는지 피그마 봐주시길
-                    .typography(.notosans15M)
+                    .typography(.notosans14M)
                     .foregroundColor(.black100)
             }
         }

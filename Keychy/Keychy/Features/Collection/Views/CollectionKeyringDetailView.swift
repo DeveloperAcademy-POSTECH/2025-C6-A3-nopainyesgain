@@ -26,6 +26,7 @@ struct CollectionKeyringDetailView: View {
     @State var showCopyAlert: Bool = false
     @State var showCopyCompleteAlert: Bool = false
     @State var showCopyLackAlert: Bool = false
+    @State var showInvenFullAlert: Bool = false
     @State var showPackageAlert: Bool = false
     @State var showPackingAlert: Bool = false
     @State var menuPosition: CGRect = .zero
@@ -56,14 +57,14 @@ struct CollectionKeyringDetailView: View {
                 alertOverlays
                 
                 // 얘는 따로 빼니까 팝업 사이에 딜레이가 있어서 겹치는 문제가 있어서 일단 빼놨음
-                if showCopyAlert || showCopyCompleteAlert || showCopyLackAlert {
+                if showCopyAlert || showCopyCompleteAlert || showCopyLackAlert || showInvenFullAlert {
                     Color.black20
                         .ignoresSafeArea()
                         .zIndex(99)
                     
                     if showCopyAlert {
                         CopyPopup(
-                            myCopyPass: copyVoucher,
+                            myCopyPass: viewModel.copyVoucher,
                             onCancel: {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     showCopyAlert = false
@@ -104,6 +105,28 @@ struct CollectionKeyringDetailView: View {
                         )
                         .zIndex(100)
                     }
+                    
+                    if showInvenFullAlert {
+                        InvenLackPopup(
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showInvenFullAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showInvenFullAlert = false
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    isSheetPresented = false
+                                    isNavigatingDeeper = true
+                                    
+                                    router.push(.coinCharge)
+                                }
+                            }
+                        )
+                        .zIndex(100)
+                    }
                 }
             }
         }
@@ -121,6 +144,7 @@ struct CollectionKeyringDetailView: View {
         
         .onAppear {
             handleViewAppear()
+            refreshCopyVoucher()
         }
         .onDisappear {
             handleViewDisappear()
@@ -135,6 +159,17 @@ struct CollectionKeyringDetailView: View {
             menuPosition = frame
         }
 
+    }
+    
+    // 복사권 개수 리프레쉬
+    func refreshCopyVoucher() {
+        guard let uid = UserDefaults.standard.string(forKey: "userUID") else { return }
+        
+        viewModel.fetchUserCollectionData(uid: uid) { success in
+            if success {
+                print("복사권 새로고침: \(viewModel.copyVoucher)개")
+            }
+        }
     }
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
