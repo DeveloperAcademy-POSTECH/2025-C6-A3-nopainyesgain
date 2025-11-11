@@ -61,14 +61,22 @@ struct BundleAddKeyringView: View {
                     }
                 }
             }
+            .background(
+                GeometryReader { fullGeometry in
+                    Color.clear
+                        .onAppear {
+                            viewSize = fullGeometry.size
+                        }
+                        .onChange(of: fullGeometry.size) { _, newSize in
+                            viewSize = newSize
+                        }
+                }
+                .ignoresSafeArea()
+            )
             .ignoresSafeArea()
             .background(backgroundImage)
             .onAppear {
                 fetchData()
-                viewSize = geometry.size
-            }
-            .onChange(of: geometry.size) { _, newSize in
-                viewSize = newSize
             }
         }
         .navigationBarBackButtonHidden(true)

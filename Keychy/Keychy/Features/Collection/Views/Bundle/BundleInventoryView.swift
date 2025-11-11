@@ -27,12 +27,18 @@ struct BundleInventoryView: View {
             VStack {
                 bundleGrid
             }
-            .onAppear {
-                screenSize = geometry.size
-            }
-            .onChange(of: geometry.size) { _, newSize in
-                screenSize = newSize
-            }
+            .background(
+                GeometryReader { fullGeometry in
+                    Color.clear
+                        .onAppear {
+                            screenSize = fullGeometry.size
+                        }
+                        .onChange(of: fullGeometry.size) { _, newSize in
+                            screenSize = newSize
+                        }
+                }
+                .ignoresSafeArea()
+            )
         }
         .padding(.horizontal, 16)
         .toolbar(.hidden, for: .tabBar)
