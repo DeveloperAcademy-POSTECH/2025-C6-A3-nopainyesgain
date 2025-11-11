@@ -13,6 +13,7 @@ import Lottie
 struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
     @Bindable var viewModel: VM
     var backgroundColor: UIColor = .gray50
+    var applyWelcomeImpulse: Bool = false  // 씬 준비 완료 시 자동 파티클 효과
     var onSceneReady: (() -> Void)? = nil  // 씬 준비 완료 콜백
 
     @State private var scene: KeyringScene? = nil
@@ -35,12 +36,22 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
                 )
                 newScene.scaleMode = .resizeFill
                 newScene.bind(to: viewModel)
-                scene = newScene
 
-                // 씬 생성 후 약간의 딜레이 (렌더링 완료 대기)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                    onSceneReady?()
+                // Setup 완료 콜백 설정 (Body까지 완전히 생성된 시점)
+                newScene.onSetupComplete = {
+                    DispatchQueue.main.async {
+                        onSceneReady?()
+
+                        // 환영 효과: Setup 완료 후 파티클 터뜨리기
+                        if applyWelcomeImpulse {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                newScene.applyWelcomeImpulse()
+                            }
+                        }
+                    }
                 }
+
+                scene = newScene
             }
         }
         .task {
