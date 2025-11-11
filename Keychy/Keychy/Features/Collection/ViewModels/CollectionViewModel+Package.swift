@@ -113,7 +113,7 @@ extension CollectionViewModel {
         db.collection("KeyringBundle")
             .whereField("userId", isEqualTo: uid)
             .getDocuments { snapshot, error in
-                if let error = error {
+                if error != nil {
                     completion(false)
                     return
                 }
@@ -248,57 +248,86 @@ extension CollectionViewModel {
         receiverId: String,
         completion: @escaping (Bool) -> Void
     ) {
-        print("   키링 수락 시작")
-        print("   PostOffice: \(postOfficeId)")
-        print("   Keyring: \(keyringId)")
-        print("   Sender: \(senderId)")
-        print("   Receiver: \(receiverId)")
-        
         let db = Firestore.firestore()
-        let batch = db.batch()
-        
-        // 1. Sender의 keyrings 배열에서 제거
-        let senderRef = db.collection("User").document(senderId)
-        batch.updateData([
-            "keyrings": FieldValue.arrayRemove([keyringId])
-        ], forDocument: senderRef)
-        
-        // 2. Receiver의 keyrings 배열에 추가
-        let receiverRef = db.collection("User").document(receiverId)
-        batch.updateData([
-            "keyrings": FieldValue.arrayUnion([keyringId])
-        ], forDocument: receiverRef)
-        
-        // 3. PostOffice 문서 업데이트 (receiverId, endedAt 추가)
-        let postOfficeRef = db.collection("PostOffice").document(postOfficeId)
-        batch.updateData([
-            "receiverId": receiverId,
-            "endedAt": Timestamp(date: Date())
-        ], forDocument: postOfficeRef)
-        
-        // 4. Keyring 문서 업데이트 (isPackaged false로 변경, 태그 비우기)
-        let keyringRef = db.collection("Keyring").document(keyringId)
-        batch.updateData([
-            "isPackaged": false,
-            "tags": []
-        ], forDocument: keyringRef)
-        
-        // Batch 실행
-        batch.commit { [weak self] error in
-            if let error = error {
-                print("키링 수락 실패: \(error.localizedDescription)")
+
+        // 1. Keyring 문서 조회 (bodyImage, soundId 가져오기)
+        db.collection("Keyring").document(keyringId).getDocument { [weak self] snapshot, error in
+            guard let self = self,
+                  let data = snapshot?.data(),
+                  let bodyImage = data["bodyImage"] as? String,
+                  let soundId = data["soundId"] as? String else {
+                print("키링 수락 실패: Keyring 문서 조회 실패")
                 completion(false)
                 return
             }
-            
-            print("키링 수락 완료")
-            
-            // 로컬 데이터 업데이트
-            if let index = self?.keyring.firstIndex(where: { $0.id.uuidString == keyringId }) {
-                self?.keyring[index].isPackaged = false
+
+            // 2. Storage 리소스 재업로드
+            Task {
+                do {
+                    let (newBodyImageURL, newSoundId) = try await self.reuploadKeyringResources(
+                        bodyImage: bodyImage,
+                        soundId: soundId,
+                        toUserId: receiverId
+                    )
+
+                    // 3. Batch 작업 (새 URL 포함)
+                    let batch = db.batch()
+
+                    // 3-1. Sender의 keyrings 배열에서 제거
+                    let senderRef = db.collection("User").document(senderId)
+                    batch.updateData([
+                        "keyrings": FieldValue.arrayRemove([keyringId])
+                    ], forDocument: senderRef)
+
+                    // 3-2. Receiver의 keyrings 배열에 추가
+                    let receiverRef = db.collection("User").document(receiverId)
+                    batch.updateData([
+                        "keyrings": FieldValue.arrayUnion([keyringId])
+                    ], forDocument: receiverRef)
+
+                    // 3-3. PostOffice 문서 업데이트
+                    let postOfficeRef = db.collection("PostOffice").document(postOfficeId)
+                    batch.updateData([
+                        "receiverId": receiverId,
+                        "endedAt": Timestamp(date: Date())
+                    ], forDocument: postOfficeRef)
+
+                    // 3-4. Keyring 문서 업데이트 (새 URL 포함!)
+                    let keyringRef = db.collection("Keyring").document(keyringId)
+                    batch.updateData([
+                        "isPackaged": false,
+                        "tags": [],
+                        "bodyImage": newBodyImageURL,
+                        "soundId": newSoundId
+                    ], forDocument: keyringRef)
+
+                    // 4. Batch 실행
+                    batch.commit { [weak self] error in
+                        if let error = error {
+                            print("키링 수락 실패: \(error.localizedDescription)")
+                            completion(false)
+                            return
+                        }
+
+                        // 로컬 데이터 업데이트
+                        if let index = self?.keyring.firstIndex(where: { $0.id.uuidString == keyringId }) {
+                            self?.keyring[index].isPackaged = false
+                            self?.keyring[index].bodyImage = newBodyImageURL
+                            self?.keyring[index].soundId = newSoundId
+                        }
+
+                        // 위젯 캐시 제거 (새 이미지로 갱신 필요)
+                        KeyringImageCache.shared.removeKeyring(id: keyringId)
+
+                        print("키링 수락 완료")
+                        completion(true)
+                    }
+
+                } catch {
+                    print("키링 수락 실패: \(error.localizedDescription)")
+                    completion(false)
+                }
             }
-            
-            completion(true)
         }
     }
     
