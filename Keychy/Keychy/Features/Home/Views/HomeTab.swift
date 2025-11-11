@@ -23,8 +23,6 @@ struct HomeTab: View {
                         BundleInventoryView(router: router, viewModel: collectionViewModel)
                     case .bundleDetailView:
                         BundleDetailView(router: router, viewModel: collectionViewModel)
-                    case .bundleSelectBackgroundView:
-                        BundleSelectBackgroundView(router: router, viewModel: collectionViewModel)
                     case .bundleSelectCarabinerView:
                         BundleSelectCarabinerView(router: router, viewModel: collectionViewModel)
                     case .bundleAddKeyringView:
