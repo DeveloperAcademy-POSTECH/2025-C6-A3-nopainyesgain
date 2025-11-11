@@ -180,7 +180,6 @@
 		4CEC62982EAE08F70099ECEE /* Birthday.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62882EAE08F70099ECEE /* Birthday.json */; };
 		4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */; };
 		4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */; };
-		4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
@@ -188,6 +187,8 @@
 		AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */; };
 		AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */; };
 		AA6298522EC233D2001576C0 /* BundleEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298512EC233D2001576C0 /* BundleEditView.swift */; };
+		AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298532EC39065001576C0 /* BundleCreateView.swift */; };
+		AA6298562EC3AD16001576C0 /* BundleItemCustomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */; };
 		AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
@@ -440,7 +441,6 @@
 		4CEC628C2EAE08F70099ECEE /* Drum.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Drum.mp3; sourceTree = "<group>"; };
 		4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDetailView.swift; sourceTree = "<group>"; };
 		4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleInventoryView.swift; sourceTree = "<group>"; };
-		4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectBackgroundView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameInputView.swift; sourceTree = "<group>"; };
@@ -448,6 +448,8 @@
 		AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleRingComponent.swift; sourceTree = "<group>"; };
 		AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleAddKeyringView.swift; sourceTree = "<group>"; };
 		AA6298512EC233D2001576C0 /* BundleEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEditView.swift; sourceTree = "<group>"; };
+		AA6298532EC39065001576C0 /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
+		AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleItemCustomSheet.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerItemTile.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
@@ -863,6 +865,7 @@
 				4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */,
 				AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */,
 				AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */,
+				AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */,
 			);
 			path = KeyringBundle;
 			sourceTree = "<group>";
@@ -1289,7 +1292,7 @@
 			children = (
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
-				4CEC629C2EAE09990099ECEE /* BundleSelectBackgroundView.swift */,
+				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
 				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
@@ -1583,6 +1586,7 @@
 				4C77753F2EB1343600981C3E /* IntroViewModel+Login.swift in Sources */,
 				4C7775402EB1343600981C3E /* IntroViewModel+Signup.swift in Sources */,
 				4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */,
+				AA6298562EC3AD16001576C0 /* BundleItemCustomSheet.swift in Sources */,
 				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
 				4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */,
 				386AECC92EB445F80001A5CD /* SplashView.swift in Sources */,
@@ -1680,10 +1684,10 @@
 				C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* ItemDetailImage.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
+				AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */,
 				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
-				4CEC62A12EAE09990099ECEE /* BundleSelectBackgroundView.swift in Sources */,
 				38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */,
 				38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
