@@ -9,7 +9,6 @@
 import SwiftUI
 import SpriteKit
 import FirebaseFirestore
-import FirebaseStorage
 
 struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
@@ -248,31 +247,16 @@ extension KeyringCompleteView {
     
     // MARK: - Firebase Storage에 이미지 업로드
     private func uploadImageToStorage(image: UIImage, uid: String, completion: @escaping (String?) -> Void) {
-        guard let imageData = image.pngData() else {
-            completion(nil)
-            return
-        }
-        
         let fileName = "\(UUID().uuidString).png"
-        let storageRef = Storage.storage().reference()
-            .child("Keyrings")
-            .child("BodyImages")
-            .child(uid)
-            .child(fileName)
-        
-        storageRef.putData(imageData, metadata: nil) { metadata, error in
-            if error != nil {
+        let path = "Keyrings/BodyImages/\(uid)/\(fileName)"
+
+        Task {
+            do {
+                let downloadURL = try await StorageManager.shared.uploadImage(image, path: path)
+                completion(downloadURL)
+            } catch {
+                print("이미지 업로드 실패: \(error.localizedDescription)")
                 completion(nil)
-                return
-            }
-            
-            storageRef.downloadURL { url, error in
-                if error != nil {
-                    completion(nil)
-                    return
-                }
-                
-                completion(url?.absoluteString)
             }
         }
     }
@@ -283,29 +267,17 @@ extension KeyringCompleteView {
             completion(nil)
             return
         }
-        
+
         let fileName = "\(UUID().uuidString).m4a"
-        let storageRef = Storage.storage().reference()
-            .child("Keyrings")
-            .child("CustomSounds")
-            .child(uid)
-            .child(fileName)
-        
-        storageRef.putData(soundData, metadata: nil) { metadata, error in
-            if let error = error {
-                print("Error uploading custom sound: \(error.localizedDescription)")
+        let path = "Keyrings/CustomSounds/\(uid)/\(fileName)"
+
+        Task {
+            do {
+                let downloadURL = try await StorageManager.shared.uploadAudio(soundData, path: path)
+                completion(downloadURL)
+            } catch {
+                print("커스텀 사운드 업로드 실패: \(error.localizedDescription)")
                 completion(nil)
-                return
-            }
-            
-            storageRef.downloadURL { url, error in
-                if let error = error {
-                    print("Error getting download URL: \(error.localizedDescription)")
-                    completion(nil)
-                    return
-                }
-                
-                completion(url?.absoluteString)
             }
         }
     }
