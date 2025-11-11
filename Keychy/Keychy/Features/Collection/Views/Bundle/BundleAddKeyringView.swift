@@ -34,6 +34,7 @@ struct BundleAddKeyringView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
+                backgroundImage
                 VStack {
                     sceneView(geometry: geometry, carabiner: (viewModel.selectedCarabiner ?? viewModel.carabiners.first)!)
                     Spacer()
@@ -61,6 +62,7 @@ struct BundleAddKeyringView: View {
                     }
                 }
             }
+            .ignoresSafeArea()
             .background(
                 GeometryReader { fullGeometry in
                     Color.clear
@@ -73,8 +75,6 @@ struct BundleAddKeyringView: View {
                 }
                 .ignoresSafeArea()
             )
-            .ignoresSafeArea()
-            .background(backgroundImage)
             .onAppear {
                 fetchData()
             }
