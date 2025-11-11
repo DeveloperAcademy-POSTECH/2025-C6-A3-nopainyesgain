@@ -377,9 +377,16 @@ extension BundleAddKeyringView {
         // GeometryReader 크기로 캡처
         let captureSize = await MainActor.run { viewSize }
 
+        // 카라비너 이미지 추출 (hamburger 타입인 경우)
+        let carabinerType = CarabinerType.from(carabiner.carabinerType)
+        let carabinerBackURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[1] : nil
+        let carabinerFrontURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[2] : nil
+
         if let pngData = await MultiKeyringCaptureScene.captureBundleImageWithGeometry(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
+            carabinerBackImageURL: carabinerBackURL,
+            carabinerFrontImageURL: carabinerFrontURL,
             viewSize: captureSize
         ) {
             await MainActor.run {

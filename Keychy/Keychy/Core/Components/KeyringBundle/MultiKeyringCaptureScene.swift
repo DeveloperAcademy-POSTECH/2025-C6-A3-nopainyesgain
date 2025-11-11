@@ -24,6 +24,8 @@ class MultiKeyringCaptureScene: SKScene {
     var currentChainType: ChainType = .basic
     var customBackgroundColor: UIColor = .clear
     var backgroundImageURL: String?  // 배경 이미지 URL
+    var carabinerBackImageURL: String?  // 카라비너 뒷면 이미지 (hamburger 타입)
+    var carabinerFrontImageURL: String?  // 카라비너 앞면 이미지 (hamburger 타입)
     var onLoadingComplete: (() -> Void)?
 
     // 로딩 완료 추적
@@ -31,6 +33,9 @@ class MultiKeyringCaptureScene: SKScene {
     private var loadedKeyrings: Int = 0
     private var backgroundLoaded: Bool = false
     private var needsBackgroundImage: Bool = false
+    private var carabinerBackLoaded: Bool = false
+    private var carabinerFrontLoaded: Bool = false
+    private var needsCarabinerImages: Bool = false
 
     // MARK: - Init
 
@@ -40,6 +45,8 @@ class MultiKeyringCaptureScene: SKScene {
         chainType: ChainType = .basic,
         backgroundColor: UIColor = .clear,
         backgroundImageURL: String? = nil,  // 배경 이미지 URL (옵션)
+        carabinerBackImageURL: String? = nil,  // 카라비너 뒷면 이미지 (hamburger 타입)
+        carabinerFrontImageURL: String? = nil,  // 카라비너 앞면 이미지 (hamburger 타입)
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
@@ -47,10 +54,17 @@ class MultiKeyringCaptureScene: SKScene {
         self.currentChainType = chainType
         self.customBackgroundColor = backgroundColor
         self.backgroundImageURL = backgroundImageURL
+        self.carabinerBackImageURL = carabinerBackImageURL
+        self.carabinerFrontImageURL = carabinerFrontImageURL
         self.onLoadingComplete = onLoadingComplete
         self.totalKeyrings = keyringDataList.count
         self.needsBackgroundImage = (backgroundImageURL != nil)
         self.backgroundLoaded = (backgroundImageURL == nil) // 배경이 없으면 로드 완료로 간주
+
+        // 카라비너 이미지 로딩 추적
+        self.needsCarabinerImages = (carabinerBackImageURL != nil || carabinerFrontImageURL != nil)
+        self.carabinerBackLoaded = (carabinerBackImageURL == nil)
+        self.carabinerFrontLoaded = (carabinerFrontImageURL == nil)
 
         super.init(size: .zero)
     }
@@ -72,12 +86,23 @@ class MultiKeyringCaptureScene: SKScene {
         // 물리 법칙 완전히 비활성화
         physicsWorld.gravity = .zero
 
-        // 배경 이미지 설정 (옵션)
+        // 1. 배경 이미지 설정 (가장 뒤)
         if let backgroundURL = backgroundImageURL {
             setupBackgroundImage(url: backgroundURL)
         }
 
+        // 2. 카라비너 뒷면 이미지 (배경 바로 위)
+        if let carabinerBackURL = carabinerBackImageURL {
+            setupCarabinerBackImage(url: carabinerBackURL)
+        }
+
+        // 3. 키링들
         setupKeyrings()
+
+        // 4. 카라비너 앞면 이미지 (가장 위)
+        if let carabinerFrontURL = carabinerFrontImageURL {
+            setupCarabinerFrontImage(url: carabinerFrontURL)
+        }
     }
 
     // MARK: - Background Setup
@@ -109,6 +134,70 @@ class MultiKeyringCaptureScene: SKScene {
                 // 배경 이미지 로딩 완료
                 self.backgroundLoaded = true
                 print("✅ [MultiKeyringCaptureScene] 배경 이미지 로드 완료")
+                self.checkLoadingComplete()
+            }
+        }
+    }
+
+    /// 카라비너 뒷면 이미지 설정 (배경 바로 위)
+    private func setupCarabinerBackImage(url: String) {
+        Task {
+            guard let imageURL = URL(string: url),
+                  let image = try? await StorageManager.shared.getImage(path: url) else {
+                print("⚠️ [MultiKeyringCaptureScene] 카라비너 뒷면 이미지 로드 실패: \(url)")
+                await MainActor.run {
+                    self.carabinerBackLoaded = true
+                    self.checkLoadingComplete()
+                }
+                return
+            }
+
+            await MainActor.run {
+                let texture = SKTexture(image: image)
+                let carabinerNode = SKSpriteNode(texture: texture)
+
+                // Scene 크기에 맞게 조정
+                carabinerNode.size = self.size
+                carabinerNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                carabinerNode.zPosition = -900  // 배경(-1000) 위, 키링(0~) 아래
+
+                self.addChild(carabinerNode)
+
+                // 카라비너 뒷면 이미지 로딩 완료
+                self.carabinerBackLoaded = true
+                print("✅ [MultiKeyringCaptureScene] 카라비너 뒷면 이미지 로드 완료")
+                self.checkLoadingComplete()
+            }
+        }
+    }
+
+    /// 카라비너 앞면 이미지 설정 (가장 위)
+    private func setupCarabinerFrontImage(url: String) {
+        Task {
+            guard let imageURL = URL(string: url),
+                  let image = try? await StorageManager.shared.getImage(path: url) else {
+                print("⚠️ [MultiKeyringCaptureScene] 카라비너 앞면 이미지 로드 실패: \(url)")
+                await MainActor.run {
+                    self.carabinerFrontLoaded = true
+                    self.checkLoadingComplete()
+                }
+                return
+            }
+
+            await MainActor.run {
+                let texture = SKTexture(image: image)
+                let carabinerNode = SKSpriteNode(texture: texture)
+
+                // Scene 크기에 맞게 조정
+                carabinerNode.size = self.size
+                carabinerNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                carabinerNode.zPosition = 10000  // 가장 위에 배치
+
+                self.addChild(carabinerNode)
+
+                // 카라비너 앞면 이미지 로딩 완료
+                self.carabinerFrontLoaded = true
+                print("✅ [MultiKeyringCaptureScene] 카라비너 앞면 이미지 로드 완료")
                 self.checkLoadingComplete()
             }
         }
@@ -238,12 +327,12 @@ class MultiKeyringCaptureScene: SKScene {
     private func checkLoadingComplete() {
         loadedKeyrings += 1
 
-        // 모든 키링과 배경 이미지가 로드되었는지 확인
+        // 모든 키링, 배경, 카라비너 이미지가 로드되었는지 확인
         let allKeyringsLoaded = loadedKeyrings >= totalKeyrings
-        let allAssetsLoaded = allKeyringsLoaded && backgroundLoaded
+        let allAssetsLoaded = allKeyringsLoaded && backgroundLoaded && carabinerBackLoaded && carabinerFrontLoaded
 
         if allAssetsLoaded {
-            print("✅ [MultiKeyringCaptureScene] 모든 리소스 로딩 완료 (키링: \(loadedKeyrings)/\(totalKeyrings), 배경: \(backgroundLoaded))")
+            print("✅ [MultiKeyringCaptureScene] 모든 리소스 로딩 완료 (키링: \(loadedKeyrings)/\(totalKeyrings), 배경: \(backgroundLoaded), 카라비너뒤: \(carabinerBackLoaded), 카라비너앞: \(carabinerFrontLoaded))")
             DispatchQueue.main.async { [weak self] in
                 self?.onLoadingComplete?()
             }

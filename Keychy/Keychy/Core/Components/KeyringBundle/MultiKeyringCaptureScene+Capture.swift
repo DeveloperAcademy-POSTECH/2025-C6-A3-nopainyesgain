@@ -54,12 +54,16 @@ extension MultiKeyringCaptureScene {
     /// - Parameters:
     ///   - keyringDataList: 키링 데이터 리스트
     ///   - backgroundImageURL: 배경 이미지 URL
+    ///   - carabinerBackImageURL: 카라비너 뒷면 이미지 URL (hamburger 타입)
+    ///   - carabinerFrontImageURL: 카라비너 앞면 이미지 URL (hamburger 타입)
     ///   - viewSize: View 크기 (GeometryReader에서 가져온 크기)
     /// - Returns: 캡처된 PNG 데이터
     @MainActor
     static func captureBundleImageWithGeometry(
         keyringDataList: [MultiKeyringCaptureScene.KeyringData],
         backgroundImageURL: String,
+        carabinerBackImageURL: String? = nil,
+        carabinerFrontImageURL: String? = nil,
         viewSize: CGSize
     ) async -> Data? {
         print("📐 [BundleCapture] 캡처 사이즈 (GeometryReader): \(viewSize.width) x \(viewSize.height)")
@@ -74,6 +78,8 @@ extension MultiKeyringCaptureScene {
                 chainType: .basic,
                 backgroundColor: .clear,
                 backgroundImageURL: backgroundImageURL,
+                carabinerBackImageURL: carabinerBackImageURL,
+                carabinerFrontImageURL: carabinerFrontImageURL,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
@@ -120,11 +126,15 @@ extension MultiKeyringCaptureScene {
     /// - Parameters:
     ///   - keyringDataList: 키링 데이터 리스트
     ///   - backgroundImageURL: 배경 이미지 URL
+    ///   - carabinerBackImageURL: 카라비너 뒷면 이미지 URL (hamburger 타입)
+    ///   - carabinerFrontImageURL: 카라비너 앞면 이미지 URL (hamburger 타입)
     ///   - customSize: 커스텀 사이즈 (nil이면 기본 크기 195x422 사용)
     /// - Returns: 캡처된 PNG 데이터
     static func captureBundleImage(
         keyringDataList: [MultiKeyringCaptureScene.KeyringData],
         backgroundImageURL: String,
+        carabinerBackImageURL: String? = nil,
+        carabinerFrontImageURL: String? = nil,
         customSize: CGSize? = nil
     ) async -> Data? {
         // 고정 캡처 사이즈 (iPhone 13 Pro 비율 기준)
@@ -142,6 +152,8 @@ extension MultiKeyringCaptureScene {
                 chainType: .basic,
                 backgroundColor: .clear,
                 backgroundImageURL: backgroundImageURL,
+                carabinerBackImageURL: carabinerBackImageURL,
+                carabinerFrontImageURL: carabinerFrontImageURL,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
