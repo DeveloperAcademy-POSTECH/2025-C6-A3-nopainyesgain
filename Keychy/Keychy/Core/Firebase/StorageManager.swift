@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 @Observable
 class StorageManager {
@@ -96,5 +97,80 @@ class StorageManager {
             print("이미지 캐시 전체 삭제")
         }
     }
-    
+
+    // MARK: - 업로드
+
+    /// 이미지 업로드 (PNG)
+    func uploadImage(_ image: UIImage, path: String) async throws -> String {
+        guard let imageData = image.pngData() else {
+            throw NSError(domain: "StorageManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "PNG 변환 실패"])
+        }
+
+        let storageRef = Storage.storage().reference().child(path)
+        _ = try await storageRef.putDataAsync(imageData)
+        let downloadURL = try await storageRef.downloadURL()
+
+        return downloadURL.absoluteString
+    }
+
+    /// 오디오 업로드 (M4A)
+    func uploadAudio(_ audioData: Data, path: String) async throws -> String {
+        let storageRef = Storage.storage().reference().child(path)
+        _ = try await storageRef.putDataAsync(audioData)
+        let downloadURL = try await storageRef.downloadURL()
+
+        return downloadURL.absoluteString
+    }
+
+    /// 범용 데이터 업로드
+    func uploadData(_ data: Data, path: String) async throws -> String {
+        let storageRef = Storage.storage().reference().child(path)
+        _ = try await storageRef.putDataAsync(data)
+        let downloadURL = try await storageRef.downloadURL()
+
+        return downloadURL.absoluteString
+    }
+
+    // MARK: - 삭제
+
+    /// 특정 파일 삭제
+    func deleteFile(path: String) async throws {
+        let storageRef = Storage.storage().reference().child(path)
+        try await storageRef.delete()
+    }
+
+    /// 사용자 폴더 전체 삭제 (Keyrings/BodyImages/{uid}/, Keyrings/CustomSounds/{uid}/)
+    func deleteUserFolder(uid: String) async throws {
+        let bodyImagesPath = "Keyrings/BodyImages/\(uid)"
+        let customSoundsPath = "Keyrings/CustomSounds/\(uid)"
+
+        try await deleteFolder(path: bodyImagesPath)
+        try await deleteFolder(path: customSoundsPath)
+    }
+
+    /// 폴더 삭제 (모든 하위 파일 삭제)
+    private func deleteFolder(path: String) async throws {
+        let storageRef = Storage.storage().reference().child(path)
+
+        do {
+            let result = try await storageRef.listAll()
+
+            for item in result.items {
+                try await item.delete()
+            }
+
+            for prefix in result.prefixes {
+                try await deleteFolder(path: prefix.fullPath)
+            }
+
+            print("Storage 폴더 삭제 완료: \(path)")
+        } catch {
+            if (error as NSError).code == StorageErrorCode.objectNotFound.rawValue {
+                print("Storage 폴더 없음 (이미 삭제됨): \(path)")
+            } else {
+                throw error
+            }
+        }
+    }
+
 }
