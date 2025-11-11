@@ -337,79 +337,37 @@ extension BundleAddKeyringView {
             viewModel.selectedKeyringsForBundle = selectedKeyrings
         }
 
-        await withCheckedContinuation { continuation in
-            var loadingCompleted = false
+        // 키링 데이터 생성
+        var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
 
-            // 키링 데이터 생성
-            var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
-
-            for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
-                let data = MultiKeyringCaptureScene.KeyringData(
-                    index: index,
-                    position: CGPoint(
-                        x: carabiner.keyringXPosition[index],
-                        y: carabiner.keyringYPosition[index]
-                    ),
-                    bodyImageURL: keyring.bodyImage
-                )
-                keyringDataList.append(data)
-            }
-
-            // MultiKeyringCaptureScene 생성 (캡처 전용, 물리 없음)
-            let scene = MultiKeyringCaptureScene(
-                keyringDataList: keyringDataList,
-                ringType: .basic,
-                chainType: .basic,
-                backgroundColor: .clear,
-                backgroundImageURL: background.backgroundImage,
-                onLoadingComplete: {
-                    loadingCompleted = true
-                }
+        for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+            let data = MultiKeyringCaptureScene.KeyringData(
+                index: index,
+                position: CGPoint(
+                    x: carabiner.keyringXPosition[index],
+                    y: carabiner.keyringYPosition[index]
+                ),
+                bodyImageURL: keyring.bodyImage
             )
-            scene.size = CGSize(width: 350, height: 466)  // 번들 썸네일 사이즈
-            scene.scaleMode = .aspectFill
+            keyringDataList.append(data)
+        }
 
-            // SKView 생성 및 씬 표시
-            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
-            view.allowsTransparency = true
-            view.presentScene(scene)
-
-            // 로딩 완료 대기
-            Task {
-                var waitTime = 0.0
-                let checkInterval = 0.1
-                let maxWaitTime = 3.0
-
-                while !loadingCompleted && waitTime < maxWaitTime {
-                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
-                    waitTime += checkInterval
-                }
-
-                if !loadingCompleted {
-                    print("⚠️ [BundleAddKeyring] 타임아웃 - 로딩 미완료")
-                } else {
-                    // 로딩 완료 후 추가 렌더링 대기
-                    try? await Task.sleep(nanoseconds: 200_000_000)
-                }
-
-                // PNG 캡처
-                if let pngData = await scene.captureToPNG() {
-                    // ViewModel에 이미지 저장
-                    await MainActor.run {
-                        viewModel.bundleCapturedImage = pngData
-                        print("✅ [BundleAddKeyring] 번들 이미지 캡처 완료")
-                    }
-                } else {
-                    print("❌ [BundleAddKeyring] 캡처 실패")
-                }
-
-                await MainActor.run {
-                    isCapturing = false
-                    router.push(.bundleNameInputView)
-                }
-
-                continuation.resume()
+        // Helper를 사용하여 캡처
+        if let pngData = await BundleImageCaptureHelper.captureBundleImage(
+            keyringDataList: keyringDataList,
+            backgroundImageURL: background.backgroundImage
+        ) {
+            await MainActor.run {
+                viewModel.bundleCapturedImage = pngData
+                print("✅ [BundleAddKeyring] 번들 이미지 캡처 완료")
             }
+        } else {
+            print("❌ [BundleAddKeyring] 캡처 실패")
+        }
+
+        await MainActor.run {
+            isCapturing = false
+            router.push(.bundleNameInputView)
         }
     }
 }
