@@ -13,7 +13,8 @@ import Lottie
 class KeyringScene: SKScene {
     // MARK: - SwiftUI로 콜백 전달용
     var onPlayParticleEffect: ((String) -> Void)?
-    
+    var onSetupComplete: (() -> Void)?  // Setup 완료 콜백
+
     // MARK: - Properties
     var bodyImage: UIImage? // UIImage용
     var bodyImageURL: String? // Firebase URL용
