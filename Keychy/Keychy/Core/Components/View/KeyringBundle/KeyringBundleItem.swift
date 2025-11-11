@@ -148,7 +148,6 @@ struct KeyringBundleItem: View {
         }
 
         // 배경 이미지 미리 로드 (캡처 전 확인)
-        print("🔄 [BundleItem] 배경 이미지 미리 로드 시작: \(background.backgroundImage)")
         guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
             print("❌ [BundleItem] 배경 이미지 미리 로드 실패")
             await MainActor.run {
@@ -156,11 +155,6 @@ struct KeyringBundleItem: View {
             }
             return
         }
-        print("✅ [BundleItem] 배경 이미지 미리 로드 완료")
-
-        // screenSize로 캡처 (부모에서 전달받은 화면 크기 사용)
-        print("📐 [BundleItem] 재캡처 크기: \(screenSize.width) x \(screenSize.height)")
-
         // 카라비너 이미지 추출 (hamburger 타입인 경우)
         let carabinerType = CarabinerType.from(carabiner.carabinerType)
         let carabinerBackURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[1] : nil
@@ -187,7 +181,6 @@ struct KeyringBundleItem: View {
                     isCapturing = false
                 }
             }
-            print("✅ [BundleItem] 번들 이미지 재캡처 및 캐시 저장 완료: \(bundleName)")
         } else {
             print("❌ [BundleItem] 재캡처 실패: \(bundleId)")
             await MainActor.run {

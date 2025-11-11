@@ -66,7 +66,6 @@ extension MultiKeyringCaptureScene {
         carabinerFrontImageURL: String? = nil,
         viewSize: CGSize
     ) async -> Data? {
-        print("📐 [BundleCapture] 캡처 사이즈 (GeometryReader): \(viewSize.width) x \(viewSize.height)")
 
         return await withCheckedContinuation { continuation in
             var loadingCompleted = false
@@ -140,7 +139,6 @@ extension MultiKeyringCaptureScene {
         // 고정 캡처 사이즈 (iPhone 13 Pro 비율 기준)
         let captureSize = customSize ?? CGSize(width: 195, height: 422)
 
-        print("📐 [BundleCapture] 캡처 사이즈 (고정): \(captureSize.width) x \(captureSize.height)")
 
         return await withCheckedContinuation { continuation in
             var loadingCompleted = false

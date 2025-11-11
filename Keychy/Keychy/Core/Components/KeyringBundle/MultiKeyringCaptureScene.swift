@@ -156,9 +156,18 @@ class MultiKeyringCaptureScene: SKScene {
                 let texture = SKTexture(image: image)
                 let carabinerNode = SKSpriteNode(texture: texture)
 
-                // Scene 크기에 맞게 조정
-                carabinerNode.size = self.size
-                carabinerNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                // 이미지 비율 유지하면서 가로에 맞춰 크기 조정
+                let imageAspectRatio = image.size.height / image.size.width
+                let nodeWidth = self.size.width
+                let nodeHeight = nodeWidth * imageAspectRatio
+
+                carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+
+                // 상단에서 60 여유를 두고 배치
+                carabinerNode.position = CGPoint(
+                    x: self.size.width / 2,
+                    y: self.size.height - nodeHeight / 2 - 60
+                )
                 carabinerNode.zPosition = -900  // 배경(-1000) 위, 키링(0~) 아래
 
                 self.addChild(carabinerNode)
@@ -188,9 +197,18 @@ class MultiKeyringCaptureScene: SKScene {
                 let texture = SKTexture(image: image)
                 let carabinerNode = SKSpriteNode(texture: texture)
 
-                // Scene 크기에 맞게 조정
-                carabinerNode.size = self.size
-                carabinerNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                // 이미지 비율 유지하면서 가로에 맞춰 크기 조정
+                let imageAspectRatio = image.size.height / image.size.width
+                let nodeWidth = self.size.width
+                let nodeHeight = nodeWidth * imageAspectRatio
+
+                carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+
+                // 상단에서 60 여유를 두고 배치
+                carabinerNode.position = CGPoint(
+                    x: self.size.width / 2,
+                    y: self.size.height - nodeHeight / 2 - 60
+                )
                 carabinerNode.zPosition = 10000  // 가장 위에 배치
 
                 self.addChild(carabinerNode)
