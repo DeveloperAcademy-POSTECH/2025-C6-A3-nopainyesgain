@@ -39,6 +39,17 @@ struct BundleAddKeyringView: View {
                     sceneView(geometry: geometry, carabiner: (viewModel.selectedCarabiner ?? viewModel.carabiners.first)!)
                     Spacer()
                 }
+                .background(
+                    GeometryReader { contentGeometry in
+                        Color.clear
+                            .onAppear {
+                                viewSize = contentGeometry.size
+                            }
+                            .onChange(of: contentGeometry.size) { _, newSize in
+                                viewSize = newSize
+                            }
+                    }
+                )
 
                 if showSelectKeyringSheet {
                     keyringSelectionSheet(height: geometry.size.height * 0.5)
@@ -63,18 +74,6 @@ struct BundleAddKeyringView: View {
                 }
             }
             .ignoresSafeArea()
-            .background(
-                GeometryReader { fullGeometry in
-                    Color.clear
-                        .onAppear {
-                            viewSize = fullGeometry.size
-                        }
-                        .onChange(of: fullGeometry.size) { _, newSize in
-                            viewSize = newSize
-                        }
-                }
-                .ignoresSafeArea()
-            )
             .onAppear {
                 fetchData()
             }
