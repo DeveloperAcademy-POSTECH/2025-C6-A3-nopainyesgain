@@ -10,6 +10,8 @@ import SwiftUI
 
 struct KeyringBundleItem: View {
     let bundle: KeyringBundle
+    let screenSize: CGSize
+
     @State private var cachedImage: Image?
     @State private var isCapturing: Bool = false
 
@@ -156,10 +158,13 @@ struct KeyringBundleItem: View {
         }
         print("✅ [BundleItem] 배경 이미지 미리 로드 완료")
 
-        // 정적 메서드를 사용하여 캡처 (고정 크기 195x422)
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        // screenSize로 캡처 (부모에서 전달받은 화면 크기 사용)
+        print("📐 [BundleItem] 재캡처 크기: \(screenSize.width) x \(screenSize.height)")
+
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImageWithGeometry(
             keyringDataList: keyringDataList,
-            backgroundImageURL: background.backgroundImage
+            backgroundImageURL: background.backgroundImage,
+            viewSize: screenSize
         ) {
             // BundleImageCache에 저장
             BundleImageCache.shared.syncBundle(

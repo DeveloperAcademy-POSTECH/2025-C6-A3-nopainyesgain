@@ -342,7 +342,16 @@ extension BundleAddKeyringView {
             viewModel.selectedKeyringsForBundle = selectedKeyrings
         }
 
-        // 키링 데이터 생성
+        // 배경 이미지 미리 로드 (캡처 전 확인)
+        guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
+            print("❌ [BundleAddKeyring] 배경 이미지 미리 로드 실패")
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
+
+        // 키링 데이터 생성 (MultiKeyringCaptureScene.KeyringData)
         var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
 
         for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
@@ -359,6 +368,7 @@ extension BundleAddKeyringView {
 
         // GeometryReader 크기로 캡처
         let captureSize = await MainActor.run { viewSize }
+
         if let pngData = await MultiKeyringCaptureScene.captureBundleImageWithGeometry(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
@@ -366,7 +376,6 @@ extension BundleAddKeyringView {
         ) {
             await MainActor.run {
                 viewModel.bundleCapturedImage = pngData
-                print("✅ [BundleAddKeyring] 번들 이미지 캡처 완료")
             }
         } else {
             print("❌ [BundleAddKeyring] 캡처 실패")

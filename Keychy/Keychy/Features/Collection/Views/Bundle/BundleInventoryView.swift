@@ -15,14 +15,24 @@ struct BundleInventoryView: View {
     @State private var showCachedBundlesDebug = false
     #endif
 
+    @State private var screenSize: CGSize = .zero
+
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 13),
         GridItem(.flexible(), spacing: 13)
     ]
 
     var body: some View {
-        VStack {
-            bundleGrid
+        GeometryReader { geometry in
+            VStack {
+                bundleGrid
+            }
+            .onAppear {
+                screenSize = geometry.size
+            }
+            .onChange(of: geometry.size) { _, newSize in
+                screenSize = newSize
+            }
         }
         .padding(.horizontal, 16)
         .toolbar(.hidden, for: .tabBar)
@@ -106,7 +116,7 @@ extension BundleInventoryView {
                         viewModel.selectedBundle = bundle
                         router.push(.bundleDetailView)
                     } label: {
-                        KeyringBundleItem(bundle: bundle)
+                        KeyringBundleItem(bundle: bundle, screenSize: screenSize)
                     }
                 }
             }
