@@ -82,20 +82,19 @@ struct BundleNameInputView: View {
 extension BundleNameInputView {
     private func keyringSceneView(geo: GeometryProxy) -> some View {
         ZStack {
-            if let scene = viewModel.bundlePreviewScene {
-                SpriteView(scene: scene, options: [.allowsTransparency])
-                    .background(.clear)
-                    .onAppear {
-                        // 씬을 미리보기 모드로 최적화
-                        optimizeSceneForPreview(scene)
-                    }
+            if let imageData = viewModel.bundleCapturedImage,
+               let uiImage = UIImage(data: imageData) {
+                // 캡처된 이미지 표시
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
             } else {
-                // 씬이 없으면 기본 메시지 표시
+                // 이미지가 없으면 기본 메시지 표시
                 VStack {
                     Image(systemName: "photo")
                         .font(.system(size: 50))
                         .foregroundColor(.gray)
-                    Text("미리보기를 불러오는 중...")
+                    Text("이미지를 불러오는 중...")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -103,24 +102,6 @@ extension BundleNameInputView {
             }
         }
         .clipped()
-    }
-    
-    // 씬을 미리보기용으로 최적화
-    private func optimizeSceneForPreview(_ scene: MultiKeyringScene) {
-        
-        // 스케일 모드를 aspectFit으로 변경하여 비율 유지
-        scene.scaleMode = .aspectFit
-        
-        // 물리 시뮬레이션 완전 정지
-        scene.physicsWorld.speed = 0
-        scene.isPaused = false // 렌더링은 계속하되 물리만 정지
-        
-        // 모든 노드의 애니메이션과 물리 정지
-        scene.enumerateChildNodes(withName: "//*") { node, _ in
-            node.removeAllActions()
-            node.physicsBody?.isDynamic = false
-            node.physicsBody?.affectedByGravity = false
-        }
     }
 }
 
@@ -214,18 +195,14 @@ extension BundleNameInputView {
                     isMain: isMain
                 ) { success, bundleId in
                     if success, let bundleId = bundleId {
-                        // Firebase 저장 성공 후 번들 이미지 캡처 및 캐싱
-                        Task {
-                            await captureAndCacheBundleImage(
-                                bundleId: bundleId,
-                                bundleName: bundleNameToSave
-                            )
+                        // Firebase 저장 성공 후 ViewModel의 이미지를 캐시에 저장
+                        saveBundleImageToCache(
+                            bundleId: bundleId,
+                            bundleName: bundleNameToSave
+                        )
 
-                            await MainActor.run {
-                                isUploading = false
-                                router.reset()
-                            }
-                        }
+                        isUploading = false
+                        router.reset()
                     } else {
                         // 실패 처리
                         isUploading = false
@@ -243,90 +220,25 @@ extension BundleNameInputView {
     }
 }
 
-// MARK: - 번들 이미지 캡처 및 캐싱
+// MARK: - 번들 이미지 캐싱
 extension BundleNameInputView {
-    /// 번들 이미지 캡처 및 BundleImageCache에 저장
-    private func captureAndCacheBundleImage(
+    /// ViewModel에 저장된 번들 이미지를 BundleImageCache에 저장
+    private func saveBundleImageToCache(
         bundleId: String,
         bundleName: String
-    ) async {
-        guard let carabiner = viewModel.selectedCarabiner,
-              let background = viewModel.selectedBackground else {
-            print("⚠️ [BundleNameInput] 카라비너 또는 배경이 없습니다")
+    ) {
+        guard let imageData = viewModel.bundleCapturedImage else {
+            print("⚠️ [BundleNameInput] 캡처된 이미지가 없습니다")
             return
         }
 
-        await withCheckedContinuation { continuation in
-            var loadingCompleted = false
-
-            // 키링 데이터 생성
-            var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
-
-            for (index, keyring) in viewModel.selectedKeyringsForBundle.sorted(by: { $0.key < $1.key }) {
-                let data = MultiKeyringCaptureScene.KeyringData(
-                    index: index,
-                    position: CGPoint(
-                        x: carabiner.keyringXPosition[index],
-                        y: carabiner.keyringYPosition[index]
-                    ),
-                    bodyImageURL: keyring.bodyImage
-                )
-                keyringDataList.append(data)
-            }
-
-            // MultiKeyringCaptureScene 생성 (캡처 전용, 물리 없음)
-            let scene = MultiKeyringCaptureScene(
-                keyringDataList: keyringDataList,
-                ringType: .basic,
-                chainType: .basic,
-                backgroundColor: .clear,
-                backgroundImageURL: background.backgroundImage,
-                onLoadingComplete: {
-                    loadingCompleted = true
-                }
-            )
-            scene.size = CGSize(width: 350, height: 466)  // 번들 썸네일 사이즈
-            scene.scaleMode = .aspectFill
-
-            // SKView 생성 및 씬 표시
-            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
-            view.allowsTransparency = true
-            view.presentScene(scene)
-
-            // 로딩 완료 대기
-            Task {
-                var waitTime = 0.0
-                let checkInterval = 0.1
-                let maxWaitTime = 3.0
-
-                while !loadingCompleted && waitTime < maxWaitTime {
-                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
-                    waitTime += checkInterval
-                }
-
-                if !loadingCompleted {
-                    print("⚠️ [BundleNameInput] 타임아웃 - 로딩 미완료: \(bundleId)")
-                } else {
-                    // 로딩 완료 후 추가 렌더링 대기
-                    try? await Task.sleep(nanoseconds: 200_000_000)
-                }
-
-                // PNG 캡처
-                if let pngData = await scene.captureToPNG() {
-                    // BundleImageCache에 저장
-                    BundleImageCache.shared.syncBundle(
-                        id: bundleId,
-                        name: bundleName,
-                        imageData: pngData
-                    )
-                    print("✅ [BundleNameInput] 번들 이미지 캐시 저장 완료: \(bundleName)")
-                } else {
-                    print("❌ [BundleNameInput] 캡처 실패: \(bundleId)")
-                }
-
-                continuation.resume()
-            }
-        }
+        // BundleImageCache에 저장
+        BundleImageCache.shared.syncBundle(
+            id: bundleId,
+            name: bundleName,
+            imageData: imageData
+        )
+        print("✅ [BundleNameInput] 번들 이미지 캐시 저장 완료: \(bundleName)")
     }
 }
 

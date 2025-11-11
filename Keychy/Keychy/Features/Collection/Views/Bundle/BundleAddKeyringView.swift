@@ -21,7 +21,8 @@ struct BundleAddKeyringView: View {
     @State private var keyringOrder: [Int] = []  // 키링이 추가된 순서 추적
     @State private var selectedPosition: Int = 0
     @State private var isDeleteButtonSelected: Bool = false
-    
+    @State private var isCapturing: Bool = false // 캡처 진행 상태
+
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
@@ -36,9 +37,27 @@ struct BundleAddKeyringView: View {
                     sceneView(geometry: geometry, carabiner: (viewModel.selectedCarabiner ?? viewModel.carabiners.first)!)
                     Spacer()
                 }
-                
+
                 if showSelectKeyringSheet {
                     keyringSelectionSheet(height: geometry.size.height * 0.5)
+                }
+
+                // 캡처 중 ProgressView
+                if isCapturing {
+                    ZStack {
+                        Color.black.opacity(0.5)
+                            .ignoresSafeArea()
+
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(1.5)
+
+                            Text("이미지 생성 중...")
+                                .foregroundColor(.white)
+                                .font(.headline)
+                        }
+                    }
                 }
             }
             .ignoresSafeArea()
@@ -293,9 +312,11 @@ extension BundleAddKeyringView {
     private var nextButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("다음") {
-                saveScene()
-                router.push(.bundleNameInputView)
+                Task {
+                    await captureAndSaveScene()
+                }
             }
+            .disabled(isCapturing)
         }
     }
 }
@@ -303,9 +324,93 @@ extension BundleAddKeyringView {
 // MARK: - Scene Management
 
 extension BundleAddKeyringView {
-    /// 씬 저장
-    private func saveScene() {
-        viewModel.selectedKeyringsForBundle = selectedKeyrings
+    /// 씬 캡처 및 저장
+    private func captureAndSaveScene() async {
+        guard let carabiner = viewModel.selectedCarabiner,
+              let background = viewModel.selectedBackground else {
+            print("⚠️ [BundleAddKeyring] 카라비너 또는 배경이 없습니다")
+            return
+        }
+
+        await MainActor.run {
+            isCapturing = true
+            viewModel.selectedKeyringsForBundle = selectedKeyrings
+        }
+
+        await withCheckedContinuation { continuation in
+            var loadingCompleted = false
+
+            // 키링 데이터 생성
+            var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
+
+            for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+                let data = MultiKeyringCaptureScene.KeyringData(
+                    index: index,
+                    position: CGPoint(
+                        x: carabiner.keyringXPosition[index],
+                        y: carabiner.keyringYPosition[index]
+                    ),
+                    bodyImageURL: keyring.bodyImage
+                )
+                keyringDataList.append(data)
+            }
+
+            // MultiKeyringCaptureScene 생성 (캡처 전용, 물리 없음)
+            let scene = MultiKeyringCaptureScene(
+                keyringDataList: keyringDataList,
+                ringType: .basic,
+                chainType: .basic,
+                backgroundColor: .clear,
+                backgroundImageURL: background.backgroundImage,
+                onLoadingComplete: {
+                    loadingCompleted = true
+                }
+            )
+            scene.size = CGSize(width: 350, height: 466)  // 번들 썸네일 사이즈
+            scene.scaleMode = .aspectFill
+
+            // SKView 생성 및 씬 표시
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+
+            // 로딩 완료 대기
+            Task {
+                var waitTime = 0.0
+                let checkInterval = 0.1
+                let maxWaitTime = 3.0
+
+                while !loadingCompleted && waitTime < maxWaitTime {
+                    try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+                    waitTime += checkInterval
+                }
+
+                if !loadingCompleted {
+                    print("⚠️ [BundleAddKeyring] 타임아웃 - 로딩 미완료")
+                } else {
+                    // 로딩 완료 후 추가 렌더링 대기
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                }
+
+                // PNG 캡처
+                if let pngData = await scene.captureToPNG() {
+                    // ViewModel에 이미지 저장
+                    await MainActor.run {
+                        viewModel.bundleCapturedImage = pngData
+                        print("✅ [BundleAddKeyring] 번들 이미지 캡처 완료")
+                    }
+                } else {
+                    print("❌ [BundleAddKeyring] 캡처 실패")
+                }
+
+                await MainActor.run {
+                    isCapturing = false
+                    router.push(.bundleNameInputView)
+                }
+
+                continuation.resume()
+            }
+        }
     }
 }
 
