@@ -29,6 +29,8 @@ class MultiKeyringCaptureScene: SKScene {
     // 로딩 완료 추적
     private var totalKeyrings: Int = 0
     private var loadedKeyrings: Int = 0
+    private var backgroundLoaded: Bool = false
+    private var needsBackgroundImage: Bool = false
 
     // MARK: - Init
 
@@ -47,6 +49,8 @@ class MultiKeyringCaptureScene: SKScene {
         self.backgroundImageURL = backgroundImageURL
         self.onLoadingComplete = onLoadingComplete
         self.totalKeyrings = keyringDataList.count
+        self.needsBackgroundImage = (backgroundImageURL != nil)
+        self.backgroundLoaded = (backgroundImageURL == nil) // 배경이 없으면 로드 완료로 간주
 
         super.init(size: .zero)
     }
@@ -84,6 +88,10 @@ class MultiKeyringCaptureScene: SKScene {
             guard let imageURL = URL(string: url),
                   let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 배경 이미지 로드 실패: \(url)")
+                await MainActor.run {
+                    self.backgroundLoaded = true
+                    self.checkLoadingComplete()
+                }
                 return
             }
 
@@ -97,6 +105,11 @@ class MultiKeyringCaptureScene: SKScene {
                 backgroundNode.zPosition = -1000  // 가장 뒤에 배치
 
                 self.addChild(backgroundNode)
+
+                // 배경 이미지 로딩 완료
+                self.backgroundLoaded = true
+                print("✅ [MultiKeyringCaptureScene] 배경 이미지 로드 완료")
+                self.checkLoadingComplete()
             }
         }
     }
@@ -225,7 +238,12 @@ class MultiKeyringCaptureScene: SKScene {
     private func checkLoadingComplete() {
         loadedKeyrings += 1
 
-        if loadedKeyrings >= totalKeyrings {
+        // 모든 키링과 배경 이미지가 로드되었는지 확인
+        let allKeyringsLoaded = loadedKeyrings >= totalKeyrings
+        let allAssetsLoaded = allKeyringsLoaded && backgroundLoaded
+
+        if allAssetsLoaded {
+            print("✅ [MultiKeyringCaptureScene] 모든 리소스 로딩 완료 (키링: \(loadedKeyrings)/\(totalKeyrings), 배경: \(backgroundLoaded))")
             DispatchQueue.main.async { [weak self] in
                 self?.onLoadingComplete?()
             }

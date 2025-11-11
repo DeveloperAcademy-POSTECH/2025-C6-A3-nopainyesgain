@@ -8,8 +8,12 @@
 import Foundation
 import SpriteKit
 import SwiftUI
+import UIKit
 
 extension MultiKeyringCaptureScene {
+
+    // MARK: - Instance Methods
+
     /// Scene을 PNG 이미지로 캡처
     @MainActor
     func captureToPNG() async -> Data? {
@@ -43,22 +47,25 @@ extension MultiKeyringCaptureScene {
 
         return pngData
     }
-}
 
-/// 번들 이미지 캡처를 위한 Helper 클래스
-class BundleImageCaptureHelper {
+    // MARK: - Static Helper Methods
 
     /// 번들 이미지 캡처
     /// - Parameters:
     ///   - keyringDataList: 키링 데이터 리스트
     ///   - backgroundImageURL: 배경 이미지 URL
-    ///   - size: 캡처 이미지 사이즈 (기본값: 350x466)
+    ///   - customSize: 커스텀 사이즈 (nil이면 기본 크기 195x422 사용)
     /// - Returns: 캡처된 PNG 데이터
     static func captureBundleImage(
         keyringDataList: [MultiKeyringCaptureScene.KeyringData],
         backgroundImageURL: String,
-        size: CGSize = CGSize(width: 350, height: 466)
+        customSize: CGSize? = nil
     ) async -> Data? {
+        // 고정 캡처 사이즈 (iPhone 13 Pro 비율 기준)
+        let captureSize = customSize ?? CGSize(width: 195, height: 422)
+
+        print("📐 [BundleCapture] 캡처 사이즈: \(captureSize.width) x \(captureSize.height)")
+
         return await withCheckedContinuation { continuation in
             var loadingCompleted = false
 
@@ -73,11 +80,11 @@ class BundleImageCaptureHelper {
                     loadingCompleted = true
                 }
             )
-            scene.size = size
+            scene.size = captureSize
             scene.scaleMode = .aspectFill
 
             // SKView 생성 및 씬 표시
-            let view = SKView(frame: CGRect(origin: .zero, size: size))
+            let view = SKView(frame: CGRect(origin: .zero, size: captureSize))
             view.allowsTransparency = true
             view.presentScene(scene)
 
@@ -93,7 +100,7 @@ class BundleImageCaptureHelper {
                 }
 
                 if !loadingCompleted {
-                    print("⚠️ [BundleImageCaptureHelper] 타임아웃 - 로딩 미완료")
+                    print("⚠️ [BundleCapture] 타임아웃 - 로딩 미완료")
                 } else {
                     // 로딩 완료 후 추가 렌더링 대기
                     try? await Task.sleep(nanoseconds: 200_000_000)
@@ -103,7 +110,7 @@ class BundleImageCaptureHelper {
                 let pngData = await scene.captureToPNG()
 
                 if pngData == nil {
-                    print("❌ [BundleImageCaptureHelper] 캡처 실패")
+                    print("❌ [BundleCapture] 캡처 실패")
                 }
 
                 continuation.resume(returning: pngData)
@@ -111,4 +118,3 @@ class BundleImageCaptureHelper {
         }
     }
 }
-

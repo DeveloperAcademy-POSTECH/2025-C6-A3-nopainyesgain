@@ -145,8 +145,8 @@ struct KeyringBundleItem: View {
             keyringDataList.append(data)
         }
 
-        // Helper를 사용하여 캡처
-        if let pngData = await BundleImageCaptureHelper.captureBundleImage(
+        // 정적 메서드를 사용하여 캡처 (고정 크기 195x422)
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage
         ) {
