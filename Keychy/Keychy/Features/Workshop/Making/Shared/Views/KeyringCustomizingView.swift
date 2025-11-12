@@ -166,16 +166,22 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             Task.detached(priority: .userInitiated) {
                 let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
                 let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
-                
-                // 캐시에서 로드 시도
+
+                // 1. 캐시에 있으면 로드 (보유 유료 파티클)
                 if FileManager.default.fileExists(atPath: cachedURL.path) {
                     _ = LottieAnimation.filepath(cachedURL.path)
+                    continuation.resume()
+                    return
                 }
-                // Bundle에서 로드 시도
-                else {
+
+                // 2. Bundle에 있는지 확인 후 로드 (무료 파티클)
+                if Bundle.main.path(forResource: particleId, ofType: "json") != nil {
                     _ = LottieAnimation.named(particleId)
+                    continuation.resume()
+                    return
                 }
-                
+
+                // 3. 둘 다 없으면 조용히 스킵 (미보유 유료 파티클)
                 continuation.resume()
             }
         }
@@ -186,10 +192,8 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
 extension KeyringCustomizingView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button {
+            BackToolbarButton {
                 showResetAlert = true
-            } label: {
-                Image(systemName: "chevron.left")
             }
             .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
                 Button("취소", role: .cancel) { }
@@ -204,6 +208,8 @@ extension KeyringCustomizingView {
     }
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
+            
+            // 여러 조건부 버튼이기에 컴포넌트 사용 X
             Button {
                 if hasCartItems {
                     showPurchaseSheet = true

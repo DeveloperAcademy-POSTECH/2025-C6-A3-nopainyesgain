@@ -21,9 +21,12 @@ struct AcrylicPhotoGuiding: View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
             HStack {
-                backBtn
-                    .padding(.top, 30)
-                    .padding(.leading, 20)
+                CloseToolbarButton {
+                    dismiss()
+                }
+                .foregroundStyle(.gray600)
+                .padding(.top, 30)
+                .padding(.leading, 20)
                 Spacer()
             }
             .padding(.bottom, 19.5)
@@ -74,15 +77,6 @@ struct GuidingHeightPreferenceKey: PreferenceKey {
 
 // MARK: - Components
 extension AcrylicPhotoGuiding {
-    private var backBtn: some View {
-        Button {
-            dismiss()
-        } label: {
-            Image("dismiss")
-                .foregroundStyle(.primary)
-        }
-    }
-    
     private var cameraBtn: some View {
         Button {
             dismiss()
