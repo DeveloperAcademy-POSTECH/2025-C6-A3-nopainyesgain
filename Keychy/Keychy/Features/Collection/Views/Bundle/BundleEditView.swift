@@ -255,7 +255,7 @@ extension BundleEditView {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .padding(.vertical, 30)
     }
     
     private var selectCarabinerSheet: some View {
@@ -274,6 +274,6 @@ extension BundleEditView {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .padding(.vertical, 30)
     }
 }
