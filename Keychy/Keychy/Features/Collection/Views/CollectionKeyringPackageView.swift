@@ -30,47 +30,50 @@ struct CollectionKeyringPackageView: View {
     let keyring: Keyring
     
     var body: some View {
-        ZStack {
-            packagedView
-            
-            // 포장 풀기 알럿
-            if showUnpackAlert || showUnpackCompleteAlert {
-                if showUnpackAlert {
-                    UnpackPopup(
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showUnpackAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            handleUnpackConfirm()
-                        }
-                    )
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(100)
-                }
+        GeometryReader { geometry in
+            ZStack {
+                packagedView
                 
-                // 포장 풀기 완료 알럿
-                if showUnpackCompleteAlert {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(99)
-                    
-                    UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
-                        .zIndex(100)
+                // 포장 풀기 알럿
+                if showUnpackAlert || showUnpackCompleteAlert {
+                    if showUnpackAlert {
+                        UnpackPopup(
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showUnpackAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                handleUnpackConfirm()
+                            }
+                        )
                         .transition(.scale.combined(with: .opacity))
                         .zIndex(100)
+                    }
+                    
+                    // 포장 풀기 완료 알럿
+                    if showUnpackCompleteAlert {
+                        Color.black20
+                            .ignoresSafeArea()
+                            .zIndex(99)
+                        
+                        UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
+                            .zIndex(100)
+                            .transition(.scale.combined(with: .opacity))
+                            .zIndex(100)
+                    }
+                }
+                
+                if showImageSaved {
+                    imageSaveAlert
+                }
+                
+                if showLinkCopied {
+                    linkCopiedAlert
                 }
             }
-            
-            if showImageSaved {
-                imageSaveAlert
-            }
-            
-            if showLinkCopied {
-                linkCopiedAlert
-            }
         }
+        .ignoresSafeArea()
         .navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
@@ -117,7 +120,7 @@ extension CollectionKeyringPackageView {
             VStack(spacing: 0) {
                 
                 Spacer()
-                    .frame(height: 30)
+                    .frame(height: 60)
                 
                 // 상단 상태 바
                 packageStatusBar
