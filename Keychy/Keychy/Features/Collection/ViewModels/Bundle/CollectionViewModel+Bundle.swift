@@ -368,6 +368,39 @@ extension CollectionViewModel {
         }
     }
     
+    // MARK: - User Background Management
+    /// User의 backgrounds 배열에 새 배경 추가 (무료 배경용)
+    func addBackgroundToUser(backgroundName: String, userManager: UserManager) async -> Bool {
+        guard let userId = userManager.currentUser?.id else {
+            print("사용자 ID를 가져올 수 없습니다")
+            return false
+        }
+        
+        let db = FirebaseFirestore.Firestore.firestore()
+        let userRef = db.collection("User").document(userId)
+        
+        do {
+            // Firebase 업데이트 (ItemPurchaseManager와 동일한 방식)
+            try await userRef.updateData([
+                "backgrounds": FirebaseFirestore.FieldValue.arrayUnion([backgroundName])
+            ])
+            
+            // UserManager 데이터 갱신
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                userManager.loadUserInfo(uid: userId) { _ in
+                    continuation.resume()
+                }
+            }
+            
+            print("User backgrounds 업데이트 완료: \(backgroundName)")
+            return true
+            
+        } catch {
+            print("User backgrounds 업데이트 에러: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
     /// 뒷 카라비너 이미지 (또는 단일 카라비너 이미지)
     func backCarabinerImage(carabiner: Carabiner) -> some View {
         LazyImage(url: URL(string: carabiner.backImageURL)) { state in
