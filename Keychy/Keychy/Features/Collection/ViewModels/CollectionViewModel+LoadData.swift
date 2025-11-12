@@ -191,6 +191,7 @@ extension CollectionViewModel {
         selectedRing: String,
         selectedChain: String,
         chainLength: Int,
+        isNew: Bool,
         completion: @escaping (Bool, String?) -> Void
     ) {
         print("새 키링 생성 시작 - 이름: \(name)")
@@ -207,7 +208,8 @@ extension CollectionViewModel {
             selectedTemplate: selectedTemplate,
             selectedRing: selectedRing,
             selectedChain: selectedChain,
-            chainLength: chainLength
+            chainLength: chainLength,
+            isNew: isNew
         )
         
         let keyringData = newKeyring.toDictionary()

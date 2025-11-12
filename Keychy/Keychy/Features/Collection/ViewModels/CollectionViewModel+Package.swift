@@ -298,7 +298,8 @@ extension CollectionViewModel {
                         "isPackaged": false,
                         "tags": [],
                         "bodyImage": newBodyImageURL,
-                        "soundId": newSoundId
+                        "soundId": newSoundId,
+                        "isNew": true
                     ], forDocument: keyringRef)
 
                     // 4. Batch 실행
@@ -314,6 +315,7 @@ extension CollectionViewModel {
                             self?.keyring[index].isPackaged = false
                             self?.keyring[index].bodyImage = newBodyImageURL
                             self?.keyring[index].soundId = newSoundId
+                            self?.keyring[index].isNew = true
                         }
 
                         // 위젯 캐시 제거 (새 이미지로 갱신 필요)

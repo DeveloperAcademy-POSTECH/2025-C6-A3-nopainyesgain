@@ -19,9 +19,9 @@ enum KeyringStatus {
         case .normal:
             return nil
         case .packaged:
-            return ("선물 수락 대기 중..")
+            return ("선물 수락 대기 중")
         case .published:
-            return ("페스티벌 출품 중..")
+            return ("페스티벌 출품 중")
         }
     }
 }
@@ -53,6 +53,27 @@ extension CollectionViewModel {
                 let hasSpace = currentCount < maxKeyringCount
                 completion(hasSpace)
             }
+    }
+    
+    // MARK: - 키링 isNew 열람 처리
+    func markAsRead(keyringId: String, completion: @escaping (Bool) -> Void) {
+        let db = Firestore.firestore()
+        
+        db.collection("Keyring").document(keyringId).updateData([
+            "isNew": false
+        ]) { error in
+            if let error = error {
+                completion(false)
+                return
+            }
+            
+            // 로컬 데이터도 업데이트
+            if let index = self.keyring.firstIndex(where: { $0.id.uuidString == keyringId }) {
+                self.keyring[index].isNew = false
+            }
+
+            completion(true)
+        }
     }
 }
 

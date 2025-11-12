@@ -73,7 +73,7 @@ extension CollectionKeyringDetailView {
             Spacer()
             
             Text("정보")
-                .typography(.suit15B25)
+                .typography(.suit17B)
             
             Spacer()
             
