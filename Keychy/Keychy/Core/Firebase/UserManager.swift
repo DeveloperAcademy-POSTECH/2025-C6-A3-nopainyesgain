@@ -285,7 +285,20 @@ class UserManager {
                 }
             }
 
-            // 3. 모든 키링 삭제 완료 후 User 문서 삭제
+            // 3. Storage에서 사용자 폴더 삭제 (BodyImages, CustomSounds)
+            group.enter()
+            Task {
+                do {
+                    try await StorageManager.shared.deleteUserFolder(uid: uid)
+                    print("Storage 삭제 완료: \(uid)")
+                } catch {
+                    print("Storage 삭제 실패: \(error.localizedDescription)")
+                    deletionError = error
+                }
+                group.leave()
+            }
+
+            // 4. 모든 삭제 완료 후 User 문서 삭제
             group.notify(queue: .main) {
                 if let error = deletionError {
                     completion(.failure(error))

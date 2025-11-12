@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SpriteKit
-import FirebaseStorage
 import FirebaseFirestore
 
 // MARK: - 환영 키링 생성
@@ -38,20 +37,10 @@ extension IntroViewModel {
 
     // MARK: - Storage 이미지 업로드
     private func uploadWelcomeImage(_ image: UIImage, uid: String) async throws -> String {
-        guard let imageData = image.pngData() else {
-            throw NSError(domain: "ImageUpload", code: -1, userInfo: [NSLocalizedDescriptionKey: "PNG 변환 실패"])
-        }
-
         let fileName = "\(UUID().uuidString).png"
-        let storageRef = Storage.storage().reference()
-            .child("Keyrings")
-            .child("BodyImages")
-            .child(uid)
-            .child(fileName)
+        let path = "Keyrings/BodyImages/\(uid)/\(fileName)"
 
-        _ = try await storageRef.putDataAsync(imageData)
-        let downloadURL = try await storageRef.downloadURL()
-        return downloadURL.absoluteString
+        return try await StorageManager.shared.uploadImage(image, path: path)
     }
 
     // MARK: - Firestore 키링 생성
