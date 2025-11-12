@@ -21,7 +21,7 @@ struct SelectBackgroundGridItem: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 114, height: 152)
+                            .aspectRatio(5/7, contentMode: .fit)
                     } else if state.isLoading {
                         ProgressView()
                             .aspectRatio(5/7, contentMode: .fit)
