@@ -84,10 +84,3 @@ struct AcrylicPhotoPreView: View {
         }
     }
 }
-
-#Preview {
-    AcrylicPhotoPreView(
-        router: NavigationRouter<WorkshopRoute>(),
-        viewModel: AcrylicPhotoVM()
-    )
-}

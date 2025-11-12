@@ -41,10 +41,13 @@ struct AcrylicPhotoEditedView: View {
         ZStack {
             imageTransitionView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
+                .blur(radius: showCheckmark ? 10 : 0)
+                .animation(.easeInOut(duration: 0.3), value: showCheckmark)
+
             if showCheckmark {
-                CheckmarkAlert(checkmarkScale: checkmarkScale, text: "배경 제거 완료")
-                    .padding(.bottom, 60)
+                Image("bgRemoved")
+                    .scaleEffect(checkmarkScale)
+                    .opacity(checkmarkOpacity)
             }
         }
         .navigationTitle("누끼를 제거합니다!")
