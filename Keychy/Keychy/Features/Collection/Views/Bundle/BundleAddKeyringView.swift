@@ -35,7 +35,7 @@ struct BundleAddKeyringView: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             VStack {
                 sceneView(carabiner: viewModel.selectedCarabiner ?? viewModel.carabiners.first!)
                 Spacer()
@@ -76,7 +76,6 @@ extension BundleAddKeyringView {
 
                 keyringButtons(carabiner: carabiner)
             }
-            .padding(.top, 60)
 
             Spacer()
         }
