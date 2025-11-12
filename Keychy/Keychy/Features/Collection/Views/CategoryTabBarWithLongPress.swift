@@ -205,8 +205,8 @@ private struct CategoryTabButton: View {
         VStack(spacing: Spacing.sm) {
             Text(title)
                 .typography(
-                    isPressing ? .suit15B25 :
-                        isSelected ? .suit15B25 : .suit15SB25
+                    isPressing ? .notosans15SB :
+                        isSelected ? .notosans15SB : .notosans15M
                 )
                 .foregroundStyle(
                     isPressing ? Color.gray300 :

@@ -84,13 +84,18 @@ struct Typography {
     
     // MARK: - NotoSans
     static let notosans10M = Typography(font: .custom(.notoSansMedium, size: 10), lineSpacing: 0)
+    
     static let notosans14SB = Typography(font: .custom(.notoSansSemiBold, size: 14), lineSpacing: 0)
     static let notosans14M = Typography(font: .custom(.notoSansMedium, size: 14), lineSpacing: 0)
+    
     static let notosans15B = Typography(font: .custom(.notoSansBold, size: 15), lineSpacing: 0)
+    static let notosans15SB = Typography(font: .custom(.notoSansSemiBold, size: 15), lineSpacing: 0)
     static let notosans15M = Typography(font: .custom(.notoSansMedium, size: 15), lineSpacing: 0)
     static let notosans15R = Typography(font: .custom(.notoSansRegular, size: 15), lineSpacing: 0)
+    
     static let notosans16R = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 0)
     static let notosans16R25 = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 9)
+    
     static let notosans20M = Typography(font: .custom(.notoSansMedium, size: 20), lineSpacing: 0)
     static let notosans24M = Typography(font: .custom(.notoSansMedium, size: 24), lineSpacing: 0)
     
