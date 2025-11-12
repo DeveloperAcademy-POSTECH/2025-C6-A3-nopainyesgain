@@ -29,7 +29,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State var checkmarkScale: CGFloat = 0.3
     @State var checkmarkOpacity: Double = 0.0
     @State var showImageSaved = false
-    @State var showSaveButton = true
+    @State var showSaveButton = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -54,9 +54,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     
                     // 이미지 저장 버튼 (공간 유지를 위해 opacity 사용)
                     saveButton
-                        .cinematicAppear(delay: 0.8, duration: 0.8, style: .scaleUp)
                         .padding(.top, 30)
                         .opacity(showSaveButton ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.3), value: showSaveButton)
                 }
                 
                 if showImageSaved {
@@ -79,7 +79,11 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
             saveKeyringToFirebase {
                 DispatchQueue.main.async {
                     showDismissButton = true
-                    showSaveButton = true
+
+                    // X버튼 애니메이션 완료 후 저장 버튼 표시
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showSaveButton = true
+                    }
                 }
             }
         }
@@ -165,12 +169,15 @@ extension KeyringCompleteView {
 extension KeyringCompleteView {
     private var saveButton: some View {
         VStack(spacing: 9) {
-            Button {
+            
+            Button(action: {
                 captureAndSaveImage()
-            } label: {
+            }) {
                 Image("imageDownload")
             }
-            .buttonStyle(.glass)
+            .frame(width: 65, height: 65)
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive(), in: .circle)
             
             Text("이미지 저장")
                 .typography(.suit13SB)
