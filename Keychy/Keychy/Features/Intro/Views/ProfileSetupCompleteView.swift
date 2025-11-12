@@ -14,6 +14,7 @@ struct ProfileSetupCompleteView: View {
     @State private var isSaving: Bool = false
     @State private var isLoadingResources: Bool = true
     @State private var isSceneReady: Bool = false
+    @State private var showNextButton: Bool = false
     @State private var loadingScale: CGFloat = 0.3
 
     var body: some View {
@@ -37,6 +38,7 @@ struct ProfileSetupCompleteView: View {
                 savingOverlay
             }
         }
+        .background(.white100)
         .onAppear {
             setupKeyringViewModel()
         }
@@ -162,6 +164,13 @@ extension ProfileSetupCompleteView {
                             isSceneReady = true
                         }
                         closeLoadingIfReady()
+
+                        // 다음 버튼 애니메이션 등장
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                                showNextButton = true
+                            }
+                        }
                     }
                 )
                 .frame(maxWidth: .infinity)
@@ -205,6 +214,8 @@ extension ProfileSetupCompleteView {
         .tint(.main500)
         .foregroundStyle(.white100)
         .disabled(isSaving || isLoadingResources || !isSceneReady)
+        .opacity(showNextButton ? 1 : 0)
+        .scaleEffect(showNextButton ? 1 : 0.3)
     }
 
     private var savingOverlay: some View {
@@ -219,7 +230,7 @@ extension ProfileSetupCompleteView {
                     .typography(.suit16B)
             }
             .padding(32)
-            .glassEffect()
+            .glassEffect(in: .rect(cornerRadius: 15))
             .cornerRadius(16)
         }
     }
