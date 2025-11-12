@@ -27,6 +27,7 @@ struct RecordingSheet: View {
                 replayButton
                 Spacer()
                 completedButton
+                    .padding(.trailing, 2)
             }
             .padding(.top, 30)
             .padding(.horizontal, 20)
@@ -75,15 +76,11 @@ extension RecordingSheet {
             recorder.cancelRecording()
         } label: {
             HStack(spacing: 4) {
-                if recorder.hasRecording() {
-                    Image("recDeleteFill")
-                } else {
-                    Image("recDelete")
-                }
+                Image(!recorder.isRecording ? .recDelete : .recDeleteFill)
                 
                 Text("삭제")
                     .typography(.suit14M)
-                    .foregroundStyle(recorder.hasRecording() ? .gray600 : .gray200)
+                    .foregroundStyle(!recorder.isRecording ? .gray600 : .gray200)
             }
         }
         .buttonStyle(.plain)
