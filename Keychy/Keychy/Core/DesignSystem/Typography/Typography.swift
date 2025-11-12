@@ -21,6 +21,7 @@ struct Typography {
     // MARK: - SUIT
     static let suit32B = Typography(font: .custom(.suitBold, size: 32), lineSpacing: 0)
     static let suit24B = Typography(font: .custom(.suitBold, size: 24), lineSpacing: 0)
+    static let suit20EB = Typography(font: .custom(.suitExtraBold, size: 20), lineSpacing: 0)
     static let suit20B = Typography(font: .custom(.suitBold, size: 20), lineSpacing: 0)
     static let suit18B = Typography(font: .custom(.suitBold, size: 18), lineSpacing: 0)
 
@@ -38,6 +39,7 @@ struct Typography {
     static let suit15B25 = Typography(font: .custom(.suitBold, size: 15), lineSpacing: 10)
     static let suit15SB25 = Typography(font: .custom(.suitSemiBold, size: 15), lineSpacing: 10)
     static let suit15M25 = Typography(font: .custom(.suitMedium, size: 15), lineSpacing: 10)
+    static let suit15M = Typography(font: .custom(.suitMedium, size: 15), lineSpacing: 0)
     static let suit15R = Typography(font: .custom(.suitRegular, size: 15), lineSpacing: 0)
 
     /// 14
@@ -79,11 +81,14 @@ struct Typography {
     static let pretendard16M  = Typography(font: .custom(.pretendardMedium, size: 16), lineSpacing: 0)
     
     // MARK: - NotoSans
+    static let notosans10M = Typography(font: .custom(.notoSansMedium, size: 10), lineSpacing: 0)
     static let notosans14M = Typography(font: .custom(.notoSansMedium, size: 14), lineSpacing: 0)
     static let notosans14SB = Typography(font: .custom(.notoSansSemiBold, size: 14), lineSpacing: 0)
+    static let notosans15B = Typography(font: .custom(.notoSansBold, size: 15), lineSpacing: 0)
     static let notosans15M = Typography(font: .custom(.notoSansMedium, size: 15), lineSpacing: 0)
     static let notosans15R = Typography(font: .custom(.notoSansRegular, size: 15), lineSpacing: 0)
     static let notosans16R = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 0)
+    static let notosans16R25 = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 9)
     static let notosans20M = Typography(font: .custom(.notoSansMedium, size: 20), lineSpacing: 0)
     static let notosans24M = Typography(font: .custom(.notoSansMedium, size: 24), lineSpacing: 0)
     

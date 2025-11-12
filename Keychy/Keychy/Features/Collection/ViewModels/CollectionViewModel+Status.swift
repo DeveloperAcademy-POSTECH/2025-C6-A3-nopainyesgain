@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
-// MARK: - 키링 상태에 따른 처리
+// MARK: - 키링 상태에 따른 처리 관련
 enum KeyringStatus {
     case normal
     case packaged
@@ -26,8 +27,33 @@ enum KeyringStatus {
 }
 
 extension CollectionViewModel {
-    
-    
+    // MARK: - 인벤토리 용량 확인
+    func checkInventoryCapacity(userId: String, completion: @escaping (Bool) -> Void) {
+        let db = Firestore.firestore()
+        
+        db.collection("User")
+            .document(userId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    completion(false)
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let keyrings = data["keyrings"] as? [String],
+                      let maxKeyringCount = data["maxKeyringCount"] as? Int else {
+                    completion(false)
+                    return
+                }
+                
+                let currentCount = keyrings.count
+                print("보관함 상태: \(currentCount)/\(maxKeyringCount)")
+                
+                // 여유 공간 있는지 확인
+                let hasSpace = currentCount < maxKeyringCount
+                completion(hasSpace)
+            }
+    }
 }
 
 

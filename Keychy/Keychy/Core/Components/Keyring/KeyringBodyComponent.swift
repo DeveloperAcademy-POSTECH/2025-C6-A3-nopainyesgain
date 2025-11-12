@@ -81,12 +81,10 @@ struct KeyringBodyComponent {
 
     // MARK: - Image Body
     private static func createImageBody(image: UIImage) -> SKNode {
-        // 원본 크기 그대로 사용
         let displaySize = image.size
-        
-        // 텍스처 생성
+
         let texture = SKTexture(image: image)
-        texture.filteringMode = .linear   // 부드럽게 렌더링
+        texture.filteringMode = .linear
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
         // 물리 바디 설정 (원본 크기에 맞게)

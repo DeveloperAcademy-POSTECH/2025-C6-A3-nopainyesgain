@@ -133,20 +133,24 @@ class UserManager {
         UserDefaults.standard.set(user.id, forKey: "userUID")
         UserDefaults.standard.set(user.nickname, forKey: "userNickname")
         UserDefaults.standard.set(user.email, forKey: "userEmail")
+        UserDefaults.standard.set(user.marketingAgreed, forKey: "userMarketingAgreed")
     }
 
     private func loadFromCache() {
         let uid = UserDefaults.standard.string(forKey: "userUID") ?? ""
         let nickname = UserDefaults.standard.string(forKey: "userNickname") ?? ""
         let email = UserDefaults.standard.string(forKey: "userEmail") ?? ""
+        let marketingAgreed = UserDefaults.standard.bool(forKey: "userMarketingAgreed")
 
         if !uid.isEmpty {
             // 캐시에서 임시 유저 생성 (전체 데이터는 Firestore에서 로드 필요)
-            currentUser = KeychyUser(
+            var user = KeychyUser(
                 id: uid,
                 nickname: nickname,
                 email: email
             )
+            user.marketingAgreed = marketingAgreed
+            currentUser = user
             isLoaded = true
         }
     }
@@ -180,6 +184,7 @@ class UserManager {
         UserDefaults.standard.removeObject(forKey: "userNickname")
         UserDefaults.standard.removeObject(forKey: "userEmail")
         UserDefaults.standard.removeObject(forKey: "userUID")
+        UserDefaults.standard.removeObject(forKey: "userMarketingAgreed")
     }
 
     // MARK: - 회원탈퇴
@@ -280,7 +285,20 @@ class UserManager {
                 }
             }
 
-            // 3. 모든 키링 삭제 완료 후 User 문서 삭제
+            // 3. Storage에서 사용자 폴더 삭제 (BodyImages, CustomSounds)
+            group.enter()
+            Task {
+                do {
+                    try await StorageManager.shared.deleteUserFolder(uid: uid)
+                    print("Storage 삭제 완료: \(uid)")
+                } catch {
+                    print("Storage 삭제 실패: \(error.localizedDescription)")
+                    deletionError = error
+                }
+                group.leave()
+            }
+
+            // 4. 모든 삭제 완료 후 User 문서 삭제
             group.notify(queue: .main) {
                 if let error = deletionError {
                     completion(.failure(error))

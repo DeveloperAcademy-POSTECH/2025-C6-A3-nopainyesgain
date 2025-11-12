@@ -23,6 +23,8 @@ struct IntroView: View {
         isTermsChecked  // 필수만 체크하면 됨
     }
 
+    @State private var showButton: Bool = false
+
     var body: some View {
         ZStack {
             logoSection
@@ -33,6 +35,8 @@ struct IntroView: View {
 
                 /// 애플 로그인 버튼
                 appleLoginBtn
+                    .opacity(showButton ? 1 : 0)
+                    .offset(y: showButton ? 0 : 20)
             }
             .sheet(isPresented: $viewModel.showTermsSheet) {
                 termsSheet
@@ -43,6 +47,11 @@ struct IntroView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.gray800)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
+                showButton = true
+            }
+        }
     }
 }
 

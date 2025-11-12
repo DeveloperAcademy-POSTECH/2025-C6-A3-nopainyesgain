@@ -114,7 +114,7 @@ extension KeyringScene {
     
     // Body 위치 설정 및 연결
     private func positionAndConnectBody(body: SKNode, ring: SKSpriteNode, chains: [SKSpriteNode], centerX: CGFloat, chainStartY: CGFloat, chainSpacing: CGFloat) {
-        
+
         // Body의 실제 누적 프레임
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
@@ -141,9 +141,12 @@ extension KeyringScene {
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         addChild(body)
         bodyNode = body
-        
+
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
+
+        // Setup 완료 알림 (Body까지 완전히 생성됨)
+        onSetupComplete?()
     }
 
     // 키링 구성 요소들을 Joint로 연결

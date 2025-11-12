@@ -16,5 +16,7 @@ struct SplashView: View {
                 Image("introTypo")
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.gray800)
     }
 }

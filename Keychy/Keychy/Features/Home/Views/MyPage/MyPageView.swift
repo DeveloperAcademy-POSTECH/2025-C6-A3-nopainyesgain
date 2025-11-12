@@ -37,7 +37,8 @@ struct MyPageView: View {
     // Apple Sign In 재인증용
     @State private var currentNonce: String?
     @State private var authCoordinator: AppleAuthCoordinator?
-     
+    @State private var isShowingAppleSignIn = false
+
     var body: some View {
         ZStack {
             // 메인 컨텐츠
@@ -62,8 +63,16 @@ struct MyPageView: View {
                 notificationManager.checkPermission { isAuthorized in
                     isPushNotificationEnabled = isAuthorized
                 }
-                // Firestore에서 마케팅 알림 설정 불러오기
                 isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
+
+                // Firestore에서 사용자 정보 새로 로드
+                if let uid = Auth.auth().currentUser?.uid {
+                    userManager.loadUserInfo(uid: uid) { _ in }
+                }
+            }
+            .onChange(of: userManager.currentUser?.marketingAgreed) { oldValue, newValue in
+                // UserManager의 marketingAgreed가 변경되면 토글 상태도 동기화
+                isMarketingNotificationEnabled = newValue ?? false
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 notificationManager.checkPermission { isAuthorized in
@@ -190,7 +199,8 @@ struct MyPageView: View {
         }
         
         // 각 alert가 뜰 때, backBtn 숨기기
-        .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert)
+        .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn)
+        .toolbar(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn ? .hidden : .visible, for: .navigationBar)
         .navigationTitle("마이페이지")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
@@ -414,7 +424,7 @@ extension MyPageView {
         Firestore.firestore()
             .collection("User")
             .document(uid)
-            .updateData(["marketingAgreed": newValue]) { error in
+            .updateData(["marketingAgreed": newValue]) { [weak userManager] error in
                 if let error = error {
                     print("마케팅 알림 설정 저장 실패: \(error.localizedDescription)")
                     // 실패 시 원래대로 되돌리기
@@ -423,6 +433,14 @@ extension MyPageView {
                     }
                 } else {
                     print("마케팅 알림 설정 저장 성공: \(newValue)")
+                    // UserManager의 currentUser도 즉시 업데이트
+                    DispatchQueue.main.async {
+                        if var user = userManager?.currentUser {
+                            user.marketingAgreed = newValue
+                            userManager?.currentUser = user
+                            userManager?.saveToCache()
+                        }
+                    }
                 }
             }
     }
@@ -544,24 +562,29 @@ extension MyPageView {
     private func startReauthentication() {
         let nonce = randomNonceString()
         currentNonce = nonce
-        
+
+        // Apple Sign In 시트 표시 시작 → 네비게이션 바 숨김
+        isShowingAppleSignIn = true
+
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.email]
         request.nonce = sha256(nonce)
-        
+
         // Coordinator 생성 및 저장
         let coordinator = AppleAuthCoordinator(
             nonce: nonce,
             onSuccess: { [self] credential in
+                self.isShowingAppleSignIn = false
                 self.handleReauthSuccess(credential: credential)
             },
-            onFailure: { error in
-                // Apple 재인증 취소 또는 실패
+            onFailure: { [self] error in
+                // Apple 재인증 취소 또는 실패 → 네비게이션 바 복원
+                self.isShowingAppleSignIn = false
             }
         )
         authCoordinator = coordinator
-        
+
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = coordinator
         authorizationController.performRequests()

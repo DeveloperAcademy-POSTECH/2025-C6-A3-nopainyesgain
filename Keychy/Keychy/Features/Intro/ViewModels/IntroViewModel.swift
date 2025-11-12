@@ -10,6 +10,7 @@ import AuthenticationServices
 import FirebaseAuth
 import FirebaseFirestore
 import CryptoKit
+import UserNotifications
 
 @Observable
 class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
@@ -21,6 +22,8 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
 
     // 프로필 설정 관련
     var needsProfileSetup = false
+    var showProfileComplete = false
+    var welcomeNickname: String = ""
     var tempUserUID: String = ""
     var tempUserEmail: String = ""
     var tempMarketingAgreed: Bool = false
@@ -28,20 +31,62 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 약관 동의 관련
     var showTermsSheet = false
 
+    // 닉네임 유효성 검사 관련
+    var validationMessage: String = "영문, 숫자, 한글, _, .만 입력 가능해요."
+    var isValidationPositive: Bool = false
+    var isCheckingDuplicate: Bool = false
+
     // MARK: - 약관 동의 완료
     func completeTermsAgreement(marketingAgreed: Bool) {
+        // 1. 시트 닫기
         showTermsSheet = false
 
-        // 신규 사용자인지 확인 (tempUserUID가 있으면 신규)
-        if !tempUserUID.isEmpty {
-            // 신규 사용자 → 약관 동의 정보 저장하고 닉네임 입력으로
-            tempMarketingAgreed = marketingAgreed
-            needsProfileSetup = true
-        } else {
-            // 기존 사용자 → Firestore에 약관 동의 저장하고 메인으로
-            saveTermsAgreement(marketingAgreed: marketingAgreed)
-            isLoggedIn = true
+        // 2. 마케팅 동의 시 푸시 알림 권한 요청
+        if marketingAgreed {
+            requestPushNotificationPermission()
         }
+
+        // 3. 시트 애니메이션이 끝난 후 다음 화면으로 전환 (0.5초 딜레이)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self = self else { return }
+
+            // 신규 사용자인지 확인 (tempUserUID가 있으면 신규)
+            if !self.tempUserUID.isEmpty {
+                // 신규 사용자 → 약관 동의 정보 저장하고 닉네임 입력으로
+                self.tempMarketingAgreed = marketingAgreed
+                self.needsProfileSetup = true
+            } else {
+                // 기존 사용자 → Firestore에 약관 동의 저장하고 메인으로
+                self.saveTermsAgreement(marketingAgreed: marketingAgreed)
+                self.isLoggedIn = true
+            }
+        }
+    }
+
+    // MARK: - 푸시 알림 권한 요청
+    private func requestPushNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("푸시 알림 권한 요청 실패: \(error.localizedDescription)")
+                return
+            }
+
+            if granted {
+                print("푸시 알림 권한 허용됨")
+                // 메인 스레드에서 원격 알림 등록
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            } else {
+                print("푸시 알림 권한 거부됨")
+            }
+        }
+    }
+
+    // MARK: - 온보딩 완료 (프로필 완료 화면에서 메인으로)
+    func completeOnboarding() {
+        showProfileComplete = false
+        isLoggedIn = true
     }
 
     // MARK: - 약관 동의 저장

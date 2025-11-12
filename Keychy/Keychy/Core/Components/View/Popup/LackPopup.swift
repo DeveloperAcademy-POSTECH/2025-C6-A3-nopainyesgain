@@ -69,7 +69,3 @@ struct LackPopup: View {
         .frame(width: 300, height: 246)
     }
 }
-
-#Preview {
-    LackPopup(title: "열쇠가 부족합니다!", onCancel: {}, onConfirm: {})
-}

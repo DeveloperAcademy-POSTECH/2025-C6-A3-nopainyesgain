@@ -105,7 +105,3 @@ struct PurchaseSuccessPopup: View {
         }
     }
 }
-
-#Preview {
-    PurchaseSuccessPopup(isPresented: .constant(true))
-}
