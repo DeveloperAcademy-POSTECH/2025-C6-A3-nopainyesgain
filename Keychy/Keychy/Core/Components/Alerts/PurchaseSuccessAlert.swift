@@ -11,17 +11,16 @@ struct PurchaseSuccessAlert: View {
     let checkmarkScale: CGFloat
     
     var body: some View {
-        VStack(spacing: 23) {
-            Image("checkmarker")
+        VStack(spacing: 5) {
+            Image("checkmarker2")
             
-            Text("구매가 완료되었습니다.")
+            Text("구매가 완료되었어요!")
                 .typography(.suit17SB)
         }
-        .padding(.top, 32)
-        .padding(.horizontal, 22)
-        .padding(.bottom, 26)
-        .glassEffect(in: .rect(cornerRadius: 15))
-        .frame(width: 300, height: 214)
+        .padding(.top, 15)
+        .padding(.horizontal, 8)
+        .padding(.bottom, 40)
+        .glassEffect(in: .rect(cornerRadius: 26.0))
         .scaleEffect(checkmarkScale)
     }
 }
