@@ -10,6 +10,7 @@ import SwiftUI
 struct BundleItemCustomSheet<Content: View>: View {
     @Binding var sheetHeight: CGFloat
     let content: Content
+    let screenHeight: CGFloat
     
     // 화면 높이 기준 비율
     private let smallRatio: CGFloat = 0.1
@@ -17,44 +18,41 @@ struct BundleItemCustomSheet<Content: View>: View {
     private let largeRatio: CGFloat = 0.8
     
     var body: some View {
-        GeometryReader { geometry in
-            let screenHeight = geometry.size.height
-            let smallHeight = screenHeight * smallRatio
-            let mediumHeight = screenHeight * mediumRatio
-            let largeHeight = screenHeight * largeRatio
+        let smallHeight = screenHeight * smallRatio
+        let mediumHeight = screenHeight * mediumRatio
+        let largeHeight = screenHeight * largeRatio
+        
+        VStack(spacing: 10) {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(Color.gray.opacity(0.5))
+                .frame(width: 40, height: 4)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
+                .contentShape(Rectangle())
+                .highPriorityGesture(dragGesture)
             
-            VStack(spacing: 10) {
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(Color.gray.opacity(0.5))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
-                    .contentShape(Rectangle())
-                    .highPriorityGesture(dragGesture(screenHeight: screenHeight))
-                
-                ScrollView {
-                    content
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                .gesture(dragGesture(screenHeight: screenHeight))
+            ScrollView {
+                content
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-            .frame(height: sheetHeight)
-            .background(
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(.ultraThickMaterial)
-                    .stroke(.gray50, lineWidth: 1)
-                    .shadow(color: .black100.opacity(0.15), radius: 9, x: 0, y: 0)
-            )
-            .onAppear {
-                if sheetHeight == 200 {
-                    sheetHeight = mediumHeight // 기본값을 중간 크기로 설정
-                }
+            .gesture(dragGesture)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .frame(height: sheetHeight)
+        .background(
+            RoundedRectangle(cornerRadius: 30)
+                .fill(.ultraThickMaterial)
+                .stroke(.gray50, lineWidth: 1)
+                .shadow(color: .black100.opacity(0.15), radius: 9, x: 0, y: 0)
+        )
+        .onAppear {
+            if sheetHeight == 360 {
+                sheetHeight = mediumHeight // 기본값을 중간 크기로 설정
             }
         }
     }
     
-    private func dragGesture(screenHeight: CGFloat) -> some Gesture {
+    private var dragGesture: some Gesture {
         let smallHeight = screenHeight * smallRatio
         let mediumHeight = screenHeight * mediumRatio
         let largeHeight = screenHeight * largeRatio
