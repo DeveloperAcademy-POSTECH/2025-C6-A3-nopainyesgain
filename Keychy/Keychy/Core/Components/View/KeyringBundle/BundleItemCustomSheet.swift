@@ -23,14 +23,18 @@ struct BundleItemCustomSheet<Content: View>: View {
             
             ScrollView {
                 content
-                    .clipShape(RoundedRectangle(cornerRadius: 30))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(height: sheetHeight)
             .gesture(dragGesture)
         }
+        .clipShape(RoundedRectangle(cornerRadius: 30))
         .frame(height: sheetHeight)
-        .background(.ultraThinMaterial)
+        .background(
+            RoundedRectangle(cornerRadius: 30)
+                .fill(.ultraThickMaterial)
+                .stroke(.gray50, lineWidth: 1)
+                .shadow(color: .black100.opacity(0.15), radius: 9, x: 0, y: 0)
+        )
     }
     
     private var dragGesture: some Gesture {
