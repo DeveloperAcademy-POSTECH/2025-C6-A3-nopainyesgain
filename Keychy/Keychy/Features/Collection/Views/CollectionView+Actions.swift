@@ -147,7 +147,7 @@ extension CollectionView {
     
     // MARK: - 네비게이션
     func navigateToKeyringDetail(keyring: Keyring) {
-        if keyring.isNew, let firestoreId = keyring.firestoreId {
+        if keyring.isNew, let firestoreId = keyring.documentId {
             collectionViewModel.markAsRead(keyringId: firestoreId) { success in
                 if success {
                     print("키링 읽음 처리 완료")
