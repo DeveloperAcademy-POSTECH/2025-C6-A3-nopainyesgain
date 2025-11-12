@@ -29,7 +29,7 @@ struct BundleAddKeyringView: View {
         GridItem(.flexible(), spacing: 16)
     ]
 
-    private let screenSize = CGSize(width: 393, height: 852)  // 기본 화면 크기
+    private let screenSize = CGSize(width: 390, height: 844)  // 기본 화면 크기
     private let sheetHeightRatio: CGFloat = 0.5               // 시트 높이 비율
 
     // MARK: - Body
@@ -376,12 +376,12 @@ extension BundleAddKeyringView {
         let carabinerFrontURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[2] : nil
 
         // 씬 캡처
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImageWithGeometry(
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
-            viewSize: screenSize
+            customSize: screenSize
         ) {
             await MainActor.run {
                 viewModel.bundleCapturedImage = pngData

@@ -10,10 +10,12 @@ import SwiftUI
 
 struct KeyringBundleItem: View {
     let bundle: KeyringBundle
-    let screenSize: CGSize
 
     @State private var cachedImage: Image?
     @State private var isCapturing: Bool = false
+
+    // 고정 캡처 크기 (iPhone 14 기준)
+    private let captureSize = CGSize(width: 390, height: 844)
 
     var body: some View {
         VStack(spacing: 5) {
@@ -160,12 +162,12 @@ struct KeyringBundleItem: View {
         let carabinerBackURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[1] : nil
         let carabinerFrontURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[2] : nil
 
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImageWithGeometry(
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
-            viewSize: screenSize
+            customSize: captureSize
         ) {
             // BundleImageCache에 저장
             BundleImageCache.shared.syncBundle(
