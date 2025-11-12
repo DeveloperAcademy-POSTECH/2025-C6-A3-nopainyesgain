@@ -41,7 +41,7 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - 파티클 효과 콜백
     var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
-    
+
     // MARK: - 씬 준비 완료 콜백
     var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
 
@@ -50,8 +50,11 @@ class MultiKeyringScene: SKScene {
     var currentRingType: RingType = .basic
     var currentChainType: ChainType = .basic
 
-    // MARK: - 배경색 설정
+    // MARK: - 배경색 및 이미지 설정
     var customBackgroundColor: UIColor = .clear
+    var backgroundImageURL: String?  // 배경 이미지 URL
+    var carabinerBackImageURL: String?  // 카라비너 뒷면 이미지 (hamburger 타입)
+    var carabinerFrontImageURL: String?  // 카라비너 앞면 이미지 (hamburger 타입)
 
     // MARK: - 스와이프 제스처 관련
     var lastTouchLocation: CGPoint?
@@ -64,12 +67,18 @@ class MultiKeyringScene: SKScene {
         keyringDataList: [KeyringData],
         ringType: RingType = .basic,
         chainType: ChainType = .basic,
-        backgroundColor: UIColor = .clear
+        backgroundColor: UIColor = .clear,
+        backgroundImageURL: String? = nil,
+        carabinerBackImageURL: String? = nil,
+        carabinerFrontImageURL: String? = nil
     ) {
         self.keyringDataList = keyringDataList
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.customBackgroundColor = backgroundColor
+        self.backgroundImageURL = backgroundImageURL
+        self.carabinerBackImageURL = carabinerBackImageURL
+        self.carabinerFrontImageURL = carabinerFrontImageURL
 
         super.init(size: .zero)
     }
@@ -89,7 +98,105 @@ class MultiKeyringScene: SKScene {
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
+        // 1. 배경 이미지 설정 (가장 뒤)
+        if let backgroundURL = backgroundImageURL {
+            setupBackgroundImage(url: backgroundURL)
+        }
+
+        // 2. 카라비너 뒷면 이미지 (배경 바로 위)
+        if let carabinerBackURL = carabinerBackImageURL {
+            setupCarabinerBackImage(url: carabinerBackURL)
+        }
+
+        // 3. 키링들
         setupKeyrings()
+
+        // 4. 카라비너 앞면 이미지 (가장 위)
+        if let carabinerFrontURL = carabinerFrontImageURL {
+            setupCarabinerFrontImage(url: carabinerFrontURL)
+        }
+    }
+
+    // MARK: - Background & Carabiner Setup
+
+    /// 배경 이미지 설정
+    private func setupBackgroundImage(url: String) {
+        Task {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
+                print("⚠️ [MultiKeyringScene] 배경 이미지 로드 실패: \(url)")
+                return
+            }
+
+            await MainActor.run {
+                let texture = SKTexture(image: image)
+                let backgroundNode = SKSpriteNode(texture: texture)
+
+                backgroundNode.size = self.size
+                backgroundNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                backgroundNode.zPosition = -1000
+
+                self.addChild(backgroundNode)
+                print("✅ [MultiKeyringScene] 배경 이미지 로드 완료")
+            }
+        }
+    }
+
+    /// 카라비너 뒷면 이미지 설정
+    private func setupCarabinerBackImage(url: String) {
+        Task {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
+                print("⚠️ [MultiKeyringScene] 카라비너 뒷면 이미지 로드 실패: \(url)")
+                return
+            }
+
+            await MainActor.run {
+                let texture = SKTexture(image: image)
+                let carabinerNode = SKSpriteNode(texture: texture)
+
+                let imageAspectRatio = image.size.height / image.size.width
+                let nodeWidth = self.size.width
+                let nodeHeight = nodeWidth * imageAspectRatio
+
+                carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+                carabinerNode.position = CGPoint(
+                    x: self.size.width / 2,
+                    y: self.size.height - nodeHeight / 2 - 60
+                )
+                carabinerNode.zPosition = -900
+
+                self.addChild(carabinerNode)
+                print("✅ [MultiKeyringScene] 카라비너 뒷면 이미지 로드 완료")
+            }
+        }
+    }
+
+    /// 카라비너 앞면 이미지 설정
+    private func setupCarabinerFrontImage(url: String) {
+        Task {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
+                print("⚠️ [MultiKeyringScene] 카라비너 앞면 이미지 로드 실패: \(url)")
+                return
+            }
+
+            await MainActor.run {
+                let texture = SKTexture(image: image)
+                let carabinerNode = SKSpriteNode(texture: texture)
+
+                let imageAspectRatio = image.size.height / image.size.width
+                let nodeWidth = self.size.width
+                let nodeHeight = nodeWidth * imageAspectRatio
+
+                carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+                carabinerNode.position = CGPoint(
+                    x: self.size.width / 2,
+                    y: self.size.height - nodeHeight / 2 - 60
+                )
+                carabinerNode.zPosition = 10000
+
+                self.addChild(carabinerNode)
+                print("✅ [MultiKeyringScene] 카라비너 앞면 이미지 로드 완료")
+            }
+        }
     }
 
     // MARK: - Setup
@@ -99,12 +206,12 @@ class MultiKeyringScene: SKScene {
         // 모든 키링이 동기적으로 생성될 때까지 카운터 사용
         let totalKeyrings = keyringDataList.count
         var completedKeyrings = 0
-        
+
         for (order, data) in keyringDataList.enumerated() {
             setupSingleKeyring(data: data, order: order) { [weak self] in
                 completedKeyrings += 1
                 print("[MultiKeyringScene] Keyring \(completedKeyrings)/\(totalKeyrings) completed")
-                
+
                 if completedKeyrings == totalKeyrings {
                     // 모든 키링 완성 후 물리 활성화
                     self?.enablePhysics()
@@ -126,7 +233,7 @@ class MultiKeyringScene: SKScene {
 
         // 좌표 변환: SwiftUI 좌표 -> SpriteKit 좌표
         let spriteKitPosition = convertToSpriteKitCoordinates(data.position)
-        
+
 
         // 각 키링 그룹에 고유한 categoryBitMask 설정 (충돌 방지)
         let categoryBitMask: UInt32 = UInt32(1 << data.index)
@@ -134,7 +241,7 @@ class MultiKeyringScene: SKScene {
 
         // zPosition 계산: 생성 순서대로 레이어링 (나중에 생성된 것이 위에)
         let baseZPosition = CGFloat(order * 10)
-        
+
         guard let carabinerType = currentCarabinerType else {
             completion()
             return
@@ -149,16 +256,16 @@ class MultiKeyringScene: SKScene {
                 return
             }
             ring.zPosition = baseZPosition  // Ring이 가장 뒤
-            
+
             let ringFrame = ring.calculateAccumulatedFrame()
             let ringRadius = ringFrame.height / 2
-            
+
             // Ring 위치: Ring의 상단이 정확히 + 버튼 위치에 오도록 설정
             let ringCenterX = spriteKitPosition.x
             // 미세 조정: 필요시 오프셋 추가
             let ringCenterY = spriteKitPosition.y - ringRadius  // +2pt 오프셋으로 조정
             ring.position = CGPoint(x: ringCenterX, y: ringCenterY)
-            
+
             // Ring이 처음에는 물리 시뮬레이션 비활성화
             ring.physicsBody?.isDynamic = false
             ring.physicsBody?.categoryBitMask = categoryBitMask
@@ -251,9 +358,9 @@ class MultiKeyringScene: SKScene {
         completion: @escaping () -> Void
     ) {
         KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
-            guard let self = self, let body = body else { 
+            guard let self = self, let body = body else {
                 completion()  // body 생성 실패 시에도 completion 호출
-                return 
+                return
             }
 
             self.positionAndConnectBody(
@@ -311,7 +418,7 @@ class MultiKeyringScene: SKScene {
 
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
-        
+
         // 키링 완성 완료
         completion()
     }
@@ -339,7 +446,7 @@ class MultiKeyringScene: SKScene {
                     x: ring.position.x,
                     y: ring.position.y - ringFrame.height/2  // Ring의 하단
                 )
-                
+
                 let joint = SKPhysicsJointPin.joint(
                     withBodyA: ringPhysics,
                     bodyB: chainPhysics,
@@ -348,7 +455,7 @@ class MultiKeyringScene: SKScene {
                 joint.shouldEnableLimits = false
                 joint.frictionTorque = 5.0  // 첫 번째 체인을 거의 고정시키는 높은 마찰
                 physicsWorld.add(joint)
-                
+
                 print("[MultiKeyringScene] Plain: First chain fixed with high friction")
             } else {
                 // Hamburger 타입은 기존 핀 조인트 유지
@@ -447,7 +554,7 @@ class MultiKeyringScene: SKScene {
             bodyPhysics.linearDamping = 0.5
             bodyPhysics.angularDamping = 0.5
         }
-        
+
         // Plain 타입에서는 Ring을 dynamic으로 유지하되 위치 제한 (anchor에 의해 제어됨)
         if let carabinerType = currentCarabinerType, carabinerType == .plain {
             // Ring은 dynamic 상태 유지하되 anchor가 위치 제어
@@ -458,14 +565,14 @@ class MultiKeyringScene: SKScene {
             print("[MultiKeyringScene] Hamburger: Ring kept static after joint connections")
         }
     }
-    
+
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
     private func enablePhysics() {
         print("[MultiKeyringScene] Enabling physics for all keyrings...")
-        
+
         // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        
+
         // 카라비너 타입별 Ring 물리 설정
         for (index, ring) in ringNodes {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -478,7 +585,7 @@ class MultiKeyringScene: SKScene {
                 print("[MultiKeyringScene] Hamburger: Ring kept static")
             }
         }
-        
+
         // 카라비너 타입별 체인 물리 활성화
         for (_, chains) in chainNodesByKeyring {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -503,7 +610,7 @@ class MultiKeyringScene: SKScene {
                 }
             }
         }
-        
+
         // 모든 바디의 물리 활성화
         for (_, body) in bodyNodes {
             body.physicsBody?.isDynamic = true
@@ -512,7 +619,7 @@ class MultiKeyringScene: SKScene {
         }
         onAllKeyringsReady?()
     }
-    
+
     // MARK: - Helper Methods
 
     /// 비율 좌표를 SpriteKit 절대 좌표로 변환
@@ -600,7 +707,7 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - Sound Effect
 
-    /// 사운드 효과 재생 (KeyringScene+Effects와 동일)
+    /// 사운드 효과 재생
     func applySoundEffect(soundId: String, index: Int) {
         guard soundId != "none" else { return }
 
@@ -672,7 +779,7 @@ class MultiKeyringScene: SKScene {
                     if let ring = ringNodes[index] {
                         ring.physicsBody?.applyImpulse(CGVector(dx: force.dx * 0.4, dy: force.dy * 0.4))
                     }
-                    
+
                     // 모든 체인에도 힘 적용
                     for chain in chains {
                         chain.physicsBody?.applyImpulse(force)

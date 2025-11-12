@@ -36,8 +36,6 @@ struct BundleAddKeyringView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            backgroundImage
-
             VStack {
                 sceneView(carabiner: viewModel.selectedCarabiner ?? viewModel.carabiners.first!)
                 Spacer()
@@ -64,22 +62,6 @@ struct BundleAddKeyringView: View {
 // MARK: - View Components
 
 extension BundleAddKeyringView {
-    /// 배경 이미지
-    private var backgroundImage: some View {
-        Group {
-            if let background = viewModel.selectedBackground {
-                LazyImage(url: URL(string: background.backgroundImage)) { state in
-                    if let image = state.image {
-                        image.resizable().scaledToFill()
-                    } else if state.isLoading {
-                        Color.clear
-                    }
-                }
-            }
-        }
-        .ignoresSafeArea()
-    }
-
     /// 카라비너 + 키링 씬 뷰
     private func sceneView(carabiner: Carabiner) -> some View {
         VStack {
@@ -103,56 +85,32 @@ extension BundleAddKeyringView {
 
     /// 햄버거 카라비너 레이어 (뒷면 - 키링 - 앞면)
     private func hamburgerCarabinerLayers(carabiner: Carabiner) -> some View {
-        Group {
-            // 뒷 카라비너
-            LazyImage(url: URL(string: carabiner.carabinerImage[1])) { state in
-                if let image = state.image {
-                    image.resizable().scaledToFit()
-                } else {
-                    ProgressView()
-                }
-            }
-
-            // 키링들
-            MultiKeyringSceneView(
-                keyringDataList: createKeyringDataList(carabiner: carabiner),
-                ringType: .basic,
-                chainType: .basic,
-                backgroundColor: .clear,
-                currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
-            )
-            .id(selectedKeyrings.keys.sorted())
-
-            // 앞 카라비너
-            LazyImage(url: URL(string: carabiner.carabinerImage[2])) { state in
-                if let image = state.image {
-                    image.resizable().scaledToFit()
-                } else {
-                    ProgressView()
-                }
-            }
-        }
+        MultiKeyringSceneView(
+            keyringDataList: createKeyringDataList(carabiner: carabiner),
+            ringType: .basic,
+            chainType: .basic,
+            backgroundColor: .clear,
+            backgroundImageURL: viewModel.selectedBackground?.backgroundImage,
+            carabinerBackImageURL: carabiner.carabinerImage[1],
+            carabinerFrontImageURL: carabiner.carabinerImage[2],
+            currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
+        )
+        .id(selectedKeyrings.keys.sorted())
     }
 
     /// 플레인 카라비너 레이어 (카라비너 - 키링)
     private func plainCarabinerLayers(carabiner: Carabiner) -> some View {
-        Group {
-            // 카라비너
-            LazyImage(url: URL(string: carabiner.carabinerImage[0])) { state in
-                if let image = state.image {
-                    image.resizable().scaledToFit()
-                } else {
-                    ProgressView()
-                }
-            }
-
-            // 키링들
-            MultiKeyringSceneView(
-                keyringDataList: createKeyringDataList(carabiner: carabiner),
-                currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
-            )
-            .id(selectedKeyrings.keys.sorted())
-        }
+        MultiKeyringSceneView(
+            keyringDataList: createKeyringDataList(carabiner: carabiner),
+            ringType: .basic,
+            chainType: .basic,
+            backgroundColor: .clear,
+            backgroundImageURL: viewModel.selectedBackground?.backgroundImage,
+            carabinerBackImageURL: carabiner.carabinerImage[0],
+            carabinerFrontImageURL: nil,
+            currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
+        )
+        .id(selectedKeyrings.keys.sorted())
     }
 
     /// 키링 추가 버튼들
@@ -370,10 +328,19 @@ extension BundleAddKeyringView {
             keyringDataList.append(data)
         }
 
-        // 햄버거 타입인 경우 앞뒤 카라비너 이미지 추출
+        // 카라비너 이미지 추출
         let carabinerType = CarabinerType.from(carabiner.carabinerType)
-        let carabinerBackURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[1] : nil
-        let carabinerFrontURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[2] : nil
+        let carabinerBackURL: String?
+        let carabinerFrontURL: String?
+
+        if carabinerType == .hamburger {
+            carabinerBackURL = carabiner.carabinerImage[1]
+            carabinerFrontURL = carabiner.carabinerImage[2]
+        } else {
+            // plain 타입
+            carabinerBackURL = carabiner.carabinerImage[0]
+            carabinerFrontURL = nil
+        }
 
         // 씬 캡처
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(

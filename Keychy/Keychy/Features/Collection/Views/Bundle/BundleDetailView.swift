@@ -23,57 +23,51 @@ struct BundleDetailView: View {
     @State private var showDeleteAlert: Bool = false
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                contentView(geometry: geometry)
-                
-                // 하단 섹션을 ZStack 안에서 직접 배치
-                VStack {
+        ZStack {
+            contentView
+
+            // 하단 섹션을 ZStack 안에서 직접 배치
+            VStack {
+                Spacer()
+                bottomSection
+            }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+
+            if showMenu {
+                HStack {
                     Spacer()
-                    bottomSection
-                }
-                .ignoresSafeArea(.keyboard, edges: .bottom)
-                
-                if showMenu {
-                    HStack {
-                        Spacer()
-                        VStack {
-                            BundleMenu(
-                                onNameEdit: {
-                                    showMenu = false
-                                    router.push(.bundleNameEditView)
-                                },
-                                onEdit: {
-                                    showMenu = false
-                                },
-                                onDelete: {
-                                    showMenu = false
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showDeleteAlert = true
-                                    }
+                    VStack {
+                        BundleMenu(
+                            onNameEdit: {
+                                showMenu = false
+                                router.push(.bundleNameEditView)
+                            },
+                            onEdit: {
+                                showMenu = false
+                            },
+                            onDelete: {
+                                showMenu = false
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteAlert = true
                                 }
-                            )
-                            .padding(.trailing, 16)
-                            .padding(.top, 8)
-                            
-                            Spacer()
-                        }
+                            }
+                        )
+                        .padding(.trailing, 16)
+                        .padding(.top, 8)
+
+                        Spacer()
                     }
-                    .zIndex(50)
-                    .allowsHitTesting(true)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showMenu = false
-                        }
+                }
+                .zIndex(50)
+                .allowsHitTesting(true)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showMenu = false
                     }
                 }
             }
         }
-        .background(
-            viewModel.backgroundImage
-                .ignoresSafeArea()
-        )
         .toolbar {
             backToolbarItem
             menuToolbarItem
@@ -254,20 +248,20 @@ extension BundleDetailView {
 // MARK: - View Components
 extension BundleDetailView {
     /// 메인 컨텐츠 뷰
-    private func contentView(geometry: GeometryProxy) -> some View {
+    private var contentView: some View {
         Group {
             if let bundle = viewModel.selectedBundle {
-                bundleSceneView(bundle: bundle, geometry: geometry)
+                bundleSceneView(bundle: bundle)
             }
         }
         .ignoresSafeArea()
     }
-    
+
     /// 번들 씬 뷰
-    private func bundleSceneView(bundle: KeyringBundle, geometry: GeometryProxy) -> some View {
+    private func bundleSceneView(bundle: KeyringBundle) -> some View {
         VStack {
             if let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner) {
-                sceneLayerView(carabiner: carabiner, geometry: geometry)
+                sceneLayerView(carabiner: carabiner)
             } else {
                 Color.clear
             }
@@ -275,58 +269,53 @@ extension BundleDetailView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
-    
+
     /// 씬 레이어 뷰 (카라비너와 키링들)
-    private func sceneLayerView(carabiner: Carabiner, geometry: GeometryProxy) -> some View {
-        ZStack(alignment: .top) {
-            switch carabiner.type {
-            case .hamburger:
-                // 1층: 뒷 카라비너 이미지
-                viewModel.backCarabinerImage(carabiner: carabiner)
-                
-                // 2층: 키링 씬 (BundleAddKeyringView와 동일하게 직접 배치)
-                Group {
-                    if didPrefetch && isSceneReady && scenePreparationDelay && allKeyringsStabilized {
-                        let dataList = viewModel.createKeyringDataList(carabiner: carabiner, geometry: geometry.size)
+    private func sceneLayerView(carabiner: Carabiner) -> some View {
+        VStack {
+            Group {
+                if didPrefetch && isSceneReady && scenePreparationDelay && allKeyringsStabilized,
+                   let background = viewModel.selectedBackground {
+                    let dataList = viewModel.createKeyringDataList(carabiner: carabiner, geometry: CGSize(width: 393, height: 852))
+
+                    switch carabiner.type {
+                    case .hamburger:
                         MultiKeyringSceneView(
                             keyringDataList: dataList,
                             ringType: .basic,
                             chainType: .basic,
                             backgroundColor: .clear,
+                            backgroundImageURL: background.backgroundImage,
+                            carabinerBackImageURL: carabiner.backImageURL,
+                            carabinerFrontImageURL: carabiner.frontImageURL,
                             currentCarabinerType: carabiner.type
                         )
                         .id(dataList.map { $0.index }.sorted())
                         .opacity(allKeyringsStabilized ? 1.0 : 0.0)
                         .animation(.easeInOut(duration: 0.5), value: allKeyringsStabilized)
-                    } else {
-                        Color.clear
-                    }
-                }
-                
-                // 3층: 앞 카라비너 이미지
-                viewModel.frontCarabinerImage(carabiner: carabiner)
-                
-            case .plain:
-                // 1층: 카라비너 이미지
-                viewModel.backCarabinerImage(carabiner: carabiner)
-                
-                // 2층: 키링 씬 (BundleAddKeyringView와 동일하게 직접 배치)
-                Group {
-                    if didPrefetch && isSceneReady && scenePreparationDelay && allKeyringsStabilized {
-                        let dataList = viewModel.createKeyringDataList(carabiner: carabiner, geometry: geometry.size)
+
+                    case .plain:
                         MultiKeyringSceneView(
                             keyringDataList: dataList,
+                            ringType: .basic,
+                            chainType: .basic,
+                            backgroundColor: .clear,
+                            backgroundImageURL: background.backgroundImage,
+                            carabinerBackImageURL: carabiner.backImageURL,
+                            carabinerFrontImageURL: nil,
                             currentCarabinerType: carabiner.type
                         )
                         .id(dataList.map { $0.index }.sorted())
                         .opacity(allKeyringsStabilized ? 1.0 : 0.0)
                         .animation(.easeInOut(duration: 0.5), value: allKeyringsStabilized)
-                    } else {
-                        Color.clear
                     }
+                } else {
+                    Color.clear
                 }
             }
+            Spacer()
         }
         .padding(.top, 60)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }

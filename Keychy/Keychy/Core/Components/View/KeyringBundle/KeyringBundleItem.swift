@@ -157,10 +157,19 @@ struct KeyringBundleItem: View {
             }
             return
         }
-        // 카라비너 이미지 추출 (hamburger 타입인 경우)
+        // 카라비너 이미지 추출
         let carabinerType = CarabinerType.from(carabiner.carabinerType)
-        let carabinerBackURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[1] : nil
-        let carabinerFrontURL: String? = carabinerType == .hamburger ? carabiner.carabinerImage[2] : nil
+        let carabinerBackURL: String?
+        let carabinerFrontURL: String?
+
+        if carabinerType == .hamburger {
+            carabinerBackURL = carabiner.carabinerImage[1]
+            carabinerFrontURL = carabiner.carabinerImage[2]
+        } else {
+            // plain 타입
+            carabinerBackURL = carabiner.carabinerImage[0]
+            carabinerFrontURL = nil
+        }
 
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,

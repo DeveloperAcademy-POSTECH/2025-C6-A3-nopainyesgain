@@ -23,6 +23,9 @@ struct MultiKeyringSceneView: View {
     let ringType: RingType
     let chainType: ChainType
     let backgroundColor: UIColor
+    let backgroundImageURL: String?
+    let carabinerBackImageURL: String?
+    let carabinerFrontImageURL: String?
     let currentCarabinerType: CarabinerType
 
     @State private var scene: MultiKeyringScene?
@@ -36,12 +39,18 @@ struct MultiKeyringSceneView: View {
         ringType: RingType = .basic,
         chainType: ChainType = .basic,
         backgroundColor: UIColor = .clear,
+        backgroundImageURL: String? = nil,
+        carabinerBackImageURL: String? = nil,
+        carabinerFrontImageURL: String? = nil,
         currentCarabinerType: CarabinerType
     ) {
         self.keyringDataList = keyringDataList
         self.ringType = ringType
         self.chainType = chainType
         self.backgroundColor = backgroundColor
+        self.backgroundImageURL = backgroundImageURL
+        self.carabinerBackImageURL = carabinerBackImageURL
+        self.carabinerFrontImageURL = carabinerFrontImageURL
         self.currentCarabinerType = currentCarabinerType
     }
 
@@ -90,7 +99,10 @@ extension MultiKeyringSceneView {
             keyringDataList: keyringDataList,
             ringType: ringType,
             chainType: chainType,
-            backgroundColor: backgroundColor
+            backgroundColor: backgroundColor,
+            backgroundImageURL: backgroundImageURL,
+            carabinerBackImageURL: carabinerBackImageURL,
+            carabinerFrontImageURL: carabinerFrontImageURL
         )
 
         newScene.size = defaultSceneSize
