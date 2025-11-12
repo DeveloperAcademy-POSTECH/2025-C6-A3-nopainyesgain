@@ -11,7 +11,7 @@ import NukeUI
 struct SelectCarabinerGridItem: View {
     var isSelected: Bool
     var carabiner: CarabinerViewData
-    
+    var widthSize: CGFloat
     var body: some View {
         VStack(spacing: 10) {
             ZStack(alignment: .topLeading) {
@@ -20,8 +20,9 @@ struct SelectCarabinerGridItem: View {
                     if let image = state.image {
                         image
                             .resizable()
-                            .scaledToFit()
-                            .frame(width: 114, height: 114)
+                            .scaledToFill()
+                            .clipped()
+                            .frame(width: (widthSize - 60) / 3, height: (widthSize - 60) / 3)
                     } else if state.isLoading {
                         ProgressView()
                             .aspectRatio(1, contentMode: .fit)
@@ -32,8 +33,6 @@ struct SelectCarabinerGridItem: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
-                .scaledToFit()
-                .clipped()
                 .background(RoundedRectangle(cornerRadius: 10).fill(.white100))
                 
                 // 유료 재화 표시

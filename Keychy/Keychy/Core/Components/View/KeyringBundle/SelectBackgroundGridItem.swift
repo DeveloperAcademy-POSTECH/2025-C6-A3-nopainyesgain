@@ -11,6 +11,7 @@ import NukeUI
 struct SelectBackgroundGridItem: View {
     let background: BackgroundViewData
     let isSelected: Bool
+    let widthSize: CGFloat
     
     var body: some View {
         VStack(spacing: 10) {
@@ -21,14 +22,12 @@ struct SelectBackgroundGridItem: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .aspectRatio(5/7, contentMode: .fit)
+                            .frame(width: (widthSize-60)/3, height: (widthSize-60) / 3 * (7/5))
+                            .clipped()
                     } else if state.isLoading {
                         ProgressView()
-                            .aspectRatio(5/7, contentMode: .fit)
                     }
                 }
-                .scaledToFit()
-                .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -78,6 +77,6 @@ struct SelectBackgroundGridItem: View {
             Text(background.background.backgroundName)
                 .typography(isSelected ? .notosans14SB : .notosans14M)
                 .foregroundStyle(isSelected ? .main500 : .black100)
-        } //: VSTACK
+        }
     }
 }
