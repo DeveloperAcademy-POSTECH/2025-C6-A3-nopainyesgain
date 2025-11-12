@@ -1,14 +1,14 @@
 //
-//  CachedImagesDebugView.swift
+//  CachedBundlesDebugView.swift
 //  Keychy
 //
-//  Created by Rundo on 11/9/25.
+//  Created by Rundo on 11/10/25.
 //
 
 import SwiftUI
 
-/// 캐시된 키링 이미지를 확인하는 디버그 뷰
-struct CachedImagesDebugView: View {
+/// 캐시된 번들 이미지를 확인하는 디버그 뷰
+struct CachedBundlesDebugView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var cachedImages: [(id: String, name: String, image: Image, size: String)] = []
 
@@ -25,7 +25,7 @@ struct CachedImagesDebugView: View {
                 }
                 .padding()
             }
-            .navigationTitle("캐시된 이미지")
+            .navigationTitle("캐시된 번들 이미지")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -54,11 +54,11 @@ struct CachedImagesDebugView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
 
-            Text("캐시된 이미지가 없습니다")
+            Text("캐시된 번들 이미지가 없습니다")
                 .font(.headline)
                 .foregroundColor(.gray)
 
-            Text("키링을 한 번 열어보면\n위젯용 이미지가 생성됩니다")
+            Text("번들을 한 번 열어보면\n번들 이미지가 생성됩니다")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -113,8 +113,7 @@ struct CachedImagesDebugView: View {
                     item.image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 200)
-                        .background(Color.main500)
+                        .frame(maxWidth: .infinity)
 
                     VStack(spacing: 4) {
                         Text(item.name)
@@ -150,19 +149,19 @@ struct CachedImagesDebugView: View {
 
     private func loadCachedImages() {
 
-        // App Group의 메타데이터 로드
-        let availableKeyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+        // 앱 샌드박스의 메타데이터 로드
+        let availableBundles = BundleImageCache.shared.loadAvailableBundles()
         var loadedImages: [(id: String, name: String, image: Image, size: String)] = []
 
-        for keyring in availableKeyrings {
+        for bundle in availableBundles {
             // 이미지 데이터 로드
-            if let imageData = KeyringImageCache.shared.loadImageByPath(keyring.imagePath),
+            if let imageData = BundleImageCache.shared.loadImageByPath(bundle.imagePath),
                let uiImage = UIImage(data: imageData) {
                 let sizeString = String(format: "%.1f KB", Double(imageData.count) / 1024.0)
 
                 loadedImages.append((
-                    id: keyring.id,
-                    name: keyring.name,
+                    id: bundle.id,
+                    name: bundle.name,
                     image: Image(uiImage: uiImage),
                     size: sizeString
                 ))
@@ -176,27 +175,26 @@ struct CachedImagesDebugView: View {
 
     private func deleteImage(id: String) {
         // 이미지와 메타데이터 모두 삭제
-        KeyringImageCache.shared.removeKeyring(id: id)
+        BundleImageCache.shared.removeBundle(id: id)
         loadCachedImages()
     }
 
     // MARK: - Clear All Cache
 
     private func clearAllCache() {
-
-        // 모든 키링 메타데이터 삭제
-        let keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
-        for keyring in keyrings {
-            KeyringImageCache.shared.removeKeyring(id: keyring.id)
+        // 모든 번들 메타데이터 삭제
+        let bundles = BundleImageCache.shared.loadAvailableBundles()
+        for bundle in bundles {
+            BundleImageCache.shared.removeBundle(id: bundle.id)
         }
 
         // 혹시 남은 이미지 파일도 삭제
-        KeyringImageCache.shared.clearAll()
+        BundleImageCache.shared.clearAll()
 
         loadCachedImages()
     }
 }
 
 #Preview {
-    CachedImagesDebugView()
+    CachedBundlesDebugView()
 }
