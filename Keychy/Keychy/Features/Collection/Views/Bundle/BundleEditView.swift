@@ -31,94 +31,96 @@ struct BundleEditView: View {
     ]
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            //TODO: 임시로 올려둔 배경화면과 카라비너입니다.
-            if let bg = newSelectedBackground {
-                LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    }
-                }
-            }
-            if let cb = newSelectedCarabiner {
-                VStack {
-                    LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                //TODO: 임시로 올려둔 배경화면과 카라비너입니다.
+                if let bg = newSelectedBackground {
+                    LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                         if let image = state.image {
                             image
                                 .resizable()
                                 .scaledToFit()
                         }
                     }
-                    Spacer()
                 }
-            }
-            // 배경 시트
-            if showBackgroundSheet {
-                VStack(spacing: 10) {
+                if let cb = newSelectedCarabiner {
+                    VStack {
+                        LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                        }
+                        Spacer()
+                    }
+                }
+                // 배경 시트
+                if showBackgroundSheet {
+                    VStack(spacing: 10) {
+                        HStack(spacing: 8) {
+                            editBackgroundButton
+                            editCarabinerButton
+                            Spacer()
+                        }
+                        .padding(.leading, 18)
+                        BundleItemCustomSheet(
+                            sheetHeight: $sheetHeight,
+                            content: selectBackgroundSheet(geo: geo)
+                        )
+                    }
+                }
+                
+                // 카라비너 시트
+                if showCarabinerSheet {
+                    VStack(spacing: 10) {
+                        HStack(spacing: 8) {
+                            editBackgroundButton
+                            editCarabinerButton
+                            Spacer()
+                        }
+                        .padding(.leading, 18)
+                        BundleItemCustomSheet(
+                            sheetHeight: $sheetHeight,
+                            content: selectCarabinerSheet(geo: geo)
+                        )
+                    }
+                }
+                
+                if !showCarabinerSheet && !showBackgroundSheet {
                     HStack(spacing: 8) {
                         editBackgroundButton
                         editCarabinerButton
                         Spacer()
                     }
                     .padding(.leading, 18)
-                    BundleItemCustomSheet(
-                        sheetHeight: $sheetHeight,
-                        content: selectBackgroundSheet
-                    )
                 }
-            }
-            
-            // 카라비너 시트
-            if showCarabinerSheet {
-                VStack(spacing: 10) {
-                    HStack(spacing: 8) {
-                        editBackgroundButton
-                        editCarabinerButton
+                
+                if showChangeCarabinerAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                showChangeCarabinerAlert = false
+                            }
+                        }
+                    VStack {
+                        Spacer()
+                        CarabinerChangePopup(
+                            title: "카라비너를 변경하시겠어요?",
+                            message: "새 카라비너로 변경하면\n현재 뭉치에 걸린 키링들이 모두 해제돼요.",
+                            onCancel: {
+                                selectCarabiner = nil
+                                showChangeCarabinerAlert = false
+                            },
+                            onConfirm: {
+                                newSelectedCarabiner = selectCarabiner
+                                showChangeCarabinerAlert = false
+                            }
+                        )
+                        .padding(.horizontal, 51)
                         Spacer()
                     }
-                    .padding(.leading, 18)
-                    BundleItemCustomSheet(
-                        sheetHeight: $sheetHeight,
-                        content: selectCarabinerSheet
-                    )
-                }
-            }
-            
-            if !showCarabinerSheet && !showBackgroundSheet {
-                HStack(spacing: 8) {
-                    editBackgroundButton
-                    editCarabinerButton
-                    Spacer()
-                }
-                .padding(.leading, 18)
-            }
-            
-            if showChangeCarabinerAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            showChangeCarabinerAlert = false
-                        }
-                    }
-                VStack {
-                    Spacer()
-                    CarabinerChangePopup(
-                        title: "카라비너를 변경하시겠어요?",
-                        message: "새 카라비너로 변경하면\n현재 뭉치에 걸린 키링들이 모두 해제돼요.",
-                        onCancel: {
-                            selectCarabiner = nil
-                            showChangeCarabinerAlert = false
-                        },
-                        onConfirm: {
-                            newSelectedCarabiner = selectCarabiner
-                            showChangeCarabinerAlert = false
-                        }
-                    )
-                    .padding(.horizontal, 51)
-                    Spacer()
                 }
             }
         }
@@ -237,12 +239,13 @@ extension BundleEditView {
 
 // MARK: - 시트 뷰
 extension BundleEditView {
-    private var selectBackgroundSheet: some View {
+    private func selectBackgroundSheet(geo: GeometryProxy) -> some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(viewModel.backgroundViewData) { bg in
                 SelectBackgroundGridItem(
-                    background: bg, isSelected: newSelectedBackground == bg
+                    background: bg, isSelected: newSelectedBackground == bg, widthSize: geo.size.width
                 )
+                
                 .onTapGesture {
                     newSelectedBackground = bg
                     
@@ -258,10 +261,10 @@ extension BundleEditView {
         .padding(.vertical, 30)
     }
     
-    private var selectCarabinerSheet: some View {
+    private func selectCarabinerSheet(geo: GeometryProxy) -> some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(viewModel.carabinerViewData) { cb in
-                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb)
+                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb, widthSize: geo.size.width)
                     .onTapGesture {
                         selectCarabiner = cb
                         showChangeCarabinerAlert = true
