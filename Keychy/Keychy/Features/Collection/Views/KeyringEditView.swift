@@ -127,8 +127,9 @@ extension KeyringEditView {
             Button {
                 router.pop()
             } label: {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.primary)
+                Image("BackIcon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
         }
     }
@@ -152,6 +153,7 @@ extension KeyringEditView {
                         .resizable()
                         .renderingMode(.template)
                         .foregroundStyle(.white100)
+                        .frame(width: 32, height: 32)
 
                 }
             }
@@ -163,6 +165,7 @@ extension KeyringEditView {
                         .resizable()
                         .renderingMode(.template)
                         .foregroundStyle(.gray300)
+                        .frame(width: 32, height: 32)
 
                 }
                 .disabled(true)
