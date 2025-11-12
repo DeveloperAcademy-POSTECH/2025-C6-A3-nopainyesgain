@@ -35,18 +35,12 @@ struct CollectionView: View {
     @State private var showCachedImagesDebug: Bool = false
     
     // 검색 관련
+    @State private var showSearchBar: Bool = false
     @State private var isSearching: Bool = false
     @State private var searchText: String = ""
+    @State private var keyboardHeight: CGFloat = 0  // 키보드 높이 추적
     @FocusState private var isSearchFieldFocused: Bool
     
-    private var categories: [String] {
-        var allCategories = ["전체"]
-        allCategories.append(contentsOf: collectionViewModel.tags)
-        
-        return allCategories
-    }
-    
-    // 정렬 옵션 (최신(생성) / 오래된 / 복사된 숫자순(인기순) / 이름 ㄱㄴㄷ순
     let sortOptions = ["최신순", "오래된순", "이름순"]
     
     let columns: [GridItem] = [
@@ -54,43 +48,32 @@ struct CollectionView: View {
         GridItem(.flexible(), spacing: Spacing.gap)
     ]
     
-    // TODO: 파이어베이스 연결해서 내 키링 불러오기
-    private var myKeyrings: [Keyring] {
-        var keyrings = collectionViewModel.keyring
-        
-        // 카테고리 필터링
-        if selectedCategory != "전체" {
-            keyrings = keyrings.filter { $0.tags.contains(selectedCategory) }
-        }
-        
-//        // 검색 필터링
-//        if !searchText.isEmpty {
-//            keyrings = keyrings.filter { keyring in
-//                keyring.name.localizedCaseInsensitiveContains(searchText)
-//            }
-//        }
-//
-        return keyrings
-    }
-    
     var body: some View {
         ZStack {
             VStack {
-                headerSection
-                    .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.padding)
-                
-                tagSection
-                    .padding(.horizontal, Spacing.xs)
-                
-                collectionSection
-                    .padding(.horizontal, Spacing.padding)
-                
                 if isSearching {
-                    searchBarOverlay
+                    searchModeView
+                        .transition(.opacity)
+                } else {
+                    normalModeView
+                        .transition(.opacity)
                 }
             }
             .ignoresSafeArea()
+            
+            if showSearchBar {
+                // 키보드 위치 계산
+                GeometryReader { geometry in
+                    VStack {
+                        Spacer()
+                        searchBarView
+                            .padding(.bottom, keyboardHeight > 0 ?
+                                     keyboardHeight - geometry.safeAreaInsets.bottom : 4)
+                    }
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.easeOut(duration: 0.25), value: keyboardHeight)
+            }
             
             if let menuCategory = showingMenuFor {
                 Color.black20
@@ -251,7 +234,7 @@ struct CollectionView: View {
 
                 if showInvenExpandAlert {
                     PurchasePopup(
-                        title: "인벤토리 확장 [+100]",
+                        title: "보관함 확장 [+10]",
                         myCoin: collectionViewModel.coin,
                         price: 100,
                         scale: invenExpandAlertScale,
@@ -298,23 +281,67 @@ struct CollectionView: View {
             }
             
         }
+        .toolbar(isSearching ? .hidden : .visible, for: .tabBar)
         .sheet(isPresented: $showSortSheet) {
             sortSheet
         }
         .onAppear {
             fetchUserData()
+            setupKeyboardNotifications()
+        }
+        .onDisappear {
+            removeKeyboardNotifications()
         }
         .onChange(of: shouldRefresh) { oldValue, newValue in
             if newValue {
                 fetchUserData()
                 shouldRefresh = false            }
         }
-        // 검색 종료 시 검색어 초기화
-//        .onChange(of: isSearching) { oldValue, newValue in
-//            if !newValue {
-//                searchText = ""
-//            }
-//        }
+        // 검색바 닫을 때 정리
+        .onChange(of: showSearchBar) { oldValue, newValue in
+            if !newValue {
+                searchText = ""
+                isSearching = false
+                isSearchFieldFocused = false
+            }
+        }
+        // 텍스트 입력 감지 - 텍스트가 있으면 검색 모드 활성화
+        .onChange(of: searchText) { oldValue, newValue in
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                isSearching = !newValue.isEmpty
+            }
+        }
+        .sheet(isPresented: $showCachedImagesDebug) {
+            CachedImagesDebugView()
+        }
+    }
+    
+    
+    // MARK: - 키보드 노티피케이션
+    // 키보드 노티피케이션 설정 (키보드 높이를 감지해서 검색바 위치 조정)
+    private func setupKeyboardNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+            keyboardHeight = keyboardFrame.height
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            keyboardHeight = 0
+        }
+    }
+    
+    // 키보드 노티피케이션 제거
+    private func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK: - 사용자 데이터 로드
@@ -459,6 +486,129 @@ struct CollectionView: View {
     }
 }
 
+// MARK: - Normal Mode View
+extension CollectionView {
+    private var normalModeView: some View {
+        VStack {
+            headerSection
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.padding)
+            
+            tagSection
+                .padding(.horizontal, Spacing.xs)
+            
+            normalCollectionSection
+                .padding(.horizontal, Spacing.padding)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if showSearchBar && !isSearching {
+                isSearchFieldFocused = false
+                
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showSearchBar = false
+                }
+            }
+        }
+    }
+    
+    private var normalCollectionSection: some View {
+        VStack(spacing: 0) {
+            collectionHeader
+            
+            if filteredKeyrings.isEmpty { // 태그에 해당하는 키링이 없어요.
+                emptyView
+            } else {
+                collectionGridView(keyrings: filteredKeyrings)
+            }
+        }
+        .padding(.horizontal, Spacing.xs)
+        //.padding(.bottom, showSearchBar ? 100 : 0)
+    }
+}
+
+// MARK: - Search Mode View
+extension CollectionView {
+    private var searchModeView: some View {
+        VStack(spacing: 10) {
+            
+            Spacer()
+                .frame(height: 60)
+            
+            HStack {
+                Spacer()
+                
+                Text("\(searchedKeyrings.count)개 발견됨")
+                    .typography(.suit14M)
+                    .foregroundColor(.gray500)
+                    .padding(.top, 22)
+                    .padding(.trailing, 22)
+            }
+            
+            HStack {
+                Text("키링")
+                    .typography(.suit16B)
+                    .foregroundColor(.gray500)
+                    .padding(.leading, 20)
+                
+                Spacer()
+            }
+            .opacity(!searchedKeyrings.isEmpty ? 1 : 0)
+            
+            searchCollectionSection
+                .padding(.horizontal, Spacing.padding)
+            
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if isSearchFieldFocused {
+                isSearchFieldFocused = false
+            }
+        }
+    }
+    
+    private var searchCollectionSection: some View {
+        VStack(spacing: 0) {
+            if searchedKeyrings.isEmpty {
+                searchEmptyView
+            } else {
+                collectionGridView(keyrings: searchedKeyrings)
+            }
+        }
+        .padding(.horizontal, Spacing.xs)
+        //.padding(.bottom, showSearchBar ? 100 : 0)
+    }
+}
+
+// 검색
+extension CollectionView {
+    private var categories: [String] {
+        var allCategories = ["전체"]
+        allCategories.append(contentsOf: collectionViewModel.tags)
+        return allCategories
+    }
+
+    // 일반 모드: 카테고리 필터링만
+    private var filteredKeyrings: [Keyring] {
+        var keyrings = collectionViewModel.keyring
+        
+        if selectedCategory != "전체" {
+            keyrings = keyrings.filter { $0.tags.contains(selectedCategory) }
+        }
+        
+        return keyrings
+    }
+    
+    // 검색 모드: 검색어 필터링만
+    private var searchedKeyrings: [Keyring] {
+        guard !searchText.isEmpty else { return collectionViewModel.keyring }
+        
+        return collectionViewModel.keyring.filter { keyring in
+            keyring.name.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+}
+
 
 // MARK: - Header Section
 extension CollectionView {
@@ -500,79 +650,70 @@ extension CollectionView {
             CircleGlassButton(
                 imageName: "Search",
                 action: {
-//                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//                        isSearching = true
-//                    }
-//                    // 키보드 올리기
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                        isSearchFieldFocused = true
-//                    }
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showSearchBar = true
+                    }
+                    // 키보드 올리기
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isSearchFieldFocused = true
+                    }
                 }
             )
         }
         .padding(.top, 60)
-        .sheet(isPresented: $showCachedImagesDebug) {
-            CachedImagesDebugView()
-        }
     }
     
-    // 검색바 (임시 임시)
-    private var searchBarOverlay: some View {
+    // 검색바 뷰 - 하단에 고정되며 키보드와 함께 움직임
+    private var searchBarView: some View {
         HStack(spacing: 12) {
-            //TODO: 교체
-            Image("Search")
-                .foregroundColor(.gray500)
-                .frame(width: 20, height: 20)
-            
-            // 검색 텍스트 필드
-            TextField("키링", text: $searchText)
-                .focused($isSearchFieldFocused)
-                .textFieldStyle(.plain)
-                .typography(.suit15M25)
-                .submitLabel(.search)
-                .autocorrectionDisabled()
-            
-            // 텍스트 지우기 버튼
-            if !searchText.isEmpty {
-                Button(action: {
-                    searchText = ""
-                }) {
-                    Image("dismiss")
-                        .resizable()
-                        .frame(width: 18, height: 18)
-                }
-                .transition(.scale.combined(with: .opacity))
+            // 검색 아이콘
+            HStack {
+                Image("SearchIcon")
+                    .resizable()
+                    .frame(width: 28, height: 28)
+                
+                // 검색 텍스트 필드
+                TextField("검색어를 입력해주세요", text: $searchText)
+                    .focused($isSearchFieldFocused)
+                    .textFieldStyle(.automatic)
+                    .typography(.suit15M25)
+                    .submitLabel(.search)
+                    .autocorrectionDisabled()
+                    .onSubmit {
+                        if searchText.isEmpty {
+                            isSearchFieldFocused = false
+                            
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showSearchBar = false
+                            }
+                        }
+                    }
             }
-            
-            // 구분선
-            Rectangle()
-                .fill(Color.gray200)
-                .frame(width: 1, height: 20)
-            
+            .padding(10)
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 296))
+            .frame(height: 48)
+            .frame(maxWidth: .infinity)
+
             // 닫기 버튼
             Button(action: {
                 // 키보드 먼저 내리기
                 isSearchFieldFocused = false
                 
-                // 애니메이션과 함께 검색 모드 종료
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        isSearching = false
-                    }
+                // 애니메이션과 함께 검색바 닫기
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showSearchBar = false
                 }
             }) {
                 Image("dismiss")
                     .resizable()
-                    .frame(width: 18, height: 18)
+                    .frame(width: 32, height: 32)
             }
+            .frame(width: 48, height: 48)
+            .glassEffect(.regular.interactive(), in: .circle)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(
-            Rectangle()
-                .fill(Color.white)
-                .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: -2)
-        )
+        .padding(.bottom, 10)
+        .frame(height: 48)
     }
 }
 
@@ -597,23 +738,7 @@ extension CollectionView {
 
 // MARK: - Collection Section
 extension CollectionView {
-    
-    private var collectionSection: some View {
-        VStack(spacing: 0) {
-            collectionHeader
-            
-            if collectionViewModel.keyring.isEmpty {
-                emptyview
-            }
-            else {
-                collectionGridView
-            }
-        }
-        //.padding(.top, Spacing.xs)
-        .padding(.horizontal, Spacing.xs)
-    }
-    
-    private var emptyview: some View {
+    private var emptyView: some View {
         VStack {
             Spacer().frame(height: 180)
             
@@ -622,6 +747,25 @@ extension CollectionView {
                 .frame(width: 124, height: 111)
             
             Text("보관함이 비었어요.")
+                .typography(.suit15R)
+                .padding(.top, 15)
+            
+            Spacer()
+        }
+        .padding(.top, 10)
+        .scrollIndicators(.hidden)
+    }
+    
+    private var searchEmptyView: some View {
+        VStack {
+            Spacer()
+                .frame(height: 180)
+            
+            Image("EmptyViewIcon")
+                .resizable()
+                .frame(width: 124, height: 111)
+            
+            Text("검색 결과가 없어요.")
                 .typography(.suit15R)
                 .padding(.top, 15)
             
@@ -652,7 +796,7 @@ extension CollectionView {
                 Image("InvenPlus")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 18, height: 18)
+                    .frame(width: 21, height: 21)
             }
         }
     }
@@ -723,10 +867,10 @@ extension CollectionView {
         .buttonStyle(PlainButtonStyle())
     }
     
-    private var collectionGridView: some View {
+    private func collectionGridView(keyrings: [Keyring]) -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 11) {
-                ForEach(myKeyrings, id: \.id) { keyring in
+                ForEach(keyrings, id: \.id) { keyring in
                     collectionCell(keyring: keyring)
                 }
             }
@@ -735,14 +879,64 @@ extension CollectionView {
         }
         .padding(.top, 10)
         .scrollIndicators(.hidden)
+        .simultaneousGesture(
+            DragGesture().onChanged { _ in
+                if showSearchBar && !isSearching {
+                    isSearchFieldFocused = false
+                    
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showSearchBar = false
+                    }
+                }
+                
+                if showSearchBar && isSearching {
+                    isSearchFieldFocused = false
+                }
+            }
+        )
+    }
+    
+    private func highlightedText(text: String, keyword: String) -> AttributedString {
+        var attributedString = AttributedString(text)
+        
+        guard !keyword.isEmpty else {
+            return attributedString
+        }
+        
+        // 대소문자 구분 없이 검색
+        let lowerText = text.lowercased()
+        let lowerKeyword = keyword.lowercased()
+        
+        var searchRange = lowerText.startIndex..<lowerText.endIndex
+        
+        while let range = lowerText.range(of: lowerKeyword, range: searchRange) {
+            // AttributedString의 range로 변환
+            let startIndex = attributedString.index(attributedString.startIndex, offsetByCharacters: lowerText.distance(from: lowerText.startIndex, to: range.lowerBound))
+            let endIndex = attributedString.index(startIndex, offsetByCharacters: lowerKeyword.count)
+            let attributedRange = startIndex..<endIndex
+            
+            // 검색어 부분 스타일 변경
+            attributedString[attributedRange].foregroundColor = .main500
+            attributedString[attributedRange].font = .notosans14SB
+            
+            // 다음 검색 범위 설정
+            searchRange = range.upperBound..<lowerText.endIndex
+        }
+        
+        return attributedString
     }
     
     private func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
-            if keyring.isPackaged {
-                router.push(.collectionKeyringPackageView(keyring))
+            // 검색 중일 때 키보드가 올라와 있으면 먼저 내리기
+            if isSearching && isSearchFieldFocused {
+                isSearchFieldFocused = false
+                // 키보드가 내려간 후 네비게이션
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    navigateToKeyringDetail(keyring: keyring)
+                }
             } else {
-                router.push(.collectionKeyringDetailView(keyring))
+                navigateToKeyringDetail(keyring: keyring)
             }
         }) {
             VStack {
@@ -753,9 +947,18 @@ extension CollectionView {
                 Text(keyring.name)
                     .typography(.notosans14M)
                     .foregroundColor(.black100)
+
             }
         }
         .buttonStyle(PlainButtonStyle())
         .frame(width: 175, height: 261)
+    }
+    
+    private func navigateToKeyringDetail(keyring: Keyring) {
+        if keyring.isPackaged {
+            router.push(.collectionKeyringPackageView(keyring))
+        } else {
+            router.push(.collectionKeyringDetailView(keyring))
+        }
     }
 }
