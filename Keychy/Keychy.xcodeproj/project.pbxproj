@@ -134,6 +134,7 @@
 		4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */; };
 		4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */; };
 		4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */; };
+		4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D37E2EC464D70009D376 /* IntroAppGuidingView.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -412,6 +413,7 @@
 		4CBBEF322EB919CC00252590 /* CinematicAppearanceModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicAppearanceModifier.swift; sourceTree = "<group>"; };
 		4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+WelcomeKeyring.swift"; sourceTree = "<group>"; };
 		4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeKeyringViewModel.swift; sourceTree = "<group>"; };
+		4CC3D37E2EC464D70009D376 /* IntroAppGuidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroAppGuidingView.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -663,6 +665,7 @@
 				38A596792EAFA94E0003D712 /* IntroView.swift */,
 				38A596832EAFEAA20003D712 /* ProfileSetupView.swift */,
 				386AECCA2EB45A640001A5CD /* ProfileSetupCompleteView.swift */,
+				4CC3D37E2EC464D70009D376 /* IntroAppGuidingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1733,6 +1736,7 @@
 				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
 				C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */,
+				4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
 				38C3C2802EC0C94D003C5DE1 /* InvenLackPopup.swift in Sources */,

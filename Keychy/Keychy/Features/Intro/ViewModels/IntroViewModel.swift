@@ -23,6 +23,7 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 프로필 설정 관련
     var needsProfileSetup = false
     var showProfileComplete = false
+    var showAppGuiding = false
     var welcomeNickname: String = ""
     var tempUserUID: String = ""
     var tempUserEmail: String = ""
@@ -83,9 +84,15 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
         }
     }
 
-    // MARK: - 온보딩 완료 (프로필 완료 화면에서 메인으로)
+    // MARK: - 온보딩 완료 (프로필 완료 화면에서 앱 가이드로)
     func completeOnboarding() {
         showProfileComplete = false
+        showAppGuiding = true
+    }
+
+    // MARK: - 앱 가이드 완료 (앱 가이드에서 메인으로)
+    func closeAppGuiding() {
+        showAppGuiding = false
         isLoggedIn = true
     }
 
