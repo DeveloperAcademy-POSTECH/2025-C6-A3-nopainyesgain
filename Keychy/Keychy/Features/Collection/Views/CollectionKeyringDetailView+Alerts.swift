@@ -37,8 +37,8 @@ extension CollectionKeyringDetailView {
             
             if showDeleteAlert {
                 DeletePopup(
-                    title: "[\(keyring.name)]\n정말 삭제하시겠어요?",
-                    message: "한 번 삭제하면 복구 할 수 없습니다.",
+                    title: "[\(keyring.name)]\n삭제할까요?",
+                    message: "삭제한 키링은 뭉치에서도 사라져요.",
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showDeleteAlert = false

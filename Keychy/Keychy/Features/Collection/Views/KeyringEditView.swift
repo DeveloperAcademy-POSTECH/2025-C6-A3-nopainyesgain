@@ -162,7 +162,7 @@ extension KeyringEditView {
                     Image("recCheck")
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundStyle(.gray600)
+                        .foregroundStyle(.gray300)
 
                 }
                 .disabled(true)

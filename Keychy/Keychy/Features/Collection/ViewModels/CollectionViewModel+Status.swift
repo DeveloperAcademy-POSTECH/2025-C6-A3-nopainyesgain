@@ -19,9 +19,9 @@ enum KeyringStatus {
         case .normal:
             return nil
         case .packaged:
-            return ("선물 수락 대기 중..")
+            return ("선물 수락 대기 중")
         case .published:
-            return ("페스티벌 출품 중..")
+            return ("페스티벌 출품 중")
         }
     }
 }

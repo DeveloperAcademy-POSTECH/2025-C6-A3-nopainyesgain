@@ -35,7 +35,7 @@ struct BangmarkAlert: View {
                 } label: {
                     Text(cancelText)
                         .typography(.suit17B)
-                        .foregroundStyle(.gray600)
+                        .foregroundStyle(.black100)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                 }

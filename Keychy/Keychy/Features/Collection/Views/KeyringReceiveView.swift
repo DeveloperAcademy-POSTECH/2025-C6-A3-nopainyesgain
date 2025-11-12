@@ -246,14 +246,15 @@ extension KeyringReceiveView {
             Text(isAccepted ? "수락됨" : "수락하기")
                 .typography(.suit17B)
                 .padding(.vertical, 7.5)
-                .foregroundStyle(isAccepted ? .black40 : .white100)
+                .foregroundStyle(isAccepted ? .gray400 : .white100)
 
         }
         .frame(maxWidth: .infinity)
         .frame(height: 48)
+        .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 1000)
-                .fill(isAccepted ? .black20 : .black70)
+                .fill(isAccepted ? .black20 : .gray600)
                 .frame(maxWidth: .infinity)
         )
         .padding(.horizontal, 34)
