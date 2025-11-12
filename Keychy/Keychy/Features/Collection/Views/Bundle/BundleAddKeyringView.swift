@@ -142,7 +142,7 @@ extension BundleAddKeyringView {
             .overlay(alignment: .top) {
                 if isDeleteButtonSelected && selectedPosition == index && selectedKeyrings[index] != nil {
                     deleteButton()
-                        .position(x: position.x, y: position.y - 49)
+                        .position(x: position.x, y: position.y)
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                         .animation(.spring, value: isDeleteButtonSelected)
                 }
