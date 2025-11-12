@@ -280,16 +280,21 @@ extension KeyringCustomizingView {
     
     /// 효과 선택 화면 (사운드 + 파티클 통합)
     private var effectSelectorView: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            // 탭 사운드 섹션
-            soundEffectSelector
-            
-            // 흔들기 효과 섹션
-            particleEffectSelector
-            
-            Spacer()
+        GeometryReader { geometry in
+            VStack(alignment: .leading, spacing: 24) {
+                // 탭 사운드 섹션
+                soundEffectSelector
+                
+                // 흔들기 효과 섹션
+                particleEffectSelector
+                
+                Spacer()
+            }
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: geometry.size.height * 0.36,
+                alignment: .topLeading)
         }
-        .frame(maxWidth: .infinity, maxHeight: 310, alignment: .topLeading)
         .background(
             UnevenRoundedRectangle(
                 topLeadingRadius: 24,
