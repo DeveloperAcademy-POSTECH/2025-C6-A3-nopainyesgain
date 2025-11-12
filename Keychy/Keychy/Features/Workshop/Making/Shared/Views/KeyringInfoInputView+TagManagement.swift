@@ -195,7 +195,7 @@ struct ChipView: View {
             Text(title)
                 .typography(isSelected ? .malang15B : .malang15R)
                 .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 15)
                         .fill(isSelected ? .mainOpacity15 : .gray50)
@@ -208,7 +208,7 @@ struct ChipView: View {
                 .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .buttonStyle(.plain)
-        .frame(height: 37)
+        .frame(height: 35)
     }
 }
 

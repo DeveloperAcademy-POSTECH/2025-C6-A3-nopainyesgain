@@ -258,7 +258,7 @@ extension KeyringEditView {
             
             HStack {
                 TextField("이름을 입력해주세요", text: $editedName)
-                    .typography(.pretendard16M)
+                    .typography(.notosans16R)
                     .foregroundColor(.black100)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
@@ -322,7 +322,7 @@ extension KeyringEditView {
                 // Placeholder
                 if editedMemo.isEmpty {
                     Text("메모를 입력해주세요")
-                        .typography(.suit16M25)
+                        .typography(.notosans16R25)
                         .foregroundColor(.gray300)
                         .padding(.horizontal, 19)
                         .padding(.vertical, 18)
@@ -330,7 +330,7 @@ extension KeyringEditView {
                 }
                 
                 TextEditor(text: $editedMemo)
-                    .typography(.pretendard16M)
+                    .typography(.notosans16R25)
                     .foregroundColor(.black100)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
@@ -340,7 +340,7 @@ extension KeyringEditView {
                     .focused($focusedField, equals: .memo)
                     .disabled(!canEdit)
             }
-            .frame(height: 135)
+            .frame(height: 140)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(canEdit ? .gray50 : .white100)
@@ -381,6 +381,7 @@ extension KeyringEditView {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(Color.gray50)
                         )
+                        .padding(.vertical, 1)
                 }
                 ForEach(availableTags, id: \.self) { tag in
                     ChipView(
