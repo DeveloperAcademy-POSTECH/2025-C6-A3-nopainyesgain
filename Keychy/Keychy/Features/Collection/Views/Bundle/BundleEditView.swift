@@ -261,7 +261,7 @@ extension BundleEditView {
     private var selectCarabinerSheet: some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(viewModel.carabinerViewData) { cb in
-                CarabinerItemTile(isSelected: newSelectedCarabiner == cb, carabiner: cb)
+                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb)
                     .onTapGesture {
                         selectCarabiner = cb
                         showChangeCarabinerAlert = true

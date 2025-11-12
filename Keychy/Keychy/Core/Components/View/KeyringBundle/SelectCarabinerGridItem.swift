@@ -8,7 +8,7 @@
 import SwiftUI
 import NukeUI
 
-struct CarabinerItemTile: View {
+struct SelectCarabinerGridItem: View {
     var isSelected: Bool
     var carabiner: CarabinerViewData
     
