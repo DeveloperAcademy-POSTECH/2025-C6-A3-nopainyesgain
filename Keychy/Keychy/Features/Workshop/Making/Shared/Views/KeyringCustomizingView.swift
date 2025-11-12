@@ -29,6 +29,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State var cartItems: [EffectItem] = []
     
     // 구매 Alert 애니메이션
+    @State var showPurchaseProgress = false
     @State var showPurchaseSuccessAlert = false
     @State var purchaseSuccessScale: CGFloat = 0.3
     @State var showPurchaseFailAlert = false
@@ -68,7 +69,27 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             }
             .background(.gray50)
             .disabled(isLoadingResources || !isSceneReady)
-            
+
+            // MARK: - 딤 처리 (Alert/Progress 표시 시)
+            if showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert {
+                Color.black.opacity(0.6)
+                    .ignoresSafeArea()
+            }
+
+            // MARK: - 구매 중 프로그레스
+            if showPurchaseProgress {
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+
+                    Text("구매 중...")
+                        .typography(.suit17B)
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+
             // MARK: - Purchase Alerts
             if showPurchaseSuccessAlert {
                 PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
@@ -195,6 +216,7 @@ extension KeyringCustomizingView {
             BackToolbarButton {
                 showResetAlert = true
             }
+            .disabled(showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert)
             .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
                 Button("취소", role: .cancel) { }
                 Button("확인", role: .destructive) {
@@ -208,7 +230,7 @@ extension KeyringCustomizingView {
     }
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            
+
             // 여러 조건부 버튼이기에 컴포넌트 사용 X
             Button {
                 if hasCartItems {
@@ -223,6 +245,7 @@ extension KeyringCustomizingView {
             }
             .buttonStyle(.glassProminent)
             .tint(hasCartItems ? .black100 : .white)
+            .disabled(showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert)
         }
     }
 }
