@@ -523,7 +523,6 @@ extension CollectionView {
             }
         }
         .padding(.horizontal, Spacing.xs)
-        //.padding(.bottom, showSearchBar ? 100 : 0)
     }
 }
 
@@ -576,7 +575,6 @@ extension CollectionView {
             }
         }
         .padding(.horizontal, Spacing.xs)
-        //.padding(.bottom, showSearchBar ? 100 : 0)
     }
 }
 
@@ -599,12 +597,15 @@ extension CollectionView {
         return keyrings
     }
     
-    // 검색 모드: 검색어 필터링만
+    // 검색 모드: 이름과 메모 모두 검색
     private var searchedKeyrings: [Keyring] {
         guard !searchText.isEmpty else { return collectionViewModel.keyring }
         
         return collectionViewModel.keyring.filter { keyring in
-            keyring.name.localizedCaseInsensitiveContains(searchText)
+            // 이름 또는 메모에서 검색어 찾기
+            let nameMatch = keyring.name.localizedCaseInsensitiveContains(searchText)
+            let memoMatch = keyring.memo?.localizedCaseInsensitiveContains(searchText) ?? false
+            return nameMatch || memoMatch
         }
     }
 }
@@ -903,7 +904,10 @@ extension CollectionView {
             return attributedString
         }
         
-        // 대소문자 구분 없이 검색
+        // 기본 폰트 설정 (하이라이트되지 않은 부분)
+        attributedString.font = .notosans14M
+        
+        // 대소문자 구분 없이 검색 (혹시 몰라서 넣음)
         let lowerText = text.lowercased()
         let lowerKeyword = keyword.lowercased()
         
@@ -915,7 +919,6 @@ extension CollectionView {
             let endIndex = attributedString.index(startIndex, offsetByCharacters: lowerKeyword.count)
             let attributedRange = startIndex..<endIndex
             
-            // 검색어 부분 스타일 변경
             attributedString[attributedRange].foregroundColor = .main500
             attributedString[attributedRange].font = .notosans14SB
             
@@ -944,9 +947,25 @@ extension CollectionView {
                     .frame(width: 175, height: 233)
                     .cornerRadius(10)
                 
-                Text(keyring.name)
-                    .typography(.notosans14M)
-                    .foregroundColor(.black100)
+                HStack(spacing: 3) {
+                    if keyring.isNew {
+                        Circle()
+                            .fill(.pink)
+                            .frame(width: 9, height: 9)
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 1.5)
+                    }
+                    
+                    // 검색 모드일 때 하이라이트 적용
+                    if isSearching && !searchText.isEmpty {
+                        Text(highlightedText(text: keyring.name, keyword: searchText))
+                    } else {
+                        Text(keyring.name)
+                            .typography(.notosans14M)
+                            .foregroundColor(.black100)
+                    }
+                }
+                
 
             }
         }
@@ -955,6 +974,14 @@ extension CollectionView {
     }
     
     private func navigateToKeyringDetail(keyring: Keyring) {
+        if keyring.isNew, let firestoreId = keyring.firestoreId {
+            collectionViewModel.markAsRead(keyringId: firestoreId) { success in
+                if success {
+                    print("키링 읽음 처리 완료")
+                }
+            }
+        }
+        
         if keyring.isPackaged {
             router.push(.collectionKeyringPackageView(keyring))
         } else {

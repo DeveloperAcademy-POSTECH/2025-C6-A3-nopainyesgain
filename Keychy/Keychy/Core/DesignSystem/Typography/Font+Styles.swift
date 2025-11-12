@@ -71,6 +71,7 @@ extension Font {
     
     // MARK: - Notosans
     static let notosans14SB = Font.custom(.notoSansSemiBold, size: 14)
+    static let notosans14M = Font.custom(.notoSansMedium, size: 14)
     
     // MARK: - NotosansKR
     //static let notoSansKRBLK
