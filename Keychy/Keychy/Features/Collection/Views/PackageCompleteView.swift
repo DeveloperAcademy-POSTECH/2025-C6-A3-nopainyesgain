@@ -14,7 +14,7 @@ struct PackageCompleteView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @Bindable var viewModel: CollectionViewModel
     @State var currentPage: Int = 0
-    @State private var authorName: String = ""
+    @State var authorName: String = ""
     @State private var scene: KeyringCellScene?
     @State private var isLoading: Bool = true
     @State private var qrCodeImage: UIImage?
@@ -22,7 +22,20 @@ struct PackageCompleteView: View {
     @State private var showLinkCopied: Bool = false
     @State var showImageSaved: Bool = false
     
+    // 캡처용 씬 PNG 이미지
+    @State var capturedSceneImage: UIImage?
+    @State var isCapturingScene: Bool = false
+    
     private let totalPages = 2
+    
+    // 씬의 RingType과 ChainType
+    var ringType: RingType {
+        RingType.fromID(keyring.selectedRing)
+    }
+    
+    var chainType: ChainType {
+        ChainType.fromID(keyring.selectedChain)
+    }
     
     let keyring: Keyring
     let postOfficeId: String
@@ -74,6 +87,7 @@ struct PackageCompleteView: View {
             hideTabBar()
             fetchAuthorName()
             loadShareLink()
+            captureSceneOnAppear()
         }
     }
     
@@ -85,6 +99,28 @@ struct PackageCompleteView: View {
             UIView.animate(withDuration: 0.3) {
                 tabBarController.tabBar.isHidden = true
             }
+        }
+    }
+    
+    // MARK: - 씬을 PNG로 미리 캡처
+    private func captureSceneOnAppear() {
+        Task { @MainActor in
+            // 씬 생성 및 PNG 캡처
+            let captureScene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                targetSize: CGSize(width: 195, height: 300),
+                customBackgroundColor: .clear,
+                zoomScale: 1.8
+            )
+            
+            guard let pngData = await captureScene.captureToPNG(),
+                  let image = UIImage(data: pngData) else {
+                return
+            }
+
+            self.capturedSceneImage = image
         }
     }
     
@@ -236,17 +272,22 @@ struct PackageCompleteView: View {
                 .frame(width: 220, height: 270)
                 .offset(y: -15)
             
-            SpriteView(
-                scene: createMiniScene(keyring: keyring),
-                options: [.allowsTransparency]
-            )
-            .frame(width: 195, height: 300)
-            .rotationEffect(.degrees(10))
-            .offset(y: -7)
+            // 항상 PNG 이미지 사용
+            if let sceneImage = capturedSceneImage {
+                Image(uiImage: sceneImage)
+                    .resizable()
+                    .frame(width: 195, height: 300)
+                    .rotationEffect(.degrees(10))
+                    .offset(y: -7)
+            } else {
+                // PNG 로딩 중
+                ProgressView()
+                    .frame(width: 195, height: 300)
+            }
         }
     }
     
-    private var packageForeground: some View {
+    var packageForeground: some View {
         ZStack(alignment: .top) {
             Image("PackageFG")
                 .resizable()
@@ -333,29 +374,6 @@ struct PackageCompleteView: View {
             }
         }
         .offset(y: -12)
-    }
-    
-    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        let scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 195, height: 300),
-            customBackgroundColor: .clear,
-            zoomScale: 1.8,
-            onLoadingComplete: {
-                DispatchQueue.main.async {
-                    withAnimation {
-                        self.isLoading = false
-                    }
-                }
-            }
-        )
-        scene.scaleMode = .aspectFill
-        return scene
     }
     
     // MARK: - 하단 버튼
