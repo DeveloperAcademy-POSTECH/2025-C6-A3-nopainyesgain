@@ -641,12 +641,8 @@ class MultiKeyringScene: SKScene {
 
         onAllKeyringsReady?()
     }
-
-    // MARK: - Helper Methods
-    // (절대 좌표 사용으로 변환 메서드 제거됨)
-
+    
     // MARK: - Touch Handling
-
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)

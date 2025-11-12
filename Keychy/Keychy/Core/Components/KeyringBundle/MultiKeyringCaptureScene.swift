@@ -374,7 +374,4 @@ class MultiKeyringCaptureScene: SKScene {
             }
         }
     }
-
-    // MARK: - Helper Methods
-    // (절대 좌표 사용으로 변환 메서드 제거됨)
 }
