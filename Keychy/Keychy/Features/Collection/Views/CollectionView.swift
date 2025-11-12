@@ -747,7 +747,7 @@ extension CollectionView {
                 .resizable()
                 .frame(width: 124, height: 111)
             
-            Text("보관함이 비었어요.")
+            Text(selectedCategory == "전체" ? "공방에서 키링을 만들어봐요" : "해당 태그를 가진 키링이 없어요")
                 .typography(.suit15R)
                 .padding(.top, 15)
             
