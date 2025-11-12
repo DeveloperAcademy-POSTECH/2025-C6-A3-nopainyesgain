@@ -46,19 +46,20 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     // 키링 씬
                     keyringScene
                         .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
-                    
+
                     // 키링 정보
                     keyringInfo
                         .padding(.bottom, 30)
                         .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
-                    
+
                     // 이미지 저장 버튼 (공간 유지를 위해 opacity 사용)
                     saveButton
                         .padding(.top, 30)
                         .opacity(showSaveButton ? 1 : 0)
                         .animation(.easeInOut(duration: 0.3), value: showSaveButton)
                 }
-                
+                .blur(radius: showImageSaved ? 10 : 0)
+
                 if showImageSaved {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
                         .padding(.bottom, 30)
@@ -67,6 +68,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                 // 커스텀 네비게이션 바
                 customNavigationBar
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .blur(radius: showImageSaved ? 10 : 0)
             }
         }
         .ignoresSafeArea()
