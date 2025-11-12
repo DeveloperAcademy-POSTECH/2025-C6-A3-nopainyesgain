@@ -25,8 +25,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     
     // 구매 시트
     @State var showPurchaseSheet = false
-    @State var purchaseSheetHeight: CGFloat = 400
     @State var cartItems: [EffectItem] = []
+
+    // 구매 시트 높이 계산 (기본 301 + 각 아이템 row당 60씩 증가)
+    var purchaseSheetHeight: CGFloat {
+        let baseHeight: CGFloat = 301
+        let rowHeight: CGFloat = 60
+        return baseHeight + (CGFloat(max(0, cartItems.count - 1)) * rowHeight)
+    }
     
     // 구매 Alert 애니메이션
     @State var showPurchaseProgress = false
