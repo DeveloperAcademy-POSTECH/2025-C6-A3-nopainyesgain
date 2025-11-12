@@ -23,9 +23,6 @@ struct BundleEditView: View {
     @State private var showCarabinerSheet: Bool = false
     @State private var showChangeCarabinerAlert: Bool = false
     @State private var sheetHeight: CGFloat = 360 // 시트 높이 (화면의 약 43%에 해당)
-    // 장바구니에 담긴 아이템들 (유료 아이템만)
-    @State private var cartBackgrounds: [BackgroundViewData] = []
-    @State private var cartCarabiners: [CarabinerViewData] = []
     
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -83,7 +80,8 @@ struct BundleEditView: View {
                         .padding(.bottom, 10)
                         BundleItemCustomSheet(
                             sheetHeight: $sheetHeight,
-                            content: selectBackgroundSheet(geo: geo)
+                            content: selectBackgroundSheet(geo: geo),
+                            screenHeight: geo.size.height
                         )
                     }
                 }
@@ -101,7 +99,8 @@ struct BundleEditView: View {
                         .padding(.bottom, 10)
                         BundleItemCustomSheet(
                             sheetHeight: $sheetHeight,
-                            content: selectCarabinerSheet(geo: geo)
+                            content: selectCarabinerSheet(geo: geo),
+                            screenHeight: geo.size.height
                         )
                     }
                 }
@@ -181,6 +180,8 @@ struct BundleEditView: View {
                             onCharge: {
                                 showPurchaseFailAlert = false
                                 purchaseFailScale = 0.3
+                                // 현재 선택 상태 저장
+                                saveCurrentSelection()
                                 router.push(.coinCharge)
                             }
                         )
@@ -208,6 +209,9 @@ struct BundleEditView: View {
                         }
                     }
                 }
+                // 배경 데이터 로드 후 복원 시도
+                restoreBackgroundSelection()
+                
                 viewModel.fetchAllCarabiners { _ in
                     if let selectedBundle = viewModel.selectedBundle {
                         // selectedCarabiner도 동일하게 ID로 CarabinerViewData를 찾음
@@ -217,6 +221,8 @@ struct BundleEditView: View {
                             }
                         }
                     }
+                    // 카라비너 데이터 로드 후 복원 시도
+                    restoreCarabinerSelection()
                 }
             }
         }
@@ -232,6 +238,41 @@ struct BundleEditView: View {
         .onChange(of: showCarabinerSheet) { oldValue, newValue in
             if newValue {
                 showBackgroundSheet = false
+            }
+        }
+    }
+    
+    // MARK: - 선택 상태 저장/복원
+    private func saveCurrentSelection() {
+        if let bg = newSelectedBackground {
+            UserDefaults.standard.set(bg.background.id, forKey: "tempSelectedBackgroundId")
+        }
+        if let cb = newSelectedCarabiner {
+            UserDefaults.standard.set(cb.carabiner.id, forKey: "tempSelectedCarbinerId")
+        }
+    }
+    
+    private func restoreSelection() {
+        restoreBackgroundSelection()
+        restoreCarabinerSelection()
+    }
+    
+    private func restoreBackgroundSelection() {
+        if let savedBackgroundId = UserDefaults.standard.string(forKey: "tempSelectedBackgroundId") {
+            if let restoredBackground = viewModel.backgroundViewData.first(where: { $0.background.id == savedBackgroundId }) {
+                newSelectedBackground = restoredBackground
+                // 복원 후 삭제
+                UserDefaults.standard.removeObject(forKey: "tempSelectedBackgroundId")
+            }
+        }
+    }
+    
+    private func restoreCarabinerSelection() {
+        if let savedCarbinerId = UserDefaults.standard.string(forKey: "tempSelectedCarbinerId") {
+            if let restoredCarabiner = viewModel.carabinerViewData.first(where: { $0.carabiner.id == savedCarbinerId }) {
+                newSelectedCarabiner = restoredCarabiner
+                // 복원 후 삭제
+                UserDefaults.standard.removeObject(forKey: "tempSelectedCarbinerId")
             }
         }
     }
@@ -255,26 +296,33 @@ extension BundleEditView {
     private var editCompleteButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                let totalCartCount = cartBackgrounds.count + cartCarabiners.count
-                if totalCartCount == 0 {
-                    // 그냥 다음 화면으로 이동
-                } else {
+                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || 
+                                    (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+                
+                if hasPayableItems {
                     showPurchaseSheet = true
+                } else {
+                    // 그냥 다음 화면으로 이동
                 }
             } label: {
-                let totalCartCount = cartBackgrounds.count + cartCarabiners.count
-                if totalCartCount == 0 {
+                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || 
+                                    (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+                
+                if hasPayableItems {
+                    let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + 
+                                     ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
+                    Text("구매 \(payableCount)")
+                } else {
                     Text("다음")
                         .typography(.suit17B)
                         .foregroundStyle(.black100)
                         .padding(.vertical, 7.5)
                         .padding(.horizontal, 6)
-                } else {
-                    Text("구매 \(totalCartCount)")
                 }
             }
             .buttonStyle(.glassProminent)
-            .tint((cartBackgrounds.count + cartCarabiners.count) == 0 ? .white : .black80)
+            .tint(((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || 
+                   (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)) ? .black80 : .white)
         }
     }
 }
@@ -290,6 +338,7 @@ extension BundleEditView {
                 Image(showBackgroundSheet ? .backgroundIconWhite100 : .backgroundIconGray600)
                     .resizable()
                     .scaledToFit()
+                    .frame(width: 23.96, height: 25.8)
                 Text("배경")
                     .typography(.suit9SB)
                     .foregroundStyle(showBackgroundSheet ? .white100 : .gray600)
@@ -312,6 +361,7 @@ extension BundleEditView {
                 Image(showCarabinerSheet ? .carabinerIconWhite100 : .carabinerIconGray600)
                     .resizable()
                     .scaledToFit()
+                    .frame(width: 26.83, height: 23)
                 Text("카라비너")
                     .typography(.suit9SB)
                     .foregroundStyle(showCarabinerSheet ? .white100 : .gray600)
@@ -339,17 +389,10 @@ extension BundleEditView {
                 .onTapGesture {
                     newSelectedBackground = bg
                     
-                    // 무료이고, 유저가 보유x
+                    // 무료이고, 유저가 보유x인 경우만 바로 추가
                     if !bg.isOwned && bg.background.isFree {
                         Task {
                             await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
-                        }
-                    }
-                    
-                    // 유료이고, 유저가 보유x
-                    if !bg.isOwned && bg.background.price > 0 {
-                        if !cartBackgrounds.contains(bg) {
-                            cartBackgrounds.append(bg)
                         }
                     }
                 }
@@ -367,16 +410,10 @@ extension BundleEditView {
                         selectCarabiner = cb
                         showChangeCarabinerAlert = true
                         
-                        // 무료 카라비너는 바로 유저 carabiner 배열에 추가
+                        // 무료 카라비너인 경우만 바로 추가
                         if !cb.isOwned && cb.carabiner.isFree {
                             Task {
                                 await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
-                            }
-                        }
-                        
-                        if !cb.isOwned && cb.carabiner.price > 0 {
-                            if !cartCarabiners.contains(cb) {
-                                cartCarabiners.append(cb)
                             }
                         }
                     }
@@ -411,10 +448,10 @@ extension BundleEditView {
             // 구매할 아이템 목록
             ScrollView {
                 VStack(spacing: 20) {
-                    ForEach(cartBackgrounds) { bg in
+                    if let bg = newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
                         cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
                     }
-                    ForEach(cartCarabiners) { cb in
+                    if let cb = newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
                         cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
                     }
                 }
@@ -489,7 +526,7 @@ extension BundleEditView {
                     .padding(.top, 16)
                     .padding(.bottom, 12)
                 
-                Text("(\(cartBackgrounds.count + cartCarabiners.count)개)")
+                Text("(\(payableItemsCount)개)")
                     .typography(.suit17SB)
             }
             .foregroundStyle(.white100)
@@ -500,10 +537,16 @@ extension BundleEditView {
         .disabled(isPurchasing)
     }
     
+    var payableItemsCount: Int {
+        let backgroundCount = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0
+        let carabinerCount = (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0
+        return backgroundCount + carabinerCount
+    }
+    
     var totalCartPrice: Int {
-        let backgroundTotal = cartBackgrounds.reduce(0) { $0 + $1.background.price }
-        let carabinerTotal = cartCarabiners.reduce(0) { $0 + $1.carabiner.price }
-        return backgroundTotal + carabinerTotal
+        let backgroundPrice = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? newSelectedBackground!.background.price : 0
+        let carabinerPrice = (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? newSelectedCarabiner!.carabiner.price : 0
+        return backgroundPrice + carabinerPrice
     }
     
     // MARK: - 구매 처리
@@ -512,31 +555,27 @@ extension BundleEditView {
         
         var allSuccess = true
         
-        // 배경 아이템 구매
-        for backgroundData in cartBackgrounds {
-            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(backgroundData.background, userManager: UserManager.shared)
+        // 선택된 배경이 유료인 경우 구매
+        if let bg = newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
+            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(bg.background, userManager: UserManager.shared)
             
             switch result {
             case .success:
-                continue
+                break
             case .insufficientCoins, .failed(_):
                 allSuccess = false
-                break
             }
         }
         
-        // 카라비너 아이템 구매 (이전 구매가 성공한 경우만)
-        if allSuccess {
-            for carabinerData in cartCarabiners {
-                let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(carabinerData.carabiner, userManager: UserManager.shared)
-                
-                switch result {
-                case .success:
-                    continue
-                case .insufficientCoins, .failed(_):
-                    allSuccess = false
-                    break
-                }
+        // 선택된 카라비너가 유료이고 이전 구매가 성공한 경우에만 구매
+        if allSuccess, let cb = newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(cb.carabiner, userManager: UserManager.shared)
+            
+            switch result {
+            case .success:
+                break
+            case .insufficientCoins, .failed(_):
+                allSuccess = false
             }
         }
         
@@ -544,8 +583,6 @@ extension BundleEditView {
             // 모든 구매 성공
             await MainActor.run {
                 isPurchasing = false
-                cartBackgrounds.removeAll()
-                cartCarabiners.removeAll()
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
                 purchasesSuccessScale = 0.3
