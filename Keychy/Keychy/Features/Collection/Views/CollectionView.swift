@@ -121,7 +121,7 @@ struct CollectionView: View {
                 Button {
                     showSortSheet = false
                 } label: {
-                    Image("Dismiss_gray600")
+                    Image("dismiss_gray600")
                         .resizable()
                         .frame(width: 24, height: 24)
                 }

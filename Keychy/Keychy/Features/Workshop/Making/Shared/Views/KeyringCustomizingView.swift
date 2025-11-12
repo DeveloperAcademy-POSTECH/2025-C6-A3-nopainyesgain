@@ -248,14 +248,20 @@ extension KeyringCustomizingView {
             selectedMode = mode
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 13)
+                RoundedRectangle(cornerRadius: 14.38)
                     .fill(selectedMode == mode ? .main500 : .white100)
                     .frame(width: 46, height: 46)
-                    .shadow(color: .black.opacity(0.25), radius: 4)
+                    .shadow(color: .black.opacity(0.25), radius: 3.83)
                 
-                Image(mode.btnImage)
-                    .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
-                
+                VStack(spacing: 0) {
+                    Image(mode.btnImage)
+                        .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
+                    Text("이펙트")
+                        .typography(.suit9B)
+                        .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
+                }
+                .padding(.top, 6.54)
+                .padding(.bottom, 3.66)
             }
         }
         .scaleEffect(selectedMode == mode ? 1.1 : 1.0)
@@ -274,16 +280,21 @@ extension KeyringCustomizingView {
     
     /// 효과 선택 화면 (사운드 + 파티클 통합)
     private var effectSelectorView: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            // 탭 사운드 섹션
-            soundEffectSelector
-            
-            // 흔들기 효과 섹션
-            particleEffectSelector
-            
-            Spacer()
+        GeometryReader { geometry in
+            VStack(alignment: .leading, spacing: 24) {
+                // 탭 사운드 섹션
+                soundEffectSelector
+                
+                // 흔들기 효과 섹션
+                particleEffectSelector
+                
+                Spacer()
+            }
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: geometry.size.height * 0.36,
+                alignment: .topLeading)
         }
-        .frame(maxWidth: .infinity, maxHeight: 310, alignment: .topLeading)
         .background(
             UnevenRoundedRectangle(
                 topLeadingRadius: 24,

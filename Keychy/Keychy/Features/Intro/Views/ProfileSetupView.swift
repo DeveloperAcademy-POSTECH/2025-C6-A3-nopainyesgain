@@ -28,6 +28,7 @@ struct ProfileSetupView: View {
         .toolbar(.hidden, for: .tabBar)
         .dismissKeyboardOnTap()
         .ignoresSafeArea(.keyboard)
+        .background(.white100)
     }
 }
 
