@@ -59,6 +59,14 @@ extension CollectionKeyringDetailView {
         return formatter.string(from: date)
     }
     
+    // 키링 선물 받은 날 포맷팅용
+    private func formattedReceiveDate(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy.MM.dd"
+        return formatter.string(from: date)
+    }
+    
     private var topSection: some View {
         HStack {
             Button(action: {
@@ -91,19 +99,44 @@ extension CollectionKeyringDetailView {
         .padding(.top, 14)
     }
     
+    private var receiveInfo: some View {
+        HStack(spacing: 3) {
+            Image("smallPresent")
+                .resizable()
+                .frame(width: 15, height: 14)
+                .padding(.vertical, 2)
+            
+            Text(senderName)
+                .typography(.notosans13M)
+                .foregroundColor(.mainOpacity70)
+            
+            if let receivedAt = keyring.receivedAt {
+                Text(formattedReceiveDate(date: receivedAt))
+                    .typography(.notosans13M)
+                    .foregroundColor(.mainOpacity70)
+            }
+        }
+        .frame(height: 18)
+    }
+    
     private var basicInfo: some View {
-        VStack {
+        VStack(spacing: 0) {
+            if keyring.senderId != nil && keyring.receivedAt != nil {
+                receiveInfo
+                    .padding(.top, 10)
+            }
+            
             Text(keyring.name)
-                .typography(.suit24B)
-                .padding(.top, 30)
+                .typography(.notosans24M)
+                .padding(.top, (keyring.senderId != nil && keyring.receivedAt != nil) ? 10 : 30)
             
             Text(formattedDate(date: keyring.createdAt))
                 .typography(.suit14M)
             
             Text("@\(authorName)")
-                .typography(.suit15M25)
+                .typography(.notosans14R)
                 .foregroundColor(.gray300)
-                .padding(.top, 15)
+                .padding(.top, 10)
         }
     }
     
@@ -238,7 +271,7 @@ extension CollectionKeyringDetailView {
         var body: some View {
             ZStack {
                 Text(tagName)
-                    .typography(.nanum14EB18)
+                    .typography(.malang15B)
                     .foregroundColor(.main700)
                     .padding(.horizontal, 10)
                     .frame(height: 36)

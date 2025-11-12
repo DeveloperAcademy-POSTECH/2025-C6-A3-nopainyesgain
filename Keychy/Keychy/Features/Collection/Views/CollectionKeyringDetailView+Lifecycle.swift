@@ -14,6 +14,10 @@ extension CollectionKeyringDetailView {
         isNavigatingDeeper = false
         hideTabBar()
         fetchAuthorName()
+        
+        if keyring.senderId != nil {
+            fetchSenderName()
+        }
     }
     
     func handleViewDisappear() {
@@ -89,6 +93,32 @@ extension CollectionKeyringDetailView {
                 }
                 
                 self.copyVoucher = copyPass
+            }
+    }
+    
+    func fetchSenderName() {
+        guard let senderId = keyring.senderId else {
+            self.senderName = "알 수 없음"
+            return
+        }
+        
+        let db = Firestore.firestore()
+        
+        db.collection("User")
+            .document(senderId)
+            .getDocument { snapshot, error in
+                if error != nil {
+                    self.senderName = "알 수 없음"
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let name = data["nickname"] as? String else {
+                    self.senderName = "알 수 없음"
+                    return
+                }
+                
+                self.senderName = name
             }
     }
 }

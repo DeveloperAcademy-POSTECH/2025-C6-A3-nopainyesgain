@@ -85,6 +85,8 @@ struct Typography {
     // MARK: - NotoSans
     static let notosans10M = Typography(font: .custom(.notoSansMedium, size: 10), lineSpacing: 0)
     
+    static let notosans12M = Typography(font: .custom(.notoSansMedium, size: 12), lineSpacing: 0)
+    
     static let notosans13M = Typography(font: .custom(.notoSansMedium, size: 13), lineSpacing: 0)
     
     static let notosans14SB = Typography(font: .custom(.notoSansSemiBold, size: 14), lineSpacing: 0)
@@ -100,6 +102,8 @@ struct Typography {
     static let notosans16R25 = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 6)
     
     static let notosans20M = Typography(font: .custom(.notoSansMedium, size: 20), lineSpacing: 0)
+    static let notosans20B = Typography(font: .custom(.notoSansBold, size: 20), lineSpacing: 0)
+    
     static let notosans24M = Typography(font: .custom(.notoSansMedium, size: 24), lineSpacing: 0)
     
     // MARK: - Malang
