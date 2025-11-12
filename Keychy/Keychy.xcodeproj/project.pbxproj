@@ -245,10 +245,6 @@
 		C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
 		C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */; };
 		C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
-		C6B5706B2EC202350049F969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6B570662EC202350049F969 /* Assets.xcassets */; };
-		C6B5706D2EC202350049F969 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570652EC202350049F969 /* AppIntent.swift */; };
-		C6B5706E2EC202350049F969 /* WidgetKeychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570682EC202350049F969 /* WidgetKeychy.swift */; };
-		C6B5706F2EC202350049F969 /* WidgetKeychyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */; };
 		C6B5707B2EC2036C0049F969 /* MultiKeyringCaptureScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */; };
 		C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
 		C6B570812EC20AF60049F969 /* CachedBundlesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */; };
@@ -528,11 +524,6 @@
 		C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeychyRelease.entitlements; sourceTree = "<group>"; };
 		C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetKeychyExtension.entitlements; sourceTree = "<group>"; };
 		C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableKeyring.swift; sourceTree = "<group>"; };
-		C6B570652EC202350049F969 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
-		C6B570662EC202350049F969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C6B570672EC202350049F969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C6B570682EC202350049F969 /* WidgetKeychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychy.swift; sourceTree = "<group>"; };
-		C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychyBundle.swift; sourceTree = "<group>"; };
 		C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringCaptureScene.swift; sourceTree = "<group>"; };
 		C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleImageCache.swift; sourceTree = "<group>"; };
 		C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBundlesDebugView.swift; sourceTree = "<group>"; };
@@ -547,7 +538,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
+		C60E84182EC484CF005C5357 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			additionalCompilerFlagsByRelativePath = {
 				WidgetConfiguration.mm = "-fno-objc-arc";
@@ -560,10 +551,10 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C6B56F372EC061BB0049F969 /* WidgetKeychy */ = {
+		C60E84112EC484CF005C5357 /* WidgetKeychy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				C6B56F4B2EC061BC0049F969 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
+				C60E84182EC484CF005C5357 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
 			);
 			path = WidgetKeychy;
 			sourceTree = "<group>";
@@ -826,7 +817,7 @@
 			children = (
 				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
-				C6B5706A2EC202350049F969 /* WidgetKeychy */,
+				C60E84112EC484CF005C5357 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
@@ -1449,18 +1440,6 @@
 			path = Cache;
 			sourceTree = "<group>";
 		};
-		C6B5706A2EC202350049F969 /* WidgetKeychy */ = {
-			isa = PBXGroup;
-			children = (
-				C6B570652EC202350049F969 /* AppIntent.swift */,
-				C6B570662EC202350049F969 /* Assets.xcassets */,
-				C6B570672EC202350049F969 /* Info.plist */,
-				C6B570682EC202350049F969 /* WidgetKeychy.swift */,
-				C6B570692EC202350049F969 /* WidgetKeychyBundle.swift */,
-			);
-			path = WidgetKeychy;
-			sourceTree = "<group>";
-		};
 		C6C4027F2EB26BFB006B58DF /* NeonSign */ = {
 			isa = PBXGroup;
 			children = (
@@ -1525,6 +1504,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				C60E84112EC484CF005C5357 /* WidgetKeychy */,
+			);
 			name = WidgetKeychyExtension;
 			packageProductDependencies = (
 			);
@@ -1547,6 +1529,7 @@
 					};
 					C6B56F312EC061BB0049F969 = {
 						CreatedOnToolsVersion = 26.0.1;
+						LastSwiftMigration = 2600;
 					};
 				};
 			};
@@ -1622,7 +1605,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6B5706B2EC202350049F969 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1839,9 +1821,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6B5706D2EC202350049F969 /* AppIntent.swift in Sources */,
-				C6B5706E2EC202350049F969 /* WidgetKeychy.swift in Sources */,
-				C6B5706F2EC202350049F969 /* WidgetKeychyBundle.swift in Sources */,
 				C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */,
 				C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */,
 			);
@@ -2068,6 +2047,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -2093,6 +2073,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2104,6 +2085,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
