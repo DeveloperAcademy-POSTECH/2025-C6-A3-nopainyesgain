@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+/// 기본적으로 .toolbar에 들어갈 아이템입니다.
+/// 커스텀 툴바를 구축하면 글래스를 따로 적용해야합니다.
+
 // MARK: - Back Toolbar Button
 struct BackToolbarButton: View {
     let action: () -> Void

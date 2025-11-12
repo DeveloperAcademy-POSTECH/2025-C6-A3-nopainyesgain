@@ -21,10 +21,11 @@ struct AcrylicPhotoGuiding: View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
             HStack {
-                CloseToolbarButton {
+                Button {
                     dismiss()
+                } label: {
+                    Image("dismiss_gray600")
                 }
-                .foregroundStyle(.gray600)
                 .padding(.top, 30)
                 .padding(.leading, 20)
                 Spacer()
