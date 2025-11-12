@@ -15,7 +15,7 @@ extension KeyringInfoInputView {
                 HStack {
                     Spacer()
                     Text("정보")
-                        .typography(.suit15B25)
+                        .typography(.suit17B)
                     Spacer()
                 }
                 .padding(.top, 29)

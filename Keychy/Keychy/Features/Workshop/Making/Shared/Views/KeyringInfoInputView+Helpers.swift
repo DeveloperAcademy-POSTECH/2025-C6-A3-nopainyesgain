@@ -41,30 +41,32 @@ extension KeyringInfoInputView {
 extension KeyringInfoInputView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
-                showSheet = false
-                viewModel.resetInfoData()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    router.pop()
+            if !showAddTagAlert {
+                BackToolbarButton {
+                    showSheet = false
+                    viewModel.resetInfoData()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        router.pop()
+                    }
                 }
-            }) {
-                Image(systemName: "chevron.left")
             }
         }
     }
 
     var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("완료") {
-                dismissKeyboard()
-                showSheet = false
-                router.push(nextRoute)
-                showAddTagAlert = false
-                showTagNameAlreadyExistsToast = false
-                showTagNameEmptyToast = false
-                viewModel.createdAt = Date()
+            if !showAddTagAlert {
+                NextToolbarButton(title: "완료") {
+                    dismissKeyboard()
+                    showSheet = false
+                    router.push(nextRoute)
+                    showAddTagAlert = false
+                    showTagNameAlreadyExistsToast = false
+                    showTagNameEmptyToast = false
+                    viewModel.createdAt = Date()
+                }
+                .disabled(viewModel.nameText.isEmpty)
             }
-            .disabled(viewModel.nameText.isEmpty)
         }
     }
 }

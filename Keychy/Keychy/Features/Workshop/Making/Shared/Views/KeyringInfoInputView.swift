@@ -35,6 +35,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State var measuredSheetHeight: CGFloat = 395
     @State var sheetDetent: PresentationDetent = .height(76)
     @State var showSheet: Bool = true
+    @State var sheetOpacity: CGFloat = 1.0
     @FocusState var isFocused: Bool
 
     // MARK: - Dynamic Sheet Heights
@@ -66,10 +67,20 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
             .interactiveDismissDisabled(true)
             .sheet(isPresented: $showSheet) {
                 infoSheet
-                    .presentationDetents(dynamicDetents, selection: $sheetDetent)
-                    .presentationDragIndicator(.visible)
-                    .presentationBackgroundInteraction(.enabled(upThrough: .height(measuredSheetHeight)))
+                    .presentationDetents(
+                        showAddTagAlert
+                            ? [.height(76)]
+                            : dynamicDetents,
+                        selection: $sheetDetent
+                    )
+                    .presentationDragIndicator(showAddTagAlert ? .hidden : .visible)
+                    .presentationBackgroundInteraction(
+                        showAddTagAlert
+                            ? .enabled
+                            : .enabled(upThrough: .height(measuredSheetHeight))
+                    )
                     .interactiveDismissDisabled()
+                    .opacity(sheetOpacity)
                     .onAppear {
                         sheetDetent = .height(measuredSheetHeight)
                     }
@@ -90,7 +101,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
 
             // Alert overlay (sheet 닫혔을 때만 표시)
             if showAddTagAlert {
-                Color.black.opacity(0.4)
+                Color.black20
                     .ignoresSafeArea()
 
                 addNewTagAlertView
