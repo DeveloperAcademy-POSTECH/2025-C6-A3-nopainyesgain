@@ -4,7 +4,8 @@
 //
 //  Created by 김서현 on 10/26/25.
 //
-// 키링 뭉치 상세보기 화면
+// 키링 뭉치 상세보기 화면 - 선택한 뭉치의 키링들을 3D 씬으로 표시
+
 import SwiftUI
 import NukeUI
 import FirebaseFirestore
@@ -13,14 +14,20 @@ struct BundleDetailView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
 
-    // MARK: - 상태 관리
+    // MARK: - State Management
+
     @State private var showMenu: Bool = false
+
     @State private var showDeleteAlert: Bool = false
+
+    /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
 
+    // MARK: - Body
+
     var body: some View {
-        ZStack {
-            // 메인 씬 뷰
+        ZStack(alignment: .top) {
+            
             if let bundle = viewModel.selectedBundle,
                let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
                let background = viewModel.selectedBackground {
@@ -36,56 +43,24 @@ struct BundleDetailView: View {
                     currentCarabinerType: carabiner.type
                 )
                 .ignoresSafeArea()
-
-                /// 이 코드는 다음 조건이 하나라도 변경되면 MultiKeyringSceneView를 완전히 재생성합니다:
-                /// - background.id 변경 (배경 이미지 변경)
-                /// - carabiner.id 변경 (카라비너 변경)
-                /// - keyringDataList의 인덱스 구성 변경 (키링 추가/삭제/순서 변경)
+                /// 씬 재생성 조건을 위한 ID 설정
+                /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                 .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
             } else {
+                // 데이터 로딩 중
                 Color.clear.ignoresSafeArea()
             }
 
-            // 하단 섹션을 ZStack 안에서 직접 배치
+            // 하단 정보 섹션
             VStack {
                 Spacer()
                 bottomSection
             }
             .ignoresSafeArea(.keyboard, edges: .bottom)
 
+            // 메뉴 오버레이
             if showMenu {
-                HStack {
-                    Spacer()
-                    VStack {
-                        BundleMenu(
-                            onNameEdit: {
-                                showMenu = false
-                                router.push(.bundleNameEditView)
-                            },
-                            onEdit: {
-                                showMenu = false
-                            },
-                            onDelete: {
-                                showMenu = false
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showDeleteAlert = true
-                                }
-                            }
-                        )
-                        .padding(.trailing, 16)
-                        .padding(.top, 8)
-
-                        Spacer()
-                    }
-                }
-                .zIndex(50)
-                .allowsHitTesting(true)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showMenu = false
-                    }
-                }
+                menuOverlay
             }
         }
         .toolbar {
@@ -95,6 +70,7 @@ struct BundleDetailView: View {
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .task {
+            // 뷰가 나타날 때 뭉치 데이터 로드
             await loadBundleData()
         }
     }
@@ -102,32 +78,43 @@ struct BundleDetailView: View {
 
 // MARK: - Data Loading
 extension BundleDetailView {
+    /// 선택된 뭉치 데이터를 로드하고 뷰 상태를 초기화
+    /// 1. 배경 및 카라비너 데이터 로드
+    /// 2. 선택된 뭉치의 배경과 카라비너 설정
+    /// 3. 선택된 뭉치의 키링들을 Firestore에서 가져와 KeyringData 리스트 생성
     @MainActor
     private func loadBundleData() async {
-        // 배경 및 카라비너 데이터 로드
+        // 1. 배경 및 카라비너 데이터 로드
         await viewModel.loadBackgroundsAndCarabiners()
 
-        // selectedBackground와 selectedCarabiner 설정
+        // 2. 선택된 뭉치의 배경과 카라비너 설정
         guard let bundle = viewModel.selectedBundle else { return }
-
         viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
         viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
 
-        // 키링 데이터 로드
+        // 3. 키링 데이터 생성
         guard let carabiner = viewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
     }
 
+    /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
+    /// - Parameters:
+    ///   - bundle: 현재 뭉치
+    ///   - carabiner: 선택된 카라비너 (위치 정보 제공)
+    /// - Returns: 3D 씬에서 사용할 KeyringData 배열
     private func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
 
         for (index, keyringId) in bundle.keyrings.enumerated() {
+            // 유효하지 않은 키링 ID 필터링
             guard index < carabiner.maxKeyringCount,
                   keyringId != "none",
                   !keyringId.isEmpty else { continue }
 
+            // Firebase에서 키링 정보 가져오기
             guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
 
+            // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
             let customSoundURL: URL? = {
                 if keyringInfo.soundId.hasPrefix("https://") || keyringInfo.soundId.hasPrefix("http://") {
                     return URL(string: keyringInfo.soundId)
@@ -135,6 +122,7 @@ extension BundleDetailView {
                 return nil
             }()
 
+            // KeyringData 생성
             let data = MultiKeyringScene.KeyringData(
                 index: index,
                 position: CGPoint(
@@ -152,6 +140,7 @@ extension BundleDetailView {
         return dataList
     }
 
+    /// Firestore에서 키링 정보를 가져옴
     private func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
         do {
             let db = FirebaseFirestore.Firestore.firestore()
@@ -175,6 +164,7 @@ extension BundleDetailView {
         }
     }
 
+    /// Firestore에서 가져온 키링 정보를 담는 구조체
     private struct KeyringInfo {
         let id: String
         let bodyImage: String
@@ -183,7 +173,7 @@ extension BundleDetailView {
     }
 }
 
-// MARK: - 툴바
+// MARK: - Toolbar
 extension BundleDetailView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
@@ -191,7 +181,6 @@ extension BundleDetailView {
                 router.pop()
             }) {
                 Image(systemName: "chevron.left")
-                    .foregroundStyle(.gray600)
                     .foregroundStyle(.gray600)
             }
         }
@@ -211,8 +200,45 @@ extension BundleDetailView {
     }
 }
 
-//MARK: - 하단 섹션
+// MARK: - View Components
 extension BundleDetailView {
+    /// 메뉴 오버레이
+    private var menuOverlay: some View {
+        HStack {
+            Spacer()
+            VStack {
+                BundleMenu(
+                    onNameEdit: {
+                        showMenu = false
+                        router.push(.bundleNameEditView)
+                    },
+                    onEdit: {
+                        showMenu = false
+                    },
+                    onDelete: {
+                        showMenu = false
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showDeleteAlert = true
+                        }
+                    }
+                )
+                .padding(.trailing, 16)
+                .padding(.top, 8)
+
+                Spacer()
+            }
+        }
+        .zIndex(50)
+        .allowsHitTesting(true)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showMenu = false
+            }
+        }
+    }
+
+    /// 하단 정보 섹션 - 핀 버튼, 뭉치 이름/개수, 다운로드 버튼
     private var bottomSection: some View {
         VStack {
             Spacer()
@@ -241,12 +267,14 @@ extension BundleDetailView {
         .buttonStyle(.glassProminent)
     }
 
+    /// 핀 버튼 - 메인 뭉치 설정/해제
     private var pinButton: some View {
-        // 메인 설정이 되어있을 때는 이미지만 선택합니다.
         Group {
             if viewModel.selectedBundle!.isMain {
+                // 이미 메인으로 설정된 경우 채워진 핀 아이콘만 표시
                 Image(.pinButtonFill)
             } else {
+                // 메인으로 설정되지 않은 경우 버튼으로 표시
                 Button(action: {
                     viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
                 }) {
