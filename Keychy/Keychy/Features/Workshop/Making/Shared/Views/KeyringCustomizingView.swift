@@ -248,14 +248,20 @@ extension KeyringCustomizingView {
             selectedMode = mode
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 13)
+                RoundedRectangle(cornerRadius: 14.38)
                     .fill(selectedMode == mode ? .main500 : .white100)
                     .frame(width: 46, height: 46)
-                    .shadow(color: .black.opacity(0.25), radius: 4)
+                    .shadow(color: .black.opacity(0.25), radius: 3.83)
                 
-                Image(mode.btnImage)
-                    .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
-                
+                VStack(spacing: 0) {
+                    Image(mode.btnImage)
+                        .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
+                    Text("이펙트")
+                        .typography(.suit9B)
+                        .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
+                }
+                .padding(.top, 6.54)
+                .padding(.bottom, 3.66)
             }
         }
         .scaleEffect(selectedMode == mode ? 1.1 : 1.0)
