@@ -34,7 +34,7 @@ struct CarabinerItemTile: View {
                 }
                 .scaledToFit()
                 .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .background(RoundedRectangle(cornerRadius: 10).fill(.white100))
                 
                 // 유료 재화 표시
                 VStack {
