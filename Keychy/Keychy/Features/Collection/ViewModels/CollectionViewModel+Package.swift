@@ -299,7 +299,9 @@ extension CollectionViewModel {
                         "tags": [],
                         "bodyImage": newBodyImageURL,
                         "soundId": newSoundId,
-                        "isNew": true
+                        "isNew": true,
+                        "senderId": senderId,
+                        "receivedAt": Timestamp(date: Date())
                     ], forDocument: keyringRef)
 
                     // 4. Batch 실행
@@ -316,6 +318,8 @@ extension CollectionViewModel {
                             self?.keyring[index].bodyImage = newBodyImageURL
                             self?.keyring[index].soundId = newSoundId
                             self?.keyring[index].isNew = true
+                            self?.keyring[index].senderId = senderId
+                            self?.keyring[index].receivedAt = Date()
                         }
 
                         // 위젯 캐시 제거 (새 이미지로 갱신 필요)
