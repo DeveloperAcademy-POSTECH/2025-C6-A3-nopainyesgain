@@ -191,22 +191,32 @@ extension CollectionViewModel {
     
     func createKeyringDataList(carabiner: Carabiner, geometry: CGSize) -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-        
+
         guard let bundle = selectedBundle else {
+            print("⚠️ [createKeyringDataList] selectedBundle is nil")
             return dataList
         }
-        
+
+        print("🔍 [createKeyringDataList] bundle.keyrings: \(bundle.keyrings)")
+        print("🔍 [createKeyringDataList] keyring count: \(keyring.count)")
+        print("🔍 [createKeyringDataList] keyringDocumentIdByLocalId: \(keyringDocumentIdByLocalId)")
+
         // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
         for index in 0..<carabiner.maxKeyringCount {
             // 번들에 저장된 문서 id (없으면 "none")
             let docId = bundle.keyrings[index] ?? "none"
+            print("  [Index \(index)] docId: \(docId)")
+
             if docId == "none" || docId.isEmpty {
                 continue
             }
-            
+
             guard let keyring = resolveKeyring(from: docId) else {
+                print("  ❌ [Index \(index)] resolveKeyring 실패 for docId: \(docId)")
                 continue
             }
+
+            print("  ✅ [Index \(index)] keyring 해석 성공: \(keyring.name)")
             
             let soundId = keyring.soundId
             

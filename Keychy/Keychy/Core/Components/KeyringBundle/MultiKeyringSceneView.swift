@@ -95,6 +95,9 @@ extension MultiKeyringSceneView {
 
     /// 씬 초기화 및 설정
     private func setupScene() {
+        let startTime = Date()
+        print("📱 [MultiKeyringSceneView] setupScene 시작 - 키링 \(keyringDataList.count)개")
+
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,
@@ -111,6 +114,9 @@ extension MultiKeyringSceneView {
         newScene.onPlayParticleEffect = handleParticleEffect
 
         scene = newScene
+
+        let elapsed = Date().timeIntervalSince(startTime)
+        print("📱 [MultiKeyringSceneView] setupScene 완료 - 소요시간: \(String(format: "%.3f", elapsed))초")
     }
 
     /// 파티클 효과 재생 처리
