@@ -49,7 +49,7 @@ struct BundleSelectCarabinerView: View {
                 .padding(.top, 60)
 
                 // 하단 선택 UI (항상 하단에 배치)
-                carabinerSelectionView
+                carabinerSelectionView(geo: geometry)
             }
             .background(backgroundImage)
             .ignoresSafeArea()
@@ -100,7 +100,7 @@ struct BundleSelectCarabinerView: View {
     }
 
     // MARK: - 하단 카라비너 선택 UI
-    private var carabinerSelectionView: some View {
+    private func carabinerSelectionView(geo: GeometryProxy)-> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("카라비너")
 
@@ -120,9 +120,10 @@ struct BundleSelectCarabinerView: View {
                             Button {
                                 viewModel.selectedCarabiner = cb.carabiner
                             } label: {
-                                CarabinerItemTile(
+                                SelectCarabinerGridItem(
                                     isSelected: viewModel.selectedCarabiner?.id == cb.carabiner.id,
-                                    carabiner: cb
+                                    carabiner: cb,
+                                    widthSize: geo.size.width
                                 )
                             }
                         }

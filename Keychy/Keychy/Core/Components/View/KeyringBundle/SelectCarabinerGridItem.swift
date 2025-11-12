@@ -20,7 +20,7 @@ struct SelectCarabinerGridItem: View {
                     if let image = state.image {
                         image
                             .resizable()
-                            .scaledToFill()
+                            .scaledToFit()
                             .clipped()
                             .frame(width: (widthSize - 60) / 3, height: (widthSize - 60) / 3)
                     } else if state.isLoading {
