@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import FirebaseFirestore
 
 struct BundleEditView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
@@ -36,6 +37,9 @@ struct BundleEditView: View {
     @State var showPurchaseFailAlert = false
     @State var purchaseFailScale: CGFloat = 0.3
     
+    /// MultiKeyringScene에 전달할 키링 데이터 리스트
+    @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
+    
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10),
@@ -45,26 +49,50 @@ struct BundleEditView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                //TODO: 임시로 올려둔 배경화면과 카라비너입니다.
-                if let bg = newSelectedBackground {
-                    LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                        }
-                    }
-                }
-                if let cb = newSelectedCarabiner {
-                    VStack {
-                        LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                // MultiKeyringScene 추가
+                if let bundle = viewModel.selectedBundle,
+                   let background = newSelectedBackground,
+                   let carabiner = newSelectedCarabiner {
+                    
+                    MultiKeyringSceneView(
+                        keyringDataList: keyringDataList,
+                        ringType: .basic,
+                        chainType: .basic,
+                        backgroundColor: .clear,
+                        backgroundImageURL: background.background.backgroundImage,
+                        carabinerBackImageURL: carabiner.carabiner.backImageURL,
+                        carabinerFrontImageURL: carabiner.carabiner.frontImageURL,
+                        carabinerX: carabiner.carabiner.carabinerX,
+                        carabinerY: carabiner.carabiner.carabinerY,
+                        carabinerWidth: carabiner.carabiner.carabinerWidth,
+                        currentCarabinerType: carabiner.carabiner.type
+                    )
+                    .ignoresSafeArea()
+                    /// 씬 재생성 조건을 위한 ID 설정
+                    .id("\(background.background.id ?? "")_\(carabiner.carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
+                } else {
+                    // 데이터 로딩 중이거나 임시 화면
+                    //TODO: 임시로 올려둔 배경화면과 카라비너입니다.
+                    if let bg = newSelectedBackground {
+                        LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
                                     .scaledToFit()
                             }
                         }
-                        Spacer()
+                    }
+                    if let cb = newSelectedCarabiner {
+                        VStack {
+                            LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                                if let image = state.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+                            }
+                            Spacer()
+                        }
                     }
                 }
                 // 배경 시트
@@ -223,6 +251,11 @@ struct BundleEditView: View {
                     }
                     // 카라비너 데이터 로드 후 복원 시도
                     restoreCarabinerSelection()
+                    
+                    // 키링 데이터 로드
+                    Task {
+                        await loadKeyringData()
+                    }
                 }
             }
         }
@@ -238,6 +271,16 @@ struct BundleEditView: View {
         .onChange(of: showCarabinerSheet) { oldValue, newValue in
             if newValue {
                 showBackgroundSheet = false
+            }
+        }
+        .onChange(of: newSelectedBackground) { _, _ in
+            Task {
+                await loadKeyringData()
+            }
+        }
+        .onChange(of: newSelectedCarabiner) { _, _ in
+            Task {
+                await loadKeyringData()
             }
         }
     }
@@ -614,5 +657,19 @@ extension BundleEditView {
                 }
             }
         }
+    }
+}
+
+// MARK: - 키링 데이터 로딩
+extension BundleEditView {
+    /// 키링 데이터를 로드하여 MultiKeyringScene에서 사용할 수 있도록 준비
+    private func loadKeyringData() async {
+        guard let bundle = viewModel.selectedBundle,
+              let carabiner = newSelectedCarabiner?.carabiner else {
+            keyringDataList = []
+            return
+        }
+        
+        keyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
     }
 }
