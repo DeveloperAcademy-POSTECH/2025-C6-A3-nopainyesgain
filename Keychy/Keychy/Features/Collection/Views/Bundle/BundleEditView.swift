@@ -22,9 +22,10 @@ struct BundleEditView: View {
     @State private var showBackgroundSheet: Bool = false
     @State private var showCarabinerSheet: Bool = false
     @State private var showChangeCarabinerAlert: Bool = false
-    @State private var sheetHeight: CGFloat = 360
+    @State private var sheetHeight: CGFloat = 360 // 시트 높이 (화면의 약 43%에 해당)
     // 장바구니에 담긴 아이템들 (유료 아이템만)
-    @State private var cartItems: [CartItem] = []
+    @State private var cartBackgrounds: [BackgroundViewData] = []
+    @State private var cartCarabiners: [CarabinerViewData] = []
     
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -71,13 +72,15 @@ struct BundleEditView: View {
                 }
                 // 배경 시트
                 if showBackgroundSheet {
-                    VStack(spacing: 10) {
+                    VStack(spacing: 0) {
+                        Spacer() // 상단을 채워서 시트를 바닥으로 밀어냄
                         HStack(spacing: 8) {
                             editBackgroundButton
                             editCarabinerButton
                             Spacer()
                         }
                         .padding(.leading, 18)
+                        .padding(.bottom, 10)
                         BundleItemCustomSheet(
                             sheetHeight: $sheetHeight,
                             content: selectBackgroundSheet(geo: geo)
@@ -87,13 +90,15 @@ struct BundleEditView: View {
                 
                 // 카라비너 시트
                 if showCarabinerSheet {
-                    VStack(spacing: 10) {
+                    VStack(spacing: 0) {
+                        Spacer() // 상단을 채워서 시트를 바닥으로 밀어냄
                         HStack(spacing: 8) {
                             editBackgroundButton
                             editCarabinerButton
                             Spacer()
                         }
                         .padding(.leading, 18)
+                        .padding(.bottom, 10)
                         BundleItemCustomSheet(
                             sheetHeight: $sheetHeight,
                             content: selectCarabinerSheet(geo: geo)
@@ -215,6 +220,9 @@ struct BundleEditView: View {
                 }
             }
         }
+        .onAppear {
+            showBackgroundSheet = true
+        }
         .ignoresSafeArea()
         .onChange(of: showBackgroundSheet) { oldValue, newValue in
             if newValue {
@@ -247,24 +255,26 @@ extension BundleEditView {
     private var editCompleteButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                if cartItems.isEmpty {
+                let totalCartCount = cartBackgrounds.count + cartCarabiners.count
+                if totalCartCount == 0 {
                     // 그냥 다음 화면으로 이동
                 } else {
                     showPurchaseSheet = true
                 }
             } label: {
-                if cartItems.isEmpty {
+                let totalCartCount = cartBackgrounds.count + cartCarabiners.count
+                if totalCartCount == 0 {
                     Text("다음")
                         .typography(.suit17B)
                         .foregroundStyle(.black100)
                         .padding(.vertical, 7.5)
                         .padding(.horizontal, 6)
                 } else {
-                    Text("구매 \(cartItems.count)")
+                    Text("구매 \(totalCartCount)")
                 }
             }
             .buttonStyle(.glassProminent)
-            .tint(cartItems.isEmpty ? .white : .black80)
+            .tint((cartBackgrounds.count + cartCarabiners.count) == 0 ? .white : .black80)
         }
     }
 }
@@ -338,9 +348,8 @@ extension BundleEditView {
                     
                     // 유료이고, 유저가 보유x
                     if !bg.isOwned && bg.background.price > 0 {
-                        let cartItem = CartItem.background(bg)
-                        if !cartItems.contains(cartItem) {
-                            cartItems.append(cartItem)
+                        if !cartBackgrounds.contains(bg) {
+                            cartBackgrounds.append(bg)
                         }
                     }
                 }
@@ -366,9 +375,8 @@ extension BundleEditView {
                         }
                         
                         if !cb.isOwned && cb.carabiner.price > 0 {
-                            let cartItem = CartItem.carabiner(cb)
-                            if !cartItems.contains(cartItem) {
-                                cartItems.append(cartItem)
+                            if !cartCarabiners.contains(cb) {
+                                cartCarabiners.append(cb)
                             }
                         }
                     }
@@ -403,8 +411,11 @@ extension BundleEditView {
             // 구매할 아이템 목록
             ScrollView {
                 VStack(spacing: 20) {
-                    ForEach(cartItems) { item in
-                        cartItemRow(item: item)
+                    ForEach(cartBackgrounds) { bg in
+                        cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
+                    }
+                    ForEach(cartCarabiners) { cb in
+                        cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -427,32 +438,25 @@ extension BundleEditView {
         .presentationDetents([.fraction(0.43)])
     }
     
-    private func cartItemRow(item: CartItem) -> some View {
+    private func cartItemRow(name: String, type: String, price: Int) -> some View {
         HStack(spacing: 6) {
             Image(.selected)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 22.5, height: 22.5)
             
-            Text(item.name)
+            Text(name)
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.trailing, 7)
             
-            switch item {
-            case .background:
-                Text("배경")
-                    .typography(.suit13M)
-                    .foregroundStyle(.gray400)
-            case .carabiner:
-                Text("카라비너")
-                    .typography(.suit13M)
-                    .foregroundStyle(.gray400)
-            }
+            Text(type)
+                .typography(.suit13M)
+                .foregroundStyle(.gray400)
             
             Spacer()
             
-            Text("\(item.price)")
+            Text("\(price)")
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
         }
@@ -485,7 +489,7 @@ extension BundleEditView {
                     .padding(.top, 16)
                     .padding(.bottom, 12)
                 
-                Text("(\(cartItems.count)개)")
+                Text("(\(cartBackgrounds.count + cartCarabiners.count)개)")
                     .typography(.suit17SB)
             }
             .foregroundStyle(.white100)
@@ -497,7 +501,9 @@ extension BundleEditView {
     }
     
     var totalCartPrice: Int {
-        cartItems.reduce(0) { $0 + $1.price}
+        let backgroundTotal = cartBackgrounds.reduce(0) { $0 + $1.background.price }
+        let carabinerTotal = cartCarabiners.reduce(0) { $0 + $1.carabiner.price }
+        return backgroundTotal + carabinerTotal
     }
     
     // MARK: - 구매 처리
@@ -505,28 +511,32 @@ extension BundleEditView {
         isPurchasing = true
         
         var allSuccess = true
-        var hasInsufficientCoins = false
         
-        for cartItem in cartItems {
-            let result: PurchaseResult
-            
-            switch cartItem {
-            case .background(let bgData):
-                result = await ItemPurchaseManager.shared.purchaseWorkshopItem(bgData.background, userManager: UserManager.shared)
-            case .carabiner(let cbData):
-                result = await ItemPurchaseManager.shared.purchaseWorkshopItem(cbData.carabiner, userManager: UserManager.shared)
-            }
+        // 배경 아이템 구매
+        for backgroundData in cartBackgrounds {
+            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(backgroundData.background, userManager: UserManager.shared)
             
             switch result {
             case .success:
                 continue
-            case .insufficientCoins:
-                hasInsufficientCoins = true
+            case .insufficientCoins, .failed(_):
                 allSuccess = false
                 break
-            case .failed(_):
-                allSuccess = false
-                break
+            }
+        }
+        
+        // 카라비너 아이템 구매 (이전 구매가 성공한 경우만)
+        if allSuccess {
+            for carabinerData in cartCarabiners {
+                let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(carabinerData.carabiner, userManager: UserManager.shared)
+                
+                switch result {
+                case .success:
+                    continue
+                case .insufficientCoins, .failed(_):
+                    allSuccess = false
+                    break
+                }
             }
         }
         
@@ -534,7 +544,8 @@ extension BundleEditView {
             // 모든 구매 성공
             await MainActor.run {
                 isPurchasing = false
-                cartItems.removeAll()
+                cartBackgrounds.removeAll()
+                cartCarabiners.removeAll()
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
                 purchasesSuccessScale = 0.3
