@@ -15,7 +15,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 키링 데이터 구조체
     struct KeyringData {
         let index: Int
-        let position: CGPoint  // 비율 좌표 (0.0 ~ 1.0)
+        let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계, 왼쪽 위 기준)
         let bodyImageURL: String
     }
 
@@ -27,6 +27,11 @@ class MultiKeyringCaptureScene: SKScene {
     var carabinerBackImageURL: String?  // 카라비너 뒷면 이미지 (hamburger 타입)
     var carabinerFrontImageURL: String?  // 카라비너 앞면 이미지 (hamburger 타입)
     var onLoadingComplete: (() -> Void)?
+
+    // MARK: - 카라비너 크기 및 위치 정보
+    var carabinerX: CGFloat = 0  // 카라비너 왼쪽 상단 X 좌표
+    var carabinerY: CGFloat = 0  // 카라비너 왼쪽 상단 Y 좌표
+    var carabinerWidth: CGFloat = 0  // 카라비너 너비
 
     // 로딩 완료 추적
     private var totalKeyrings: Int = 0
@@ -47,6 +52,9 @@ class MultiKeyringCaptureScene: SKScene {
         backgroundImageURL: String? = nil,  // 배경 이미지 URL (옵션)
         carabinerBackImageURL: String? = nil,  // 카라비너 뒷면 이미지 (hamburger 타입)
         carabinerFrontImageURL: String? = nil,  // 카라비너 앞면 이미지 (hamburger 타입)
+        carabinerX: CGFloat = 0,
+        carabinerY: CGFloat = 0,
+        carabinerWidth: CGFloat = 0,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
@@ -56,6 +64,9 @@ class MultiKeyringCaptureScene: SKScene {
         self.backgroundImageURL = backgroundImageURL
         self.carabinerBackImageURL = carabinerBackImageURL
         self.carabinerFrontImageURL = carabinerFrontImageURL
+        self.carabinerX = carabinerX
+        self.carabinerY = carabinerY
+        self.carabinerWidth = carabinerWidth
         self.onLoadingComplete = onLoadingComplete
         self.totalKeyrings = keyringDataList.count
         self.needsBackgroundImage = (backgroundImageURL != nil)
@@ -156,18 +167,20 @@ class MultiKeyringCaptureScene: SKScene {
                 let texture = SKTexture(image: image)
                 let carabinerNode = SKSpriteNode(texture: texture)
 
-                // 이미지 비율 유지하면서 가로에 맞춰 크기 조정
+                // 카라비너 크기 계산: carabinerWidth를 기준으로 비율 유지
                 let imageAspectRatio = image.size.height / image.size.width
-                let nodeWidth = self.size.width
+                let nodeWidth = self.carabinerWidth
                 let nodeHeight = nodeWidth * imageAspectRatio
 
                 carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
 
-                // 상단에서 60 여유를 두고 배치
-                carabinerNode.position = CGPoint(
-                    x: self.size.width / 2,
-                    y: self.size.height - nodeHeight / 2 - 60
-                )
+                // 카라비너 위치 계산: 왼쪽 상단 기준 -> 중심 기준으로 변환
+                // SwiftUI 좌표(왼쪽 위 기준) -> SpriteKit 좌표(왼쪽 아래 기준)
+                let centerX = self.carabinerX + nodeWidth / 2
+                let centerY = self.carabinerY + nodeHeight / 2
+                let spriteKitY = self.size.height - centerY
+
+                carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
                 carabinerNode.zPosition = -900  // 배경(-1000) 위, 키링(0~) 아래
 
                 self.addChild(carabinerNode)
@@ -197,18 +210,20 @@ class MultiKeyringCaptureScene: SKScene {
                 let texture = SKTexture(image: image)
                 let carabinerNode = SKSpriteNode(texture: texture)
 
-                // 이미지 비율 유지하면서 가로에 맞춰 크기 조정
+                // 카라비너 크기 계산: carabinerWidth를 기준으로 비율 유지
                 let imageAspectRatio = image.size.height / image.size.width
-                let nodeWidth = self.size.width
+                let nodeWidth = self.carabinerWidth
                 let nodeHeight = nodeWidth * imageAspectRatio
 
                 carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
 
-                // 상단에서 60 여유를 두고 배치
-                carabinerNode.position = CGPoint(
-                    x: self.size.width / 2,
-                    y: self.size.height - nodeHeight / 2 - 60
-                )
+                // 카라비너 위치 계산: 왼쪽 상단 기준 -> 중심 기준으로 변환
+                // SwiftUI 좌표(왼쪽 위 기준) -> SpriteKit 좌표(왼쪽 아래 기준)
+                let centerX = self.carabinerX + nodeWidth / 2
+                let centerY = self.carabinerY + nodeHeight / 2
+                let spriteKitY = self.size.height - centerY
+
+                carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
                 carabinerNode.zPosition = 10000  // 가장 위에 배치
 
                 self.addChild(carabinerNode)
@@ -232,7 +247,11 @@ class MultiKeyringCaptureScene: SKScene {
 
     /// 단일 키링 정적 배치
     private func setupSingleKeyring(data: KeyringData, order: Int) {
-        let spriteKitPosition = convertToSpriteKitCoordinates(data.position)
+        // 절대 좌표를 SpriteKit 좌표로 변환 (Y축만 반전)
+        let spriteKitPosition = CGPoint(
+            x: data.position.x,
+            y: size.height - data.position.y
+        )
         let baseZPosition = CGFloat(order * 10)
 
         // 1. Ring 생성
@@ -357,11 +376,5 @@ class MultiKeyringCaptureScene: SKScene {
     }
 
     // MARK: - Helper Methods
-
-    /// 비율 좌표를 SpriteKit 절대 좌표로 변환
-    private func convertToSpriteKitCoordinates(_ point: CGPoint) -> CGPoint {
-        let absoluteX = point.x * size.width
-        let absoluteY = (1.0 - point.y) * size.height
-        return CGPoint(x: absoluteX, y: absoluteY)
-    }
+    // (절대 좌표 사용으로 변환 메서드 제거됨)
 }

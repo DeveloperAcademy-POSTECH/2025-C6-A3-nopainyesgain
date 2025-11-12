@@ -56,6 +56,9 @@ extension MultiKeyringCaptureScene {
     ///   - backgroundImageURL: 배경 이미지 URL
     ///   - carabinerBackImageURL: 카라비너 뒷면 이미지 URL (hamburger 타입)
     ///   - carabinerFrontImageURL: 카라비너 앞면 이미지 URL (hamburger 타입)
+    ///   - carabinerX: 카라비너 왼쪽 상단 X 좌표
+    ///   - carabinerY: 카라비너 왼쪽 상단 Y 좌표
+    ///   - carabinerWidth: 카라비너 너비
     ///   - customSize: 커스텀 사이즈 (nil이면 기본 크기 390x844 사용)
     /// - Returns: 캡처된 PNG 데이터
     static func captureBundleImage(
@@ -63,6 +66,9 @@ extension MultiKeyringCaptureScene {
         backgroundImageURL: String,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerX: CGFloat = 0,
+        carabinerY: CGFloat = 0,
+        carabinerWidth: CGFloat = 0,
         customSize: CGSize? = nil
     ) async -> Data? {
         // 고정 캡처 사이즈 (iPhone 14 기준)
@@ -81,6 +87,9 @@ extension MultiKeyringCaptureScene {
                 backgroundImageURL: backgroundImageURL,
                 carabinerBackImageURL: carabinerBackImageURL,
                 carabinerFrontImageURL: carabinerFrontImageURL,
+                carabinerX: carabinerX,
+                carabinerY: carabinerY,
+                carabinerWidth: carabinerWidth,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

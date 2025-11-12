@@ -40,6 +40,9 @@ struct BundleDetailView: View {
                     backgroundImageURL: background.backgroundImage,
                     carabinerBackImageURL: carabiner.backImageURL,
                     carabinerFrontImageURL: carabiner.frontImageURL,
+                    carabinerX: carabiner.carabinerX,
+                    carabinerY: carabiner.carabinerY,
+                    carabinerWidth: carabiner.carabinerWidth,
                     currentCarabinerType: carabiner.type
                 )
                 .ignoresSafeArea()

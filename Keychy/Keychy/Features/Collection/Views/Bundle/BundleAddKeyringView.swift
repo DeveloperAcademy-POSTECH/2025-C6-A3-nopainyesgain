@@ -93,6 +93,9 @@ extension BundleAddKeyringView {
             backgroundImageURL: viewModel.selectedBackground?.backgroundImage,
             carabinerBackImageURL: carabiner.carabinerImage[1],
             carabinerFrontImageURL: carabiner.carabinerImage[2],
+            carabinerX: carabiner.carabinerX,
+            carabinerY: carabiner.carabinerY,
+            carabinerWidth: carabiner.carabinerWidth,
             currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
         )
         .id(selectedKeyrings.keys.sorted())
@@ -108,6 +111,9 @@ extension BundleAddKeyringView {
             backgroundImageURL: viewModel.selectedBackground?.backgroundImage,
             carabinerBackImageURL: carabiner.carabinerImage[0],
             carabinerFrontImageURL: nil,
+            carabinerX: carabiner.carabinerX,
+            carabinerY: carabiner.carabinerY,
+            carabinerWidth: carabiner.carabinerWidth,
             currentCarabinerType: CarabinerType.from(carabiner.carabinerType)
         )
         .id(selectedKeyrings.keys.sorted())
@@ -348,6 +354,9 @@ extension BundleAddKeyringView {
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
+            carabinerX: carabiner.carabinerX,
+            carabinerY: carabiner.carabinerY,
+            carabinerWidth: carabiner.carabinerWidth,
             customSize: screenSize
         ) {
             await MainActor.run {
@@ -383,11 +392,11 @@ extension BundleAddKeyringView {
 // MARK: - Helper Methods
 
 extension BundleAddKeyringView {
-    /// 버튼 위치 계산 (비율 좌표 -> 절대 좌표)
+    /// 버튼 위치 계산 (절대 좌표 그대로 반환)
     private func buttonPosition(index: Int, carabiner: Carabiner) -> CGPoint {
         CGPoint(
-            x: carabiner.keyringXPosition[index] * screenSize.width,
-            y: carabiner.keyringYPosition[index] * screenSize.height
+            x: carabiner.keyringXPosition[index],
+            y: carabiner.keyringYPosition[index]
         )
     }
 
@@ -410,16 +419,15 @@ extension BundleAddKeyringView {
 
             let particleId = keyring.particleId
 
-            // 절대 좌표를 비율 좌표로 변환
-            let absolutePosition = buttonPosition(index: index, carabiner: carabiner)
-            let relativePosition = CGPoint(
-                x: absolutePosition.x / screenSize.width,
-                y: absolutePosition.y / screenSize.height
+            // 절대 좌표 사용 (이미 절대 좌표로 저장됨)
+            let position = CGPoint(
+                x: carabiner.keyringXPosition[index],
+                y: carabiner.keyringYPosition[index]
             )
 
             let data = MultiKeyringScene.KeyringData(
                 index: index,
-                position: relativePosition,
+                position: position,
                 bodyImageURL: keyring.bodyImage,
                 soundId: soundId,
                 customSoundURL: customSoundURL,
