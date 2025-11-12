@@ -181,7 +181,8 @@ extension KeyringEditView {
         VStack {
             ZStack {
                 SpriteView(
-                    scene: createMiniScene(keyring: keyring)
+                    scene: createMiniScene(keyring: keyring),
+                    options: [.allowsTransparency]
                 )
                 if isLoading {
                     Color.black20
@@ -223,6 +224,7 @@ extension KeyringEditView {
             chainType: chainType,
             bodyImage: keyring.bodyImage,
             targetSize: CGSize(width: 175, height: 233),
+            customBackgroundColor: .clear,
             zoomScale: 2.0,
             onLoadingComplete: {
                 DispatchQueue.main.async {
