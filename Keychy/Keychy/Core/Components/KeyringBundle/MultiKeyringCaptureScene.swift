@@ -144,7 +144,6 @@ class MultiKeyringCaptureScene: SKScene {
 
                 // 배경 이미지 로딩 완료
                 self.backgroundLoaded = true
-                print("✅ [MultiKeyringCaptureScene] 배경 이미지 로드 완료")
                 self.checkLoadingComplete()
             }
         }
@@ -187,7 +186,6 @@ class MultiKeyringCaptureScene: SKScene {
 
                 // 카라비너 뒷면 이미지 로딩 완료
                 self.carabinerBackLoaded = true
-                print("✅ [MultiKeyringCaptureScene] 카라비너 뒷면 이미지 로드 완료")
                 self.checkLoadingComplete()
             }
         }
@@ -230,7 +228,6 @@ class MultiKeyringCaptureScene: SKScene {
 
                 // 카라비너 앞면 이미지 로딩 완료
                 self.carabinerFrontLoaded = true
-                print("✅ [MultiKeyringCaptureScene] 카라비너 앞면 이미지 로드 완료")
                 self.checkLoadingComplete()
             }
         }
