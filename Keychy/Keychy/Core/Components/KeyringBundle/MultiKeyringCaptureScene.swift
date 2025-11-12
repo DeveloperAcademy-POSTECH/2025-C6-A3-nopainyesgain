@@ -121,8 +121,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 배경 이미지 설정
     private func setupBackgroundImage(url: String) {
         Task {
-            guard let imageURL = URL(string: url),
-                  let image = try? await StorageManager.shared.getImage(path: url) else {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 배경 이미지 로드 실패: \(url)")
                 await MainActor.run {
                     self.backgroundLoaded = true
@@ -152,8 +151,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 카라비너 뒷면 이미지 설정 (배경 바로 위)
     private func setupCarabinerBackImage(url: String) {
         Task {
-            guard let imageURL = URL(string: url),
-                  let image = try? await StorageManager.shared.getImage(path: url) else {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 카라비너 뒷면 이미지 로드 실패: \(url)")
                 await MainActor.run {
                     self.carabinerBackLoaded = true
@@ -194,8 +192,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 카라비너 앞면 이미지 설정 (가장 위)
     private func setupCarabinerFrontImage(url: String) {
         Task {
-            guard let imageURL = URL(string: url),
-                  let image = try? await StorageManager.shared.getImage(path: url) else {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 카라비너 앞면 이미지 로드 실패: \(url)")
                 await MainActor.run {
                     self.carabinerFrontLoaded = true
