@@ -350,7 +350,6 @@ class MultiKeyringCaptureScene: SKScene {
         let allAssetsLoaded = allKeyringsLoaded && backgroundLoaded && carabinerBackLoaded && carabinerFrontLoaded
 
         if allAssetsLoaded {
-            print("✅ [MultiKeyringCaptureScene] 모든 리소스 로딩 완료 (키링: \(loadedKeyrings)/\(totalKeyrings), 배경: \(backgroundLoaded), 카라비너뒤: \(carabinerBackLoaded), 카라비너앞: \(carabinerFrontLoaded))")
             DispatchQueue.main.async { [weak self] in
                 self?.onLoadingComplete?()
             }

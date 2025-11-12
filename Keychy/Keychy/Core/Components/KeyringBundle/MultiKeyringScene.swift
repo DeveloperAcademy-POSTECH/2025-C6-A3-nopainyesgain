@@ -94,33 +94,27 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - Scene Lifecycle
     override func didMove(to view: SKView) {
-        let sceneStartTime = Date()
         backgroundColor = customBackgroundColor
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
-        print("🎬 [MultiKeyringScene] didMove 시작 (시간: 0.000초)")
-
         // 모든 이미지를 동시에 로드 시작
         Task {
-            let imageLoadStart = Date()
-            print("🖼️ [MultiKeyringScene] 이미지 로드 시작 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
-
             async let backgroundTask: Void = {
-                if let backgroundURL = backgroundImageURL {
-                    await setupBackgroundImageAsync(url: backgroundURL, sceneStartTime: sceneStartTime)
+                if let backgroundURL = await backgroundImageURL {
+                    await setupBackgroundImageAsync(url: backgroundURL)
                 }
             }()
 
             async let carabinerBackTask: Void = {
-                if let carabinerBackURL = carabinerBackImageURL {
-                    await setupCarabinerBackImageAsync(url: carabinerBackURL, sceneStartTime: sceneStartTime)
+                if let carabinerBackURL = await carabinerBackImageURL {
+                    await setupCarabinerBackImageAsync(url: carabinerBackURL)
                 }
             }()
 
             async let carabinerFrontTask: Void = {
-                if let carabinerFrontURL = carabinerFrontImageURL {
-                    await setupCarabinerFrontImageAsync(url: carabinerFrontURL, sceneStartTime: sceneStartTime)
+                if let carabinerFrontURL = await carabinerFrontImageURL {
+                    await setupCarabinerFrontImageAsync(url: carabinerFrontURL)
                 }
             }()
 
@@ -129,13 +123,9 @@ class MultiKeyringScene: SKScene {
             await carabinerBackTask
             await carabinerFrontTask
 
-            let imageLoadElapsed = Date().timeIntervalSince(imageLoadStart)
-            print("✅ [MultiKeyringScene] 모든 이미지 로드 완료 - 소요시간: \(String(format: "%.3f", imageLoadElapsed))초 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
-
             // 키링 설정
             await MainActor.run {
-                print("🔧 [MultiKeyringScene] 키링 설정 시작 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
-                self.setupKeyrings(sceneStartTime: sceneStartTime)
+                self.setupKeyrings()
             }
         }
     }
@@ -143,17 +133,10 @@ class MultiKeyringScene: SKScene {
     // MARK: - Background & Carabiner Setup
 
     /// 배경 이미지 설정 (async)
-    private func setupBackgroundImageAsync(url: String, sceneStartTime: Date) async {
-        let start = Date()
-        print("  📥 [Background] 다운로드 시작...")
-
+    private func setupBackgroundImageAsync(url: String) async {
         guard let image = try? await StorageManager.shared.getImage(path: url) else {
-            print("  ❌ [Background] 로드 실패 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
             return
         }
-
-        let downloadElapsed = Date().timeIntervalSince(start)
-        print("  📦 [Background] 다운로드 완료 - \(String(format: "%.3f", downloadElapsed))초")
 
         await MainActor.run {
             let texture = SKTexture(image: image)
@@ -164,23 +147,14 @@ class MultiKeyringScene: SKScene {
             backgroundNode.zPosition = -1000
 
             self.addChild(backgroundNode)
-            let totalElapsed = Date().timeIntervalSince(start)
-            print("  ✅ [Background] 씬 추가 완료 - 총 \(String(format: "%.3f", totalElapsed))초 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
         }
     }
 
     /// 카라비너 뒷면 이미지 설정 (async)
-    private func setupCarabinerBackImageAsync(url: String, sceneStartTime: Date) async {
-        let start = Date()
-        print("  📥 [CarabinerBack] 다운로드 시작...")
-
+    private func setupCarabinerBackImageAsync(url: String) async {
         guard let image = try? await StorageManager.shared.getImage(path: url) else {
-            print("  ❌ [CarabinerBack] 로드 실패 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
             return
         }
-
-        let downloadElapsed = Date().timeIntervalSince(start)
-        print("  📦 [CarabinerBack] 다운로드 완료 - \(String(format: "%.3f", downloadElapsed))초")
 
         await MainActor.run {
             let texture = SKTexture(image: image)
@@ -198,23 +172,14 @@ class MultiKeyringScene: SKScene {
             carabinerNode.zPosition = -900
 
             self.addChild(carabinerNode)
-            let totalElapsed = Date().timeIntervalSince(start)
-            print("  ✅ [CarabinerBack] 씬 추가 완료 - 총 \(String(format: "%.3f", totalElapsed))초 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
         }
     }
 
     /// 카라비너 앞면 이미지 설정 (async)
-    private func setupCarabinerFrontImageAsync(url: String, sceneStartTime: Date) async {
-        let start = Date()
-        print("  📥 [CarabinerFront] 다운로드 시작...")
-
+    private func setupCarabinerFrontImageAsync(url: String) async {
         guard let image = try? await StorageManager.shared.getImage(path: url) else {
-            print("  ❌ [CarabinerFront] 로드 실패 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
             return
         }
-
-        let downloadElapsed = Date().timeIntervalSince(start)
-        print("  📦 [CarabinerFront] 다운로드 완료 - \(String(format: "%.3f", downloadElapsed))초")
 
         await MainActor.run {
             let texture = SKTexture(image: image)
@@ -232,48 +197,37 @@ class MultiKeyringScene: SKScene {
             carabinerNode.zPosition = 10000
 
             self.addChild(carabinerNode)
-            let totalElapsed = Date().timeIntervalSince(start)
-            print("  ✅ [CarabinerFront] 씬 추가 완료 - 총 \(String(format: "%.3f", totalElapsed))초 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
         }
     }
 
     // MARK: - Setup
 
     /// 모든 키링 설정
-    private func setupKeyrings(sceneStartTime: Date) {
-        let startTime = Date()
-
+    private func setupKeyrings() {
         // 모든 키링이 동기적으로 생성될 때까지 카운터 사용
         let totalKeyrings = keyringDataList.count
 
         guard totalKeyrings > 0 else {
-            print("⚠️ [MultiKeyringScene] 키링이 없음")
-            enablePhysics(sceneStartTime: sceneStartTime)
+            enablePhysics()
             return
         }
 
         var completedKeyrings = 0
 
         for (order, data) in keyringDataList.enumerated() {
-            print("  🔨 [Keyring \(order + 1)/\(totalKeyrings)] 생성 시작...")
-            setupSingleKeyring(data: data, order: order, sceneStartTime: sceneStartTime) { [weak self] in
+            setupSingleKeyring(data: data, order: order) { [weak self] in
                 completedKeyrings += 1
-                print("  ✓ [Keyring \(completedKeyrings)/\(totalKeyrings)] 완성 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
 
                 if completedKeyrings == totalKeyrings {
-                    let elapsed = Date().timeIntervalSince(startTime)
-                    print("✅ [모든 키링 완성] 소요시간: \(String(format: "%.3f", elapsed))초 (총 경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
                     // 모든 키링 완성 후 물리 활성화
-                    self?.enablePhysics(sceneStartTime: sceneStartTime)
+                    self?.enablePhysics()
                 }
             }
         }
     }
 
     /// 단일 키링 설정
-    private func setupSingleKeyring(data: KeyringData, order: Int, sceneStartTime: Date, completion: @escaping () -> Void) {
-        let keyringStart = Date()
-
+    private func setupSingleKeyring(data: KeyringData, order: Int, completion: @escaping () -> Void) {
         // 사운드 정보 저장
         soundIdsByKeyring[data.index] = data.soundId
         if let customURL = data.customSoundURL {
@@ -298,9 +252,6 @@ class MultiKeyringScene: SKScene {
             completion()
             return
         }
-
-        print("    🔹 [Keyring \(data.index)] Ring 생성 시작...")
-        let ringStart = Date()
 
         BundleRingComponent.createCarabinerRingNode(
             carabinerType: carabinerType,
@@ -332,9 +283,6 @@ class MultiKeyringScene: SKScene {
             self.ringNodes[data.index] = ring
             self.keyringNodes[data.index] = ring
 
-            let ringElapsed = Date().timeIntervalSince(ringStart)
-            print("    ✓ [Keyring \(data.index)] Ring 완료 - \(String(format: "%.3f", ringElapsed))초")
-
             // 2. Chain 생성
             self.setupChain(
                 ring: ring,
@@ -342,8 +290,6 @@ class MultiKeyringScene: SKScene {
                 bodyImageURL: data.bodyImageURL,
                 index: data.index,
                 baseZPosition: baseZPosition,
-                keyringStart: keyringStart,
-                sceneStartTime: sceneStartTime,
                 completion: completion
             )
         }
@@ -356,12 +302,8 @@ class MultiKeyringScene: SKScene {
         bodyImageURL: String,
         index: Int,
         baseZPosition: CGFloat,
-        keyringStart: Date,
-        sceneStartTime: Date,
         completion: @escaping () -> Void
     ) {
-        print("    🔹 [Keyring \(index)] Chain 생성 시작...")
-        let chainStart = Date()
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY + 0.5
@@ -381,7 +323,7 @@ class MultiKeyringScene: SKScene {
             let categoryBitMask: UInt32 = UInt32(1 << index)
             let collisionBitMask: UInt32 = categoryBitMask
 
-            for (chainIndex, chain) in chains.enumerated() {
+            for (_, chain) in chains.enumerated() {
                 // zPosition은 KeyringChainComponent에서 이미 설정됨
                 // 체인도 처음에는 물리 비활성화
                 chain.physicsBody?.isDynamic = false
@@ -394,9 +336,6 @@ class MultiKeyringScene: SKScene {
             // Chain 노드 저장
             self.chainNodesByKeyring[index] = chains
 
-            let chainElapsed = Date().timeIntervalSince(chainStart)
-            print("    ✓ [Keyring \(index)] Chain 완료 - \(String(format: "%.3f", chainElapsed))초")
-
             // 3. Body 생성
             self.setupBody(
                 ring: ring,
@@ -407,8 +346,6 @@ class MultiKeyringScene: SKScene {
                 bodyImageURL: bodyImageURL,
                 index: index,
                 baseZPosition: baseZPosition,
-                keyringStart: keyringStart,
-                sceneStartTime: sceneStartTime,
                 completion: completion
             )
         }
@@ -424,21 +361,13 @@ class MultiKeyringScene: SKScene {
         bodyImageURL: String,
         index: Int,
         baseZPosition: CGFloat,
-        keyringStart: Date,
-        sceneStartTime: Date,
         completion: @escaping () -> Void
     ) {
-        print("    🔹 [Keyring \(index)] Body 이미지 로드 시작...")
-        let bodyStart = Date()
-
         KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else {
                 completion()  // body 생성 실패 시에도 completion 호출
                 return
             }
-
-            let bodyElapsed = Date().timeIntervalSince(bodyStart)
-            print("    ✓ [Keyring \(index)] Body 이미지 로드 완료 - \(String(format: "%.3f", bodyElapsed))초")
 
             self.positionAndConnectBody(
                 body: body,
@@ -449,8 +378,6 @@ class MultiKeyringScene: SKScene {
                 chainSpacing: chainSpacing,
                 index: index,
                 baseZPosition: baseZPosition,
-                keyringStart: keyringStart,
-                sceneStartTime: sceneStartTime,
                 completion: completion
             )
         }
@@ -466,12 +393,8 @@ class MultiKeyringScene: SKScene {
         chainSpacing: CGFloat,
         index: Int,
         baseZPosition: CGFloat,
-        keyringStart: Date,
-        sceneStartTime: Date,
         completion: @escaping () -> Void
     ) {
-        print("    🔹 [Keyring \(index)] Body 위치 설정 및 조인트 연결 시작...")
-        let connectStart = Date()
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
 
@@ -502,12 +425,6 @@ class MultiKeyringScene: SKScene {
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
 
-        let connectElapsed = Date().timeIntervalSince(connectStart)
-        print("    ✓ [Keyring \(index)] 조인트 연결 완료 - \(String(format: "%.3f", connectElapsed))초")
-
-        let totalKeyringElapsed = Date().timeIntervalSince(keyringStart)
-        print("    ✅ [Keyring \(index)] 전체 완성 - 총 소요시간: \(String(format: "%.3f", totalKeyringElapsed))초")
-
         // 키링 완성 완료
         completion()
     }
@@ -523,7 +440,6 @@ class MultiKeyringScene: SKScene {
             // physicsBody 존재 확인 (안전한 코딩)
             guard let ringPhysics = ring.physicsBody,
                   let chainPhysics = firstChain.physicsBody else {
-                print("[MultiKeyringScene] Warning: Missing physics body for joint connection")
                 return
             }
 
@@ -544,8 +460,6 @@ class MultiKeyringScene: SKScene {
                 joint.shouldEnableLimits = false
                 joint.frictionTorque = 5.0  // 첫 번째 체인을 거의 고정시키는 높은 마찰
                 physicsWorld.add(joint)
-
-                print("[MultiKeyringScene] Plain: First chain fixed with high friction")
             } else {
                 // Hamburger 타입은 기존 핀 조인트 유지
                 let joint = SKPhysicsJointPin.joint(
@@ -647,32 +561,25 @@ class MultiKeyringScene: SKScene {
         // Plain 타입에서는 Ring을 dynamic으로 유지하되 위치 제한 (anchor에 의해 제어됨)
         if let carabinerType = currentCarabinerType, carabinerType == .plain {
             // Ring은 dynamic 상태 유지하되 anchor가 위치 제어
-            print("[MultiKeyringScene] Plain: Ring kept dynamic for natural swing with anchor")
         } else {
             // Hamburger 타입에서만 Ring을 static으로 설정
             ring.physicsBody?.isDynamic = false
-            print("[MultiKeyringScene] Hamburger: Ring kept static after joint connections")
         }
     }
 
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
-    private func enablePhysics(sceneStartTime: Date) {
-        let physicsStart = Date()
-        print("⚡️ [MultiKeyringScene] 물리 시뮬레이션 활성화 시작 (경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
-
+    private func enablePhysics() {
         // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
         // 카라비너 타입별 Ring 물리 설정
-        for (index, ring) in ringNodes {
+        for (_, ring) in ringNodes {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
                 // Plain 타입: Ring 완전히 고정
                 ring.physicsBody?.isDynamic = false
-                print("[MultiKeyringScene] Plain: Ring completely fixed (static)")
             } else {
                 // Hamburger 타입: Ring은 완전히 고정
                 ring.physicsBody?.isDynamic = false
-                print("[MultiKeyringScene] Hamburger: Ring kept static")
             }
         }
 
@@ -707,9 +614,6 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
         }
-
-        let physicsElapsed = Date().timeIntervalSince(physicsStart)
-        print("✅ [MultiKeyringScene] 물리 시뮬레이션 활성화 완료 - 소요시간: \(String(format: "%.3f", physicsElapsed))초 (총 경과: \(String(format: "%.3f", Date().timeIntervalSince(sceneStartTime)))초)")
 
         onAllKeyringsReady?()
     }

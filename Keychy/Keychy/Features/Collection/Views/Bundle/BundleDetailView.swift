@@ -80,15 +80,11 @@ struct BundleDetailView: View {
 extension BundleDetailView {
     @MainActor
     private func prefetchBundleImages() async {
-        let prefetchStart = Date()
-        print("📸 [BundleDetailView] 이미지 프리페칭 시작...")
-
         // 1. 배경 및 카라비너 데이터 로드 (필요한 경우)
         await viewModel.loadBackgroundsAndCarabiners()
 
         // 2. selectedBackground와 selectedCarabiner 설정
         guard let bundle = viewModel.selectedBundle else {
-            print("  ⚠️ [BundleDetailView] selectedBundle 없음")
             return
         }
 
@@ -97,14 +93,8 @@ extension BundleDetailView {
 
         guard let carabiner = viewModel.selectedCarabiner,
               let background = viewModel.selectedBackground else {
-            print("  ⚠️ [BundleDetailView] 프리페칭할 데이터 없음")
-            print("    - background: \(viewModel.selectedBackground?.id ?? "nil")")
-            print("    - carabiner: \(viewModel.selectedCarabiner?.id ?? "nil")")
             return
         }
-
-        print("  ✓ [BundleDetailView] selectedBackground: \(background.id)")
-        print("  ✓ [BundleDetailView] selectedCarabiner: \(carabiner.id)")
 
         // 키링 데이터 로드
         keyringDataList = await createKeyringDataListFromBundle(bundle: bundle, carabiner: carabiner)
@@ -140,15 +130,10 @@ extension BundleDetailView {
             }
         }
 
-        print("  📥 [BundleDetailView] \(imagePaths.count)개 이미지 다운로드 시작...")
-
         // 병렬로 모든 이미지 다운로드
         do {
             let _ = try await StorageManager.shared.getMultipleImages(paths: imagePaths)
-            let elapsed = Date().timeIntervalSince(prefetchStart)
-            print("  ✅ [BundleDetailView] 이미지 프리페칭 완료 - 소요시간: \(String(format: "%.3f", elapsed))초")
         } catch {
-            print("  ❌ [BundleDetailView] 이미지 프리페칭 실패: \(error.localizedDescription)")
         }
     }
 
@@ -164,7 +149,6 @@ extension BundleDetailView {
 
             return SimpleKeyringInfo(id: keyringId, bodyImage: bodyImage)
         } catch {
-            print("  ⚠️ [BundleDetailView] 키링 정보 로드 실패: \(keyringId)")
             return nil
         }
     }
@@ -185,23 +169,17 @@ extension BundleDetailView {
     private func createKeyringDataListFromBundle(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
 
-        print("🔍 [BundleDetailView] createKeyringDataList 시작 - bundle.keyrings: \(bundle.keyrings)")
-
         // bundle.keyrings 배열을 순회 (각 요소는 Firestore 문서 ID)
         for (index, keyringId) in bundle.keyrings.enumerated() {
             guard index < carabiner.maxKeyringCount else { break }
             guard keyringId != "none", !keyringId.isEmpty else {
-                print("  [Index \(index)] 키링 없음 (none)")
                 continue
             }
 
             // Firestore에서 키링 상세 정보 가져오기
             guard let keyringInfo = await fetchFullKeyringInfo(keyringId: keyringId) else {
-                print("  ❌ [Index \(index)] 키링 정보 로드 실패: \(keyringId)")
                 continue
             }
-
-            print("  ✅ [Index \(index)] 키링 로드 성공: \(keyringId)")
 
             // 커스텀 사운드 URL 처리
             let customSoundURL: URL? = {
@@ -228,7 +206,6 @@ extension BundleDetailView {
             dataList.append(data)
         }
 
-        print("🔍 [BundleDetailView] createKeyringDataList 완료 - 키링 개수: \(dataList.count)")
         return dataList
     }
 
@@ -252,7 +229,6 @@ extension BundleDetailView {
                 particleId: particleId
             )
         } catch {
-            print("  ⚠️ [BundleDetailView] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
         }
     }
@@ -367,12 +343,8 @@ extension BundleDetailView {
 
     /// 씬 레이어 뷰 (카라비너와 키링들)
     private func sceneLayerView(carabiner: Carabiner) -> some View {
-        let _ = print("🎨 [BundleDetailView] sceneLayerView 렌더링 - keyringDataList count: \(keyringDataList.count)")
-
         return VStack {
             if let background = viewModel.selectedBackground {
-                let _ = print("🎨 [BundleDetailView] MultiKeyringSceneView 생성 - 키링 개수: \(keyringDataList.count)")
-
                 MultiKeyringSceneView(
                     keyringDataList: keyringDataList,
                     ringType: .basic,
@@ -383,7 +355,7 @@ extension BundleDetailView {
                     carabinerFrontImageURL: carabiner.frontImageURL,
                     currentCarabinerType: carabiner.type
                 )
-                .id("\(background.id)_\(carabiner.id)_\(keyringDataList.map { $0.index }.sorted())")
+                .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
             } else {
                 ProgressView("로딩 중...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

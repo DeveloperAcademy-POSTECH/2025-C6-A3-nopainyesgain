@@ -59,11 +59,7 @@ struct KeyringChainComponent {
         
         group.notify(queue: .main) {
             let nodes = (0..<count).compactMap { nodesDictionary[$0] }
-            
-            for (index, node) in nodes.enumerated() {
-                print("   링크 \(index): position = (\(node.position.x), \(node.position.y))")
-            }
-            
+
             completion(nodes)
         }
     }
@@ -88,11 +84,9 @@ struct KeyringChainComponent {
         if let carabinerType = carabinerType, carabinerType == .plain {
             // Plain: 체인이 링 뒤로 가도록 (Ring이 baseZPosition이면 체인은 더 낮게)
             node.zPosition = baseZPosition - 1 - CGFloat(index) * 0.1
-            print("[KeyringChainComponent] Plain: Chain \(index) zPosition = \(node.zPosition) (behind ring)")
         } else {
             // Hamburger: 체인이 링 앞으로 (기존 방식)
             node.zPosition = baseZPosition + 2 + CGFloat(index) * 0.1
-            print("[KeyringChainComponent] Hamburger: Chain \(index) zPosition = \(node.zPosition) (front of ring)")
         }
         
         // 물리 바디 추가 (기본값으로 설정, 씬에서 조정됨)
