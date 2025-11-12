@@ -57,6 +57,9 @@ struct Typography {
     static let suit12R25 = Typography(font: .custom(.suitRegular, size: 12), lineSpacing: 13)
     
     static let suit10SB = Typography(font: .custom(.suitSemiBold, size: 10), lineSpacing: 0)
+    
+    /// 9
+    static let suit9SB = Typography(font: .custom(.suitSemiBold, size: 9), lineSpacing: 0)
 
     // MARK: - Nanum
     static let nanum20EB = Typography(font: .custom(.nanumExtraBold, size: 20), lineSpacing: 0)
