@@ -4,6 +4,7 @@
 //
 //  Created by 길지훈 on 10/16/25.
 //
+// 홈 화면 - 메인 뭉치의 키링들을 3D 씬으로 표시
 
 import SwiftUI
 import NukeUI
@@ -11,15 +12,21 @@ import FirebaseFirestore
 
 struct HomeView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
+
     @Bindable var userManager: UserManager
+
     @State var collectionViewModel: CollectionViewModel
+
+    /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
 
+    /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
+
+    // MARK: - Body
 
     var body: some View {
         ZStack(alignment: .top) {
-            // 메인 씬 뷰
             if let bundle = collectionViewModel.selectedBundle,
                let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
                let background = collectionViewModel.selectedBackground {
@@ -35,83 +42,97 @@ struct HomeView: View {
                     currentCarabinerType: carabiner.type
                 )
                 .ignoresSafeArea()
-        
-                ///  이 코드는 다음 조건이 하나라도 변경되면 MultiKeyringSceneView를 완전히 재생성합니다:
-                ///- background.id 변경 (배경 이미지 변경)
-                ///- carabiner.id 변경 (카라비너 변경)
-                ///- keyringDataList의 인덱스 구성 변경 (키링 추가/삭제/순서 변경)
+                /// 씬 재생성 조건을 위한 ID 설정
+                /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                 .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
             } else {
+                // 데이터 로딩 중
                 Color.clear.ignoresSafeArea()
             }
 
-            // 상단 버튼들
-            HStack(spacing: 10) {
-                Spacer()
-
-                Button {
-                    router.push(.bundleInventoryView)
-                } label: {
-                    Image(.bundleIcon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 36, height: 36)
-                }
-                .buttonStyle(.glassProminent)
-
-                GlassEffectContainer {
-                    HStack(spacing: 0) {
-                        Button {
-                            router.push(.alarmView)
-                        } label: {
-                            Image(.alarmIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 36, height: 36)
-                        }
-                        .buttonStyle(.glassProminent)
-                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-
-                        Button {
-                            router.push(.myPageView)
-                        } label: {
-                            Image(.myPageIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 36, height: 36)
-                        }
-                        .buttonStyle(.glassProminent)
-                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                    }
-                }
-            }
-            .padding(.horizontal, 16)
-            .tint(.white.opacity(0.8))
+            // 상단 네비게이션 버튼들
+            navigationButtons
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
+            // 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
         }
     }
+}
 
-    // MARK: - Data Loading
+// MARK: - View Components
+extension HomeView {
+    /// 상단 네비게이션 버튼들
+    private var navigationButtons: some View {
+        HStack(spacing: 10) {
+            Spacer()
 
+            // 뭉치 목록 버튼
+            Button {
+                router.push(.bundleInventoryView)
+            } label: {
+                Image(.bundleIcon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 36, height: 36)
+            }
+            .buttonStyle(.glassProminent)
+
+            // 알림 및 마이페이지 버튼 그룹
+            GlassEffectContainer {
+                HStack(spacing: 0) {
+                    Button {
+                        router.push(.alarmView)
+                    } label: {
+                        Image(.alarmIcon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+
+                    Button {
+                        router.push(.myPageView)
+                    } label: {
+                        Image(.myPageIcon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .tint(.white.opacity(0.8))
+    }
+}
+
+// MARK: - Data Loading
+extension HomeView {
+    /// 메인 뭉치 데이터를 로드하고 뷰 상태를 초기화
+    /// 1. 사용자의 모든 뭉치 목록을 가져옴
+    /// 2. 메인으로 설정된 뭉치를 찾아 선택
+    /// 3. 선택된 뭉치의 키링들을 Firestore에서 가져와 KeyringData 리스트 생성
     @MainActor
     private func loadMainBundle() async {
         let uid = UserManager.shared.userUID
         guard !uid.isEmpty else { return }
 
-        // 배경 및 카라비너 데이터 로드
+        // 1. 배경 및 카라비너 데이터 로드
         await collectionViewModel.loadBackgroundsAndCarabiners()
 
-        // 번들 목록 로드
+        // 2. 번들 목록 로드
         await withCheckedContinuation { continuation in
             collectionViewModel.fetchAllBundles(uid: uid) { _ in
                 continuation.resume()
             }
         }
 
-        // Main bundle 설정
+        // 3. 메인 뭉치 설정 (isMain == true인 뭉치, 없으면 첫 번째 뭉치)
         if let mainBundle = collectionViewModel.sortedBundles.first(where: { $0.isMain }) {
             collectionViewModel.selectedBundle = mainBundle
         } else if let firstBundle = collectionViewModel.sortedBundles.first {
@@ -120,26 +141,34 @@ struct HomeView: View {
             return
         }
 
-        // Background와 Carabiner 설정
+        // 4. 선택된 뭉치의 배경과 카라비너 설정
         guard let bundle = collectionViewModel.selectedBundle else { return }
         collectionViewModel.selectedBackground = collectionViewModel.resolveBackground(from: bundle.selectedBackground)
         collectionViewModel.selectedCarabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
 
-        // 키링 데이터 로드
+        // 5. 키링 데이터 생성
         guard let carabiner = collectionViewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
     }
 
+    /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
+    /// - Parameters:
+    ///   - bundle: 현재 뭉치
+    ///   - carabiner: 선택된 카라비너 (위치 정보 제공)
+    /// - Returns: 3D 씬에서 사용할 KeyringData 배열
     private func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
 
         for (index, keyringId) in bundle.keyrings.enumerated() {
+            // 유효하지 않은 키링 ID 필터링
             guard index < carabiner.maxKeyringCount,
                   keyringId != "none",
                   !keyringId.isEmpty else { continue }
 
+            // Firebase에서 키링 정보 가져오기
             guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
 
+            // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
             let customSoundURL: URL? = {
                 if keyringInfo.soundId.hasPrefix("https://") || keyringInfo.soundId.hasPrefix("http://") {
                     return URL(string: keyringInfo.soundId)
@@ -147,6 +176,7 @@ struct HomeView: View {
                 return nil
             }()
 
+            // KeyringData 생성
             let data = MultiKeyringScene.KeyringData(
                 index: index,
                 position: CGPoint(
@@ -164,6 +194,7 @@ struct HomeView: View {
         return dataList
     }
 
+    /// Firestore에서 키링 정보를 가져옴
     private func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
         do {
             let db = FirebaseFirestore.Firestore.firestore()
@@ -187,6 +218,7 @@ struct HomeView: View {
         }
     }
 
+    /// Firestore에서 가져온 키링 정보를 담는 구조체
     private struct KeyringInfo {
         let id: String
         let bodyImage: String
