@@ -176,6 +176,9 @@ struct KeyringBundleItem: View {
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
+            carabinerX: carabiner.carabinerX,
+            carabinerY: carabiner.carabinerY,
+            carabinerWidth: carabiner.carabinerWidth,
             customSize: captureSize
         ) {
             // BundleImageCache에 저장
