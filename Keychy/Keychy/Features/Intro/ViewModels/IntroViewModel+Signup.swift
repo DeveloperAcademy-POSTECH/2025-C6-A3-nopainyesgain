@@ -30,7 +30,7 @@ extension IntroViewModel {
         }
     }
     
-    // 프로필 저장
+    // 닉네임 입력 완료 (Firestore 저장 없이 ProfileCompleteView로 이동)
     func saveProfile(nickname: String) {
         if tempUserUID.isEmpty {
             if let currentUser = Auth.auth().currentUser {
@@ -41,37 +41,25 @@ extension IntroViewModel {
                 return
             }
         }
-        isLoading = true
-        errorMessage = nil
 
-        // KeychyUser 객체 생성
-        let newUser = KeychyUser(
+        // Firestore 저장 없이 닉네임만 저장하고 다음 화면으로
+        welcomeNickname = nickname
+        needsProfileSetup = false
+        showProfileComplete = true
+    }
+
+    // 프로필 실제 저장 (ProfileCompleteView의 "다음" 버튼에서 호출)
+    func saveProfileToFirestore(completion: @escaping (Bool) -> Void) {
+        var newUser = KeychyUser(
             id: tempUserUID,
-            nickname: nickname,
+            nickname: welcomeNickname,
             email: tempUserEmail
         )
+        newUser.termsAgreed = true
+        newUser.marketingAgreed = tempMarketingAgreed
 
-        UserManager.shared.saveProfile(user: newUser) { [weak self] success in
-            guard let self = self else { return }
-
-            DispatchQueue.main.async {
-                self.isLoading = false
-
-                if success {
-                    // 약관 동의 정보 저장
-                    self.saveTermsAgreement(marketingAgreed: self.tempMarketingAgreed)
-
-                    // 임시 정보 초기화 및 메인으로 이동
-                    self.needsProfileSetup = false
-                    self.isLoggedIn = true
-                    self.tempUserUID = ""
-                    self.tempUserEmail = ""
-                    self.tempMarketingAgreed = false
-                } else {
-                    self.errorMessage = "프로필 저장 실패"
-                }
-            }
+        UserManager.shared.saveProfile(user: newUser) { success in
+            completion(success)
         }
-
     }
 }

@@ -47,7 +47,7 @@ extension KeyringScene {
 
                 // 일정 스피드 이상 스와이프 시 이펙트 발사 (쓰로틀링 적용 - 0.3초 간격)
                 let speed = hypot(velocity.dx, velocity.dy)
-                if speed > 2500 && (touch.timestamp - lastParticleTime) > 0.3 {
+                if speed > 1250 && (touch.timestamp - lastParticleTime) > 0.3 {
                     applyParticleEffect(particleId: currentParticleId)
                     lastParticleTime = touch.timestamp
                 }

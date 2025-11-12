@@ -241,10 +241,3 @@ extension BundleNameInputView {
         print("✅ [BundleNameInput] 번들 이미지 캐시 저장 완료: \(bundleName)")
     }
 }
-
-#Preview {
-    BundleNameInputView(
-        router: NavigationRouter(),
-        viewModel: CollectionViewModel()
-    )
-}

@@ -106,7 +106,3 @@ struct CopyCompletePopup: View {
         }
     }
 }
-
-#Preview {
-    CopyCompletePopup(isPresented: .constant(true))
-}

@@ -78,22 +78,29 @@ struct PackingPopup: View {
     @Binding var isPresented: Bool
     
     var body: some View {
-        Text("키링 포장 중...")
-            .typography(.suit17SB)
-            .foregroundColor(.black100)
-            .frame(width: 300, height: 94)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-            .transition(.scale.combined(with: .opacity))
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        isPresented = false
-                    }
+//        Text("키링 포장 중...")
+//            .typography(.suit17SB)
+//            .foregroundColor(.black100)
+//            .frame(width: 300, height: 94)
+//            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+//            .transition(.scale.combined(with: .opacity))
+
+        VStack(spacing: 19) {
+            Image("WalkingPresent") // 네이밍 미안합니다
+                .resizable()
+                .frame(width: 128, height: 191)
+            
+            Text("포장 중...")
+                .typography(.suit17SB)
+                .foregroundColor(.white100)
+        }
+        .transition(.scale.combined(with: .opacity))
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isPresented = false
                 }
             }
+        }
     }
-}
-
-#Preview {
-    PackingPopup(isPresented: .constant(true))
 }
