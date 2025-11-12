@@ -189,6 +189,7 @@
 		AA6298522EC233D2001576C0 /* BundleEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298512EC233D2001576C0 /* BundleEditView.swift */; };
 		AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298532EC39065001576C0 /* BundleCreateView.swift */; };
 		AA6298562EC3AD16001576C0 /* BundleItemCustomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */; };
+		AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */; };
 		AA9115082EB126A60026E9BC /* CarabinerItemTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
@@ -450,6 +451,7 @@
 		AA6298512EC233D2001576C0 /* BundleEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEditView.swift; sourceTree = "<group>"; };
 		AA6298532EC39065001576C0 /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
 		AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleItemCustomSheet.swift; sourceTree = "<group>"; };
+		AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerChangePopup.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerItemTile.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
@@ -866,6 +868,7 @@
 				AA9115072EB126A60026E9BC /* CarabinerItemTile.swift */,
 				AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */,
 				AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */,
+				AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */,
 			);
 			path = KeyringBundle;
 			sourceTree = "<group>";
@@ -1623,6 +1626,7 @@
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
+				AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
