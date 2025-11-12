@@ -116,6 +116,9 @@ extension CollectionKeyringPackageView {
             
             VStack(spacing: 0) {
                 
+                Spacer()
+                    .frame(height: 30)
+                
                 // 상단 상태 바
                 packageStatusBar
                 

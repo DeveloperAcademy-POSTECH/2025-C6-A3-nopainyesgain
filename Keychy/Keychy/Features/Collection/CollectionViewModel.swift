@@ -35,6 +35,7 @@ class CollectionViewModel {
     var maxBundleNameCount: Int = 9
     var selectedKeyringsForBundle: [Int: Keyring] = [:] // 번들 생성용 선택된 키링들
     var bundlePreviewScene: MultiKeyringScene?
+    var bundleCapturedImage: Data? // 캡처된 번들 이미지 (PNG 데이터)
     
     // Firestore에서 로드되는 실제 뭉치 목록 (초기 빈 배열)
     var bundles: [KeyringBundle] = []

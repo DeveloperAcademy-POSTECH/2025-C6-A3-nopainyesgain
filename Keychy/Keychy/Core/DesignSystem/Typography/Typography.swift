@@ -58,9 +58,11 @@ struct Typography {
     static let suit12M25 = Typography(font: .custom(.suitMedium, size: 12), lineSpacing: 10)
     static let suit12R25 = Typography(font: .custom(.suitRegular, size: 12), lineSpacing: 13)
     
+    /// 10
     static let suit10SB = Typography(font: .custom(.suitSemiBold, size: 10), lineSpacing: 0)
     
     /// 9
+    static let suit9B = Typography(font: .custom(.suitBold, size: 9), lineSpacing: 0)
     static let suit9SB = Typography(font: .custom(.suitSemiBold, size: 9), lineSpacing: 0)
 
     // MARK: - Nanum
@@ -82,6 +84,7 @@ struct Typography {
     
     // MARK: - NotoSans
     static let notosans10M = Typography(font: .custom(.notoSansMedium, size: 10), lineSpacing: 0)
+    static let notosans14SB = Typography(font: .custom(.notoSansSemiBold, size: 14), lineSpacing: 0)
     static let notosans14M = Typography(font: .custom(.notoSansMedium, size: 14), lineSpacing: 0)
     static let notosans14SB = Typography(font: .custom(.notoSansSemiBold, size: 14), lineSpacing: 0)
     static let notosans15B = Typography(font: .custom(.notoSansBold, size: 15), lineSpacing: 0)

@@ -200,7 +200,6 @@ struct MyPageView: View {
         
         // 각 alert가 뜰 때, backBtn 숨기기
         .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn)
-        .toolbar(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn ? .hidden : .visible, for: .navigationBar)
         .navigationTitle("마이페이지")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)

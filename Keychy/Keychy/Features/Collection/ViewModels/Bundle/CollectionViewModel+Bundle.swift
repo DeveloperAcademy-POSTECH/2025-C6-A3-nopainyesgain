@@ -191,19 +191,20 @@ extension CollectionViewModel {
     
     func createKeyringDataList(carabiner: Carabiner, geometry: CGSize) -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-        
+
         guard let bundle = selectedBundle else {
             return dataList
         }
-        
+
         // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
         for index in 0..<carabiner.maxKeyringCount {
             // 번들에 저장된 문서 id (없으면 "none")
             let docId = bundle.keyrings[index] ?? "none"
+
             if docId == "none" || docId.isEmpty {
                 continue
             }
-            
+
             guard let keyring = resolveKeyring(from: docId) else {
                 continue
             }

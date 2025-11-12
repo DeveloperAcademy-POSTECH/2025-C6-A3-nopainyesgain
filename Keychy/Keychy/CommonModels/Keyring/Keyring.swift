@@ -12,7 +12,7 @@ import FirebaseFirestore
 // TODO: - 바디, 체인, 링타입 추가 필요함
 struct Keyring: Identifiable, Equatable, Hashable {
     let id = UUID()
-    var firestoreId: String?  // Firestore documentId (위젯 캐시용)
+    var documentId: String?  // Firestore documentId (위젯 캐시용)
 
     var name: String
     var bodyImage: String
@@ -31,6 +31,9 @@ struct Keyring: Identifiable, Equatable, Hashable {
     var isPackaged: Bool
     var originalId: String?
     var chainLength: Int
+    var isNew: Bool
+    var senderId: String?
+    var receivedAt: Date?
     
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -48,7 +51,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
             "selectedChain": selectedChain,
             "isEditable": isEditable,
             "isPackaged": isPackaged,
-            "chainLength": chainLength
+            "chainLength": chainLength,
+            "isNew": isNew
         ]
         
         // Optional 필드 처리
@@ -61,6 +65,13 @@ struct Keyring: Identifiable, Equatable, Hashable {
         if let originalId = originalId {
             dict["originalId"] = originalId
         }
+        if let senderId = senderId {
+            dict["senderId"] = senderId
+        }
+        if let receivedAt = receivedAt {
+            dict["receivedAt"] = Timestamp(date: receivedAt)
+        }
+        
         
         return dict
     }
@@ -81,7 +92,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
         }
 
         // Firestore documentId 저장 (위젯 캐시 키로 사용)
-        self.firestoreId = documentId
+        self.documentId = documentId
 
         // 기본값이 있는 필드들
         self.name = name
@@ -100,11 +111,19 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.isEditable = data["isEditable"] as? Bool ?? true
         self.isPackaged = data["isPackaged"] as? Bool ?? false
         self.chainLength = data["chainLength"] as? Int ?? 5
+        self.isNew = data["isNew"] as? Bool ?? true
 
         // Optional 필드
         self.memo = data["memo"] as? String
         self.history = data["history"] as? [String]
         self.originalId = data["originalId"] as? String
+        self.senderId = data["senderId"] as? String
+        
+        if let receivedTimestamp = data["receivedAt"] as? Timestamp {
+            self.receivedAt = receivedTimestamp.dateValue()
+        } else {
+            self.receivedAt = nil
+        }
     }
     
     // MARK: - 일반 초기화 (새 키링 생성용)
@@ -120,7 +139,10 @@ struct Keyring: Identifiable, Equatable, Hashable {
          selectedRing: String,
          selectedChain: String,
          originalId: String? = nil,
-         chainLength: Int
+         chainLength: Int,
+         isNew: Bool = true,
+         senderId: String? = nil,
+         receivedAt: Date? = nil
     ) {
         self.name = name
         self.bodyImage = bodyImage
@@ -139,5 +161,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.isPackaged = false
         self.originalId = originalId
         self.chainLength = chainLength
+        self.isNew = isNew
+        self.senderId = senderId
+        self.receivedAt = receivedAt
     }
 }

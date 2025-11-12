@@ -50,19 +50,19 @@ struct CollectionCellView: View {
             .fill(.black20)
             .overlay {
                 VStack {
-                    ZStack {
-                        UnevenRoundedRectangle(
-                            topLeadingRadius: 10,
-                            topTrailingRadius: 10
+                    Text(info)
+                        .typography(.suit13M)
+                        .foregroundColor(.white100)
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.black60)
+                                .frame(height: 26)
                         )
-                        .fill(Color.black60)
-                        .frame(height: 26)
-                        
-                        Text(info)
-                            .typography(.suit13M)
-                            .foregroundColor(.white100)
-                            .frame(height: 26)
-                    }
+                        .padding(.top, 8)
+                        .padding(.horizontal, 8)
+                    
                     Spacer()
                 }
             }
@@ -95,7 +95,7 @@ struct CollectionCellView: View {
     /// 캐시 확인 후 없으면 백그라운드에서 캡처만 수행 (위젯용)
     private func checkAndCaptureKeyring() {
         // Firestore documentId가 없으면 캐싱 불가
-        guard let keyringID = keyring.firestoreId else {
+        guard let keyringID = keyring.documentId else {
             return
         }
 
@@ -161,7 +161,7 @@ struct CollectionCellView: View {
                 }
 
                 if !loadingCompleted {
-                    print("⚠️ [CollectionCell] 타임아웃 - 로딩 미완료: \(keyringID)")
+                    print("[CollectionCell] 타임아웃 - 로딩 미완료: \(keyringID)")
                 } else {
                     // 로딩 완료 후 추가 렌더링 대기 (200ms)
                     try? await Task.sleep(nanoseconds: 200_000_000)

@@ -149,7 +149,6 @@ struct CachedImagesDebugView: View {
     // MARK: - Load Cached Images
 
     private func loadCachedImages() {
-        print("🔍 [DebugView] 캐시 이미지 로드 시작")
 
         // App Group의 메타데이터 로드
         let availableKeyrings = KeyringImageCache.shared.loadAvailableKeyrings()
@@ -171,13 +170,11 @@ struct CachedImagesDebugView: View {
         }
 
         cachedImages = loadedImages
-        print("✅ [DebugView] \(cachedImages.count)개 이미지 로드 완료")
     }
 
     // MARK: - Delete Image
 
     private func deleteImage(id: String) {
-        print("🗑️ [DebugView] 이미지 삭제: \(id)")
         // 이미지와 메타데이터 모두 삭제
         KeyringImageCache.shared.removeKeyring(id: id)
         loadCachedImages()
@@ -186,7 +183,6 @@ struct CachedImagesDebugView: View {
     // MARK: - Clear All Cache
 
     private func clearAllCache() {
-        print("🗑️ [DebugView] 전체 캐시 삭제")
 
         // 모든 키링 메타데이터 삭제
         let keyrings = KeyringImageCache.shared.loadAvailableKeyrings()

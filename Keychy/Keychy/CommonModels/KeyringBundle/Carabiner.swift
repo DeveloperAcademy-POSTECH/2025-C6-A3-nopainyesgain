@@ -50,6 +50,13 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     /// 생성일
     let createdAt: Date
     
+    /// 카라비너 왼쪽상단 좌표
+    let carabinerX: CGFloat
+    
+    let carabinerY: CGFloat
+    
+    let carabinerWidth: CGFloat
+    
     /// 키링 x위치 배열
     let keyringXPosition: [CGFloat]
     

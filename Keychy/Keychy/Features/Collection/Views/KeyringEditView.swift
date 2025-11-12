@@ -105,7 +105,7 @@ struct KeyringEditView: View {
                 .zIndex(200)
             }
         }
-        .navigationTitle("키링 편집")
+        .navigationTitle("정보 수정")
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -162,7 +162,7 @@ extension KeyringEditView {
                     Image("recCheck")
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundStyle(.gray600)
+                        .foregroundStyle(.gray300)
 
                 }
                 .disabled(true)

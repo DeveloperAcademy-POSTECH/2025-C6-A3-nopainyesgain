@@ -216,7 +216,8 @@ extension KeyringCompleteView {
             selectedTemplate: templateId,
             selectedRing: "basic",
             selectedChain: "basic",
-            chainLength: 5
+            chainLength: 5,
+            isNew: true
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
@@ -295,6 +296,7 @@ extension KeyringCompleteView {
         selectedRing: String,
         selectedChain: String,
         chainLength: Int,
+        isNew: Bool,
         completion: @escaping (Bool, String?) -> Void
     ) {
         let newKeyring = Keyring(
@@ -309,7 +311,8 @@ extension KeyringCompleteView {
             selectedTemplate: selectedTemplate,
             selectedRing: selectedRing,
             selectedChain: selectedChain,
-            chainLength: chainLength
+            chainLength: chainLength,
+            isNew: isNew
         )
         
         let keyringData = newKeyring.toDictionary()

@@ -60,6 +60,7 @@ struct MainTabView: View {
                 .tag(3)
         }
         .tint(.main500)  // 선택된 아이템 색상
+        .tabBarMinimizeBehavior(.onScrollDown)
         .onAppear {
             checkPendingDeepLink()
         }

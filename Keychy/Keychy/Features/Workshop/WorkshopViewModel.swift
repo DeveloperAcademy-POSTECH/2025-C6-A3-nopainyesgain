@@ -20,9 +20,6 @@ enum EffectFilterType: String, CaseIterable {
     case sound = "사운드"
     case particle = "파티클"
 }
-
-// CommonFilterType은 더 이상 사용하지 않음 - 동적 태그로 대체
-
 // MARK: - WorkshopItem Protocol
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
