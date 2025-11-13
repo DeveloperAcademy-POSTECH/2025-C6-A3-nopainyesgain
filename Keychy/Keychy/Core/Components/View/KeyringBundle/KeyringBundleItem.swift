@@ -44,7 +44,7 @@ struct KeyringBundleItem: View {
                             .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal, 10)
-                    .padding(.top, 8)
+                    .padding(.top, 10)
                 }
             }
             .frame(height: 245)
@@ -55,6 +55,7 @@ struct KeyringBundleItem: View {
                     .foregroundStyle(.black100)
                 Spacer()
             }
+            
             HStack {
                 Text("걸린 키링")
                     .typography(.suit12M)
@@ -104,7 +105,6 @@ struct KeyringBundleItem: View {
         if let imageData = BundleImageCache.shared.load(for: documentId),
            let uiImage = UIImage(data: imageData) {
             cachedImage = Image(uiImage: uiImage)
-//            print("✅ [BundleItem] 캐시 이미지 로드: \(bundle.name)")
         } else {
             print("⚠️ [BundleItem] 캐시 이미지 없음: \(bundle.name) - 재캡처 시작")
             // 캐시가 없으면 다시 캡처
