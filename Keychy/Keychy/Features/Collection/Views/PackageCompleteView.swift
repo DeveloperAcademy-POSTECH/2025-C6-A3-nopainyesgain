@@ -41,41 +41,47 @@ struct PackageCompleteView: View {
     let postOfficeId: String
     
     var body: some View {
-        ZStack {
-            Image("GreenBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                Text("키링 포장이 완료되었어요!")
-                    .typography(.suit20B)
-                    .foregroundColor(.black100)
-                    .padding(.top, 16)
-                    .padding(.bottom, 9)
+        GeometryReader { geometry in
+            ZStack {
+                Image("GreenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 
-                Text("링크나 QR로 바로 공유할 수 있어요.")
-                    .typography(.suit16M)
-                    .foregroundColor(.black100)
-                    .padding(.bottom, 42)
+                VStack(spacing: 0) {
+                    
+                    // 상단 상태 바
+                    Text("키링 포장이 완료되었어요!")
+                        .typography(.suit20B)
+                        .foregroundColor(.black100)
+                        .padding(.top, 16)
+                        .padding(.bottom, 9)
+                    
+                    Text("링크나 QR로 바로 공유할 수 있어요.")
+                        .typography(.suit16M)
+                        .foregroundColor(.black100)
+                        .padding(.bottom, 42)
+                    
+                    pageScrollView
+                    
+                    pageIndicator
+                    
+                    Spacer()
+                        .frame(height: 24)
+                    
+                    imageSaveSection
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
                 
-                pageScrollView
+                if showImageSaved {
+                    imageSaveAlert
+                }
                 
-                pageIndicator
-                
-                Spacer()
-                    .frame(height: 24)
-                
-                imageSaveSection
-            }
-            .padding(.horizontal, 20)
-            
-            if showImageSaved {
-                imageSaveAlert
-            }
-            
-            if showLinkCopied {
-                linkCopiedAlert
+                if showLinkCopied {
+                    linkCopiedAlert
+                }
             }
         }
         .navigationBarBackButtonHidden(true)

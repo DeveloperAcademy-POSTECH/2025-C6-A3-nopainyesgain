@@ -108,7 +108,7 @@ extension PackageCompleteView {
                     .frame(width: 220, height: 270)
                     .offset(y: -15)
                 
-                // ⭐ 이미 캡처된 PNG 이미지 사용
+                // 이미 캡처된 PNG 이미지 사용
                 if let sceneImage = capturedSceneImage {
                     Image(uiImage: sceneImage)
                         .resizable()
