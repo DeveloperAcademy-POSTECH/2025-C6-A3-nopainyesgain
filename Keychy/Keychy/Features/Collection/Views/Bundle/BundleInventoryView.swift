@@ -71,7 +71,7 @@ extension BundleInventoryView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("+") {
-                // action
+                router.push(.bundleCreateView)
             }
         }
     }
