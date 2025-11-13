@@ -131,7 +131,7 @@ extension KeyringScene {
 //        let gapByScreen = size.height * 0.01
 //        let gapByBody = bodyFrame.height * 0.03
 //        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 30.0
+        let connectGap = 25.0
         //let gap = gapByScreen
 
         // 바디 중심 Y를 계산:
@@ -139,6 +139,7 @@ extension KeyringScene {
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+        body.zPosition = -1  // Body는 체인 아래
         addChild(body)
         bodyNode = body
 

@@ -434,11 +434,11 @@ class MultiKeyringScene: SKScene {
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-        let connectGap = 35.0
+        let connectGap = 25.0
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
-        body.zPosition = baseZPosition + 1  // Body는 Ring 바로 위
+        body.zPosition = baseZPosition - 2  // Body는 체인 아래
 
         // Body에 고유한 물리 마스크 적용
         let categoryBitMask: UInt32 = UInt32(1 << index)
