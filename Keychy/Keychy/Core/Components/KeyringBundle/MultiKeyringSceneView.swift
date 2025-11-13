@@ -118,7 +118,7 @@ extension MultiKeyringSceneView {
         )
 
         newScene.size = defaultSceneSize
-        newScene.scaleMode = .resizeFill
+        newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
 
