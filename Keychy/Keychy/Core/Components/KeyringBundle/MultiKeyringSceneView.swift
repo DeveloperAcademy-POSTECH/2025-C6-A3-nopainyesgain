@@ -69,7 +69,12 @@ struct MultiKeyringSceneView: View {
             sceneView
             particleEffectsView
         }
-        .onAppear { setupScene() }
+        .onAppear {
+            // 씬이 없을 때만 초기 설정
+            if scene == nil {
+                setupScene()
+            }
+        }
         .onChange(of: keyringDataList) { _, _ in setupScene() }
         .onChange(of: currentCarabinerType) { _, _ in setupScene() }
     }
@@ -107,8 +112,11 @@ extension MultiKeyringSceneView {
 
     /// 씬 초기화 및 설정
     private func setupScene() {
-        // 씬 교체 시 준비 상태 리셋
-        isSceneReady = false
+        // 씬이 실제로 변경될 때만 준비 상태 리셋
+        let shouldReset = scene != nil
+        if shouldReset {
+            isSceneReady = false
+        }
 
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
