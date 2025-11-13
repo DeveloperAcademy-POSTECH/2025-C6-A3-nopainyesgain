@@ -152,9 +152,7 @@ struct BundleSelectCarabinerView: View {
             let y = carabiner.keyringYPosition[index] * imageRect.height
             CarabinerAddKeyringButton(
                 isSelected: false,
-                hasKeyring: false,
-                action: {},
-                secondAction: {}
+                action: {}
             )
             .position(x: x, y: y)
             .disabled(true)
