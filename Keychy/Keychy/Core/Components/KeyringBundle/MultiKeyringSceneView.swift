@@ -87,10 +87,8 @@ extension MultiKeyringSceneView {
             if let scene {
                 SpriteView(scene: scene, options: [.allowsTransparency])
                     .ignoresSafeArea()
-                    .opacity(isSceneReady ? 1 : 0)
-                    .animation(.easeOut(duration: 0.4), value: isSceneReady)
             } else {
-                Color.clear
+                Text("뭉치가 하나도 없어요!")
             }
         }
     }
@@ -135,16 +133,8 @@ extension MultiKeyringSceneView {
         newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
-        newScene.onAllKeyringsReady = handleSceneReady
 
         scene = newScene
-    }
-
-    /// 씬 준비 완료 처리
-    private func handleSceneReady() {
-        DispatchQueue.main.async {
-            isSceneReady = true
-        }
     }
 
     /// 파티클 효과 재생 처리

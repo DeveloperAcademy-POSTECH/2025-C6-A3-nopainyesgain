@@ -42,12 +42,6 @@ class MultiKeyringScene: SKScene {
     // MARK: - 파티클 효과 콜백
     var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
 
-    // MARK: - 씬 준비 완료 콜백
-    var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
-
-    // MARK: - 씬 로딩 상태
-    private var isSceneReady: Bool = false
-
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
     var currentRingType: RingType = .basic
@@ -622,7 +616,7 @@ class MultiKeyringScene: SKScene {
     private func enablePhysics() {
         // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-
+        
         // 카라비너 타입별 Ring 물리 설정
         for (_, ring) in ringNodes {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -633,7 +627,7 @@ class MultiKeyringScene: SKScene {
                 ring.physicsBody?.isDynamic = false
             }
         }
-
+        
         // 카라비너 타입별 체인 물리 활성화
         for (_, chains) in chainNodesByKeyring {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -658,17 +652,13 @@ class MultiKeyringScene: SKScene {
                 }
             }
         }
-
+        
         // 모든 바디의 물리 활성화
         for (_, body) in bodyNodes {
             body.physicsBody?.isDynamic = true
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
         }
-
-        // 씬 준비 완료
-        isSceneReady = true
-        onAllKeyringsReady?()
     }
 
     // MARK: - Touch Handling
