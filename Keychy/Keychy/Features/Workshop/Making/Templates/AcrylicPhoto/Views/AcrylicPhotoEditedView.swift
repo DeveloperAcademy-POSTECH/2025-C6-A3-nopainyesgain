@@ -41,7 +41,7 @@ struct AcrylicPhotoEditedView: View {
         ZStack {
             imageTransitionView
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .blur(radius: showCheckmark ? 10 : 0)
+                .blur(radius: showCheckmark ? 15 : 0)
                 .animation(.easeInOut(duration: 0.3), value: showCheckmark)
 
             if showCheckmark {
