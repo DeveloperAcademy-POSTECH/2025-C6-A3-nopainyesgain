@@ -27,7 +27,7 @@ struct BundleItemCustomSheet<Content: View>: View {
             VStack(spacing: 0) {
                 Spacer()
                 RoundedRectangle(cornerRadius: 3)
-                    .fill(Color.gray.opacity(0.5))
+                    .fill(.gray100)
                     .frame(width: 40, height: 4)
                 Spacer()
             }
