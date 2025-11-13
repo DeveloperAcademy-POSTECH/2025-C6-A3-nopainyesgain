@@ -17,6 +17,11 @@ struct KeyringBundleItem: View {
     // 고정 캡처 크기 (iPhone 14 기준)
     private let captureSize = CGSize(width: 390, height: 844)
 
+    // 실제로 걸린 키링 개수 (none과 빈 문자열 제외)
+    private var actualKeyringCount: Int {
+        bundle.keyrings.filter { $0 != "none" && !$0.isEmpty }.count
+    }
+
     var body: some View {
         VStack(spacing: 5) {
             ZStack(alignment: .top) {
@@ -55,7 +60,7 @@ struct KeyringBundleItem: View {
                     .typography(.suit12M)
                     .foregroundStyle(.gray500)
                 Spacer()
-                Text("\(bundle.keyrings.count) / \(bundle.maxKeyrings) 개")
+                Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
                     .typography(.suit12M)
                     .foregroundStyle(.main500)
             }
