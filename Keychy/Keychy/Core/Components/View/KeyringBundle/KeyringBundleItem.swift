@@ -22,10 +22,7 @@ struct KeyringBundleItem: View {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.gray.opacity(0.2))
-                    )
+
                 if bundle.isMain {
                     UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
                         .fill(.pink100.opacity(0.7))
@@ -39,6 +36,8 @@ struct KeyringBundleItem: View {
                     
                 }
             }
+            .frame(height: 245)
+            .cornerRadius(10)
             
             HStack {
                 Text(bundle.name)
@@ -75,7 +74,7 @@ struct KeyringBundleItem: View {
             } else if let cachedImage = cachedImage {
                 cachedImage
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
             } else {
                 // 캐시 로딩 중 또는 실패 시 플레이스홀더
                 Image(.ddochi)
