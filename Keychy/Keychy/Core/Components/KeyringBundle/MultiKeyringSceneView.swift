@@ -83,6 +83,10 @@ struct MultiKeyringSceneView: View {
                 setupScene()
             }
         }
+        .onDisappear {
+            // 다른 뷰로 이동할 때 메모리 해제
+            cleanupScene()
+        }
         .onChange(of: keyringDataList) { _, _ in
             isSceneReady = false
             loadBackgroundImage()
@@ -183,6 +187,27 @@ extension MultiKeyringSceneView {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             isSceneReady = true
         }
+    }
+
+    /// 씬 정리 및 메모리 해제
+    private func cleanupScene() {
+        // Scene의 모든 자식 노드 제거
+        scene?.removeAllChildren()
+
+        // Scene의 모든 액션 제거
+        scene?.removeAllActions()
+
+        // Scene을 nil로 설정하여 메모리 해제
+        scene = nil
+
+        // 배경 이미지도 해제
+        backgroundImage = nil
+
+        // 파티클 효과 정리
+        particleEffects.removeAll()
+
+        // 상태 초기화
+        isSceneReady = false
     }
 
     /// 파티클 효과 재생 처리
