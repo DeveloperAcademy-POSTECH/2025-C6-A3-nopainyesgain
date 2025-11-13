@@ -138,17 +138,17 @@ class MultiKeyringScene: SKScene {
     // MARK: - Shadow Helper
 
     /// 노드에 수직 그림자 추가 (z축 위에서 내려오는 광원)
-    private func addShadowToNode(_ node: SKSpriteNode, offsetY: CGFloat = -8) {
+    private func addShadowToNode(_ node: SKSpriteNode, offsetX: CGFloat = 8, offsetY: CGFloat = -8) {
         // 원본 노드를 복제해서 그림자로 사용
         guard let shadowNode = node.copy() as? SKSpriteNode else { return }
 
-        // 그림자 설정 (더 연하게)
-        shadowNode.alpha = 0.15
+        // 그림자 설정 (살짝 더 진하게)
+        shadowNode.alpha = 0.25
         shadowNode.color = .black
         shadowNode.colorBlendFactor = 1.0
 
         // z축에서 수직으로 떨어지는 그림자 (약간 아래로만 이동)
-        shadowNode.position = CGPoint(x: 0, y: offsetY)
+        shadowNode.position = CGPoint(x: offsetX, y: offsetY)
         shadowNode.zPosition = 0  // effectNode 내에서 기본 위치
 
         // 물리 바디 제거 (충돌 방지)
@@ -158,11 +158,14 @@ class MultiKeyringScene: SKScene {
         let effectNode = SKEffectNode()
         effectNode.shouldRasterize = true
         effectNode.shouldEnableEffects = true
-        effectNode.zPosition = -10  // 원본 노드보다 확실히 뒤에
+
+        // 원본 노드 바로 뒤에 위치 (레이어 순서 유지)
+        // 부모 노드의 zPosition - 0.5로 설정하여 다른 노드들과의 순서도 고려
+        effectNode.zPosition = -0.5
 
         // Gaussian Blur 필터
         if let blurFilter = CIFilter(name: "CIGaussianBlur") {
-            blurFilter.setValue(3.0, forKey: kCIInputRadiusKey)
+            blurFilter.setValue(4.0, forKey: kCIInputRadiusKey)
             effectNode.filter = blurFilter
         }
 
@@ -204,7 +207,7 @@ class MultiKeyringScene: SKScene {
             self.addChild(carabinerNode)
 
             // 수직 그림자 추가
-            self.addShadowToNode(carabinerNode, offsetY: -10)
+            self.addShadowToNode(carabinerNode, offsetX: 8, offsetY: -8)
 
             // 카라비너 뒷면 노드 저장
             self.carabinerBackNode = carabinerNode
@@ -241,9 +244,6 @@ class MultiKeyringScene: SKScene {
             carabinerNode.alpha = 0
 
             self.addChild(carabinerNode)
-
-            // 수직 그림자 추가
-            self.addShadowToNode(carabinerNode, offsetY: -10)
 
             // 카라비너 앞면 노드 저장
             self.carabinerFrontNode = carabinerNode
@@ -342,7 +342,7 @@ class MultiKeyringScene: SKScene {
             self.addChild(ring)
 
             // 수직 그림자 추가
-            self.addShadowToNode(ring, offsetY: -6)
+            self.addShadowToNode(ring, offsetX: 4, offsetY: -8)
 
             // Ring 노드 저장
             self.ringNodes[data.index] = ring
@@ -415,7 +415,7 @@ class MultiKeyringScene: SKScene {
                 self.addChild(chain)
 
                 // 수직 그림자 추가
-                self.addShadowToNode(chain, offsetY: -5)
+                self.addShadowToNode(chain, offsetX: 4, offsetY: -8)
             }
 
             // Chain 노드 저장
@@ -515,7 +515,7 @@ class MultiKeyringScene: SKScene {
 
         // 수직 그림자 추가 (SKSpriteNode인 경우에만)
         if let spriteBody = body as? SKSpriteNode {
-            addShadowToNode(spriteBody, offsetY: -8)
+            addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
         }
 
         // Body 노드 저장
