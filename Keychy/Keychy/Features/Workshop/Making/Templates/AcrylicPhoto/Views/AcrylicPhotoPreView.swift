@@ -31,6 +31,14 @@ struct AcrylicPhotoPreView: View {
             router: router,
             showDeleteButton: showDeleteButton
         )
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                BackToolbarButton {
+                    router.pop()
+                }
+            }
+        }
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)
@@ -83,11 +91,4 @@ struct AcrylicPhotoPreView: View {
             }
         }
     }
-}
-
-#Preview {
-    AcrylicPhotoPreView(
-        router: NavigationRouter<WorkshopRoute>(),
-        viewModel: AcrylicPhotoVM()
-    )
 }

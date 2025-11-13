@@ -19,7 +19,7 @@ struct PurchaseFailAlert: View {
                 Image("bangMark")
                     .padding(.vertical, 4)
 
-                Text("열쇠가 부족합니다!")
+                Text("코인이 부족해요")
                     .typography(.suit20B)
                     .foregroundStyle(.black100)
                     .fixedSize(horizontal: true, vertical: false)

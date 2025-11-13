@@ -411,3 +411,11 @@ extension CoinChargeView {
     }
 }
 
+// MARK: - PreferenceKey
+struct PurchaseSheetHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 301
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+

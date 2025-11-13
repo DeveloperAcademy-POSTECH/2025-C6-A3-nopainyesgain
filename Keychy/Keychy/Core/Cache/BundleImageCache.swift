@@ -230,10 +230,10 @@ class BundleImageCache {
                 return
             }
 
-            for (index, file) in files.enumerated() {
-                let fileName = file.lastPathComponent
+            for (_, file) in files.enumerated() {
+                _ = file.lastPathComponent
                 let fileSize = (try? fileManager.attributesOfItem(atPath: file.path)[.size] as? Int64) ?? 0
-                let sizeString = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
+                _ = ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)
 
             }
 
@@ -241,7 +241,7 @@ class BundleImageCache {
                 let size = (try? fileManager.attributesOfItem(atPath: file.path)[.size] as? Int64) ?? 0
                 return sum + size
             }
-            let totalSizeString = ByteCountFormatter.string(fromByteCount: totalSize, countStyle: .file)
+            _ = ByteCountFormatter.string(fromByteCount: totalSize, countStyle: .file)
 
         } catch {
             print("❌ [BundleCache] 파일 목록 조회 실패: \(error.localizedDescription)")

@@ -63,18 +63,16 @@ struct AcrylicPhotoCropView: View {
 extension AcrylicPhotoCropView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button {
+            BackToolbarButton {
                 viewModel.resetImageData()
                 router.pop()
-            } label: {
-                Image(systemName: "chevron.left")
             }
         }
     }
 
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("다음") {
+            NextToolbarButton {
                 guard let cropped = viewModel.cropImage(
                     image: viewModel.selectedImage!,
                     cropArea: viewModel.cropArea,
