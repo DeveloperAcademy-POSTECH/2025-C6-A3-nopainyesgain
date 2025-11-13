@@ -41,6 +41,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     .clipped()
                     .ignoresSafeArea()
                     .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
+                    .blur(radius: showImageSaved ? 15 : 0)
                 
                 VStack(spacing: 0) {
                     // 키링 씬
@@ -58,7 +59,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                         .opacity(showSaveButton ? 1 : 0)
                         .animation(.easeInOut(duration: 0.3), value: showSaveButton)
                 }
-                .blur(radius: showImageSaved ? 10 : 0)
+                .blur(radius: showImageSaved ? 15 : 0)
 
                 if showImageSaved {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
@@ -68,7 +69,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                 // 커스텀 네비게이션 바
                 customNavigationBar
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .blur(radius: showImageSaved ? 10 : 0)
+                    .blur(radius: showImageSaved ? 15 : 0)
             }
         }
         .ignoresSafeArea()

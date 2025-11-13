@@ -76,15 +76,19 @@ extension RecordingSheet {
             recorder.cancelRecording()
         } label: {
             HStack(spacing: 4) {
-                Image(!recorder.isRecording ? .recDelete : .recDeleteFill)
+                if recorder.hasRecording() && !recorder.isRecording {
+                    Image("recDeleteFill")
+                } else {
+                    Image("recDelete")
+                }
                 
                 Text("삭제")
                     .typography(.suit14M)
-                    .foregroundStyle(!recorder.isRecording ? .gray600 : .gray200)
+                    .foregroundStyle(recorder.hasRecording() && !recorder.isRecording ? .gray600 : .gray200)
             }
         }
         .buttonStyle(.plain)
-        .disabled(!recorder.hasRecording()) // 녹음 파일 없으면 비활성화
+        .disabled(!recorder.hasRecording() || recorder.isRecording)
     }
     
     // 녹음 재생 버튼

@@ -130,7 +130,7 @@ extension KeyringCustomizingView {
                 showPurchaseSuccessAlert = false
             }
 
-        } catch let error as NSError {
+        } catch _ as NSError {
             await MainActor.run {
                 // 프로그레스 닫기
                 showPurchaseProgress = false
