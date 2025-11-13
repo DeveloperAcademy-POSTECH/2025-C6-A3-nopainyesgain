@@ -13,8 +13,8 @@ struct BundleItemCustomSheet<Content: View>: View {
     let screenHeight: CGFloat
     
     // 화면 높이 기준 비율
-    private let smallRatio: CGFloat = 0.1
-    private let mediumRatio: CGFloat = 0.43  
+    private let smallRatio: CGFloat = 0.05
+    private let mediumRatio: CGFloat = 0.43
     private let largeRatio: CGFloat = 0.8
     
     var body: some View {
@@ -23,13 +23,18 @@ struct BundleItemCustomSheet<Content: View>: View {
         let largeHeight = screenHeight * largeRatio
         
         VStack(spacing: 10) {
-            RoundedRectangle(cornerRadius: 3)
-                .fill(Color.gray.opacity(0.5))
-                .frame(width: 40, height: 4)
-                .padding(.top, 8)
-                .padding(.bottom, 8)
-                .contentShape(Rectangle())
-                .highPriorityGesture(dragGesture)
+
+            VStack(spacing: 0) {
+                Spacer()
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color.gray.opacity(0.5))
+                    .frame(width: 40, height: 4)
+                Spacer()
+            }
+            .frame(height: 30)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .highPriorityGesture(dragGesture)
             
             ScrollView {
                 content
