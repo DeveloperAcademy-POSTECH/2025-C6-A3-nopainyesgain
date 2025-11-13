@@ -79,6 +79,15 @@ class SoundEffectComponent {
         audioQueue.async { [weak self] in
             guard let self = self else { return }
 
+            // 오디오 세션 설정 (무음 모드에서도 재생)
+            do {
+                let audioSession = AVAudioSession.sharedInstance()
+                try audioSession.setCategory(.playback, mode: .default, options: [])
+                try audioSession.setActive(true)
+            } catch {
+                print("Error setting up audio session: \(error.localizedDescription)")
+            }
+
             // 로드된 audioPlayers에 있으면 바로 재생
             if let player = self.audioPlayers[soundId] {
                 player.currentTime = 0  // 처음부터 재생
@@ -109,9 +118,9 @@ class SoundEffectComponent {
             guard let self = self else { return }
 
             do {
-                // 오디오 세션 활성화 (재생용)
+                // 오디오 세션 활성화 (무음 모드에서도 재생)
                 let audioSession = AVAudioSession.sharedInstance()
-                try audioSession.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+                try audioSession.setCategory(.playback, mode: .default, options: [])
                 try audioSession.setActive(true)
 
                 // 원격 URL인 경우 다운로드 후 재생

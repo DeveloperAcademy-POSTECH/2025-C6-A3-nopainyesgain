@@ -75,18 +75,22 @@ struct KeyringChainComponent {
         baseZPosition: CGFloat = 0
     ) -> SKSpriteNode {
         let texture = SKTexture(image: image)
-        
+
         let node = SKSpriteNode(texture: texture)
         node.size = link.size
         node.position = position
-        
+
+        // 좁은 체인(width 5)이 넓은 체인(width 18)보다 항상 위에 쌓이도록
+        let isNarrowChain = link.width < 10  // 좁은 체인 판별
+        let narrowChainOffset: CGFloat = isNarrowChain ? 0.5 : 0.0
+
         // 카라비너 타입에 따라 zPosition 조정
         if let carabinerType = carabinerType, carabinerType == .plain {
             // Plain: 체인이 링 뒤로 가도록 (Ring이 baseZPosition이면 체인은 더 낮게)
-            node.zPosition = baseZPosition - 1 - CGFloat(index) * 0.1
+            node.zPosition = baseZPosition - 1 - CGFloat(index) * 0.1 + narrowChainOffset
         } else {
             // Hamburger: 체인이 링 앞으로 (기존 방식)
-            node.zPosition = baseZPosition + 2 + CGFloat(index) * 0.1
+            node.zPosition = baseZPosition + 2 + CGFloat(index) * 0.1 + narrowChainOffset
         }
         
         // 물리 바디 추가 (기본값으로 설정, 씬에서 조정됨)

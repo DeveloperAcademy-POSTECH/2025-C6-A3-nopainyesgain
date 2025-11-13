@@ -17,28 +17,37 @@ struct KeyringBundleItem: View {
     // 고정 캡처 크기 (iPhone 14 기준)
     private let captureSize = CGSize(width: 390, height: 844)
 
+    // 실제로 걸린 키링 개수 (none과 빈 문자열 제외)
+    private var actualKeyringCount: Int {
+        bundle.keyrings.filter { $0 != "none" && !$0.isEmpty }.count
+    }
+
     var body: some View {
         VStack(spacing: 5) {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.gray.opacity(0.2))
-                    )
+                    .frame(height: 245)
+                    .cornerRadius(10)
+
                 if bundle.isMain {
-                    UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
-                        .fill(.pink100.opacity(0.7))
-                        .overlay(
-                            Text("대표")
-                                .typography(.suit13M)
-                                .foregroundStyle(.white100)
-                        )
-                        .frame(height: 26)
-                        .frame(maxWidth: .infinity)
-                    
+                    HStack {
+                        Rectangle()
+                            .fill(.mainOpacity80)
+                            .overlay(
+                                Text("대표")
+                                    .typography(.suit13M)
+                                    .foregroundStyle(.white100)
+                            )
+                            .cornerRadius(20)
+                            .frame(height: 24)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.top, 10)
                 }
             }
+            .frame(height: 245)
             
             HStack {
                 Text(bundle.name)
@@ -46,12 +55,13 @@ struct KeyringBundleItem: View {
                     .foregroundStyle(.black100)
                 Spacer()
             }
+            
             HStack {
                 Text("걸린 키링")
                     .typography(.suit12M)
                     .foregroundStyle(.gray500)
                 Spacer()
-                Text("\(bundle.keyrings.count) / \(bundle.maxKeyrings) 개")
+                Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
                     .typography(.suit12M)
                     .foregroundStyle(.main500)
             }
@@ -75,12 +85,9 @@ struct KeyringBundleItem: View {
             } else if let cachedImage = cachedImage {
                 cachedImage
                     .resizable()
-                    .scaledToFit()
-            } else {
-                // 캐시 로딩 중 또는 실패 시 플레이스홀더
-                Image(.ddochi)
-                    .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
+                    .offset(y: 30)   // 아래로 30pt 이동
+                    .clipped()
             }
         }
     }
@@ -98,7 +105,6 @@ struct KeyringBundleItem: View {
         if let imageData = BundleImageCache.shared.load(for: documentId),
            let uiImage = UIImage(data: imageData) {
             cachedImage = Image(uiImage: uiImage)
-//            print("✅ [BundleItem] 캐시 이미지 로드: \(bundle.name)")
         } else {
             print("⚠️ [BundleItem] 캐시 이미지 없음: \(bundle.name) - 재캡처 시작")
             // 캐시가 없으면 다시 캡처
@@ -176,10 +182,10 @@ struct KeyringBundleItem: View {
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,  // 카라비너 타입 전달
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth,
-            customSize: captureSize
         ) {
             // BundleImageCache에 저장
             BundleImageCache.shared.syncBundle(
