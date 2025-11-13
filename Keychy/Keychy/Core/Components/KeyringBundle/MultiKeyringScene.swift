@@ -395,7 +395,7 @@ class MultiKeyringScene: SKScene {
         baseZPosition: CGFloat,
         completion: @escaping () -> Void
     ) {
-        KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
+        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else {
                 completion()  // body 생성 실패 시에도 completion 호출
                 return

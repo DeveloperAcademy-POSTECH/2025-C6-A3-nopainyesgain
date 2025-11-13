@@ -371,7 +371,7 @@ class MultiKeyringCaptureScene: SKScene {
         bodyImageURL: String,
         baseZPosition: CGFloat
     ) {
-        KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
+        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else {
                 self?.checkLoadingComplete()
                 return
