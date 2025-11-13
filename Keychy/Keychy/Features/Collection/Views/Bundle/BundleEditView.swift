@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import SceneKit
 import FirebaseFirestore
 
 struct BundleEditView: View {
@@ -133,21 +134,19 @@ struct BundleEditView: View {
         }
         .onChange(of: newSelectedBackground) { _, newBackground in
             guard newBackground != nil else { return }
-            Task {
-                await loadKeyringData()
-            }
+            // 배경 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
+            updateKeyringDataList()
         }
         .onChange(of: newSelectedCarabiner) { _, newCarabiner in
             guard newCarabiner != nil else { return }
-            Task {
-                await loadKeyringData()
-            }
+            // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
+            updateKeyringDataList()
         }
     }
     
     // MARK: - 키링 편집 뷰 컴포넌트들
     
-    /// 키링 편집이 가능한 씬 뷰
+    /// 키링 편집 씬 뷰
     private func keyringEditSceneView(bundle: KeyringBundle, background: BackgroundViewData, carabiner: CarabinerViewData) -> some View {
         ZStack(alignment: .top) {
             // MultiKeyringScene
@@ -207,18 +206,10 @@ struct BundleEditView: View {
     private func keyringSelectionSheet(geo: GeometryProxy) -> some View {
         VStack {
             HStack {
-                Button {
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = false
-                    }
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.gray600)
-                }
                 Spacer()
                 Text("키링 선택")
-                    .typography(.suit17B)
-                    .foregroundStyle(.gray600)
+                    .typography(.suit16B)
+                    .foregroundStyle(.black100)
                 Spacer()
                 // 완료 버튼: 닫기만
                 Button {
@@ -235,7 +226,7 @@ struct BundleEditView: View {
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 10) {
                     ForEach(viewModel.keyring, id: \.self) { keyring in
-                        keyringCell(keyring: keyring)
+                        keyringCell(keyring: keyring, geo: geo)
                     }
                 }
             }
@@ -252,9 +243,13 @@ struct BundleEditView: View {
     }
     
     /// 키링 셀 (체크 토글 + 시트 유지)
-    private func keyringCell(keyring: Keyring) -> some View {
+    private func keyringCell(keyring: Keyring, geo: GeometryProxy) -> some View {
         // 현재 선택된 위치에 이 키링이 선택되어 있는지
         let isSelectedHere: Bool = selectedKeyrings[selectedPosition]?.id == keyring.id
+        // 다른 위치에 이미 선택된 키링인지 체크
+        let isSelectedElsewhere: Bool = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
+        let widthSize = (geo.size.width - 60) / 3
+        let heightSize = widthSize * 4/3
         
         return Button {
             // 토글
@@ -262,7 +257,8 @@ struct BundleEditView: View {
                 // 해제
                 selectedKeyrings[selectedPosition] = nil
                 keyringOrder.removeAll { $0 == selectedPosition }
-            } else {
+            } else if !isSelectedElsewhere {
+                // 중복이 아닐 때만 선택 가능
                 // 기존 있으면 순서 제거 후 교체
                 if selectedKeyrings[selectedPosition] != nil {
                     keyringOrder.removeAll { $0 == selectedPosition }
@@ -270,37 +266,57 @@ struct BundleEditView: View {
                 selectedKeyrings[selectedPosition] = keyring
                 keyringOrder.append(selectedPosition)
             }
-            // 씬에 즉시 반영
+            // 중복인 경우 아무것도 하지 않음 (선택되지 않음)
             updateKeyringDataList()
-            // 시트는 닫지 않음
         } label: {
             ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 8) {
+                VStack(spacing: 10) {
                     CollectionCellView(keyring: keyring)
+                        .frame(width: widthSize, height: heightSize)
                         .cornerRadius(10)
                     
-                    Text("\(keyring.name) 키링")
-                        .typography(.suit14SB18)
-                        .foregroundStyle(.black100)
+                    Text("\(keyring.name)")
+                        .typography(isSelectedHere ? .notosans14SB : .notosans14M)
+                        .foregroundStyle(isSelectedHere ? .main500 :  .black100)
                 }
                 
-                if isSelectedHere {
-                    // 체크 뱃지
-                    ZStack {
-                        Circle()
-                            .fill(Color(.systemPurple))
-                            .frame(width: 28, height: 28)
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(.white)
-                            .font(.system(size: 14, weight: .bold))
+                // 체크 뱃지
+                ZStack {
+                    Circle()
+                        .stroke(.white100)
+                        .fill(isSelectedHere ? .main500 : .clear)
+                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 0)
+                        .frame(width: 26.14, height: 26.14)
+                    Image(.recCheck)
+                        .foregroundStyle(.white)
+                }
+                .padding(.bottom, 35.86)
+                .padding(.trailing, 8.86)
+                
+                // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
+                if isSelectedElsewhere {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Text("장착 중")
+                                .foregroundStyle(.white100)
+                                .typography(.suit13M)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(.mainOpacity80)
+                                )
+                        }
+                        Spacer()
                     }
-                    .padding(8)
+                    .padding(.top, 5)
+                    .padding(.trailing, 5)
                 }
             }
         }
         .buttonStyle(PlainButtonStyle())
-        .frame(width: 175, height: 261)
-        .disabled(keyring.status == .packaged || keyring.status == .published)
+        .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
     }
     
     /// 삭제 버튼
@@ -409,27 +425,27 @@ struct BundleEditView: View {
                         },
                         onConfirm: {
                             Task { @MainActor in
+                                // 편집 중 로컬 상태만 변경 (Firestore에 쓰지 않음)
                                 
-                                // 1. 화면에서 키링 제거
+                                // 1) UI 오버레이/선택 상태 초기화
+                                isDeleteButtonSelected = false
+                                selectedPosition = 0
+                                
+                                // 2) 키링 데이터와 선택 목록을 즉시 비우기
                                 keyringDataList = []
-                                
-                                // 2. 로컬 상태 초기화
                                 selectedKeyrings.removeAll()
                                 keyringOrder.removeAll()
-
-                                // 3. 새 카라비너 설정
-                                let previousCarabiner = newSelectedCarabiner?.carabiner.carabinerName
-                                newSelectedCarabiner = selectCarabiner
-
-                                // 4. 씬 새로고침
-                                sceneRefreshId = UUID()
                                 
-                                // 5. 키링 데이터 업데이트 (빈 상태로)
+                                // 3) 새 카라비너 적용
+                                newSelectedCarabiner = selectCarabiner
+                                
+                                // 4) 빈 상태를 씬/리스트에 반영
                                 updateKeyringDataList()
                                 
-                                // 6. Firebase에 변경사항 즉시 저장
-                                await updateBundleKeyringsToNone()
+                                // 5) 씬 강제 리프레시로 남은 잔상 제거
+                                sceneRefreshId = UUID()
                                 
+                                // 6) 알럿 닫기
                                 showChangeCarabinerAlert = false
                             }
                         }
@@ -530,8 +546,10 @@ struct BundleEditView: View {
                     self.restoreCarabinerSelection()
                     
                     Task {
-                        await self.initializeSelectedKeyrings()
-                        await self.loadKeyringData()
+                        // Firebase 데이터를 한 번만 로컬 상태로 초기화
+                        await self.initializeSelectedKeyringsFromFirebase()
+                        // 이후부터는 완전히 로컬 데이터만 사용
+                        self.updateKeyringDataList()
                     }
                     
                     continuation.resume()
@@ -540,8 +558,8 @@ struct BundleEditView: View {
         }
     }
     
-    /// 선택된 뭉치의 키링들을 selectedKeyrings로 초기화
-    private func initializeSelectedKeyrings() async {
+    /// Firebase 데이터를 로컬 상태로 한 번만 초기화
+    private func initializeSelectedKeyringsFromFirebase() async {
         guard let bundle = viewModel.selectedBundle else {
             return 
         }
@@ -549,7 +567,6 @@ struct BundleEditView: View {
         let result = await viewModel.convertBundleToSelectedKeyrings(bundle: bundle)
         selectedKeyrings = result.0
         keyringOrder = result.1
-        updateKeyringDataList()
     }
     
     /// 키링 데이터 리스트 업데이트
@@ -577,45 +594,9 @@ struct BundleEditView: View {
     }
     
     /// 카라비너 변경 시 뭉치의 키링들을 모두 "none"으로 업데이트
+    /// - 편집 중에는 Firestore 업데이트를 하지 않으므로 현재 함수는 더 이상 사용하지 않습니다.
     private func updateBundleKeyringsToNone() async {
-        guard let bundle = viewModel.selectedBundle,
-              let documentId = bundle.documentId,
-              let carabiner = newSelectedCarabiner?.carabiner else {
-            return 
-        }
-        
-        // 새로운 카라비너의 maxKeyringCount만큼 "none" 배열 생성
-        let noneKeyrings = Array(repeating: "none", count: carabiner.maxKeyringCount)
-        
-        do {
-            let db = FirebaseFirestore.Firestore.firestore()
-            try await db.collection("KeyringBundle").document(documentId).updateData([
-                "keyrings": noneKeyrings,
-                "selectedCarabiner": carabiner.id ?? ""
-            ])
-            
-            // 로컬 상태도 즉시 업데이트
-            await MainActor.run {
-                if let index = viewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
-                    viewModel.bundles[index].keyrings = noneKeyrings
-                    viewModel.bundles[index].selectedCarabiner = carabiner.id ?? ""
-                }
-                
-                // selectedBundle도 업데이트
-                if viewModel.selectedBundle?.documentId == documentId {
-                    viewModel.selectedBundle?.keyrings = noneKeyrings
-                    viewModel.selectedBundle?.selectedCarabiner = carabiner.id ?? ""
-                }
-                
-                // UI 상태 업데이트
-                selectedKeyrings.removeAll()
-                keyringOrder.removeAll()
-                keyringDataList = []
-                sceneRefreshId = UUID()
-            }
-        } catch {
-            print("Firebase 키링 초기화 실패: \(error.localizedDescription)")
-        }
+        // intentionally left unused to avoid mid-edit persistence
     }
     
     /// 최종 뭉치 변경사항을 Firebase에 저장
@@ -686,7 +667,7 @@ struct BundleEditView: View {
             UserDefaults.standard.set(bg.background.id, forKey: "tempSelectedBackgroundId")
         }
         if let cb = newSelectedCarabiner {
-            UserDefaults.standard.set(cb.carabiner.id, forKey: "tempSelectedCarbinerId")
+            UserDefaults.standard.set(cb.carabiner.id, forKey: "tempSelectedCarabinerId")
         }
     }
     
@@ -706,11 +687,11 @@ struct BundleEditView: View {
     }
     
     private func restoreCarabinerSelection() {
-        if let savedCarbinerId = UserDefaults.standard.string(forKey: "tempSelectedCarbinerId") {
+        if let savedCarbinerId = UserDefaults.standard.string(forKey: "tempSelectedCarabinerId") {
             if let restoredCarabiner = viewModel.carabinerViewData.first(where: { $0.carabiner.id == savedCarbinerId }) {
                 newSelectedCarabiner = restoredCarabiner
                 // 복원 후 삭제
-                UserDefaults.standard.removeObject(forKey: "tempSelectedCarbinerId")
+                UserDefaults.standard.removeObject(forKey: "tempSelectedCarabinerId")
             }
         }
     }
