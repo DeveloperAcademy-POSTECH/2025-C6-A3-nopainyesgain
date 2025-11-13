@@ -327,9 +327,17 @@ class MultiKeyringCaptureScene: SKScene {
         let chainStartY = ringBottomY + 0.5
         let chainSpacing: CGFloat = 16
 
+        // 카라비너 타입에 따라 체인 개수 설정
+        let chainCount: Int = {
+            if let carabinerType = currentCarabinerType {
+                return carabinerType == .plain ? 4 : 5
+            }
+            return 5  // 기본값
+        }()
+
         KeyringChainComponent.createLinks(
             from: currentChainType,
-            count: 6,
+            count: chainCount,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing,
             carabinerType: currentCarabinerType,  // 카라비너 타입 전달
