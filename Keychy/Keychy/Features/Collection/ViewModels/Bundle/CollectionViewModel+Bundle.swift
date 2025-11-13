@@ -578,4 +578,43 @@ extension CollectionViewModel {
         
         return keyrings
     }
+    
+    // MARK: - 카라비너 위치 계산
+    
+    /// 카라비너의 중심 위치를 계산 (이미지 로드 후 사용)
+    /// - Parameters:
+    ///   - carabiner: 카라비너 데이터
+    ///   - imageSize: 실제 이미지 크기 (NukeUI의 PlatformImage.size)
+    /// - Returns: 계산된 중심 위치
+    func calculateCarabinerCenterPosition(
+        for carabiner: Carabiner,
+        imageSize: CGSize
+    ) -> CGPoint {
+        // X 좌표: 기존 방식 (왼쪽 상단 + 너비/2)
+        let centerX = carabiner.carabinerX + (carabiner.carabinerWidth / 2)
+        
+        // Y 좌표: 이미지 비율을 고려하여 높이 계산 후 중심값
+        let aspectRatio = imageSize.width / imageSize.height
+        let scaledHeight = carabiner.carabinerWidth / aspectRatio
+        let centerY = carabiner.carabinerY + (scaledHeight / 2)
+        
+        return CGPoint(x: centerX, y: centerY)
+    }
+    
+    /// 일반적인 카라비너 비율을 사용한 근사치 계산
+    /// (실제 이미지 로드 없이 빠른 계산이 필요한 경우)
+    /// - Parameters:
+    ///   - carabiner: 카라비너 데이터
+    ///   - assumedAspectRatio: 가정하는 가로세로 비율 (기본값: 0.8 - 세로로 긴 형태)
+    /// - Returns: 근사치 중심 위치
+    func calculateApproximateCarabinerCenterPosition(
+        for carabiner: Carabiner,
+        assumedAspectRatio: CGFloat = 0.8
+    ) -> CGPoint {
+        let centerX = carabiner.carabinerX + (carabiner.carabinerWidth / 2)
+        let approximateHeight = carabiner.carabinerWidth / assumedAspectRatio
+        let centerY = carabiner.carabinerY + (approximateHeight / 2)
+        
+        return CGPoint(x: centerX, y: centerY)
+    }
 }
