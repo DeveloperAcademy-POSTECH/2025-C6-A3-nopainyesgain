@@ -150,7 +150,7 @@ extension KeyringDetailScene {
 //        let gapByScreen = size.height * 0.01
 //        let gapByBody = bodyFrame.height * 0.03
 //        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 25.0
+        let connectGap = 12.0
         //let gap = gapByScreen
 
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap

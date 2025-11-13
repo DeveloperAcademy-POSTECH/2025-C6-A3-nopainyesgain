@@ -384,7 +384,7 @@ class MultiKeyringCaptureScene: SKScene {
             let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
             let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-            let connectGap = 25.0
+            let connectGap = 12.0
             let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
             body.position = CGPoint(x: centerX, y: bodyCenterY)
