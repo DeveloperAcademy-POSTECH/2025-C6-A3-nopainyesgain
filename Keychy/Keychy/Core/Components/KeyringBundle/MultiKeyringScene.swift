@@ -58,6 +58,11 @@ class MultiKeyringScene: SKScene {
     var carabinerY: CGFloat = 0  // 카라비너 중심 Y 좌표
     var carabinerWidth: CGFloat = 0  // 카라비너 너비
 
+    // MARK: - 카라비너 및 배경 노드 저장
+    private var carabinerBackNode: SKSpriteNode?
+    private var carabinerFrontNode: SKSpriteNode?
+    private var backgroundNode: SKSpriteNode?
+
     // MARK: - 스와이프 제스처 관련
     var lastTouchLocation: CGPoint?
     var lastTouchTime: TimeInterval = 0
@@ -184,7 +189,13 @@ class MultiKeyringScene: SKScene {
             carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
             carabinerNode.zPosition = -900
 
+            // 페이드인을 위해 투명하게 시작
+            carabinerNode.alpha = 0
+
             self.addChild(carabinerNode)
+
+            // 카라비너 뒷면 노드 저장
+            self.carabinerBackNode = carabinerNode
         }
     }
 
@@ -214,7 +225,13 @@ class MultiKeyringScene: SKScene {
             carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
             carabinerNode.zPosition = -800  // 카라비너 뒷면(-900)과 키링들(0~) 사이
 
+            // 페이드인을 위해 투명하게 시작
+            carabinerNode.alpha = 0
+
             self.addChild(carabinerNode)
+
+            // 카라비너 앞면 노드 저장
+            self.carabinerFrontNode = carabinerNode
         }
     }
 
@@ -303,6 +320,10 @@ class MultiKeyringScene: SKScene {
             ring.physicsBody?.categoryBitMask = categoryBitMask
             ring.physicsBody?.collisionBitMask = collisionBitMask
             ring.physicsBody?.contactTestBitMask = 0
+
+            // 페이드인을 위해 투명하게 시작
+            ring.alpha = 0
+
             self.addChild(ring)
 
             // Ring 노드 저장
@@ -369,6 +390,10 @@ class MultiKeyringScene: SKScene {
                 chain.physicsBody?.categoryBitMask = categoryBitMask
                 chain.physicsBody?.collisionBitMask = collisionBitMask
                 chain.physicsBody?.contactTestBitMask = 0
+
+                // 페이드인을 위해 투명하게 시작
+                chain.alpha = 0
+
                 self.addChild(chain)
             }
 
@@ -461,6 +486,9 @@ class MultiKeyringScene: SKScene {
         body.physicsBody?.categoryBitMask = categoryBitMask
         body.physicsBody?.collisionBitMask = collisionBitMask
         body.physicsBody?.contactTestBitMask = 0
+
+        // 페이드인을 위해 투명하게 시작
+        body.alpha = 0
 
         addChild(body)
 
@@ -658,6 +686,53 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.isDynamic = true
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
+        }
+
+        // 각 키링을 순차적으로 페이드인
+        fadeInKeyringsSequentially()
+    }
+
+    /// 키링들을 순차적으로 페이드인
+    private func fadeInKeyringsSequentially() {
+        // 1. 카라비너를 먼저 페이드인 (0.15초)
+        let carabinerFadeIn = SKAction.fadeIn(withDuration: 0.15)
+        carabinerFadeIn.timingMode = .easeOut
+
+        carabinerBackNode?.run(carabinerFadeIn)
+        carabinerFrontNode?.run(carabinerFadeIn)
+
+        // 2. 키링 인덱스를 정렬하여 순서대로 페이드인
+        let sortedIndices = Array(keyringNodes.keys).sorted()
+
+        for (order, index) in sortedIndices.enumerated() {
+            // 카라비너 페이드인 후 0.05초 대기 + 각 키링마다 0.08초씩 지연
+            let delay = 0.2 + TimeInterval(order) * 0.08
+
+            // Ring 페이드인
+            if let ring = ringNodes[index] {
+                let wait = SKAction.wait(forDuration: delay)
+                let fadeIn = SKAction.fadeIn(withDuration: 0.25)
+                fadeIn.timingMode = .easeOut
+                ring.run(SKAction.sequence([wait, fadeIn]))
+            }
+
+            // Chain 페이드인
+            if let chains = chainNodesByKeyring[index] {
+                for chain in chains {
+                    let wait = SKAction.wait(forDuration: delay)
+                    let fadeIn = SKAction.fadeIn(withDuration: 0.25)
+                    fadeIn.timingMode = .easeOut
+                    chain.run(SKAction.sequence([wait, fadeIn]))
+                }
+            }
+
+            // Body 페이드인
+            if let body = bodyNodes[index] {
+                let wait = SKAction.wait(forDuration: delay)
+                let fadeIn = SKAction.fadeIn(withDuration: 0.25)
+                fadeIn.timingMode = .easeOut
+                body.run(SKAction.sequence([wait, fadeIn]))
+            }
         }
     }
 
