@@ -80,6 +80,8 @@ struct KeyringBundleItem: View {
                 cachedImage
                     .resizable()
                     .scaledToFill()
+                    .offset(y: 30)   // 아래로 30pt 이동
+                    .clipped()
             }
         }
     }
