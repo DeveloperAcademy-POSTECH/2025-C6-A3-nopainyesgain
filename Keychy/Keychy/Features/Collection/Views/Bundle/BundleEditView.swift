@@ -71,7 +71,6 @@ struct BundleEditView: View {
                     
                 } else {
                     // 데이터 로딩 중이거나 임시 화면
-                    //TODO: 임시로 올려둔 배경화면과 카라비너입니다.
                     if let bg = newSelectedBackground {
                         LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                             if let image = state.image {
