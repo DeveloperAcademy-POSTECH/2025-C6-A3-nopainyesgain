@@ -26,7 +26,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     // 구매 시트
     @State var showPurchaseSheet = false
     @State var cartItems: [EffectItem] = []
-
+    
     // 구매 시트 높이 계산 (기본 301 + 각 아이템 row당 60씩 증가)
     var purchaseSheetHeight: CGFloat {
         let baseHeight: CGFloat = 301
@@ -46,7 +46,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             VStack(spacing: 0) {
                 ZStack(alignment: .center) {
                     KeyringSceneView(viewModel: viewModel, onSceneReady: {
-                        withAnimation(.easeIn(duration: 1.0)) {
+                        withAnimation(.easeIn(duration: 0.4)) {
                             isSceneReady = true
                         }
                         closeLoadingIfReady()
@@ -55,9 +55,9 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .opacity(isSceneReady ? 1.0 : 0.0)
                     
                     // 로딩 인디케이터 (키링씬 중앙)
-                    if isLoadingResources || !isSceneReady {
-                        loadingIndicator()
-                    }
+//                    if isLoadingResources || !isSceneReady {
+//                        loadingIndicator()
+//                    }
                     
                     // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
@@ -72,30 +72,31 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 
                 // MARK: - 하단 영역
                 bottomContentView
+                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
             }
             .background(.gray50)
             .disabled(isLoadingResources || !isSceneReady)
-
+            
             // MARK: - 딤 처리 (Alert/Progress 표시 시)
             if showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert {
                 Color.black.opacity(0.6)
                     .ignoresSafeArea()
             }
-
+            
             // MARK: - 구매 중 프로그레스
             if showPurchaseProgress {
                 VStack(spacing: 16) {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         .scaleEffect(1.5)
-
+                    
                     Text("구매 중...")
                         .typography(.suit17B)
                         .foregroundStyle(.white)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-
+            
             // MARK: - Purchase Alerts
             if showPurchaseSuccessAlert {
                 PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
@@ -163,27 +164,44 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     private func closeLoadingIfReady() {
         // 리소스 + 씬 모두 준비되면 로딩 닫기
         if !isLoadingResources && isSceneReady {
-            withAnimation {
-                // 이미 조건이 맞으면 자동으로 UI 업데이트됨
+            // 사라지는 애니메이션
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                loadingScale = 0.3
             }
         }
     }
     
     // MARK: - Preload Sound Resources
     private func preloadAllSoundEffects() async {
-        // Firebase에서 가져온 사운드를 순차적으로 로드
-        for sound in viewModel.availableSounds {
-            guard let soundId = sound.id else { continue }
-            await SoundEffectComponent.shared.preloadSound(named: soundId)
+        // Firebase에서 가져온 사운드를 병렬로 로드
+        await withTaskGroup(of: Void.self) { group in
+            for sound in viewModel.availableSounds {
+                guard let soundId = sound.id else { continue }
+                group.addTask {
+                    await SoundEffectComponent.shared.preloadSound(named: soundId)
+                }
+            }
         }
     }
-    
+
     // MARK: - Preload Particle Resources
     private func preloadAllParticleEffects() async {
-        // Firebase에서 가져온 파티클을 순차적으로 로드
-        for particle in viewModel.availableParticles {
-            guard let particleId = particle.id else { continue }
-            await preloadParticle(named: particleId)
+        // 보유한 파티클만 병렬로 로드 (미보유는 스킵)
+        await withTaskGroup(of: Void.self) { group in
+            for particle in viewModel.availableParticles {
+                guard let particleId = particle.id else { continue }
+
+                // 보유 여부 미리 확인
+                let isOwned = viewModel.isOwned(particleId: particleId)
+                let isFree = particle.isFree
+
+                // 보유하거나 무료인 것만 로드
+                if isOwned || isFree {
+                    group.addTask {
+                        await self.preloadParticle(named: particleId)
+                    }
+                }
+            }
         }
     }
     
@@ -193,21 +211,21 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             Task.detached(priority: .userInitiated) {
                 let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
                 let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
-
+                
                 // 1. 캐시에 있으면 로드 (보유 유료 파티클)
                 if FileManager.default.fileExists(atPath: cachedURL.path) {
                     _ = LottieAnimation.filepath(cachedURL.path)
                     continuation.resume()
                     return
                 }
-
+                
                 // 2. Bundle에 있는지 확인 후 로드 (무료 파티클)
                 if Bundle.main.path(forResource: particleId, ofType: "json") != nil {
                     _ = LottieAnimation.named(particleId)
                     continuation.resume()
                     return
                 }
-
+                
                 // 3. 둘 다 없으면 조용히 스킵 (미보유 유료 파티클)
                 continuation.resume()
             }
@@ -236,7 +254,7 @@ extension KeyringCustomizingView {
     }
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-
+            
             // 여러 조건부 버튼이기에 컴포넌트 사용 X
             Button {
                 if hasCartItems {
@@ -264,12 +282,12 @@ extension KeyringCustomizingView {
             Image("appIcon")
                 .resizable()
                 .frame(width: 80, height: 80)
-            
+
             Text("키링을 만들고 있어요")
                 .typography(.suit17SB)
         }
-        .padding(20)
         .scaleEffect(loadingScale)
+        .opacity(loadingScale > 0.5 ? 1 : 0)
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
                 loadingScale = 1.0
