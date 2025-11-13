@@ -222,7 +222,7 @@ class MultiKeyringCaptureScene: SKScene {
                 let spriteKitY = self.size.height - centerY
 
                 carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
-                carabinerNode.zPosition = 10000  // 가장 위에 배치
+                carabinerNode.zPosition = -800  // 카라비너 뒷면(-900)과 키링들(0~) 사이
 
                 self.addChild(carabinerNode)
 
@@ -293,7 +293,13 @@ class MultiKeyringCaptureScene: SKScene {
                 return
             }
 
-            ring.zPosition = baseZPosition
+            // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
+            if carabinerType == .hamburger {
+                ring.zPosition = -850  // 카라비너 뒷면(-900)과 앞면(-800) 사이
+            } else {
+                ring.zPosition = baseZPosition
+            }
+
             let ringFrame = ring.calculateAccumulatedFrame()
             let ringRadius = ringFrame.height / 2
 
@@ -310,7 +316,8 @@ class MultiKeyringCaptureScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                carabinerType: carabinerType
             )
         }
     }
@@ -320,7 +327,8 @@ class MultiKeyringCaptureScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        carabinerType: CarabinerType? = nil
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
@@ -335,13 +343,16 @@ class MultiKeyringCaptureScene: SKScene {
             return 5  // 기본값
         }()
 
+        // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
+        let chainBaseZPosition = baseZPosition
+
         KeyringChainComponent.createLinks(
             from: currentChainType,
             count: chainCount,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing,
             carabinerType: currentCarabinerType,  // 카라비너 타입 전달
-            baseZPosition: baseZPosition
+            baseZPosition: chainBaseZPosition
         ) { [weak self] chains in
             guard let self = self else { return }
 
@@ -357,7 +368,8 @@ class MultiKeyringCaptureScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                carabinerType: carabinerType
             )
         }
     }
@@ -369,7 +381,8 @@ class MultiKeyringCaptureScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        carabinerType: CarabinerType? = nil
     ) {
         KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else {
@@ -388,6 +401,8 @@ class MultiKeyringCaptureScene: SKScene {
             let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
             body.position = CGPoint(x: centerX, y: bodyCenterY)
+
+            // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
             body.zPosition = baseZPosition - 2  // Body는 체인 아래
 
             // 물리 바디 제거 (정적 배치만)

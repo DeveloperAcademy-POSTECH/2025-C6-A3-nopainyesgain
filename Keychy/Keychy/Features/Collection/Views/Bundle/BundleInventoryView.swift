@@ -34,6 +34,7 @@ struct BundleInventoryView: View {
             nextToolbarItem
 
         }
+        .padding(.top, 20)
         .navigationBarBackButtonHidden(true)
         #if DEBUG
         .sheet(isPresented: $showCachedBundlesDebug) {
