@@ -405,16 +405,6 @@ struct BundleEditView: View {
                     )
                 }
             }
-            
-            // 버튼들만 표시 (시트가 없을 때)
-            if !showCarabinerSheet && !showBackgroundSheet {
-                HStack(spacing: 8) {
-                    editBackgroundButton
-                    editCarabinerButton
-                    Spacer()
-                }
-                .padding(.leading, 18)
-            }
         }
     }
     
