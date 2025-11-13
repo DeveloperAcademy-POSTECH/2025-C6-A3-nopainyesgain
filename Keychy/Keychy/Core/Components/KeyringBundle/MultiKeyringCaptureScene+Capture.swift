@@ -56,6 +56,7 @@ extension MultiKeyringCaptureScene {
     ///   - backgroundImageURL: 배경 이미지 URL
     ///   - carabinerBackImageURL: 카라비너 뒷면 이미지 URL (hamburger 타입)
     ///   - carabinerFrontImageURL: 카라비너 앞면 이미지 URL (hamburger 타입)
+    ///   - carabinerType: 카라비너 타입
     ///   - carabinerX: 카라비너 왼쪽 상단 X 좌표
     ///   - carabinerY: 카라비너 왼쪽 상단 Y 좌표
     ///   - carabinerWidth: 카라비너 너비
@@ -66,6 +67,7 @@ extension MultiKeyringCaptureScene {
         backgroundImageURL: String,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerType: CarabinerType? = nil,
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
@@ -81,6 +83,7 @@ extension MultiKeyringCaptureScene {
             // MultiKeyringCaptureScene 생성 (캡처 전용, 물리 없음)
             let scene = MultiKeyringCaptureScene(
                 keyringDataList: keyringDataList,
+                carabinerType: carabinerType,
                 ringType: .basic,
                 chainType: .basic,
                 backgroundColor: .clear,

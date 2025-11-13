@@ -176,6 +176,7 @@ struct KeyringBundleItem: View {
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,  // 카라비너 타입 전달
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth,

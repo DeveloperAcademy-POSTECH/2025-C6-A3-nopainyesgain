@@ -20,6 +20,7 @@ class MultiKeyringCaptureScene: SKScene {
     }
 
     var keyringDataList: [KeyringData] = []
+    var currentCarabinerType: CarabinerType?  // 카라비너 타입 추가
     var currentRingType: RingType = .basic
     var currentChainType: ChainType = .basic
     var customBackgroundColor: UIColor = .clear
@@ -46,6 +47,7 @@ class MultiKeyringCaptureScene: SKScene {
 
     init(
         keyringDataList: [KeyringData],
+        carabinerType: CarabinerType? = nil,  // 카라비너 타입 추가
         ringType: RingType = .basic,
         chainType: ChainType = .basic,
         backgroundColor: UIColor = .clear,
@@ -58,6 +60,7 @@ class MultiKeyringCaptureScene: SKScene {
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
+        self.currentCarabinerType = carabinerType
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.customBackgroundColor = backgroundColor
@@ -248,8 +251,43 @@ class MultiKeyringCaptureScene: SKScene {
         )
         let baseZPosition = CGFloat(order * 10)
 
-        // 1. Ring 생성
-        KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
+        // 카라비너 타입이 있으면 BundleRingComponent 사용, 없으면 기본 Ring 사용
+        guard let carabinerType = currentCarabinerType else {
+            // 기존 방식 (호환성 유지)
+            KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
+                guard let self = self, let ring = ring else {
+                    self?.checkLoadingComplete()
+                    return
+                }
+
+                ring.zPosition = baseZPosition
+                let ringFrame = ring.calculateAccumulatedFrame()
+                let ringRadius = ringFrame.height / 2
+
+                ring.position = CGPoint(
+                    x: spriteKitPosition.x,
+                    y: spriteKitPosition.y - ringRadius
+                )
+
+                ring.physicsBody = nil
+                self.addChild(ring)
+
+                // 2. Chain 생성
+                self.setupChain(
+                    ring: ring,
+                    centerX: spriteKitPosition.x,
+                    bodyImageURL: data.bodyImageURL,
+                    baseZPosition: baseZPosition
+                )
+            }
+            return
+        }
+
+        // 1. Ring 생성 (카라비너 타입에 맞는 Ring)
+        BundleRingComponent.createCarabinerRingNode(
+            carabinerType: carabinerType,
+            ringType: currentRingType
+        ) { [weak self] ring in
             guard let self = self, let ring = ring else {
                 self?.checkLoadingComplete()
                 return
@@ -294,7 +332,7 @@ class MultiKeyringCaptureScene: SKScene {
             count: 6,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing,
-            carabinerType: nil,
+            carabinerType: currentCarabinerType,  // 카라비너 타입 전달
             baseZPosition: baseZPosition
         ) { [weak self] chains in
             guard let self = self else { return }
