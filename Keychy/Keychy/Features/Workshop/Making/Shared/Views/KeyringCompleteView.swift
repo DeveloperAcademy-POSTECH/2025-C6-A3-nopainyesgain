@@ -29,24 +29,25 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State var checkmarkScale: CGFloat = 0.3
     @State var checkmarkOpacity: Double = 0.0
     @State var showImageSaved = false
-    @State var showSaveButton = true
+    @State var showSaveButton = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image("completeBG")
+                Image("completeBG2")
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
                     .ignoresSafeArea()
                     .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
+                    .blur(radius: showImageSaved ? 15 : 0)
                 
                 VStack(spacing: 0) {
                     // 키링 씬
                     keyringScene
                         .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
-                    
+
                     // 키링 정보
                     keyringInfo
                         .padding(.bottom, 30)
@@ -54,33 +55,38 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 
                     // 이미지 저장 버튼 (공간 유지를 위해 opacity 사용)
                     saveButton
-                        .cinematicAppear(delay: 0.8, duration: 0.8, style: .slideUp)
                         .padding(.top, 30)
                         .opacity(showSaveButton ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.3), value: showSaveButton)
                 }
-                
+                .blur(radius: showImageSaved ? 15 : 0)
+
                 if showImageSaved {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
                         .padding(.bottom, 30)
                 }
+
+                // 커스텀 네비게이션 바
+                customNavigationBar
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .blur(radius: showImageSaved ? 15 : 0)
             }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            backToolbarItem
-        }
-        .navigationTitle(showDismissButton ? "키링이 완성되었어요!" : "")
-        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
-
+            
             // Firebase 저장 시작 (completion으로 dismiss 버튼 표시)
             saveKeyringToFirebase {
                 DispatchQueue.main.async {
                     showDismissButton = true
-                    showSaveButton = true
+
+                    // X버튼 애니메이션 완료 후 저장 버튼 표시
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showSaveButton = true
+                    }
                 }
             }
         }
@@ -90,25 +96,44 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 // MARK: - KeyringScene Section
 extension KeyringCompleteView {
     private var keyringScene: some View {
-        KeyringSceneView(viewModel: viewModel, backgroundColor: .clear)
+        KeyringSceneView(viewModel: viewModel, backgroundColor: .clear, applyWelcomeImpulse: true)
             .frame(maxWidth: .infinity)
             .frame(height: 500)
     }
 }
 
-//MARK: - 툴바
+//MARK: - 커스텀 네비게이션 바
 extension KeyringCompleteView {
-    @ToolbarContentBuilder
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            if showDismissButton {
-                Button(action: {
-                    viewModel.resetAll()
-                    router.reset()
-                }) {
-                    Image(systemName: "xmark")
+    private var customNavigationBar: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                if showDismissButton {
+                    CloseToolbarButton {
+                        viewModel.resetAll()
+                        router.reset()
+                    }
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+                    .padding(.leading, 16)
+
+                    Spacer()
+
+                    Text("키링이 완성되었어요!")
+                        .typography(.suit17B)
+                        .foregroundStyle(.black100)
+
+                    Spacer()
+
+                    Color.clear
+                        .frame(width: 44, height: 44)
+                        .padding(.trailing, 16)
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: showDismissButton)
+            .frame(height: 44)
+            .padding(.top, 60)
+
+            Spacer()
         }
     }
 }
@@ -147,12 +172,15 @@ extension KeyringCompleteView {
 extension KeyringCompleteView {
     private var saveButton: some View {
         VStack(spacing: 9) {
-            Button {
+            
+            Button(action: {
                 captureAndSaveImage()
-            } label: {
+            }) {
                 Image("imageDownload")
             }
-            .buttonStyle(.glass)
+            .frame(width: 65, height: 65)
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive(), in: .circle)
             
             Text("이미지 저장")
                 .typography(.suit13SB)
@@ -169,14 +197,14 @@ extension KeyringCompleteView {
             completion()
             return
         }
-
+        
         // 1. Firebase Storage에 이미지 업로드
         uploadImageToStorage(image: bodyImage, uid: uid) { imageURL in
             guard let imageURL = imageURL else {
                 completion()
                 return
             }
-
+            
             // 2. 커스텀 사운드가 있으면 Firebase Storage에 업로드
             if let customSoundURL = self.viewModel.customSoundURL {
                 self.uploadSoundToStorage(soundURL: customSoundURL, uid: uid) { soundURL in
@@ -185,7 +213,7 @@ extension KeyringCompleteView {
                         self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId, completion: completion)
                         return
                     }
-
+                    
                     // 업로드 성공 - Firebase Storage URL을 soundId로 사용
                     self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL, completion: completion)
                 }
@@ -195,7 +223,7 @@ extension KeyringCompleteView {
             }
         }
     }
-
+    
     // MARK: - 키링 생성 헬퍼 메서드
     private func createKeyringWithData(uid: String, imageURL: String, soundId: String, completion: @escaping () -> Void) {
         let templateId: String
@@ -204,7 +232,7 @@ extension KeyringCompleteView {
         } else {
             templateId = "AcrylicPhoto"
         }
-
+        
         self.createKeyring(
             uid: uid,
             name: self.viewModel.nameText,
@@ -223,7 +251,7 @@ extension KeyringCompleteView {
             if success, let keyringId = keyringId {
                 // viewModel이 reset되기 전에 이름을 미리 캡처
                 let keyringName = self.viewModel.nameText
-
+                
                 Task {
                     // 위젯 캐싱 완료 대기
                     await self.captureAndCacheKeyring(
@@ -233,7 +261,7 @@ extension KeyringCompleteView {
                         ringType: .basic,
                         chainType: .basic
                     )
-
+                    
                     // 모든 작업 완료 후 dismiss 버튼 표시
                     await MainActor.run {
                         completion()
@@ -250,7 +278,7 @@ extension KeyringCompleteView {
     private func uploadImageToStorage(image: UIImage, uid: String, completion: @escaping (String?) -> Void) {
         let fileName = "\(UUID().uuidString).png"
         let path = "Keyrings/BodyImages/\(uid)/\(fileName)"
-
+        
         Task {
             do {
                 let downloadURL = try await StorageManager.shared.uploadImage(image, path: path)
@@ -268,10 +296,10 @@ extension KeyringCompleteView {
             completion(nil)
             return
         }
-
+        
         let fileName = "\(UUID().uuidString).m4a"
         let path = "Keyrings/CustomSounds/\(uid)/\(fileName)"
-
+        
         Task {
             do {
                 let downloadURL = try await StorageManager.shared.uploadAudio(soundData, path: path)
@@ -357,7 +385,7 @@ extension KeyringCompleteView {
                 }
             }
     }
-
+    
     // MARK: - 위젯용 이미지 캡처 및 캐싱
     private func captureAndCacheKeyring(
         keyringId: String,
@@ -369,7 +397,7 @@ extension KeyringCompleteView {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
             var loadingCompleted = false
-
+            
             // Scene 생성 (onLoadingComplete 콜백 추가, 투명 배경)
             let scene = KeyringCellScene(
                 ringType: ringType,
@@ -383,35 +411,35 @@ extension KeyringCompleteView {
                 }
             )
             scene.scaleMode = .aspectFill
-
+            
             // SKView 생성 및 Scene 표시 (렌더링 시작)
             let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
             view.allowsTransparency = true
             view.presentScene(scene)
-
+            
             // 로딩 완료 대기 (최대 3초)
             Task {
                 var waitTime = 0.0
                 let checkInterval = 0.1 // 100ms마다 체크
                 let maxWaitTime = 3.0   // 최대 3초
-
+                
                 while !loadingCompleted && waitTime < maxWaitTime {
                     try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
                     waitTime += checkInterval
                 }
-
+                
                 if !loadingCompleted {
-                    print("⚠️ [KeyringComplete] 타임아웃 - 로딩 미완료: \(keyringId)")
+                    print("[KeyringComplete] 타임아웃 - 로딩 미완료: \(keyringId)")
                 } else {
                     // 로딩 완료 후 추가 렌더링 대기 (200ms)
                     try? await Task.sleep(nanoseconds: 200_000_000)
                 }
-
+                
                 // PNG 캡처
                 if let pngData = await scene.captureToPNG() {
                     // FileManager 캐시에 저장 (위젯에서 접근 가능)
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringId)
-
+                    
                     // App Group에 위젯용 이미지 및 메타데이터 동기화
                     KeyringImageCache.shared.syncKeyring(
                         id: keyringId,
@@ -420,9 +448,9 @@ extension KeyringCompleteView {
                     )
                     
                 } else {
-                    print("❌ [KeyringComplete] 캡처 실패: \(keyringId)")
+                    print("[KeyringComplete] 캡처 실패: \(keyringId)")
                 }
-
+                
                 continuation.resume()
             }
         }

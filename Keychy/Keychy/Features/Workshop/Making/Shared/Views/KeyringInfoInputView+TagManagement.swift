@@ -19,7 +19,9 @@ extension KeyringInfoInputView {
             ChipLayout(verticalSpacing: 8, horizontalSpacing: 8) {
                 Button {
                     sheetDetent = .height(76)
-                    showAddTagAlert = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showAddTagAlert = true
+                    }
                 } label: {
                     Image("Plus")
                         .resizable()
@@ -129,7 +131,7 @@ extension KeyringInfoInputView {
                             RoundedRectangle(cornerRadius: 100)
                                 .fill(.main500)
                         )
-                    
+
                 }
                 .buttonStyle(.plain)
                 .disabled(newTagName.isEmpty || showTagNameAlreadyExistsToast)

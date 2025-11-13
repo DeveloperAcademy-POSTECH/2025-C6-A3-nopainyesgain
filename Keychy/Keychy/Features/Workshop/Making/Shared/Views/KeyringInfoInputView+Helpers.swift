@@ -13,12 +13,12 @@ extension KeyringInfoInputView {
     var isSheetExpanded: Bool {
         sheetDetent != .height(76)
     }
-
+    
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     var sceneScale: CGFloat {
         isSheetExpanded ? 0.7 : 1.2
     }
-
+    
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     var sceneYOffset: CGFloat {
         isSheetExpanded ? -120 : 0
@@ -41,21 +41,22 @@ extension KeyringInfoInputView {
 extension KeyringInfoInputView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
+            Button {
                 showSheet = false
                 viewModel.resetInfoData()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     router.pop()
                 }
-            }) {
-                Image(systemName: "chevron.left")
+            } label: {
+                Image("backIcon")
             }
+            .disabled(showAddTagAlert)
         }
     }
-
+    
     var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("완료") {
+            NextToolbarButton(title: "다음") {
                 dismissKeyboard()
                 showSheet = false
                 router.push(nextRoute)
@@ -64,6 +65,7 @@ extension KeyringInfoInputView {
                 showTagNameEmptyToast = false
                 viewModel.createdAt = Date()
             }
+            .foregroundStyle(.gray600)
             .disabled(viewModel.nameText.isEmpty)
         }
     }
@@ -74,23 +76,23 @@ extension KeyringInfoInputView {
 final class KeyboardResponder {
     private var notificationCenter: NotificationCenter
     private(set) var currentHeight: CGFloat = 0
-
+    
     init(center: NotificationCenter = .default) {
         notificationCenter = center
         notificationCenter.addObserver(self, selector: #selector(keyBoardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(keyBoardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
+    
     deinit {
         notificationCenter.removeObserver(self)
     }
-
+    
     @objc func keyBoardWillShow(notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             currentHeight = keyboardSize.height
         }
     }
-
+    
     @objc func keyBoardWillHide(notification: Notification) {
         currentHeight = 0
     }
