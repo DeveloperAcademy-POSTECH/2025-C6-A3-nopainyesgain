@@ -22,22 +22,27 @@ struct KeyringBundleItem: View {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
+                    .frame(height: 245)
+                    .cornerRadius(10)
 
                 if bundle.isMain {
-                    UnevenRoundedRectangle(topLeadingRadius: 10, topTrailingRadius: 10)
-                        .fill(.pink100.opacity(0.7))
-                        .overlay(
-                            Text("대표")
-                                .typography(.suit13M)
-                                .foregroundStyle(.white100)
-                        )
-                        .frame(height: 26)
-                        .frame(maxWidth: .infinity)
-                    
+                    HStack {
+                        Rectangle()
+                            .fill(.mainOpacity80)
+                            .overlay(
+                                Text("대표")
+                                    .typography(.suit13M)
+                                    .foregroundStyle(.white100)
+                            )
+                            .cornerRadius(20)
+                            .frame(height: 24)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.top, 8)
                 }
             }
             .frame(height: 245)
-            .cornerRadius(10)
             
             HStack {
                 Text(bundle.name)
@@ -75,11 +80,6 @@ struct KeyringBundleItem: View {
                 cachedImage
                     .resizable()
                     .scaledToFill()
-            } else {
-                // 캐시 로딩 중 또는 실패 시 플레이스홀더
-                Image(.ddochi)
-                    .resizable()
-                    .scaledToFit()
             }
         }
     }
