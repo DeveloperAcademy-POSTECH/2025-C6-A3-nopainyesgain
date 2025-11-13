@@ -58,10 +58,9 @@ class MultiKeyringScene: SKScene {
     var carabinerY: CGFloat = 0  // 카라비너 중심 Y 좌표
     var carabinerWidth: CGFloat = 0  // 카라비너 너비
 
-    // MARK: - 카라비너 및 배경 노드 저장
+    // MARK: - 카라비너 노드 저장
     private var carabinerBackNode: SKSpriteNode?
     private var carabinerFrontNode: SKSpriteNode?
-    private var backgroundNode: SKSpriteNode?
 
     // MARK: - 스와이프 제스처 관련
     var lastTouchLocation: CGPoint?
@@ -111,14 +110,8 @@ class MultiKeyringScene: SKScene {
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
-        // 모든 이미지를 동시에 로드 시작
+        // 카라비너 이미지와 키링들을 로드
         Task {
-            async let backgroundTask: Void = {
-                if let backgroundURL = await backgroundImageURL {
-                    await setupBackgroundImageAsync(url: backgroundURL)
-                }
-            }()
-
             async let carabinerBackTask: Void = {
                 if let carabinerBackURL = await carabinerBackImageURL {
                     await setupCarabinerBackImageAsync(url: carabinerBackURL)
@@ -131,8 +124,7 @@ class MultiKeyringScene: SKScene {
                 }
             }()
 
-            // 모든 이미지 로드 병렬 실행
-            await backgroundTask
+            // 카라비너 이미지 로드 병렬 실행
             await carabinerBackTask
             await carabinerFrontTask
 
@@ -143,25 +135,7 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    // MARK: - Background & Carabiner Setup
-
-    /// 배경 이미지 설정 (async)
-    private func setupBackgroundImageAsync(url: String) async {
-        guard let image = try? await StorageManager.shared.getImage(path: url) else {
-            return
-        }
-
-        await MainActor.run {
-            let texture = SKTexture(image: image)
-            let backgroundNode = SKSpriteNode(texture: texture)
-
-            backgroundNode.size = self.size
-            backgroundNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-            backgroundNode.zPosition = -1000
-
-            self.addChild(backgroundNode)
-        }
-    }
+    // MARK: - Carabiner Setup
 
     /// 카라비너 뒷면 이미지 설정 (async)
     private func setupCarabinerBackImageAsync(url: String) async {

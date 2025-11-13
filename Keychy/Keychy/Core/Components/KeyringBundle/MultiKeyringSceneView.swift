@@ -34,6 +34,7 @@ struct MultiKeyringSceneView: View {
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
     @State private var isSceneReady: Bool = false
+    @State private var backgroundImage: UIImage?
 
     // 기본 화면 크기 (iPhone 14 기준)
     private let defaultSceneSize = CGSize(width: 393, height: 852)
@@ -66,21 +67,48 @@ struct MultiKeyringSceneView: View {
 
     var body: some View {
         ZStack {
+            backgroundView
             sceneView
+                .opacity(isSceneReady ? 1 : 0)
+                .animation(.easeOut(duration: 0.4), value: isSceneReady)
             particleEffectsView
         }
         .onAppear {
             // 씬이 없을 때만 초기 설정
             if scene == nil {
+                loadBackgroundImage()
                 setupScene()
             }
         }
-        .onChange(of: keyringDataList) { _, _ in setupScene() }
-        .onChange(of: currentCarabinerType) { _, _ in setupScene() }
+        .onChange(of: keyringDataList) { _, _ in
+            isSceneReady = false
+            loadBackgroundImage()
+            setupScene()
+        }
+        .onChange(of: currentCarabinerType) { _, _ in
+            isSceneReady = false
+            loadBackgroundImage()
+            setupScene()
+        }
     }
 }
 
 extension MultiKeyringSceneView {
+    /// 배경 뷰 (먼저 렌더링)
+    private var backgroundView: some View {
+        Group {
+            if let backgroundImage {
+                Image(uiImage: backgroundImage)
+                    .resizable()
+                    .scaledToFit()
+                    .ignoresSafeArea()
+            } else {
+                Color(backgroundColor)
+                    .ignoresSafeArea()
+            }
+        }
+    }
+
     /// SpriteKit 씬 뷰
     private var sceneView: some View {
         Group {
@@ -108,20 +136,30 @@ extension MultiKeyringSceneView {
         }
     }
 
-    /// 씬 초기화 및 설정
-    private func setupScene() {
-        // 씬이 실제로 변경될 때만 준비 상태 리셋
-        let shouldReset = scene != nil
-        if shouldReset {
-            isSceneReady = false
+    /// 배경 이미지 로드
+    private func loadBackgroundImage() {
+        guard let backgroundURL = backgroundImageURL else {
+            backgroundImage = nil
+            return
         }
 
+        Task {
+            if let image = try? await StorageManager.shared.getImage(path: backgroundURL) {
+                await MainActor.run {
+                    backgroundImage = image
+                }
+            }
+        }
+    }
+
+    /// 씬 초기화 및 설정
+    private func setupScene() {
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,
             chainType: chainType,
-            backgroundColor: backgroundColor,
-            backgroundImageURL: backgroundImageURL,
+            backgroundColor: .clear,  // 배경은 투명하게
+            backgroundImageURL: nil,  // 배경은 SwiftUI에서 처리
             carabinerBackImageURL: carabinerBackImageURL,
             carabinerFrontImageURL: carabinerFrontImageURL,
             carabinerX: carabinerX,
@@ -135,6 +173,11 @@ extension MultiKeyringSceneView {
         newScene.onPlayParticleEffect = handleParticleEffect
 
         scene = newScene
+
+        // 씬이 준비되면 페이드인 (약간의 지연 후)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            isSceneReady = true
+        }
     }
 
     /// 파티클 효과 재생 처리
