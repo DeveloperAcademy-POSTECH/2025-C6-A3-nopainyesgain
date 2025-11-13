@@ -30,6 +30,7 @@ struct MultiKeyringSceneView: View {
     let carabinerY: CGFloat
     let carabinerWidth: CGFloat
     let currentCarabinerType: CarabinerType
+    let onBackgroundLoaded: (() -> Void)?
 
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
@@ -50,7 +51,8 @@ struct MultiKeyringSceneView: View {
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
-        currentCarabinerType: CarabinerType
+        currentCarabinerType: CarabinerType,
+        onBackgroundLoaded: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
         self.ringType = ringType
@@ -63,6 +65,7 @@ struct MultiKeyringSceneView: View {
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
         self.currentCarabinerType = currentCarabinerType
+        self.onBackgroundLoaded = onBackgroundLoaded
     }
 
     var body: some View {
@@ -147,6 +150,8 @@ extension MultiKeyringSceneView {
             if let image = try? await StorageManager.shared.getImage(path: backgroundURL) {
                 await MainActor.run {
                     backgroundImage = image
+                    // 배경 이미지 로드 완료 콜백 호출
+                    onBackgroundLoaded?()
                 }
             }
         }
