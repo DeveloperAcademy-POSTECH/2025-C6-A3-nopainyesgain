@@ -294,6 +294,8 @@ struct BundleEditView: View {
                     Text("\(keyring.name)")
                         .typography(isSelectedHere ? .notosans14SB : .notosans14M)
                         .foregroundStyle(isSelectedHere ? .main500 :  .black100)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
                 
                 // 체크 뱃지
@@ -333,6 +335,7 @@ struct BundleEditView: View {
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
+        .opacity(1.0) // 강제로 투명도 1.0 유지
     }
     
     /// 삭제 버튼
