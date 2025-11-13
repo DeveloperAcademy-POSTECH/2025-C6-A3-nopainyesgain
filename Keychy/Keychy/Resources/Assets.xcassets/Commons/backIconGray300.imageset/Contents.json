@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "backIconGray300.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

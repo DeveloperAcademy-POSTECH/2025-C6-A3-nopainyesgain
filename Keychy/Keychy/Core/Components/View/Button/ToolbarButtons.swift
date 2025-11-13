@@ -16,7 +16,7 @@ struct BackToolbarButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image("BackIcon")
+            Image("backIcon")
         }
     }
 }
@@ -38,7 +38,6 @@ struct NextToolbarButton: View {
         Button(action: action) {
             Text(title)
                 .typography(.suit17B)
-                .foregroundStyle(.gray600)
         }
     }
 }

@@ -20,9 +20,6 @@ extension KeyringInfoInputView {
                 Button {
                     sheetDetent = .height(76)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            sheetOpacity = 0.2
-                        }
                         showAddTagAlert = true
                     }
                 } label: {
@@ -100,9 +97,6 @@ extension KeyringInfoInputView {
                     newTagName = ""
                     showAddTagAlert = false
                     showTagNameAlreadyExistsToast = false
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        sheetOpacity = 1.0
-                    }
                     sheetDetent = .height(measuredSheetHeight)
                 } label: {
                     Text("취소")
@@ -125,9 +119,6 @@ extension KeyringInfoInputView {
                         showAddTagAlert = false
                         showTagNameAlreadyExistsToast = false
                         showTagNameEmptyToast = false
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            sheetOpacity = 1.0
-                        }
                         sheetDetent = .height(measuredSheetHeight)
                     }
                 } label: {
