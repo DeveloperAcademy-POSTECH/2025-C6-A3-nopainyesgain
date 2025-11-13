@@ -10,11 +10,11 @@ enum HomeRoute: Hashable {
     // 나중에 추가
     case bundleInventoryView
     case bundleDetailView
-    case bundleSelectBackgroundView
     case bundleSelectCarabinerView
     case bundleAddKeyringView
     case bundleNameInputView
     case bundleNameEditView
+    case bundleEditView
     case coinCharge
     case myPageView
     case changeName

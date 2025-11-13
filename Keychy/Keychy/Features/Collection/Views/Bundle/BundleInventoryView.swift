@@ -71,7 +71,7 @@ extension BundleInventoryView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("+") {
-                router.push(.bundleSelectBackgroundView)
+                // action
             }
         }
     }
@@ -104,7 +104,13 @@ extension BundleInventoryView {
             LazyVGrid(columns: columns, spacing: 18) {
                 ForEach(viewModel.sortedBundles, id: \.self) { bundle in
                     Button {
+                        // 선택한 번들 설정
                         viewModel.selectedBundle = bundle
+                        // 번들에 저장된 id(String)를 실제 모델로 해석하여 선택 상태에 반영
+                        viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
+                        viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+                        
+                        // 상세 화면으로 이동
                         router.push(.bundleDetailView)
                     } label: {
                         KeyringBundleItem(bundle: bundle)
@@ -114,3 +120,4 @@ extension BundleInventoryView {
         }
     }
 }
+

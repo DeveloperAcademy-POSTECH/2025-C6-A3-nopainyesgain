@@ -125,16 +125,11 @@ extension BundleAddKeyringView {
 
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
-                hasKeyring: selectedKeyrings[index] != nil,
                 action: {
                     selectedPosition = index
                     withAnimation(.easeInOut) {
                         showSelectKeyringSheet = true
                     }
-                },
-                secondAction: {
-                    selectedPosition = index
-                    isDeleteButtonSelected = true
                 }
             )
             .position(position)
