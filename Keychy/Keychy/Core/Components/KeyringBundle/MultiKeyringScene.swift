@@ -692,46 +692,30 @@ class MultiKeyringScene: SKScene {
         fadeInKeyringsSequentially()
     }
 
-    /// 키링들을 순차적으로 페이드인
+    /// 모든 노드들을 동시에 페이드인 (배경은 SwiftUI에서 먼저 렌더링됨)
     private func fadeInKeyringsSequentially() {
-        // 1. 카라비너를 먼저 페이드인 (0.15초)
-        let carabinerFadeIn = SKAction.fadeIn(withDuration: 0.15)
-        carabinerFadeIn.timingMode = .easeOut
+        let fadeInDuration = 0.3
+        let fadeIn = SKAction.fadeIn(withDuration: fadeInDuration)
+        fadeIn.timingMode = .easeOut
 
-        carabinerBackNode?.run(carabinerFadeIn)
-        carabinerFrontNode?.run(carabinerFadeIn)
+        // 1. 카라비너 페이드인
+        carabinerBackNode?.run(fadeIn)
+        carabinerFrontNode?.run(fadeIn)
 
-        // 2. 키링 인덱스를 정렬하여 순서대로 페이드인
-        let sortedIndices = Array(keyringNodes.keys).sorted()
-
-        for (order, index) in sortedIndices.enumerated() {
-            // 카라비너 페이드인 후 0.05초 대기 + 각 키링마다 0.08초씩 지연
-            let delay = 0.2 + TimeInterval(order) * 0.08
-
-            // Ring 페이드인
-            if let ring = ringNodes[index] {
-                let wait = SKAction.wait(forDuration: delay)
-                let fadeIn = SKAction.fadeIn(withDuration: 0.25)
-                fadeIn.timingMode = .easeOut
-                ring.run(SKAction.sequence([wait, fadeIn]))
-            }
+        // 2. 모든 키링 동시에 페이드인
+        for (index, ring) in ringNodes {
+            ring.run(fadeIn)
 
             // Chain 페이드인
             if let chains = chainNodesByKeyring[index] {
                 for chain in chains {
-                    let wait = SKAction.wait(forDuration: delay)
-                    let fadeIn = SKAction.fadeIn(withDuration: 0.25)
-                    fadeIn.timingMode = .easeOut
-                    chain.run(SKAction.sequence([wait, fadeIn]))
+                    chain.run(fadeIn)
                 }
             }
 
             // Body 페이드인
             if let body = bodyNodes[index] {
-                let wait = SKAction.wait(forDuration: delay)
-                let fadeIn = SKAction.fadeIn(withDuration: 0.25)
-                fadeIn.timingMode = .easeOut
-                body.run(SKAction.sequence([wait, fadeIn]))
+                body.run(fadeIn)
             }
         }
     }
