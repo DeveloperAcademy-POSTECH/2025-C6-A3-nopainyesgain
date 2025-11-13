@@ -375,7 +375,7 @@ struct BundleEditView: View {
                             showChangeCarabinerAlert = false
                         },
                         onConfirm: {
-                            // 카라비너 변경 시 키링들 초기화
+                            // 카라비너 변경 시 키링들 초기화 (로컬에서만)
                             selectedKeyrings.removeAll()
                             keyringOrder.removeAll()
                             
@@ -387,11 +387,6 @@ struct BundleEditView: View {
                             
                             // 키링 데이터 업데이트 (빈 상태로)
                             updateKeyringDataList()
-                            
-                            // Firebase에서 실제 뭉치 데이터도 업데이트
-                            Task {
-                                await updateBundleKeyringsToNone()
-                            }
                             
                             showChangeCarabinerAlert = false
                         }
@@ -553,6 +548,49 @@ struct BundleEditView: View {
         }
     }
     
+    /// 최종 뭉치 변경사항을 Firebase에 저장
+    private func saveBundleChanges() async {
+        guard let bundle = viewModel.selectedBundle,
+              let documentId = bundle.documentId,
+              let background = newSelectedBackground,
+              let carabiner = newSelectedCarabiner else { return }
+        
+        // selectedKeyrings를 뭉치 형태로 변환
+        let keyrings = viewModel.convertSelectedKeyringsToBundleFormat(
+            selectedKeyrings: selectedKeyrings,
+            maxKeyringCount: carabiner.carabiner.maxKeyringCount
+        )
+        
+        do {
+            let db = FirebaseFirestore.Firestore.firestore()
+            try await db.collection("KeyringBundle").document(documentId).updateData([
+                "keyrings": keyrings,
+                "selectedBackground": background.background.id ?? "",
+                "selectedCarabiner": carabiner.carabiner.id ?? ""
+            ])
+            
+            // 로컬 상태도 업데이트
+            await MainActor.run {
+                if let index = viewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
+                    viewModel.bundles[index].keyrings = keyrings
+                    viewModel.bundles[index].selectedBackground = background.background.id ?? ""
+                    viewModel.bundles[index].selectedCarabiner = carabiner.carabiner.id ?? ""
+                }
+                
+                // selectedBundle도 업데이트
+                if viewModel.selectedBundle?.documentId == documentId {
+                    viewModel.selectedBundle?.keyrings = keyrings
+                    viewModel.selectedBundle?.selectedBackground = background.background.id ?? ""
+                    viewModel.selectedBundle?.selectedCarabiner = carabiner.carabiner.id ?? ""
+                }
+            }
+            
+            print("뭉치 변경사항 저장 완료")
+        } catch {
+            print("뭉치 저장 중 오류: \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: - 선택 상태 저장/복원
     private func saveCurrentSelection() {
         if let bg = newSelectedBackground {
@@ -607,21 +645,22 @@ extension BundleEditView {
     private var editCompleteButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || 
-                                    (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
                 
                 if hasPayableItems {
                     showPurchaseSheet = true
                 } else {
-                    // 그냥 다음 화면으로 이동
+                    router.pop()
+                    Task {
+                        await saveBundleChanges()
+                        // 다음 화면으로 이동하는 로직 추가 필요
+                    }
                 }
             } label: {
-                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || 
-                                    (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
                 
                 if hasPayableItems {
-                    let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + 
-                                     ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
+                    let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
                     Text("구매 \(payableCount)")
                 } else {
                     Text("다음")
@@ -632,7 +671,7 @@ extension BundleEditView {
                 }
             }
             .buttonStyle(.glassProminent)
-            .tint(((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || 
+            .tint(((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ||
                    (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)) ? .black80 : .white)
         }
     }
@@ -905,6 +944,9 @@ extension BundleEditView {
             // 뷰모델 데이터 새로고침
             viewModel.fetchAllBackgrounds { _ in }
             viewModel.fetchAllCarabiners { _ in }
+            
+            // 구매 완료 후 최종 저장
+            await saveBundleChanges()
             
         } else {
             // 구매 실패
