@@ -222,14 +222,31 @@ struct BundleEditView: View {
                         .foregroundStyle(.gray600)
                 }
             }
-            
-            ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: 10) {
-                    ForEach(viewModel.keyring, id: \.self) { keyring in
-                        keyringCell(keyring: keyring, geo: geo)
+            if viewModel.keyring.isEmpty {
+                VStack {
+                    Image(.emptyViewIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 77)
+                    Text("공방에서 키링을 만들 수 있어요")
+                        .typography(.suit15R)
+                        .foregroundStyle(.black100)
+                        .padding(.vertical, 15)
+                }
+                .padding(.bottom, 77)
+                .padding(.top, 62)
+                .frame(maxWidth: .infinity)
+                    
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: gridColumns, spacing: 10) {
+                        ForEach(viewModel.keyring, id: \.self) { keyring in
+                            keyringCell(keyring: keyring, geo: geo)
+                        }
                     }
                 }
             }
+            
         }
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
         .frame(maxWidth: .infinity)
