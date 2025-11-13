@@ -475,15 +475,12 @@ struct BundleEditView: View {
                 Color.black20
                     .ignoresSafeArea()
                     .onTapGesture {
-                        // Alert 닫을 때 저장 후 화면 이동
                         Task {
-                            do {
-                                await saveBundleChanges()
-                                await MainActor.run {
-                                    showPurchaseSuccessAlert = false
-                                    purchasesSuccessScale = 0.3
-                                    router.pop()
-                                }
+                            await saveBundleChanges()
+                            await MainActor.run {
+                                showPurchaseSuccessAlert = false
+                                purchasesSuccessScale = 0.3
+                                router.pop()
                             }
                         }
                     }
@@ -1035,7 +1032,15 @@ extension BundleEditView {
             viewModel.fetchAllBackgrounds { _ in }
             viewModel.fetchAllCarabiners { _ in }
             
-            // 저장과 화면 이동은 alert 터치 시 처리
+            // 1초 후 알럿 자동 닫기 및 저장 후 화면 이동
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
+            
+            await saveBundleChanges()
+            await MainActor.run {
+                showPurchaseSuccessAlert = false
+                purchasesSuccessScale = 0.3
+                router.pop()
+            }
             
         } else {
             // 구매 실패
