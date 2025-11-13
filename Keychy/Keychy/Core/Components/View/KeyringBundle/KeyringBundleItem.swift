@@ -180,7 +180,6 @@ struct KeyringBundleItem: View {
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth,
-            customSize: captureSize
         ) {
             // BundleImageCache에 저장
             BundleImageCache.shared.syncBundle(

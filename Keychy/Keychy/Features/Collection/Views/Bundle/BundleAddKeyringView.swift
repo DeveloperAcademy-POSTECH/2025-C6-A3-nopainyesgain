@@ -357,7 +357,6 @@ extension BundleAddKeyringView {
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth,
-            customSize: screenSize
         ) {
             await MainActor.run {
                 viewModel.bundleCapturedImage = pngData
