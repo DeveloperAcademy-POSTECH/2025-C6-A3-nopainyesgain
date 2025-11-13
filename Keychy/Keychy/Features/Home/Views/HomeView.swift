@@ -78,7 +78,7 @@ extension HomeView {
                 Image(.bundleIcon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 28, height: 28)
+                    .frame(width: 30, height: 30)
             }
             .frame(width: 44, height: 44)
             .glassEffect()
@@ -92,7 +92,7 @@ extension HomeView {
                         Image(.alarmIcon)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 28, height: 28)
+                            .frame(width: 30, height: 30)
                     }
                     .frame(width: 44, height: 44)
                     .glassEffect()
@@ -104,7 +104,7 @@ extension HomeView {
                         Image(.myPageIcon)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 28, height: 28)
+                            .frame(width: 30, height: 30)
 
                     }
                     .frame(width: 44, height: 44)
