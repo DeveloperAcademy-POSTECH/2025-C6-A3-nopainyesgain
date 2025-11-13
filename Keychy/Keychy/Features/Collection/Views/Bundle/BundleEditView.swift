@@ -94,6 +94,13 @@ struct BundleEditView: View {
                     }
                 }
                 
+                // Dim 오버레이 (키링 시트가 열릴 때)
+                if showSelectKeyringSheet {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                        .zIndex(1)
+                }
+                
                 // 키링 선택 시트
                 if showSelectKeyringSheet {
                     keyringSelectionSheet(geo: geo)
@@ -177,27 +184,16 @@ struct BundleEditView: View {
             
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
-                hasKeyring: selectedKeyrings[index] != nil,
                 action: {
                     selectedPosition = index
                     withAnimation(.easeInOut) {
                         showSelectKeyringSheet = true
                     }
-                },
-                secondAction: {
-                    selectedPosition = index
-                    isDeleteButtonSelected = true
                 }
             )
             .position(position)
-            .overlay(alignment: .top) {
-                if isDeleteButtonSelected && selectedPosition == index && selectedKeyrings[index] != nil {
-                    deleteButton()
-                        .position(x: position.x, y: position.y)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
-                        .animation(.spring, value: isDeleteButtonSelected)
-                }
-            }
+            .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
+            .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
         }
     }
     
