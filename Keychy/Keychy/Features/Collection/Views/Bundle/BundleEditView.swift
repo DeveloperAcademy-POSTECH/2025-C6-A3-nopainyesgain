@@ -595,12 +595,6 @@ struct BundleEditView: View {
         }
     }
     
-    /// 카라비너 변경 시 뭉치의 키링들을 모두 "none"으로 업데이트
-    /// - 편집 중에는 Firestore 업데이트를 하지 않으므로 현재 함수는 더 이상 사용하지 않습니다.
-    private func updateBundleKeyringsToNone() async {
-        // intentionally left unused to avoid mid-edit persistence
-    }
-    
     /// 최종 뭉치 변경사항을 Firebase에 저장
     private func saveBundleChanges() async {
         
