@@ -33,6 +33,7 @@ struct MultiKeyringSceneView: View {
 
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
+    @State private var isSceneReady: Bool = false
 
     // 기본 화면 크기 (iPhone 14 기준)
     private let defaultSceneSize = CGSize(width: 393, height: 852)
@@ -81,6 +82,8 @@ extension MultiKeyringSceneView {
             if let scene {
                 SpriteView(scene: scene, options: [.allowsTransparency])
                     .ignoresSafeArea()
+                    .opacity(isSceneReady ? 1 : 0)
+                    .animation(.easeOut(duration: 0.4), value: isSceneReady)
             } else {
                 Color.clear
             }
@@ -104,6 +107,9 @@ extension MultiKeyringSceneView {
 
     /// 씬 초기화 및 설정
     private func setupScene() {
+        // 씬 교체 시 준비 상태 리셋
+        isSceneReady = false
+
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,
@@ -121,8 +127,16 @@ extension MultiKeyringSceneView {
         newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
+        newScene.onAllKeyringsReady = handleSceneReady
 
         scene = newScene
+    }
+
+    /// 씬 준비 완료 처리
+    private func handleSceneReady() {
+        DispatchQueue.main.async {
+            isSceneReady = true
+        }
     }
 
     /// 파티클 효과 재생 처리

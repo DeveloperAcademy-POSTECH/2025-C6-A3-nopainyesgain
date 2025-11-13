@@ -45,6 +45,9 @@ class MultiKeyringScene: SKScene {
     // MARK: - 씬 준비 완료 콜백
     var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
 
+    // MARK: - 씬 로딩 상태
+    private var isSceneReady: Bool = false
+
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
     var currentRingType: RingType = .basic
@@ -663,9 +666,11 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.angularDamping = 0.5
         }
 
+        // 씬 준비 완료
+        isSceneReady = true
         onAllKeyringsReady?()
     }
-    
+
     // MARK: - Touch Handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
