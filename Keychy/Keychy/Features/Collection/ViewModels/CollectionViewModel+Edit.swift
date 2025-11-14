@@ -146,18 +146,31 @@ extension CollectionViewModel {
                         return
                     }
                     
-                    // 4. 로컬 데이터 정리
-                    if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
-                        self.keyring.remove(at: index)
+                    // 4. Storage에서 키링 리소스 삭제
+                    Task {
+                        do {
+                            try await self.deleteKeyringResources(keyring: keyring)
+                            print("Storage 리소스 삭제 완료")
+                        } catch {
+                            print("Storage 리소스 삭제 실패: \(error.localizedDescription)")
+                            // Storage 삭제 실패해도 Firestore는 이미 삭제됐으므로 계속 진행
+                        }
+                        
+                        // 5. 로컬 데이터 정리
+                        await MainActor.run {
+                            if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                                self.keyring.remove(at: index)
+                            }
+
+                            // 6. 매핑 Dictionary에서도 제거
+                            self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
+
+                            // 7. App Group 위젯용 캐시에서도 제거
+                            KeyringImageCache.shared.removeKeyring(id: documentId)
+
+                            completion(true)
+                        }
                     }
-
-                    // 5. 매핑 Dictionary에서도 제거
-                    self.keyringDocumentIdByLocalId.removeValue(forKey: keyring.id)
-
-                    // 6. App Group 위젯용 캐시에서도 제거
-                    KeyringImageCache.shared.removeKeyring(id: documentId)
-
-                    completion(true)
                 }
             }
     }
@@ -259,4 +272,63 @@ extension CollectionViewModel {
 
         return (newBodyImageURL, newSoundId)
     }
+    
+    // MARK: - Storage에서 키링 리소스 삭제
+    private func deleteKeyringResources(keyring: Keyring) async throws {
+        // 1. bodyImage 삭제
+        do {
+            // bodyImage는 항상 URL 형식
+            let bodyImagePath = extractStoragePath(from: keyring.bodyImage)
+            try await StorageManager.shared.deleteFile(path: bodyImagePath)
+            print("bodyImage 삭제 완료: \(bodyImagePath)")
+        } catch {
+            print("bodyImage 삭제 실패: \(error.localizedDescription)")
+            // 파일이 이미 없을 수도 있으므로 에러를 throw하지 않고 계속 진행
+        }
+        // 2. soundId 삭제 (커스텀 사운드인 경우만)
+        if !keyring.soundId.isEmpty && keyring.soundId.hasPrefix("https://") {
+            do {
+                let soundPath = extractStoragePath(from: keyring.soundId)
+                try await StorageManager.shared.deleteFile(path: soundPath)
+                print("customSound 삭제 완료: \(soundPath)")
+            } catch {
+                print("customSound 삭제 실패: \(error.localizedDescription)")
+                // 파일이 이미 없을 수도 있으므로 에러를 throw하지 않고 계속 진행
+            }
+        }
+    }
+    
+    // MARK: - Firebase Storage URL에서 경로 추출
+    private func extractStoragePath(from url: String) -> String {
+        // URL 예시:
+        // https://firebasestorage.googleapis.com:443/v0/b/keychy-f6011.firebasestorage.app/o/Keyrings%2FBodyImages%2FfkhS07JxL9PTqTxOubCRD1kuhAC3%2FCE0CE156-6C8A-4F92-8889-58B9E3AB0F6D.png?alt=media&token=...
+        
+        // URL이 이미 경로 형식이면 그대로 반환 (혹시 모를 경우 대비)
+        if !url.hasPrefix("https://") {
+            return url
+        }
+        
+        // "/o/" 이후의 부분 추출
+        guard let range = url.range(of: "/o/") else {
+            print("URL에서 '/o/' 부분을 찾을 수 없음: \(url)")
+            return url
+        }
+        
+        var path = String(url[range.upperBound...])
+        
+        // "?alt=media" 또는 "?" 이전까지 추출
+        if let queryRange = path.range(of: "?") {
+            path = String(path[..<queryRange.lowerBound])
+        }
+        
+        // URL 디코딩 (%2F -> /, %20 -> 공백 등)
+        guard let decodedPath = path.removingPercentEncoding else {
+            print("URL 디코딩 실패: \(path)")
+            return path
+        }
+        
+        print("📍 추출된 경로: \(decodedPath)")
+        return decodedPath
+    }
+
 }
