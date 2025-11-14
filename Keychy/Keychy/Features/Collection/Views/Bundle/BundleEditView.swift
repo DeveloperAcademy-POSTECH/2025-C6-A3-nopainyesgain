@@ -125,7 +125,15 @@ struct BundleEditView: View {
             await initializeData()
         }
         .onAppear {
-            showBackgroundSheet = true
+            // 화면이 나타날 때마다 데이터 새로고침
+            Task {
+                await refreshEditData()
+            }
+            
+            // 화면 첫 진입 시 배경 시트를 보여줌
+            if !showBackgroundSheet && !showCarabinerSheet {
+                showBackgroundSheet = true
+            }
         }
         .ignoresSafeArea()
         .onChange(of: showBackgroundSheet) { oldValue, newValue in
@@ -556,6 +564,43 @@ struct BundleEditView: View {
                     
                     continuation.resume()
                 }
+            }
+        }
+    }
+    
+    /// 화면이 다시 나타날 때 데이터 새로고침 (구매 상태 업데이트)
+    private func refreshEditData() async {
+        // 현재 선택된 아이템의 ID 저장
+        let currentBackgroundId = newSelectedBackground?.background.id
+        let currentCarabinerId = newSelectedCarabiner?.carabiner.id
+        
+        // 배경 데이터 새로고침
+        await withCheckedContinuation { continuation in
+            viewModel.fetchAllBackgrounds { _ in
+                // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
+                if let bgId = currentBackgroundId {
+                    self.newSelectedBackground = viewModel.backgroundViewData.first { $0.background.id == bgId }
+                }
+                continuation.resume()
+            }
+        }
+        
+        // 카라비너 데이터 새로고침
+        await withCheckedContinuation { continuation in
+            viewModel.fetchAllCarabiners { _ in
+                // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
+                if let cbId = currentCarabinerId {
+                    self.newSelectedCarabiner = viewModel.carabinerViewData.first { $0.carabiner.id == cbId }
+                }
+                continuation.resume()
+            }
+        }
+        
+        // 키링 데이터도 새로고침
+        let uid = UserManager.shared.userUID
+        await withCheckedContinuation { continuation in
+            viewModel.fetchUserKeyrings(uid: uid) { _ in
+                continuation.resume()
             }
         }
     }
