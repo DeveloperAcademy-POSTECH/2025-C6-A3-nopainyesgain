@@ -13,9 +13,17 @@ struct HomeTab: View {
     @State private var collectionViewModel = CollectionViewModel()
     @Bindable private var introViewModel = IntroViewModel()
 
+    /// 배경 로드 완료 콜백
+    var onBackgroundLoaded: (() -> Void)? = nil
+
     var body: some View {
         NavigationStack(path: $router.path) {
-            HomeView(router: router, userManager: userManager, collectionViewModel: collectionViewModel)
+            HomeView(
+                router: router,
+                userManager: userManager,
+                collectionViewModel: collectionViewModel,
+                onBackgroundLoaded: onBackgroundLoaded
+            )
                 .navigationDestination(for: HomeRoute.self) {route in
                     switch route {
                         //키링 뭉치함

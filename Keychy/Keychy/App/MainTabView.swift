@@ -20,11 +20,26 @@ struct MainTabView: View {
     @State private var showReceiveSheet = false
     @State private var receivedPostOfficeId: String?
     @State private var shouldRefreshCollection = false
-    
+
+    /// 스플래시 표시 여부
+    @State private var showSplash: Bool = true
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            // 홈
-            HomeTab(router: homeRouter, userManager: userManager)
+        ZStack {
+            TabView(selection: $selectedTab) {
+                // 홈
+                HomeTab(
+                    router: homeRouter,
+                    userManager: userManager,
+                    onBackgroundLoaded: {
+                        // 배경이 로드되면 스플래시 페이드아웃
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                showSplash = false
+                            }
+                        }
+                    }
+                )
                 .tabItem {
                     Image("home")
                         .renderingMode(.template)
@@ -58,35 +73,43 @@ struct MainTabView: View {
                     Text("페스티벌")
                 }
                 .tag(3)
-        }
-        .tint(.main500)  // 선택된 아이템 색상
-        .tabBarMinimizeBehavior(.onScrollDown)
-        .onAppear {
-            checkPendingDeepLink()
-        }
-        .onChange(of: deepLinkManager.pendingPostOfficeId) { oldValue, newValue in
-            if newValue != nil {
+            }
+            .tint(.main500)  // 선택된 아이템 색상
+            .tabBarMinimizeBehavior(.onScrollDown)
+            .onAppear {
                 checkPendingDeepLink()
             }
-        }
-        .fullScreenCover(isPresented: $showReceiveSheet) {
-            // 시트가 닫힐 때 새로고침 플래그 활성화
-            if receivedPostOfficeId != nil {
-                shouldRefreshCollection = true
-            }
-            receivedPostOfficeId = nil
-        } content: {
-            if let postOfficeId = receivedPostOfficeId {
-                KeyringReceiveView(
-                    viewModel: collectionViewModel,
-                    postOfficeId: postOfficeId
-                )
-                .onDisappear {
-                    receivedPostOfficeId = nil
+            .onChange(of: deepLinkManager.pendingPostOfficeId) { oldValue, newValue in
+                if newValue != nil {
+                    checkPendingDeepLink()
                 }
             }
+            .fullScreenCover(isPresented: $showReceiveSheet) {
+                // 시트가 닫힐 때 새로고침 플래그 활성화
+                if receivedPostOfficeId != nil {
+                    shouldRefreshCollection = true
+                }
+                receivedPostOfficeId = nil
+            } content: {
+                if let postOfficeId = receivedPostOfficeId {
+                    KeyringReceiveView(
+                        viewModel: collectionViewModel,
+                        postOfficeId: postOfficeId
+                    )
+                    .onDisappear {
+                        receivedPostOfficeId = nil
+                    }
+                }
+            }
+
+            // 스플래시 화면
+            if showSplash {
+                SplashView()
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .zIndex(999)
+            }
         }
-        
     }
     
     private func checkPendingDeepLink() {
@@ -99,11 +122,11 @@ struct MainTabView: View {
     
     private func handleDeepLink(postOfficeId: String) {
         print("키링 수신 처리 시작: \(postOfficeId)")
-        
+
         selectedTab = 1
-        
+
         receivedPostOfficeId = postOfficeId
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             showReceiveSheet = true
         }

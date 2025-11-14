@@ -17,14 +17,14 @@ struct HomeView: View {
 
     @State var collectionViewModel: CollectionViewModel
 
+    /// 배경 로드 완료 콜백
+    var onBackgroundLoaded: (() -> Void)? = nil
+
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
 
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
-
-    /// 스플래시 화면 표시 여부
-    @State private var showSplash: Bool = true
 
     // MARK: - Body
 
@@ -46,14 +46,7 @@ struct HomeView: View {
                     carabinerY: carabiner.carabinerY,
                     carabinerWidth: carabiner.carabinerWidth,
                     currentCarabinerType: carabiner.type,
-                    onBackgroundLoaded: {
-                        // 배경이 로드되면 스플래시 페이드아웃
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            withAnimation(.easeOut(duration: 0.5)) {
-                                showSplash = false
-                            }
-                        }
-                    }
+                    onBackgroundLoaded: onBackgroundLoaded
                 )
                 .ignoresSafeArea()
                 /// 씬 재생성 조건을 위한 ID 설정
@@ -66,18 +59,8 @@ struct HomeView: View {
 
             // 상단 네비게이션 버튼들
             navigationButtons
-                .opacity(showSplash ? 0 : 1)
-                .animation(.easeOut(duration: 0.5).delay(0.2), value: showSplash)
-
-            // 스플래시 화면
-            if showSplash {
-                SplashView()
-                    .transition(.opacity)
-                    .zIndex(999)
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .toolbar(showSplash ? .hidden : .visible, for: .tabBar)
         .task {
             // 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
