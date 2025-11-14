@@ -61,6 +61,11 @@ struct MyItemsView: View {
         }
         .navigationTitle("내 창고")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                chargeCoinBtn
+            }
+        }
         .task {
             // 최초 한 번만 초기화
             if !hasInitialized {
@@ -158,18 +163,18 @@ struct MyItemsView: View {
     }
     
     /// 열쇠 충전 버튼
-    var chargeCoinBtn: some View {
+    private var chargeCoinBtn: some View {
         Button {
             router.push(.coinCharge)
         } label: {
             HStack(spacing: 0) {
-                Image(.myItem)
+                Image(.buyKey)
                     .resizable()
                     .scaledToFit()
 
                 Spacer()
 
-                Text("내 아이템")
+                Text("\(userManager.currentUser?.coin ?? 0)")
                     .typography(.suit17B)
                     .foregroundColor(.black)
             }
