@@ -117,7 +117,7 @@ extension HomeView {
                 }
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
         .tint(.white.opacity(0))
     }
 }
