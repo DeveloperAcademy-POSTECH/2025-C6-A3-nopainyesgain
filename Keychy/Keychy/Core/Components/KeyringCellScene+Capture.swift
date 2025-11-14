@@ -26,7 +26,7 @@ extension KeyringCellScene {
 
         // 텍스처 캡처
         guard let texture = view.texture(from: self) else {
-            print("❌ [KeyringCapture] 텍스처 생성 실패")
+            print("[KeyringCapture] 텍스처 생성 실패")
             return nil
         }
 
@@ -36,7 +36,7 @@ extension KeyringCellScene {
         // UIImage로 변환 후 PNG 데이터 추출
         let image = UIImage(cgImage: cgImage)
         guard let pngData = image.pngData() else {
-            print("❌ [KeyringCapture] PNG 데이터 변환 실패")
+            print("[KeyringCapture] PNG 데이터 변환 실패")
             return nil
         }
 

@@ -17,11 +17,20 @@ struct PackagedKeyringView: View {
     @State var currentPage: Int = 0
     @State private var qrCodeImage: UIImage?
     @State private var isLoading: Bool = true
+    @State var capturedSceneImage: UIImage?
     
     var onImageSaved: (() -> Void)?
     var onLinkCopied: (() -> Void)?
     
     private let totalPages = 2
+    
+    private var ringType: RingType {
+        RingType.fromID(keyring.selectedRing)
+    }
+    
+    private var chainType: ChainType {
+        ChainType.fromID(keyring.selectedChain)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -36,11 +45,35 @@ struct PackagedKeyringView: View {
             imageSaveSection
         }
         .padding(.horizontal, 20)
+        .onAppear {
+            captureSceneOnAppear()
+        }
         .onChange(of: shareLink) { oldValue, newValue in
             // shareLink가 업데이트되면 QR 코드 생성
             if !newValue.isEmpty {
                 generateQRCodeImage()
             }
+        }
+    }
+    
+    // MARK: - 씬을 PNG로 미리 캡처
+    private func captureSceneOnAppear() {
+        Task { @MainActor in
+            let captureScene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                targetSize: CGSize(width: 195, height: 300),
+                customBackgroundColor: .clear,
+                zoomScale: 1.8
+            )
+            
+            guard let pngData = await captureScene.captureToPNG(),
+                  let image = UIImage(data: pngData) else {
+                return
+            }
+            
+            self.capturedSceneImage = image
         }
     }
     
@@ -138,13 +171,17 @@ extension PackagedKeyringView {
                 .frame(width: 220, height: 270)
                 .offset(y: -15)
             
-            SpriteView(
-                scene: createMiniScene(keyring: keyring),
-                options: [.allowsTransparency]
-            )
-            .frame(width: 195, height: 300)
-            .rotationEffect(.degrees(10))
-            .offset(y: -7)
+            if let sceneImage = capturedSceneImage {
+                Image(uiImage: sceneImage)
+                    .resizable()
+                    .frame(width: 195, height: 300)
+                    .rotationEffect(.degrees(10))
+                    .offset(y: -7)
+            } else {
+                // PNG 로딩 중
+                ProgressView()
+                    .frame(width: 195, height: 300)
+            }
         }
     }
     
@@ -257,47 +294,20 @@ extension PackagedKeyringView {
 
 // MARK: - Helper Functions
 extension PackagedKeyringView {
-    func createMiniScene(keyring: Keyring) -> KeyringCellScene {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        let scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 195, height: 300),
-            customBackgroundColor: .clear,
-            zoomScale: 1.8,
-            onLoadingComplete: {
-                DispatchQueue.main.async {
-                    withAnimation {
-                        self.isLoading = false
-                    }
-                }
-            }
-        )
-        scene.scaleMode = .aspectFill
-        return scene
-    }
-    
     func copyLink() {
         if shareLink.isEmpty {
-            print("ShareLink가 비어있습니다")
             return
         }
         
         UIPasteboard.general.string = shareLink
-        print("링크 복사 완료: \(shareLink)")
     }
     
     func generateQRCodeImage() {
         if shareLink.isEmpty {
-            print("ShareLink가 비어있습니다")
             return
         }
         
         qrCodeImage = generateQRCode(from: shareLink)
-        print("QR 코드 생성 완료: \(shareLink)")
     }
     
     func generateQRCode(from string: String) -> UIImage {
@@ -325,10 +335,9 @@ extension PackagedKeyringView {
     }
     
     func saveImage() {
-        print("이미지 저장 - 현재 페이지: \(currentPage)")
         captureAndSaveCurrentPage { success in
             if success {
-                print("✅ 저장 완료")
+                print("저장 완료")
             }
         }
     }

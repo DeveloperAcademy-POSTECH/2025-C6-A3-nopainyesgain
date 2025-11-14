@@ -19,6 +19,7 @@ struct CollectionKeyringDetailView: View {
     @State var isSheetPresented: Bool = true
     @State var isNavigatingDeeper: Bool = false
     @State var authorName: String = ""
+    @State var senderName: String = ""
     @State var copyVoucher: Int = 0
     @State var showMenu: Bool = false
     @State var showDeleteAlert: Bool = false

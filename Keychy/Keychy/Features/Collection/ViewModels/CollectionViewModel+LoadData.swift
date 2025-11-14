@@ -290,10 +290,10 @@ extension CollectionViewModel {
             }
     }
     
-    // MARK: - 작성자 닉네임 가져오기
-    func fetchAuthorName(authorId: String, completion: @escaping (String) -> Void) {
+    // MARK: - 유저 닉네임 가져오기
+    func fetchUserName(userId: String, completion: @escaping (String) -> Void) {
         db.collection("User")
-            .document(authorId)
+            .document(userId)
             .getDocument { snapshot, error in
                 if let error = error {
                     print("작성자 정보 로드 에러: \(error.localizedDescription)")

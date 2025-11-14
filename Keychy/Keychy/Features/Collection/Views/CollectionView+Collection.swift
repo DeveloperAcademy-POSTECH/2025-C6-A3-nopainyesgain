@@ -13,7 +13,7 @@ extension CollectionView {
         VStack {
             headerSection
                 .padding(.horizontal, Spacing.margin)
-                .padding(.top, Spacing.padding)
+                .padding(.top, 2)
             
             tagSection
                 .padding(.horizontal, Spacing.xs)
@@ -49,7 +49,7 @@ extension CollectionView {
     private var headerSection: some View {
         HStack(spacing: 0) {
             Text("보관함")
-                .typography(.suit32B)
+                .typography(.nanum32EB)
                 .padding(.leading, Spacing.sm)
 
             Spacer()

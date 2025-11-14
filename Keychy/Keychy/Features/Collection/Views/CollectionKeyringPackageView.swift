@@ -30,47 +30,50 @@ struct CollectionKeyringPackageView: View {
     let keyring: Keyring
     
     var body: some View {
-        ZStack {
-            packagedView
-            
-            // 포장 풀기 알럿
-            if showUnpackAlert || showUnpackCompleteAlert {
-                if showUnpackAlert {
-                    UnpackPopup(
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showUnpackAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            handleUnpackConfirm()
-                        }
-                    )
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(100)
-                }
+        GeometryReader { geometry in
+            ZStack {
+                packagedView
                 
-                // 포장 풀기 완료 알럿
-                if showUnpackCompleteAlert {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(99)
-                    
-                    UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
-                        .zIndex(100)
+                // 포장 풀기 알럿
+                if showUnpackAlert || showUnpackCompleteAlert {
+                    if showUnpackAlert {
+                        UnpackPopup(
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showUnpackAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                handleUnpackConfirm()
+                            }
+                        )
                         .transition(.scale.combined(with: .opacity))
                         .zIndex(100)
+                    }
+                    
+                    // 포장 풀기 완료 알럿
+                    if showUnpackCompleteAlert {
+                        Color.black20
+                            .ignoresSafeArea()
+                            .zIndex(99)
+                        
+                        UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
+                            .zIndex(100)
+                            .transition(.scale.combined(with: .opacity))
+                            .zIndex(100)
+                    }
+                }
+                
+                if showImageSaved {
+                    imageSaveAlert
+                }
+                
+                if showLinkCopied {
+                    linkCopiedAlert
                 }
             }
-            
-            if showImageSaved {
-                imageSaveAlert
-            }
-            
-            if showLinkCopied {
-                linkCopiedAlert
-            }
         }
+        .ignoresSafeArea()
         .navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
@@ -82,14 +85,28 @@ struct CollectionKeyringPackageView: View {
             hideTabBar()
             loadPackagedKeyringInfo()
         }
+        .onDisappear {
+            showTabBar()
+        }
     }
     
+    // MARK: - 탭바 제어
     func hideTabBar() {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first,
            let tabBarController = window.rootViewController?.findTabBarController() {
             UIView.animate(withDuration: 0.3) {
                 tabBarController.tabBar.isHidden = true
+            }
+        }
+    }
+    
+    func showTabBar() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let tabBarController = window.rootViewController?.findTabBarController() {
+            UIView.animate(withDuration: 0.3) {
+                tabBarController.tabBar.isHidden = false
             }
         }
     }
@@ -117,7 +134,7 @@ extension CollectionKeyringPackageView {
             VStack(spacing: 0) {
                 
                 Spacer()
-                    .frame(height: 30)
+                    .frame(height: 60)
                 
                 // 상단 상태 바
                 packageStatusBar
@@ -199,7 +216,7 @@ extension CollectionKeyringPackageView {
             }) {
                 Image("UnpackIcon")
                     .resizable()
-                    .frame(width: 32, height: 32)
+                    .frame(width: 34, height: 34)
             }
         }
     }
