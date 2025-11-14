@@ -217,7 +217,6 @@
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
-		AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
 		AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheet.swift */; };
 		AAA446822EC6519700080AB1 /* SelectCarabinerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */; };
@@ -509,7 +508,6 @@
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
-		AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSelectCarabinerView.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 		AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectBackgroundSheet.swift; sourceTree = "<group>"; };
 		AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerSheet.swift; sourceTree = "<group>"; };
@@ -1386,7 +1384,6 @@
 				C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
-				AA9B2E8C2EB0027D0004D31C /* BundleSelectCarabinerView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
 				AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */,
@@ -1654,7 +1651,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA9B2E8D2EB0027D0004D31C /* BundleSelectCarabinerView.swift in Sources */,
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
 				AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */,
 				AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */,
