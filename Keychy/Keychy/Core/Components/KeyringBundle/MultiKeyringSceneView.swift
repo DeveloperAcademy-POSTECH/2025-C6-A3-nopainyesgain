@@ -86,6 +86,8 @@ struct MultiKeyringSceneView: View {
         }
         .onAppear {
             // 씬이 없을 때만 초기 설정
+            showClouds = false
+            
             if scene == nil {
                 showClouds = true
                 loadBackgroundImage()
