@@ -81,7 +81,7 @@ struct MultiKeyringSceneView: View {
             if showClouds {
                 cloudsView
                     .transition(.opacity)
-                    .zIndex(100)
+                    .zIndex(1000)  // 스플래시(999)보다 위에 표시
             }
         }
         .onAppear {
