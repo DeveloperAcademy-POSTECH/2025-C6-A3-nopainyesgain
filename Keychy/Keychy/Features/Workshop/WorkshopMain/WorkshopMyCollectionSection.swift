@@ -51,7 +51,7 @@ extension WorkshopView {
     /// 빈 창고 뷰
     var emptyOwnedView: some View {
         HStack(alignment: .center, spacing: 0) {
-            Text("내 창고가 비었어요")
+            Text("최근 사용한 템플릿이 없어요")
                 .typography(.suit13SB)
                 .foregroundColor(.gray500)
         }
