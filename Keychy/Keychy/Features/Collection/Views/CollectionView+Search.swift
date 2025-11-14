@@ -95,8 +95,7 @@ extension CollectionView {
                 }
             }) {
                 Image("dismiss")
-                    .resizable()
-                    .frame(width: 32, height: 32)
+                    .foregroundColor(.primary)
             }
             .frame(width: 48, height: 48)
             .glassEffect(.regular.interactive(), in: .circle)

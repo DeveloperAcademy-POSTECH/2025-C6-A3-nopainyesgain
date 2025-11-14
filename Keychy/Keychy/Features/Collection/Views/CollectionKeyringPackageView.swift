@@ -216,7 +216,7 @@ extension CollectionKeyringPackageView {
             }) {
                 Image("UnpackIcon")
                     .resizable()
-                    .frame(width: 32, height: 32)
+                    .frame(width: 34, height: 34)
             }
         }
     }
