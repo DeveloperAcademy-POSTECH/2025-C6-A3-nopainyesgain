@@ -15,7 +15,7 @@ extension WorkshopView {
         VStack {
             HStack {
                 Spacer()
-                coinButton
+                myItemBtn
             }
 
             Spacer()
@@ -31,12 +31,12 @@ extension WorkshopView {
         HStack {
             titleView
             Spacer()
-            coinButton
+            myItemBtn
         }
-        .padding(.top, 70)
+        .padding(.top, 60)
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.white100)
         .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
     }
 
@@ -48,24 +48,24 @@ extension WorkshopView {
     }
 
     /// 코인 버튼
-    var coinButton: some View {
+    var myItemBtn: some View {
         Button {
             router.push(.coinCharge)
         } label: {
             HStack(spacing: 0) {
-                Image(.keyCoin)
+                Image(.myItem)
                     .resizable()
                     .scaledToFit()
 
                 Spacer()
 
-                Text("\(userManager.currentUser?.coin ?? 0)")
-                    .typography(.nanum16EB)
+                Text("내 아이템")
+                    .typography(.suit17B)
                     .foregroundColor(.black)
             }
         }
         .frame(minWidth: 80)
-        .frame(height: 40)
+        .frame(height: 44)
         .fixedSize(horizontal: true, vertical: true)
         .buttonStyle(.glass)
     }
