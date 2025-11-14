@@ -214,37 +214,22 @@ extension BundleCreateView {
 // MARK: - 배경, 카라비너 뷰
 extension BundleCreateView {
     private func selectedView(bg: BackgroundViewData, cb: CarabinerViewData, geometry: GeometryProxy) -> some View {
-        ZStack {
-            // 배경화면 이미지
-            LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .scaledToFit()
-                }
-            }
-            
-            // 카라비너 이미지 - MultiKeyringScene처럼 상대적 위치로 배치
-            carabinerImageView(carabiner: cb.carabiner, containerSize: geometry.size)
-        }
-    }
-    
-    /// MultiKeyringScene처럼 상대적 위치로 카라비너 배치
-    private func carabinerImageView(carabiner: Carabiner, containerSize: CGSize) -> some View {
-        LazyImage(url: URL(string: carabiner.carabinerImage[0])) { state in
-            if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: carabiner.carabinerWidth)
-                    .offset(
-                        // MultiKeyringScene과 동일한 방식으로 상대적 위치 계산
-                        x: carabiner.carabinerX - containerSize.width/2 + carabiner.carabinerWidth/2,
-                        y: carabiner.carabinerY - containerSize.height/2
-                    )
-            }
-            // 로딩 중에는 어떤 걸 표시할 지 고민이다
-        }
+        // 배경과 카라비너만 보여줌
+        MultiKeyringSceneView(
+            keyringDataList: [],
+            ringType: .basic,
+            chainType: .basic,
+            backgroundColor: .clear,
+            backgroundImageURL: bg.background.backgroundImage,
+            carabinerBackImageURL: cb.carabiner.backImageURL,
+            carabinerFrontImageURL: cb.carabiner.frontImageURL,
+            carabinerX: cb.carabiner.carabinerX,
+            carabinerY: cb.carabiner.carabinerY,
+            carabinerWidth: cb.carabiner.carabinerWidth,
+            currentCarabinerType: cb.carabiner.type
+        )
+        .ignoresSafeArea()
+        .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
     }
 }
 
