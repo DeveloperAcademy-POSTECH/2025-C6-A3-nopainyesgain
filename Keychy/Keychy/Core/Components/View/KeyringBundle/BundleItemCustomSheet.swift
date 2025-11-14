@@ -22,12 +22,12 @@ struct BundleItemCustomSheet<Content: View>: View {
         let mediumHeight = screenHeight * mediumRatio
         let largeHeight = screenHeight * largeRatio
         
-        VStack(spacing: 10) {
-
+        VStack(spacing: 0) {
+            // 인디케이터
             VStack(spacing: 0) {
                 Spacer()
                 RoundedRectangle(cornerRadius: 3)
-                    .fill(.gray100)
+                    .fill(.gray300)
                     .frame(width: 40, height: 4)
                 Spacer()
             }
@@ -42,7 +42,6 @@ struct BundleItemCustomSheet<Content: View>: View {
             }
             .gesture(dragGesture)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 30))
         .frame(height: sheetHeight)
         .background(
             RoundedRectangle(cornerRadius: 30)
@@ -50,6 +49,7 @@ struct BundleItemCustomSheet<Content: View>: View {
                 .stroke(.gray50, lineWidth: 1)
                 .shadow(color: .black100.opacity(0.15), radius: 9, x: 0, y: 0)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 30))
         .onAppear {
             if sheetHeight == 360 {
                 sheetHeight = mediumHeight // 기본값을 중간 크기로 설정
