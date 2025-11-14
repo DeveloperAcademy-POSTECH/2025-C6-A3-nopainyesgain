@@ -200,7 +200,7 @@ extension CollectionKeyringPackageView {
             Button {
                 router.pop()
             } label: {
-                Image("BackIcon")
+                Image("backIcon")
                     .resizable()
                     .frame(width: 32, height: 32)
             }

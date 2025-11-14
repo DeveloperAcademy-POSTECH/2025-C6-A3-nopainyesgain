@@ -66,9 +66,18 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
             .interactiveDismissDisabled(true)
             .sheet(isPresented: $showSheet) {
                 infoSheet
-                    .presentationDetents(dynamicDetents, selection: $sheetDetent)
-                    .presentationDragIndicator(.visible)
-                    .presentationBackgroundInteraction(.enabled(upThrough: .height(measuredSheetHeight)))
+                    .presentationDetents(
+                        showAddTagAlert
+                            ? [.height(76)]
+                            : dynamicDetents,
+                        selection: $sheetDetent
+                    )
+                    .presentationDragIndicator(showAddTagAlert ? .hidden : .visible)
+                    .presentationBackgroundInteraction(
+                        showAddTagAlert
+                            ? .enabled
+                            : .enabled(upThrough: .height(measuredSheetHeight))
+                    )
                     .interactiveDismissDisabled()
                     .onAppear {
                         sheetDetent = .height(measuredSheetHeight)
@@ -88,13 +97,15 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
             }
             .dismissKeyboardOnTap()
 
-            // Alert overlay (sheet 닫혔을 때만 표시)
+            // Alert overlay
             if showAddTagAlert {
-                Color.black.opacity(0.4)
+                Color.black50
                     .ignoresSafeArea()
+                    .zIndex(99)
 
                 addNewTagAlertView
                     .padding(.horizontal, 51)
+                    .zIndex(100)
             }
         }
     }

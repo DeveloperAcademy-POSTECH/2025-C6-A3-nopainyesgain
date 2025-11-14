@@ -145,17 +145,18 @@ extension KeyringDetailScene {
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
-        
+
         // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
 //        let gapByScreen = size.height * 0.01
 //        let gapByBody = bodyFrame.height * 0.03
 //        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 30.0
+        let connectGap = 12.0
         //let gap = gapByScreen
-        
+
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
-        
+
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+        body.zPosition = -1  // Body는 체인 아래
         addChild(body)
         self.bodyNode = body
         

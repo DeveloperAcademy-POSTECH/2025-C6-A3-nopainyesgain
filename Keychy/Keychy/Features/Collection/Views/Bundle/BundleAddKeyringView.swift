@@ -35,7 +35,7 @@ struct BundleAddKeyringView: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             VStack {
                 sceneView(carabiner: viewModel.selectedCarabiner ?? viewModel.carabiners.first!)
                 Spacer()
@@ -76,7 +76,6 @@ extension BundleAddKeyringView {
 
                 keyringButtons(carabiner: carabiner)
             }
-            .padding(.top, 60)
 
             Spacer()
         }
@@ -126,16 +125,11 @@ extension BundleAddKeyringView {
 
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
-                hasKeyring: selectedKeyrings[index] != nil,
                 action: {
                     selectedPosition = index
                     withAnimation(.easeInOut) {
                         showSelectKeyringSheet = true
                     }
-                },
-                secondAction: {
-                    selectedPosition = index
-                    isDeleteButtonSelected = true
                 }
             )
             .position(position)
@@ -354,10 +348,10 @@ extension BundleAddKeyringView {
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,  // 카라비너 타입 전달
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth,
-            customSize: screenSize
         ) {
             await MainActor.run {
                 viewModel.bundleCapturedImage = pngData

@@ -78,9 +78,10 @@ extension HomeView {
                 Image(.bundleIcon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 36, height: 36)
+                    .frame(width: 28, height: 28)
             }
-            .buttonStyle(.glassProminent)
+            .frame(width: 44, height: 44)
+            .glassEffect()
 
             // 알림 및 마이페이지 버튼 그룹
             GlassEffectContainer {
@@ -91,9 +92,10 @@ extension HomeView {
                         Image(.alarmIcon)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 36, height: 36)
+                            .frame(width: 28, height: 28)
                     }
-                    .buttonStyle(.glassProminent)
+                    .frame(width: 44, height: 44)
+                    .glassEffect()
                     .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
 
                     Button {
@@ -102,15 +104,17 @@ extension HomeView {
                         Image(.myPageIcon)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 36, height: 36)
+                            .frame(width: 28, height: 28)
+
                     }
-                    .buttonStyle(.glassProminent)
+                    .frame(width: 44, height: 44)
+                    .glassEffect()
                     .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 }
             }
         }
         .padding(.horizontal, 16)
-        .tint(.white.opacity(0.8))
+        .tint(.white.opacity(0))
     }
 }
 

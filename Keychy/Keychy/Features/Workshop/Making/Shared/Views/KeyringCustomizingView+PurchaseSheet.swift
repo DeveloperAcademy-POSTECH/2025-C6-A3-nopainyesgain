@@ -58,21 +58,8 @@ extension KeyringCustomizingView {
             purchaseButton
                 .padding(.horizontal, 33.2)
         }
-        .background(
-            GeometryReader { geometry in
-                Color.clear.preference(
-                    key: PurchaseSheetHeightPreferenceKey.self,
-                    value: geometry.size.height
-                )
-            }
-        )
         .background(Color.white100)
         .presentationBackground(Color.white100)
-        .onPreferenceChange(PurchaseSheetHeightPreferenceKey.self) { height in
-            if height > 0 {
-                purchaseSheetHeight = height
-            }
-        }
         .presentationDetents([.height(purchaseSheetHeight)])
     }
 }
@@ -143,13 +130,5 @@ extension KeyringCustomizingView {
             .background(.black80)
             .clipShape(RoundedRectangle(cornerRadius: 100))
         }
-    }
-}
-
-// MARK: - PreferenceKey
-struct PurchaseSheetHeightPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 500
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }

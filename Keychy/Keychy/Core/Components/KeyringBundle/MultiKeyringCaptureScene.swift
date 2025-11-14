@@ -20,6 +20,7 @@ class MultiKeyringCaptureScene: SKScene {
     }
 
     var keyringDataList: [KeyringData] = []
+    var currentCarabinerType: CarabinerType?  // 카라비너 타입 추가
     var currentRingType: RingType = .basic
     var currentChainType: ChainType = .basic
     var customBackgroundColor: UIColor = .clear
@@ -46,6 +47,7 @@ class MultiKeyringCaptureScene: SKScene {
 
     init(
         keyringDataList: [KeyringData],
+        carabinerType: CarabinerType? = nil,  // 카라비너 타입 추가
         ringType: RingType = .basic,
         chainType: ChainType = .basic,
         backgroundColor: UIColor = .clear,
@@ -58,6 +60,7 @@ class MultiKeyringCaptureScene: SKScene {
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
+        self.currentCarabinerType = carabinerType
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.customBackgroundColor = backgroundColor
@@ -121,8 +124,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 배경 이미지 설정
     private func setupBackgroundImage(url: String) {
         Task {
-            guard let imageURL = URL(string: url),
-                  let image = try? await StorageManager.shared.getImage(path: url) else {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 배경 이미지 로드 실패: \(url)")
                 await MainActor.run {
                     self.backgroundLoaded = true
@@ -152,8 +154,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 카라비너 뒷면 이미지 설정 (배경 바로 위)
     private func setupCarabinerBackImage(url: String) {
         Task {
-            guard let imageURL = URL(string: url),
-                  let image = try? await StorageManager.shared.getImage(path: url) else {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 카라비너 뒷면 이미지 로드 실패: \(url)")
                 await MainActor.run {
                     self.carabinerBackLoaded = true
@@ -194,8 +195,7 @@ class MultiKeyringCaptureScene: SKScene {
     /// 카라비너 앞면 이미지 설정 (가장 위)
     private func setupCarabinerFrontImage(url: String) {
         Task {
-            guard let imageURL = URL(string: url),
-                  let image = try? await StorageManager.shared.getImage(path: url) else {
+            guard let image = try? await StorageManager.shared.getImage(path: url) else {
                 print("⚠️ [MultiKeyringCaptureScene] 카라비너 앞면 이미지 로드 실패: \(url)")
                 await MainActor.run {
                     self.carabinerFrontLoaded = true
@@ -222,7 +222,7 @@ class MultiKeyringCaptureScene: SKScene {
                 let spriteKitY = self.size.height - centerY
 
                 carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
-                carabinerNode.zPosition = 10000  // 가장 위에 배치
+                carabinerNode.zPosition = -800  // 카라비너 뒷면(-900)과 키링들(0~) 사이
 
                 self.addChild(carabinerNode)
 
@@ -251,14 +251,55 @@ class MultiKeyringCaptureScene: SKScene {
         )
         let baseZPosition = CGFloat(order * 10)
 
-        // 1. Ring 생성
-        KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
+        // 카라비너 타입이 있으면 BundleRingComponent 사용, 없으면 기본 Ring 사용
+        guard let carabinerType = currentCarabinerType else {
+            // 기존 방식 (호환성 유지)
+            KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
+                guard let self = self, let ring = ring else {
+                    self?.checkLoadingComplete()
+                    return
+                }
+
+                ring.zPosition = baseZPosition
+                let ringFrame = ring.calculateAccumulatedFrame()
+                let ringRadius = ringFrame.height / 2
+
+                ring.position = CGPoint(
+                    x: spriteKitPosition.x,
+                    y: spriteKitPosition.y - ringRadius
+                )
+
+                ring.physicsBody = nil
+                self.addChild(ring)
+
+                // 2. Chain 생성
+                self.setupChain(
+                    ring: ring,
+                    centerX: spriteKitPosition.x,
+                    bodyImageURL: data.bodyImageURL,
+                    baseZPosition: baseZPosition
+                )
+            }
+            return
+        }
+
+        // 1. Ring 생성 (카라비너 타입에 맞는 Ring)
+        BundleRingComponent.createCarabinerRingNode(
+            carabinerType: carabinerType,
+            ringType: currentRingType
+        ) { [weak self] ring in
             guard let self = self, let ring = ring else {
                 self?.checkLoadingComplete()
                 return
             }
 
-            ring.zPosition = baseZPosition
+            // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
+            if carabinerType == .hamburger {
+                ring.zPosition = -850  // 카라비너 뒷면(-900)과 앞면(-800) 사이
+            } else {
+                ring.zPosition = baseZPosition
+            }
+
             let ringFrame = ring.calculateAccumulatedFrame()
             let ringRadius = ringFrame.height / 2
 
@@ -275,7 +316,8 @@ class MultiKeyringCaptureScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                carabinerType: carabinerType
             )
         }
     }
@@ -285,20 +327,32 @@ class MultiKeyringCaptureScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        carabinerType: CarabinerType? = nil
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 20
+        let chainSpacing: CGFloat = 16
+
+        // 카라비너 타입에 따라 체인 개수 설정
+        let chainCount: Int = {
+            if let carabinerType = currentCarabinerType {
+                return carabinerType == .plain ? 4 : 5
+            }
+            return 5  // 기본값
+        }()
+
+        // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
+        let chainBaseZPosition = baseZPosition
 
         KeyringChainComponent.createLinks(
             from: currentChainType,
-            count: 6,
+            count: chainCount,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing,
-            carabinerType: nil,
-            baseZPosition: baseZPosition
+            carabinerType: currentCarabinerType,  // 카라비너 타입 전달
+            baseZPosition: chainBaseZPosition
         ) { [weak self] chains in
             guard let self = self else { return }
 
@@ -314,7 +368,8 @@ class MultiKeyringCaptureScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
-                baseZPosition: baseZPosition
+                baseZPosition: baseZPosition,
+                carabinerType: carabinerType
             )
         }
     }
@@ -326,9 +381,10 @@ class MultiKeyringCaptureScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
-        baseZPosition: CGFloat
+        baseZPosition: CGFloat,
+        carabinerType: CarabinerType? = nil
     ) {
-        KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
+        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else {
                 self?.checkLoadingComplete()
                 return
@@ -341,11 +397,13 @@ class MultiKeyringCaptureScene: SKScene {
             let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
             let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-            let connectGap = 35.0
+            let connectGap = 12.0
             let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
 
             body.position = CGPoint(x: centerX, y: bodyCenterY)
-            body.zPosition = baseZPosition + 1
+
+            // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
+            body.zPosition = baseZPosition - 2  // Body는 체인 아래
 
             // 물리 바디 제거 (정적 배치만)
             body.physicsBody = nil

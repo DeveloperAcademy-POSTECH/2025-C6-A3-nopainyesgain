@@ -10,6 +10,8 @@ import NukeUI
 
 struct SelectBackgroundGridItem: View {
     let background: BackgroundViewData
+    let isSelected: Bool
+    let widthSize: CGFloat
     
     var body: some View {
         VStack(spacing: 10) {
@@ -19,60 +21,62 @@ struct SelectBackgroundGridItem: View {
                     if let image = state.image {
                         image
                             .resizable()
-                            .aspectRatio(2/3, contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .scaledToFill()
+                            .frame(width: (widthSize-60)/3, height: (widthSize-60) / 3 * (7/5))
+                            .clipped()
                     } else if state.isLoading {
                         ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .aspectRatio(2/3, contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    } else {
-                        Color.gray.opacity(0.1)
-                            .aspectRatio(2/3, contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
-                
-                // 오버레이 요소들
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isSelected ? .black.opacity(0.15) : .clear)
+                    
+                )
                 VStack {
                     HStack {
-                        // 유료 배경은 유료 아이콘 표시
+                        // 유료 아이콘
                         if !background.background.isFree {
-                            Image(.deselectPaid)
+                            Image(.keyHole)
                                 .resizable()
-                                .scaledToFit()
-                                .frame(width: 20, height: 20)
-                                .padding(EdgeInsets(top: 7, leading: 10, bottom: 0, trailing: 0))
+                                .frame(width: 30, height: 30)
+                                .padding(.top, 3)
                         }
+                        
                         Spacer()
-                        //소유하고 있는 배경화면은 보유 표시
+                        // 보유 표시
                         if background.isOwned {
                             Text("보유")
-                                .typography(.suit13SB)
-                                .foregroundStyle(Color.white100)
+                                .typography(.suit13M)
+                                .foregroundStyle(.white100)
+                                .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .padding(.horizontal, 12)
-                                .background(
-                                    UnevenRoundedRectangle(bottomLeadingRadius: 5, topTrailingRadius: 10)
-                                        .fill(Color.black60)
-                                )
-                            // 텍스트가 아주 조금 띄워져 보여져서 음수 오프셋을 사용합니다
-                                .offset(y: -1)
+                                .background(Color.black.opacity(0.6))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
-                    .padding(.all, 0)
+                    .padding(.horizontal, 5)
+                    .padding(.top, 3)
+                    
                     Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        // 다운로드 아이콘
+                        if background.background.isFree && !background.isOwned {
+                            Image(.download)
+                                .resizable()
+                                .frame(width: 18, height: 18)
+                                .padding(7)
+                        }
+                    }
                 }
-                .padding(.all, 0)
             }
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.gray.opacity(0.2))
-            )
-
+            // 이름 라벨
             Text(background.background.backgroundName)
-                .typography(.suit14SB18)
-                .foregroundStyle(.black100)
-        } //:VSTACK
+                .typography(isSelected ? .notosans14SB : .notosans14M)
+                .foregroundStyle(isSelected ? .main500 : .black100)
+        }
     }
 }

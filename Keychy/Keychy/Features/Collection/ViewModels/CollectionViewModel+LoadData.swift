@@ -359,4 +359,75 @@ extension CollectionViewModel {
             return .failed("인벤토리 확장 처리 중 오류가 발생했습니다")
         }
     }
+    
+    // MARK: - 키링 데이터 로딩 (공통 함수)
+    /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
+    func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
+        var dataList: [MultiKeyringScene.KeyringData] = []
+        
+        for (index, keyringId) in bundle.keyrings.enumerated() {
+            // 유효하지 않은 키링 ID 필터링
+            guard index < carabiner.maxKeyringCount,
+                  keyringId != "none",
+                  !keyringId.isEmpty else { continue }
+            
+            // Firebase에서 키링 정보 가져오기
+            guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
+            
+            // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
+            let customSoundURL: URL? = {
+                if keyringInfo.soundId.hasPrefix("https://") || keyringInfo.soundId.hasPrefix("http://") {
+                    return URL(string: keyringInfo.soundId)
+                }
+                return nil
+            }()
+            
+            // KeyringData 생성
+            let data = MultiKeyringScene.KeyringData(
+                index: index,
+                position: CGPoint(
+                    x: carabiner.keyringXPosition[index],
+                    y: carabiner.keyringYPosition[index]
+                ),
+                bodyImageURL: keyringInfo.bodyImage,
+                soundId: keyringInfo.soundId,
+                customSoundURL: customSoundURL,
+                particleId: keyringInfo.particleId
+            )
+            dataList.append(data)
+        }
+        
+        return dataList
+    }
+    
+    /// Firestore에서 키링 정보를 가져옴
+    private func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
+        do {
+            let document = try await db.collection("Keyring").document(keyringId).getDocument()
+            
+            guard let data = document.data(),
+                  let bodyImage = data["bodyImage"] as? String,
+                  let soundId = data["soundId"] as? String,
+                  let particleId = data["particleId"] as? String else {
+                return nil
+            }
+            
+            return KeyringInfo(
+                id: keyringId,
+                bodyImage: bodyImage,
+                soundId: soundId,
+                particleId: particleId
+            )
+        } catch {
+            return nil
+        }
+    }
+    
+    /// Firestore에서 가져온 키링 정보를 담는 구조체
+    struct KeyringInfo {
+        let id: String
+        let bodyImage: String
+        let soundId: String
+        let particleId: String
+    }
 }

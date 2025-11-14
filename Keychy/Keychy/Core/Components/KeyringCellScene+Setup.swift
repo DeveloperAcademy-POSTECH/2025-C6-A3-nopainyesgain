@@ -151,8 +151,9 @@ extension KeyringCellScene {
         //let gap = gapByScreen
         
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
-        
+
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+        body.zPosition = -1  // Body는 체인 아래
         containerNode.addChild(body)
         
         // 4. 조인트 연결

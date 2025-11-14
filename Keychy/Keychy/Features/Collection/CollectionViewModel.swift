@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseStorage
+import FirebaseFirestore
 import SpriteKit
 
 @Observable
