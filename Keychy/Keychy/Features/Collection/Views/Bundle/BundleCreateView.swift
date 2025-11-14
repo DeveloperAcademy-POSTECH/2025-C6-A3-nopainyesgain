@@ -119,6 +119,17 @@ struct BundleCreateView: View {
                 showBackgroundSheet = false
             }
         }
+        // 선택한 배경과 카라비너를 ViewModel과 자동 동기화
+        .onChange(of: selectedBackground) { _, newValue in
+            if let bg = newValue {
+                viewModel.selectedBackground = bg.background
+            }
+        }
+        .onChange(of: selectedCarabiner) { _, newValue in
+            if let cb = newValue {
+                viewModel.selectedCarabiner = cb.carabiner
+            }
+        }
     }
 }
 
@@ -145,7 +156,7 @@ extension BundleCreateView {
                 if hasUnpurchasedItems {
                     showPurchaseSheet = true
                 } else {
-                    // 무료 아이템만 있으면 다음 화면으로 이동 (키링 추가 화면)
+                    // 무료 아이템 or 보유한 아이템만 있으면 다음 화면으로 이동
                     router.push(.bundleAddKeyringView)
                 }
             } label: {
@@ -565,6 +576,7 @@ extension BundleCreateView {
             await MainActor.run {
                 showPurchaseSuccessAlert = false
                 purchasesSuccessScale = 0.3
+
                 router.push(.bundleAddKeyringView)
             }
             
