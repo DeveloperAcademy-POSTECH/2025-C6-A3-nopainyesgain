@@ -104,10 +104,15 @@ struct MainTabView: View {
 
             // 스플래시 화면
             if showSplash {
-                SplashView()
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                    .zIndex(999)
+                ZStack {
+                    // 배경색으로 전체 화면 덮기 (탭바 포함)
+                    Color.white
+                        .ignoresSafeArea()
+
+                    SplashView()
+                }
+                .transition(.opacity)
+                .zIndex(999)
             }
         }
     }
