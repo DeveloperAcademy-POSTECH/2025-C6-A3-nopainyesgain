@@ -26,9 +26,6 @@ struct HomeView: View {
     /// 스플래시 화면 표시 여부
     @State private var showSplash: Bool = true
 
-    /// 배경 이미지 로드 완료 여부
-    @State private var isBackgroundLoaded: Bool = false
-
     // MARK: - Body
 
     var body: some View {
@@ -51,7 +48,6 @@ struct HomeView: View {
                     currentCarabinerType: carabiner.type,
                     onBackgroundLoaded: {
                         // 배경이 로드되면 스플래시 페이드아웃
-                        isBackgroundLoaded = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             withAnimation(.easeOut(duration: 0.5)) {
                                 showSplash = false
