@@ -1,5 +1,5 @@
 //
-//  WorkshopMyCollectionSection.swift
+//  WorkshopMyItemSection.swift
 //  Keychy
 //
 //  Created by rundo on 11/3/25.
@@ -11,15 +11,14 @@ import SwiftUI
 
 extension WorkshopView {
     /// 내 창고 섹션 (보유한 키링만 표시)
-    var myCollectionSection: some View {
+    var myItemSection: some View {
         VStack(spacing: 12) {
             // 헤더
             HStack {
-                Button("내 창고 >") {
-                    router.push(.myItems)
-                }
-                .typography(.suit16B)
-                .foregroundColor(.black.opacity(0.7))
+            
+                Text("최근 사용 템플릿")
+                    .typography(.suit16B)
+                    .foregroundColor(.black.opacity(0.7))
 
                 Spacer()
             }

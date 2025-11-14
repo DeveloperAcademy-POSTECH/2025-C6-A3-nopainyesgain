@@ -156,6 +156,29 @@ struct MyItemsView: View {
             }
         }
     }
+    
+    /// 열쇠 충전 버튼
+    var chargeCoinBtn: some View {
+        Button {
+            router.push(.coinCharge)
+        } label: {
+            HStack(spacing: 0) {
+                Image(.myItem)
+                    .resizable()
+                    .scaledToFit()
+
+                Spacer()
+
+                Text("내 아이템")
+                    .typography(.suit17B)
+                    .foregroundColor(.black)
+            }
+        }
+        .frame(minWidth: 80)
+        .frame(height: 44)
+        .fixedSize(horizontal: true, vertical: true)
+        .buttonStyle(.glass)
+    }
 
     /// 빈 콘텐츠 뷰
     private var emptyContentView: some View {

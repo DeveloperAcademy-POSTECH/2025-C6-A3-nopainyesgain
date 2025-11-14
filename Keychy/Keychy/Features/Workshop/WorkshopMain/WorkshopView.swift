@@ -102,7 +102,7 @@ struct WorkshopView: View {
                     .frame(height: 20)
 
                 // 내 창고 섹션
-                myCollectionSection
+                myItemSection
 
                 // 메인 콘텐츠 (그리드)
                 mainContentSection

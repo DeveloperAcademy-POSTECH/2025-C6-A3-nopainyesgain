@@ -47,10 +47,10 @@ extension WorkshopView {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// 코인 버튼
+    /// 내 아이템 버튼
     var myItemBtn: some View {
         Button {
-            router.push(.coinCharge)
+            router.push(.myItems)
         } label: {
             HStack(spacing: 0) {
                 Image(.myItem)
