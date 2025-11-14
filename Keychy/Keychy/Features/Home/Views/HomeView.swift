@@ -149,6 +149,8 @@ extension HomeView {
         } else if let firstBundle = collectionViewModel.sortedBundles.first {
             collectionViewModel.selectedBundle = firstBundle
         } else {
+            // 번들이 하나도 없는 경우 - 스플래시 즉시 종료
+            onBackgroundLoaded?()
             return
         }
 
