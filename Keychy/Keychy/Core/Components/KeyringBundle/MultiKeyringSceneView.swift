@@ -112,9 +112,11 @@ struct MultiKeyringSceneView: View {
         }
         .onChange(of: isSceneReady) { _, ready in
             if ready {
-                // Scene이 준비되면 구름 사라지기
-                withAnimation(.easeOut(duration: 0.6)) {
-                    showClouds = false
+                // Scene 애니메이션 중간(0.2초 후)에 구름 걷히기
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    withAnimation(.easeOut(duration: 0.6)) {
+                        showClouds = false
+                    }
                 }
             }
         }
