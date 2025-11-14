@@ -106,6 +106,12 @@ struct BundleDetailView: View {
             // 뷰가 나타날 때 뭉치 데이터 로드
             await loadBundleData()
         }
+        .overlay {
+            // 삭제 확인 Alert
+            if showDeleteAlert {
+                deleteAlertView
+            }
+        }
     }
     
 }
@@ -129,6 +135,36 @@ extension BundleDetailView {
         // 3. 키링 데이터 생성
         guard let carabiner = viewModel.selectedCarabiner else { return }
         keyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+    }
+    
+    /// 뭉치 삭제
+    @MainActor
+    private func deleteBundle() async {
+        guard let bundle = viewModel.selectedBundle,
+              let documentId = bundle.documentId else {
+            showDeleteAlert = false
+            return
+        }
+        
+        do {
+            let db = Firestore.firestore()
+            
+            // Firebase에서 문서 삭제
+            try await db.collection("KeyringBundle").document(documentId).delete()
+            
+            // 로컬 배열에서도 제거
+            viewModel.bundles.removeAll { $0.documentId == documentId }
+            
+            // Alert 닫기
+            showDeleteAlert = false
+            
+            // 이전 화면으로 이동
+            router.pop()
+            
+        } catch {
+            print("[BundleDetail] 뭉치 삭제 실패: \(error.localizedDescription)")
+            showDeleteAlert = false
+        }
     }
 }
 
@@ -161,6 +197,77 @@ extension BundleDetailView {
 
 // MARK: - View Components
 extension BundleDetailView {
+    /// 삭제 확인 Alert
+    private var deleteAlertView: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showDeleteAlert = false
+                    }
+                }
+            
+            VStack {
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    // 타이틀
+                    Text("뭉치를 삭제하시겠어요?")
+                        .typography(.suit17B)
+                        .foregroundStyle(.black100)
+                        .padding(.top, 24)
+                        .padding(.bottom, 8)
+                    
+                    // 메시지
+                    Text("삭제된 뭉치는 복구할 수 없어요")
+                        .typography(.suit15R)
+                        .foregroundStyle(.gray600)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 24)
+                    
+                    Divider()
+                    
+                    // 버튼들
+                    HStack(spacing: 0) {
+                        // 취소 버튼
+                        Button {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showDeleteAlert = false
+                            }
+                        } label: {
+                            Text("취소")
+                                .typography(.suit16M)
+                                .foregroundStyle(.black100)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                        }
+                        
+                        Divider()
+                        
+                        // 삭제 버튼
+                        Button {
+                            Task {
+                                await deleteBundle()
+                            }
+                        } label: {
+                            Text("삭제")
+                                .typography(.suit16M)
+                                .foregroundStyle(.primaryRed)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                        }
+                    }
+                }
+                .background(.white100)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(.horizontal, 51)
+                
+                Spacer()
+            }
+        }
+    }
+    
     /// 메뉴 오버레이
     private var menuOverlay: some View {
         HStack {
