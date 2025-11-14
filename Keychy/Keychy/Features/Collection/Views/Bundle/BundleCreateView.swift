@@ -55,8 +55,6 @@ struct BundleCreateView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                // 배경과 카라비너가 모두 선택되었을 때만 화면 표시
-                // 초기 화면 진입 시 기본 배경, 기본 카라비너를 선택해주긴 하지만 앱 크래시 방지용으로 넣어둡니다
                 if let background = selectedBackground,
                    let carabiner = selectedCarabiner {
                     selectedView(
@@ -68,7 +66,7 @@ struct BundleCreateView: View {
                     sheetContent(geo: geo)
                 } else {
                     // 로딩 중일 때
-                    // 기본 배경 이미지와 로딩 중 애니메이션
+                    // 기본 배경 이미지와 로딩 중 애니메이션..
                     Image(.greenBackground)
                         .resizable()
                         .scaledToFit()
@@ -103,7 +101,50 @@ struct BundleCreateView: View {
             }
         }
     }
+}
 
+// MARK: - 툴바
+extension BundleCreateView {
+    private var backButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image(.lessThan)
+                    .resizable()
+                    .scaledToFit()
+            }
+            .frame(width: 44, height: 44)
+            .buttonStyle(.glass)
+        }
+    }
+    
+    private var nextButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                // 유료 아이템이 있으면 구매 시트 열기
+                if hasUnpurchasedItems {
+                    showPurchaseSheet = true
+                } else {
+                    // 무료 아이템만 있으면 다음 화면으로 이동 (키링 추가 화면)
+                    router.push(.bundleAddKeyringView)
+                }
+            } label: {
+                if hasUnpurchasedItems {
+                    let payableCount = payableItemsCount
+                    Text("구매 \(payableCount)")
+                } else {
+                    Text("다음")
+                        .typography(.suit17B)
+                        .foregroundStyle(.black100)
+                        .padding(.vertical, 7.5)
+                        .padding(.horizontal, 6)
+                }
+            }
+            .buttonStyle(.glassProminent)
+            .tint(hasUnpurchasedItems ? .black80 : .white)
+        }
+    }
 }
 
 //MARK: - 시트 뷰
@@ -161,7 +202,6 @@ extension BundleCreateView {
                     image
                         .resizable()
                         .scaledToFit()
-                        .ignoresSafeArea()
                 }
             }
             
@@ -184,7 +224,7 @@ extension BundleCreateView {
                         y: carabiner.carabinerY - containerSize.height/2
                     )
             }
-            // 로딩 중에는 아무것도 표시하지 않음
+            // 로딩 중에는 어떤 걸 표시할 지 고민이다
         }
     }
 }
@@ -200,9 +240,42 @@ extension BundleCreateView {
         await loadUserOwnedItems()
     }
     
+    /// 화면이 다시 나타날 때 데이터 새로고침
+    private func refreshData() async {
+        guard let _ = UserManager.shared.currentUser else {
+            return
+        }
+        
+        // 현재 선택된 아이템의 ID 저장
+        let currentBackgroundId = selectedBackground?.background.id
+        let currentCarabinerId = selectedCarabiner?.carabiner.id
+        
+        // 배경 데이터 새로고침
+        await withCheckedContinuation { continuation in
+            viewModel.fetchAllBackgrounds { _ in
+                // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
+                if let bgId = currentBackgroundId {
+                    self.selectedBackground = viewModel.backgroundViewData.first { $0.background.id == bgId }
+                }
+                continuation.resume()
+            }
+        }
+        
+        // 카라비너 데이터 새로고침
+        await withCheckedContinuation { continuation in
+            viewModel.fetchAllCarabiners { _ in
+                // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
+                if let cbId = currentCarabinerId {
+                    self.selectedCarabiner = viewModel.carabinerViewData.first { $0.carabiner.id == cbId }
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
     /// 사용자가 소유한 배경과 카라비너 아이템들을 로드
     private func loadUserOwnedItems() async {
-        guard let currentUser = UserManager.shared.currentUser else {
+        guard let _ = UserManager.shared.currentUser else {
             return
         }
         
