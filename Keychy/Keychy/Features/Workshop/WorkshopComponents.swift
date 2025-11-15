@@ -164,7 +164,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             }
 
             // 가격 오버레이
-            priceOverlay(
+            PriceOverlay(
                 isFree: item.isFree,
                 price: item.workshopPrice,
                 isOwned: isOwned,
@@ -292,106 +292,118 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
 }
 
 /// 공통 가격 오버레이 (유료 표시)
-func priceOverlay<Item: WorkshopItem>(
-    isFree: Bool,
-    price: Int,
-    isOwned: Bool,
-    item: Item,
-    effectManager: EffectManager,
-    userManager: UserManager
-) -> some View {
-    VStack {
-        HStack(spacing: 0) {
-            if !isFree {
-                HStack {
-                    Image(.paidIcon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 32)
+struct PriceOverlay<Item: WorkshopItem>: View {
+    let isFree: Bool
+    let price: Int
+    let isOwned: Bool
+    let item: Item
+    let effectManager: EffectManager
+    let userManager: UserManager
+
+    var body: some View {
+        VStack {
+            HStack(spacing: 0) {
+                if !isFree {
+                    HStack {
+                        Image(.paidIcon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32)
+                    }
+                    .padding(.top, 7)
+                    .padding(.leading, 10)
                 }
-                .padding(.top, 7)
-                .padding(.leading, 10)
+
+                Spacer()
+
+                if isOwned {
+                    VStack {
+                        Rectangle()
+                            .fill(.black60)
+                            .overlay(
+                                Text("보유")
+                                    .typography(.suit13M)
+                                    .foregroundStyle(.white100)
+                            )
+                            .cornerRadius(20)
+                            .frame(width: 43, height: 24)
+
+                        Spacer()
+                    }
+                    .padding(.top, 10)
+                    .padding(.trailing, 10)
+                }
             }
+            .frame(width:175, height: 43)
 
             Spacer()
 
-            if isOwned {
-                VStack {
-                    Rectangle()
-                        .fill(.black60)
-                        .overlay(
-                            Text("보유")
-                                .typography(.suit13M)
-                                .foregroundStyle(.white100)
-                        )
-                        .cornerRadius(20)
-                        .frame(width: 43, height: 24)
-                    
+            // 사운드일 때만 재생 버튼 표시
+            if item is Sound {
+                HStack {
                     Spacer()
+
+                    EffectButtonStyle(
+                        item: item,
+                        effectManager: effectManager,
+                        userManager: userManager
+                    )
                 }
-                .padding(.top, 10)
-                .padding(.trailing, 10)
+                .padding(8)
             }
-        }
-        .frame(width:175, height: 43)
-
-        Spacer()
-
-        // 사운드일 때만 재생 버튼 표시
-        if item is Sound {
-            HStack {
-                Spacer()
-
-                effectButtonStyle(
-                    item: item,
-                    effectManager: effectManager,
-                    userManager: userManager
-                )
-            }
-            .padding(8)
         }
     }
 }
 
-func effectButtonStyle<Item: WorkshopItem>(
-    item: Item,
-    effectManager: EffectManager,
-    userManager: UserManager
-) -> some View {
-    let itemId = item.id ?? ""
-    let isDownloading = effectManager.downloadingItemIds.contains(itemId)
-    let progress = effectManager.downloadProgress[itemId] ?? 0.0
+struct EffectButtonStyle<Item: WorkshopItem>: View {
+    let item: Item
+    let effectManager: EffectManager
+    let userManager: UserManager
 
-    return Button {
-        Task {
-            if let sound = item as? Sound {
-                await effectManager.playSound(sound, userManager: userManager)
-            }
-        }
-    } label: {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.gray50)
-                .frame(width: 38, height: 38)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(.white100, lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
-
-            if isDownloading {
-                // 다운로드 중이면 프로그레스 표시
-                CircularProgressView(progress: progress)
-                    .frame(width: 25, height: 25)
-            } else {
-                Image(.polygon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 14, height: 14)
-            }
-        }
+    private var itemId: String {
+        item.id ?? ""
     }
-    .disabled(isDownloading)
+
+    private var isDownloading: Bool {
+        effectManager.downloadingItemIds.contains(itemId)
+    }
+
+    private var progress: Double {
+        effectManager.downloadProgress[itemId] ?? 0.0
+    }
+
+    var body: some View {
+        Button {
+            Task {
+                if let sound = item as? Sound {
+                    await effectManager.playSound(sound, userManager: userManager)
+                }
+            }
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.gray50)
+                    .frame(width: 38, height: 38)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(.white100, lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+
+                if isDownloading {
+                    // 다운로드 중이면 프로그레스 표시
+                    CircularProgressView(progress: progress)
+                        .frame(width: 25, height: 25)
+                } else {
+                    Image(.polygon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 14, height: 14)
+                }
+            }
+        }
+        .disabled(isDownloading)
+    }
 }
 
 /// 원형 프로그레스 뷰
