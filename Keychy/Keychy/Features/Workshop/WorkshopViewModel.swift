@@ -123,6 +123,15 @@ class WorkshopViewModel {
             return user.templates.contains(id)
         }
     }
+    
+    // 보유한 아이템 목록 (실시간 반영)
+    var currentUsedTemplates: [KeyringTemplate] {
+        guard let user = userManager.currentUser else { return [] }
+        return templates.filter { template in
+            guard let id = template.id else { return false }
+            return user.currentUsedTemplates.contains(id)
+        }
+    }
 
     var ownedBackgrounds: [Background] {
         guard let user = userManager.currentUser else { return [] }

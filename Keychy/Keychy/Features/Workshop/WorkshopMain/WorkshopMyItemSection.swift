@@ -1,5 +1,5 @@
 //
-//  WorkshopMyItemSection.swift
+//  WorkshopCurrentUsedSection.swift
 //  Keychy
 //
 //  Created by rundo on 11/3/25.
@@ -10,8 +10,8 @@ import SwiftUI
 // MARK: - My Collection Section
 
 extension WorkshopView {
-    /// 내 창고 섹션 (보유한 키링만 표시)
-    var myItemSection: some View {
+    /// 내 아이템 섹션 (끝까지 만들었던 키링만 표시)
+    var CurrentUsedSection: some View {
         VStack(spacing: 12) {
             // 헤더
             HStack {
@@ -23,18 +23,18 @@ extension WorkshopView {
                 Spacer()
             }
 
-            // 보유 아이템 리스트
+            // 최근 사용한 탬플리 리스트
             Group {
-                if viewModel.isLoading || !viewModel.hasLoadedOwnedItems {
-                    loadingOwnedView
+                if viewModel.isLoading {
+                    loadingUsedTemplatesView
                 } else {
-                    if viewModel.ownedTemplates.isEmpty {
+                    if viewModel.currentUsedTemplates.isEmpty {
                         emptyOwnedView
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 7) {
-                                ForEach(viewModel.ownedTemplates) { template in
-                                    OwnedItemCard(item: template, router: router, viewModel: viewModel)
+                                ForEach(viewModel.currentUsedTemplates) { template in
+                                    CurrentUsedCard(item: template, router: router, viewModel: viewModel)
                                 }
                             }
                         }
@@ -47,7 +47,7 @@ extension WorkshopView {
         .padding(.bottom, 30)
     }
 
-    /// 빈 창고 뷰
+    /// 빈 최근 사용한 템플릿 뷰
     var emptyOwnedView: some View {
         HStack(alignment: .center, spacing: 0) {
             Text("키링을 만들면 최근 사용한 템플릿이 이곳에 표시돼요.")
@@ -61,8 +61,8 @@ extension WorkshopView {
         .cornerRadius(10)
     }
 
-    /// 내 창고 로딩 중 뷰
-    var loadingOwnedView: some View {
+    /// 최근 사용한 템플릿 뷰
+    var loadingUsedTemplatesView: some View {
         HStack(alignment: .center, spacing: 0) {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .purple))

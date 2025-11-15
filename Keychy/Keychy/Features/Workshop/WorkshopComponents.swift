@@ -212,7 +212,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
 }
 
 /// 보유한 아이템을 표시하는 작은 카드 뷰
-struct OwnedItemCard<Item: WorkshopItem>: View {
+struct CurrentUsedCard<Item: WorkshopItem>: View {
     let item: Item
     var router: NavigationRouter<WorkshopRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
@@ -223,7 +223,7 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
             handleTap()
         } label: {
             VStack(spacing: 8) {
-                VStack {
+                ZStack {
                     LazyImage(url: URL(string: item.thumbnailURL)) { state in
                         if let image = state.image {
                             image
@@ -236,6 +236,18 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
                         }
                     }
                     .scaledToFit()
+                    
+                    if !item.isFree {
+                        HStack {
+                            Image(.paidIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24)
+                        }
+                        .padding(.top, 3)
+                        .padding(.leading, 7)
+                    }
+                    
                 }
                 .frame(width:112, height:112)
                 .background(Color.white)
