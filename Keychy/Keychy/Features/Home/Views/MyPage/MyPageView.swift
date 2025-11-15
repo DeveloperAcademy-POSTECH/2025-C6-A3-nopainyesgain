@@ -193,7 +193,7 @@ struct MyPageView: View {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                         .onTapGesture {}
-                    LoadingAlert(checkmarkScale: loadingAlertScale)
+                    LoadingAlert(type: .short, message: nil)
                 }
             }
         }

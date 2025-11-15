@@ -22,6 +22,7 @@ struct ProfileSetupCompleteView: View {
             keyring
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.top, 30)
+                .blur(radius: isSaving ? 15 : 0)
 
             VStack(spacing: 0) {
                 title
@@ -32,10 +33,11 @@ struct ProfileSetupCompleteView: View {
                 nextBtn
                     .padding(.horizontal, 34)
             }
-            .disabled(isLoadingResources || !isSceneReady)
+            .disabled(isLoadingResources || !isSceneReady || isSaving)
+            .blur(radius: isSaving ? 15 : 0)
 
             if isSaving {
-                savingOverlay
+                LoadingAlert(type: .short, message: nil)
             }
         }
         .background(.white100)
@@ -162,6 +164,8 @@ extension ProfileSetupCompleteView {
             .frame(maxWidth: .infinity, alignment: .center)
             .multilineTextAlignment(.center)
             .padding(.top, 54)
+            .opacity(isSceneReady ? 1.0 : 0.0)
+            .scaleEffect(isSceneReady ? 1.0 : 0.9)
     }
 
     private var keyring: some View {
@@ -172,15 +176,18 @@ extension ProfileSetupCompleteView {
                     backgroundColor: .clear,
                     applyWelcomeImpulse: true,  // 자동 파티클 효과!
                     onSceneReady: {
-                        withAnimation(.easeIn(duration: 1.0)) {
-                            isSceneReady = true
-                        }
-                        closeLoadingIfReady()
+                        // 1초 딜레이 후 키링 표시
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            withAnimation(.easeIn(duration: 1.0)) {
+                                isSceneReady = true
+                            }
+                            closeLoadingIfReady()
 
-                        // 다음 버튼 애니메이션 등장
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                                showNextButton = true
+                            // 다음 버튼 애니메이션 등장
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                                    showNextButton = true
+                                }
                             }
                         }
                     }
@@ -190,26 +197,7 @@ extension ProfileSetupCompleteView {
             }
 
             if isLoadingResources || !isSceneReady {
-                loadingIndicator
-            }
-        }
-    }
-
-    private var loadingIndicator: some View {
-        VStack(spacing: 23) {
-            Image("appIcon")
-                .resizable()
-                .frame(width: 120, height: 120)
-
-            Text("환영 키링을 만드는 중이에요!")
-                .typography(.suit17SB)
-                .foregroundStyle(.black100)
-        }
-        .padding(20)
-        .scaleEffect(loadingScale)
-        .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
-                loadingScale = 1.0
+                LoadingAlert(type: .longWithKeychy, message: "환영 키링을 만드는 중이에요!")
             }
         }
     }
@@ -229,22 +217,5 @@ extension ProfileSetupCompleteView {
         .disabled(isSaving || isLoadingResources || !isSceneReady)
         .opacity(showNextButton ? 1 : 0)
         .scaleEffect(showNextButton ? 1 : 0.3)
-    }
-
-    private var savingOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-
-            VStack(spacing: 16) {
-                ProgressView()
-                    .scaleEffect(1.5)
-                Text("잠시만 기다려주세요...!")
-                    .typography(.suit16B)
-            }
-            .padding(32)
-            .glassEffect(in: .rect(cornerRadius: 15))
-            .cornerRadius(16)
-        }
     }
 }
