@@ -162,9 +162,8 @@ extension CollectionView {
                 .padding(.trailing, 8)
 
             Button(action: {
-                showInvenExpandAlert = true
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                    invenExpandAlertScale = 1.0
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showInvenExpandAlert = true
                 }
             }) {
                 Image("InvenPlus")

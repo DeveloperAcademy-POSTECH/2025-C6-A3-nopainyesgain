@@ -110,26 +110,30 @@ struct CollectionKeyringDetailView: View {
                     }
                     
                     if showInvenFullAlert {
-                        InvenLackPopup(
-                            onCancel: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showInvenFullAlert = false
-                                }
-                            },
-                            onConfirm: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showInvenFullAlert = false
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    isSheetPresented = false
-                                    isNavigatingDeeper = true
-                                    
-                                    router.push(.coinCharge)
-                                }
-                            }
-                        )
-                        .zIndex(100)
+                        InvenLackPopup(isPresented: $showInvenFullAlert)
+                            .zIndex(100)
                     }
+//                    if showInvenFullAlert {
+//                        InvenLackPopup(
+//                            onCancel: {
+//                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+//                                    showInvenFullAlert = false
+//                                }
+//                            },
+//                            onConfirm: {
+//                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+//                                    showInvenFullAlert = false
+//                                }
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                                    isSheetPresented = false
+//                                    isNavigatingDeeper = true
+//                                    
+//                                    router.push(.coinCharge)
+//                                }
+//                            }
+//                        )
+//                        .zIndex(100)
+//                    }
                 }
             }
         }

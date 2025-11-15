@@ -80,19 +80,8 @@ struct KeyringReceiveView: View {
                 }
                 
                 if showInvenFullAlert {
-                    InvenLackPopup(
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showInvenFullAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                //router.push(.coinCharge) 라우터 연결 필요
-                            }
-                        }
-                    )
-                    .zIndex(100)
+                    InvenLackPopup(isPresented: $showInvenFullAlert)
+                        .zIndex(100)
                 }
             }
         }
@@ -224,7 +213,7 @@ extension KeyringReceiveView {
         VStack(spacing: 10) {
             HStack(spacing: 0) {
                 Text(senderName)
-                    .typography(.notosans20B) // 요기
+                    .typography(.notosans20B) // 요기////
                     .foregroundColor(.main500)
                 
                 Text("님이 키링을 선물했어요!")
