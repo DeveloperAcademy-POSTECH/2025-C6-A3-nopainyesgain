@@ -17,9 +17,12 @@ struct BundleNameInputView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
     
+    @State private var textColor: Color = .gray300
+    
     // 업로드 상태
     @State private var isUploading: Bool = false
     @State private var uploadError: String?
+    
     
     // 선택된 키링들을 ViewModel에서 가져옴
     private var selectedKeyrings: [Int: Keyring] {
@@ -29,17 +32,12 @@ struct BundleNameInputView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 20) {
-                // 씬 표시 - ViewModel에 저장된 씬 재활용
-                keyringSceneView(geo: geo)
-                    .frame(height: geo.size.height * 0.5)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 82)
-                    .padding(.bottom, 20)
+                viewModel.keyringSceneView(geo: geo)
                 
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
                     .padding(.horizontal, 20)
-                
+                //TODO: 업로드 중 로티 추가
                 if isUploading {
                     ProgressView("업로드 중...")
                         .padding(.top, 8)
@@ -52,6 +50,7 @@ struct BundleNameInputView: View {
                 
                 Spacer()
             }
+            .frame(width: geo.size.width)
             .padding(.bottom, max(380 - keyboardHeight, 20))
             .onAppear {
                 // 키보드 자동 활성화
@@ -78,33 +77,6 @@ struct BundleNameInputView: View {
     }
 }
 
-// MARK: - 카라비너 + 키링 SpriteKit 씬 표시 (ViewModel에서 재활용)
-extension BundleNameInputView {
-    private func keyringSceneView(geo: GeometryProxy) -> some View {
-        ZStack {
-            if let imageData = viewModel.bundleCapturedImage,
-               let uiImage = UIImage(data: imageData) {
-                // 캡처된 이미지 표시
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                // 이미지가 없으면 기본 메시지 표시
-                VStack {
-                    Image(systemName: "photo")
-                        .font(.system(size: 50))
-                        .foregroundColor(.gray)
-                    Text("이미지를 불러오는 중...")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                .frame(width: 200, height: 200)
-            }
-        }
-        .clipped()
-    }
-}
-
 // MARK: - 이름 입력
 extension BundleNameInputView {
     private func bundleNameTextField() -> some View {
@@ -113,8 +85,8 @@ extension BundleNameInputView {
                 "이름을 입력해주세요",
                 text: $bundleName
             )
-            .typography(.suit16M25)
-            .foregroundStyle(bundleName.count == 0 ? .gray300 : .black100)
+            .typography(.notosans16R)
+            .foregroundStyle(textColor)
             .focused($isTextFieldFocused)
             .onChange(of: bundleName) { _, newValue in
                 let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
@@ -127,6 +99,8 @@ extension BundleNameInputView {
                 if sanitized != bundleName {
                     bundleName = sanitized
                 }
+                
+                textColor = (bundleName.count == 0 ? .gray300 : .black100)
             }
             Spacer()
             Text("\(bundleName.count) / \(viewModel.maxBundleNameCount)")
@@ -202,7 +176,14 @@ extension BundleNameInputView {
                         )
 
                         isUploading = false
+                        
+                        // 생성된 번들을 selectedBundle에 할당
+                        // createBundle의 completion이 배열 업데이트 후 호출되므로 안전
+                        viewModel.selectedBundle = viewModel.bundles.first { $0.documentId == bundleId }
                         router.reset()
+                        router.push(.bundleInventoryView)
+                        // 네비게이션: 상세 페이지로 이동
+                        router.push(.bundleDetailView)
                     } else {
                         // 실패 처리
                         isUploading = false
@@ -228,7 +209,6 @@ extension BundleNameInputView {
         bundleName: String
     ) {
         guard let imageData = viewModel.bundleCapturedImage else {
-            print("⚠️ [BundleNameInput] 캡처된 이미지가 없습니다")
             return
         }
 
@@ -238,6 +218,5 @@ extension BundleNameInputView {
             name: bundleName,
             imageData: imageData
         )
-        print("✅ [BundleNameInput] 번들 이미지 캐시 저장 완료: \(bundleName)")
     }
 }

@@ -61,17 +61,6 @@ struct SelectCarabinerGridItem: View {
                     .padding(.top, 3)
                     
                     Spacer()
-                    
-                    HStack {
-                        Spacer()
-                        // 다운로드 표시
-                        if carabiner.carabiner.isFree && !carabiner.isOwned {
-                            Image(.download)
-                                .resizable()
-                                .frame(width: 18, height: 18)
-                                .padding(7)
-                        }
-                    }
                 }
                 if isSelected {
                     RoundedRectangle(cornerRadius: 10)
