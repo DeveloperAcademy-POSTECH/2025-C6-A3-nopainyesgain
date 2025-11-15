@@ -7,6 +7,8 @@
 
 // 뭉치 보관함 그리드에 들어가는 각각의 아이템 컴포넌트입니다
 import SwiftUI
+import SpriteKit
+import FirebaseFirestore
 
 struct KeyringBundleItem: View {
     let bundle: KeyringBundle
@@ -97,7 +99,6 @@ struct KeyringBundleItem: View {
     /// 캐시에서 번들 이미지 로드
     private func loadBundleImage() {
         guard let documentId = bundle.documentId else {
-            print("⚠️ [BundleItem] documentId 없음")
             return
         }
 
@@ -106,7 +107,6 @@ struct KeyringBundleItem: View {
            let uiImage = UIImage(data: imageData) {
             cachedImage = Image(uiImage: uiImage)
         } else {
-            print("⚠️ [BundleItem] 캐시 이미지 없음: \(bundle.name) - 재캡처 시작")
             // 캐시가 없으면 다시 캡처
             Task {
                 await recaptureAndCacheBundleImage(bundleId: documentId, bundleName: bundle.name)
@@ -125,7 +125,6 @@ struct KeyringBundleItem: View {
         // Firestore에서 번들 정보 가져오기 (배경, 카라비너, 키링 정보)
         guard let background = await fetchBackgroundInfo(backgroundId: bundle.selectedBackground),
               let carabiner = await fetchCarabinerInfo(carabinerId: bundle.selectedCarabiner) else {
-            print("❌ [BundleItem] 배경 또는 카라비너 정보를 가져올 수 없습니다")
             await MainActor.run {
                 isCapturing = false
             }
@@ -157,7 +156,6 @@ struct KeyringBundleItem: View {
 
         // 배경 이미지 미리 로드 (캡처 전 확인)
         guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
-            print("❌ [BundleItem] 배경 이미지 미리 로드 실패")
             await MainActor.run {
                 isCapturing = false
             }
@@ -202,7 +200,6 @@ struct KeyringBundleItem: View {
                 }
             }
         } else {
-            print("❌ [BundleItem] 재캡처 실패: \(bundleId)")
             await MainActor.run {
                 isCapturing = false
             }
@@ -255,7 +252,7 @@ struct KeyringBundleItem: View {
 
             return KeyringInfo(id: keyringId, bodyImage: bodyImage)
         } catch {
-            print("❌ [BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
+            print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
         }
     }
@@ -266,6 +263,3 @@ struct KeyringBundleItem: View {
         let bodyImage: String
     }
 }
-
-import SpriteKit
-import FirebaseFirestore
