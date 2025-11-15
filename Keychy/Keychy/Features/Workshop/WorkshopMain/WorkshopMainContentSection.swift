@@ -26,15 +26,14 @@ extension WorkshopView {
         .background(.white100)
     }
 
-    /// 로딩 뷰
+    /// 로딩 뷰 (스켈레톤 애니메이션)
     var loadingView: some View {
-        HStack(spacing: 0) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-                .scaleEffect(1.5)
+        HStack(spacing: 11){
+            SkeletonBox(width: 175, height: 233)
+            SkeletonBox(width: 175, height: 233)
         }
-        .frame(maxWidth: .infinity, minHeight: 300)
-        .padding(.top, 50)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 92)
     }
 
 
@@ -137,5 +136,44 @@ extension WorkshopView {
             .buttonStyle(.borderedProminent)
         }
         .padding(.top, 100)
+    }
+}
+
+// MARK: - Skeleton Loading View
+
+struct SkeletonBox: View {
+    let width: CGFloat
+    let height: CGFloat
+
+    @State private var isAnimating = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .fill(Color.gray50)
+            .frame(width: width, height: height)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.clear,
+                                Color.white.opacity(0.5),
+                                Color.clear
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .offset(x: isAnimating ? width : -width)
+                    .animation(
+                        Animation.linear(duration: 1.5)
+                            .repeatForever(autoreverses: false),
+                        value: isAnimating
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .onAppear {
+                isAnimating = true
+            }
     }
 }
