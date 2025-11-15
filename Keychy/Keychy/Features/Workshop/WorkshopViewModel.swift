@@ -238,12 +238,12 @@ class WorkshopViewModel {
 
     /// 배경과 카라비너에서 사용 가능한 태그를 추출
     private func extractAvailableTags() {
-        // 배경 태그 추출
-        let backgroundTagSet = Set(backgrounds.flatMap { $0.tags })
+        // 배경 태그 추출 (빈 문자열 제외)
+        let backgroundTagSet = Set(backgrounds.flatMap { $0.tags }.filter { !$0.isEmpty })
         availableBackgroundTags = Array(backgroundTagSet).sorted()
 
-        // 카라비너 태그 추출
-        let carabinerTagSet = Set(carabiners.flatMap { $0.tags })
+        // 카라비너 태그 추출 (빈 문자열 제외)
+        let carabinerTagSet = Set(carabiners.flatMap { $0.tags }.filter { !$0.isEmpty })
         availableCarabinerTags = Array(carabinerTagSet).sorted()
     }
     
