@@ -19,10 +19,8 @@ struct CarabinerAddKeyringButton: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
-                .foregroundStyle(.white)
-                .padding(5)
+                .padding(8)
         }
         .glassEffect(.clear.interactive(), in: .circle)
-        .frame(width: 50, height: 50)
     }
 }
