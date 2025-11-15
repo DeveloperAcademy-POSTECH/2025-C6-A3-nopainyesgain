@@ -17,9 +17,12 @@ struct BundleNameInputView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
     
+    @State private var textColor: Color = .gray300
+    
     // 업로드 상태
     @State private var isUploading: Bool = false
     @State private var uploadError: String?
+    
     
     // 선택된 키링들을 ViewModel에서 가져옴
     private var selectedKeyrings: [Int: Keyring] {
@@ -83,7 +86,7 @@ extension BundleNameInputView {
                 text: $bundleName
             )
             .typography(.suit16M25)
-            .foregroundStyle(bundleName.count == 0 ? .gray300 : .black100)
+            .foregroundStyle(textColor)
             .focused($isTextFieldFocused)
             .onChange(of: bundleName) { _, newValue in
                 let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
@@ -96,6 +99,8 @@ extension BundleNameInputView {
                 if sanitized != bundleName {
                     bundleName = sanitized
                 }
+                
+                textColor = (bundleName.count == 0 ? .gray300 : .black100)
             }
             Spacer()
             Text("\(bundleName.count) / \(viewModel.maxBundleNameCount)")
