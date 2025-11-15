@@ -201,8 +201,9 @@ extension ProfileSetupCompleteView {
                 .resizable()
                 .frame(width: 120, height: 120)
 
-            Text("환영 키링을 만들고 있어요")
+            Text("환영 키링을 만드는 중이에요!")
                 .typography(.suit17SB)
+                .foregroundStyle(.black100)
         }
         .padding(20)
         .scaleEffect(loadingScale)
