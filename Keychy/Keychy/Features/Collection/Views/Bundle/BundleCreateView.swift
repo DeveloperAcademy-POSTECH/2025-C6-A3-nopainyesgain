@@ -59,8 +59,7 @@ struct BundleCreateView: View {
                    let carabiner = selectedCarabiner {
                     selectedView(
                         bg: background,
-                        cb: carabiner,
-                        geometry: geo
+                        cb: carabiner
                     )
                     
                     sheetContent(geo: geo)
@@ -224,7 +223,7 @@ extension BundleCreateView {
 
 // MARK: - 배경, 카라비너 뷰
 extension BundleCreateView {
-    private func selectedView(bg: BackgroundViewData, cb: CarabinerViewData, geometry: GeometryProxy) -> some View {
+    private func selectedView(bg: BackgroundViewData, cb: CarabinerViewData) -> some View {
         // 배경과 카라비너만 보여줌
         MultiKeyringSceneView(
             keyringDataList: [],
