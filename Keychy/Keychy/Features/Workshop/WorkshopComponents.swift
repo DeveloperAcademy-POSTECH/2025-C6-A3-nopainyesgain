@@ -285,19 +285,34 @@ func priceOverlay<Item: WorkshopItem>(
     VStack {
         HStack(spacing: 0) {
             if !isFree {
-                Image(.keyHole)
-                    .padding(.leading, 10)
-                    .padding(.top, 7)
+                HStack {
+                    Image(.paidIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 32)
+                }
+                .padding(.top, 7)
+                .padding(.leading, 10)
             }
 
             Spacer()
 
             if isOwned {
                 VStack {
-                    Image(.owned)
+                    Rectangle()
+                        .fill(.black60)
+                        .overlay(
+                            Text("보유")
+                                .typography(.suit13M)
+                                .foregroundStyle(.white100)
+                        )
+                        .cornerRadius(20)
+                        .frame(width: 43, height: 24)
                     
                     Spacer()
                 }
+                .padding(.top, 10)
+                .padding(.trailing, 10)
             }
         }
         .frame(width:175, height: 43)

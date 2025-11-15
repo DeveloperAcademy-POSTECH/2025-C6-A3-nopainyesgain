@@ -39,12 +39,16 @@ struct SelectCarabinerGridItem: View {
                 VStack {
                     HStack {
                         if !carabiner.carabiner.isFree {
-                            Image(.keyHole)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                                .padding(.top, 4.5)
+                            HStack {
+                                Image(.paidIcon)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 32)
+                            }
+                            .padding(.top, 7)
+                            .padding(.leading, 10)
                         }
+                        
                         Spacer()
                         // 보유 카라비너 표시
                         if carabiner.isOwned {
