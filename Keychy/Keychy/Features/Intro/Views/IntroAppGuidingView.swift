@@ -10,18 +10,17 @@ import SwiftUI
 struct IntroAppGuidingView: View {
     @Bindable var viewModel: IntroViewModel
     @State private var currentPage = 0
-
+    
     // 가이드 페이지 수
     private let totalPages = 2
-
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // 페이지 뷰
-                HStack {
-                    backToolbarItem
-                    Spacer()
-                }
+                
+                // 커스텀 인디케이터
+                pageIndicator
+                    .safeAreaPadding(.top, 106)
                 
                 TabView(selection: $currentPage) {
                     ForEach(0..<totalPages, id: \.self) { index in
@@ -31,9 +30,9 @@ struct IntroAppGuidingView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: currentPage)
-
-                // 커스텀 인디케이터
-                pageIndicator
+                
+                // 다음버튼
+                nextBtn
             }
             .background(.white100)
         }
@@ -44,31 +43,36 @@ struct IntroAppGuidingView: View {
 extension IntroAppGuidingView {
     /// 페이지 콘텐츠
     private func guidePage(index: Int) -> some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 63) {
             // 제목
             Text(guidingLabel(for: index))
                 .typography(.suit20B)
                 .foregroundStyle(.black100)
                 .multilineTextAlignment(.center)
-
+            
             // 이미지
             switch index {
             case 0:
-                Image("homeGuiding")
+                Rectangle()
+                    .frame(width: 401, height: 409)
+                    .foregroundStyle(.gray50)
             case 1:
-                Image("collectionGuiding")
+                Rectangle()
+                    .frame(width: 401, height: 409)
+                    .foregroundStyle(.gray50)
             default:
-                Image("homeGuiding")
+                Rectangle()
+                    .frame(width: 401, height: 409)
+                    .foregroundStyle(.gray50)
             }
         }
-        .padding(.bottom, 16)
     }
-
+    
     /// 설명 레이블
     private func guidingLabel(for index: Int) -> String {
         switch index {
-        case 0: return "홈"
-        case 1: return "보관함"
+        case 0: return "홈에서는 어쩌고 저쩌고 라이팅"
+        case 1: return "보관함에서는 어쩌고 저쩌고 라이팅"
         default: return ""
         }
     }
@@ -86,13 +90,19 @@ extension IntroAppGuidingView {
     }
     
     /// X 버튼
-    private var backToolbarItem: some View {
-        CircleGlassButton(imageName: "dismiss_gray600") {
+    private var nextBtn: some View {
+        Button {
             viewModel.closeAppGuiding()
+        } label: {
+            Text("다음")
+                .frame(maxWidth: .infinity)
+                .typography(.suit17B)
+                .padding(.vertical, 7.5)
         }
-        .padding(.leading, 26)
+        .padding(.horizontal, 34)
+        .buttonStyle(.glassProminent)
+        .tint(.main500)
+        .foregroundStyle(.white100)
     }
 }
-
-
 

@@ -99,7 +99,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
 
             // Alert overlay
             if showAddTagAlert {
-                Color.black50
+                Color.black60
                     .ignoresSafeArea()
                     .zIndex(99)
 

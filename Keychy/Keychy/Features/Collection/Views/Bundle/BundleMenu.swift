@@ -11,6 +11,7 @@ struct BundleMenu: View {
     let onNameEdit: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
+    let isMain: Bool
     
     @State private var isAppearing = false
     
@@ -48,19 +49,21 @@ struct BundleMenu: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             // 삭제 버튼
-            Button(action: onDelete) {
-                HStack(spacing: 8) {
-                    Image(.trash)
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                    
-                    Text("삭제")
-                        .typography(.suit16M)
-                        .foregroundColor(.pink)
+            if !isMain {
+                Button(action: onDelete) {
+                    HStack(spacing: 8) {
+                        Image(.trash)
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                        
+                        Text("삭제")
+                            .typography(.suit16M)
+                            .foregroundColor(.pink)
+                    }
                 }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .buttonStyle(.plain)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 20)

@@ -82,10 +82,11 @@ extension CollectionViewModel {
                 var updatedBundle = newBundle
                 updatedBundle.documentId = bundleId
                 self.bundles.append(updatedBundle)
+                
+                print("뭉치 생성 완료: \(bundleId)")
+                // 배열 업데이트 후 completion 호출
+                completion(true, bundleId)
             }
-            
-            print("뭉치 생성 완료: \(bundleId)")
-            completion(true, bundleId)
         }
     }
     
@@ -577,5 +578,80 @@ extension CollectionViewModel {
         }
         
         return keyrings
+    }
+    
+    // MARK: - 카라비너 위치 계산
+    
+    /// 카라비너의 중심 위치를 계산 (이미지 로드 후 사용)
+    /// - Parameters:
+    ///   - carabiner: 카라비너 데이터
+    ///   - imageSize: 실제 이미지 크기 (NukeUI의 PlatformImage.size)
+    /// - Returns: 계산된 중심 위치
+    func calculateCarabinerCenterPosition(
+        for carabiner: Carabiner,
+        imageSize: CGSize
+    ) -> CGPoint {
+        // X 좌표: 기존 방식 (왼쪽 상단 + 너비/2)
+        let centerX = carabiner.carabinerX + (carabiner.carabinerWidth / 2)
+        
+        // Y 좌표: 이미지 비율을 고려하여 높이 계산 후 중심값
+        let aspectRatio = imageSize.width / imageSize.height
+        let scaledHeight = carabiner.carabinerWidth / aspectRatio
+        let centerY = carabiner.carabinerY + (scaledHeight / 2)
+        
+        return CGPoint(x: centerX, y: centerY)
+    }
+    
+    /// 일반적인 카라비너 비율을 사용한 근사치 계산
+    /// (실제 이미지 로드 없이 빠른 계산이 필요한 경우)
+    /// - Parameters:
+    ///   - carabiner: 카라비너 데이터
+    ///   - assumedAspectRatio: 가정하는 가로세로 비율 (기본값: 0.8 - 세로로 긴 형태)
+    /// - Returns: 근사치 중심 위치
+    func calculateApproximateCarabinerCenterPosition(
+        for carabiner: Carabiner,
+        assumedAspectRatio: CGFloat = 0.8
+    ) -> CGPoint {
+        let centerX = carabiner.carabinerX + (carabiner.carabinerWidth / 2)
+        let approximateHeight = carabiner.carabinerWidth / assumedAspectRatio
+        let centerY = carabiner.carabinerY + (approximateHeight / 2)
+        
+        return CGPoint(x: centerX, y: centerY)
+    }
+    
+    // 캡쳐한 씬을 보여주는 메서드
+    // BundleNameInputView, BundleNameEditView에서 사용하는 미리보기 씬
+    @ViewBuilder
+    func keyringSceneView(geo: GeometryProxy) -> some View {
+        let widthSize = max(geo.size.width - 176, 0)
+        let heightSize = max(widthSize * 7/5, 0)
+        
+        if widthSize > 0 {
+            ZStack {
+                if let imageData = bundleCapturedImage,
+                   let uiImage = UIImage(data: imageData) {
+                    // 캡처된 이미지 표시
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .offset(y: 30)
+                        .frame(width: widthSize, height: heightSize)
+                } else {
+                    // 이미지가 없으면 기본 메시지 표시
+                    VStack {
+                        Image(systemName: "photo")
+                            .font(.system(size: 50))
+                            .foregroundColor(.gray)
+                        Text("이미지를 불러오는 중...")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(width: widthSize, height: heightSize)
+                }
+            }
+            .clipped()
+        } else {
+            ProgressView()
+        }
     }
 }

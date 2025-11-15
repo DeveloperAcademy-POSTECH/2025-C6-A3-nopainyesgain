@@ -60,17 +60,6 @@ struct SelectBackgroundGridItem: View {
                     .padding(.top, 3)
                     
                     Spacer()
-                    
-                    HStack {
-                        Spacer()
-                        // 다운로드 아이콘
-                        if background.background.isFree && !background.isOwned {
-                            Image(.download)
-                                .resizable()
-                                .frame(width: 18, height: 18)
-                                .padding(7)
-                        }
-                    }
                 }
             }
             // 이름 라벨

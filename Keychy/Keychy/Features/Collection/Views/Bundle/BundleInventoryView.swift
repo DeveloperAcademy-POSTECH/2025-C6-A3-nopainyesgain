@@ -10,46 +10,48 @@ import SwiftUI
 struct BundleInventoryView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
-
-    #if DEBUG
+    
+#if DEBUG
     @State private var showCachedBundlesDebug = false
-    #endif
-
+#endif
+    
     let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 13),
-        GridItem(.flexible(), spacing: 13)
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
     ]
-
+    
     var body: some View {
-        VStack {
-            bundleGrid
-        }
-        .padding(.horizontal, 16)
-        .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            backToolbarItem
-            #if DEBUG
-            debugToolbarItem
-            #endif
-            nextToolbarItem
-
-        }
-        .padding(.top, 20)
-        .navigationBarBackButtonHidden(true)
-        #if DEBUG
-        .sheet(isPresented: $showCachedBundlesDebug) {
-            CachedBundlesDebugView()
-        }
-        #endif
-        .navigationTitle("뭉치함")
-        .scrollIndicators(.hidden)
-        .onAppear {
-            // 현재 로그인된 유저의 뭉치 로드
-            let uid = UserManager.shared.userUID
-            guard !uid.isEmpty else { return }
-            viewModel.fetchAllBundles(uid: uid) { success in
-                if !success {
-                    print("뭉치 로드 실패")
+        GeometryReader { geo in
+            VStack {
+                bundleGrid(geo: geo)
+            }
+            .padding(.horizontal, 20)
+            .toolbar(.hidden, for: .tabBar)
+            .toolbar {
+                backToolbarItem
+#if DEBUG
+                debugToolbarItem
+#endif
+                nextToolbarItem
+                
+            }
+            .padding(.top, 20)
+            .navigationBarBackButtonHidden(true)
+#if DEBUG
+            .sheet(isPresented: $showCachedBundlesDebug) {
+                CachedBundlesDebugView()
+            }
+#endif
+            .navigationTitle("뭉치함")
+            .scrollIndicators(.hidden)
+            .onAppear {
+                // 현재 로그인된 유저의 뭉치 로드
+                let uid = UserManager.shared.userUID
+                guard !uid.isEmpty else { return }
+                viewModel.fetchAllBundles(uid: uid) { success in
+                    if !success {
+                        print("뭉치 로드 실패")
+                    }
                 }
             }
         }
@@ -71,12 +73,12 @@ extension BundleInventoryView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("+") {
-                // action
+                router.push(.bundleCreateView)
             }
         }
     }
-
-    #if DEBUG
+    
+#if DEBUG
     private var debugToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
@@ -94,12 +96,12 @@ extension BundleInventoryView {
             }
         }
     }
-    #endif
+#endif
 }
 
 // MARK: - 그리드 뷰
 extension BundleInventoryView {
-    private var bundleGrid: some View {
+    private func bundleGrid(geo: GeometryProxy) -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 18) {
                 ForEach(viewModel.sortedBundles, id: \.self) { bundle in
@@ -113,7 +115,7 @@ extension BundleInventoryView {
                         // 상세 화면으로 이동
                         router.push(.bundleDetailView)
                     } label: {
-                        KeyringBundleItem(bundle: bundle)
+                        KeyringBundleItem(bundle: bundle, isInventoryView: true, geo: geo)
                     }
                 }
             }

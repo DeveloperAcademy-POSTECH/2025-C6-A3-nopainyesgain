@@ -7,16 +7,23 @@
 
 // 뭉치 보관함 그리드에 들어가는 각각의 아이템 컴포넌트입니다
 import SwiftUI
+import SpriteKit
+import FirebaseFirestore
 
 struct KeyringBundleItem: View {
     let bundle: KeyringBundle
+    let isInventoryView: Bool
+    let geo: GeometryProxy
 
     @State private var cachedImage: Image?
     @State private var isCapturing: Bool = false
+    // 임시 초기값, 함수에서 계산합니다
+    @State private var widthSize: CGFloat = 0
+    @State private var heightSize: CGFloat = 0
 
     // 고정 캡처 크기 (iPhone 14 기준)
     private let captureSize = CGSize(width: 390, height: 844)
-
+    
     // 실제로 걸린 키링 개수 (none과 빈 문자열 제외)
     private var actualKeyringCount: Int {
         bundle.keyrings.filter { $0 != "none" && !$0.isEmpty }.count
@@ -27,50 +34,68 @@ struct KeyringBundleItem: View {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
-                    .frame(height: 245)
+                    .frame(width: widthSize, height: heightSize)
                     .cornerRadius(10)
 
-                if bundle.isMain {
-                    HStack {
-                        Rectangle()
-                            .fill(.mainOpacity80)
-                            .overlay(
-                                Text("대표")
-                                    .typography(.suit13M)
-                                    .foregroundStyle(.white100)
-                            )
-                            .cornerRadius(20)
-                            .frame(height: 24)
-                            .frame(maxWidth: .infinity)
+                if isInventoryView {
+                    if bundle.isMain {
+                        HStack {
+                            Rectangle()
+                                .fill(.mainOpacity80)
+                                .overlay(
+                                    Text("대표")
+                                        .typography(.suit13M)
+                                        .foregroundStyle(.white100)
+                                )
+                                .cornerRadius(20)
+                                .frame(height: 24)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.top, 10)
                 }
             }
-            .frame(height: 245)
             
-            HStack {
-                Text(bundle.name)
-                    .typography(.suit15SB25)
-                    .foregroundStyle(.black100)
-                Spacer()
-            }
-            
-            HStack {
-                Text("걸린 키링")
-                    .typography(.suit12M)
-                    .foregroundStyle(.gray500)
-                Spacer()
-                Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
-                    .typography(.suit12M)
-                    .foregroundStyle(.main500)
+            if isInventoryView {
+                HStack {
+                    Text(bundle.name)
+                        .typography(.notosans15M)
+                        .foregroundStyle(.black100)
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("걸린 키링")
+                        .typography(.suit12M)
+                        .foregroundStyle(.gray500)
+                    Spacer()
+                    Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
+                        .typography(.suit12M)
+                        .foregroundStyle(.main500)
+                }
             }
         }
         .onAppear {
             loadBundleImage()
+            calculateWidthSize()
         }
     }
-
+    // MARK: - 프레임 계산 메서드
+    private func calculateWidthSize() {
+        // 뭉치 보관함에서 쓰는 사이즈
+        if isInventoryView {
+            widthSize = ((geo.size.width - 52) / 2)
+            heightSize = widthSize * 7/5
+        } else {
+            // 이름 입력 뷰에서 쓰는 사이즈
+            widthSize = (geo.size.width - 176)
+            heightSize = widthSize * 7/5
+        }
+        print("widthSize: \(widthSize), heightSize: \(heightSize)")
+    }
+    
+    
     // MARK: - Bundle Image View
 
     private var bundleImageView: some View {
@@ -97,7 +122,6 @@ struct KeyringBundleItem: View {
     /// 캐시에서 번들 이미지 로드
     private func loadBundleImage() {
         guard let documentId = bundle.documentId else {
-            print("⚠️ [BundleItem] documentId 없음")
             return
         }
 
@@ -106,7 +130,6 @@ struct KeyringBundleItem: View {
            let uiImage = UIImage(data: imageData) {
             cachedImage = Image(uiImage: uiImage)
         } else {
-            print("⚠️ [BundleItem] 캐시 이미지 없음: \(bundle.name) - 재캡처 시작")
             // 캐시가 없으면 다시 캡처
             Task {
                 await recaptureAndCacheBundleImage(bundleId: documentId, bundleName: bundle.name)
@@ -125,7 +148,6 @@ struct KeyringBundleItem: View {
         // Firestore에서 번들 정보 가져오기 (배경, 카라비너, 키링 정보)
         guard let background = await fetchBackgroundInfo(backgroundId: bundle.selectedBackground),
               let carabiner = await fetchCarabinerInfo(carabinerId: bundle.selectedCarabiner) else {
-            print("❌ [BundleItem] 배경 또는 카라비너 정보를 가져올 수 없습니다")
             await MainActor.run {
                 isCapturing = false
             }
@@ -157,7 +179,6 @@ struct KeyringBundleItem: View {
 
         // 배경 이미지 미리 로드 (캡처 전 확인)
         guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
-            print("❌ [BundleItem] 배경 이미지 미리 로드 실패")
             await MainActor.run {
                 isCapturing = false
             }
@@ -202,7 +223,6 @@ struct KeyringBundleItem: View {
                 }
             }
         } else {
-            print("❌ [BundleItem] 재캡처 실패: \(bundleId)")
             await MainActor.run {
                 isCapturing = false
             }
@@ -255,7 +275,7 @@ struct KeyringBundleItem: View {
 
             return KeyringInfo(id: keyringId, bodyImage: bodyImage)
         } catch {
-            print("❌ [BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
+            print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
         }
     }
@@ -266,6 +286,3 @@ struct KeyringBundleItem: View {
         let bodyImage: String
     }
 }
-
-import SpriteKit
-import FirebaseFirestore
