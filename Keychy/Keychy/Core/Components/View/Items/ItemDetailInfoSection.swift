@@ -72,7 +72,7 @@ extension ItemDetailInfoSection {
 
     private var itemTags: some View {
         HStack(spacing: 8) {
-            ForEach(item.tags, id: \.self) { tag in
+            ForEach(item.tags.filter { !$0.isEmpty }, id: \.self) { tag in
                 tagView(text: tag)
             }
         }
