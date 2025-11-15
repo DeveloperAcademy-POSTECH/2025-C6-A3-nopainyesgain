@@ -19,12 +19,8 @@ struct BundleNameEditView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 20) {
-                // 뭉치 캡쳐 씬으로 수정 필요
-                Rectangle()
-                    .fill(.gray100)
-                    .aspectRatio(5/7, contentMode: .fit)
+                viewModel.keyringSceneView(widthSize: geo.size.width - 175.58)
                 bundleNameTextField
-                Spacer().frame(height: geo.size.height * 0.3)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
