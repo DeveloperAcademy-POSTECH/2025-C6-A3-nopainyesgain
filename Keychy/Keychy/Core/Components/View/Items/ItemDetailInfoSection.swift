@@ -17,7 +17,10 @@ struct ItemDetailInfoSection: View {
             HStack(spacing: 8) {
                 /// 유료 태그 표시
                 if !item.isFree {
-                    Image("keyHole")
+                    Image(.paidIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 21)
                 }
 
                 /// 이펙트 타입 표시 (사운드/파티클)
