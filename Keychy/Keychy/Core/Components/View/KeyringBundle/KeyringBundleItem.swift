@@ -12,13 +12,18 @@ import FirebaseFirestore
 
 struct KeyringBundleItem: View {
     let bundle: KeyringBundle
+    let isInventoryView: Bool
+    let geo: GeometryProxy
 
     @State private var cachedImage: Image?
     @State private var isCapturing: Bool = false
+    // 임시 초기값, 함수에서 계산합니다
+    @State private var widthSize: CGFloat = 0
+    @State private var heightSize: CGFloat = 0
 
     // 고정 캡처 크기 (iPhone 14 기준)
     private let captureSize = CGSize(width: 390, height: 844)
-
+    
     // 실제로 걸린 키링 개수 (none과 빈 문자열 제외)
     private var actualKeyringCount: Int {
         bundle.keyrings.filter { $0 != "none" && !$0.isEmpty }.count
@@ -29,50 +34,68 @@ struct KeyringBundleItem: View {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
-                    .frame(height: 245)
+                    .frame(width: widthSize, height: heightSize)
                     .cornerRadius(10)
 
-                if bundle.isMain {
-                    HStack {
-                        Rectangle()
-                            .fill(.mainOpacity80)
-                            .overlay(
-                                Text("대표")
-                                    .typography(.suit13M)
-                                    .foregroundStyle(.white100)
-                            )
-                            .cornerRadius(20)
-                            .frame(height: 24)
-                            .frame(maxWidth: .infinity)
+                if isInventoryView {
+                    if bundle.isMain {
+                        HStack {
+                            Rectangle()
+                                .fill(.mainOpacity80)
+                                .overlay(
+                                    Text("대표")
+                                        .typography(.suit13M)
+                                        .foregroundStyle(.white100)
+                                )
+                                .cornerRadius(20)
+                                .frame(height: 24)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.top, 10)
                 }
             }
-            .frame(height: 245)
             
-            HStack {
-                Text(bundle.name)
-                    .typography(.suit15SB25)
-                    .foregroundStyle(.black100)
-                Spacer()
-            }
-            
-            HStack {
-                Text("걸린 키링")
-                    .typography(.suit12M)
-                    .foregroundStyle(.gray500)
-                Spacer()
-                Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
-                    .typography(.suit12M)
-                    .foregroundStyle(.main500)
+            if isInventoryView {
+                HStack {
+                    Text(bundle.name)
+                        .typography(.suit15SB25)
+                        .foregroundStyle(.black100)
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("걸린 키링")
+                        .typography(.suit12M)
+                        .foregroundStyle(.gray500)
+                    Spacer()
+                    Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
+                        .typography(.suit12M)
+                        .foregroundStyle(.main500)
+                }
             }
         }
         .onAppear {
             loadBundleImage()
+            calculateWidthSize()
         }
     }
-
+    // MARK: - 프레임 계산 메서드
+    private func calculateWidthSize() {
+        // 뭉치 보관함에서 쓰는 사이즈
+        if isInventoryView {
+            widthSize = ((geo.size.width - 52) / 2)
+            heightSize = widthSize * 7/5
+        } else {
+            // 이름 입력 뷰에서 쓰는 사이즈
+            widthSize = (geo.size.width - 176)
+            heightSize = widthSize * 7/5
+        }
+        print("widthSize: \(widthSize), heightSize: \(heightSize)")
+    }
+    
+    
     // MARK: - Bundle Image View
 
     private var bundleImageView: some View {
