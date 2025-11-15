@@ -31,6 +31,7 @@ struct ItemDetailInfoSection: View {
                     itemTags
                 }
             }
+            .frame(height: 27)
             .padding(.bottom, 4)
 
             /// item 이름
