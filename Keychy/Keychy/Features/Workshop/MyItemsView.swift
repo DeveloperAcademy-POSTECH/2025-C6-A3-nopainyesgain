@@ -124,7 +124,6 @@ struct MyItemsView: View {
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             case "배경":
@@ -133,7 +132,6 @@ struct MyItemsView: View {
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             case "카라비너":
@@ -142,7 +140,6 @@ struct MyItemsView: View {
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             case "이펙트":
@@ -152,7 +149,6 @@ struct MyItemsView: View {
                     isParticleOwned: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             default:

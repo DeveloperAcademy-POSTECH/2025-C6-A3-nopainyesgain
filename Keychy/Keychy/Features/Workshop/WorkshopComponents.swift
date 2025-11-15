@@ -121,7 +121,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     var isOwned: Bool = false
     var router: NavigationRouter<WorkshopRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
-    var showDeleteButton: Bool = false  // MyItemsView에서만 true
 
     @State private var effectManager = EffectManager.shared
     @Environment(UserManager.self) private var userManager
@@ -195,18 +194,18 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId, showDeleteButton: showDeleteButton) {
+           let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
         }
         // 나머지 아이템들은 WorkshopPreview로 이동
         else if let background = item as? Background {
-            router.push(.workshopPreview(item: AnyHashable(background), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
-            router.push(.workshopPreview(item: AnyHashable(carabiner), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
         } else if let particle = item as? Particle {
-            router.push(.workshopPreview(item: AnyHashable(particle), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(particle)))
         } else if let sound = item as? Sound {
-            router.push(.workshopPreview(item: AnyHashable(sound), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
@@ -216,7 +215,6 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
     let item: Item
     var router: NavigationRouter<WorkshopRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
-    var showDeleteButton: Bool = false  // MyItemsView에서만 true
 
     var body: some View {
         Button {
@@ -277,18 +275,18 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId, showDeleteButton: showDeleteButton) {
+           let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
         }
         // 나머지 아이템들은 WorkshopPreview로 이동
         else if let background = item as? Background {
-            router.push(.workshopPreview(item: AnyHashable(background), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
-            router.push(.workshopPreview(item: AnyHashable(carabiner), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
         } else if let particle = item as? Particle {
-            router.push(.workshopPreview(item: AnyHashable(particle), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(particle)))
         } else if let sound = item as? Sound {
-            router.push(.workshopPreview(item: AnyHashable(sound), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
