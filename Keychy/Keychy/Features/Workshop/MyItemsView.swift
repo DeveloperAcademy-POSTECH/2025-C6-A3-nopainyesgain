@@ -121,7 +121,6 @@ struct MyItemsView: View {
             case "키링":
                 WorkshopGridHelpers.itemGridView(
                     items: filteredOwnedTemplates,
-                    // 내 창고 이므로 항상 보유중 -> 보유중 표시 안하기 위해서 항상 보유안했다고 가정.
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
