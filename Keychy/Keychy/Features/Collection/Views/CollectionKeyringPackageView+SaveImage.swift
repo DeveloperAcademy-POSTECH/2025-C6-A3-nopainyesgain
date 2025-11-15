@@ -12,7 +12,7 @@ extension PackagedKeyringView {
     
     // MARK: - 현재 페이지만 캡처
     @MainActor
-    func captureCurrentPage() -> UIImage? {
+    func captureCurrentPage() async -> UIImage? {
         // 현재 페이지에 따라 적절한 뷰 선택
         let targetView: AnyView = currentPage == 0
             ? AnyView(captureablePackagePreviewPage)
@@ -82,10 +82,10 @@ extension PackagedKeyringView {
         }
     }
     
-    // MARK: - 캡처용 페이지 (UI 요소 제외)
+    // MARK: - 캡처용 페이지 뷰들
     var captureablePackagePreviewPage: some View {
         VStack(spacing: 0) {
-            packageImageStack
+            captureablePackageImageStack
         }
         .padding(.horizontal, 20)
     }
@@ -98,6 +98,49 @@ extension PackagedKeyringView {
         .padding(.horizontal, 20)
     }
     
+    // MARK: - PNG가 적용된 packageImageStack
+    private var captureablePackageImageStack: some View {
+        ZStack(alignment: .bottom) {
+            ZStack {
+                Image("PackageBG")
+                    .resizable()
+                    .frame(width: 220, height: 270)
+                    .offset(y: -15)
+                
+                // 이미 캡처된 PNG 이미지 사용
+                if let sceneImage = capturedSceneImage {
+                    Image(uiImage: sceneImage)
+                        .resizable()
+                        .frame(width: 195, height: 300)
+                        .rotationEffect(.degrees(10))
+                        .offset(y: -7)
+                }
+            }
+            
+            ZStack(alignment: .top) {
+                Image("PackageFG")
+                    .resizable()
+                    .frame(width: 240, height: 390)
+                
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(keyring.name)
+                            .typography(.notosans15B)
+                            .foregroundColor(.white100)
+                        
+                        Text("@\(authorName)")
+                            .typography(.notosans10M)
+                            .foregroundColor(.white100)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.leading, 18)
+                .offset(y: 46)
+            }
+        }
+    }
+
     // MARK: - 포토 라이브러리 권한 요청
     func requestPhotoLibraryPermission(completion: @escaping (Bool) -> Void) {
         let status = PHPhotoLibrary.authorizationStatus()
@@ -138,8 +181,8 @@ extension PackagedKeyringView {
     
     // MARK: - 메인 저장 함수
     func captureAndSaveCurrentPage(completion: @escaping (Bool) -> Void) {
-        DispatchQueue.main.async {
-            guard let capturedImage = self.captureCurrentPage() else {
+        Task { @MainActor in
+            guard let capturedImage = await captureCurrentPage() else {
                 print("이미지 캡처 실패")
                 completion(false)
                 return
@@ -154,8 +197,9 @@ extension PackagedKeyringView {
             
             self.saveImageToLibrary(enlargedImage) { success in
                 if success {
-                    print("이미지 저장 완료")
-                    self.onImageSaved?()
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.onImageSaved?()
+                    }
                 } else {
                     print("이미지 저장 실패")
                 }

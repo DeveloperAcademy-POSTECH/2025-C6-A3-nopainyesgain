@@ -120,17 +120,29 @@ extension ProfileSetupCompleteView {
 
             // 2. 환영 키링 저장
             do {
-                _ = try await viewModel.createWelcomeKeyring(
+                let keyringId = try await viewModel.createWelcomeKeyring(
                     nickname: viewModel.welcomeNickname,
                     bodyImage: bodyImage,
                     uid: uid
                 )
+
+                // 3. 웰컴 뭉치 생성
+                let bundleCreated = await withCheckedContinuation { continuation in
+                    viewModel.makeBundle(welcomeKeyringId: keyringId) { success, _ in
+                        continuation.resume(returning: success)
+                    }
+                }
+
+                if !bundleCreated {
+                    print("이미 만들어졌음")
+                }
 
                 await MainActor.run {
                     isSaving = false
                     viewModel.completeOnboarding()
                 }
             } catch {
+                print("웰컴 키링 생성 실패: \(error)")
                 await MainActor.run {
                     isSaving = false
                     viewModel.completeOnboarding()

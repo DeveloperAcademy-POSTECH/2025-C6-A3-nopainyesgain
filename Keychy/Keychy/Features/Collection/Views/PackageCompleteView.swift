@@ -14,7 +14,7 @@ struct PackageCompleteView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @Bindable var viewModel: CollectionViewModel
     @State var currentPage: Int = 0
-    @State private var authorName: String = ""
+    @State var authorName: String = ""
     @State private var scene: KeyringCellScene?
     @State private var isLoading: Bool = true
     @State private var qrCodeImage: UIImage?
@@ -22,47 +22,66 @@ struct PackageCompleteView: View {
     @State private var showLinkCopied: Bool = false
     @State var showImageSaved: Bool = false
     
+    // 캡처용 씬 PNG 이미지
+    @State var capturedSceneImage: UIImage?
+    @State var isCapturingScene: Bool = false
+    
     private let totalPages = 2
+    
+    // 씬의 RingType과 ChainType
+    var ringType: RingType {
+        RingType.fromID(keyring.selectedRing)
+    }
+    
+    var chainType: ChainType {
+        ChainType.fromID(keyring.selectedChain)
+    }
     
     let keyring: Keyring
     let postOfficeId: String
     
     var body: some View {
-        ZStack {
-            Image("GreenBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                Text("키링 포장이 완료되었어요!")
-                    .typography(.suit20B)
-                    .foregroundColor(.black100)
-                    .padding(.top, 16)
-                    .padding(.bottom, 9)
+        GeometryReader { geometry in
+            ZStack {
+                Image("GreenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 
-                Text("링크나 QR로 바로 공유할 수 있어요.")
-                    .typography(.suit16M)
-                    .foregroundColor(.black100)
-                    .padding(.bottom, 42)
+                VStack(spacing: 0) {
+                    
+                    // 상단 상태 바
+                    Text("키링 포장이 완료되었어요!")
+                        .typography(.suit20B)
+                        .foregroundColor(.black100)
+                        .padding(.top, 16)
+                        .padding(.bottom, 9)
+                    
+                    Text("링크나 QR로 바로 공유할 수 있어요.")
+                        .typography(.suit16M)
+                        .foregroundColor(.black100)
+                        .padding(.bottom, 42)
+                    
+                    pageScrollView
+                    
+                    pageIndicator
+                    
+                    Spacer()
+                        .frame(height: 24)
+                    
+                    imageSaveSection
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
                 
-                pageScrollView
+                if showImageSaved {
+                    imageSaveAlert
+                }
                 
-                pageIndicator
-                
-                Spacer()
-                    .frame(height: 24)
-                
-                imageSaveSection
-            }
-            .padding(.horizontal, 20)
-            
-            if showImageSaved {
-                imageSaveAlert
-            }
-            
-            if showLinkCopied {
-                linkCopiedAlert
+                if showLinkCopied {
+                    linkCopiedAlert
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -74,6 +93,7 @@ struct PackageCompleteView: View {
             hideTabBar()
             fetchAuthorName()
             loadShareLink()
+            captureSceneOnAppear()
         }
     }
     
@@ -85,6 +105,28 @@ struct PackageCompleteView: View {
             UIView.animate(withDuration: 0.3) {
                 tabBarController.tabBar.isHidden = true
             }
+        }
+    }
+    
+    // MARK: - 씬을 PNG로 미리 캡처
+    private func captureSceneOnAppear() {
+        Task { @MainActor in
+            // 씬 생성 및 PNG 캡처
+            let captureScene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                targetSize: CGSize(width: 195, height: 300),
+                customBackgroundColor: .clear,
+                zoomScale: 1.8
+            )
+            
+            guard let pngData = await captureScene.captureToPNG(),
+                  let image = UIImage(data: pngData) else {
+                return
+            }
+
+            self.capturedSceneImage = image
         }
     }
     
@@ -236,17 +278,22 @@ struct PackageCompleteView: View {
                 .frame(width: 220, height: 270)
                 .offset(y: -15)
             
-            SpriteView(
-                scene: createMiniScene(keyring: keyring),
-                options: [.allowsTransparency]
-            )
-            .frame(width: 195, height: 300)
-            .rotationEffect(.degrees(10))
-            .offset(y: -7)
+            // 항상 PNG 이미지 사용
+            if let sceneImage = capturedSceneImage {
+                Image(uiImage: sceneImage)
+                    .resizable()
+                    .frame(width: 195, height: 300)
+                    .rotationEffect(.degrees(10))
+                    .offset(y: -7)
+            } else {
+                // PNG 로딩 중
+                ProgressView()
+                    .frame(width: 195, height: 300)
+            }
         }
     }
     
-    private var packageForeground: some View {
+    var packageForeground: some View {
         ZStack(alignment: .top) {
             Image("PackageFG")
                 .resizable()
@@ -333,29 +380,6 @@ struct PackageCompleteView: View {
             }
         }
         .offset(y: -12)
-    }
-    
-    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        let scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 195, height: 300),
-            customBackgroundColor: .clear,
-            zoomScale: 1.8,
-            onLoadingComplete: {
-                DispatchQueue.main.async {
-                    withAnimation {
-                        self.isLoading = false
-                    }
-                }
-            }
-        )
-        scene.scaleMode = .aspectFill
-        return scene
     }
     
     // MARK: - 하단 버튼

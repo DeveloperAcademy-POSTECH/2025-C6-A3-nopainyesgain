@@ -127,8 +127,9 @@ extension KeyringEditView {
             Button {
                 router.pop()
             } label: {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.primary)
+                Image("BackIcon")
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
         }
     }
@@ -152,6 +153,7 @@ extension KeyringEditView {
                         .resizable()
                         .renderingMode(.template)
                         .foregroundStyle(.white100)
+                        .frame(width: 32, height: 32)
 
                 }
             }
@@ -163,6 +165,7 @@ extension KeyringEditView {
                         .resizable()
                         .renderingMode(.template)
                         .foregroundStyle(.gray300)
+                        .frame(width: 32, height: 32)
 
                 }
                 .disabled(true)
@@ -178,7 +181,8 @@ extension KeyringEditView {
         VStack {
             ZStack {
                 SpriteView(
-                    scene: createMiniScene(keyring: keyring)
+                    scene: createMiniScene(keyring: keyring),
+                    options: [.allowsTransparency]
                 )
                 if isLoading {
                     Color.black20
@@ -220,6 +224,7 @@ extension KeyringEditView {
             chainType: chainType,
             bodyImage: keyring.bodyImage,
             targetSize: CGSize(width: 175, height: 233),
+            customBackgroundColor: .clear,
             zoomScale: 2.0,
             onLoadingComplete: {
                 DispatchQueue.main.async {
@@ -255,7 +260,7 @@ extension KeyringEditView {
             
             HStack {
                 TextField("이름을 입력해주세요", text: $editedName)
-                    .typography(.pretendard16M)
+                    .typography(.notosans16R)
                     .foregroundColor(.black100)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
@@ -319,7 +324,7 @@ extension KeyringEditView {
                 // Placeholder
                 if editedMemo.isEmpty {
                     Text("메모를 입력해주세요")
-                        .typography(.suit16M25)
+                        .typography(.notosans16R25)
                         .foregroundColor(.gray300)
                         .padding(.horizontal, 19)
                         .padding(.vertical, 18)
@@ -327,7 +332,7 @@ extension KeyringEditView {
                 }
                 
                 TextEditor(text: $editedMemo)
-                    .typography(.pretendard16M)
+                    .typography(.notosans16R25)
                     .foregroundColor(.black100)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
@@ -337,7 +342,7 @@ extension KeyringEditView {
                     .focused($focusedField, equals: .memo)
                     .disabled(!canEdit)
             }
-            .frame(height: 135)
+            .frame(height: 140)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(canEdit ? .gray50 : .white100)
@@ -378,6 +383,7 @@ extension KeyringEditView {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(Color.gray50)
                         )
+                        .padding(.vertical, 1)
                 }
                 ForEach(availableTags, id: \.self) { tag in
                     ChipView(

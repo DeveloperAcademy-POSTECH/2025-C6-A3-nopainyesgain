@@ -68,7 +68,7 @@ extension CollectionView {
                 TextField("검색어를 입력해주세요", text: $searchText)
                     .focused($isSearchFieldFocused)
                     .textFieldStyle(.automatic)
-                    .typography(.suit15M25)
+                    .typography(.notosans16R)
                     .submitLabel(.search)
                     .autocorrectionDisabled()
                     .onSubmit {
@@ -95,8 +95,7 @@ extension CollectionView {
                 }
             }) {
                 Image("dismiss")
-                    .resizable()
-                    .frame(width: 32, height: 32)
+                    .foregroundColor(.primary)
             }
             .frame(width: 48, height: 48)
             .glassEffect(.regular.interactive(), in: .circle)

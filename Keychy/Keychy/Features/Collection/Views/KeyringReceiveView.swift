@@ -31,6 +31,11 @@ struct KeyringReceiveView: View {
     
     var body: some View {
         ZStack {
+            Image("GreenBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            
             VStack(spacing: 10) {
                 if isLoading {
                     // 로딩 상태
@@ -45,6 +50,7 @@ struct KeyringReceiveView: View {
                     keyringImage(keyring: keyring)
                     
                     Spacer()
+                        .frame(height: 80)
                     
                     receiveButton
                 } else {
@@ -62,7 +68,6 @@ struct KeyringReceiveView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .background(.white100)
             
             if showAcceptCompleteAlert || showInvenFullAlert {
                 Color.black20
@@ -123,12 +128,12 @@ struct KeyringReceiveView: View {
                 self.keyring = keyring
                 
                 // authorId로 제작자 이름 로드
-                viewModel.fetchAuthorName(authorId: keyring.authorId) { name in
+                viewModel.fetchUserName(userId: keyring.authorId) { name in
                     self.authorName = name
                 }
                 
                 // senderId로 발신자 이름 로드
-                viewModel.fetchAuthorName(authorId: senderId) { name in
+                viewModel.fetchUserName(userId: senderId) { name in
                     self.senderName = name
                     self.isLoading = false
                 }
@@ -161,11 +166,11 @@ struct KeyringReceiveView: View {
                 .overlay(alignment: .topLeading) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(keyring.name)
-                            .typography(.nanum20EB)
+                            .typography(.notosans20B)
                             .foregroundColor(.white100)
                         
                         Text("@\(authorName)")
-                            .typography(.suit13SB)
+                            .typography(.notosans12M)
                             .foregroundColor(.white100)
                     }
                     .padding(.leading, 23)
@@ -247,16 +252,11 @@ extension KeyringReceiveView {
                 .typography(.suit17B)
                 .padding(.vertical, 7.5)
                 .foregroundStyle(isAccepted ? .gray400 : .white100)
-
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 48)
-        .buttonStyle(.plain)
-        .background(
-            RoundedRectangle(cornerRadius: 1000)
-                .fill(isAccepted ? .black20 : .gray600)
                 .frame(maxWidth: .infinity)
-        )
+        }
+        .frame(height: 48)
+        .buttonStyle(.glassProminent)
+        .tint(isAccepted ? .black20 : .gray600)
         .padding(.horizontal, 34)
         .disabled(isAccepted)
     }
