@@ -66,6 +66,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                         }
                         Spacer()
                     }
+                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
                     .padding(18)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 }

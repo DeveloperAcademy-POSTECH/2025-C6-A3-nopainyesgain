@@ -6,24 +6,51 @@
 //
 
 import SwiftUI
+import Lottie
+
+enum LoadingType {
+    case short
+    case longWithKeychy
+    case longWithPresent
+
+    var lottieFileName: String {
+        switch self {
+        case .short: return "shotLoading"
+        case .longWithKeychy: return "longLoadingKeychy"
+        case .longWithPresent: return "longLoadingPresent"
+        }
+    }
+
+    var frameSize: CGFloat {
+        switch self {
+        case .short: return 80
+        case .longWithKeychy: return 122
+        case .longWithPresent: return 122
+        }
+    }
+}
 
 struct LoadingAlert: View {
-    let checkmarkScale: CGFloat
-    
+    let type: LoadingType
+    let message: String?
+
     var body: some View {
         VStack(spacing: 23) {
-            Image("appIcon")
-                .resizable()
-                .frame(width: 80, height: 80)
-            
-            Text("잠시만 기다려주세요. . .")
-                .typography(.suit17SB)
+            LottieView(
+                name: type.lottieFileName,
+                loopMode: .loop,
+                speed: 1.0
+            )
+            .frame(width: type.frameSize, height: type.frameSize)
+
+            if type != .short, let message = message {
+                Text(message)
+                    .typography(.suit17SB)
+                    .foregroundStyle(.white100)
+                    .textOutline(color: .white100, width: 3)
+            }
         }
-        .padding(.top, 42)
-        .padding(.horizontal, 55)
-        .padding(.bottom, 26)
-        .glassEffect(in: .rect(cornerRadius: 15))
-        .frame(minWidth: 300)
-        .scaleEffect(checkmarkScale)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
     }
 }
