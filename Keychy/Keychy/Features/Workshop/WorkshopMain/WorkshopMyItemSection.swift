@@ -27,6 +27,9 @@ extension WorkshopView {
             Group {
                 if viewModel.isLoading {
                     loadingUsedTemplatesView
+                    
+                    Spacer()
+                    
                 } else {
                     if viewModel.currentUsedTemplates.isEmpty {
                         emptyOwnedView
@@ -61,13 +64,16 @@ extension WorkshopView {
         .cornerRadius(10)
     }
 
-    /// 최근 사용한 템플릿 뷰
+    /// 최근 사용한 템플릿 뷰 로딩
     var loadingUsedTemplatesView: some View {
-        HStack(alignment: .center, spacing: 0) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+        HStack(spacing: 7) {
+            SkeletonBox(width: 112, height: 112)
+                .cornerRadius(10)
+            SkeletonBox(width: 112, height: 112)
+                .cornerRadius(10)
+            SkeletonBox(width: 112, height: 112)
+                .cornerRadius(10)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 135)
     }
 }
