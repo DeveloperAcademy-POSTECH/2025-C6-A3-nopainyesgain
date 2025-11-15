@@ -224,7 +224,7 @@ extension KeyringReceiveView {
         VStack(spacing: 10) {
             HStack(spacing: 0) {
                 Text(senderName)
-                    .typography(.suit20EB)
+                    .typography(.notosans20B) // 요기
                     .foregroundColor(.main500)
                 
                 Text("님이 키링을 선물했어요!")

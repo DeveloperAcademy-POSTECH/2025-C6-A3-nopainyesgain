@@ -27,7 +27,7 @@ struct CollectionCellView: View {
                                 .progressViewStyle(CircularProgressViewStyle(tint: .gray))
                                 .scaleEffect(1.2)
 
-                            Text("키링을 가져오는 중...")
+                            Text("키링을 가져오는 중")
                                 .typography(.suit12M)
                                 .foregroundColor(.white)
                         }

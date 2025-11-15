@@ -169,7 +169,6 @@ extension PackagedKeyringView {
             Image("PackageBG")
                 .resizable()
                 .frame(width: 220, height: 270)
-                .offset(y: -15)
             
             if let sceneImage = capturedSceneImage {
                 Image(uiImage: sceneImage)
@@ -190,6 +189,7 @@ extension PackagedKeyringView {
             Image("PackageFG")
                 .resizable()
                 .frame(width: 240, height: 390)
+                .blendMode(.darken)
             
             keyringInfoLabel
         }

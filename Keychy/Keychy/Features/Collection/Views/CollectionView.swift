@@ -129,7 +129,7 @@ struct CollectionView: View {
                 Spacer()
                 
                 Text("정렬 기준")
-                    .typography(.suit15B25)
+                    .typography(.suit17B)
                 
                 Spacer()
                 
