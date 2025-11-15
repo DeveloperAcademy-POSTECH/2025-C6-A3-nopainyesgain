@@ -148,7 +148,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 if let image = state.image {
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
+                        .padding(.horizontal, item is Carabiner ? 5 : 0)
                         .frame(width: 175, height: itemHeight)
                         .clipped()
                 } else if state.isLoading {
