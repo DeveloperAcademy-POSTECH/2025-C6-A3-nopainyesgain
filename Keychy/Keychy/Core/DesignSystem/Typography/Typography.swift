@@ -32,6 +32,7 @@ struct Typography {
 
     /// 16
     static let suit16B = Typography(font: .custom(.suitBold, size: 16), lineSpacing: 0)
+    static let suit16SB = Typography(font: .custom(.suitSemiBold, size: 16), lineSpacing: 0)
     static let suit16M = Typography(font: .custom(.suitMedium, size: 16), lineSpacing: 0)
     static let suit16M25 = Typography(font: .custom(.suitMedium, size: 16), lineSpacing: 9)
 
@@ -86,6 +87,7 @@ struct Typography {
     static let notosans10M = Typography(font: .custom(.notoSansMedium, size: 10), lineSpacing: 0)
     
     static let notosans12M = Typography(font: .custom(.notoSansMedium, size: 12), lineSpacing: 0)
+    static let notosans12R = Typography(font: .custom(.notoSansRegular, size: 12), lineSpacing: 0)
     
     static let notosans13M = Typography(font: .custom(.notoSansMedium, size: 13), lineSpacing: 0)
     
@@ -109,6 +111,8 @@ struct Typography {
     // MARK: - Malang
     static let malang15R = Typography(font: .custom(.malangRegular, size: 15), lineSpacing: 0)
     static let malang15B = Typography(font: .custom(.malangBold, size: 15), lineSpacing: 0)
+    
+    static let malang24B = Typography(font: .custom(.malangBold, size: 24), lineSpacing: 0)
 }
 
 // MARK: - View Extension
