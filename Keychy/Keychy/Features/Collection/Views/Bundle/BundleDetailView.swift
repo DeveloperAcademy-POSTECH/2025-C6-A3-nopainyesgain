@@ -371,18 +371,11 @@ extension BundleDetailView {
 extension BundleDetailView {
     private var capturingOverlay: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            Color.black20
                 .ignoresSafeArea()
-
-            VStack(spacing: 16) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(1.5)
-
-                Text("이미지 생성 중...")
-                    .foregroundColor(.white)
-                    .font(.headline)
-            }
+                .blur(radius: 15)
+            
+            Image(.imageSaved)
         }
     }
 }

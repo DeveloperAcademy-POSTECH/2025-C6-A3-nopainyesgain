@@ -401,7 +401,7 @@ extension CollectionViewModel {
     }
     
     /// Firestore에서 키링 정보를 가져옴
-    private func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
+    func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
         do {
             let document = try await db.collection("Keyring").document(keyringId).getDocument()
             
