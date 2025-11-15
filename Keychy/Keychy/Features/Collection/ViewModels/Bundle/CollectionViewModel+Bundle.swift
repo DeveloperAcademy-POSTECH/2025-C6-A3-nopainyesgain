@@ -620,28 +620,37 @@ extension CollectionViewModel {
     
     // 캡쳐한 씬을 보여주는 메서드
     // BundleNameInputView, BundleNameEditView에서 사용하는 미리보기 씬
-    func keyringSceneView(widthSize: CGFloat) -> some View {
-        ZStack {
-            if let imageData = bundleCapturedImage,
-               let uiImage = UIImage(data: imageData) {
-                // 캡처된 이미지 표시
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: widthSize, height: widthSize * 7/5)
-            } else {
-                // 이미지가 없으면 기본 메시지 표시
-                VStack {
-                    Image(systemName: "photo")
-                        .font(.system(size: 50))
-                        .foregroundColor(.gray)
-                    Text("이미지를 불러오는 중...")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+    @ViewBuilder
+    func keyringSceneView(geo: GeometryProxy) -> some View {
+        let widthSize = max(geo.size.width - 176, 0)
+        let heightSize = max(widthSize * 7/5, 0)
+        
+        if widthSize > 0 {
+            ZStack {
+                if let imageData = bundleCapturedImage,
+                   let uiImage = UIImage(data: imageData) {
+                    // 캡처된 이미지 표시
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .offset(y: 30)
+                        .frame(width: widthSize, height: heightSize)
+                } else {
+                    // 이미지가 없으면 기본 메시지 표시
+                    VStack {
+                        Image(systemName: "photo")
+                            .font(.system(size: 50))
+                            .foregroundColor(.gray)
+                        Text("이미지를 불러오는 중...")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(width: widthSize, height: heightSize)
                 }
-                .frame(width: widthSize, height: widthSize * 7/5)
             }
+            .clipped()
+        } else {
+            ProgressView()
         }
-        .clipped()
     }
 }
