@@ -10,16 +10,16 @@ import SwiftUI
 struct BundleInventoryView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
-    
-#if DEBUG
+
+    #if DEBUG
     @State private var showCachedBundlesDebug = false
-#endif
-    
+    #endif
+
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 13),
         GridItem(.flexible(), spacing: 13)
     ]
-    
+
     var body: some View {
         VStack {
             bundleGrid
@@ -28,19 +28,19 @@ struct BundleInventoryView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             backToolbarItem
-#if DEBUG
+            #if DEBUG
             debugToolbarItem
-#endif
+            #endif
             nextToolbarItem
-            
+
         }
         .padding(.top, 20)
         .navigationBarBackButtonHidden(true)
-#if DEBUG
+        #if DEBUG
         .sheet(isPresented: $showCachedBundlesDebug) {
             CachedBundlesDebugView()
         }
-#endif
+        #endif
         .navigationTitle("뭉치함")
         .scrollIndicators(.hidden)
         .onAppear {
@@ -75,8 +75,8 @@ extension BundleInventoryView {
             }
         }
     }
-    
-#if DEBUG
+
+    #if DEBUG
     private var debugToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
@@ -94,58 +94,30 @@ extension BundleInventoryView {
             }
         }
     }
-#endif
+    #endif
 }
 
 // MARK: - 그리드 뷰
 extension BundleInventoryView {
     private var bundleGrid: some View {
-        Group {
-            if viewModel.sortedBundles.isEmpty {
-                emptyContentView
-                
-                Spacer()
-                
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 18) {
-                        ForEach(viewModel.sortedBundles, id: \.self) { bundle in
-                            Button {
-                                // 선택한 번들 설정
-                                viewModel.selectedBundle = bundle
-                                // 번들에 저장된 id(String)를 실제 모델로 해석하여 선택 상태에 반영
-                                viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
-                                viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-                                
-                                // 상세 화면으로 이동
-                                router.push(.bundleDetailView)
-                            } label: {
-                                KeyringBundleItem(bundle: bundle)
-                            }
-                        }
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 18) {
+                ForEach(viewModel.sortedBundles, id: \.self) { bundle in
+                    Button {
+                        // 선택한 번들 설정
+                        viewModel.selectedBundle = bundle
+                        // 번들에 저장된 id(String)를 실제 모델로 해석하여 선택 상태에 반영
+                        viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
+                        viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+                        
+                        // 상세 화면으로 이동
+                        router.push(.bundleDetailView)
+                    } label: {
+                        KeyringBundleItem(bundle: bundle)
                     }
                 }
             }
         }
     }
 }
-    
-extension BundleInventoryView {
-    /// 빈 콘텐츠 뷰
-    private var emptyContentView: some View {
-        VStack {
-            
-            Spacer()
-                .frame(height: 240)
-            
-            Image("EmptyViewIcon")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 124)
-            
-            Text("뭉치를 생성해 주세요")
-                .typography(.suit15R)
-                .padding(.leading, 10)
-        }
-    }
-}
+
