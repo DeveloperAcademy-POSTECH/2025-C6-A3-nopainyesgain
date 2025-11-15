@@ -18,6 +18,7 @@ struct BundleDetailView: View {
     @State private var showMenu: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteToast: Bool = false
+    @State private var showChangeMainBundleAlert: Bool = false
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -136,6 +137,12 @@ struct BundleDetailView: View {
                         .zIndex(100)
                 }
                 
+                if showChangeMainBundleAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    changeMainBundleAlert
+                        .padding(.horizontal, 51)
+                }
             }
         }
     }
@@ -246,9 +253,19 @@ extension BundleDetailView {
             HStack {
                 pinButton
                 Spacer()
-                Text("\(viewModel.selectedBundle!.name)\n\(viewModel.selectedBundle!.keyrings.count) / \(viewModel.selectedBundle!.maxKeyrings)")
-                    .foregroundStyle(.gray600)
-                    .typography(.notosans15M)
+                if let bundle = viewModel.selectedBundle {
+                    if bundle.isMain {
+                        Text("대표 뭉치 설정 중")
+                            .typography(.suit16M)
+                            .foregroundStyle(.white100)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(.main500)
+                            )
+                    }
+                }
                 Spacer()
                 downloadImageButton
             }
@@ -263,27 +280,83 @@ extension BundleDetailView {
             }
         }) {
             Image(.imageDownload)
-                .foregroundStyle(.gray600)
         }
-        .buttonStyle(.glassProminent)
+        .frame(width: 48, height: 48)
+        .glassEffect(in: .circle)
     }
     
     /// 핀 버튼 - 메인 뭉치 설정/해제
     private var pinButton: some View {
         Group {
-            if viewModel.selectedBundle!.isMain {
-                // 이미 메인으로 설정된 경우 채워진 핀 아이콘만 표시
-                Image(.pinButtonFill)
-            } else {
-                // 메인으로 설정되지 않은 경우 버튼으로 표시
-                Button(action: {
-                    viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
-                }) {
-                    Image(.pinButton)
-                        .foregroundStyle(.gray600)
+            if let bundle = viewModel.selectedBundle {
+                if bundle.isMain {
+                    Button {
+                        //action
+                    } label: {
+                        Image(.starFill)
+                    }
+                    .disabled(true)
+                    .frame(width: 48, height: 48)
+                    .glassEffect(in: .circle)
+                } else {
+                    // 메인으로 설정되지 않은 경우 버튼으로 표시
+                    Button(action: {
+                        showChangeMainBundleAlert = true
+                    }) {
+                        Image(.star)
+                    }
+                    .frame(width: 48, height: 48)
+                    .glassEffect(in: .circle)
                 }
-                .buttonStyle(.glassProminent)
             }
         }
+    }
+    
+    private var changeMainBundleAlert: some View {
+        VStack(spacing: 24) {
+            VStack(spacing: 10) {
+                Image("bangMark")
+                    .padding(.vertical, 4)
+                
+                Text("대표 뭉치를 변경할까요?")
+                    .typography(.suit20B)
+                    .foregroundStyle(.black100)
+                Text("선택한 뭉치가 홈에 걸려요.")
+                    .typography(.suit15R)
+                    .foregroundStyle(.black100)
+            }
+            .padding(8)
+            
+            // 버튼 영역
+            HStack(spacing: 16) {
+                Button {
+                    showChangeMainBundleAlert = false
+                } label: {
+                    Text("취소")
+                        .typography(.suit17SB)
+                        .foregroundStyle(.black100)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13.5)
+                }
+                .buttonStyle(.glassProminent)
+                .tint(.black10)
+                
+                Button {
+                    viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
+                    showChangeMainBundleAlert = false
+                } label: {
+                    Text("확인")
+                        .typography(.suit17SB)
+                        .foregroundStyle(.white100)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13.5)
+                }
+                .buttonStyle(.glassProminent)
+                .tint(.main500)
+            }
+        }
+        .padding(14)
+        .glassEffect(in: .rect(cornerRadius: 34))
+        .frame(minWidth: 200)
     }
 }
