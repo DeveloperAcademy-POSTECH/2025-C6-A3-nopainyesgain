@@ -223,14 +223,14 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
             handleTap()
         } label: {
             VStack(spacing: 8) {
-                ZStack(alignment: .top) {
+                ZStack {
                     LazyImage(url: URL(string: item.thumbnailURL)) { state in
                         if let image = state.image {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                         } else if state.isLoading {
-                            Text("로딩중 로티 드가자~")
+                            ProgressView()
                         } else {
                             Color.gray50
                         }
