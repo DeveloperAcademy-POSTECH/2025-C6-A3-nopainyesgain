@@ -59,7 +59,7 @@ struct MyItemsView: View {
             }
             .background(Color(UIColor.systemBackground))
         }
-        .navigationTitle("내 창고")
+        .navigationTitle("내 아이템")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -170,19 +170,15 @@ struct MyItemsView: View {
             HStack(spacing: 0) {
                 Image(.buyKey)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
+                    .frame(width: 36)
 
-                Spacer()
-
-                Text("\(userManager.currentUser?.coin ?? 0)")
-                    .typography(.suit17B)
+                Text("\((userManager.currentUser?.coin ?? 0).formatted())")
+                    .typography(.nanum16EB)
                     .foregroundColor(.black)
             }
         }
-        .frame(minWidth: 80)
         .frame(height: 44)
-        .fixedSize(horizontal: true, vertical: true)
-        .buttonStyle(.glass)
     }
 
     /// 빈 콘텐츠 뷰

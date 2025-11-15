@@ -50,7 +50,7 @@ extension WorkshopView {
     /// 빈 창고 뷰
     var emptyOwnedView: some View {
         HStack(alignment: .center, spacing: 0) {
-            Text("최근 사용한 템플릿이 없어요")
+            Text("키링을 만들면 최근 사용한 템플릿이 이곳에 표시돼요.")
                 .typography(.suit13SB)
                 .foregroundColor(.gray500)
         }
