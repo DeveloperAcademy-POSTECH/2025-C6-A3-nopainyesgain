@@ -30,16 +30,12 @@ struct BundleNameInputView: View {
         GeometryReader { geo in
             VStack(spacing: 20) {
                 // 씬 표시 - ViewModel에 저장된 씬 재활용
-                keyringSceneView(geo: geo)
-                    .frame(height: geo.size.height * 0.5)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 82)
-                    .padding(.bottom, 20)
+                viewModel.keyringSceneView(widthSize: geo.size.width - 175.58)
                 
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
                     .padding(.horizontal, 20)
-                
+                //TODO: 업로드 중 로티 추가
                 if isUploading {
                     ProgressView("업로드 중...")
                         .padding(.top, 8)
@@ -75,33 +71,6 @@ struct BundleNameInputView: View {
             keyboardHeight = 0
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
-    }
-}
-
-// MARK: - 카라비너 + 키링 SpriteKit 씬 표시 (ViewModel에서 재활용)
-extension BundleNameInputView {
-    private func keyringSceneView(geo: GeometryProxy) -> some View {
-        ZStack {
-            if let imageData = viewModel.bundleCapturedImage,
-               let uiImage = UIImage(data: imageData) {
-                // 캡처된 이미지 표시
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                // 이미지가 없으면 기본 메시지 표시
-                VStack {
-                    Image(systemName: "photo")
-                        .font(.system(size: 50))
-                        .foregroundColor(.gray)
-                    Text("이미지를 불러오는 중...")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                .frame(width: 200, height: 200)
-            }
-        }
-        .clipped()
     }
 }
 
@@ -228,7 +197,6 @@ extension BundleNameInputView {
         bundleName: String
     ) {
         guard let imageData = viewModel.bundleCapturedImage else {
-            print("⚠️ [BundleNameInput] 캡처된 이미지가 없습니다")
             return
         }
 
@@ -238,6 +206,5 @@ extension BundleNameInputView {
             name: bundleName,
             imageData: imageData
         )
-        print("✅ [BundleNameInput] 번들 이미지 캐시 저장 완료: \(bundleName)")
     }
 }
