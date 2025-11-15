@@ -79,25 +79,6 @@ struct TemplatePreviewBody: View {
         .task {
             await fetchTemplate()
         }
-        .task(id: template?.id) {
-            // 무료 템플릿이면 자동으로 소유권 추가
-            if let template = template,
-               template.isFree,
-               !isOwned,
-               let templateId = template.id,
-               let userId = userManager.currentUser?.id {
-                do {
-                    try await Firestore.firestore()
-                        .collection("User")
-                        .document(userId)
-                        .updateData([
-                            "templates": FieldValue.arrayUnion([templateId])
-                        ])
-                } catch {
-                    print(" Failed to add template \(templateId): \(error.localizedDescription)")
-                }
-            }
-        }
         .overlay {
             ZStack(alignment: .center) {
                 // 삭제 확인 팝업
@@ -194,7 +175,7 @@ struct TemplatePreviewBody: View {
 
                     BangmarkAlert(
                         checkmarkScale: purchaseFailScale,
-                        text: "열쇠가 부족해요",
+                        text: "코인이 부족해요",
                         cancelText: "취소",
                         confirmText: "충전하기",
                         onCancel: {
