@@ -223,14 +223,14 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
             handleTap()
         } label: {
             VStack(spacing: 8) {
-                ZStack {
+                ZStack(alignment: .top) {
                     LazyImage(url: URL(string: item.thumbnailURL)) { state in
                         if let image = state.image {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                         } else if state.isLoading {
-                            ProgressView()
+                            Text("로딩중 로티 드가자~")
                         } else {
                             Color.gray50
                         }
@@ -238,14 +238,22 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
                     .scaledToFit()
                     
                     if !item.isFree {
-                        HStack {
-                            Image(.paidIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24)
+                        VStack {
+                            HStack {
+                                Image(.paidIcon)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24)
+                                
+                                Spacer()
+                                
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 3)
+                            .padding(.leading, 7)
+                            
+                            Spacer()
                         }
-                        .padding(.top, 3)
-                        .padding(.leading, 7)
                     }
                     
                 }
