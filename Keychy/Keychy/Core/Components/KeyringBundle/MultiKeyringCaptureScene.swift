@@ -237,8 +237,9 @@ class MultiKeyringCaptureScene: SKScene {
 
     /// 모든 키링 정적 배치
     private func setupKeyrings() {
-        for (order, data) in keyringDataList.enumerated() {
-            setupSingleKeyring(data: data, order: order)
+        for data in keyringDataList {
+            // data.index가 원본 인덱스, 이를 그대로 사용하여 정확한 위치에 배치
+            setupSingleKeyring(data: data, order: data.index)
         }
     }
 
