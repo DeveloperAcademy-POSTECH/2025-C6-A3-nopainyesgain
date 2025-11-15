@@ -32,8 +32,7 @@ struct BundleNameInputView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 20) {
-                // 씬 표시 - ViewModel에 저장된 씬 재활용
-                viewModel.keyringSceneView(widthSize: geo.size.width - 175.58)
+                viewModel.keyringSceneView(geo: geo)
                 
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
@@ -51,6 +50,7 @@ struct BundleNameInputView: View {
                 
                 Spacer()
             }
+            .frame(width: geo.size.width)
             .padding(.bottom, max(380 - keyboardHeight, 20))
             .onAppear {
                 // 키보드 자동 활성화

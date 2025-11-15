@@ -19,11 +19,12 @@ struct BundleNameEditView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 20) {
-                viewModel.keyringSceneView(widthSize: geo.size.width - 175.58)
+                if let bundle = viewModel.selectedBundle {
+                    KeyringBundleItem(bundle: bundle, isInventoryView: false, geo: geo)
+                }
                 bundleNameTextField
+                    .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 20)
         }
         .onAppear {
             if let bundle = viewModel.selectedBundle {
