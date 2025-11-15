@@ -15,16 +15,14 @@ struct BundleDetailView: View {
     @State var viewModel: CollectionViewModel
     
     // MARK: - State Management
-    
     @State private var showMenu: Bool = false
-    
     @State private var showDeleteAlert: Bool = false
+    @State private var showDeleteCompleteToast: Bool = false
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
     
     // MARK: - Body
-    
     var body: some View {
         ZStack(alignment: .top) {
             
@@ -109,13 +107,38 @@ struct BundleDetailView: View {
             await loadBundleData()
         }
         .overlay {
-            // 삭제 확인 Alert
-            if showDeleteAlert {
-                deleteAlertView
+            ZStack(alignment: .center) {
+                // 삭제 확인 Alert
+                if showDeleteAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    if let bundle = viewModel.selectedBundle {
+                        DeletePopup(
+                            title: "\(bundle.name)\n삭제하시겠어요?",
+                            message: "삭제한 뭉치는 복구할 수 없습니다",
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                Task {
+                                    await deleteBundle()
+                                }
+                            }
+                        )
+                    }
+                }
+                if showDeleteCompleteToast {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
+                        .zIndex(100)
+                }
+                
             }
         }
     }
-    
 }
 
 // MARK: - Data Loading
@@ -149,18 +172,34 @@ extension BundleDetailView {
         }
         
         do {
+            // 1. 삭제 확인 Alert 닫기
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showDeleteAlert = false
+            }
+            
             let db = Firestore.firestore()
             
-            // Firebase에서 문서 삭제
+            // 2. Firebase에서 문서 삭제
             try await db.collection("KeyringBundle").document(documentId).delete()
             
-            // 로컬 배열에서도 제거
+            // 3. 로컬 배열에서도 제거
             viewModel.bundles.removeAll { $0.documentId == documentId }
             
-            // Alert 닫기
-            showDeleteAlert = false
+            // 5. 삭제 완료 팝업 표시
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showDeleteCompleteToast = true
+            }
             
-            // 이전 화면으로 이동
+            // 6. 1.5초 후 팝업 닫고 이전 화면으로 이동
+            try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5초
+            
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showDeleteCompleteToast = false
+            }
+            
+            // 7. 애니메이션 완료 대기 후 화면 이동
+            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3초
+            
             router.pop()
             
         } catch {
@@ -199,76 +238,6 @@ extension BundleDetailView {
 
 // MARK: - View Components
 extension BundleDetailView {
-    /// 삭제 확인 Alert
-    private var deleteAlertView: some View {
-        ZStack {
-            Color.black20
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showDeleteAlert = false
-                    }
-                }
-            
-            VStack {
-                Spacer()
-                
-                VStack(spacing: 0) {
-                    // 타이틀
-                    Text("뭉치를 삭제하시겠어요?")
-                        .typography(.suit17B)
-                        .foregroundStyle(.black100)
-                        .padding(.top, 24)
-                        .padding(.bottom, 8)
-                    
-                    // 메시지
-                    Text("삭제된 뭉치는 복구할 수 없어요")
-                        .typography(.suit15R)
-                        .foregroundStyle(.gray600)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 24)
-                    
-                    Divider()
-                    
-                    // 버튼들
-                    HStack(spacing: 0) {
-                        // 취소 버튼
-                        Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showDeleteAlert = false
-                            }
-                        } label: {
-                            Text("취소")
-                                .typography(.suit16M)
-                                .foregroundStyle(.black100)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                        }
-                        
-                        Divider()
-                        
-                        // 삭제 버튼
-                        Button {
-                            Task {
-                                await deleteBundle()
-                            }
-                        } label: {
-                            Text("삭제")
-                                .typography(.suit16M)
-                                .foregroundStyle(.primaryRed)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                        }
-                    }
-                }
-                .background(.white100)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .padding(.horizontal, 51)
-                
-                Spacer()
-            }
-        }
-    }
     
     /// 하단 정보 섹션 - 핀 버튼, 뭉치 이름/개수, 다운로드 버튼
     private var bottomSection: some View {
