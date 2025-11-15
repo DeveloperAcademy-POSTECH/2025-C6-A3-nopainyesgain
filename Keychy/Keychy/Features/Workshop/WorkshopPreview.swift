@@ -174,23 +174,41 @@ struct WorkshopPreview: View {
 extension WorkshopPreview {
     private var itemPreview: some View {
         GeometryReader { geometry in
+            let availableWidth = geometry.size.width - 60  // 좌우 패딩 30씩 제외
+
             VStack {
-                
+
                 Spacer()
 
                 // 파티클이 아닌 경우 이미지 표시
                 if !(item is Particle) {
-                    ItemDetailImage(itemURL: getPreviewURL())
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
-                        .cornerRadius(20)
+                    if item is Background {
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity, maxHeight: 501)
+                            .cornerRadius(20)
+                    } else if item is KeyringTemplate {
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
+                            .cornerRadius(20)
+                    } else {
+                        // 카라비너, 사운드: 1:1 비율
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFit()
+                            .frame(width: availableWidth, height: availableWidth)
+                            .cornerRadius(20)
+                    }
                 }
 
-                // 파티클 이펙트일 경우 무한 재생
+                // 파티클 이펙트일 경우 무한 재생 (1:1 비율)
                 if let particle = item as? Particle,
                    let particleId = particle.id {
                     if isParticleReady {
                         infiniteParticleLottieView(particleId: particleId)
+                            .scaledToFill()
+                            .frame(width: availableWidth, height: availableWidth)
+                            .cornerRadius(20)
                     } else {
                         ProgressView()
                             .task {
