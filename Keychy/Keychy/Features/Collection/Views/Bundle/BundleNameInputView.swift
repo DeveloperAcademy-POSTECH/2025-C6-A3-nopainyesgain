@@ -85,7 +85,7 @@ extension BundleNameInputView {
                 "이름을 입력해주세요",
                 text: $bundleName
             )
-            .typography(.suit16M25)
+            .typography(.notosans16R)
             .foregroundStyle(textColor)
             .focused($isTextFieldFocused)
             .onChange(of: bundleName) { _, newValue in

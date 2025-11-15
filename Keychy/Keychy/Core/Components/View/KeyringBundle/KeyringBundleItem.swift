@@ -60,7 +60,7 @@ struct KeyringBundleItem: View {
             if isInventoryView {
                 HStack {
                     Text(bundle.name)
-                        .typography(.suit15SB25)
+                        .typography(.notosans15M)
                         .foregroundStyle(.black100)
                     Spacer()
                 }
