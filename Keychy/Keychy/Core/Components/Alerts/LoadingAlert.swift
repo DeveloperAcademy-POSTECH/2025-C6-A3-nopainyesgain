@@ -46,10 +46,10 @@ struct LoadingAlert: View {
             if type != .short, let message = message {
                 Text(message)
                     .typography(.suit17SB)
-                    .foregroundStyle(.white100)
-                    .textOutline(color: .white100, width: 3)
+                    .foregroundStyle(.black100)
             }
         }
+        .padding(.bottom, message != nil ? 45 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
     }
