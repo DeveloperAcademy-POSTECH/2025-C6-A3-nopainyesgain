@@ -49,51 +49,53 @@ struct BundleDetailView: View {
                 /// 씬 재생성 조건을 위한 ID 설정
                 /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                 .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
+                
+                // 하단 섹션을 ZStack 안에서 직접 배치
+                VStack {
+                    Spacer()
+                    bottomSection
+                }
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+                
+                if showMenu {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            BundleMenu(
+                                onNameEdit: {
+                                    showMenu = false
+                                    router.push(.bundleNameEditView)
+                                },
+                                onEdit: {
+                                    showMenu = false
+                                    router.push(.bundleEditView)
+                                },
+                                onDelete: {
+                                    showMenu = false
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showDeleteAlert = true
+                                    }
+                                },
+                                isMain: bundle.isMain
+                            )
+                            .padding(.trailing, 16)
+                            .padding(.top, 8)
+                            
+                            Spacer()
+                        }
+                    }
+                    .zIndex(50)
+                    .allowsHitTesting(true)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMenu = false
+                        }
+                    }
+                }
             } else {
                 // 데이터 로딩 중
                 Color.clear.ignoresSafeArea()
-            }
-            // 하단 섹션을 ZStack 안에서 직접 배치
-            VStack {
-                Spacer()
-                bottomSection
-            }
-            .ignoresSafeArea(.keyboard, edges: .bottom)
-            
-            if showMenu {
-                HStack {
-                    Spacer()
-                    VStack {
-                        BundleMenu(
-                            onNameEdit: {
-                                showMenu = false
-                                router.push(.bundleNameEditView)
-                            },
-                            onEdit: {
-                                showMenu = false
-                                router.push(.bundleEditView)
-                            },
-                            onDelete: {
-                                showMenu = false
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showDeleteAlert = true
-                                }
-                            }
-                        )
-                        .padding(.trailing, 16)
-                        .padding(.top, 8)
-                        
-                        Spacer()
-                    }
-                }
-                .zIndex(50)
-                .allowsHitTesting(true)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showMenu = false
-                    }
-                }
             }
         }
         .toolbar {
@@ -264,42 +266,6 @@ extension BundleDetailView {
                 .padding(.horizontal, 51)
                 
                 Spacer()
-            }
-        }
-    }
-    
-    /// 메뉴 오버레이
-    private var menuOverlay: some View {
-        HStack {
-            Spacer()
-            VStack {
-                BundleMenu(
-                    onNameEdit: {
-                        showMenu = false
-                        router.push(.bundleNameEditView)
-                    },
-                    onEdit: {
-                        showMenu = false
-                    },
-                    onDelete: {
-                        showMenu = false
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showDeleteAlert = true
-                        }
-                    }
-                )
-                .padding(.trailing, 16)
-                .padding(.top, 8)
-                
-                Spacer()
-            }
-        }
-        .zIndex(50)
-        .allowsHitTesting(true)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showMenu = false
             }
         }
     }
