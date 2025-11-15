@@ -82,10 +82,11 @@ extension CollectionViewModel {
                 var updatedBundle = newBundle
                 updatedBundle.documentId = bundleId
                 self.bundles.append(updatedBundle)
+                
+                print("뭉치 생성 완료: \(bundleId)")
+                // 배열 업데이트 후 completion 호출
+                completion(true, bundleId)
             }
-            
-            print("뭉치 생성 완료: \(bundleId)")
-            completion(true, bundleId)
         }
     }
     

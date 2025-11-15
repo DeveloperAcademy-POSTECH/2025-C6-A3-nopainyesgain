@@ -176,7 +176,14 @@ extension BundleNameInputView {
                         )
 
                         isUploading = false
+                        
+                        // 생성된 번들을 selectedBundle에 할당
+                        // createBundle의 completion이 배열 업데이트 후 호출되므로 안전
+                        viewModel.selectedBundle = viewModel.bundles.first { $0.documentId == bundleId }
                         router.reset()
+                        router.push(.bundleInventoryView)
+                        // 네비게이션: 상세 페이지로 이동
+                        router.push(.bundleDetailView)
                     } else {
                         // 실패 처리
                         isUploading = false
