@@ -142,6 +142,10 @@
 		4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D37E2EC464D70009D376 /* IntroAppGuidingView.swift */; };
 		4CC3D3992EC4C16B0009D376 /* ToolbarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D3982EC4C16B0009D376 /* ToolbarButtons.swift */; };
 		4CC3D3C52EC701610009D376 /* IntroViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D3C42EC701610009D376 /* IntroViewModel+Bundle.swift */; };
+		4CC3D3C82EC8A47E0009D376 /* OutlineText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D3C62EC8A47E0009D376 /* OutlineText.swift */; };
+		4CC3D3CC2EC8AE030009D376 /* ShortLoadingAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D3CB2EC8AE030009D376 /* ShortLoadingAlert.swift */; };
+		4CC3D3CD2EC8AE030009D376 /* KeychyAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D3C92EC8AE030009D376 /* KeychyAlert.swift */; };
+		4CC3D3CE2EC8AE030009D376 /* LongLoadingAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3D3CA2EC8AE030009D376 /* LongLoadingAlert.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -431,6 +435,10 @@
 		4CC3D37E2EC464D70009D376 /* IntroAppGuidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroAppGuidingView.swift; sourceTree = "<group>"; };
 		4CC3D3982EC4C16B0009D376 /* ToolbarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtons.swift; sourceTree = "<group>"; };
 		4CC3D3C42EC701610009D376 /* IntroViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Bundle.swift"; sourceTree = "<group>"; };
+		4CC3D3C62EC8A47E0009D376 /* OutlineText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineText.swift; sourceTree = "<group>"; };
+		4CC3D3C92EC8AE030009D376 /* KeychyAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyAlert.swift; sourceTree = "<group>"; };
+		4CC3D3CA2EC8AE030009D376 /* LongLoadingAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongLoadingAlert.swift; sourceTree = "<group>"; };
+		4CC3D3CB2EC8AE030009D376 /* ShortLoadingAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortLoadingAlert.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DA2EAE08C00099ECEE /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
@@ -743,6 +751,9 @@
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
 			isa = PBXGroup;
 			children = (
+				4CC3D3C92EC8AE030009D376 /* KeychyAlert.swift */,
+				4CC3D3CA2EC8AE030009D376 /* LongLoadingAlert.swift */,
+				4CC3D3CB2EC8AE030009D376 /* ShortLoadingAlert.swift */,
 				4C65304F2EBB2A90000F8154 /* LoadingAlert.swift */,
 				4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */,
 				4C6530712EBCFD10000F8154 /* BangmarkAlert.swift */,
@@ -835,6 +846,14 @@
 				4CBBEF282EB7DB9800252590 /* RecordingSheet.swift */,
 			);
 			path = Recording;
+			sourceTree = "<group>";
+		};
+		4CC3D3C72EC8A47E0009D376 /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				4CC3D3C62EC8A47E0009D376 /* OutlineText.swift */,
+			);
+			path = Text;
 			sourceTree = "<group>";
 		};
 		4CEC61A82EAE071B0099ECEE = {
@@ -944,6 +963,7 @@
 		4CEC61F82EAE08DA0099ECEE /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4CC3D3C72EC8A47E0009D376 /* Text */,
 				38173D0D2EB902FD00E36F7E /* Popup */,
 				4CBBEF202EB3705E00252590 /* Items */,
 				38C147B92EB13B2100A8E511 /* Button */,
@@ -1738,6 +1758,7 @@
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				385425C82EB3C3F300A06C02 /* KeyringDetailSceneView.swift in Sources */,
 				38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */,
+				4CC3D3C82EC8A47E0009D376 /* OutlineText.swift in Sources */,
 				385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */,
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
 				4C6530402EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift in Sources */,
@@ -1787,6 +1808,9 @@
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				3822DDBE2EBAAC80003125BE /* PurchasePopup.swift in Sources */,
+				4CC3D3CC2EC8AE030009D376 /* ShortLoadingAlert.swift in Sources */,
+				4CC3D3CD2EC8AE030009D376 /* KeychyAlert.swift in Sources */,
+				4CC3D3CE2EC8AE030009D376 /* LongLoadingAlert.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* AcrylicPhotoEditedView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,

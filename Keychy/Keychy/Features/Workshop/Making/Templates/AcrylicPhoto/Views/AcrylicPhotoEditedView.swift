@@ -44,11 +44,12 @@ struct AcrylicPhotoEditedView: View {
                 .blur(radius: showCheckmark ? 15 : 0)
                 .animation(.easeInOut(duration: 0.3), value: showCheckmark)
 
-            if showCheckmark {
-                Image("bgRemoved")
-                    .scaleEffect(checkmarkScale)
-                    .opacity(checkmarkOpacity)
-            }
+            /// 누끼 완료 alert
+            KeychyAlert(
+                type: .checkmark,
+                message: "배경 제거 완료!",
+                isPresented: $showCheckmark
+            )
         }
         .navigationTitle("누끼를 제거합니다!")
         .navigationBarBackButtonHidden(true)
