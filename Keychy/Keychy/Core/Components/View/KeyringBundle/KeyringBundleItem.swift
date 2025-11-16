@@ -34,7 +34,7 @@ struct KeyringBundleItem: View {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
-                    .frame(width: widthSize, height: heightSize)
+                    .frame(width: twoGridCellWidth, height: twoGridCellHeight)
                     .cornerRadius(10)
 
                 if isInventoryView {

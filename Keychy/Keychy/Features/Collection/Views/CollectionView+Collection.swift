@@ -244,7 +244,7 @@ extension CollectionView {
         }) {
             VStack {
                 CollectionCellView(keyring: keyring)
-                    .frame(width: UIApplication.twoGridCellWidth, height: UIApplication.twoGridCellHeight)
+                    .frame(width: twoGridCellWidth, height: twoGridCellHeight)
                     .cornerRadius(10)
                 
                 HStack(spacing: 3) {
