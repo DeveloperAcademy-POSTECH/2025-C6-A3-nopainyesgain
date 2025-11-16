@@ -74,6 +74,14 @@ struct WorkshopPreview: View {
         }
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                BackToolbarButton {
+                    router.pop()
+                }
+            }
+        }
         .task {
             // 배경이 무료이고 아직 소유하지 않았다면 자동으로 추가
             if let background = item as? Background {
@@ -173,55 +181,45 @@ struct WorkshopPreview: View {
 // MARK: - Item Preview Section
 extension WorkshopPreview {
     private var itemPreview: some View {
-        GeometryReader { geometry in
-            let availableWidth = geometry.size.width - 60  // 좌우 패딩 30씩 제외
+        VStack {
+            Spacer()
 
-            VStack {
-
-                Spacer()
-
-                // 파티클이 아닌 경우 이미지 표시
-                if !(item is Particle) {
-                    if item is Background {
-                        ItemDetailImage(itemURL: getPreviewURL())
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity, maxHeight: 501)
-                            .cornerRadius(20)
-                    } else if item is KeyringTemplate {
-                        ItemDetailImage(itemURL: getPreviewURL())
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity)
-                            .cornerRadius(20)
-                    } else {
-                        // 카라비너, 사운드: 1:1 비율
-                        ItemDetailImage(itemURL: getPreviewURL())
-                            .scaledToFit()
-                            .frame(width: availableWidth, height: availableWidth)
-                            .cornerRadius(20)
-                    }
+            // 파티클이 아닌 경우 이미지 표시
+            if !(item is Particle) {
+                if item is Background {
+                    ItemDetailImage(itemURL: getPreviewURL())
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity, maxHeight: 501)
+                        .cornerRadius(20)
+                } else {
+                    // 카라비너, 사운드: 1:1 비율
+                    ItemDetailImage(itemURL: getPreviewURL())
+                        .scaledToFit()
+                        .aspectRatio(1, contentMode: .fit)
+                        .cornerRadius(20)
                 }
-
-                // 파티클 이펙트일 경우 무한 재생 (1:1 비율)
-                if let particle = item as? Particle,
-                   let particleId = particle.id {
-                    if isParticleReady {
-                        infiniteParticleLottieView(particleId: particleId)
-                            .scaledToFill()
-                            .frame(width: availableWidth, height: availableWidth)
-                            .cornerRadius(20)
-                    } else {
-                        ProgressView()
-                            .task {
-                                await ensureParticleReady(particle)
-                            }
-                    }
-                }
-
-                Spacer()
             }
-            .padding(.horizontal, 30)
-            .frame(height: 500)
+            
+            // 파티클 이펙트일 경우 무한 재생 (1:1 비율)
+            if let particle = item as? Particle,
+               let particleId = particle.id {
+                if isParticleReady {
+                    infiniteParticleLottieView(particleId: particleId)
+                        .scaledToFill()
+                        .aspectRatio(1, contentMode: .fit)
+                        .cornerRadius(20)
+                } else {
+                    ProgressView()
+                        .task {
+                            await ensureParticleReady(particle)
+                        }
+                }
+            }
+
+            Spacer()
         }
+        .padding(.horizontal, 30)
+        .frame(height: 500)
     }
 
     /// 파티클 다운로드 및 소유권 처리
