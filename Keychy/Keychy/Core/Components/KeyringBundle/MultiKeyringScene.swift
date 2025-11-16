@@ -206,9 +206,6 @@ class MultiKeyringScene: SKScene {
             carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
             carabinerNode.zPosition = -900
 
-            // 페이드인을 위해 투명하게 시작
-            carabinerNode.alpha = 0
-
             self.addChild(carabinerNode)
 
             // 수직 그림자 추가
@@ -244,9 +241,6 @@ class MultiKeyringScene: SKScene {
 
             carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
             carabinerNode.zPosition = -800  // 카라비너 뒷면(-900)과 키링들(0~) 사이
-
-            // 페이드인을 위해 투명하게 시작
-            carabinerNode.alpha = 0
 
             self.addChild(carabinerNode)
 
@@ -341,9 +335,6 @@ class MultiKeyringScene: SKScene {
             ring.physicsBody?.collisionBitMask = collisionBitMask
             ring.physicsBody?.contactTestBitMask = 0
 
-            // 페이드인을 위해 투명하게 시작
-            ring.alpha = 0
-
             self.addChild(ring)
 
             // 수직 그림자 추가
@@ -413,9 +404,6 @@ class MultiKeyringScene: SKScene {
                 chain.physicsBody?.categoryBitMask = categoryBitMask
                 chain.physicsBody?.collisionBitMask = collisionBitMask
                 chain.physicsBody?.contactTestBitMask = 0
-
-                // 페이드인을 위해 투명하게 시작
-                chain.alpha = 0
 
                 self.addChild(chain)
 
@@ -512,9 +500,6 @@ class MultiKeyringScene: SKScene {
         body.physicsBody?.categoryBitMask = categoryBitMask
         body.physicsBody?.collisionBitMask = collisionBitMask
         body.physicsBody?.contactTestBitMask = 0
-
-        // 페이드인을 위해 투명하게 시작
-        body.alpha = 0
 
         addChild(body)
 
@@ -717,37 +702,6 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.isDynamic = true
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
-        }
-
-        // 각 키링을 순차적으로 페이드인
-        fadeInKeyringsSequentially()
-    }
-
-    /// 모든 노드들을 동시에 페이드인 (배경은 SwiftUI에서 먼저 렌더링됨)
-    private func fadeInKeyringsSequentially() {
-        let fadeInDuration = 0.3
-        let fadeIn = SKAction.fadeIn(withDuration: fadeInDuration)
-        fadeIn.timingMode = .easeOut
-
-        // 1. 카라비너 페이드인
-        carabinerBackNode?.run(fadeIn)
-        carabinerFrontNode?.run(fadeIn)
-
-        // 2. 모든 키링 동시에 페이드인
-        for (index, ring) in ringNodes {
-            ring.run(fadeIn)
-
-            // Chain 페이드인
-            if let chains = chainNodesByKeyring[index] {
-                for chain in chains {
-                    chain.run(fadeIn)
-                }
-            }
-
-            // Body 페이드인
-            if let body = bodyNodes[index] {
-                body.run(fadeIn)
-            }
         }
     }
 
