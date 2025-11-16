@@ -101,15 +101,18 @@ struct MultiKeyringSceneView: View {
 extension MultiKeyringSceneView {
     /// 배경 뷰 (먼저 렌더링)
     private var backgroundView: some View {
-        Group {
-            if let backgroundImage {
-                Image(uiImage: backgroundImage)
-                    .resizable()
-                    .scaledToFit()
-                    .ignoresSafeArea()
-            } else {
-                Color(backgroundColor)
-                    .ignoresSafeArea()
+        GeometryReader { geometry in
+            Group {
+                if let backgroundImage {
+                    Image(uiImage: backgroundImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .clipped()
+                } else {
+                    Color(backgroundColor)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                }
             }
         }
     }
