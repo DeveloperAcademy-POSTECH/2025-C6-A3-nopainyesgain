@@ -101,6 +101,8 @@ struct Typography {
     static let notosans16R = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 0)
     static let notosans16R25 = Typography(font: .custom(.notoSansRegular, size: 16), lineSpacing: 6)
     
+    static let notosans17B = Typography(font: .custom(.notoSansBold, size: 17), lineSpacing: 0)
+    
     static let notosans20M = Typography(font: .custom(.notoSansMedium, size: 20), lineSpacing: 0)
     static let notosans20B = Typography(font: .custom(.notoSansBold, size: 20), lineSpacing: 0)
     

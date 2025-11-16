@@ -41,8 +41,8 @@ struct KeychyAlert: View {
 
             Text(message)
                 .typography(.suit17SB)
-                .foregroundStyle(.black100)
                 .textOutline(color: .white100, width: 3)
+                .foregroundStyle(.black100)                
         }
         .onChange(of: isPresented) { oldValue, newValue in
             if newValue {
