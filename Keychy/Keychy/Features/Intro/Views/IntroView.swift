@@ -37,6 +37,8 @@ struct IntroView: View {
                 appleLoginBtn
                     .opacity(showButton ? 1 : 0)
                     .offset(y: showButton ? 0 : 20)
+                    .adaptiveBottomPadding()
+                    .padding(.horizontal, 34)
             }
             .sheet(isPresented: $viewModel.showTermsSheet) {
                 termsSheet
@@ -94,8 +96,9 @@ extension IntroView {
                 
                 Text("Sign in with Apple")
                     .font(.system(size: 16, weight: .semibold))
+                    .padding(.vertical, 14.5)
             }
-            .frame(width: 334, height: 48)
+            .frame(maxWidth: .infinity)
             .cornerRadius(24)
         }
         .buttonStyle(.glassProminent)
