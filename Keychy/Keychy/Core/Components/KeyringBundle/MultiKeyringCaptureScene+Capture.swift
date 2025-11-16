@@ -31,7 +31,6 @@ extension MultiKeyringCaptureScene {
 
         // 텍스처 캡처
         guard let texture = view.texture(from: self) else {
-            print("❌ [BundleCapture] 텍스처 생성 실패")
             return nil
         }
 
@@ -41,7 +40,6 @@ extension MultiKeyringCaptureScene {
         // UIImage로 변환 후 PNG 데이터 추출
         let image = UIImage(cgImage: cgImage)
         guard let pngData = image.pngData() else {
-            print("❌ [BundleCapture] PNG 데이터 변환 실패")
             return nil
         }
 
@@ -71,6 +69,18 @@ extension MultiKeyringCaptureScene {
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
     ) async -> Data? {
+        do {
+            try await preloadAllImages(
+                keyringDataList: keyringDataList,
+                backgroundURL: backgroundImageURL,
+                carabinerBackURL: carabinerBackImageURL,
+                carabinerFrontURL: carabinerFrontImageURL,
+                carabinerType: carabinerType
+            )
+        } catch {
+            return nil
+        }
+        
         // 고정 캡처 사이즈 (iPhone 14 기준)
         let captureSize = CGSize(width: 390, height: 844)
 
@@ -115,7 +125,6 @@ extension MultiKeyringCaptureScene {
                 }
 
                 if !loadingCompleted {
-                    print("⚠️ [BundleCapture] 타임아웃 - 로딩 미완료")
                 } else {
                     // 로딩 완료 후 추가 렌더링 대기
                     try? await Task.sleep(nanoseconds: 200_000_000)
@@ -124,12 +133,50 @@ extension MultiKeyringCaptureScene {
                 // PNG 캡처
                 let pngData = await scene.captureToPNG()
 
-                if pngData == nil {
-                    print("❌ [BundleCapture] 캡처 실패")
-                }
-
                 continuation.resume(returning: pngData)
             }
         }
+    }
+    
+    // MARK: - Image Preloading (Cache Warming)
+    
+    /// 모든 이미지를 사전에 로드하여 StorageManager 캐시에 저장
+    /// - 캡쳐 전에 호출하여 Scene 내부에서의 이미지 로딩 실패를 방지
+    private static func preloadAllImages(
+        keyringDataList: [MultiKeyringCaptureScene.KeyringData],
+        backgroundURL: String,
+        carabinerBackURL: String?,
+        carabinerFrontURL: String?,
+        carabinerType: CarabinerType?
+    ) async throws {
+        // 1. 배경 이미지 로드
+        _ = try await StorageManager.shared.getImage(path: backgroundURL)
+        
+        // 2. 모든 키링 bodyImage 병렬 로드
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for keyringData in keyringDataList {
+                group.addTask {
+                    _ = try await StorageManager.shared.getImage(path: keyringData.bodyImageURL)
+                }
+            }
+            try await group.waitForAll()
+        }
+        
+        // 3. 카라비너 이미지 로드
+        if carabinerType == .hamburger {
+            if let backURL = carabinerBackURL {
+                _ = try await StorageManager.shared.getImage(path: backURL)
+            }
+            if let frontURL = carabinerFrontURL {
+                _ = try await StorageManager.shared.getImage(path: frontURL)
+            }
+        } else if carabinerType == .plain {
+            if let backURL = carabinerBackURL {
+                _ = try await StorageManager.shared.getImage(path: backURL)
+            }
+        }
+        
+        // 4. 캐시 동기화 대기
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1초
     }
 }
