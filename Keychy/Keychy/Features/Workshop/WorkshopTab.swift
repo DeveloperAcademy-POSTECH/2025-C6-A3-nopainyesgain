@@ -20,17 +20,17 @@ struct WorkshopTab: View {
                     switch route {
 
                     // MARK: - 공통 프리뷰
-                    case .workshopPreview(let item, let showDeleteButton):
+                    case .workshopPreview(let item):
                         if let template = item.base as? KeyringTemplate {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: template, showDeleteButton: showDeleteButton)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: template)
                         } else if let background = item.base as? Background {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: background, showDeleteButton: showDeleteButton)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: background)
                         } else if let carabiner = item.base as? Carabiner {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: carabiner, showDeleteButton: showDeleteButton)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: carabiner)
                         } else if let particle = item.base as? Particle {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: particle, showDeleteButton: showDeleteButton)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: particle)
                         } else if let sound = item.base as? Sound {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: sound, showDeleteButton: showDeleteButton)
+                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: sound)
                         }
                     
                     // MARK: - 내 창고뷰
@@ -44,8 +44,8 @@ struct WorkshopTab: View {
                         )
 
                     // MARK: - AcrylicPhoto
-                    case .acrylicPhotoPreview(let showDeleteButton):
-                        AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM(), showDeleteButton: showDeleteButton)
+                    case .acrylicPhotoPreview:
+                        AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM())
                     case .acrylicPhotoCrop:
                         AcrylicPhotoCropView(router: router, viewModel: getAcrylicPhotoVM())
                     case .acrylicPhotoEdited:
@@ -70,8 +70,8 @@ struct WorkshopTab: View {
                         )
 
                     // MARK: - NeonSign
-                    case .NeonSignPreView(let showDeleteButton):
-                        NeonSignPreView(router: router, viewModel: getNeonSignVM(), showDeleteButton: showDeleteButton)
+                    case .NeonSignPreView:
+                        NeonSignPreView(router: router, viewModel: getNeonSignVM())
                     case .neonSignCustomizing:
                         KeyringCustomizingView(
                             router: router,

@@ -17,7 +17,10 @@ struct ItemDetailInfoSection: View {
             HStack(spacing: 8) {
                 /// 유료 태그 표시
                 if !item.isFree {
-                    Image("keyHole")
+                    Image(.paidIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 21)
                 }
 
                 /// 이펙트 타입 표시 (사운드/파티클)
@@ -28,6 +31,7 @@ struct ItemDetailInfoSection: View {
                     itemTags
                 }
             }
+            .frame(height: 27)
             .padding(.bottom, 4)
 
             /// item 이름
@@ -69,7 +73,7 @@ extension ItemDetailInfoSection {
 
     private var itemTags: some View {
         HStack(spacing: 8) {
-            ForEach(item.tags, id: \.self) { tag in
+            ForEach(item.tags.filter { !$0.isEmpty }, id: \.self) { tag in
                 tagView(text: tag)
             }
         }

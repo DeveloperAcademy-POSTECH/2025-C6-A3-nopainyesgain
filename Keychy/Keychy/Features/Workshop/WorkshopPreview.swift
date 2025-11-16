@@ -14,9 +14,6 @@ struct WorkshopPreview: View {
     @Environment(UserManager.self) private var userManager
     @State private var effectManager = EffectManager.shared
     @State private var isParticleReady = false
-    @State private var showDeletePopup = false
-    @State private var deletePopupScale: CGFloat = 0.3
-    @State private var showDeleteCompletePopup = false
 
     // 구매 관련 상태
     @State private var showPurchaseSheet = false
@@ -28,7 +25,6 @@ struct WorkshopPreview: View {
 
     let viewModel: WorkshopViewModel
     let item: any WorkshopItem
-    var showDeleteButton: Bool = false  // MyItemsView에서 올 때 true
     
     /// 아이템 보유 여부 확인
     private var isOwned: Bool {
@@ -78,22 +74,6 @@ struct WorkshopPreview: View {
         }
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            if showDeleteButton {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showDeletePopup = true
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                            deletePopupScale = 1.0
-                        }
-                    } label: {
-                        Image("trashBlack")
-                            .resizable()
-                            .frame(width: 32, height: 32)
-                    }
-                }
-            }
-        }
         .task {
             // 배경이 무료이고 아직 소유하지 않았다면 자동으로 추가
             if let background = item as? Background {
@@ -106,41 +86,6 @@ struct WorkshopPreview: View {
         }
         .overlay {
             ZStack(alignment: .center) {
-                // 삭제 확인 팝업
-                if showDeletePopup {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
-
-                    DeletePopup(
-                        title: "[\(item.name)]\n정말 삭제하시겠어요?",
-                        message: "한 번 삭제하면 복구 할 수 없습니다.",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                deletePopupScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showDeletePopup = false
-                            }
-                        },
-                        onConfirm: {
-                            Task {
-                                await deleteItem()
-                            }
-                        }
-                    )
-                    .scaleEffect(deletePopupScale)
-                }
-
-                // 삭제 완료 팝업
-                if showDeleteCompletePopup {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
-
-                    DeleteCompletePopup(isPresented: $showDeleteCompletePopup)
-                }
-
                 // 구매 확인 팝업
                 if showPurchaseSheet {
                     Color.black20
@@ -223,86 +168,47 @@ struct WorkshopPreview: View {
             }
         }
     }
-
-    /// 아이템 삭제
-    private func deleteItem() async {
-        guard let itemId = item.id,
-              let userId = userManager.currentUser?.id else { return }
-
-        // 삭제 확인 팝업 닫기 애니메이션
-        await MainActor.run {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                deletePopupScale = 0.3
-            }
-        }
-
-        try? await Task.sleep(nanoseconds: 200_000_000)
-
-        await MainActor.run {
-            showDeletePopup = false
-        }
-
-        do {
-            let field: String
-            if item is KeyringTemplate {
-                field = "templates"
-            } else if item is Background {
-                field = "backgrounds"
-            } else if item is Carabiner {
-                field = "carabiners"
-            } else if item is Particle {
-                field = "particleEffects"
-            } else if item is Sound {
-                field = "soundEffects"
-            } else {
-                return
-            }
-
-            try await Firestore.firestore()
-                .collection("User")
-                .document(userId)
-                .updateData([
-                    field: FieldValue.arrayRemove([itemId])
-                ])
-
-            // 삭제 완료 팝업 표시
-            await MainActor.run {
-                showDeleteCompletePopup = true
-            }
-
-            // 1초 후 뒤로 가기
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-
-            await MainActor.run {
-                router.pop()
-            }
-        } catch {
-            print("아이템 삭제 실패: \(error.localizedDescription)")
-        }
-    }
 }
 
 // MARK: - Item Preview Section
 extension WorkshopPreview {
     private var itemPreview: some View {
         GeometryReader { geometry in
+            let availableWidth = geometry.size.width - 60  // 좌우 패딩 30씩 제외
+
             VStack {
-                
+
                 Spacer()
 
                 // 파티클이 아닌 경우 이미지 표시
                 if !(item is Particle) {
-                    ItemDetailImage(itemURL: getPreviewURL())
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
-                        .cornerRadius(20)
+                    if item is Background {
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity, maxHeight: 501)
+                            .cornerRadius(20)
+                    } else if item is KeyringTemplate {
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
+                            .cornerRadius(20)
+                    } else {
+                        // 카라비너, 사운드: 1:1 비율
+                        ItemDetailImage(itemURL: getPreviewURL())
+                            .scaledToFit()
+                            .frame(width: availableWidth, height: availableWidth)
+                            .cornerRadius(20)
+                    }
                 }
 
-                // 파티클 이펙트일 경우 무한 재생
+                // 파티클 이펙트일 경우 무한 재생 (1:1 비율)
                 if let particle = item as? Particle,
                    let particleId = particle.id {
                     if isParticleReady {
                         infiniteParticleLottieView(particleId: particleId)
+                            .scaledToFill()
+                            .frame(width: availableWidth, height: availableWidth)
+                            .cornerRadius(20)
                     } else {
                         ProgressView()
                             .task {

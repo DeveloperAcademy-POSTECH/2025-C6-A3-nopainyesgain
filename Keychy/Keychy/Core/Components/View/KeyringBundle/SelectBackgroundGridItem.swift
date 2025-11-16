@@ -38,10 +38,14 @@ struct SelectBackgroundGridItem: View {
                     HStack {
                         // 유료 아이콘
                         if !background.background.isFree {
-                            Image(.keyHole)
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .padding(.top, 3)
+                            HStack {
+                                Image(.paidIcon)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 32)
+                            }
+                            .padding(.top, 7)
+                            .padding(.leading, 10)
                         }
                         
                         Spacer()

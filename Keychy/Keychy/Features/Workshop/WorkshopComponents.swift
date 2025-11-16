@@ -121,7 +121,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     var isOwned: Bool = false
     var router: NavigationRouter<WorkshopRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
-    var showDeleteButton: Bool = false  // MyItemsView에서만 true
 
     @State private var effectManager = EffectManager.shared
     @Environment(UserManager.self) private var userManager
@@ -149,7 +148,8 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 if let image = state.image {
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
+                        .padding(.horizontal, item is Carabiner ? 5 : 0)
                         .frame(width: 175, height: itemHeight)
                         .clipped()
                 } else if state.isLoading {
@@ -165,7 +165,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             }
 
             // 가격 오버레이
-            priceOverlay(
+            PriceOverlay(
                 isFree: item.isFree,
                 price: item.workshopPrice,
                 isOwned: isOwned,
@@ -195,35 +195,34 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId, showDeleteButton: showDeleteButton) {
+           let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
         }
         // 나머지 아이템들은 WorkshopPreview로 이동
         else if let background = item as? Background {
-            router.push(.workshopPreview(item: AnyHashable(background), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
-            router.push(.workshopPreview(item: AnyHashable(carabiner), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
         } else if let particle = item as? Particle {
-            router.push(.workshopPreview(item: AnyHashable(particle), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(particle)))
         } else if let sound = item as? Sound {
-            router.push(.workshopPreview(item: AnyHashable(sound), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
 
 /// 보유한 아이템을 표시하는 작은 카드 뷰
-struct OwnedItemCard<Item: WorkshopItem>: View {
+struct CurrentUsedCard<Item: WorkshopItem>: View {
     let item: Item
     var router: NavigationRouter<WorkshopRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
-    var showDeleteButton: Bool = false  // MyItemsView에서만 true
 
     var body: some View {
         Button {
             handleTap()
         } label: {
             VStack(spacing: 8) {
-                VStack {
+                ZStack {
                     LazyImage(url: URL(string: item.thumbnailURL)) { state in
                         if let image = state.image {
                             image
@@ -236,6 +235,26 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
                         }
                     }
                     .scaledToFit()
+                    
+                    if !item.isFree {
+                        VStack {
+                            HStack {
+                                Image(.paidIcon)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24)
+                                
+                                Spacer()
+                                
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 3)
+                            .padding(.leading, 7)
+                            
+                            Spacer()
+                        }
+                    }
+                    
                 }
                 .frame(width:112, height:112)
                 .background(Color.white)
@@ -257,108 +276,135 @@ struct OwnedItemCard<Item: WorkshopItem>: View {
         // 키링일 경우 바로 해당 키링 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId, showDeleteButton: showDeleteButton) {
+           let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
         }
         // 나머지 아이템들은 WorkshopPreview로 이동
         else if let background = item as? Background {
-            router.push(.workshopPreview(item: AnyHashable(background), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
-            router.push(.workshopPreview(item: AnyHashable(carabiner), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(carabiner)))
         } else if let particle = item as? Particle {
-            router.push(.workshopPreview(item: AnyHashable(particle), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(particle)))
         } else if let sound = item as? Sound {
-            router.push(.workshopPreview(item: AnyHashable(sound), showDeleteButton: showDeleteButton))
+            router.push(.workshopPreview(item: AnyHashable(sound)))
         }
     }
 }
 
 /// 공통 가격 오버레이 (유료 표시)
-func priceOverlay<Item: WorkshopItem>(
-    isFree: Bool,
-    price: Int,
-    isOwned: Bool,
-    item: Item,
-    effectManager: EffectManager,
-    userManager: UserManager
-) -> some View {
-    VStack {
-        HStack(spacing: 0) {
-            if !isFree {
-                Image(.keyHole)
-                    .padding(.leading, 10)
+struct PriceOverlay<Item: WorkshopItem>: View {
+    let isFree: Bool
+    let price: Int
+    let isOwned: Bool
+    let item: Item
+    let effectManager: EffectManager
+    let userManager: UserManager
+
+    var body: some View {
+        VStack {
+            HStack(spacing: 0) {
+                if !isFree {
+                    HStack {
+                        Image(.paidIcon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32)
+                    }
                     .padding(.top, 7)
+                    .padding(.leading, 10)
+                }
+
+                Spacer()
+
+                if isOwned {
+                    VStack {
+                        Rectangle()
+                            .fill(.black60)
+                            .overlay(
+                                Text("보유")
+                                    .typography(.suit13M)
+                                    .foregroundStyle(.white100)
+                            )
+                            .cornerRadius(20)
+                            .frame(width: 43, height: 24)
+
+                        Spacer()
+                    }
+                    .padding(.top, 10)
+                    .padding(.trailing, 10)
+                }
             }
+            .frame(width:175, height: 43)
 
             Spacer()
 
-            if isOwned {
-                VStack {
-                    Image(.owned)
-                    
+            // 사운드일 때만 재생 버튼 표시
+            if item is Sound {
+                HStack {
                     Spacer()
+
+                    EffectButtonStyle(
+                        item: item,
+                        effectManager: effectManager,
+                        userManager: userManager
+                    )
                 }
+                .padding(8)
             }
-        }
-        .frame(width:175, height: 43)
-
-        Spacer()
-
-        // 사운드일 때만 재생 버튼 표시
-        if item is Sound {
-            HStack {
-                Spacer()
-
-                effectButtonStyle(
-                    item: item,
-                    effectManager: effectManager,
-                    userManager: userManager
-                )
-            }
-            .padding(8)
         }
     }
 }
 
-func effectButtonStyle<Item: WorkshopItem>(
-    item: Item,
-    effectManager: EffectManager,
-    userManager: UserManager
-) -> some View {
-    let itemId = item.id ?? ""
-    let isDownloading = effectManager.downloadingItemIds.contains(itemId)
-    let progress = effectManager.downloadProgress[itemId] ?? 0.0
+struct EffectButtonStyle<Item: WorkshopItem>: View {
+    let item: Item
+    let effectManager: EffectManager
+    let userManager: UserManager
 
-    return Button {
-        Task {
-            if let sound = item as? Sound {
-                await effectManager.playSound(sound, userManager: userManager)
-            }
-        }
-    } label: {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.gray50)
-                .frame(width: 38, height: 38)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(.white100, lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
-
-            if isDownloading {
-                // 다운로드 중이면 프로그레스 표시
-                CircularProgressView(progress: progress)
-                    .frame(width: 25, height: 25)
-            } else {
-                Image(.polygon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 14, height: 14)
-            }
-        }
+    private var itemId: String {
+        item.id ?? ""
     }
-    .disabled(isDownloading)
+
+    private var isDownloading: Bool {
+        effectManager.downloadingItemIds.contains(itemId)
+    }
+
+    private var progress: Double {
+        effectManager.downloadProgress[itemId] ?? 0.0
+    }
+
+    var body: some View {
+        Button {
+            Task {
+                if let sound = item as? Sound {
+                    await effectManager.playSound(sound, userManager: userManager)
+                }
+            }
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.gray50)
+                    .frame(width: 38, height: 38)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(.white100, lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+
+                if isDownloading {
+                    // 다운로드 중이면 프로그레스 표시
+                    CircularProgressView(progress: progress)
+                        .frame(width: 25, height: 25)
+                } else {
+                    Image(.polygon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 14, height: 14)
+                }
+            }
+        }
+        .disabled(isDownloading)
+    }
 }
 
 /// 원형 프로그레스 뷰
@@ -597,5 +643,44 @@ struct WorkshopFilterBar: View {
                 EmptyView()
             }
         }
+    }
+}
+
+// MARK: - Skeleton Loading View
+
+struct SkeletonBox: View {
+    let width: CGFloat
+    let height: CGFloat
+
+    @State private var isAnimating = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .fill(Color.gray50)
+            .frame(width: width, height: height)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.clear,
+                                Color.white.opacity(0.5),
+                                Color.clear
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .offset(x: isAnimating ? width : -width)
+                    .animation(
+                        Animation.linear(duration: 1.5)
+                            .repeatForever(autoreverses: false),
+                        value: isAnimating
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .onAppear {
+                isAnimating = true
+            }
     }
 }

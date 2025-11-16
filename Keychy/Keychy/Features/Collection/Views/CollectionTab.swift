@@ -36,5 +36,6 @@ struct CollectionTab: View {
                     }
                 }
         }
+        .tint(.black)
     }
 }
