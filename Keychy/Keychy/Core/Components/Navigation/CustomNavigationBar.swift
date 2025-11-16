@@ -36,7 +36,7 @@ struct CustomNavigationBar<Leading: View, Center: View, Trailing: View>: View {
                 Spacer()
 
                 trailing
-                    .frame(width: 44, height: 44)
+                    .frame(minWidth: 44, minHeight: 44)
                     .padding(.trailing, 16)
             }
             .frame(height: 44)

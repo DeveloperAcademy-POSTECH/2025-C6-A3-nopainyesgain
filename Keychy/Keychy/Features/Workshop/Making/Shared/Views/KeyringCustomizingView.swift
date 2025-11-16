@@ -42,9 +42,12 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State var purchaseFailScale: CGFloat = 0.3
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                ZStack(alignment: .center) {
+        GeometryReader { geometry in
+            ZStack {
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    ZStack(alignment: .center) {
                     KeyringSceneView(viewModel: viewModel, onSceneReady: {
                         withAnimation(.easeIn(duration: 0.4)) {
                             isSceneReady = true
@@ -69,6 +72,10 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 // MARK: - 하단 영역
                 bottomContentView
                     .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: geometry.size.height * 0.35,
+                        alignment: .topLeading)
             }
             .background(.gray50)
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
@@ -115,12 +122,23 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 .padding(.horizontal, 51)
                 .padding(.bottom, 60)
             }
+
+            // MARK: - 커스텀 네비게이션 바
+            customNavigationBar
+                .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || isLoadingResources || !isSceneReady ? 15 : 0)
+            }
         }
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
-        .toolbar {
-            backToolbarItem
-            nextToolbarItem
+        .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
+            Button("취소", role: .cancel) { }
+            Button("확인", role: .destructive) {
+                viewModel.resetAll()
+                router.reset()
+            }
+        } message: {
+            Text("지금까지 작업한 내용이 모두 초기화됩니다.")
         }
         .task {
             // Firebase에서 이펙트 데이터 가져오기
@@ -215,28 +233,21 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     }
 }
 
-// MARK: - Toolbar Section
+// MARK: - Custom Navigation Bar
 extension KeyringCustomizingView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
                 showResetAlert = true
             }
-            .disabled(showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert)
-            .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
-                Button("취소", role: .cancel) { }
-                Button("확인", role: .destructive) {
-                    viewModel.resetAll()
-                    router.reset()
-                }
-            } message: {
-                Text("지금까지 작업한 내용이 모두 초기화됩니다.")
-            }
-        }
-    }
-    private var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            // 여러 조건부 버튼이기에 컴포넌트 사용 X
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            // Center (중앙) - 빈 공간
+            Spacer()
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
             Button {
                 if hasCartItems {
                     showPurchaseSheet = true
@@ -247,10 +258,10 @@ extension KeyringCustomizingView {
                 Text(hasCartItems ? "구매 \(cartItems.count)" : "다음")
                     .typography(.suit17B)
                     .foregroundStyle(hasCartItems ? .white100 : .black100)
+                    .padding(5)
             }
             .buttonStyle(.glassProminent)
             .tint(hasCartItems ? .black100 : .white100)
-            .disabled(showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert)
         }
     }
 }
@@ -304,11 +315,10 @@ extension KeyringCustomizingView {
                 particleEffectSelector
                 Spacer()
             }
-            .adaptiveBottomPadding()
-            .frame(
-                maxWidth: .infinity,
-                maxHeight: geometry.size.height * 0.36,
-                alignment: .topLeading)
+//            .frame(
+//                maxWidth: .infinity,
+//                maxHeight: geometry.size.height * 0.25,
+//                alignment: .topLeading)
         }
         .background(
             UnevenRoundedRectangle(
