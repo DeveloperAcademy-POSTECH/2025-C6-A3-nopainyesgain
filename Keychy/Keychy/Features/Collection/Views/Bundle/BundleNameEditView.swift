@@ -26,11 +26,12 @@ struct BundleNameEditView: View {
             
             Spacer()
         }
-        .frame(width: screenWidth)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.bottom, max(380 - keyboardHeight, 20))
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
+                viewModel.loadBundleImageFromCache(bundle: bundle)
             }
             DispatchQueue.main.async {
                 isTextFieldFocused = true
