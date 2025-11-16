@@ -59,8 +59,13 @@ struct MyItemsView: View {
             }
             .background(Color(UIColor.systemBackground))
         }
-        .navigationTitle("내 창고")
+        .navigationTitle("내 아이템")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                chargeCoinBtn
+            }
+        }
         .task {
             // 최초 한 번만 초기화
             if !hasInitialized {
@@ -116,11 +121,9 @@ struct MyItemsView: View {
             case "키링":
                 WorkshopGridHelpers.itemGridView(
                     items: filteredOwnedTemplates,
-                    // 내 창고 이므로 항상 보유중 -> 보유중 표시 안하기 위해서 항상 보유안했다고 가정.
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             case "배경":
@@ -129,7 +132,6 @@ struct MyItemsView: View {
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             case "카라비너":
@@ -138,7 +140,6 @@ struct MyItemsView: View {
                     isOwnedCheck: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             case "이펙트":
@@ -148,13 +149,31 @@ struct MyItemsView: View {
                     isParticleOwned: { _ in false },
                     router: router,
                     viewModel: viewModel,
-                    showDeleteButton: true,
                     emptyView: emptyContentView
                 )
             default:
                 emptyContentView
             }
         }
+    }
+    
+    /// 열쇠 충전 버튼
+    private var chargeCoinBtn: some View {
+        Button {
+            router.push(.coinCharge)
+        } label: {
+            HStack(spacing: 0) {
+                Image(.buyKey)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 36)
+
+                Text("\((userManager.currentUser?.coin ?? 0).formatted())")
+                    .typography(.nanum16EB)
+                    .foregroundColor(.black)
+            }
+        }
+        .frame(height: 44)
     }
 
     /// 빈 콘텐츠 뷰

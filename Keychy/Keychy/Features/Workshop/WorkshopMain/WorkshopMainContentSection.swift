@@ -26,15 +26,14 @@ extension WorkshopView {
         .background(.white100)
     }
 
-    /// 로딩 뷰
+    /// 로딩 뷰 (스켈레톤 애니메이션)
     var loadingView: some View {
-        HStack(spacing: 0) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .purple))
-                .scaleEffect(1.5)
+        HStack(spacing: 11){
+            SkeletonBox(width: 175, height: 233)
+            SkeletonBox(width: 175, height: 233)
         }
-        .frame(maxWidth: .infinity, minHeight: 300)
-        .padding(.top, 50)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 92)
     }
 
 
@@ -139,3 +138,5 @@ extension WorkshopView {
         .padding(.top, 100)
     }
 }
+
+

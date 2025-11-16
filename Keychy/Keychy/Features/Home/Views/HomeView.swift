@@ -17,6 +17,9 @@ struct HomeView: View {
 
     @State var collectionViewModel: CollectionViewModel
 
+    /// 배경 로드 완료 콜백
+    var onBackgroundLoaded: (() -> Void)? = nil
+
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
 
@@ -42,7 +45,8 @@ struct HomeView: View {
                     carabinerX: carabiner.carabinerX,
                     carabinerY: carabiner.carabinerY,
                     carabinerWidth: carabiner.carabinerWidth,
-                    currentCarabinerType: carabiner.type
+                    currentCarabinerType: carabiner.type,
+                    onBackgroundLoaded: onBackgroundLoaded
                 )
                 .ignoresSafeArea()
                 /// 씬 재생성 조건을 위한 ID 설정
@@ -78,7 +82,7 @@ extension HomeView {
                 Image(.bundleIcon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 28, height: 28)
+                    .frame(width: 30, height: 30)
             }
             .frame(width: 44, height: 44)
             .glassEffect()
@@ -92,7 +96,7 @@ extension HomeView {
                         Image(.alarmIcon)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 28, height: 28)
+                            .frame(width: 30, height: 30)
                     }
                     .frame(width: 44, height: 44)
                     .glassEffect()
@@ -104,7 +108,7 @@ extension HomeView {
                         Image(.myPageIcon)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 28, height: 28)
+                            .frame(width: 30, height: 30)
 
                     }
                     .frame(width: 44, height: 44)
@@ -113,7 +117,7 @@ extension HomeView {
                 }
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
         .tint(.white.opacity(0))
     }
 }
@@ -145,6 +149,8 @@ extension HomeView {
         } else if let firstBundle = collectionViewModel.sortedBundles.first {
             collectionViewModel.selectedBundle = firstBundle
         } else {
+            // 번들이 하나도 없는 경우 - 스플래시 즉시 종료
+            onBackgroundLoaded?()
             return
         }
 

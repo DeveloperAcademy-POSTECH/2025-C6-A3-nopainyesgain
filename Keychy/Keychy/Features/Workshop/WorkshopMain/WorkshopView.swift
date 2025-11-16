@@ -101,8 +101,8 @@ struct WorkshopView: View {
                 Spacer()
                     .frame(height: 20)
 
-                // 내 창고 섹션
-                myCollectionSection
+                // 내 아이템 섹션
+                CurrentUsedSection
 
                 // 메인 콘텐츠 (그리드)
                 mainContentSection

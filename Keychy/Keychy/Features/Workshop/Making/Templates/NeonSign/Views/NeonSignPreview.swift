@@ -10,7 +10,6 @@ import SwiftUI
 struct NeonSignPreView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: NeonSignVM
-    var showDeleteButton: Bool = false
 
     var body: some View {
         TemplatePreviewBody(
@@ -19,8 +18,7 @@ struct NeonSignPreView: View {
             onMake: {
                 router.push(.neonSignCustomizing)
             },
-            router: router,
-            showDeleteButton: showDeleteButton
+            router: router
         )
     }
 }

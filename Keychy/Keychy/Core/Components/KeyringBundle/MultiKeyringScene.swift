@@ -42,9 +42,6 @@ class MultiKeyringScene: SKScene {
     // MARK: - 파티클 효과 콜백
     var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
 
-    // MARK: - 씬 준비 완료 콜백
-    var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
-
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
     var currentRingType: RingType = .basic
@@ -60,6 +57,10 @@ class MultiKeyringScene: SKScene {
     var carabinerX: CGFloat = 0  // 카라비너 중심 X 좌표
     var carabinerY: CGFloat = 0  // 카라비너 중심 Y 좌표
     var carabinerWidth: CGFloat = 0  // 카라비너 너비
+
+    // MARK: - 카라비너 노드 저장
+    private var carabinerBackNode: SKSpriteNode?
+    private var carabinerFrontNode: SKSpriteNode?
 
     // MARK: - 스와이프 제스처 관련
     var lastTouchLocation: CGPoint?
@@ -109,14 +110,8 @@ class MultiKeyringScene: SKScene {
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
-        // 모든 이미지를 동시에 로드 시작
+        // 카라비너 이미지와 키링들을 로드
         Task {
-            async let backgroundTask: Void = {
-                if let backgroundURL = await backgroundImageURL {
-                    await setupBackgroundImageAsync(url: backgroundURL)
-                }
-            }()
-
             async let carabinerBackTask: Void = {
                 if let carabinerBackURL = await carabinerBackImageURL {
                     await setupCarabinerBackImageAsync(url: carabinerBackURL)
@@ -129,8 +124,7 @@ class MultiKeyringScene: SKScene {
                 }
             }()
 
-            // 모든 이미지 로드 병렬 실행
-            await backgroundTask
+            // 카라비너 이미지 로드 병렬 실행
             await carabinerBackTask
             await carabinerFrontTask
 
@@ -141,25 +135,50 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    // MARK: - Background & Carabiner Setup
+    // MARK: - Shadow Helper
 
-    /// 배경 이미지 설정 (async)
-    private func setupBackgroundImageAsync(url: String) async {
-        guard let image = try? await StorageManager.shared.getImage(path: url) else {
-            return
+    /// 노드에 수직 그림자 추가 (z축 위에서 내려오는 광원)
+    /// - Parameters:
+    ///   - node: 그림자를 추가할 노드
+    ///   - offsetX: X축 오프셋 (기본값 8)
+    ///   - offsetY: Y축 오프셋 (기본값 -8)
+    ///   - blurRadius: Gaussian Blur 강도 (기본값 5.0)
+    private func addShadowToNode(_ node: SKSpriteNode, offsetX: CGFloat = 8, offsetY: CGFloat = -8, blurRadius: CGFloat = 5.0) {
+        // 원본 노드를 복제해서 그림자로 사용
+        guard let shadowNode = node.copy() as? SKSpriteNode else { return }
+
+        // 그림자 설정 (살짝 더 진하게)
+        shadowNode.alpha = 0.25
+        shadowNode.color = .black
+        shadowNode.colorBlendFactor = 1.0
+
+        // z축에서 수직으로 떨어지는 그림자 (약간 아래로만 이동)
+        shadowNode.position = CGPoint(x: offsetX, y: offsetY)
+        shadowNode.zPosition = 0  // effectNode 내에서 기본 위치
+
+        // 물리 바디 제거 (충돌 방지)
+        shadowNode.physicsBody = nil
+
+        // Blur 효과를 위한 SKEffectNode
+        let effectNode = SKEffectNode()
+        effectNode.shouldRasterize = true
+        effectNode.shouldEnableEffects = true
+
+        // 원본 노드 바로 뒤에 위치 (레이어 순서 유지)
+        // 부모 노드의 zPosition - 0.5로 설정하여 다른 노드들과의 순서도 고려
+        effectNode.zPosition = -0.5
+
+        // Gaussian Blur 필터
+        if let blurFilter = CIFilter(name: "CIGaussianBlur") {
+            blurFilter.setValue(blurRadius, forKey: kCIInputRadiusKey)
+            effectNode.filter = blurFilter
         }
 
-        await MainActor.run {
-            let texture = SKTexture(image: image)
-            let backgroundNode = SKSpriteNode(texture: texture)
-
-            backgroundNode.size = self.size
-            backgroundNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-            backgroundNode.zPosition = -1000
-
-            self.addChild(backgroundNode)
-        }
+        effectNode.addChild(shadowNode)
+        node.addChild(effectNode)
     }
+
+    // MARK: - Carabiner Setup
 
     /// 카라비너 뒷면 이미지 설정 (async)
     private func setupCarabinerBackImageAsync(url: String) async {
@@ -187,7 +206,16 @@ class MultiKeyringScene: SKScene {
             carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
             carabinerNode.zPosition = -900
 
+            // 페이드인을 위해 투명하게 시작
+            carabinerNode.alpha = 0
+
             self.addChild(carabinerNode)
+
+            // 수직 그림자 추가
+            self.addShadowToNode(carabinerNode, offsetX: 2, offsetY: -3, blurRadius: 1.0)
+
+            // 카라비너 뒷면 노드 저장
+            self.carabinerBackNode = carabinerNode
         }
     }
 
@@ -217,7 +245,13 @@ class MultiKeyringScene: SKScene {
             carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
             carabinerNode.zPosition = -800  // 카라비너 뒷면(-900)과 키링들(0~) 사이
 
+            // 페이드인을 위해 투명하게 시작
+            carabinerNode.alpha = 0
+
             self.addChild(carabinerNode)
+
+            // 카라비너 앞면 노드 저장
+            self.carabinerFrontNode = carabinerNode
         }
     }
 
@@ -306,7 +340,14 @@ class MultiKeyringScene: SKScene {
             ring.physicsBody?.categoryBitMask = categoryBitMask
             ring.physicsBody?.collisionBitMask = collisionBitMask
             ring.physicsBody?.contactTestBitMask = 0
+
+            // 페이드인을 위해 투명하게 시작
+            ring.alpha = 0
+
             self.addChild(ring)
+
+            // 수직 그림자 추가
+            self.addShadowToNode(ring, offsetX: 4, offsetY: -8)
 
             // Ring 노드 저장
             self.ringNodes[data.index] = ring
@@ -372,7 +413,14 @@ class MultiKeyringScene: SKScene {
                 chain.physicsBody?.categoryBitMask = categoryBitMask
                 chain.physicsBody?.collisionBitMask = collisionBitMask
                 chain.physicsBody?.contactTestBitMask = 0
+
+                // 페이드인을 위해 투명하게 시작
+                chain.alpha = 0
+
                 self.addChild(chain)
+
+                // 수직 그림자 추가
+                self.addShadowToNode(chain, offsetX: 4, offsetY: -8)
             }
 
             // Chain 노드 저장
@@ -465,7 +513,15 @@ class MultiKeyringScene: SKScene {
         body.physicsBody?.collisionBitMask = collisionBitMask
         body.physicsBody?.contactTestBitMask = 0
 
+        // 페이드인을 위해 투명하게 시작
+        body.alpha = 0
+
         addChild(body)
+
+        // 수직 그림자 추가 (SKSpriteNode인 경우에만)
+        if let spriteBody = body as? SKSpriteNode {
+            addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+        }
 
         // Body 노드 저장
         bodyNodes[index] = body
@@ -619,7 +675,7 @@ class MultiKeyringScene: SKScene {
     private func enablePhysics() {
         // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-
+        
         // 카라비너 타입별 Ring 물리 설정
         for (_, ring) in ringNodes {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -630,7 +686,7 @@ class MultiKeyringScene: SKScene {
                 ring.physicsBody?.isDynamic = false
             }
         }
-
+        
         // 카라비너 타입별 체인 물리 활성화
         for (_, chains) in chainNodesByKeyring {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -655,7 +711,7 @@ class MultiKeyringScene: SKScene {
                 }
             }
         }
-
+        
         // 모든 바디의 물리 활성화
         for (_, body) in bodyNodes {
             body.physicsBody?.isDynamic = true
@@ -663,9 +719,38 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.angularDamping = 0.5
         }
 
-        onAllKeyringsReady?()
+        // 각 키링을 순차적으로 페이드인
+        fadeInKeyringsSequentially()
     }
-    
+
+    /// 모든 노드들을 동시에 페이드인 (배경은 SwiftUI에서 먼저 렌더링됨)
+    private func fadeInKeyringsSequentially() {
+        let fadeInDuration = 0.3
+        let fadeIn = SKAction.fadeIn(withDuration: fadeInDuration)
+        fadeIn.timingMode = .easeOut
+
+        // 1. 카라비너 페이드인
+        carabinerBackNode?.run(fadeIn)
+        carabinerFrontNode?.run(fadeIn)
+
+        // 2. 모든 키링 동시에 페이드인
+        for (index, ring) in ringNodes {
+            ring.run(fadeIn)
+
+            // Chain 페이드인
+            if let chains = chainNodesByKeyring[index] {
+                for chain in chains {
+                    chain.run(fadeIn)
+                }
+            }
+
+            // Body 페이드인
+            if let body = bodyNodes[index] {
+                body.run(fadeIn)
+            }
+        }
+    }
+
     // MARK: - Touch Handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }

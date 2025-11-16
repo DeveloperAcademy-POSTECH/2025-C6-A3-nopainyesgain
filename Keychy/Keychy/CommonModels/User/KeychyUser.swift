@@ -29,6 +29,7 @@ struct KeychyUser: Identifiable {
     var keyrings: [String]
     var termsAgreed: Bool         // 필수 약관 동의 여부
     var marketingAgreed: Bool     // 마케팅 수신 동의 여부
+    var currentUsedTemplates: [String] // 최근 사용 템플릿
 
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -49,7 +50,8 @@ struct KeychyUser: Identifiable {
             "tags": tags,
             "keyrings": keyrings,
             "termsAgreed": termsAgreed,
-            "marketingAgreed": marketingAgreed
+            "marketingAgreed": marketingAgreed,
+            "currentUsedTemplates": currentUsedTemplates
         ]
     }
 
@@ -79,6 +81,7 @@ struct KeychyUser: Identifiable {
         self.keyrings = data["keyrings"] as? [String] ?? []
         self.termsAgreed = data["termsAgreed"] as? Bool ?? false
         self.marketingAgreed = data["marketingAgreed"] as? Bool ?? false
+        self.currentUsedTemplates = data["currentUsedTemplates"] as? [String] ?? []
     }
 
     // 일반 초기화 (새 유저 생성용)
@@ -101,5 +104,6 @@ struct KeychyUser: Identifiable {
         self.keyrings = []
         self.termsAgreed = false
         self.marketingAgreed = false
+        self.currentUsedTemplates = []
     }
 }

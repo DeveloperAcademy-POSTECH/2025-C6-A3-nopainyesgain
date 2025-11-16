@@ -9,10 +9,10 @@ import UIKit
 /// 공방 탭 라우팅
 enum WorkshopRoute: Hashable {
     // MARK: - 공통 프리뷰
-    case workshopPreview(item: AnyHashable, showDeleteButton: Bool = false)
+    case workshopPreview(item: AnyHashable)
 
     // MARK: - 아크릴 포토 템플릿
-    case acrylicPhotoPreview(showDeleteButton: Bool = false)
+    case acrylicPhotoPreview
     case acrylicPhotoCrop
     case acrylicPhotoEdited
     case acrylicPhotoCustomizing
@@ -22,7 +22,7 @@ enum WorkshopRoute: Hashable {
     case myItems
 
     // MARK: - 네온 사인 템플릿
-    case NeonSignPreView(showDeleteButton: Bool = false)
+    case NeonSignPreView
     case neonSignCustomizing
     case neonSignInfoInput
     case neonSignComplete
@@ -32,14 +32,14 @@ enum WorkshopRoute: Hashable {
     // case hkCustomizing
     // case hkInfoInput
     // case hkComplete
-    
+
     /// template.id 문자열을 WorkshopRoute로 변환
-    static func from(string: String, showDeleteButton: Bool = false) -> WorkshopRoute? {
+    static func from(string: String) -> WorkshopRoute? {
         switch string {
         case "AcrylicPhoto":
-            return .acrylicPhotoPreview(showDeleteButton: showDeleteButton)
+            return .acrylicPhotoPreview
         case "NeonSign":
-            return .NeonSignPreView(showDeleteButton: showDeleteButton)
+            return .NeonSignPreView
 
             // 필요한 프리뷰 케이스들 추가
         default:

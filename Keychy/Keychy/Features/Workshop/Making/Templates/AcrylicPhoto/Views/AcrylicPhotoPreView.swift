@@ -18,7 +18,6 @@ struct AcrylicPhotoPreView: View {
     @State private var showGuide = false
     @State private var hasAppearedBefore = false
     @State private var capturedImage: UIImage?
-    var showDeleteButton: Bool = false
 
     var body: some View {
         TemplatePreviewBody(
@@ -28,8 +27,7 @@ struct AcrylicPhotoPreView: View {
                 showGuide = true
                 selectedItem = nil
             },
-            router: router,
-            showDeleteButton: showDeleteButton
+            router: router
         )
         .navigationBarBackButtonHidden(true)
         .toolbar {
