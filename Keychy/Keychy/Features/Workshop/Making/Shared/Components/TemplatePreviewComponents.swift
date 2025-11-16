@@ -46,7 +46,7 @@ struct TemplatePreviewBody: View {
             // 템플릿 정보
             infoSection
                 .padding(.bottom, 40)
-                .frame(height: 120)
+                .frame(minHeight: 120, alignment: .top)
 
             // 액션 버튼
             actionButton
