@@ -81,18 +81,25 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
             .disabled(isLoadingResources || !isSceneReady)
 
+            // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
+            if showPurchaseFailAlert {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .zIndex(1)
+            }
+
             // MARK: - 구매 중 로딩
             if showPurchaseProgress {
                 LoadingAlert(type: .short, message: nil)
             }
-            
+
             // MARK: - Purchase Alerts
             if showPurchaseSuccessAlert {
                 PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
                     .padding(.bottom, 60)
                     .padding(.horizontal, 51)
             }
-            
+
             if showPurchaseFailAlert {
                 PurchaseFailAlert(
                     checkmarkScale: purchaseFailScale,
@@ -120,12 +127,16 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     }
                 )
                 .padding(.horizontal, 51)
-                .padding(.bottom, 60)
+                .zIndex(2)
             }
 
             // MARK: - 커스텀 네비게이션 바
             customNavigationBar
                 .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || isLoadingResources || !isSceneReady ? 15 : 0)
+                .opacity(showPurchaseProgress || showPurchaseSuccessAlert ? 0 : 1)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseProgress)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
+                .zIndex(0)
             }
         }
         .ignoresSafeArea()
