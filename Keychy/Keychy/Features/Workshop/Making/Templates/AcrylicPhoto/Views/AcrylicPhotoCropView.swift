@@ -49,11 +49,12 @@ struct AcrylicPhotoCropView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 70)
         }
-        .navigationTitle("누끼 영역을 지정해주세요")
         .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(true)
         .toolbar {
             backToolbarItem
+            naivgationTitle
             nextToolbarItem
         }
     }
@@ -67,6 +68,12 @@ extension AcrylicPhotoCropView {
                 viewModel.resetImageData()
                 router.pop()
             }
+        }
+    }
+    
+    private var naivgationTitle: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            NavigationTitle(title: "누끼 영역을 지정해주세요")
         }
     }
 
