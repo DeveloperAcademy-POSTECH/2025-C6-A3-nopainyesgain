@@ -15,7 +15,8 @@ struct Provider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
+        // 위젯 설정 화면에서는 항상 플레이스홀더 표시
+        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
     }
 
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
@@ -34,8 +35,9 @@ struct WidgetKeychy: Widget {
                 .containerBackground(.clear, for: .widget)
         }
         .configurationDisplayName("Keychy 위젯")
-        .description("키링을 표시합니다")
+        .description("위젯에 표시될 키링을 골라주세요")
         .contentMarginsDisabled()
+        .supportedFamilies([.systemSmall, .systemLarge])
     }
 }
 
@@ -48,6 +50,7 @@ struct SimpleEntry: TimelineEntry {
 // MARK: - Entry View
 struct WidgetKeychyEntryView: View {
     var entry: Provider.Entry
+    @Environment(\.widgetFamily) var widgetFamily
 
     var body: some View {
         if let selectedKeyring = entry.configuration.selectedKeyring,
@@ -60,15 +63,15 @@ struct WidgetKeychyEntryView: View {
         } else {
             // 플레이스홀더
             VStack(spacing: 8) {
-                Image(systemName: "key.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-
-                Text("키링 선택")
-                    .font(.caption)
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                if widgetFamily == .systemSmall {
+                    Image(.smallPlace)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Image(.bigPlace)
+                        .resizable()
+                        .scaledToFill()
+                }
             }
         }
     }
