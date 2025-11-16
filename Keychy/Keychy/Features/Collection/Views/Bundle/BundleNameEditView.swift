@@ -13,17 +13,21 @@ struct BundleNameEditView: View {
     
     @State private var bundleName: String = ""
     @FocusState private var isTextFieldFocused: Bool
-    @State private var textColor: UIColor = .gray300
+    @State private var textColor: Color = .gray300
+    @State private var keyboardHeight: CGFloat = 0
     
     @State private var isUpdating: Bool = false
     var body: some View {
         VStack(spacing: 20) {
-            if let bundle = viewModel.selectedBundle {
-                viewModel.keyringSceneView()
-            }
+            viewModel.keyringSceneView()
+            
             bundleNameTextField
                 .padding(.horizontal, 20)
+            
+            Spacer()
         }
+        .frame(width: screenWidth)
+        .padding(.bottom, max(380 - keyboardHeight, 20))
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
@@ -32,12 +36,21 @@ struct BundleNameEditView: View {
                 isTextFieldFocused = true
             }
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             backButton
             checkButton
         }
-        .navigationBarBackButtonHidden(true)
+        // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                keyboardHeight = keyboardFrame.height
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardHeight = 0
+        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }
 
@@ -48,8 +61,8 @@ extension BundleNameEditView {
                 "뭉치 이름을 입력해주세요.",
                 text: $bundleName
             )
-            .typography(.notosans16R)
-            .foregroundStyle(bundleName.isEmpty ? .gray300 : .black100)
+            .typography(bundleName.isEmpty ? .notosans16R : .suit16M)
+            .foregroundStyle(textColor)
             .focused($isTextFieldFocused)
             .onChange(of: bundleName) { _, newValue in
                 let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"

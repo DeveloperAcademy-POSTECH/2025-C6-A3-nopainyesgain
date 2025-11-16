@@ -30,33 +30,31 @@ struct BundleNameInputView: View {
     }
     
     var body: some View {
-        GeometryReader { geo in
-            VStack(spacing: 20) {
-                viewModel.keyringSceneView()
-                
-                // 번들 이름 입력 섹션
-                bundleNameTextField()
-                    .padding(.horizontal, 20)
-                //TODO: 업로드 중 로티 추가
-                if isUploading {
-                    ProgressView("업로드 중...")
-                        .padding(.top, 8)
-                }
-                if let uploadError {
-                    Text(uploadError)
-                        .foregroundStyle(.red)
-                        .font(.footnote)
-                }
-                
-                Spacer()
+        VStack(spacing: 20) {
+            viewModel.keyringSceneView()
+            
+            // 번들 이름 입력 섹션
+            bundleNameTextField()
+                .padding(.horizontal, 20)
+            //TODO: 업로드 중 로티 추가
+            if isUploading {
+                ProgressView("업로드 중...")
+                    .padding(.top, 8)
             }
-            .frame(width: geo.size.width)
-            .padding(.bottom, max(380 - keyboardHeight, 20))
-            .onAppear {
-                // 키보드 자동 활성화
-                DispatchQueue.main.async {
-                    isTextFieldFocused = true
-                }
+            if let uploadError {
+                Text(uploadError)
+                    .foregroundStyle(.red)
+                    .font(.footnote)
+            }
+            
+            Spacer()
+        }
+        .frame(width: screenWidth)
+        .padding(.bottom, max(380 - keyboardHeight, 20))
+        .onAppear {
+            // 키보드 자동 활성화
+            DispatchQueue.main.async {
+                isTextFieldFocused = true
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -82,7 +80,7 @@ extension BundleNameInputView {
     private func bundleNameTextField() -> some View {
         HStack {
             TextField(
-                "이름을 입력해주세요",
+                "뭉치 이름을 입력해주세요",
                 text: $bundleName
             )
             .typography(.notosans16R)
