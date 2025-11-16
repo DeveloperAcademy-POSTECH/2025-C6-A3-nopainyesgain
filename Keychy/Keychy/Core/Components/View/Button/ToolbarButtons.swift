@@ -56,6 +56,18 @@ struct CloseToolbarButton: View {
     }
 }
 
+// MARK: - Plus Toolbar Button (+ 버튼)
+struct PlusToolbarButton: View {
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(.plus)
+        }
+        .frame(width: 44, height: 44)
+    }
+}
+
 // MARK: - Custom Text Toolbar Button
 struct TextToolbarButton: View {
     let title: String
