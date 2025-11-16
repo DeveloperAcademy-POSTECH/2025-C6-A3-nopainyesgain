@@ -108,6 +108,25 @@ extension BundleDetailView {
             )
         }
         
+        
+        // 1. 배경 이미지 로드
+        guard let _ = try? await StorageManager.shared.getImage(path: bg.backgroundImage) else {
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
+        
+        // 2. 모든 키링 bodyImage 병렬로 로드
+        await withTaskGroup(of: Void.self) { group in
+            for keyringData in keyringDataList {
+                group.addTask {
+                    _ = try? await StorageManager.shared.getImage(path: keyringData.bodyImageURL)
+                }
+            }
+        }
+        
+        // 3. 카라비너 이미지 로드
         let carabinerType = CarabinerType.from(cb.carabinerType)
         let carabinerBackURL: String?
         let carabinerFrontURL: String?
@@ -115,10 +134,14 @@ extension BundleDetailView {
         if carabinerType == .hamburger {
             carabinerBackURL = cb.carabinerImage[1]
             carabinerFrontURL = cb.carabinerImage[2]
+            // hamburger: back, front 모두 로드
+            _ = try? await StorageManager.shared.getImage(path: cb.carabinerImage[1])
+            _ = try? await StorageManager.shared.getImage(path: cb.carabinerImage[2])
         } else {
             //plain 타입일 때
             carabinerBackURL = cb.carabinerImage[0]
             carabinerFrontURL = nil
+            _ = try? await StorageManager.shared.getImage(path: cb.carabinerImage[0])
         }
         
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
@@ -134,6 +157,15 @@ extension BundleDetailView {
             // viewModel에 캡쳐된 이미지 저장
             await MainActor.run {
                 viewModel.bundleCapturedImage = pngData
+            }
+            
+            // 사용자가 이미지를 저장할 때도 캐시를 업데이트 함
+            if let documentId = bundle.documentId {
+                BundleImageCache.shared.syncBundle(
+                    id: documentId,
+                    name: bundle.name,
+                    imageData: pngData
+                )
             }
             
             // PNG 데이터를 UIImage로 변환
