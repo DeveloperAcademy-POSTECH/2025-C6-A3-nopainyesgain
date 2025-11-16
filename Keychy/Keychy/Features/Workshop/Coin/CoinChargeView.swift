@@ -199,9 +199,9 @@ extension CoinChargeView {
                     .typography(.suit16M)
                     .foregroundStyle(.black100)
                 
-                Text(item.currentCount)
+                Text(item.itemDescription)
                     .typography(.suit13M)
-                    .foregroundStyle(.main500)
+                    .foregroundStyle(.gray500)
             }
             
             Spacer()
@@ -376,8 +376,7 @@ extension CoinChargeView {
             }
         }
         
-        var currentCount: String {
-            let user = UserManager.shared.currentUser
+        var itemDescription: String {
             switch self {
             case .inventoryExpansion:
                 return "키링을 더 많이 만들 수 있어요!"

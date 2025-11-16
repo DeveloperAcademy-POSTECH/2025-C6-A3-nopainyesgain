@@ -13,13 +13,13 @@ struct CurrentItemsCard: View {
     var body: some View {
         HStack(spacing: 20) {
             itemCard(
-                image: "invenIcon",
+                image: "myCoin",
                 title: "코인",
                 count: "\(userManager.currentUser?.coin ?? 0)"
             )
             
             itemCard(
-                image: "myKeyringCount",
+                image: "invenIcon",
                 title: "보유 키링",
                 count: "\(userManager.currentUser?.keyrings.count ?? 0)/\(userManager.currentUser?.maxKeyringCount ?? 100)"
             )
