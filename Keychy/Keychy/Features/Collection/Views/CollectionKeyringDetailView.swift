@@ -15,7 +15,7 @@ struct CollectionKeyringDetailView: View {
     @Bindable var viewModel: CollectionViewModel
     @State var sheetDetent: PresentationDetent = .height(76)
     @State private var scene: KeyringDetailScene?
-    @State private var isLoading: Bool = false
+    @State private var isLoading: Bool = true
     @State var isSheetPresented: Bool = true
     @State var isNavigatingDeeper: Bool = false
     @State var authorName: String = ""
@@ -60,6 +60,14 @@ struct CollectionKeyringDetailView: View {
                 
                 if showMenu {
                     menuOverlay
+                }
+                
+                if isLoading {
+                    Color.black20
+                        .ignoresSafeArea()
+                        
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(200)
                 }
                 
                 alertOverlays
@@ -132,7 +140,8 @@ struct CollectionKeyringDetailView: View {
 extension CollectionKeyringDetailView {
     var keyringScene: some View {
         KeyringDetailSceneView(
-            keyring: keyring
+            keyring: keyring,
+            isLoading: $isLoading
         )
         .frame(maxWidth: .infinity)
         .scaleEffect(sceneScale)
