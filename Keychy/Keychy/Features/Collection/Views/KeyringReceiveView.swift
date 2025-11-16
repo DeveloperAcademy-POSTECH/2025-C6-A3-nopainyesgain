@@ -31,74 +31,96 @@ struct KeyringReceiveView: View {
     
     var body: some View {
         ZStack {
-            Image("GreenBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack(spacing: 10) {
-                if isLoading {
-                    // 로딩 상태
-                    ProgressView("로딩 중...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let keyring = keyring {
-                    // 키링 로드 성공
-                    headerSection
-                    
-                    messageSection(keyring: keyring)
-                    
-                    keyringImage(keyring: keyring)
-                    
-                    Spacer()
-                        .frame(height: 80)
-                    
-                    receiveButton
-                } else {
-                    // 에러 상태
-                    VStack(spacing: 20) {
-                        Text("키링을 불러올 수 없습니다")
-                            .typography(.suit16M)
-                            .foregroundColor(.gray500)
+            Group {
+                Image("GreenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 10) {
+                    if isLoading {
+                        // 로딩 상태
+                        ProgressView("로딩 중...")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         
-                        Button("닫기") {
-                            dismiss()
+                    } else if let keyring = keyring {
+                        // 키링 로드 성공
+                        headerSection
+                        
+                        messageSection(keyring: keyring)
+                        
+                        keyringImage(keyring: keyring)
+                        
+                        Spacer()
+                            .frame(height: 80)
+                        
+                        receiveButton
+                    } else {
+                        // 에러 상태
+                        VStack(spacing: 20) {
+                            VStack(spacing: 0) {
+                                Image("EmptyViewIcon")
+                                    .resizable()
+                                    .frame(width: 124, height: 111)
+                                
+                                Text("키링을 불러올 수 없습니다.")
+                                    .typography(.suit15R)
+                                    .foregroundColor(.black100)
+                                    .padding(.vertical, 15)
+                                
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Text("닫기")
+                                        .typography(.suit15R)
+                                        .foregroundColor(.main500)
+                                        .padding(.vertical, 15)
+                                }
+                            }
                         }
-                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .blur(radius: shouldApplyBlur ? 10 : 0)
+            .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
             
-            if showAcceptCompleteAlert || showInvenFullAlert {
+            if isAccepting || showAcceptCompleteAlert || showInvenFullAlert {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(99)
                 
+                if isAccepting {
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(101)
+                }
+                
                 if showAcceptCompleteAlert {
-                    SavedPopup(isPresented: $showAcceptCompleteAlert, message: "키링이 내 보관함에 추가되었어요.")
-                        .zIndex(100)
+                    KeychyAlert(
+                        type: .addToCollection,
+                        message: "키링이 내 보관함에 추가되었어요!",
+                        isPresented: $showAcceptCompleteAlert
+                    )
+                    .zIndex(101)
                 }
                 
                 if showInvenFullAlert {
-                    InvenLackPopup(
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showInvenFullAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                //router.push(.coinCharge) 라우터 연결 필요
-                            }
-                        }
-                    )
-                    .zIndex(100)
+                    InvenLackPopup(isPresented: $showInvenFullAlert)
+                        .zIndex(100)
                 }
             }
         }
         .onAppear {
             loadKeyringData()
         }
+    }
+    
+    //  블러 적용 여부
+    private var shouldApplyBlur: Bool {
+        isAccepting ||
+        showAcceptCompleteAlert ||
+        showInvenFullAlert ||
+        false
     }
     
     // MARK: - 데이터 로드
@@ -148,8 +170,7 @@ struct KeyringReceiveView: View {
                 Image("PackageBG")
                     .resizable()
                     .frame(width: 280, height: 347)
-                    
-                    .offset(y: -15)
+                    .offset(y: -24)
                 
                 SpriteView(
                     scene: createMiniScene(keyring: keyring),
@@ -157,25 +178,36 @@ struct KeyringReceiveView: View {
                 )
                 .frame(width: 195, height: 300)
                 .rotationEffect(.degrees(10))
-                .offset(y: -7)
+                .offset(y: -8)
             }
             
-            Image("PackageFG")
-                .resizable()
-                .frame(width: 304, height: 490)
-                .overlay(alignment: .topLeading) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(keyring.name)
-                            .typography(.notosans20B)
-                            .foregroundColor(.white100)
-                        
-                        Text("@\(authorName)")
-                            .typography(.notosans12M)
-                            .foregroundColor(.white100)
-                    }
-                    .padding(.leading, 23)
-                    .padding(.top, 58)
+            VStack(spacing: 0) {
+                Image("PackageFG_T")
+                    .resizable()
+                    .frame(width: 304, height: 113)
+                
+                Image("PackageFG_B")
+                    .resizable()
+                    .frame(width: 304, height: 389)
+                    .blendMode(.darken)
+                    .offset(y: -12)
+            }
+            .frame(width: 304, height: 490)
+            .overlay(alignment: .topLeading) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(keyring.name)
+                        .typography(.notosans20B)
+                        .foregroundColor(.white100)
+                    
+                    Text("@\(authorName)")
+                        .typography(.notosans12M)
+                        .foregroundColor(.white100)
                 }
+                .padding(.leading, 23)
+                .padding(.top, 42)
+            }
+            
+
 
         }
     }
@@ -190,7 +222,7 @@ struct KeyringReceiveView: View {
             bodyImage: keyring.bodyImage,
             targetSize: CGSize(width: 304, height: 490),
             customBackgroundColor: .clear,
-            zoomScale: 2.0,
+            zoomScale: 2.1,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {
@@ -209,7 +241,7 @@ extension KeyringReceiveView {
     private var headerSection: some View {
         HStack {
             CircleGlassButton(
-                imageName: "dismiss",
+                imageName: "dismiss_gray600",
                 action: {
                     dismiss()
                 }
@@ -224,7 +256,7 @@ extension KeyringReceiveView {
         VStack(spacing: 10) {
             HStack(spacing: 0) {
                 Text(senderName)
-                    .typography(.suit20EB)
+                    .typography(.notosans20B) // 요기////
                     .foregroundColor(.main500)
                 
                 Text("님이 키링을 선물했어요!")
@@ -270,16 +302,17 @@ extension KeyringReceiveView {
             return
         }
         
-        isAccepting = true
-        
         viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
             if !hasSpace {
                 // 보관함 가득 참
-                self.isAccepting = false
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     self.showInvenFullAlert = true
                 }
                 return
+            }
+            
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                self.isAccepting = true
             }
             
             // 보관함 여유 있음 - 수락 진행
@@ -289,16 +322,20 @@ extension KeyringReceiveView {
                 senderId: senderId,
                 receiverId: receiverId
             ) { success in
-                self.isAccepting = false
+                DispatchQueue.main.async {
+                    self.isAccepting = false
                 
-                if success {
-                    self.isAccepted = true
-                    
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        self.showAcceptCompleteAlert = true
+                    if success {
+                        self.isAccepted = true
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                self.showAcceptCompleteAlert = true
+                            }
+                        }
+                    } else {
+                        print("키링 수락 실패")
                     }
-                } else {
-                    print("키링 수락 실패")
                 }
             }
         }

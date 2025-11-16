@@ -20,17 +20,10 @@ struct CollectionCellView: View {
             )
 
             if isLoading {
-                Color.black20
+                Color.gray50
                     .overlay {
-                        VStack(spacing: 8) {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                                .scaleEffect(1.2)
-
-                            Text("키링을 가져오는 중...")
-                                .typography(.suit12M)
-                                .foregroundColor(.white)
-                        }
+                        LoadingAlert(type: .short, message: nil)
+                            .scaleEffect(0.5)
                     }
             }
 

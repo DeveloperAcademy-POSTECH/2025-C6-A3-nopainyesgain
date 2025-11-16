@@ -30,6 +30,8 @@ struct DeletePopup: View {
             // 메시지
             Text(message)
                 .typography(.suit17SB)
+                .foregroundColor(.black100)
+                .multilineTextAlignment(.center)
                 .padding(.bottom, 22)
             
             // 버튼들
@@ -67,7 +69,7 @@ struct DeletePopup: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 278)
+        .frame(width: 300)
     }
 }
 

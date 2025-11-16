@@ -68,7 +68,7 @@ struct KeyringMenu: View {
                             
                             Text("삭제")
                                 .typography(.suit16M)
-                                .foregroundColor(.pink100)
+                                .foregroundColor(.pink)
                         }
                     }
                     .buttonStyle(.plain)

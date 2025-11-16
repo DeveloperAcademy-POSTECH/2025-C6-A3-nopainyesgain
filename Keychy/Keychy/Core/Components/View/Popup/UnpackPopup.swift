@@ -26,7 +26,7 @@ struct UnpackPopup: View {
                 .multilineTextAlignment(.center)
             
             // 메시지
-            Text("선물하기가 취소되고\n키링이 다시 보관함으로 이동합니다.")
+            Text("키링이 다시 내 보관함에서 활성화돼요.")
                 .typography(.suit15R)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
@@ -67,7 +67,7 @@ struct UnpackPopup: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 263)
+        .frame(width: 300)
     }
 }
 

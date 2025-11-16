@@ -60,6 +60,8 @@ struct CollectionView: View {
                 }
             }
             .ignoresSafeArea()
+            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+            .animation(.easeInOut(duration: 0.3), value: showPurchaseSuccessAlert)
             
             // 검색바
             if showSearchBar {
@@ -129,7 +131,7 @@ struct CollectionView: View {
                 Spacer()
                 
                 Text("정렬 기준")
-                    .typography(.suit15B25)
+                    .typography(.suit17B)
                 
                 Spacer()
                 

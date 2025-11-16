@@ -135,7 +135,7 @@ extension CollectionKeyringDetailView {
             
             Text("@\(authorName)")
                 .typography(.notosans14R)
-                .foregroundColor(.gray300)
+                .foregroundColor(.gray500)
                 .padding(.top, 10)
         }
     }
@@ -195,7 +195,7 @@ extension CollectionKeyringDetailView {
                 } else {
                     // 3줄 이하일 때 스크롤 없음
                     Text(memo)
-                        .typography(.suit16M25)
+                        .typography(.notosans16R25)
                         .foregroundColor(.black100)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)

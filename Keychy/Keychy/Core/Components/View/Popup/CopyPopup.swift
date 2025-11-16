@@ -17,17 +17,18 @@ struct CopyPopup: View {
         VStack {
             VStack(spacing: 20) {
                 // 제목
-                Text("복사하기")
-                    .typography(.suit20B)
-                    .foregroundColor(.black100)
-                    .padding(.top, 8)
-                
                 Image("copyVoucher")
                     .resizable()
                     .frame(width: 75, height: 45)
+                    .padding(.top, 8)
+                    .padding(.vertical, 8)
                 
-                Text("복사권을 사용하여\n키링을 복사합니다.")
-                    .typography(.suit17SB)
+                Text("복사권을 사용할까요?")
+                    .typography(.suit20B)
+                    .foregroundColor(.black100)
+                
+                Text("복사권을 사용하면 키링이 복사돼요.")
+                    .typography(.suit15R)
                     .padding(.bottom, 5)
                     .multilineTextAlignment(.center)
                 
@@ -74,7 +75,7 @@ struct CopyPopup: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 310)
+        .frame(width: 300)
     }
 }
 

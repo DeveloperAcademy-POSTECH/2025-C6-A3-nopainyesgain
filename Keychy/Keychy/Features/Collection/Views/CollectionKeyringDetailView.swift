@@ -27,6 +27,7 @@ struct CollectionKeyringDetailView: View {
     @State var showCopyAlert: Bool = false
     @State var showCopyCompleteAlert: Bool = false
     @State var showCopyLackAlert: Bool = false
+    @State var showCopyingAlert: Bool = false
     @State var showInvenFullAlert: Bool = false
     @State var showPackageAlert: Bool = false
     @State var showPackingAlert: Bool = false
@@ -46,91 +47,30 @@ struct CollectionKeyringDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image("CollectionBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                
-                keyringScene
+                Group {
+                    Image("CollectionBackground")
+                        .resizable()
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                    
+                    keyringScene
+                }
+                .blur(radius: shouldApplyBlur ? 10 : 0)
+                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
                 if showMenu {
                     menuOverlay
                 }
                 
-                alertOverlays
-                
-                // 얘는 따로 빼니까 팝업 사이에 딜레이가 있어서 겹치는 문제가 있어서 일단 빼놨음
-                if showCopyAlert || showCopyCompleteAlert || showCopyLackAlert || showInvenFullAlert {
+                if isLoading {
                     Color.black20
                         .ignoresSafeArea()
-                        .zIndex(99)
-                    
-                    if showCopyAlert {
-                        CopyPopup(
-                            myCopyPass: viewModel.copyVoucher,
-                            onCancel: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showCopyAlert = false
-                                }
-                            },
-                            onConfirm: {
-                                handleCopyConfirm()
-                            }
-                        )
-                        .transition(.scale.combined(with: .opacity))
-                        .zIndex(100)
-                    }
-                    
-                    if showCopyCompleteAlert {
-                        CopyCompletePopup(isPresented: $showCopyCompleteAlert)
-                            .zIndex(100)
-                    }
-                    
-                    if showCopyLackAlert {
-                        LackPopup(
-                            title: "복사권이 부족합니다!",
-                            onCancel: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showCopyLackAlert = false
-                                }
-                            },
-                            onConfirm: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showCopyLackAlert = false
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    isSheetPresented = false
-                                    isNavigatingDeeper = true
-                                    
-                                    router.push(.coinCharge)
-                                }
-                            }
-                        )
-                        .zIndex(100)
-                    }
-                    
-                    if showInvenFullAlert {
-                        InvenLackPopup(
-                            onCancel: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showInvenFullAlert = false
-                                }
-                            },
-                            onConfirm: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showInvenFullAlert = false
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    isSheetPresented = false
-                                    isNavigatingDeeper = true
-                                    
-                                    router.push(.coinCharge)
-                                }
-                            }
-                        )
-                        .zIndex(100)
-                    }
+                        
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(200)
                 }
+                
+                alertOverlays
             }
         }
         .ignoresSafeArea()
@@ -164,6 +104,15 @@ struct CollectionKeyringDetailView: View {
 
     }
     
+    private var shouldApplyBlur: Bool {
+        isLoading ||
+        showCopyCompleteAlert ||
+        showCopyingAlert ||
+        showPackingAlert ||
+        showImageSaved ||
+        false
+    }
+    
     // 복사권 개수 리프레쉬
     func refreshCopyVoucher() {
         guard let uid = UserDefaults.standard.string(forKey: "userUID") else { return }
@@ -191,7 +140,8 @@ struct CollectionKeyringDetailView: View {
 extension CollectionKeyringDetailView {
     var keyringScene: some View {
         KeyringDetailSceneView(
-            keyring: keyring
+            keyring: keyring,
+            isLoading: $isLoading
         )
         .frame(maxWidth: .infinity)
         .scaleEffect(sceneScale)
