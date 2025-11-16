@@ -17,6 +17,8 @@ struct BackToolbarButton: View {
     var body: some View {
         Button(action: action) {
             Image("backIcon")
+                .resizable()
+                .frame(width: 32, height: 32)
         }
     }
 }

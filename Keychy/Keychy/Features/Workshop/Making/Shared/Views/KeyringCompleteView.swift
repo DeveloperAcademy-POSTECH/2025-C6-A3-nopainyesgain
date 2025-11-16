@@ -44,26 +44,26 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     .blur(radius: showImageSaved ? 15 : 0)
                 
                 VStack(spacing: 0) {
-                    // 키링 씬
+                    Spacer()
+                    // 키링 씬 (화면 높이의 60%로 제한)
                     keyringScene
+                        .frame(height: geometry.size.height * 0.6)
                         .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
 
                     // 키링 정보
                     keyringInfo
-                        .padding(.bottom, 30)
                         .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
 
+                    // 이미지 저장 버튼
+                    saveButton
+                        .padding(.top, 20)
+                        .opacity(showSaveButton ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.3), value: showSaveButton)
+                        .adaptiveBottomPadding()
+                    
                     Spacer()
                 }
                 .blur(radius: showImageSaved ? 15 : 0)
-                .overlay(alignment: .bottom) {
-                    // 이미지 저장 버튼
-                    saveButton
-                        .padding(.top, 30)
-                        .adaptiveBottomPadding()
-                        .opacity(showSaveButton ? 1 : 0)
-                        .animation(.easeInOut(duration: 0.3), value: showSaveButton)
-                }
                 
                 if showImageSaved {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
@@ -73,6 +73,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                 // 커스텀 네비게이션 바
                 customNavigationBar
                     .blur(radius: showImageSaved ? 15 : 0)
+                    .adaptiveTopPadding()
             }
         }
         .ignoresSafeArea()
@@ -101,7 +102,7 @@ extension KeyringCompleteView {
     private var keyringScene: some View {
         KeyringSceneView(viewModel: viewModel, backgroundColor: .clear, applyWelcomeImpulse: true)
             .frame(maxWidth: .infinity)
-            .frame(height: 500)
+            //.frame(height: 500)
     }
 }
 
@@ -451,11 +452,11 @@ extension KeyringCompleteView {
     }
 }
 
-// MARK: - 프리뷰
-#Preview("iPhone 16 Pro") {
-    KeyringCompleteView(
-        router: NavigationRouter<WorkshopRoute>(),
-        viewModel: AcrylicPhotoVM(),
-        navigationTitle: "키링 완성"
-    )
-}
+//// MARK: - 프리뷰
+//#Preview("iPhone 16 Pro") {
+//    KeyringCompleteView(
+//        router: NavigationRouter<WorkshopRoute>(),
+//        viewModel: AcrylicPhotoVM(),
+//        navigationTitle: "키링 완성"
+//    )
+//}
