@@ -495,14 +495,6 @@ extension CollectionViewModel {
     
     // MARK: - 키링 편집 관련 공통 메서드들
     
-    /// 버튼 위치 계산 (절대 좌표 그대로 반환)
-    func buttonPosition(index: Int, carabiner: Carabiner) -> CGPoint {
-        CGPoint(
-            x: carabiner.keyringXPosition[index],
-            y: carabiner.keyringYPosition[index]
-        )
-    }
-    
     /// 선택된 키링들로부터 키링 데이터 리스트 생성 (편집용)
     func createKeyringDataListFromSelected(
         selectedKeyrings: [Int: Keyring],

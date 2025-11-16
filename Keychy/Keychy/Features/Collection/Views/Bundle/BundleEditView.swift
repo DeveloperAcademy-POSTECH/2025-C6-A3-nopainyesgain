@@ -177,32 +177,29 @@ struct BundleEditView: View {
                 carabinerWidth: carabiner.carabiner.carabinerWidth,
                 currentCarabinerType: carabiner.carabiner.type
             )
-            .ignoresSafeArea()
             .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들
-            keyringButtons(carabiner: carabiner.carabiner)
-        }
-    }
-    
-    /// 키링 추가 버튼들
-    private func keyringButtons(carabiner: Carabiner) -> some View {
-        ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-            let position = viewModel.buttonPosition(index: index, carabiner: carabiner)
-            
-            CarabinerAddKeyringButton(
-                isSelected: selectedPosition == index,
-                action: {
-                    selectedPosition = index
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = true
+            ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
+                //se3상에서 버튼 위치가 아주 조금 안 맞아서 추가적인 패딩값을 줍니다
+                let needsMorePadding: CGFloat = getBottomPadding(34) == 34 ? 5 : 0
+                let xPos = carabiner.carabiner.keyringXPosition[index] - needsMorePadding
+                let yPos = carabiner.carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPadding(34) - needsMorePadding
+                CarabinerAddKeyringButton(
+                    isSelected: selectedPosition == index,
+                    action: {
+                        selectedPosition = index
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = true
+                        }
                     }
-                }
-            )
-            .position(position)
-            .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-            .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+                )
+                .position(x: xPos, y: yPos)
+                .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
+                .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+            }
         }
+        .ignoresSafeArea()
     }
     
     /// 키링 선택 시트
