@@ -105,7 +105,6 @@ extension PackagedKeyringView {
                 Image("PackageBG")
                     .resizable()
                     .frame(width: 220, height: 270)
-                    .offset(y: -15)
                 
                 // 이미 캡처된 PNG 이미지 사용
                 if let sceneImage = capturedSceneImage {
@@ -113,14 +112,23 @@ extension PackagedKeyringView {
                         .resizable()
                         .frame(width: 195, height: 300)
                         .rotationEffect(.degrees(10))
-                        .offset(y: -7)
+                        .offset(y: -2)
                 }
             }
             
             ZStack(alignment: .top) {
-                Image("PackageFG")
-                    .resizable()
-                    .frame(width: 240, height: 390)
+                VStack(spacing: 0) {
+                    Image("PackageFG_T")
+                        .resizable()
+                        .frame(width: 240, height: 91)
+                    
+                    Image("PackageFG_B")
+                        .resizable()
+                        .frame(width: 240, height: 301)
+                        .blendMode(.darken)
+                        .offset(y: -2)
+                }
+                .frame(width: 240, height: 390)
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
@@ -136,7 +144,7 @@ extension PackagedKeyringView {
                     Spacer()
                 }
                 .padding(.leading, 18)
-                .offset(y: 46)
+                .offset(y: 40)
             }
         }
     }

@@ -175,7 +175,7 @@ extension PackagedKeyringView {
                     .resizable()
                     .frame(width: 195, height: 300)
                     .rotationEffect(.degrees(10))
-                    .offset(y: -7)
+                    .offset(y: -2)
             } else {
                 // PNG 로딩 중
                 ProgressView()
@@ -186,10 +186,18 @@ extension PackagedKeyringView {
     
     private var packageForeground: some View {
         ZStack(alignment: .top) {
-            Image("PackageFG")
-                .resizable()
-                .frame(width: 240, height: 390)
-                .blendMode(.darken)
+            VStack(spacing: 0) {
+                Image("PackageFG_T")
+                    .resizable()
+                    .frame(width: 240, height: 91)
+                
+                Image("PackageFG_B")
+                    .resizable()
+                    .frame(width: 240, height: 301)
+                    .blendMode(.darken)
+                    .offset(y: -2)
+            }
+            .frame(width: 240, height: 390)
             
             keyringInfoLabel
         }
@@ -210,7 +218,7 @@ extension PackagedKeyringView {
             Spacer()
         }
         .padding(.leading, 18)
-        .offset(y: 46)
+        .offset(y: 40)
     }
     
     private var copyLinkButton: some View {

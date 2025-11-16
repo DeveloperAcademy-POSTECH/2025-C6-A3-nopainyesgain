@@ -158,8 +158,7 @@ struct KeyringReceiveView: View {
                 Image("PackageBG")
                     .resizable()
                     .frame(width: 280, height: 347)
-                    
-                    .offset(y: -15)
+                    .offset(y: -24)
                 
                 SpriteView(
                     scene: createMiniScene(keyring: keyring),
@@ -167,25 +166,36 @@ struct KeyringReceiveView: View {
                 )
                 .frame(width: 195, height: 300)
                 .rotationEffect(.degrees(10))
-                .offset(y: -7)
+                .offset(y: -8)
             }
             
-            Image("PackageFG")
-                .resizable()
-                .frame(width: 304, height: 490)
-                .overlay(alignment: .topLeading) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(keyring.name)
-                            .typography(.notosans20B)
-                            .foregroundColor(.white100)
-                        
-                        Text("@\(authorName)")
-                            .typography(.notosans12M)
-                            .foregroundColor(.white100)
-                    }
-                    .padding(.leading, 23)
-                    .padding(.top, 58)
+            VStack(spacing: 0) {
+                Image("PackageFG_T")
+                    .resizable()
+                    .frame(width: 304, height: 113)
+                
+                Image("PackageFG_B")
+                    .resizable()
+                    .frame(width: 304, height: 389)
+                    .blendMode(.darken)
+                    .offset(y: -12)
+            }
+            .frame(width: 304, height: 490)
+            .overlay(alignment: .topLeading) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(keyring.name)
+                        .typography(.notosans20B)
+                        .foregroundColor(.white100)
+                    
+                    Text("@\(authorName)")
+                        .typography(.notosans12M)
+                        .foregroundColor(.white100)
                 }
+                .padding(.leading, 23)
+                .padding(.top, 42)
+            }
+            
+
 
         }
     }
@@ -200,7 +210,7 @@ struct KeyringReceiveView: View {
             bodyImage: keyring.bodyImage,
             targetSize: CGSize(width: 304, height: 490),
             customBackgroundColor: .clear,
-            zoomScale: 2.0,
+            zoomScale: 2.1,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {
@@ -219,7 +229,7 @@ extension KeyringReceiveView {
     private var headerSection: some View {
         HStack {
             CircleGlassButton(
-                imageName: "dismiss",
+                imageName: "dismiss_gray600",
                 action: {
                     dismiss()
                 }
