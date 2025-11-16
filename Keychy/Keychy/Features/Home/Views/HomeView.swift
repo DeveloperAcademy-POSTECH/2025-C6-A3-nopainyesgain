@@ -26,6 +26,9 @@ struct HomeView: View {
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
 
+    /// 씬 준비 완료 여부
+    @State private var isSceneReady = false
+
     // MARK: - Body
 
     var body: some View {
@@ -46,7 +49,12 @@ struct HomeView: View {
                     carabinerY: carabiner.carabinerY,
                     carabinerWidth: carabiner.carabinerWidth,
                     currentCarabinerType: carabiner.type,
-                    onBackgroundLoaded: onBackgroundLoaded
+                    onBackgroundLoaded: onBackgroundLoaded,
+                    onAllKeyringsReady: {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            isSceneReady = true
+                        }
+                    }
                 )
                 .ignoresSafeArea()
                 /// 씬 재생성 조건을 위한 ID 설정
@@ -59,11 +67,31 @@ struct HomeView: View {
 
             // 상단 네비게이션 버튼들
             navigationButtons
+
+            // 로딩 알림 (씬 준비 전까지 표시)
+            if !isSceneReady {
+                ZStack {
+                    // 블러 배경
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(Color.black.opacity(0.2))
+                        .ignoresSafeArea()
+
+                    // 로딩 알림
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
             // 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
+        }
+        .onChange(of: keyringDataList) { _, _ in
+            // 키링 데이터가 변경되면 씬 준비 상태 초기화
+            withAnimation(.easeIn(duration: 0.2)) {
+                isSceneReady = false
+            }
         }
     }
 }

@@ -31,12 +31,11 @@ struct MultiKeyringSceneView: View {
     let carabinerWidth: CGFloat
     let currentCarabinerType: CarabinerType
     let onBackgroundLoaded: (() -> Void)?
+    let onAllKeyringsReady: (() -> Void)?
 
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
-    @State private var isSceneReady: Bool = false
     @State private var backgroundImage: UIImage?
-    @State private var showClouds: Bool = true
 
     // 기본 화면 크기 (iPhone 14 기준)
     private let defaultSceneSize = CGSize(width: 393, height: 852)
@@ -53,7 +52,8 @@ struct MultiKeyringSceneView: View {
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
         currentCarabinerType: CarabinerType,
-        onBackgroundLoaded: (() -> Void)? = nil
+        onBackgroundLoaded: (() -> Void)? = nil,
+        onAllKeyringsReady: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
         self.ringType = ringType
@@ -67,60 +67,33 @@ struct MultiKeyringSceneView: View {
         self.carabinerWidth = carabinerWidth
         self.currentCarabinerType = currentCarabinerType
         self.onBackgroundLoaded = onBackgroundLoaded
+        self.onAllKeyringsReady = onAllKeyringsReady
     }
 
     var body: some View {
         ZStack {
             backgroundView
             sceneView
-                .opacity(isSceneReady ? 1 : 0)
-                .animation(.easeOut(duration: 0.4), value: isSceneReady)
             particleEffectsView
-
-            // 구름 효과 (Scene 위에 배치)
-            if showClouds {
-                cloudsView
-                    .transition(.opacity)
-                    .zIndex(1000)  // 스플래시(999)보다 위에 표시
-            }
         }
         .onAppear {
             // 씬이 없을 때만 초기 설정
-            showClouds = false
-            
             if scene == nil {
-                showClouds = true
                 loadBackgroundImage()
                 setupScene()
             }
         }
         .onDisappear {
-            // 다른 뷰로 이동할 때 구름 먼저 숨기기
-            showClouds = false
             // 메모리 해제
             cleanupScene()
         }
         .onChange(of: keyringDataList) { _, _ in
-            isSceneReady = false
-            showClouds = true
             loadBackgroundImage()
             setupScene()
         }
         .onChange(of: currentCarabinerType) { _, _ in
-            isSceneReady = false
-            showClouds = true
             loadBackgroundImage()
             setupScene()
-        }
-        .onChange(of: isSceneReady) { _, ready in
-            if ready {
-                // Scene 애니메이션 중간(0.2초 후)에 구름 걷히기
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    withAnimation(.easeOut(duration: 0.6)) {
-                        showClouds = false
-                    }
-                }
-            }
         }
     }
 }
@@ -128,15 +101,18 @@ struct MultiKeyringSceneView: View {
 extension MultiKeyringSceneView {
     /// 배경 뷰 (먼저 렌더링)
     private var backgroundView: some View {
-        Group {
-            if let backgroundImage {
-                Image(uiImage: backgroundImage)
-                    .resizable()
-                    .scaledToFit()
-                    .ignoresSafeArea()
-            } else {
-                Color(backgroundColor)
-                    .ignoresSafeArea()
+        GeometryReader { geometry in
+            Group {
+                if let backgroundImage {
+                    Image(uiImage: backgroundImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .clipped()
+                } else {
+                    Color(backgroundColor)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                }
             }
         }
     }
@@ -166,42 +142,6 @@ extension MultiKeyringSceneView {
             .position(effect.position)
             .transition(.opacity)
         }
-    }
-
-    /// 구름 효과 뷰
-    private var cloudsView: some View {
-        ZStack {
-            // 구름 1 (왼쪽으로 걷히기)
-            CloudShape()
-                .fill(.white.opacity(showClouds ? 0.9 : 0))
-                .frame(width: 180, height: 100)
-                .blur(radius: 15)
-                .offset(
-                    x: showClouds ? -80 : -300,
-                    y: -100
-                )
-
-            // 구름 2 (아래로 걷히기)
-            CloudShape()
-                .fill(.white.opacity(showClouds ? 0.8 : 0))
-                .frame(width: 160, height: 80)
-                .blur(radius: 15)
-                .offset(
-                    x: 0,
-                    y: showClouds ? 60 : 300
-                )
-
-            // 구름 3 (오른쪽으로 걷히기)
-            CloudShape()
-                .fill(.white.opacity(showClouds ? 0.85 : 0))
-                .frame(width: 190, height: 90)
-                .blur(radius: 15)
-                .offset(
-                    x: showClouds ? 85 : 350,
-                    y: -20
-                )
-        }
-        .allowsHitTesting(false)
     }
 
 
@@ -242,13 +182,9 @@ extension MultiKeyringSceneView {
         newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
+        newScene.onAllKeyringsReady = onAllKeyringsReady
 
         scene = newScene
-
-        // 씬이 준비되면 페이드인 (약간의 지연 후)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            isSceneReady = true
-        }
     }
 
     /// 씬 정리 및 메모리 해제
@@ -267,10 +203,6 @@ extension MultiKeyringSceneView {
 
         // 파티클 효과 정리
         particleEffects.removeAll()
-
-        // 상태 초기화
-        isSceneReady = false
-        showClouds = true
     }
 
     /// 파티클 효과 재생 처리
@@ -308,41 +240,3 @@ extension MultiKeyringSceneView {
     }
 }
 
-// MARK: - Cloud Shape
-
-/// 뭉게뭉게 구름 모양
-struct CloudShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-
-        let width = rect.width
-        let height = rect.height
-
-        // 구름은 3개의 원으로 구성
-        // 왼쪽 원
-        path.addEllipse(in: CGRect(
-            x: 0,
-            y: height * 0.3,
-            width: width * 0.4,
-            height: height * 0.7
-        ))
-
-        // 중앙 원 (가장 큰 원)
-        path.addEllipse(in: CGRect(
-            x: width * 0.25,
-            y: 0,
-            width: width * 0.5,
-            height: height
-        ))
-
-        // 오른쪽 원
-        path.addEllipse(in: CGRect(
-            x: width * 0.6,
-            y: height * 0.25,
-            width: width * 0.4,
-            height: height * 0.75
-        ))
-
-        return path
-    }
-}

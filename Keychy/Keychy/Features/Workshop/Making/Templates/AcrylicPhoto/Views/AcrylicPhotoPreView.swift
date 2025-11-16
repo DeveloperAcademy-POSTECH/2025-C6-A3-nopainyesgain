@@ -29,14 +29,6 @@ struct AcrylicPhotoPreView: View {
             },
             router: router
         )
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                BackToolbarButton {
-                    router.pop()
-                }
-            }
-        }
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)

@@ -86,12 +86,16 @@ extension ItemDetailInfoSection {
     private var itemName: some View {
         Text(item.name)
             .typography(.suit24B)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private var itemDescription: some View {
         Text(item.itemDescription)
             .typography(.suit15R)
             .foregroundStyle(.gray500)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 
