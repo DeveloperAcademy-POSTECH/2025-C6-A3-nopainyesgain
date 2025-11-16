@@ -17,14 +17,12 @@ struct BundleNameEditView: View {
     
     @State private var isUpdating: Bool = false
     var body: some View {
-        GeometryReader { geo in
-            VStack(spacing: 20) {
-                if let bundle = viewModel.selectedBundle {
-                    KeyringBundleItem(bundle: bundle, isInventoryView: false, geo: geo)
-                }
-                bundleNameTextField
-                    .padding(.horizontal, 20)
+        VStack(spacing: 20) {
+            if let bundle = viewModel.selectedBundle {
+                viewModel.keyringSceneView()
             }
+            bundleNameTextField
+                .padding(.horizontal, 20)
         }
         .onAppear {
             if let bundle = viewModel.selectedBundle {

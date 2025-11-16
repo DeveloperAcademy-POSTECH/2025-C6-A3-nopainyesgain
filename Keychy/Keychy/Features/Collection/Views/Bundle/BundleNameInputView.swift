@@ -32,7 +32,7 @@ struct BundleNameInputView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 20) {
-                viewModel.keyringSceneView(geo: geo)
+                viewModel.keyringSceneView()
                 
                 // 번들 이름 입력 섹션
                 bundleNameTextField()

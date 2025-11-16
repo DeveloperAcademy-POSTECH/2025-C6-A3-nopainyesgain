@@ -21,9 +21,8 @@ struct BundleInventoryView: View {
     ]
     
     var body: some View {
-        GeometryReader { geo in
             VStack {
-                bundleGrid(geo: geo)
+                bundleGrid()
             }
             .padding(.horizontal, 20)
             .toolbar(.hidden, for: .tabBar)
@@ -54,7 +53,6 @@ struct BundleInventoryView: View {
                     }
                 }
             }
-        }
     }
 }
 
@@ -101,7 +99,7 @@ extension BundleInventoryView {
 
 // MARK: - 그리드 뷰
 extension BundleInventoryView {
-    private func bundleGrid(geo: GeometryProxy) -> some View {
+    private func bundleGrid() -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 18) {
                 ForEach(viewModel.sortedBundles, id: \.self) { bundle in
@@ -115,7 +113,7 @@ extension BundleInventoryView {
                         // 상세 화면으로 이동
                         router.push(.bundleDetailView)
                     } label: {
-                        KeyringBundleItem(bundle: bundle, isInventoryView: true, geo: geo)
+                        KeyringBundleItem(bundle: bundle)
                     }
                 }
             }
