@@ -107,72 +107,21 @@ extension BundleDetailView {
                 )
             )
         }
-
-        // 1. 배경 이미지 로드
-        do {
-            _ = try await StorageManager.shared.getImage(path: bg.backgroundImage)
-        } catch {
-            await MainActor.run {
-                isCapturing = false
-            }
-            return
-        }
         
-        // 2. 모든 키링 bodyImage 병렬로 로드 및 실패 추적
-        var failedImages: [String] = []
-        await withTaskGroup(of: (String, Bool).self) { group in
-            for keyringData in keyringDataList {
-                group.addTask {
-                    do {
-                        _ = try await StorageManager.shared.getImage(path: keyringData.bodyImageURL)
-                        return (keyringData.bodyImageURL, true)
-                    } catch {
-                        return (keyringData.bodyImageURL, false)
-                    }
-                }
-            }
-            
-            for await (url, success) in group {
-                if !success {
-                    failedImages.append(url)
-                }
-            }
-        }
-
-        if !failedImages.isEmpty {
-            await MainActor.run {
-                isCapturing = false
-            }
-            return
-        }
-        
-        // 3. 카라비너 이미지 및 URL 준비
         let carabinerType = CarabinerType.from(cb.carabinerType)
         let carabinerBackURL: String?
         let carabinerFrontURL: String?
         
-        do {
-            if carabinerType == .hamburger {
-                carabinerBackURL = cb.carabinerImage[1]
-                carabinerFrontURL = cb.carabinerImage[2]
-                _ = try await StorageManager.shared.getImage(path: cb.carabinerImage[1])
-                _ = try await StorageManager.shared.getImage(path: cb.carabinerImage[2])
-            } else {
-                carabinerBackURL = cb.carabinerImage[0]
-                carabinerFrontURL = nil
-                _ = try await StorageManager.shared.getImage(path: cb.carabinerImage[0])
-            }
-        } catch {
-            await MainActor.run {
-                isCapturing = false
-            }
-            return
+        if carabinerType == .hamburger {
+            carabinerBackURL = cb.carabinerImage[1]
+            carabinerFrontURL = cb.carabinerImage[2]
+        } else {
+            //plain 타입일 때
+            carabinerBackURL = cb.carabinerImage[0]
+            carabinerFrontURL = nil
         }
         
-        // bodyImage를 불러오는 중에 캡쳐하지 않도록 대기 시간을 추가함
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
-        
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        guard let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: bg.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
@@ -181,36 +130,36 @@ extension BundleDetailView {
             carabinerX: cb.carabinerX,
             carabinerY: cb.carabinerY,
             carabinerWidth: cb.carabinerWidth
-        ) {
-            // viewModel에 캡쳐된 이미지 저장
-            await MainActor.run {
-                viewModel.bundleCapturedImage = pngData
-            }
-            
-            // 사용자가 이미지를 저장할 때도 캐시를 업데이트 함
-            if let documentId = bundle.documentId {
-                BundleImageCache.shared.syncBundle(
-                    id: documentId,
-                    name: bundle.name,
-                    imageData: pngData
-                )
-            }
-            
-            // PNG 데이터를 UIImage로 변환
-            guard let image = UIImage(data: pngData) else {
-                await MainActor.run {
-                    isCapturing = false
-                }
-                return
-            }
-            // 포토 라이브러리에 저장
-            await saveImageToLibrary(image)
-            
-        } else {
-            print("[BundleDetailView] 캡쳐 실패")
+        ) else {
             await MainActor.run {
                 isCapturing = false
             }
+            return
         }
+        
+        // viewModel에 캡쳐된 이미지 저장
+        await MainActor.run {
+            viewModel.bundleCapturedImage = pngData
+        }
+        
+        if let documentId = bundle.documentId,
+           !BundleImageCache.shared.exists(for: documentId) {
+            BundleImageCache.shared.syncBundle(
+                id: documentId,
+                name: bundle.name,
+                imageData: pngData
+            )
+            print("[BundleDetailView] 편집된 뭉치 캐시 복구: \(documentId)")
+        }
+        
+        // PNG 데이터를 UIImage로 변환하여 포토 라이브러리에 저장
+        guard let image = UIImage(data: pngData) else {
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
+        
+        await saveImageToLibrary(image)
     }
 }
