@@ -84,9 +84,6 @@ extension CoinChargeView {
             await MainActor.run {
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                    purchaseSuccessScale = 1.0
-                }
             }
 
         } catch {

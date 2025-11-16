@@ -20,7 +20,6 @@ struct CoinChargeView<Route: Hashable>: View {
     
     // 성공/실패 Alert
     @State var showPurchaseSuccessAlert = false
-    @State var purchaseSuccessScale: CGFloat = 0.3
     @State var showPurchaseFailAlert = false
     @State var purchaseFailScale: CGFloat = 0.3
     
@@ -53,53 +52,23 @@ struct CoinChargeView<Route: Hashable>: View {
                 purchaseSheet
             }
             .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
-            
-            // 구매 성공 Alert
-            if showPurchaseSuccessAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
-                    
-                    BangmarkAlert(
-                        checkmarkScale: purchaseSuccessScale,
-                        text: "구매 완료!",
-                        cancelText: "닫기",
-                        confirmText: "확인",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
-                }
-            }
-            
-            // 구매 실패 Alert
+
+            // 구매 성공 Alert - KeychyAlert 사용
+            KeychyAlert(
+                type: .checkmark,
+                message: "구매가 완료되었어요!",
+                isPresented: $showPurchaseSuccessAlert
+            )
+
+            // 구매 실패 Alert - PurchaseFailAlert 사용
             if showPurchaseFailAlert {
                 ZStack {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                         .onTapGesture {}
-                    
-                    BangmarkAlert(
+
+                    PurchaseFailAlert(
                         checkmarkScale: purchaseFailScale,
-                        text: "열쇠가 부족해요",
-                        cancelText: "취소",
-                        confirmText: "확인",
                         onCancel: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 purchaseFailScale = 0.3
@@ -108,7 +77,7 @@ struct CoinChargeView<Route: Hashable>: View {
                                 showPurchaseFailAlert = false
                             }
                         },
-                        onConfirm: {
+                        onCharge: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 purchaseFailScale = 0.3
                             }
@@ -118,7 +87,11 @@ struct CoinChargeView<Route: Hashable>: View {
                         }
                     )
                     .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
+                }
+                .onAppear {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                        purchaseFailScale = 1.0
+                    }
                 }
             }
         }
