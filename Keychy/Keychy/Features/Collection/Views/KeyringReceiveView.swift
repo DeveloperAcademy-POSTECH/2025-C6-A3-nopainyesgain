@@ -42,6 +42,7 @@ struct KeyringReceiveView: View {
                         // 로딩 상태
                         ProgressView("로딩 중...")
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        
                     } else if let keyring = keyring {
                         // 키링 로드 성공
                         headerSection
@@ -57,14 +58,25 @@ struct KeyringReceiveView: View {
                     } else {
                         // 에러 상태
                         VStack(spacing: 20) {
-                            Text("키링을 불러올 수 없습니다")
-                                .typography(.suit16M)
-                                .foregroundColor(.gray500)
-                            
-                            Button("닫기") {
-                                dismiss()
+                            VStack(spacing: 0) {
+                                Image("EmptyViewIcon")
+                                    .resizable()
+                                    .frame(width: 124, height: 111)
+                                
+                                Text("키링을 불러올 수 없습니다.")
+                                    .typography(.suit15R)
+                                    .foregroundColor(.black100)
+                                    .padding(.vertical, 15)
+                                
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Text("닫기")
+                                        .typography(.suit15R)
+                                        .foregroundColor(.main500)
+                                        .padding(.vertical, 15)
+                                }
                             }
-                            .padding()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }

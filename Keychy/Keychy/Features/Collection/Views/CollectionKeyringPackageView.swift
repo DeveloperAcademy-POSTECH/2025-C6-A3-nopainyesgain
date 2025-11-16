@@ -74,9 +74,6 @@ struct CollectionKeyringPackageView: View {
                             isPresented: $showUnpackCompleteAlert
                         )
                         .zIndex(101)
-//                        UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
-//                            .zIndex(100)
-//                            .transition(.scale.combined(with: .opacity)
                     }
                 }
                 
