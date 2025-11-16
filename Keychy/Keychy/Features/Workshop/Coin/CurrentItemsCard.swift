@@ -19,7 +19,7 @@ struct CurrentItemsCard: View {
             )
             
             itemCard(
-                image: "invenIcon",
+                image: "myKeyringCount",
                 title: "보유 키링",
                 count: "\(userManager.currentUser?.keyrings.count ?? 0)/\(userManager.currentUser?.maxKeyringCount ?? 100)"
             )
