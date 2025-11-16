@@ -35,24 +35,23 @@ struct TemplatePreviewBody: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                // 프리뷰 이미지
-                ItemDetailImage(itemURL: template?.previewURL ?? "")
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer()
 
-                Spacer()
+            // 프리뷰 이미지
+            templatePreview
 
-                // 템플릿 정보
-                infoSection
-            }
-            .padding(.bottom, 120)
+            Spacer()
+
+            // 템플릿 정보
+            infoSection
+                .padding(.bottom, 40)
+                .frame(height: 120)
 
             // 액션 버튼
             actionButton
         }
-        .padding(.horizontal, 35)
+        .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -156,6 +155,26 @@ struct TemplatePreviewBody: View {
 
 // MARK: - TemplatePreviewBody Extensions
 extension TemplatePreviewBody {
+    /// 템플릿 프리뷰 이미지
+    private var templatePreview: some View {
+        VStack {
+            Spacer()
+
+            if let template {
+                ItemDetailImage(itemURL: template.previewURL)
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .cornerRadius(20)
+            } else {
+                ProgressView()
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 30)
+        .frame(height: 500)
+    }
+
     /// 템플릿 정보 섹션
     private var infoSection: some View {
         Group {
