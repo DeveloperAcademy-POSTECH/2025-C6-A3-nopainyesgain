@@ -191,11 +191,6 @@ extension WorkshopPreview {
                         .scaledToFill()
                         .frame(maxWidth: .infinity, maxHeight: 501)
                         .cornerRadius(20)
-                } else if item is KeyringTemplate {
-                    ItemDetailImage(itemURL: getPreviewURL())
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
-                        .cornerRadius(20)
                 } else {
                     // 카라비너, 사운드: 1:1 비율
                     ItemDetailImage(itemURL: getPreviewURL())
