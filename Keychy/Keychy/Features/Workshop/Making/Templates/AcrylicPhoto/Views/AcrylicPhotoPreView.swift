@@ -53,6 +53,11 @@ struct AcrylicPhotoPreView: View {
                 viewModel.resetImageData()
                 selectedItem = nil
                 capturedImage = nil
+
+                // 포토피커 자동 열기
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showPhotoPicker = true
+                }
             }
             hasAppearedBefore = true
         }
