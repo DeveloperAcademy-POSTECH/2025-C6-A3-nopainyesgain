@@ -53,22 +53,25 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                         .padding(.bottom, 30)
                         .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
 
-                    // 이미지 저장 버튼 (공간 유지를 위해 opacity 사용)
+                    Spacer()
+                }
+                .blur(radius: showImageSaved ? 15 : 0)
+                .overlay(alignment: .bottom) {
+                    // 이미지 저장 버튼
                     saveButton
                         .padding(.top, 30)
+                        .adaptiveBottomPadding()
                         .opacity(showSaveButton ? 1 : 0)
                         .animation(.easeInOut(duration: 0.3), value: showSaveButton)
                 }
-                .blur(radius: showImageSaved ? 15 : 0)
-
+                
                 if showImageSaved {
                     ImageSaveAlert(checkmarkScale: checkmarkScale)
                         .padding(.bottom, 30)
                 }
-
+                
                 // 커스텀 네비게이션 바
                 customNavigationBar
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .blur(radius: showImageSaved ? 15 : 0)
             }
         }
@@ -77,7 +80,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         .onAppear {
             guard !isCreatingKeyring else { return }
             isCreatingKeyring = true
-            
+
             // Firebase 저장 시작 (completion으로 dismiss 버튼 표시)
             saveKeyringToFirebase {
                 DispatchQueue.main.async {
@@ -105,36 +108,27 @@ extension KeyringCompleteView {
 //MARK: - 커스텀 네비게이션 바
 extension KeyringCompleteView {
     private var customNavigationBar: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if showDismissButton {
-                    CloseToolbarButton {
-                        viewModel.resetAll()
-                        router.reset()
-                    }
-                    .frame(width: 44, height: 44)
-                    .glassEffect(.regular.interactive(), in: .circle)
-                    .padding(.leading, 16)
-
-                    Spacer()
-
-                    Text("키링이 완성되었어요!")
-                        .typography(.suit17B)
-                        .foregroundStyle(.black100)
-
-                    Spacer()
-
-                    Color.clear
-                        .frame(width: 44, height: 44)
-                        .padding(.trailing, 16)
+        CustomNavigationBar {
+            // Leading (왼쪽)
+            if showDismissButton {
+                CloseToolbarButton {
+                    viewModel.resetAll()
+                    router.reset()
                 }
+                .glassEffect(.regular.interactive(), in: .circle)
             }
-            .animation(.easeInOut(duration: 0.3), value: showDismissButton)
-            .frame(height: 44)
-            .padding(.top, 60)
-
+        } center: {
+            // Center (중앙)
+            if showDismissButton {
+                Text("키링이 완성되었어요!")
+                    .typography(.suit17B)
+                    .foregroundStyle(.black100)
+            }
+        } trailing: {
+            // Trailing (오른쪽) - 빈 공간 유지
             Spacer()
         }
+        .animation(.easeInOut(duration: 0.3), value: showDismissButton)
     }
 }
 
@@ -455,4 +449,13 @@ extension KeyringCompleteView {
             }
         }
     }
+}
+
+// MARK: - 프리뷰
+#Preview("iPhone 16 Pro") {
+    KeyringCompleteView(
+        router: NavigationRouter<WorkshopRoute>(),
+        viewModel: AcrylicPhotoVM(),
+        navigationTitle: "키링 완성"
+    )
 }

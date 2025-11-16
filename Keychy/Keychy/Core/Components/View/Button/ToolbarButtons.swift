@@ -48,8 +48,9 @@ struct CloseToolbarButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image("dismiss")
+            Image("dismiss_gray600")
         }
+        .frame(width: 44, height: 44)
     }
 }
 
