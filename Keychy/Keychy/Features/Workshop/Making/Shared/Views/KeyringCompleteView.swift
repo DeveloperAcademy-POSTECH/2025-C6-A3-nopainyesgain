@@ -21,6 +21,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State var checkmarkOpacity: Double = 0.0
     @State var showImageSaved = false
     @State var isCapturingImage = false
+
+    // 씬 인터랙션
+    @State var isInteractionEnabled = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -76,9 +79,20 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 // MARK: - KeyringScene Section
 extension KeyringCompleteView {
     private var keyringScene: some View {
-        KeyringSceneView(viewModel: viewModel, backgroundColor: .clear, applyWelcomeImpulse: true)
-            .frame(maxWidth: .infinity)
-            //.frame(height: 500)
+        KeyringSceneView(
+            viewModel: viewModel,
+            backgroundColor: .clear,
+            applyWelcomeImpulse: true,
+            onSceneReady: {
+                // Setup 완료 후 impulse 적용 시간(0.5초) + 여유 시간 대기 후 터치 활성화
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    isInteractionEnabled = true
+                }
+            }
+        )
+        .frame(maxWidth: .infinity)
+        .allowsHitTesting(isInteractionEnabled)
+        //.frame(height: 500)
     }
 }
 
