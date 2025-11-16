@@ -54,6 +54,14 @@ struct TemplatePreviewBody: View {
         }
         .padding(.horizontal, 35)
         .toolbar(.hidden, for: .tabBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                BackToolbarButton {
+                    router?.pop()
+                }
+            }
+        }
         .task {
             await fetchTemplate()
         }
