@@ -14,7 +14,7 @@ extension View {
     func adaptiveBottomPadding(_ defaultPadding: CGFloat = 34) -> some View {
         self.padding(.bottom, getBottomPadding(defaultPadding))
     }
-    
+
     /// 상단
     func adaptiveTopPadding(_ defaultPadding: CGFloat = 20) -> some View {
         self.padding(.top, getTopPadding(defaultPadding))

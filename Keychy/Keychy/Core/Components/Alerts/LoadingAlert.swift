@@ -55,6 +55,7 @@ struct LoadingAlert: View {
                 Text(message)
                     .typography(.suit17SB)
                     .foregroundStyle(.black100)
+                    .textOutline(color: .white100, width: 3)
             }
         }
         .padding(.bottom, message != nil ? 45 : 0)
