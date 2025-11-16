@@ -14,6 +14,7 @@ enum AlertType {
     case linkCopy           // 링크 복사
     case unpack             // 선물 포장 해제
     case addToCollection    // 보관함에 키링 추가
+    case fail               // 무언가 실패함 (땀흘리는 아이콘임)
 
     var imageName: String {
         switch self {
@@ -23,6 +24,7 @@ enum AlertType {
         case .linkCopy: return "copyLinkAlert"
         case .unpack: return "openPresentAlert"
         case .addToCollection: return "receivePresentAlert"
+        case .fail: return "failAlert"
         }
     }
 }
@@ -42,7 +44,7 @@ struct KeychyAlert: View {
             Text(message)
                 .typography(.suit17SB)
                 .textOutline(color: .white100, width: 3)
-                .foregroundStyle(.black100)                
+                .foregroundStyle(.black100)
         }
         .onChange(of: isPresented) { oldValue, newValue in
             if newValue {
