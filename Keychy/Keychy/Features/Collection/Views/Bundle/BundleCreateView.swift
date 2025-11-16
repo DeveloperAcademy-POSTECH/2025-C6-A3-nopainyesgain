@@ -53,36 +53,34 @@ struct BundleCreateView: View {
     
     //MARK: 메인 뷰
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .bottom) {
-                if let background = selectedBackground,
-                   let carabiner = selectedCarabiner {
-                    selectedView(
-                        bg: background,
-                        cb: carabiner
-                    )
-                    
-                    sheetContent(geo: geo)
-                } else {
-                    // 로딩 중일 때
-                    // 기본 배경 이미지와 로딩 중 애니메이션..
-                    Image(.greenBackground)
+        ZStack(alignment: .bottom) {
+            if let background = selectedBackground,
+               let carabiner = selectedCarabiner {
+                selectedView(
+                    bg: background,
+                    cb: carabiner
+                )
+                
+                sheetContent()
+            } else {
+                // 로딩 중일 때
+                // 기본 배경 이미지와 로딩 중 애니메이션..
+                Image(.greenBackground)
+                    .resizable()
+                    .scaledToFit()
+                    .ignoresSafeArea()
+                VStack {
+                    Spacer()
+                    Image(.introTypo)
                         .resizable()
                         .scaledToFit()
-                        .ignoresSafeArea()
-                    VStack {
-                        Spacer()
-                        Image(.introTypo)
-                            .resizable()
-                            .scaledToFit()
-                        Text("로딩 중이에요")
-                        Spacer()
-                    }
+                    Text("로딩 중이에요")
+                    Spacer()
                 }
-                
-                // Alert들
-                alertContent
             }
+            
+            // Alert들
+            alertContent
         }
         .ignoresSafeArea()
         .toolbar {
@@ -178,7 +176,7 @@ extension BundleCreateView {
 
 //MARK: - 시트 뷰
 extension BundleCreateView {
-    private func sheetContent(geo: GeometryProxy) -> some View {
+    private func sheetContent() -> some View {
         Group {
             // 배경 시트
             if showBackgroundSheet {
@@ -193,8 +191,14 @@ extension BundleCreateView {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectBackgroundSheet(geo: geo),
-                        screenHeight: geo.size.height
+                        content: SelectBackgroundSheet(
+                            viewModel: viewModel,
+                            selectedBG: selectedBackground,
+                            onBackgroundTap: { bg in
+                                selectedBackground = bg
+                            }
+                        ),
+                        screenHeight: screenHeight
                     )
                 }
             }
@@ -212,8 +216,14 @@ extension BundleCreateView {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectCarabinerSheet(geo: geo),
-                        screenHeight: geo.size.height
+                        content: SelectCarabinerSheet(
+                            viewModel: viewModel,
+                            selectedCarabiner: selectedCarabiner,
+                            onCarabinerTap: { carabiner in
+                                selectedCarabiner = carabiner
+                            }
+                        ),
+                        screenHeight: screenHeight
                     )
                 }
             }
@@ -316,33 +326,6 @@ extension BundleCreateView {
                 continuation.resume()
             }
         }
-    }
-}
-
-// MARK: - 시트
-extension BundleCreateView {
-    /// 배경 선택 시트
-    private func selectBackgroundSheet(geo: GeometryProxy) -> some View {
-        SelectBackgroundSheet(
-            geo: geo,
-            viewModel: viewModel,
-            selectedBG: selectedBackground,
-            onBackgroundTap: { bg in
-                selectedBackground = bg
-            }
-        )
-    }
-    
-    /// 카라비너 선택 시트
-    private func selectCarabinerSheet(geo: GeometryProxy) -> some View {
-        SelectCarabinerSheet(
-            geo: geo,
-            viewModel: viewModel,
-            selectedCarabiner: selectedCarabiner,
-            onCarabinerTap: { carabiner in
-                selectedCarabiner = carabiner
-            }
-        )
     }
 }
 

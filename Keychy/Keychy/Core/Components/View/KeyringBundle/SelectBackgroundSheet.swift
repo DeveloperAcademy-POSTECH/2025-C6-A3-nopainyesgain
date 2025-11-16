@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SelectBackgroundSheet: View {
-    let geo: GeometryProxy
     let viewModel: CollectionViewModel
     let selectedBG: BackgroundViewData?
     let onBackgroundTap: (BackgroundViewData) -> Void
@@ -17,7 +16,6 @@ struct SelectBackgroundSheet: View {
         SelectionGridSheet(
             items: viewModel.backgroundViewData,
             selectedItem: selectedBG,
-            widthSize: geo.size.width,
             onItemTap: { bg in
                 onBackgroundTap(bg)
                 
@@ -28,11 +26,10 @@ struct SelectBackgroundSheet: View {
                     }
                 }
             },
-            gridItemView: { bg, isSelected, widthSize in
+            gridItemView: { bg, isSelected in
                 SelectBackgroundGridItem(
                     background: bg,
-                    isSelected: isSelected,
-                    widthSize: widthSize
+                    isSelected: isSelected
                 )
             }
         )
