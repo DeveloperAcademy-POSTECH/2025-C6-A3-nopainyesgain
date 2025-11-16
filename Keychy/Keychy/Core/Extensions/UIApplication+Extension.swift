@@ -31,18 +31,36 @@ extension UIApplication {
     }
 }
 
-// MARK: - Grid Layout Helpers
+// MARK: - 그리드 레이아웃 프레임 계산
+// 추가할 비율 등이 있다면 추가하셔서 사용하시면 됩니다
 extension UIApplication {
-    
-    /// 그리드 셀의 너비 계산 (2열 그리드 기준)
-    static var gridCellWidth: CGFloat {
+    // MARK: - 2열
+    /// 2열 그리드 셀의 너비
+    static var twoGridCellWidth: CGFloat {
         gridCellWidth(columns: 2)
     }
     
-    /// 그리드 셀의 높이 계산 (4:3 비율 기준)
-    static var gridCellHeight: CGFloat {
-        gridCellWidth * 4/3
+    /// 2열 그리드 셀의 높이 (비율 3:4)
+    static var twoGridCellHeight: CGFloat {
+        gridCellHeight(columns: 2)
     }
+    
+    /// 2열 정사각형 그리드 셀의 크기 (1:1 비율)
+    static var twoSquareGridCellSize: CGFloat {
+        gridCellWidth(columns: 2)
+    }
+    
+    // MARK: - 3열
+    /// 기본 3열 그리드 셀의 너비
+    static var threeGridCellWidth: CGFloat {
+        gridCellWidth(columns: 3, spacing: 10)
+    }
+    
+    /// 3열 그리드 셀의 높이 (비율 3:4)
+    static var threeGridCellHeight: CGFloat {
+        gridCellHeight(columns: 3, horizontalPadding: 10)
+    }
+    
     
     /// 커스텀 컬럼 수에 따른 그리드 셀 너비 계산
     /// - Parameters:
@@ -62,7 +80,7 @@ extension UIApplication {
     /// 커스텀 비율에 따른 그리드 셀 높이 계산
     /// - Parameters:
     ///   - columns: 그리드 컬럼 수
-    ///   - aspectRatio: 가로:세로 비율 (예: 4/3, 1, 16/9)
+    ///   - aspectRatio: 가로:세로 비율 (예: 4/3, 1, 16/9) (기본값 4/3)
     ///   - spacing: 셀 간 간격
     ///   - horizontalPadding: 좌우 여백의 합
     /// - Returns: 계산된 셀의 높이
