@@ -19,6 +19,7 @@ struct BundleDetailView: View {
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteToast: Bool = false
     @State private var showChangeMainBundleAlert: Bool = false
+    @State var isCapturing: Bool = false
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -95,6 +96,10 @@ struct BundleDetailView: View {
             } else {
                 // 데이터 로딩 중
                 Color.clear.ignoresSafeArea()
+            }
+            
+            if isCapturing {
+                capturingOverlay
             }
         }
         .toolbar {
@@ -275,12 +280,13 @@ extension BundleDetailView {
     
     private var downloadImageButton: some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showMenu.toggle()
+            Task {
+                await captureAndSaveScene()
             }
         }) {
             Image(.imageDownload)
         }
+        .disabled(isCapturing)
         .frame(width: 48, height: 48)
         .glassEffect(in: .circle)
     }
@@ -358,5 +364,18 @@ extension BundleDetailView {
         .padding(14)
         .glassEffect(in: .rect(cornerRadius: 34))
         .frame(minWidth: 200)
+    }
+}
+
+//MARK: 캡쳐 오버레이
+extension BundleDetailView {
+    private var capturingOverlay: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .blur(radius: 15)
+            
+            Image(.imageSaved)
+        }
     }
 }
