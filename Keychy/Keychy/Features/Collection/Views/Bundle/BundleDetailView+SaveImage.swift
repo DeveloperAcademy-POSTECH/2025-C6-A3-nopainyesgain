@@ -107,42 +107,70 @@ extension BundleDetailView {
                 )
             )
         }
-        
-        
+
         // 1. 배경 이미지 로드
-        guard let _ = try? await StorageManager.shared.getImage(path: bg.backgroundImage) else {
+        do {
+            _ = try await StorageManager.shared.getImage(path: bg.backgroundImage)
+        } catch {
             await MainActor.run {
                 isCapturing = false
             }
             return
         }
         
-        // 2. 모든 키링 bodyImage 병렬로 로드
-        await withTaskGroup(of: Void.self) { group in
+        // 2. 모든 키링 bodyImage 병렬로 로드 및 실패 추적
+        var failedImages: [String] = []
+        await withTaskGroup(of: (String, Bool).self) { group in
             for keyringData in keyringDataList {
                 group.addTask {
-                    _ = try? await StorageManager.shared.getImage(path: keyringData.bodyImageURL)
+                    do {
+                        _ = try await StorageManager.shared.getImage(path: keyringData.bodyImageURL)
+                        return (keyringData.bodyImageURL, true)
+                    } catch {
+                        return (keyringData.bodyImageURL, false)
+                    }
+                }
+            }
+            
+            for await (url, success) in group {
+                if !success {
+                    failedImages.append(url)
                 }
             }
         }
+
+        if !failedImages.isEmpty {
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
         
-        // 3. 카라비너 이미지 로드
+        // 3. 카라비너 이미지 및 URL 준비
         let carabinerType = CarabinerType.from(cb.carabinerType)
         let carabinerBackURL: String?
         let carabinerFrontURL: String?
         
-        if carabinerType == .hamburger {
-            carabinerBackURL = cb.carabinerImage[1]
-            carabinerFrontURL = cb.carabinerImage[2]
-            // hamburger: back, front 모두 로드
-            _ = try? await StorageManager.shared.getImage(path: cb.carabinerImage[1])
-            _ = try? await StorageManager.shared.getImage(path: cb.carabinerImage[2])
-        } else {
-            //plain 타입일 때
-            carabinerBackURL = cb.carabinerImage[0]
-            carabinerFrontURL = nil
-            _ = try? await StorageManager.shared.getImage(path: cb.carabinerImage[0])
+        do {
+            if carabinerType == .hamburger {
+                carabinerBackURL = cb.carabinerImage[1]
+                carabinerFrontURL = cb.carabinerImage[2]
+                _ = try await StorageManager.shared.getImage(path: cb.carabinerImage[1])
+                _ = try await StorageManager.shared.getImage(path: cb.carabinerImage[2])
+            } else {
+                carabinerBackURL = cb.carabinerImage[0]
+                carabinerFrontURL = nil
+                _ = try await StorageManager.shared.getImage(path: cb.carabinerImage[0])
+            }
+        } catch {
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
         }
+        
+        // bodyImage를 불러오는 중에 캡쳐하지 않도록 대기 시간을 추가함
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
         
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
