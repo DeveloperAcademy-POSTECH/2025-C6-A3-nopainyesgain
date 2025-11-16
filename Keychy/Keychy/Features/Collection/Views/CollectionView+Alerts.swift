@@ -107,8 +107,8 @@ extension CollectionView {
             
             if showDeleteAlert {
                 DeletePopup(
-                    title: "[\(deletingCategory)]\n정말 삭제하시겠어요?",
-                    message: "한 번 삭제하면 복구 할 수 없습니다.",
+                    title: "[\(deletingCategory)]\n삭제할까요?",
+                    message: "태그를 삭제해도\n키링은 삭제되지 않아요.",
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showDeleteAlert = false
@@ -153,20 +153,21 @@ extension CollectionView {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        invenExpandAlertScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         showInvenExpandAlert = false
                     }
                 }
                 .zIndex(99)
 
+            
             if showInvenExpandAlert {
-                PurchasePopup(
-                    title: "보관함 확장 [+10]",
+                InvenExpandPopup(
                     myCoin: collectionViewModel.coin,
                     price: 20,
-                    scale: invenExpandAlertScale,
+                    onCancel: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showInvenExpandAlert = false
+                        }
+                    },
                     onConfirm: {
                         handleInvenExpandConfirm()
                     }
@@ -176,15 +177,34 @@ extension CollectionView {
                 .transition(.scale.combined(with: .opacity))
                 .zIndex(100)
             }
+//            if showInvenExpandAlert {
+//                PurchasePopup(
+//                    title: "보관함 확장",
+//                    myCoin: collectionViewModel.coin,
+//                    price: 20,
+//                    scale: invenExpandAlertScale,
+//                    onConfirm: {
+//                        handleInvenExpandConfirm()
+//                    }
+//                )
+//                .padding(.horizontal, 40)
+//                .padding(.bottom, 30)
+//                .transition(.scale.combined(with: .opacity))
+//                .zIndex(100)
+//            }
             
             if showPurchaseSuccessAlert {
-                PurchaseSuccessPopup(isPresented: $showPurchaseSuccessAlert)
-                    .zIndex(100)
+                KeychyAlert(
+                    type: .checkmark,
+                    message: "구매가 완료되었어요!",
+                    isPresented: $showPurchaseSuccessAlert
+                )
+                .zIndex(101)
             }
             
             if showPurchaseFailAlert {
                 LackPopup(
-                    title: "열쇠가 부족합니다!",
+                    title: "코인이 부족해요",
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showPurchaseFailAlert = false

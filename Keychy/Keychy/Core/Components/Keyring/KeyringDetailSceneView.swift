@@ -12,12 +12,12 @@ import Lottie
 /// 읽기 전용 키링 뷰 (Detail 화면 전용)
 struct KeyringDetailSceneView: View {
     let keyring: Keyring
+    @Binding var isLoading: Bool
     
     @State private var scene: KeyringDetailScene?
     @State private var showEffect: Bool = false
     @State private var currentEffect: String = ""
     @State private var lottieID = UUID()
-    @State private var isLoading: Bool = true
     @State private var fixedSize: CGSize? = nil
 
     var body: some View {
@@ -28,24 +28,18 @@ struct KeyringDetailSceneView: View {
                 
                 if showEffect { lottieEffectView }
                 
-                if isLoading {
-                    VStack(spacing: 12) {
-                        ProgressView()
-                            .scaleEffect(1.2)
-                        Text("키링을 불러오는 중...")
-                            .font(.caption)
-                            .foregroundColor(.gray500)
-                    }
-                    .padding(20)
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
             }
             .frame(width: geometry.size.width, height: fixedSize?.height ?? geometry.size.height, alignment: .top)
             .clipped()
             .onAppear {
                 if scene == nil {
                     initializeScene()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            self.isLoading = false
+                        }
+                    }
                 }
             }
         }

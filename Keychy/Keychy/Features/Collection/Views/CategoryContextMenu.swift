@@ -30,7 +30,7 @@ struct CategoryContextMenu: View {
                 VStack(alignment: .leading, spacing: 25) {
                     // 태그 이름
                     Text(categoryName)
-                        .typography(.suit13M)
+                        .typography(.notosans13M)
                         .foregroundColor(.gray500)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -44,7 +44,7 @@ struct CategoryContextMenu: View {
                             
                             Text("태그 이름 변경")
                                 .typography(.suit16M)
-                                .foregroundColor(.black100)
+                                .foregroundColor(.gray600)
                         }
                     }
                     .buttonStyle(.plain)
@@ -58,7 +58,7 @@ struct CategoryContextMenu: View {
                             
                             Text("삭제")
                                 .typography(.suit16M)
-                                .foregroundColor(.pink100)
+                                .foregroundColor(.pink)
                         }
                     }
                     .buttonStyle(.plain)

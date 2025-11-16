@@ -77,7 +77,7 @@ extension CollectionView {
                               action: { router.push(.widgetSettingView) })
             .padding(.trailing, 10)
 
-            CircleGlassButton(imageName: "bundleIcon",
+            CircleGlassButton(imageName: "BundleIcon",
                               action: { router.push(.bundleInventoryView) })
             .padding(.trailing, 10)
             
@@ -162,9 +162,8 @@ extension CollectionView {
                 .padding(.trailing, 8)
 
             Button(action: {
-                showInvenExpandAlert = true
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                    invenExpandAlertScale = 1.0
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showInvenExpandAlert = true
                 }
             }) {
                 Image("InvenPlus")

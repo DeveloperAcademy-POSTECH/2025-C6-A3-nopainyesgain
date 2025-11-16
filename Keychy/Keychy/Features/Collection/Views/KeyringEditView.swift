@@ -192,7 +192,7 @@ extension KeyringEditView {
                                     .progressViewStyle(CircularProgressViewStyle(tint: .gray))
                                     .scaleEffect(1.2)
                                 
-                                Text("키링을 가져오는 중...")
+                                Text("키링을 가져오는 중")
                                     .typography(.suit12M)
                                     .foregroundColor(.white)
                             }
@@ -275,8 +275,8 @@ extension KeyringEditView {
                             options: .regularExpression
                         )
                         
-                        if sanitized.count > 9 {
-                            sanitized = String(sanitized.prefix(9))
+                        if sanitized.count > 10 {
+                            sanitized = String(sanitized.prefix(10))
                         }
                         
                         if sanitized != editedName {

@@ -74,43 +74,5 @@ extension CollectionKeyringDetailView {
             showDeleteAlert = true
         }
     }
-    
-    // MARK: - 포장
-    func handlePackageConfirm() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            showPackageAlert = false
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-            guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
-                print("UID를 찾을 수 없습니다")
-                return
-            }
-            
-            print("포장하기 시작")
-            
-            viewModel.packageKeyring(uid: uid, keyring: keyring) { success, postOfficeId in
-                if success {
-                    print("포장 완료 - PostOffice ID: \(postOfficeId ?? "nil")")
-                    self.postOfficeId = postOfficeId ?? ""
-                    
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showPackingAlert = true
-                    }
-                } else {
-                    print("포장 실패")
-                }
-            }
-        }
-    }
-    
-    func handlePackingComplete() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isSheetPresented = false
-            isNavigatingDeeper = true
-            
-            router.push(.packageCompleteView(keyring: keyring, postOffice: postOfficeId))
-        }
-    }
 
 }

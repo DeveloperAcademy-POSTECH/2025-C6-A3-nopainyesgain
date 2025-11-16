@@ -17,6 +17,7 @@ struct CollectionKeyringPackageView: View {
     @State var packageAuthorName: String = ""
     @State var packagedDate: Date?
     @State var shareLink: String = ""
+    @State var isLoading: Bool = true
     @State var showUnpackAlert: Bool = false
     @State var showUnpackCompleteAlert: Bool = false
     @State var showLinkCopied: Bool = false
@@ -33,9 +34,23 @@ struct CollectionKeyringPackageView: View {
         GeometryReader { geometry in
             ZStack {
                 packagedView
+                    .blur(radius: shouldApplyBlur ? 10 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                
+                if isLoading {
+                    Color.black20
+                        .ignoresSafeArea()
+                    
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(101)
+                }
                 
                 // 포장 풀기 알럿
                 if showUnpackAlert || showUnpackCompleteAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
                     if showUnpackAlert {
                         UnpackPopup(
                             onCancel: {
@@ -53,23 +68,31 @@ struct CollectionKeyringPackageView: View {
                     
                     // 포장 풀기 완료 알럿
                     if showUnpackCompleteAlert {
-                        Color.black20
-                            .ignoresSafeArea()
-                            .zIndex(99)
-                        
-                        UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
-                            .zIndex(100)
-                            .transition(.scale.combined(with: .opacity))
-                            .zIndex(100)
+                        KeychyAlert(
+                            type: .unpack,
+                            message: "선물 포장을 풀었어요",
+                            isPresented: $showUnpackCompleteAlert
+                        )
+                        .zIndex(101)
                     }
                 }
                 
                 if showImageSaved {
-                    imageSaveAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $showImageSaved)
+                        .zIndex(101)
                 }
                 
                 if showLinkCopied {
-                    linkCopiedAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .linkCopy, message: "링크가 복사되었어요!", isPresented: $showLinkCopied)
+                        .zIndex(101)
                 }
             }
         }
@@ -111,6 +134,14 @@ struct CollectionKeyringPackageView: View {
         }
     }
     
+    private var shouldApplyBlur: Bool {
+        isLoading ||
+        showUnpackCompleteAlert ||
+        showImageSaved ||
+        showLinkCopied ||
+        false
+    }
+    
     private var imageSaveAlert: some View {
         SavedPopup(isPresented: $showImageSaved, message: "이미지가 저장되었습니다.")
             .zIndex(101)
@@ -148,6 +179,7 @@ extension CollectionKeyringPackageView {
                     postOfficeId: loadedPostOfficeId,
                     shareLink: shareLink,
                     authorName: packageAuthorName,
+                    isLoading: $isLoading,
                     onImageSaved: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showImageSaved = true

@@ -31,7 +31,9 @@ extension Font {
     static let suit17M = Font.custom(.suitMedium, size: 17)
     
     /// 16
+    static let suit16EB = Font.custom(.suitExtraBold, size: 16)
     static let suit16B = Font.custom(.suitBold, size: 16)
+    static let suit16SB = Font.custom(.suitSemiBold, size: 16)
     static let suit16M = Font.custom(.suitMedium, size: 16)
     static let suit16M25 = Font.custom(.suitMedium, size: 16)
     

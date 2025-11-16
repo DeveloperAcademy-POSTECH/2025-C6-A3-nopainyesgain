@@ -16,7 +16,7 @@ struct PackageCompleteView: View {
     @State var currentPage: Int = 0
     @State var authorName: String = ""
     @State private var scene: KeyringCellScene?
-    @State private var isLoading: Bool = true
+    @State private var isLoading: Bool = false
     @State private var qrCodeImage: UIImage?
     @State private var shareLink: String = ""
     @State private var showLinkCopied: Bool = false
@@ -42,45 +42,35 @@ struct PackageCompleteView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Image("GreenBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    
-                    // 상단 상태 바
-                    Text("키링 포장이 완료되었어요!")
-                        .typography(.suit20B)
-                        .foregroundColor(.black100)
-                        .padding(.top, 16)
-                        .padding(.bottom, 9)
-                    
-                    Text("링크나 QR로 바로 공유할 수 있어요.")
-                        .typography(.suit16M)
-                        .foregroundColor(.black100)
-                        .padding(.bottom, 42)
-                    
-                    pageScrollView
-                    
-                    pageIndicator
-                    
-                    Spacer()
-                        .frame(height: 24)
-                    
-                    imageSaveSection
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
+            ZStack(alignment: .center) {
+                packagedView
+                    .blur(radius: shouldApplyBlur ? 10 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
                 if showImageSaved {
-                    imageSaveAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $showImageSaved)
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
+                        .zIndex(101)
                 }
                 
                 if showLinkCopied {
-                    linkCopiedAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .linkCopy, message: "링크가 복사되었어요!", isPresented: $showLinkCopied)
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
+                        .zIndex(101)
                 }
             }
         }
@@ -106,6 +96,14 @@ struct PackageCompleteView: View {
                 tabBarController.tabBar.isHidden = true
             }
         }
+    }
+    
+    // 블러 처리
+    private var shouldApplyBlur: Bool {
+        isLoading ||
+        showLinkCopied ||
+        showImageSaved ||
+        false
     }
     
     // MARK: - 씬을 PNG로 미리 캡처
@@ -253,6 +251,41 @@ struct PackageCompleteView: View {
     }
     
     
+    private var packagedView: some View {
+        ZStack {
+            Image("GreenBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                
+                // 상단 상태 바
+                Text("키링 포장이 완료되었어요!")
+                    .typography(.suit20B)
+                    .foregroundColor(.black100)
+                    .padding(.top, 16)
+                    .padding(.bottom, 9)
+                
+                Text("링크나 QR로 바로 공유할 수 있어요.")
+                    .typography(.suit16M)
+                    .foregroundColor(.black100)
+                    .padding(.bottom, 42)
+                
+                pageScrollView
+                
+                pageIndicator
+                
+                Spacer()
+                    .frame(height: 24)
+                
+                imageSaveSection
+                
+                Spacer()
+            }
+        }
+    }
+    
     // MARK: - 첫 번째 페이지 (포장 전체 뷰)
     private var packagePreviewPage: some View {
         VStack(spacing: 0) {
@@ -276,7 +309,6 @@ struct PackageCompleteView: View {
             Image("PackageBG")
                 .resizable()
                 .frame(width: 220, height: 270)
-                .offset(y: -15)
             
             // 항상 PNG 이미지 사용
             if let sceneImage = capturedSceneImage {
@@ -284,7 +316,7 @@ struct PackageCompleteView: View {
                     .resizable()
                     .frame(width: 195, height: 300)
                     .rotationEffect(.degrees(10))
-                    .offset(y: -7)
+                    .offset(y: -2)
             } else {
                 // PNG 로딩 중
                 ProgressView()
@@ -295,9 +327,18 @@ struct PackageCompleteView: View {
     
     var packageForeground: some View {
         ZStack(alignment: .top) {
-            Image("PackageFG")
-                .resizable()
-                .frame(width: 240, height: 390)
+            VStack(spacing: 0) {
+                Image("PackageFG_T")
+                    .resizable()
+                    .frame(width: 240, height: 91)
+                
+                Image("PackageFG_B")
+                    .resizable()
+                    .frame(width: 240, height: 301)
+                    .blendMode(.darken)
+                    .offset(y: -2)
+            }
+            .frame(width: 240, height: 390)
             
             keyringInfoLabel
         }
@@ -318,7 +359,7 @@ struct PackageCompleteView: View {
             Spacer()
         }
         .padding(.leading, 18)
-        .offset(y: 46)
+        .offset(y: 40)
     }
     
     private var copyLinkButton: some View {

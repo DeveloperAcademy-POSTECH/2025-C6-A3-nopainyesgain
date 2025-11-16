@@ -14,9 +14,9 @@ struct PackagedKeyringView: View {
     let postOfficeId: String
     let shareLink: String
     let authorName: String
+    @Binding var isLoading: Bool
     @State var currentPage: Int = 0
     @State private var qrCodeImage: UIImage?
-    @State private var isLoading: Bool = true
     @State var capturedSceneImage: UIImage?
     
     var onImageSaved: (() -> Void)?
@@ -74,6 +74,18 @@ struct PackagedKeyringView: View {
             }
             
             self.capturedSceneImage = image
+            
+            checkLoadingComplete()
+        }
+    }
+    
+    // 로딩 완료 체크
+    private func checkLoadingComplete() {
+        // shareLink와 capturedSceneImage가 모두 준비되면 로딩 해제
+        if capturedSceneImage != nil {
+            withAnimation(.easeOut(duration: 0.3)) {
+                isLoading = false
+            }
         }
     }
     
@@ -169,14 +181,13 @@ extension PackagedKeyringView {
             Image("PackageBG")
                 .resizable()
                 .frame(width: 220, height: 270)
-                .offset(y: -15)
             
             if let sceneImage = capturedSceneImage {
                 Image(uiImage: sceneImage)
                     .resizable()
                     .frame(width: 195, height: 300)
                     .rotationEffect(.degrees(10))
-                    .offset(y: -7)
+                    .offset(y: -2)
             } else {
                 // PNG 로딩 중
                 ProgressView()
@@ -187,9 +198,18 @@ extension PackagedKeyringView {
     
     private var packageForeground: some View {
         ZStack(alignment: .top) {
-            Image("PackageFG")
-                .resizable()
-                .frame(width: 240, height: 390)
+            VStack(spacing: 0) {
+                Image("PackageFG_T")
+                    .resizable()
+                    .frame(width: 240, height: 91)
+                
+                Image("PackageFG_B")
+                    .resizable()
+                    .frame(width: 240, height: 301)
+                    .blendMode(.darken)
+                    .offset(y: -2)
+            }
+            .frame(width: 240, height: 390)
             
             keyringInfoLabel
         }
@@ -210,7 +230,7 @@ extension PackagedKeyringView {
             Spacer()
         }
         .padding(.leading, 18)
-        .offset(y: 46)
+        .offset(y: 40)
     }
     
     private var copyLinkButton: some View {
