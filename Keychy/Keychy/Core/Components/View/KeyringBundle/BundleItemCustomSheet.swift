@@ -13,15 +13,24 @@ struct BundleItemCustomSheet<Content: View>: View {
     let screenHeight: CGFloat
     
     // 화면 높이 기준 비율
-    private let smallRatio: CGFloat = 0.05
+    private let smallRatio: CGFloat = 0.2
     private let mediumRatio: CGFloat = 0.43
     private let largeRatio: CGFloat = 0.8
     
+    // 계산된 높이 값들
+    private var smallHeight: CGFloat {
+        screenHeight * smallRatio
+    }
+    
+    private var mediumHeight: CGFloat {
+        screenHeight * mediumRatio
+    }
+    
+    private var largeHeight: CGFloat {
+        screenHeight * largeRatio
+    }
+    
     var body: some View {
-        let smallHeight = screenHeight * smallRatio
-        let mediumHeight = screenHeight * mediumRatio
-        let largeHeight = screenHeight * largeRatio
-        
         VStack(spacing: 0) {
             // 인디케이터
             VStack(spacing: 0) {
@@ -58,11 +67,7 @@ struct BundleItemCustomSheet<Content: View>: View {
     }
     
     private var dragGesture: some Gesture {
-        let smallHeight = screenHeight * smallRatio
-        let mediumHeight = screenHeight * mediumRatio
-        let largeHeight = screenHeight * largeRatio
-        
-        return DragGesture()
+        DragGesture()
             .onChanged { value in
                 let newHeight = sheetHeight - value.translation.height
                 if newHeight >= smallHeight && newHeight <= largeHeight {
