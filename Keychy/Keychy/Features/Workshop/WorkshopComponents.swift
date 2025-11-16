@@ -150,7 +150,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                         .resizable()
                         .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
                         .padding(.horizontal, item is Carabiner ? 5 : 0)
-                        .frame(width: 175, height: itemHeight)
+                        .frame(width: twoGridCellWidth, height: itemHeight)
                         .clipped()
                 } else if state.isLoading {
                     Color.gray50
@@ -174,7 +174,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 userManager: userManager
             )
         }
-        .frame(width: 175, height: itemHeight)
+        .frame(width: twoGridCellWidth, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
     }
@@ -182,9 +182,9 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     /// 아이템 타입에 따른 높이 계산
     private var itemHeight: CGFloat {
         if item is KeyringTemplate || item is Background {
-            return 233
+            return twoGridCellHeight
         } else {
-            return 175
+            return twoSquareGridCellSize
         }
     }
 

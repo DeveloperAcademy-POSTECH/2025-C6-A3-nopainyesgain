@@ -11,7 +11,7 @@ import NukeUI
 struct SelectCarabinerGridItem: View {
     var isSelected: Bool
     var carabiner: CarabinerViewData
-    var widthSize: CGFloat
+
     var body: some View {
         VStack(spacing: 10) {
             ZStack(alignment: .topLeading) {
@@ -22,7 +22,7 @@ struct SelectCarabinerGridItem: View {
                             .resizable()
                             .scaledToFit()
                             .clipped()
-                            .frame(width: (widthSize - 60) / 3, height: (widthSize - 60) / 3)
+                            .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                     } else if state.isLoading {
                         ProgressView()
                             .aspectRatio(1, contentMode: .fit)

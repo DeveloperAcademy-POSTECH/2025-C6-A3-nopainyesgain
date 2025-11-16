@@ -13,33 +13,51 @@ struct BundleNameEditView: View {
     
     @State private var bundleName: String = ""
     @FocusState private var isTextFieldFocused: Bool
-    @State private var textColor: UIColor = .gray300
+    @State private var textColor: Color = .gray300
+    @State private var keyboardHeight: CGFloat = 0
     
     @State private var isUpdating: Bool = false
     var body: some View {
-        GeometryReader { geo in
-            VStack(spacing: 20) {
-                if let bundle = viewModel.selectedBundle {
-                    KeyringBundleItem(bundle: bundle, isInventoryView: false, geo: geo)
-                }
-                bundleNameTextField
-                    .padding(.horizontal, 20)
-            }
+        VStack(spacing: 20) {
+            viewModel.keyringSceneView()
+            
+            bundleNameTextField
+                .padding(.horizontal, 20)
+            
+            Spacer()
         }
+        .padding(.top, 100)
+        .frame(maxHeight: .infinity)
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
+                viewModel.loadBundleImageFromCache(bundle: bundle)
             }
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             backButton
             checkButton
         }
-        .navigationBarBackButtonHidden(true)
+        .transaction { transaction in
+            transaction.animation = nil
+            transaction.disablesAnimations = true
+        }
+        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                keyboardHeight = keyboardFrame.height
+                UIView.setAnimationsEnabled(false)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardHeight = 0
+            UIView.setAnimationsEnabled(false)
+        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }
 
@@ -50,8 +68,8 @@ extension BundleNameEditView {
                 "뭉치 이름을 입력해주세요.",
                 text: $bundleName
             )
-            .typography(.notosans16R)
-            .foregroundStyle(bundleName.isEmpty ? .gray300 : .black100)
+            .typography(bundleName.isEmpty ? .notosans16R : .suit16M)
+            .foregroundStyle(textColor)
             .focused($isTextFieldFocused)
             .onChange(of: bundleName) { _, newValue in
                 let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"

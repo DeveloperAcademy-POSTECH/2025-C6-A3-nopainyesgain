@@ -244,7 +244,7 @@ extension CollectionView {
         }) {
             VStack {
                 CollectionCellView(keyring: keyring)
-                    .frame(width: 175, height: 233)
+                    .frame(width: twoGridCellWidth, height: twoGridCellHeight)
                     .cornerRadius(10)
                 
                 HStack(spacing: 3) {
@@ -270,6 +270,5 @@ extension CollectionView {
             }
         }
         .buttonStyle(PlainButtonStyle())
-        .frame(width: 175, height: 261)
     }
 }

@@ -29,8 +29,8 @@ extension WorkshopView {
     /// 로딩 뷰 (스켈레톤 애니메이션)
     var loadingView: some View {
         HStack(spacing: 11){
-            SkeletonBox(width: 175, height: 233)
-            SkeletonBox(width: 175, height: 233)
+            SkeletonBox(width: twoGridCellWidth, height: twoGridCellHeight)
+            SkeletonBox(width: twoGridCellWidth, height: twoGridCellHeight)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 92)

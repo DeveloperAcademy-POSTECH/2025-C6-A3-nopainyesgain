@@ -622,36 +622,55 @@ extension CollectionViewModel {
     // 캡쳐한 씬을 보여주는 메서드
     // BundleNameInputView, BundleNameEditView에서 사용하는 미리보기 씬
     @ViewBuilder
-    func keyringSceneView(geo: GeometryProxy) -> some View {
-        let widthSize = max(geo.size.width - 176, 0)
-        let heightSize = max(widthSize * 7/5, 0)
+    func keyringSceneView() -> some View {
+        let widthSize = screenWidth - 176
+        let heightSize = widthSize * 7/5
         
-        if widthSize > 0 {
-            ZStack {
-                if let imageData = bundleCapturedImage,
-                   let uiImage = UIImage(data: imageData) {
-                    // 캡처된 이미지 표시
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .offset(y: 30)
-                        .frame(width: widthSize, height: heightSize)
-                } else {
-                    // 이미지가 없으면 기본 메시지 표시
-                    VStack {
-                        Image(systemName: "photo")
-                            .font(.system(size: 50))
-                            .foregroundColor(.gray)
-                        Text("이미지를 불러오는 중...")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    .frame(width: widthSize, height: heightSize)
+        Group {
+            if let imageData = bundleCapturedImage,
+               let uiImage = UIImage(data: imageData) {
+                // 캡처된 이미지 표시
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .offset(y: 30)
+                    .clipped()
+            } else {
+                // 이미지가 없으면 기본 메시지 표시
+                VStack {
+                    Image(systemName: "photo")
+                        .font(.system(size: 50))
+                        .foregroundColor(.gray)
+                    Text("이미지를 불러오는 중...")
+                        .font(.caption)
+                        .foregroundColor(.gray)
                 }
             }
-            .clipped()
+        }
+        .frame(width: widthSize, height: heightSize)
+        .clipped()
+    }
+    
+    // MARK: - 번들 이미지 캐시 관리
+    
+    /// 캐시에서 번들 이미지를 로드하여 bundleCapturedImage에 설정
+    /// - Parameter bundle: 로드할 번들
+    /// - Returns: 로드 성공 여부
+    @discardableResult
+    func loadBundleImageFromCache(bundle: KeyringBundle) -> Bool {
+        guard let documentId = bundle.documentId else {
+            print("[CollectionViewModel] 번들 documentId가 없습니다.")
+            return false
+        }
+        
+        // BundleImageCache에서 이미지 로드
+        if let imageData = BundleImageCache.shared.load(for: documentId) {
+            self.bundleCapturedImage = imageData
+            print("[CollectionViewModel] 캐시에서 번들 이미지 로드 성공: \(documentId)")
+            return true
         } else {
-            ProgressView()
+            print("[CollectionViewModel] 캐시에 번들 이미지가 없습니다: \(documentId)")
+            return false
         }
     }
 }

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SelectCarabinerSheet: View {
-    let geo: GeometryProxy
     let viewModel: CollectionViewModel
     let selectedCarabiner: CarabinerViewData?
     let onCarabinerTap: (CarabinerViewData) -> Void
@@ -17,7 +16,6 @@ struct SelectCarabinerSheet: View {
         SelectionGridSheet(
             items: viewModel.carabinerViewData,
             selectedItem: selectedCarabiner,
-            widthSize: geo.size.width,
             onItemTap: { carabiner in
                 onCarabinerTap(carabiner)
                 
@@ -28,11 +26,10 @@ struct SelectCarabinerSheet: View {
                     }
                 }
             },
-            gridItemView: { carabiner, isSelected, widthSize in
+            gridItemView: { carabiner, isSelected in
                 SelectCarabinerGridItem(
                     isSelected: isSelected,
-                    carabiner: carabiner,
-                    widthSize: widthSize
+                    carabiner: carabiner
                 )
             }
         )
