@@ -37,6 +37,7 @@ struct CoinChargeView<Route: Hashable>: View {
                     // 기타 아이템 섹션
                     otherItemsSection
                 }
+                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
@@ -55,18 +56,11 @@ struct CoinChargeView<Route: Hashable>: View {
 
             // 구매 성공 Alert - KeychyAlert 사용
             if showPurchaseSuccessAlert {
-                ZStack {
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(Color.black20)
-                        .ignoresSafeArea()
-
-                    KeychyAlert(
-                        type: .checkmark,
-                        message: "구매가 완료되었어요!",
-                        isPresented: $showPurchaseSuccessAlert
-                    )
-                }
+                KeychyAlert(
+                    type: .checkmark,
+                    message: "구매가 완료되었어요!",
+                    isPresented: $showPurchaseSuccessAlert
+                )
             }
 
             // 구매 실패 Alert
