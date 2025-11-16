@@ -42,6 +42,9 @@ class MultiKeyringScene: SKScene {
     // MARK: - 파티클 효과 콜백
     var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
 
+    // MARK: - 씬 준비 완료 콜백
+    var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
+
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
     var currentRingType: RingType = .basic
@@ -702,6 +705,11 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.isDynamic = true
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
+        }
+
+        // 씬 렌더링 완료를 위해 약간의 지연 후 콜백 호출
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+            self?.onAllKeyringsReady?()
         }
     }
 

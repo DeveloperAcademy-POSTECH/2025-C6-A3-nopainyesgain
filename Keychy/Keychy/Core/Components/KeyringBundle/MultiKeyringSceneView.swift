@@ -31,6 +31,7 @@ struct MultiKeyringSceneView: View {
     let carabinerWidth: CGFloat
     let currentCarabinerType: CarabinerType
     let onBackgroundLoaded: (() -> Void)?
+    let onAllKeyringsReady: (() -> Void)?
 
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
@@ -51,7 +52,8 @@ struct MultiKeyringSceneView: View {
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
         currentCarabinerType: CarabinerType,
-        onBackgroundLoaded: (() -> Void)? = nil
+        onBackgroundLoaded: (() -> Void)? = nil,
+        onAllKeyringsReady: (() -> Void)? = nil
     ) {
         self.keyringDataList = keyringDataList
         self.ringType = ringType
@@ -65,6 +67,7 @@ struct MultiKeyringSceneView: View {
         self.carabinerWidth = carabinerWidth
         self.currentCarabinerType = currentCarabinerType
         self.onBackgroundLoaded = onBackgroundLoaded
+        self.onAllKeyringsReady = onAllKeyringsReady
     }
 
     var body: some View {
@@ -176,6 +179,7 @@ extension MultiKeyringSceneView {
         newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
+        newScene.onAllKeyringsReady = onAllKeyringsReady
 
         scene = newScene
     }
