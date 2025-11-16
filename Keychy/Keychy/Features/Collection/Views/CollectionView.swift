@@ -60,6 +60,8 @@ struct CollectionView: View {
                 }
             }
             .ignoresSafeArea()
+            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+            .animation(.easeInOut(duration: 0.3), value: showPurchaseSuccessAlert)
             
             // 검색바
             if showSearchBar {

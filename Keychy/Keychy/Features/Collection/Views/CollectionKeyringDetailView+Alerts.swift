@@ -15,9 +15,9 @@ extension CollectionKeyringDetailView {
             deleteAlertOverlay
         }
         
-//        if showCopyAlert || showCopyCompleteAlert || showCopyLackAlert {
-//            copyAlertOverlay
-//        }
+        if showCopyAlert || showCopyingAlert || showCopyCompleteAlert || showCopyLackAlert || showInvenFullAlert {
+            copyAlertOverlay
+        }
         
         if showPackageAlert || showPackingAlert {
             packageAlertOverlay
@@ -88,6 +88,7 @@ extension CollectionKeyringDetailView {
     
     // MARK: - Copy Alerts
     private var copyAlertOverlay: some View {
+        
         ZStack {
             Color.black20
                 .ignoresSafeArea()
@@ -109,9 +110,18 @@ extension CollectionKeyringDetailView {
                 .zIndex(100)
             }
             
+            if showCopyingAlert {
+                LoadingAlert(type: .short, message: nil)
+                    .zIndex(101)
+            }
+            
             if showCopyCompleteAlert {
-                CopyCompletePopup(isPresented: $showCopyCompleteAlert)
-                    .zIndex(100)
+                KeychyAlert(
+                    type: .copy,
+                    message: "키링이 복사되었어요!",
+                    isPresented: $showCopyCompleteAlert
+                )
+                .zIndex(101)
             }
             
             if showCopyLackAlert {
@@ -135,6 +145,11 @@ extension CollectionKeyringDetailView {
                     }
                 )
                 .zIndex(100)
+            }
+            
+            if showInvenFullAlert {
+                InvenLackPopup(isPresented: $showInvenFullAlert)
+                    .zIndex(100)
             }
         }
     }
@@ -171,17 +186,25 @@ extension CollectionKeyringDetailView {
                         return
                     }
                     
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showCopyingAlert = true
+                    }
+                    
                     // 3. 복사권 있고, 인벤토리 여유 있음 -> 복사 진행
                     self.viewModel.copyKeyring(uid: uid, keyring: self.keyring) { success, newKeyringId in
                         DispatchQueue.main.async {
+                            self.showCopyingAlert = false
+                            
                             if success {
                                 print("키링 복사 성공")
                                 
                                 // 복사권 개수 새로고침
                                 self.refreshCopyVoucher()
                                 
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    self.showCopyCompleteAlert = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        self.showCopyCompleteAlert = true
+                                    }
                                 }
                             } else {
                                 print("키링 복사 실패")
@@ -199,7 +222,7 @@ extension CollectionKeyringDetailView {
     // MARK: - Package Alerts
     private var packageAlertOverlay: some View {
         ZStack {
-            (showPackingAlert ? Color.black60 : Color.black20)
+            Color.black20
                 .ignoresSafeArea()
                 .zIndex(99)
             
@@ -219,18 +242,67 @@ extension CollectionKeyringDetailView {
             }
             
             if showPackingAlert {
-                PackingPopup(isPresented: $showPackingAlert)
-                    .zIndex(100)
-                    .onDisappear {
-                        handlePackingComplete()
-                    }
+                LoadingAlert(
+                    type: .longWithPresent,
+                    message: "선물 포장 중.."
+                )
+                .zIndex(101)
             }
+        }
+    }
+    
+    func handlePackageConfirm() {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            showPackageAlert = false
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                print("UID를 찾을 수 없습니다")
+                return
+            }
+            
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                self.showPackingAlert = true
+            }
+            
+            print("포장하기 시작")
+            
+            self.viewModel.packageKeyring(uid: uid, keyring: keyring) { success, postOfficeId in
+                DispatchQueue.main.async {
+                    if success {
+                        print("포장 완료 - PostOffice ID: \(postOfficeId ?? "nil")")
+                        self.postOfficeId = postOfficeId ?? ""
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.handlePackingComplete()
+                        }
+                    } else {
+                        print("포장 실패")
+                        
+                        self.showPackingAlert = false
+                    }
+                }
+            }
+        }
+    }
+    
+    func handlePackingComplete() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            isSheetPresented = false
+            isNavigatingDeeper = true
+            
+            router.push(.packageCompleteView(keyring: keyring, postOffice: postOfficeId))
         }
     }
     
     // MARK: - Image Save Alert
     private var imageSaveAlert: some View {
-        SavedPopup(isPresented: $showImageSaved, message: "이미지가 저장되었습니다.")
+        KeychyAlert(
+            type: .imageSave,
+            message: "이미지가 저장되었어요!",
+            isPresented: $showImageSaved
+        )
             .zIndex(101)
     }
 }

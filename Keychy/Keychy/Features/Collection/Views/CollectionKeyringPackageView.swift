@@ -33,9 +33,15 @@ struct CollectionKeyringPackageView: View {
         GeometryReader { geometry in
             ZStack {
                 packagedView
+                    .blur(radius: shouldApplyBlur ? 10 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
                 // 포장 풀기 알럿
                 if showUnpackAlert || showUnpackCompleteAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
                     if showUnpackAlert {
                         UnpackPopup(
                             onCancel: {
@@ -53,23 +59,34 @@ struct CollectionKeyringPackageView: View {
                     
                     // 포장 풀기 완료 알럿
                     if showUnpackCompleteAlert {
-                        Color.black20
-                            .ignoresSafeArea()
-                            .zIndex(99)
-                        
-                        UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
-                            .zIndex(100)
-                            .transition(.scale.combined(with: .opacity))
-                            .zIndex(100)
+                        KeychyAlert(
+                            type: .unpack,
+                            message: "선물 포장을 풀었어요",
+                            isPresented: $showUnpackCompleteAlert
+                        )
+                        .zIndex(101)
+//                        UnpackCompletePopup(isPresented: $showUnpackCompleteAlert)
+//                            .zIndex(100)
+//                            .transition(.scale.combined(with: .opacity)
                     }
                 }
                 
                 if showImageSaved {
-                    imageSaveAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $showImageSaved)
+                        .zIndex(101)
                 }
                 
                 if showLinkCopied {
-                    linkCopiedAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .linkCopy, message: "링크가 복사되었어요!", isPresented: $showLinkCopied)
+                        .zIndex(101)
                 }
             }
         }
@@ -109,6 +126,13 @@ struct CollectionKeyringPackageView: View {
                 tabBarController.tabBar.isHidden = false
             }
         }
+    }
+    
+    private var shouldApplyBlur: Bool {
+        showUnpackCompleteAlert ||
+        showImageSaved ||
+        showLinkCopied ||
+        false
     }
     
     private var imageSaveAlert: some View {

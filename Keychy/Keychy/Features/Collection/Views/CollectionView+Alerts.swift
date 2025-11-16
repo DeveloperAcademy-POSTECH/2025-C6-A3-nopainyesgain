@@ -153,9 +153,6 @@ extension CollectionView {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        invenExpandAlertScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         showInvenExpandAlert = false
                     }
                 }
@@ -197,8 +194,12 @@ extension CollectionView {
 //            }
             
             if showPurchaseSuccessAlert {
-                PurchaseSuccessPopup(isPresented: $showPurchaseSuccessAlert)
-                    .zIndex(100)
+                KeychyAlert(
+                    type: .checkmark,
+                    message: "구매가 완료되었어요!",
+                    isPresented: $showPurchaseSuccessAlert
+                )
+                .zIndex(101)
             }
             
             if showPurchaseFailAlert {

@@ -275,8 +275,8 @@ extension KeyringEditView {
                             options: .regularExpression
                         )
                         
-                        if sanitized.count > 9 {
-                            sanitized = String(sanitized.prefix(9))
+                        if sanitized.count > 10 {
+                            sanitized = String(sanitized.prefix(10))
                         }
                         
                         if sanitized != editedName {

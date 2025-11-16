@@ -31,52 +31,65 @@ struct KeyringReceiveView: View {
     
     var body: some View {
         ZStack {
-            Image("GreenBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack(spacing: 10) {
-                if isLoading {
-                    // 로딩 상태
-                    ProgressView("로딩 중...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let keyring = keyring {
-                    // 키링 로드 성공
-                    headerSection
-                    
-                    messageSection(keyring: keyring)
-                    
-                    keyringImage(keyring: keyring)
-                    
-                    Spacer()
-                        .frame(height: 80)
-                    
-                    receiveButton
-                } else {
-                    // 에러 상태
-                    VStack(spacing: 20) {
-                        Text("키링을 불러올 수 없습니다")
-                            .typography(.suit16M)
-                            .foregroundColor(.gray500)
+            Group {
+                Image("GreenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 10) {
+                    if isLoading {
+                        // 로딩 상태
+                        ProgressView("로딩 중...")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if let keyring = keyring {
+                        // 키링 로드 성공
+                        headerSection
                         
-                        Button("닫기") {
-                            dismiss()
+                        messageSection(keyring: keyring)
+                        
+                        keyringImage(keyring: keyring)
+                        
+                        Spacer()
+                            .frame(height: 80)
+                        
+                        receiveButton
+                    } else {
+                        // 에러 상태
+                        VStack(spacing: 20) {
+                            Text("키링을 불러올 수 없습니다")
+                                .typography(.suit16M)
+                                .foregroundColor(.gray500)
+                            
+                            Button("닫기") {
+                                dismiss()
+                            }
+                            .padding()
                         }
-                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .blur(radius: shouldApplyBlur ? 10 : 0)
+            .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
             
-            if showAcceptCompleteAlert || showInvenFullAlert {
+            if isAccepting || showAcceptCompleteAlert || showInvenFullAlert {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(99)
                 
+                if isAccepting {
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(101)
+                }
+                
                 if showAcceptCompleteAlert {
-                    SavedPopup(isPresented: $showAcceptCompleteAlert, message: "키링이 내 보관함에 추가되었어요.")
-                        .zIndex(100)
+                    KeychyAlert(
+                        type: .addToCollection,
+                        message: "키링이 내 보관함에 추가되었어요!",
+                        isPresented: $showAcceptCompleteAlert
+                    )
+                    .zIndex(101)
                 }
                 
                 if showInvenFullAlert {
@@ -88,6 +101,14 @@ struct KeyringReceiveView: View {
         .onAppear {
             loadKeyringData()
         }
+    }
+    
+    //  블러 적용 여부
+    private var shouldApplyBlur: Bool {
+        isAccepting ||
+        showAcceptCompleteAlert ||
+        showInvenFullAlert ||
+        false
     }
     
     // MARK: - 데이터 로드
@@ -259,16 +280,17 @@ extension KeyringReceiveView {
             return
         }
         
-        isAccepting = true
-        
         viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
             if !hasSpace {
                 // 보관함 가득 참
-                self.isAccepting = false
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     self.showInvenFullAlert = true
                 }
                 return
+            }
+            
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                self.isAccepting = true
             }
             
             // 보관함 여유 있음 - 수락 진행
@@ -278,16 +300,20 @@ extension KeyringReceiveView {
                 senderId: senderId,
                 receiverId: receiverId
             ) { success in
-                self.isAccepting = false
+                DispatchQueue.main.async {
+                    self.isAccepting = false
                 
-                if success {
-                    self.isAccepted = true
-                    
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        self.showAcceptCompleteAlert = true
+                    if success {
+                        self.isAccepted = true
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                self.showAcceptCompleteAlert = true
+                            }
+                        }
+                    } else {
+                        print("키링 수락 실패")
                     }
-                } else {
-                    print("키링 수락 실패")
                 }
             }
         }

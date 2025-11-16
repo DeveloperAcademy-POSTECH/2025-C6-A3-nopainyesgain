@@ -16,7 +16,7 @@ struct PackageCompleteView: View {
     @State var currentPage: Int = 0
     @State var authorName: String = ""
     @State private var scene: KeyringCellScene?
-    @State private var isLoading: Bool = true
+    @State private var isLoading: Bool = false
     @State private var qrCodeImage: UIImage?
     @State private var shareLink: String = ""
     @State private var showLinkCopied: Bool = false
@@ -74,13 +74,24 @@ struct PackageCompleteView: View {
                     Spacer()
                 }
                 .padding(.horizontal, 20)
+                .blur(radius: shouldApplyBlur ? 10 : 0)
+                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
                 if showImageSaved {
-                    imageSaveAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $showImageSaved)
+                        .zIndex(101)
                 }
                 
                 if showLinkCopied {
-                    linkCopiedAlert
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    KeychyAlert(type: .linkCopy, message: "링크가 복사되었어요!", isPresented: $showLinkCopied)
+                        .zIndex(101)
                 }
             }
         }
@@ -106,6 +117,14 @@ struct PackageCompleteView: View {
                 tabBarController.tabBar.isHidden = true
             }
         }
+    }
+    
+    // 블러 처리
+    private var shouldApplyBlur: Bool {
+        isLoading ||
+        showLinkCopied ||
+        showImageSaved ||
+        false
     }
     
     // MARK: - 씬을 PNG로 미리 캡처
