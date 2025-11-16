@@ -127,6 +127,8 @@
 		4C7775402EB1343600981C3E /* IntroViewModel+Signup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */; };
 		4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
+		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
+		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
 		4CAF11AB2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */; };
 		4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */; };
 		4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */; };
@@ -428,6 +430,8 @@
 		4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Login.swift"; sourceTree = "<group>"; };
 		4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
 		4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
+		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
+		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AcrylicPhotoVM+BGRemover.swift"; sourceTree = "<group>"; };
 		4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGuiding.swift; sourceTree = "<group>"; };
@@ -844,6 +848,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		4CA9C6A52EC9D11600CA546B /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
 		4CBBEF202EB3705E00252590 /* Items */ = {
 			isa = PBXGroup;
 			children = (
@@ -1032,6 +1044,7 @@
 		4CEC62062EAE08DA0099ECEE /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4CA9C6A52EC9D11600CA546B /* Navigation */,
 				4C65303C2EBA5FF3000F8154 /* Alerts */,
 				AADD2AB52EB3AF520051478E /* KeyringBundle */,
 				4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */,
@@ -1097,6 +1110,7 @@
 		4CEC62182EAE08DA0099ECEE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */,
 				4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */,
 				4CEC62172EAE08DA0099ECEE /* View+Extension.swift */,
 			);
@@ -1766,6 +1780,7 @@
 				4CBBEF262EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift in Sources */,
 				38C3C28C2EC1E4B4003C5DE1 /* CollectionKeyringDetailView+Alerts.swift in Sources */,
 				4CAF11AB2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift in Sources */,
+				4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */,
 				4C7775342EB0EF8800981C3E /* ItemDetailInfoSection.swift in Sources */,
 				4CC3D3992EC4C16B0009D376 /* ToolbarButtons.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
@@ -1784,6 +1799,7 @@
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
+				4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */,
 				382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */,
 				38C3C28E2EC1F56B003C5DE1 /* CollectionKeyringDetailView+Sheet.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,

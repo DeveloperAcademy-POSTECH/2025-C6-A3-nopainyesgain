@@ -121,7 +121,7 @@ extension BundleDetailView {
             carabinerFrontURL = nil
         }
         
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        guard let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: bg.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
@@ -130,27 +130,36 @@ extension BundleDetailView {
             carabinerX: cb.carabinerX,
             carabinerY: cb.carabinerY,
             carabinerWidth: cb.carabinerWidth
-        ) {
-            // viewModel에 캡쳐된 이미지 저장
-            await MainActor.run {
-                viewModel.bundleCapturedImage = pngData
-            }
-            
-            // PNG 데이터를 UIImage로 변환
-            guard let image = UIImage(data: pngData) else {
-                await MainActor.run {
-                    isCapturing = false
-                }
-                return
-            }
-            // 포토 라이브러리에 저장
-            await saveImageToLibrary(image)
-            
-        } else {
-            print("[BundleDetailView] 캡쳐 실패")
+        ) else {
             await MainActor.run {
                 isCapturing = false
             }
+            return
         }
+        
+        // viewModel에 캡쳐된 이미지 저장
+        await MainActor.run {
+            viewModel.bundleCapturedImage = pngData
+        }
+        
+        if let documentId = bundle.documentId,
+           !BundleImageCache.shared.exists(for: documentId) {
+            BundleImageCache.shared.syncBundle(
+                id: documentId,
+                name: bundle.name,
+                imageData: pngData
+            )
+            print("[BundleDetailView] 편집된 뭉치 캐시 복구: \(documentId)")
+        }
+        
+        // PNG 데이터를 UIImage로 변환하여 포토 라이브러리에 저장
+        guard let image = UIImage(data: pngData) else {
+            await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
+        
+        await saveImageToLibrary(image)
     }
 }
