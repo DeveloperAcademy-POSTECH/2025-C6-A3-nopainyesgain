@@ -51,7 +51,9 @@ struct AcrylicPhotoEditedView: View {
                 isPresented: $showCheckmark
             )
         }
-        .navigationTitle("누끼를 제거합니다!")
+        .toolbar {
+            naivgationTitle
+        }
         .navigationBarBackButtonHidden(true)
         .onAppear {
             startBackgroundRemoval()
@@ -64,7 +66,14 @@ struct AcrylicPhotoEditedView: View {
 
 // MARK: - View Components
 extension AcrylicPhotoEditedView {
-    // MARK: - Components
+    
+    /// 네비 타이틀
+    private var naivgationTitle: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            NavigationTitle(title: "누끼를 제거합니다!")
+        }
+    }
+    
     /// 누끼 전→후 이미지 트랜지션 (레이어 효과)
     private var imageTransitionView: some View {
         ZStack {

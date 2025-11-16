@@ -48,6 +48,7 @@ struct AcrylicPhotoGuiding: View {
                 photoPickBtn
             }
             .padding(.horizontal, 35)
+            .adaptiveBottomPadding()
         }
         .background(
             GeometryReader { geometry in
@@ -128,13 +129,4 @@ extension AcrylicPhotoGuiding {
             .frame(minHeight: 272.87)
             .padding(.horizontal, 30)
     }
-}
-
-#Preview {
-    AcrylicPhotoGuiding(
-        showPhotoPicker: .constant(false),
-        showCamera: .constant(false),
-        guidingText: "인물 사진을 선택해주세요\n배경이 제거된 키링을 만들 수 있습니다",
-        guidingImageURL: ""
-    )
 }
