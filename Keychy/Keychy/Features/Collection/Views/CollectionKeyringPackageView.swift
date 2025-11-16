@@ -17,6 +17,7 @@ struct CollectionKeyringPackageView: View {
     @State var packageAuthorName: String = ""
     @State var packagedDate: Date?
     @State var shareLink: String = ""
+    @State var isLoading: Bool = true
     @State var showUnpackAlert: Bool = false
     @State var showUnpackCompleteAlert: Bool = false
     @State var showLinkCopied: Bool = false
@@ -35,6 +36,14 @@ struct CollectionKeyringPackageView: View {
                 packagedView
                     .blur(radius: shouldApplyBlur ? 10 : 0)
                     .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                
+                if isLoading {
+                    Color.black20
+                        .ignoresSafeArea()
+                    
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(101)
+                }
                 
                 // 포장 풀기 알럿
                 if showUnpackAlert || showUnpackCompleteAlert {
@@ -129,6 +138,7 @@ struct CollectionKeyringPackageView: View {
     }
     
     private var shouldApplyBlur: Bool {
+        isLoading ||
         showUnpackCompleteAlert ||
         showImageSaved ||
         showLinkCopied ||
@@ -172,6 +182,7 @@ extension CollectionKeyringPackageView {
                     postOfficeId: loadedPostOfficeId,
                     shareLink: shareLink,
                     authorName: packageAuthorName,
+                    isLoading: $isLoading,
                     onImageSaved: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showImageSaved = true

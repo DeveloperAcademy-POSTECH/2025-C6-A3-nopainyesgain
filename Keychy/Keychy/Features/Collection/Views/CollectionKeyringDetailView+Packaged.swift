@@ -14,9 +14,9 @@ struct PackagedKeyringView: View {
     let postOfficeId: String
     let shareLink: String
     let authorName: String
+    @Binding var isLoading: Bool
     @State var currentPage: Int = 0
     @State private var qrCodeImage: UIImage?
-    @State private var isLoading: Bool = true
     @State var capturedSceneImage: UIImage?
     
     var onImageSaved: (() -> Void)?
@@ -74,6 +74,18 @@ struct PackagedKeyringView: View {
             }
             
             self.capturedSceneImage = image
+            
+            checkLoadingComplete()
+        }
+    }
+    
+    // 로딩 완료 체크
+    private func checkLoadingComplete() {
+        // shareLink와 capturedSceneImage가 모두 준비되면 로딩 해제
+        if capturedSceneImage != nil {
+            withAnimation(.easeOut(duration: 0.3)) {
+                isLoading = false
+            }
         }
     }
     
