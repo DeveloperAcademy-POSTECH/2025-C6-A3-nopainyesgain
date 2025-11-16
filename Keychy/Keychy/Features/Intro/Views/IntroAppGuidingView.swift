@@ -66,7 +66,7 @@ extension IntroAppGuidingView {
                     .resizable()
                     .scaledToFit()
             case 2:
-                Image("collectionGuiding")
+                Image("workshopGuiding")
                     .resizable()
                     .scaledToFit()
             default:
@@ -80,7 +80,7 @@ extension IntroAppGuidingView {
     /// 설명 레이블
     private func guidingLabel(for index: Int) -> String {
         switch index {
-        case 0: return "나만의 키링을 모아보고\n키링을 터치해서 가지고 놀아보세요"
+        case 0: return "키링을 조합해\n뭉치 형태로 걸어둘 수 있는 공간이에요"
         case 1: return "키링을 모으고 즐기며 나누는 공간이에요\n "
         case 2: return "키링을 만들고 꾸미는 데 필요한 것들이\n모여 있는 제작 공간이에요"
         default: return ""
