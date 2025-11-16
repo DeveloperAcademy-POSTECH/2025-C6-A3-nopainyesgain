@@ -21,19 +21,19 @@ extension View {
     }
     
     /// 하단 safeArea 값 반환
-    private func getBottomPadding(_ defaultPadding: CGFloat) -> CGFloat {
+    func getBottomPadding(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows
             .first(where: { $0.isKeyWindow }) else {
             return defaultPadding
         }
-        
         // safeAreaInsets.bottom이 0이면 직각형 기기임!
         return window.safeAreaInsets.bottom == 0 ? defaultPadding : 0
     }
+    
     /// 상단 safeArea 값 반환
-    private func getTopPadding(_ defaultPadding: CGFloat) -> CGFloat {
+    func getTopPadding(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows
@@ -41,7 +41,9 @@ extension View {
             return defaultPadding
         }
         
-        return window.safeAreaInsets.top == 0 ? defaultPadding : 0
+        // 25보다 작으면 홈버튼 있는 모델
+        // se3 topPadding: 20, 16 topPadding: 59
+        return window.safeAreaInsets.top < 25 ? 39 : 0
     }
     
 }
