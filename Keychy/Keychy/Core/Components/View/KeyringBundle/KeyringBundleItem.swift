@@ -154,37 +154,38 @@ struct KeyringBundleItem: View {
             return
         }
 
-        // 키링 정보 가져오기
-        let keyringInfoList = await fetchKeyringInfoList(keyringIds: bundle.keyrings)
-
-        // 키링 데이터 생성
+        // 키링 데이터 생성 (원본 index 유지)
         var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
 
-        for (index, keyringInfo) in keyringInfoList.enumerated() {
-            guard index < carabiner.keyringXPosition.count,
-                  index < carabiner.keyringYPosition.count else {
+        for (originalIndex, keyringId) in bundle.keyrings.enumerated() {
+            // "none"이나 빈 문자열은 건너뛰기
+            guard keyringId != "none" && !keyringId.isEmpty else {
+                continue
+            }
+            
+            // index 범위 체크
+            guard originalIndex < carabiner.keyringXPosition.count,
+                  originalIndex < carabiner.keyringYPosition.count else {
+                continue
+            }
+            
+            // Firebase에서 키링 정보 가져오기
+            guard let keyringInfo = await fetchKeyringFromFirestore(keyringId: keyringId) else {
                 continue
             }
 
             let data = MultiKeyringCaptureScene.KeyringData(
-                index: index,
+                index: originalIndex,
                 position: CGPoint(
-                    x: carabiner.keyringXPosition[index],
-                    y: carabiner.keyringYPosition[index]
+                    x: carabiner.keyringXPosition[originalIndex],
+                    y: carabiner.keyringYPosition[originalIndex]
                 ),
                 bodyImageURL: keyringInfo.bodyImage
             )
             keyringDataList.append(data)
         }
 
-        // 배경 이미지 미리 로드 (캡처 전 확인)
-        guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
-            await MainActor.run {
-                isCapturing = false
-            }
-            return
-        }
-        // 카라비너 이미지 추출
+        // 카라비너 타입 및 URL 준비
         let carabinerType = CarabinerType.from(carabiner.carabinerType)
         let carabinerBackURL: String?
         let carabinerFrontURL: String?
@@ -193,37 +194,37 @@ struct KeyringBundleItem: View {
             carabinerBackURL = carabiner.carabinerImage[1]
             carabinerFrontURL = carabiner.carabinerImage[2]
         } else {
-            // plain 타입
             carabinerBackURL = carabiner.carabinerImage[0]
             carabinerFrontURL = nil
         }
 
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        guard let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
-            carabinerType: carabinerType,  // 카라비너 타입 전달
+            carabinerType: carabinerType,
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
-            carabinerWidth: carabiner.carabinerWidth,
-        ) {
-            // BundleImageCache에 저장
-            BundleImageCache.shared.syncBundle(
-                id: bundleId,
-                name: bundleName,
-                imageData: pngData
-            )
-
-            // UI 업데이트
-            if let uiImage = UIImage(data: pngData) {
-                await MainActor.run {
-                    cachedImage = Image(uiImage: uiImage)
-                    isCapturing = false
-                }
-            }
-        } else {
+            carabinerWidth: carabiner.carabinerWidth
+        ) else {
             await MainActor.run {
+                isCapturing = false
+            }
+            return
+        }
+        
+        // BundleImageCache에 저장
+        BundleImageCache.shared.syncBundle(
+            id: bundleId,
+            name: bundleName,
+            imageData: pngData
+        )
+
+        // UI 업데이트
+        if let uiImage = UIImage(data: pngData) {
+            await MainActor.run {
+                cachedImage = Image(uiImage: uiImage)
                 isCapturing = false
             }
         }
@@ -243,23 +244,6 @@ struct KeyringBundleItem: View {
         // WorkshopDataManager에서 카라비너 정보 가져오기
         await WorkshopDataManager.shared.fetchCarabinersIfNeeded()
         return WorkshopDataManager.shared.carabiners.first { $0.id == carabinerId }
-    }
-
-    /// 키링 정보 목록 가져오기
-    private func fetchKeyringInfoList(keyringIds: [String]) async -> [KeyringInfo] {
-        var keyringInfoList: [KeyringInfo] = []
-
-        for keyringId in keyringIds {
-            // "none"은 스킵
-            guard keyringId != "none" else { continue }
-
-            // Firestore에서 키링 정보 가져오기
-            if let keyringInfo = await fetchKeyringFromFirestore(keyringId: keyringId) {
-                keyringInfoList.append(keyringInfo)
-            }
-        }
-
-        return keyringInfoList
     }
 
     /// Firestore에서 키링 정보 가져오기

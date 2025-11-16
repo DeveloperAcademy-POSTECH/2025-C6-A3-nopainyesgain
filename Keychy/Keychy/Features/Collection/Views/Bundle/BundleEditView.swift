@@ -691,6 +691,9 @@ struct BundleEditView: View {
                     viewModel.selectedBundle?.selectedBackground = backgroundId
                     viewModel.selectedBundle?.selectedCarabiner = carabinerId
                 }
+                
+                // 캐시 삭제, BundleInventoryView로 접근했을 때 썸네일 업데이트 하도록 함
+                BundleImageCache.shared.delete(for: documentId)
             }
         } catch {
             print("\(error.localizedDescription)")
