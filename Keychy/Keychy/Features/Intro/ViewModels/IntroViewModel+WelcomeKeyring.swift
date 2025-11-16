@@ -50,7 +50,17 @@ extension IntroViewModel {
             bodyImage: bodyImageURL,
             soundId: "none",  // 사운드 없음
             particleId: "Confetti",
-            memo: "",
+            memo: """
+            ╭ ◜◝ ͡ ◜◝ ͡ ◜◝ ͡ ◜◝ ͡ ◜◝ ╮
+             키치 앱 재밌게 사용해주세요♡
+            ╰ ◟◞ ͜ ◟ ͜ ◟◞ ͜ ◟ ͜ ◟◞◟◞╯
+            ⠀⠀⠀⠀O
+            ⠀⠀⠀⠀⠀°
+                   o　 ()＿()
+            ‎  ⊂⌒ （   ^ ﻌ ^ ）
+              ヽ_っ  ＿/￣￣￣/
+            　 　  ＼/＿＿＿/    - 개발진 올림 -
+            """,
             tags: [],
             createdAt: Date(),
             authorId: uid,
