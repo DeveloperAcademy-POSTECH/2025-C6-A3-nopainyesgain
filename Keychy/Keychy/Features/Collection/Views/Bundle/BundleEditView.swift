@@ -852,8 +852,7 @@ extension BundleEditView {
             ForEach(viewModel.backgroundViewData) { bg in
                 SelectBackgroundGridItem(
                     background: bg,
-                    isSelected: newSelectedBackground == bg,
-                    widthSize: geo.size.width
+                    isSelected: newSelectedBackground == bg
                 )
                 .onTapGesture {
                     newSelectedBackground = bg
@@ -874,7 +873,7 @@ extension BundleEditView {
     private func selectCarabinerSheet(geo: GeometryProxy) -> some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(viewModel.carabinerViewData) { cb in
-                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb, widthSize: geo.size.width)
+                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb)
                     .onTapGesture {
                         selectCarabiner = cb
                         showChangeCarabinerAlert = true
