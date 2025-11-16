@@ -54,6 +54,7 @@ struct LoadingAlert: View {
             if type != .short, let message = message {
                 Text(message)
                     .typography(.suit17SB)
+                    .textOutline(color: .white100, width: 3)
                     .foregroundStyle(.black100)
             }
         }
