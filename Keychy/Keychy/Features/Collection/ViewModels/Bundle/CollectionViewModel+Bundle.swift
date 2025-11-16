@@ -625,7 +625,8 @@ extension CollectionViewModel {
     func keyringSceneView() -> some View {
         let widthSize = screenWidth - 176
         let heightSize = widthSize * 7/5
-        ZStack {
+        
+        Group {
             if let imageData = bundleCapturedImage,
                let uiImage = UIImage(data: imageData) {
                 // 캡처된 이미지 표시
@@ -633,7 +634,7 @@ extension CollectionViewModel {
                     .resizable()
                     .scaledToFill()
                     .offset(y: 30)
-                    .frame(width: widthSize, height: heightSize)
+                    .clipped()
             } else {
                 // 이미지가 없으면 기본 메시지 표시
                 VStack {
@@ -644,9 +645,9 @@ extension CollectionViewModel {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-                .frame(width: widthSize, height: heightSize)
             }
         }
+        .frame(width: widthSize, height: heightSize)
         .clipped()
     }
     
