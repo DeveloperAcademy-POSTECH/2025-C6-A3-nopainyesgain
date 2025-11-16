@@ -54,21 +54,33 @@ struct CoinChargeView<Route: Hashable>: View {
             .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
 
             // 구매 성공 Alert - KeychyAlert 사용
-            KeychyAlert(
-                type: .checkmark,
-                message: "구매가 완료되었어요!",
-                isPresented: $showPurchaseSuccessAlert
-            )
+            if showPurchaseSuccessAlert {
+                ZStack {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(Color.black20)
+                        .ignoresSafeArea()
 
-            // 구매 실패 Alert - PurchaseFailAlert 사용
+                    KeychyAlert(
+                        type: .checkmark,
+                        message: "구매가 완료되었어요!",
+                        isPresented: $showPurchaseSuccessAlert
+                    )
+                }
+            }
+
+            // 구매 실패 Alert
             if showPurchaseFailAlert {
                 ZStack {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                         .onTapGesture {}
 
-                    PurchaseFailAlert(
+                    BangmarkAlert(
                         checkmarkScale: purchaseFailScale,
+                        text: "코인이 부족해요",
+                        cancelText: "취소",
+                        confirmText: "확인",
                         onCancel: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 purchaseFailScale = 0.3
@@ -77,7 +89,7 @@ struct CoinChargeView<Route: Hashable>: View {
                                 showPurchaseFailAlert = false
                             }
                         },
-                        onCharge: {
+                        onConfirm: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 purchaseFailScale = 0.3
                             }
@@ -87,6 +99,7 @@ struct CoinChargeView<Route: Hashable>: View {
                         }
                     )
                     .padding(.horizontal, 40)
+                    .padding(.bottom, 30)
                 }
                 .onAppear {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
