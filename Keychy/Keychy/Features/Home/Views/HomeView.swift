@@ -29,9 +29,6 @@ struct HomeView: View {
     /// 씬 준비 완료 여부
     @State private var isSceneReady = false
 
-    /// 로딩 알림 투명도
-    @State private var loadingAlertOpacity: CGFloat = 1.0
-
     // MARK: - Body
 
     var body: some View {
@@ -54,13 +51,7 @@ struct HomeView: View {
                     currentCarabinerType: carabiner.type,
                     onBackgroundLoaded: onBackgroundLoaded,
                     onAllKeyringsReady: {
-                        // 흐려지면서 소멸
                         withAnimation(.easeOut(duration: 0.3)) {
-                            loadingAlertOpacity = 0
-                        }
-
-                        // 애니메이션 완료 후 상태 변경
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             isSceneReady = true
                         }
                     }
@@ -83,12 +74,11 @@ struct HomeView: View {
                     // 블러 배경
                     Rectangle()
                         .fill(.ultraThinMaterial)
-                        .overlay(Color.black20)
+                        .overlay(Color.black.opacity(0.2))
                         .ignoresSafeArea()
 
                     // 로딩 알림
                     LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                        .opacity(loadingAlertOpacity)
                 }
             }
         }
@@ -99,8 +89,9 @@ struct HomeView: View {
         }
         .onChange(of: keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
-            isSceneReady = false
-            loadingAlertOpacity = 1.0
+            withAnimation(.easeIn(duration: 0.2)) {
+                isSceneReady = false
+            }
         }
     }
 }
