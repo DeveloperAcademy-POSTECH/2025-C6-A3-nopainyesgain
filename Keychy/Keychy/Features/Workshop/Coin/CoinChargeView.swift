@@ -136,9 +136,6 @@ extension CoinChargeView {
                     coinRow(for: product)
                 }
             }
-            
-            Divider()
-                .padding(.top, 16)
         }
     }
     
@@ -367,15 +364,15 @@ extension CoinChargeView {
         
         var icon: String {
             switch self {
-            case .inventoryExpansion: return "invenBlack"
+            case .inventoryExpansion: return "invenIconBlack"
             case .copyVoucher10: return "copyBlack"
             }
         }
         
         var title: String {
             switch self {
-            case .inventoryExpansion: return "키링 보관함 10칸 업그레이드"
-            case .copyVoucher10: return "내 키링 복사권 10개"
+            case .inventoryExpansion: return "보관함 10칸 확장"
+            case .copyVoucher10: return "키링 복사권 10개"
             }
         }
         
@@ -383,12 +380,9 @@ extension CoinChargeView {
             let user = UserManager.shared.currentUser
             switch self {
             case .inventoryExpansion:
-                let maxCount = user?.maxKeyringCount ?? 0
-                let currentKeyringCount = user?.keyrings.count ?? 0
-                let remainingSlots = maxCount - currentKeyringCount
-                return "내 키링 보관함 \(remainingSlots)/\(maxCount)칸"
+                return "키링을 더 많이 만들 수 있어요!"
             case .copyVoucher10:
-                return "내 복사권 \(user?.copyVoucher ?? 0)개"
+                return "키링을 더 자유롭게 추가할 수 있어요!"
             }
         }
         

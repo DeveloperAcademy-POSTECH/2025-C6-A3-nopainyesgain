@@ -25,8 +25,8 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "keychycoin10",
-      "referenceName" : "keychycoin10개",
+      "productID" : "keychyCoin1700",
+      "referenceName" : "1700 코인 추가",
       "type" : "Consumable"
     },
     {
@@ -40,8 +40,8 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "keychycoin30",
-      "referenceName" : "keychycoin30개",
+      "productID" : "keychyCoin3500",
+      "referenceName" : "3500 코인 추가",
       "type" : "Consumable"
     },
     {
@@ -55,53 +55,8 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "keychycoin50",
-      "referenceName" : "keychycoin50개",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "10",
-      "familyShareable" : false,
-      "internalID" : "0EEE7266",
-      "localizations" : [
-        {
-          "description" : "",
-          "displayName" : "",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "keychycoin100",
-      "referenceName" : "keychycoin100개",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "20",
-      "familyShareable" : false,
-      "internalID" : "E15E524A",
-      "localizations" : [
-        {
-          "description" : "",
-          "displayName" : "",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "keychycoin200",
-      "referenceName" : "keychycoin200개",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "30",
-      "familyShareable" : false,
-      "internalID" : "6B900AF2",
-      "localizations" : [
-        {
-          "description" : "",
-          "displayName" : "",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "keychycoin300",
-      "referenceName" : "keychycoin300개",
+      "productID" : "keychyCoin7500",
+      "referenceName" : "7500 코인 추가",
       "type" : "Consumable"
     }
   ],
