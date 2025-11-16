@@ -74,18 +74,9 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
             .disabled(isLoadingResources || !isSceneReady)
 
-            // MARK: - 구매 중 프로그레스
+            // MARK: - 구매 중 로딩
             if showPurchaseProgress {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        .scaleEffect(1.5)
-
-                    Text("구매 중...")
-                        .typography(.suit17B)
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingAlert(type: .short, message: nil)
             }
             
             // MARK: - Purchase Alerts
