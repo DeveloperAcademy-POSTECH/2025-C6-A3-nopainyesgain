@@ -364,7 +364,7 @@ extension CoinChargeView {
         
         var icon: String {
             switch self {
-            case .inventoryExpansion: return "invenIconBlack"
+            case .inventoryExpansion: return "invenIcon"
             case .copyVoucher10: return "copyBlack"
             }
         }
