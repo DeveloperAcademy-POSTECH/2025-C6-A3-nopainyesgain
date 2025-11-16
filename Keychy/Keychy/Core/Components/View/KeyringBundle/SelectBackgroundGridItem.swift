@@ -11,7 +11,6 @@ import NukeUI
 struct SelectBackgroundGridItem: View {
     let background: BackgroundViewData
     let isSelected: Bool
-    let widthSize: CGFloat
     
     var body: some View {
         VStack(spacing: 10) {
@@ -22,7 +21,7 @@ struct SelectBackgroundGridItem: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(width: (widthSize-60)/3, height: (widthSize-60) / 3 * (7/5))
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                             .clipped()
                     } else if state.isLoading {
                         ProgressView()
