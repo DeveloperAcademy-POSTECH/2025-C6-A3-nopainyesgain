@@ -86,11 +86,8 @@ extension KeyringCompleteView {
     /// 이미지 캡처 및 저장 (메인 함수)
     func captureAndSaveImage() {
         // 1. 저장 버튼과 toolbar 임시 숨기기 (애니메이션 없이)
-        let originalShowDismissButton = showDismissButton
-
         withAnimation(.none) {
-            showDismissButton = false
-            showSaveButton = false
+            isCapturingImage = true
         }
 
         // 2. UI 업데이트 완전히 대기 후 캡처 (0.5초로 증가)
@@ -99,8 +96,7 @@ extension KeyringCompleteView {
                 print("Failed to capture image")
                 // UI 복원 (애니메이션 없이)
                 withAnimation(.none) {
-                    self.showDismissButton = originalShowDismissButton
-                    self.showSaveButton = true
+                    self.isCapturingImage = false
                 }
                 return
             }
@@ -110,8 +106,7 @@ extension KeyringCompleteView {
 
             // 4. UI 복원 (애니메이션 없이)
             withAnimation(.none) {
-                self.showDismissButton = originalShowDismissButton
-                self.showSaveButton = true
+                self.isCapturingImage = false
             }
         }
     }

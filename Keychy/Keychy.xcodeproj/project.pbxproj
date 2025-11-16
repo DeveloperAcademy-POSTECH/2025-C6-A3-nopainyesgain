@@ -126,6 +126,7 @@
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
+		4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */; };
 		4CAF11AB2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */; };
 		4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */; };
 		4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */; };
@@ -426,6 +427,7 @@
 		4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
+		4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+FirebaseSave.swift"; sourceTree = "<group>"; };
 		4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AcrylicPhotoVM+BGRemover.swift"; sourceTree = "<group>"; };
 		4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGuiding.swift; sourceTree = "<group>"; };
@@ -1282,6 +1284,7 @@
 				4CBBEF222EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift */,
 				4CBBEF212EB78A5D00252590 /* KeyringInfoInputView+Helpers.swift */,
 				4CBBEF232EB78A5D00252590 /* KeyringInfoInputView+TagManagement.swift */,
+				4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */,
 				4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */,
 				4C65303F2EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift */,
 			);
@@ -1888,6 +1891,7 @@
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
 				4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
+				4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* TemplateInitializer.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
