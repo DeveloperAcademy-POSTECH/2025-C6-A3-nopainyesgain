@@ -61,22 +61,12 @@ extension KeyringCompleteView {
             }) { [self] success, error in
                 DispatchQueue.main.async {
                     if success {
-                        // 저장 성공 애니메이션
+                        // 저장 성공 alert 표시
                         showImageSaved = true
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                            checkmarkScale = 1.0
-                            checkmarkOpacity = 1.0
 
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                                    checkmarkScale = 0.0
-                                    checkmarkOpacity = 0.0
-                                    showImageSaved = false
-                                }
-                            }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            showImageSaved = false
                         }
-                    } else if let error = error {
-                        print("Error saving image: \(error.localizedDescription)")
                     }
                 }
             }

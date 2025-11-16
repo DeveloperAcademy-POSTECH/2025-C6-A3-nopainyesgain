@@ -17,8 +17,6 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     var userManager: UserManager = UserManager.shared
     
     // 이미지 저장
-    @State var checkmarkScale: CGFloat = 0.3
-    @State var checkmarkOpacity: Double = 0.0
     @State var showImageSaved = false
     @State var isCapturingImage = false
 
@@ -58,12 +56,14 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     Spacer()
                 }
                 .blur(radius: showImageSaved ? 15 : 0)
-                
-                if showImageSaved {
-                    ImageSaveAlert(checkmarkScale: checkmarkScale)
-                        .padding(.bottom, 30)
-                }
-                
+
+                /// 이미지 저장 완료 alert
+                KeychyAlert(
+                    type: .imageSave,
+                    message: "이미지가 저장되었어요!",
+                    isPresented: $showImageSaved
+                )
+
                 // 커스텀 네비게이션 바
                 customNavigationBar
                     .blur(radius: showImageSaved ? 15 : 0)
