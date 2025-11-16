@@ -26,8 +26,8 @@ struct BundleNameEditView: View {
             
             Spacer()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.bottom, max(380 - keyboardHeight, 20))
+        .padding(.top, 100)
+        .frame(maxHeight: .infinity)
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
@@ -42,14 +42,20 @@ struct BundleNameEditView: View {
             backButton
             checkButton
         }
-        // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
+        .transaction { transaction in
+            transaction.animation = nil
+            transaction.disablesAnimations = true
+        }
+        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
                 keyboardHeight = keyboardFrame.height
+                UIView.setAnimationsEnabled(false)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             keyboardHeight = 0
+            UIView.setAnimationsEnabled(false)
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
