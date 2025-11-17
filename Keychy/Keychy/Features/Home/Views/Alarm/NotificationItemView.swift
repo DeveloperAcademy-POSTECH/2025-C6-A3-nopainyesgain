@@ -11,52 +11,42 @@ import SwiftUI
 /// - 선물 수락 알림을 표시
 /// - 미확인: MainOpacity15 배경, 확인: white 배경
 struct NotificationItemView: View {
-    let notification: Notification
+    let notification: KeychyNotification
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 12) {
                 // 선물 아이콘
-                Image("AlarmIconFill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 40, height: 40)
-                    .padding(8)
-                    .background(
-                        Circle()
-                            .fill(.mainOpacity10)
-                    )
+                Image("giftAccepted")
 
                 // 알림 내용
-                VStack(alignment: .leading, spacing: 4) {
-                    // 메시지
-                    Text(notification.message)
-                        .typography(.suit15B)
-                        .foregroundStyle(.black100)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 0) {
+                    
+                    HStack(spacing: 0) {
+                        Text(notification.senderNickname)
+                            .typography(.notosans14SB)
+                            .foregroundStyle(.black100)
+                        Text(notification.message)
+                            .typography(.suit15R)
+                            .foregroundStyle(.black100)
+                            .padding(.top, 3)
+                            
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     // 시간
                     Text(notification.relativeTimeString)
-                        .typography(.suit13M)
-                        .foregroundStyle(.gray400)
+                        .typography(.suit15R)
+                        .foregroundStyle(.gray300)
                 }
+                
 
-                Spacer()
-
-                // 미확인 표시 점
-                if !notification.isRead {
-                    Circle()
-                        .fill(.main)
-                        .frame(width: 8, height: 8)
-                }
+                //Spacer()
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(notification.isRead ? .white100 : .mainOpacity15)
-            )
+            .padding(.horizontal, 25)
+            .padding(.vertical, 15)
+            .background(notification.isRead ? .white100 : .mainOpacity15)
         }
         .buttonStyle(.plain)
     }
@@ -65,11 +55,11 @@ struct NotificationItemView: View {
 // MARK: - Preview
 #Preview("미확인 알림") {
     NotificationItemView(
-        notification: Notification(
+        notification: KeychyNotification(
             type: .giftAccepted,
             receiverId: "user123",
             senderId: "user456",
-            senderNickname: "김서현",
+            senderNickname: "sing",
             keyringName: "귀여운 키링",
             postOfficeId: "post123",
             isRead: false,
@@ -84,7 +74,7 @@ struct NotificationItemView: View {
 
 #Preview("확인한 알림") {
     NotificationItemView(
-        notification: Notification(
+        notification: KeychyNotification(
             type: .giftAccepted,
             receiverId: "user123",
             senderId: "user456",
@@ -105,7 +95,7 @@ struct NotificationItemView: View {
     ScrollView {
         VStack(spacing: 8) {
             NotificationItemView(
-                notification: Notification(
+                notification: KeychyNotification(
                     type: .giftAccepted,
                     receiverId: "user123",
                     senderId: "user456",
@@ -119,7 +109,7 @@ struct NotificationItemView: View {
             )
 
             NotificationItemView(
-                notification: Notification(
+                notification: KeychyNotification(
                     type: .giftAccepted,
                     receiverId: "user123",
                     senderId: "user789",
@@ -133,7 +123,7 @@ struct NotificationItemView: View {
             )
 
             NotificationItemView(
-                notification: Notification(
+                notification: KeychyNotification(
                     type: .giftAccepted,
                     receiverId: "user123",
                     senderId: "user999",
