@@ -109,19 +109,15 @@ extension BundleNameEditView {
 extension BundleNameEditView {
     private var backButton: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button {
+            BackToolbarButton {
                 router.pop()
-            } label: {
-                //TODO: 에셋 이미지로 변경 필요
-                Image(systemName: "chevron.left")
             }
-            .buttonStyle(.glass)
         }
     }
     
     private var checkButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button {
+            NextToolbarButton(title: "완료") {
                 viewModel.updateBundleName(bundle: viewModel.selectedBundle!, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
                     DispatchQueue.main.async {
                         self.isUpdating = false
@@ -131,18 +127,8 @@ extension BundleNameEditView {
                         }
                     }
                 }
-            } label: {
-                if isUpdating {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white100))
-                        .scaleEffect(0.8)
-                } else {
-                    Image(.recCheck)
-                        .foregroundStyle(.white100)
-                }
             }
             .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .buttonStyle(.glassProminent)
         }
     }
 }
