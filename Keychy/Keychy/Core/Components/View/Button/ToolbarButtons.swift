@@ -68,6 +68,18 @@ struct PlusToolbarButton: View {
     }
 }
 
+// MARK: - Menu Toolbar Button (점 세개 버튼)
+struct MenuToolbarButton: View {
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(.menuIcon)
+        }
+        .frame(width: 44, height: 44)
+    }
+}
+
 // MARK: - Custom Text Toolbar Button
 struct TextToolbarButton: View {
     let title: String
