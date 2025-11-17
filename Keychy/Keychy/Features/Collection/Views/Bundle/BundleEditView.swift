@@ -111,11 +111,10 @@ struct BundleEditView: View {
                 
                 // Alert들
                 alertContent
+                
+                // navigationBar
+                customNavigationBar
             }
-        }
-        .toolbar {
-            backButton
-            editCompleteButton
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -738,57 +737,37 @@ struct BundleEditView: View {
     }
 }
 
-// MARK: - 툴바
+//MARK: - 툴바
 extension BundleEditView {
-    private var backButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
                 router.pop()
-            } label: {
-                Image(.lessThan)
-                    .resizable()
-                    .scaledToFit()
             }
             .frame(width: 44, height: 44)
-            .buttonStyle(.glass)
-        }
-    }
-    private var editCompleteButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                
-                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
-                
-                if hasPayableItems {
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            Text("편집")
+        } trailing: {
+            let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+            
+            if hasPayableItems {
+                let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
+                PurchaseToolbarButton(title: "구매 \(payableCount)") {
                     showPurchaseSheet = true
-                } else {
-                    // 최종 저장 후 화면 이동
+                }
+            } else {
+                NextToolbarButton {
                     Task {
-                        do {
-                            await saveBundleChanges()
-                            await MainActor.run {
-                                router.pop()
-                            }
+                        await saveBundleChanges()
+                        await MainActor.run {
+                            router.pop()
                         }
                     }
                 }
-            } label: {
-                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
-                
-                if hasPayableItems {
-                    let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
-                    Text("구매 \(payableCount)")
-                } else {
-                    Text("다음")
-                        .typography(.suit17B)
-                        .foregroundStyle(.black100)
-                        .padding(.vertical, 7.5)
-                        .padding(.horizontal, 6)
-                }
+                .frame(width: 62, height: 44)
+                .buttonStyle(.glass)
             }
-            .buttonStyle(.glassProminent)
-            .tint(((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ||
-                   (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)) ? .black80 : .white)
         }
     }
 }
