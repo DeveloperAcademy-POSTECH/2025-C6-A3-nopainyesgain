@@ -311,33 +311,29 @@ extension BundleCreateView {
         Group {
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        showPurchaseSuccessAlert = false
-                        purchasesSuccessScale = 0.3
-                        // TODO: 번들 생성 완료 후 화면 이동
-                        router.pop()
-                    }
-                
-                VStack {
-                    Spacer()
+                ZStack {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            showPurchaseSuccessAlert = false
+                            purchasesSuccessScale = 0.3
+                            router.pop()
+                        }
+                    
                     PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    Spacer()
                 }
             }
             
             // 구매 실패 Alert
             if showPurchaseFailAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        showPurchaseFailAlert = false
-                        purchaseFailScale = 0.3
-                    }
-                
-                VStack {
-                    Spacer()
+                ZStack {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            showPurchaseFailAlert = false
+                            purchaseFailScale = 0.3
+                        }
+                    
                     PurchaseFailAlert(
                         checkmarkScale: purchaseFailScale,
                         onCancel: {
@@ -350,7 +346,6 @@ extension BundleCreateView {
                             router.push(.coinCharge)
                         }
                     )
-                    Spacer()
                 }
             }
         }
