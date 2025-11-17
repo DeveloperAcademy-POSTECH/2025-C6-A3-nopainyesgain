@@ -97,6 +97,20 @@ extension CollectionView {
         .padding(.top, 60)
     }
     
+//    //공방뷰도 올리면 같이 올릴 예정
+//    private func headerTopPadding() -> CGFloat {
+//        guard let window = UIApplication.shared.connectedScenes
+//            .compactMap({ $0 as? UIWindowScene })
+//            .first?.windows
+//            .first(where: { $0.isKeyWindow }) else {
+//            return 20
+//        }
+//        
+//        // SE (safeAreaInsets.top < 25): 20pt
+//        // 노치 기기: 60pt
+//        return window.safeAreaInsets.top < 25 ? 20 : 60
+//    }
+    
     private var tagSection: some View {
         CategoryTabBarWithLongPress(
             categories: categories,
