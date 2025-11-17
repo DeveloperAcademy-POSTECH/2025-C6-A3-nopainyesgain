@@ -17,6 +17,7 @@ struct BundleNameEditView: View {
     @State private var keyboardHeight: CGFloat = 0
     
     @State private var isUpdating: Bool = false
+    @State private var morePadding: CGFloat = 0
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 20) {
@@ -30,8 +31,12 @@ struct BundleNameEditView: View {
             .padding(.top, 100)
             .frame(maxHeight: .infinity)
             .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
-            
+        }
+        .navigationBarBackButtonHidden(true)
+        .overlay(alignment: .top) {
             customNavigationBar
+                .adaptiveTopPadding()
+                .padding(.top, morePadding)
         }
         .onAppear {
             if let bundle = viewModel.selectedBundle {
@@ -41,8 +46,10 @@ struct BundleNameEditView: View {
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
+            if getBottomPadding(0) == 0 {
+                morePadding = 20
+            }
         }
-        .navigationBarBackButtonHidden(true)
         .transaction { transaction in
             transaction.animation = nil
             transaction.disablesAnimations = true
@@ -113,7 +120,7 @@ extension BundleNameEditView {
                 router.pop()
             }
             .frame(width: 44, height: 44)
-            .glassEffect(.clear.interactive())
+            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             EmptyView()
         } trailing: {
@@ -122,8 +129,7 @@ extension BundleNameEditView {
             }
             .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             .frame(width: 62, height: 44)
-            .glassEffect(.regular, in: .rect(cornerRadius: 100))
-            
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
         }
     }
     

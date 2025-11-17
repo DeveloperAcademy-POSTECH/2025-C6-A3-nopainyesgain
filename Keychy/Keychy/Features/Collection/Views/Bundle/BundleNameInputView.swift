@@ -23,6 +23,7 @@ struct BundleNameInputView: View {
     @State private var isUploading: Bool = false
     @State private var uploadError: String?
     
+    @State private var morePadding: CGFloat = 0
     
     // 선택된 키링들을 ViewModel에서 가져옴
     private var selectedKeyrings: [Int: Keyring] {
@@ -37,36 +38,39 @@ struct BundleNameInputView: View {
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
                     .padding(.horizontal, 20)
-                //TODO: 업로드 중 로티 추가
-                if isUploading {
-                    ProgressView("업로드 중...")
-                        .padding(.top, 8)
-                }
-                if let uploadError {
-                    Text(uploadError)
-                        .foregroundStyle(.red)
-                        .font(.footnote)
-                }
                 
                 Spacer()
             }
             .padding(.top, 100)
             .frame(maxHeight: .infinity)
+            .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
             
-            customNavigationBar
+            if isUploading {
+                Color.black80
+                    .ignoresSafeArea()
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 생성하고 있어요")
+            }
         }
+        .overlay(alignment: .top) {
+            customNavigationBar
+                .adaptiveTopPadding()
+                .padding(.top, morePadding)
+        }
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             // 키보드 자동 활성화
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
+            //SE2,3를 위한 추가적인 패딩값
+            if getBottomPadding(0) == 0 {
+                morePadding = 20
+            }
         }
-        .navigationBarBackButtonHidden(true)
         .transaction { transaction in
             transaction.animation = nil
             transaction.disablesAnimations = true
         }
-        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
         // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -139,6 +143,7 @@ extension BundleNameInputView {
                 isUploading ||
                 bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             )
+            .frame(width: 62, height: 44)
             .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
         }
     }
