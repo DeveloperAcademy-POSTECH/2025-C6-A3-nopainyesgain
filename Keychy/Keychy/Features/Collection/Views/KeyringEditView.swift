@@ -38,11 +38,10 @@ struct KeyringEditView: View {
     }
     
     private var canEdit: Bool {
-        //keyring.isEditable
         guard let currentUserId = UserDefaults.standard.string(forKey: "userUID") else {
             return false
         }
-        return keyring.authorId == currentUserId
+        return keyring.isEditable && keyring.authorId == currentUserId
     }
     
     enum Field: Hashable {
@@ -127,7 +126,7 @@ extension KeyringEditView {
             Button {
                 router.pop()
             } label: {
-                Image("BackIcon")
+                Image("backIcon")
                     .resizable()
                     .frame(width: 32, height: 32)
             }
