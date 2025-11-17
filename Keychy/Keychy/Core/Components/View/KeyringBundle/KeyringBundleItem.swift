@@ -34,19 +34,16 @@ struct KeyringBundleItem: View {
                 
                 if bundle.isMain {
                     HStack {
-                        Rectangle()
-                            .fill(.mainOpacity80)
-                            .overlay(
-                                Text("대표")
-                                    .typography(.suit13M)
-                                    .foregroundStyle(.white100)
+                        Spacer()
+                        Image(.starFillMain500)
+                            .padding(6.53)
+                            .background(
+                                Circle()
+                                    .fill(.white50)
+                                    .glassEffect(.regular.interactive(), in: .circle)
                             )
-                            .cornerRadius(20)
-                            .frame(height: 24)
-                            .frame(maxWidth: .infinity)
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.top, 10)
+                    .padding(10)
                 }
             }
             HStack {
@@ -79,11 +76,7 @@ extension KeyringBundleItem {
         return Group {
             if isCapturing {
                 // 캡처 중 ProgressView
-                ZStack {
-                    Color.gray.opacity(0.2)
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                }
+                LoadingAlert(type: .short, message: nil)
             } else if let cachedImage = cachedImage {
                 cachedImage
                     .resizable()

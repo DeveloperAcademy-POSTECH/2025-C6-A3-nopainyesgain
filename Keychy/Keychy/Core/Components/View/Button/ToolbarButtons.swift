@@ -17,8 +17,6 @@ struct BackToolbarButton: View {
     var body: some View {
         Button(action: action) {
             Image("backIcon")
-                .resizable()
-                .frame(width: 32, height: 32)
         }
     }
 }
@@ -40,6 +38,8 @@ struct NextToolbarButton: View {
         Button(action: action) {
             Text(title)
                 .typography(.suit17B)
+                .padding(4.5)
+                .foregroundStyle(.black100)
         }
     }
 }
@@ -66,6 +66,52 @@ struct NavigationTitle: View {
     }
 }
 
+
+// MARK: - Plus Toolbar Button (+ 버튼)
+struct PlusToolbarButton: View {
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(.plus)
+        }
+        .frame(width: 44, height: 44)
+    }
+}
+
+// MARK: - Menu Toolbar Button (점 세개 버튼)
+struct MenuToolbarButton: View {
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(.menuIcon)
+        }
+        .frame(width: 44, height: 44)
+    }
+}
+
+//MARK: - Purchase Toolbar Button (구매 버튼)
+struct PurchaseToolbarButton: View {
+    let title: String
+    let action: () -> Void
+    
+    init(title: String, action: @escaping () -> Void) {
+        self.title = title
+        self.action = action
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .typography(.suit17B)
+                .foregroundStyle(.white100)
+                .padding(4.5)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(.black80)
+    }
+}
 
 // MARK: - Custom Text Toolbar Button
 struct TextToolbarButton: View {

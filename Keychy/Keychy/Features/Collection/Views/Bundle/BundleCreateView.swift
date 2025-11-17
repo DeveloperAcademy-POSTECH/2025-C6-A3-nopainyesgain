@@ -16,6 +16,8 @@ struct BundleCreateView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
+    @State private var isSceneReady = false
+    
     /// 선택한 카테고리 : "Background" 또는 "Carabiner"
     @State private var selectedCategory: String = ""
     
@@ -54,39 +56,56 @@ struct BundleCreateView: View {
     //MARK: 메인 뷰
     var body: some View {
         ZStack(alignment: .bottom) {
-            if let background = selectedBackground,
-               let carabiner = selectedCarabiner {
-                selectedView(
-                    bg: background,
-                    cb: carabiner
+            if let bg = selectedBackground,
+               let cb = selectedCarabiner {
+                // 배경과 카라비너만 보여줌
+                MultiKeyringSceneView(
+                    keyringDataList: [],
+                    ringType: .basic,
+                    chainType: .basic,
+                    backgroundColor: .clear,
+                    backgroundImageURL: bg.background.backgroundImage,
+                    carabinerBackImageURL: cb.carabiner.backImageURL,
+                    carabinerFrontImageURL: cb.carabiner.frontImageURL,
+                    carabinerX: cb.carabiner.carabinerX,
+                    carabinerY: cb.carabiner.carabinerY,
+                    carabinerWidth: cb.carabiner.carabinerWidth,
+                    currentCarabinerType: cb.carabiner.type,
+                    onAllKeyringsReady: {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            isSceneReady = true
+                        }
+                    }
                 )
+                .ignoresSafeArea()
+                .blur(radius: isSceneReady ? 0 : 10)
+                .animation(.easeInOut(duration: 0.3), value: isSceneReady)
+                .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
                 
                 sheetContent()
-            } else {
-                // 로딩 중일 때
-                // 기본 배경 이미지와 로딩 중 애니메이션..
-                Image(.greenBackground)
-                    .resizable()
-                    .scaledToFit()
-                    .ignoresSafeArea()
-                VStack {
-                    Spacer()
-                    Image(.introTypo)
-                        .resizable()
-                        .scaledToFit()
-                    Text("로딩 중이에요")
-                    Spacer()
+                
+                if !isSceneReady {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(10)
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                        .zIndex(11)
                 }
+            } else {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(10)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(11)
             }
             
-            // Alert들
+            // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
+                .position(x: screenWidth / 2, y: screenHeight / 2)
+            
+            customNavigationBar
         }
         .ignoresSafeArea()
-        .toolbar {
-            backButton
-            nextButton
-        }
         .navigationBarBackButtonHidden()
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -98,6 +117,7 @@ struct BundleCreateView: View {
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshData()
+                isSceneReady = false
             }
             
             // 화면 첫 진입 시 배경 시트를 보여줌
@@ -130,47 +150,29 @@ struct BundleCreateView: View {
     }
 }
 
-// MARK: - 툴바
+// MARK: - 커스텀 네비게이션 바
 extension BundleCreateView {
-    private var backButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
                 router.pop()
-            } label: {
-                Image(.lessThan)
-                    .resizable()
-                    .scaledToFit()
             }
             .frame(width: 44, height: 44)
-            .buttonStyle(.glass)
-        }
-    }
-    
-    private var nextButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                // 유료 아이템이 있으면 구매 시트 열기
-                if hasUnpurchasedItems {
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+        } trailing: {
+            if hasUnpurchasedItems {
+                PurchaseToolbarButton(title: "구매 \(payableItemsCount)") {
                     showPurchaseSheet = true
-                } else {
-                    // 무료 아이템 or 보유한 아이템만 있으면 다음 화면으로 이동
+                }
+            } else {
+                NextToolbarButton {
                     router.push(.bundleAddKeyringView)
                 }
-            } label: {
-                if hasUnpurchasedItems {
-                    let payableCount = payableItemsCount
-                    Text("구매 \(payableCount)")
-                } else {
-                    Text("다음")
-                        .typography(.suit17B)
-                        .foregroundStyle(.black100)
-                        .padding(.vertical, 7.5)
-                        .padding(.horizontal, 6)
-                }
+                .buttonStyle(.glass)
             }
-            .buttonStyle(.glassProminent)
-            .tint(hasUnpurchasedItems ? .black80 : .white)
         }
+        
     }
 }
 
@@ -231,28 +233,6 @@ extension BundleCreateView {
     }
 }
 
-// MARK: - 배경, 카라비너 뷰
-extension BundleCreateView {
-    private func selectedView(bg: BackgroundViewData, cb: CarabinerViewData) -> some View {
-        // 배경과 카라비너만 보여줌
-        MultiKeyringSceneView(
-            keyringDataList: [],
-            ringType: .basic,
-            chainType: .basic,
-            backgroundColor: .clear,
-            backgroundImageURL: bg.background.backgroundImage,
-            carabinerBackImageURL: cb.carabiner.backImageURL,
-            carabinerFrontImageURL: cb.carabiner.frontImageURL,
-            carabinerX: cb.carabiner.carabinerX,
-            carabinerY: cb.carabiner.carabinerY,
-            carabinerWidth: cb.carabiner.carabinerWidth,
-            currentCarabinerType: cb.carabiner.type
-        )
-        .ignoresSafeArea()
-        .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
-    }
-}
-
 
 
 // MARK: - 데이터 가져오는 메서드
@@ -306,9 +286,11 @@ extension BundleCreateView {
         // 배경 데이터 로드
         await withCheckedContinuation { continuation in
             viewModel.fetchAllBackgrounds { _ in
-                // 가장 첫 번째 배경을 기본으로 선택
+                // "키치 배경"을 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedBackground == nil {
-                    self.selectedBackground = viewModel.backgroundViewData.first
+                    self.selectedBackground = viewModel.backgroundViewData.first { bg in
+                        bg.background.backgroundName == "키치 배경"
+                    } ?? viewModel.backgroundViewData.first
                 }
                 
                 continuation.resume()
@@ -318,9 +300,11 @@ extension BundleCreateView {
         // 카라비너 데이터 로드
         await withCheckedContinuation { continuation in
             viewModel.fetchAllCarabiners { _ in
-                // 가장 첫 번째 카라비너를 기본으로 선택
+                // "키치 카라비너"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedCarabiner == nil {
-                    self.selectedCarabiner = viewModel.carabinerViewData.first
+                    self.selectedCarabiner = viewModel.carabinerViewData.first { cb in
+                        cb.carabiner.carabinerName == "키치 카라비너"
+                    } ?? viewModel.carabinerViewData.first
                 }
                 
                 continuation.resume()
@@ -340,28 +324,23 @@ extension BundleCreateView {
                     .onTapGesture {
                         showPurchaseSuccessAlert = false
                         purchasesSuccessScale = 0.3
-                        // TODO: 번들 생성 완료 후 화면 이동
-                        router.pop()
+                        router.push(.bundleAddKeyringView)
                     }
                 
-                VStack {
-                    Spacer()
-                    PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    Spacer()
-                }
+                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
+                    .scaleEffect(purchasesSuccessScale)
             }
             
             // 구매 실패 Alert
             if showPurchaseFailAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        showPurchaseFailAlert = false
-                        purchaseFailScale = 0.3
-                    }
-                
-                VStack {
-                    Spacer()
+                ZStack {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            showPurchaseFailAlert = false
+                            purchaseFailScale = 0.3
+                        }
+                    
                     PurchaseFailAlert(
                         checkmarkScale: purchaseFailScale,
                         onCancel: {
@@ -374,7 +353,7 @@ extension BundleCreateView {
                             router.push(.coinCharge)
                         }
                     )
-                    Spacer()
+                    .padding(.horizontal, 51)
                 }
             }
         }
@@ -427,6 +406,7 @@ extension BundleCreateView {
             }
             purchaseButton
                 .padding(.horizontal, 33.2)
+                .adaptiveBottomPadding()
         }
         .background(.white100)
         .presentationDetents([.fraction(0.43)])
@@ -552,8 +532,8 @@ extension BundleCreateView {
             viewModel.fetchAllBackgrounds { _ in }
             viewModel.fetchAllCarabiners { _ in }
             
-            // 1초 후 알럿 자동 닫기
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
+            // 2.5초 후 알럿 자동 닫기 (Alert duration 2초 + 0.5초 여유)
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
             
             await MainActor.run {
                 showPurchaseSuccessAlert = false
@@ -593,9 +573,6 @@ extension BundleCreateView {
         } label: {
             VStack(spacing: 0) {
                 Image(showBackgroundSheet ? .backgroundIconWhite100 : .backgroundIconGray600)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 23.96, height: 25.8)
                 Text("배경")
                     .typography(.suit9SB)
                     .foregroundStyle(showBackgroundSheet ? .white100 : .gray600)
@@ -616,9 +593,6 @@ extension BundleCreateView {
         } label: {
             VStack(spacing: 0) {
                 Image(showCarabinerSheet ? .carabinerIconWhite100 : .carabinerIconGray600)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 26.83, height: 23)
                 Text("카라비너")
                     .typography(.suit9SB)
                     .foregroundStyle(showCarabinerSheet ? .white100 : .gray600)

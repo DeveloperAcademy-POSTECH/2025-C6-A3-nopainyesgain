@@ -55,6 +55,8 @@ struct BundleDetailView: View {
                         }
                     )
                     .ignoresSafeArea()
+                    .blur(radius: isSceneReady ? 0 : 10)
+                    .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                     /// 씬 재생성 조건을 위한 ID 설정
                     /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                     .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
@@ -93,6 +95,7 @@ struct BundleDetailView: View {
                                 Spacer()
                             }
                         }
+                        .padding(.top, 60)
                         .zIndex(50)
                         .allowsHitTesting(true)
                         .contentShape(Rectangle())
@@ -102,26 +105,25 @@ struct BundleDetailView: View {
                             }
                         }
                     }
+                    if !isSceneReady {
+                        Color.black20
+                            .ignoresSafeArea()
+                        
+                        LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
+                            .zIndex(200)
+                    }
+                    
                 } else {
                     // 데이터 로딩 중
                     Color.clear.ignoresSafeArea()
                 }
             }
-            .blur(radius: isSceneReady ? 0 : 15)
 
             if isCapturing {
                 capturingOverlay
             }
-
-            // 로딩 알림 (씬 준비 전까지 표시)
-            if !isSceneReady {
-                // 로딩 알림
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-            }
-        }
-        .toolbar {
-            backToolbarItem
-            menuToolbarItem
+            customnavigationBar
+                .ignoresSafeArea()
         }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
@@ -151,7 +153,7 @@ struct BundleDetailView: View {
             ZStack(alignment: .center) {
                 // 삭제 확인 Alert
                 if showDeleteAlert {
-                    Color.black.opacity(0.4)
+                    Color.black40
                         .ignoresSafeArea()
                     if let bundle = viewModel.selectedBundle {
                         DeletePopup(
@@ -171,14 +173,14 @@ struct BundleDetailView: View {
                     }
                 }
                 if showDeleteCompleteToast {
-                    Color.black.opacity(0.4)
+                    Color.black40
                         .ignoresSafeArea()
                     DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
                         .zIndex(100)
                 }
                 
                 if showChangeMainBundleAlert {
-                    Color.black.opacity(0.4)
+                    Color.black40
                         .ignoresSafeArea()
                     changeMainBundleAlert
                         .padding(.horizontal, 51)
@@ -256,30 +258,28 @@ extension BundleDetailView {
     }
 }
 
-// MARK: - Toolbar
+// MARK: - 커스텀 네비게이션 바
 extension BundleDetailView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
+    private var customnavigationBar: some View {
+        CustomNavigationBar {
+            //Leading(왼쪽)
+            BackToolbarButton {
                 router.pop()
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundStyle(.gray600)
             }
-        }
-    }
-    
-    private var menuToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular, in: .circle)
+        } center: {
+        } trailing: {
+            // Trailing (오른쪽)
+            MenuToolbarButton {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     showMenu.toggle()
                 }
-            }) {
-                Image(systemName: "ellipsis")
-                    .foregroundStyle(.gray600)
             }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular, in: .circle)
         }
+        
     }
 }
 
