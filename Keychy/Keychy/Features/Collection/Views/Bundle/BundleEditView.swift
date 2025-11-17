@@ -14,6 +14,8 @@ struct BundleEditView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
+    @State private var isSceneReady = false
+    
     @State private var selectedCategory: String = ""
     @State private var selectedKeyringPosition: Int = 0
     @State private var newSelectedBackground: BackgroundViewData?
@@ -70,13 +72,15 @@ struct BundleEditView: View {
                     keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
                     
                 } else {
-                    // 데이터 로딩 중이거나 임시 화면
                     if let bg = newSelectedBackground {
                         LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
                                     .scaledToFit()
+                            } else if state.isLoading {
+                                Color.black20
+                                    .ignoresSafeArea()
                             }
                         }
                     }
@@ -94,6 +98,17 @@ struct BundleEditView: View {
                     }
                 }
                 
+                // navigationBar
+                customNavigationBar
+                
+                if !isSceneReady {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(100)
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                        .zIndex(101)
+                }
+                
                 // Dim 오버레이 (키링 시트가 열릴 때)
                 if showSelectKeyringSheet {
                     Color.black.opacity(0.3)
@@ -109,13 +124,11 @@ struct BundleEditView: View {
                 // 배경/카라비너 시트들
                 sheetContent(geo: geo)
                 
-                // Alert들
+                // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
                 alertContent
+                    .position(x: screenWidth / 2, y: screenHeight / 2)
+                
             }
-        }
-        .toolbar {
-            backButton
-            editCompleteButton
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -175,34 +188,40 @@ struct BundleEditView: View {
                 carabinerX: carabiner.carabiner.carabinerX,
                 carabinerY: carabiner.carabiner.carabinerY,
                 carabinerWidth: carabiner.carabiner.carabinerWidth,
-                currentCarabinerType: carabiner.carabiner.type
-            )
-            .ignoresSafeArea()
-            .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
-            
-            // 키링 추가 버튼들
-            keyringButtons(carabiner: carabiner.carabiner)
-        }
-    }
-    
-    /// 키링 추가 버튼들
-    private func keyringButtons(carabiner: Carabiner) -> some View {
-        ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-            let position = viewModel.buttonPosition(index: index, carabiner: carabiner)
-            
-            CarabinerAddKeyringButton(
-                isSelected: selectedPosition == index,
-                action: {
-                    selectedPosition = index
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = true
+                currentCarabinerType: carabiner.carabiner.type,
+                onAllKeyringsReady: {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isSceneReady = true
                     }
                 }
             )
-            .position(position)
-            .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-            .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+            .ignoresSafeArea()
+            .blur(radius: isSceneReady ? 0 : 10)
+            .animation(.easeInOut(duration: 0.3), value: isSceneReady)
+            .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
+            
+            // 키링 추가 버튼들
+            ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
+                //se3상에서 버튼 위치가 아주 조금 안 맞아서 추가적인 패딩값을 줍니다
+                let needsMorePadding: CGFloat = getBottomPadding(34) == 34 ? 5 : 0
+                let xPos = carabiner.carabiner.keyringXPosition[index] - needsMorePadding
+                let yPos = carabiner.carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPadding(34) - needsMorePadding
+                CarabinerAddKeyringButton(
+                    isSelected: selectedPosition == index,
+                    action: {
+                        selectedPosition = index
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = true
+                        }
+                    }
+                )
+                .position(x: xPos, y: yPos)
+                .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
+                .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+                .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
+            }
         }
+        .ignoresSafeArea()
     }
     
     /// 키링 선택 시트
@@ -483,11 +502,8 @@ struct BundleEditView: View {
                         }
                     }
                 
-                VStack {
-                    Spacer()
-                    PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    Spacer()
-                }
+                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
+                    .scaleEffect(purchasesSuccessScale)
             }
             
             // 구매 실패 Alert
@@ -499,23 +515,20 @@ struct BundleEditView: View {
                         purchaseFailScale = 0.3
                     }
                 
-                VStack {
-                    Spacer()
-                    PurchaseFailAlert(
-                        checkmarkScale: purchaseFailScale,
-                        onCancel: {
-                            showPurchaseFailAlert = false
-                            purchaseFailScale = 0.3
-                        },
-                        onCharge: {
-                            showPurchaseFailAlert = false
-                            purchaseFailScale = 0.3
-                            saveCurrentSelection()
-                            router.push(.coinCharge)
-                        }
-                    )
-                    Spacer()
-                }
+                PurchaseFailAlert(
+                    checkmarkScale: purchaseFailScale,
+                    onCancel: {
+                        showPurchaseFailAlert = false
+                        purchaseFailScale = 0.3
+                    },
+                    onCharge: {
+                        showPurchaseFailAlert = false
+                        purchaseFailScale = 0.3
+                        saveCurrentSelection()
+                        router.push(.coinCharge)
+                    }
+                )
+                .padding(.horizontal, 51)
             }
         }
     }
@@ -741,57 +754,35 @@ struct BundleEditView: View {
     }
 }
 
-// MARK: - 툴바
+//MARK: - 툴바
 extension BundleEditView {
-    private var backButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
                 router.pop()
-            } label: {
-                Image(.lessThan)
-                    .resizable()
-                    .scaledToFit()
             }
             .frame(width: 44, height: 44)
-            .buttonStyle(.glass)
-        }
-    }
-    private var editCompleteButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                
-                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
-                
-                if hasPayableItems {
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+        } trailing: {
+            let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+            
+            if hasPayableItems {
+                let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
+                PurchaseToolbarButton(title: "구매 \(payableCount)") {
                     showPurchaseSheet = true
-                } else {
-                    // 최종 저장 후 화면 이동
+                }
+            } else {
+                NextToolbarButton {
                     Task {
-                        do {
-                            await saveBundleChanges()
-                            await MainActor.run {
-                                router.pop()
-                            }
+                        await saveBundleChanges()
+                        await MainActor.run {
+                            router.pop()
                         }
                     }
                 }
-            } label: {
-                let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
-                
-                if hasPayableItems {
-                    let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
-                    Text("구매 \(payableCount)")
-                } else {
-                    Text("다음")
-                        .typography(.suit17B)
-                        .foregroundStyle(.black100)
-                        .padding(.vertical, 7.5)
-                        .padding(.horizontal, 6)
-                }
+                .buttonStyle(.glass)
             }
-            .buttonStyle(.glassProminent)
-            .tint(((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ||
-                   (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)) ? .black80 : .white)
         }
     }
 }
@@ -805,9 +796,6 @@ extension BundleEditView {
         } label: {
             VStack(spacing: 0) {
                 Image(showBackgroundSheet ? .backgroundIconWhite100 : .backgroundIconGray600)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 23.96, height: 25.8)
                 Text("배경")
                     .typography(.suit9SB)
                     .foregroundStyle(showBackgroundSheet ? .white100 : .gray600)
@@ -828,9 +816,6 @@ extension BundleEditView {
         } label: {
             VStack(spacing: 0) {
                 Image(showCarabinerSheet ? .carabinerIconWhite100 : .carabinerIconGray600)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 26.83, height: 23)
                 Text("카라비너")
                     .typography(.suit9SB)
                     .foregroundStyle(showCarabinerSheet ? .white100 : .gray600)
@@ -938,6 +923,7 @@ extension BundleEditView {
             }
             purchaseButton
                 .padding(.horizontal, 33.2)
+                .adaptiveBottomPadding()
         }
         .background(.white100)
         .presentationDetents([.fraction(0.43)])

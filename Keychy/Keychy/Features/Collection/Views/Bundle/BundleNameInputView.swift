@@ -27,6 +27,7 @@ struct BundleNameInputView: View {
     @State private var validationMessage: String = ""
     @State private var hasProfanity: Bool = false
     
+    @State private var morePadding: CGFloat = 0
     
     // 선택된 키링들을 ViewModel에서 가져옴
     private var selectedKeyrings: [Int: Keyring] {
@@ -34,43 +35,46 @@ struct BundleNameInputView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            viewModel.keyringSceneView()
+        ZStack(alignment: .top) {
+            VStack(spacing: 20) {
+                viewModel.keyringSceneView()
+                
+                // 번들 이름 입력 섹션
+                bundleNameTextField()
+                    .padding(.horizontal, 20)
+                
+                Spacer()
+            }
+            .padding(.top, 100)
+            .frame(maxHeight: .infinity)
+            .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
             
-            // 번들 이름 입력 섹션
-            bundleNameTextField()
-                .padding(.horizontal, 20)
-            //TODO: 업로드 중 로티 추가
             if isUploading {
-                ProgressView("업로드 중...")
-                    .padding(.top, 8)
+                Color.black20
+                    .ignoresSafeArea()
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 생성하고 있어요")
             }
-            if let uploadError {
-                Text(uploadError)
-                    .foregroundStyle(.red)
-                    .font(.footnote)
-            }
-            
-            Spacer()
         }
-        .padding(.top, 100)
-        .frame(maxHeight: .infinity)
+        .overlay(alignment: .top) {
+            customNavigationBar
+                .adaptiveTopPadding()
+                .padding(.top, morePadding)
+        }
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             // 키보드 자동 활성화
             DispatchQueue.main.async {
                 isTextFieldFocused = true
             }
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            backToolbarItem
-            nextToolbarItem
+            //SE2,3를 위한 추가적인 패딩값
+            if getBottomPadding(0) == 0 {
+                morePadding = 20
+            }
         }
         .transaction { transaction in
             transaction.animation = nil
             transaction.disablesAnimations = true
         }
-        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
         // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -151,87 +155,89 @@ extension BundleNameInputView {
 
 //MARK: - 툴바
 extension BundleNameInputView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
                 router.pop()
-            }) {
-                Image(systemName: "chevron.left")
             }
-        }
-    }
-    
-    private var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                // 필수 값 안전 확인
-                guard
-                    let backgroundId = viewModel.selectedBackground?.id,
-                    let carabinerId = viewModel.selectedCarabiner?.id,
-                    let carabiner = viewModel.selectedCarabiner
-                else {
-                    // 값이 없으면 조용히 리턴하거나 에러 상태 표시
-                    return
-                }
-                
-                // 선택된 키링들을 카라비너의 최대 개수 길이에 맞춰 직렬화
-                // 인덱스에 키링이 없으면 "none"을 저장
-                let keyringIds: [String] = (0..<carabiner.maxKeyringCount).map { idx in
-                    if let kr = viewModel.selectedKeyringsForBundle[idx],
-                       let docId = viewModel.keyringDocumentIdByLocalId[kr.id] {
-                        return docId
-                    } else {
-                        return "none"
-                    }
-                }
-                
-                let maxKeyrings = carabiner.maxKeyringCount
-                let isMain = viewModel.bundles.isEmpty
-                
-                // 번들 이름을 미리 캡처 (async 작업 전)
-                let bundleNameToSave = bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                isUploading = true
-
-                viewModel.createBundle(
-                    userId: UserManager.shared.userUID,
-                    name: bundleNameToSave,
-                    selectedBackground: backgroundId,
-                    selectedCarabiner: carabinerId,
-                    keyrings: keyringIds,
-                    maxKeyrings: maxKeyrings,
-                    isMain: isMain
-                ) { success, bundleId in
-                    if success, let bundleId = bundleId {
-                        // Firebase 저장 성공 후 ViewModel의 이미지를 캐시에 저장
-                        saveBundleImageToCache(
-                            bundleId: bundleId,
-                            bundleName: bundleNameToSave
-                        )
-
-                        isUploading = false
-                        
-                        // 생성된 번들을 selectedBundle에 할당
-                        // createBundle의 completion이 배열 업데이트 후 호출되므로 안전
-                        viewModel.selectedBundle = viewModel.bundles.first { $0.documentId == bundleId }
-                        router.reset()
-                        router.push(.bundleInventoryView)
-                        // 네비게이션: 상세 페이지로 이동
-                        router.push(.bundleDetailView)
-                    } else {
-                        // 실패 처리
-                        isUploading = false
-                        uploadError = "뭉치 저장에 실패했어요. 잠시 후 다시 시도해 주세요."
-                    }
-                }
-            } label: {
-                Text("다음")
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            EmptyView()
+        } trailing: {
+            NextToolbarButton {
+                handleNextButtonTap()
             }
             .disabled(
                 isUploading ||
                 bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                 hasProfanity
             )
+            .frame(width: 62, height: 44)
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
+        }
+    }
+    
+    private func handleNextButtonTap() {
+        // 필수 값 안전 확인
+        guard
+            let backgroundId = viewModel.selectedBackground?.id,
+            let carabinerId = viewModel.selectedCarabiner?.id,
+            let carabiner = viewModel.selectedCarabiner
+        else {
+            // 값이 없으면 조용히 리턴하거나 에러 상태 표시
+            return
+        }
+        
+        // 선택된 키링들을 카라비너의 최대 개수 길이에 맞춰 직렬화
+        // 인덱스에 키링이 없으면 "none"을 저장
+        let keyringIds: [String] = (0..<carabiner.maxKeyringCount).map { idx in
+            if let kr = viewModel.selectedKeyringsForBundle[idx],
+               let docId = viewModel.keyringDocumentIdByLocalId[kr.id] {
+                return docId
+            } else {
+                return "none"
+            }
+        }
+        
+        let maxKeyrings = carabiner.maxKeyringCount
+        let isMain = viewModel.bundles.isEmpty
+        
+        // 번들 이름을 미리 캡처 (async 작업 전)
+        let bundleNameToSave = bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        isUploading = true
+
+        viewModel.createBundle(
+            userId: UserManager.shared.userUID,
+            name: bundleNameToSave,
+            selectedBackground: backgroundId,
+            selectedCarabiner: carabinerId,
+            keyrings: keyringIds,
+            maxKeyrings: maxKeyrings,
+            isMain: isMain
+        ) { success, bundleId in
+            if success, let bundleId = bundleId {
+                // Firebase 저장 성공 후 ViewModel의 이미지를 캐시에 저장
+                saveBundleImageToCache(
+                    bundleId: bundleId,
+                    bundleName: bundleNameToSave
+                )
+
+                isUploading = false
+                
+                // 생성된 번들을 selectedBundle에 할당
+                // createBundle의 completion이 배열 업데이트 후 호출되므로 안전
+                viewModel.selectedBundle = viewModel.bundles.first { $0.documentId == bundleId }
+                router.reset()
+                router.push(.bundleInventoryView)
+                // 네비게이션: 상세 페이지로 이동
+                router.push(.bundleDetailView)
+            } else {
+                // 실패 처리
+                isUploading = false
+                uploadError = "뭉치 저장에 실패했어요. 잠시 후 다시 시도해 주세요."
+            }
         }
     }
 }

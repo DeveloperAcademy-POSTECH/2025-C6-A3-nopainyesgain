@@ -60,17 +60,15 @@ struct BundleInventoryView: View {
 extension BundleInventoryView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button(action: {
+            BackToolbarButton {
                 router.pop()
-            }) {
-                Image(systemName: "chevron.left")
             }
         }
     }
     
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("+") {
+            PlusToolbarButton {
                 router.push(.bundleCreateView)
             }
         }

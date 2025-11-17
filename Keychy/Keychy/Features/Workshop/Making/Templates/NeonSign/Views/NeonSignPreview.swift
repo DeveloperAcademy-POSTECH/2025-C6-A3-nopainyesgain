@@ -20,6 +20,7 @@ struct NeonSignPreView: View {
             },
             router: router
         )
+        .swipeBackGesture(enabled: true)
     }
 }
 

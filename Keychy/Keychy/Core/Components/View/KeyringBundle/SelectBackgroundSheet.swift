@@ -12,9 +12,25 @@ struct SelectBackgroundSheet: View {
     let selectedBG: BackgroundViewData?
     let onBackgroundTap: (BackgroundViewData) -> Void
     
+    /// "키치 배경"을 맨 앞으로 정렬
+    private var sortedBackgrounds: [BackgroundViewData] {
+        viewModel.backgroundViewData.sorted { bg1, bg2 in
+            let isKeychy1 = bg1.background.backgroundName == "키치 배경"
+            let isKeychy2 = bg2.background.backgroundName == "키치 배경"
+            
+            if isKeychy1 && !isKeychy2 {
+                return true  // bg1이 앞으로
+            } else if !isKeychy1 && isKeychy2 {
+                return false  // bg2가 앞으로
+            } else {
+                return false  // 순서 유지
+            }
+        }
+    }
+    
     var body: some View {
         SelectionGridSheet(
-            items: viewModel.backgroundViewData,
+            items: sortedBackgrounds,
             selectedItem: selectedBG,
             onItemTap: { bg in
                 onBackgroundTap(bg)
