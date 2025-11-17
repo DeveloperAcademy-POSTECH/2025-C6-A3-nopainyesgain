@@ -485,24 +485,7 @@ struct BundleEditView: View {
             
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        Task {
-                            await saveBundleChanges()
-                            await MainActor.run {
-                                showPurchaseSuccessAlert = false
-                                purchasesSuccessScale = 0.3
-                                router.pop()
-                            }
-                        }
-                    }
-                
-                VStack {
-                    Spacer()
-                    PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    Spacer()
-                }
+                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSheet)
             }
             
             // 구매 실패 Alert
@@ -531,6 +514,7 @@ struct BundleEditView: View {
                     )
                     Spacer()
                 }
+
             }
         }
     }

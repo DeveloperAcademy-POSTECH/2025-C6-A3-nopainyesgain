@@ -308,17 +308,7 @@ extension BundleCreateView {
         Group {
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
-                ZStack {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            showPurchaseSuccessAlert = false
-                            purchasesSuccessScale = 0.3
-                            router.pop()
-                        }
-                    
-                    PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                }
+                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSheet)
             }
             
             // 구매 실패 Alert
