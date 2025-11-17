@@ -71,7 +71,7 @@ struct CategoryContextMenu: View {
                 .opacity(isAppearing ? 1.0 : 0.0)
                 .position( // 메뉴 위치
                     x: calculateSafeX(in: geometry),
-                    y: position.maxY + 20
+                    y: position.maxY + adaptiveOffset()
                 )
             }
         }
@@ -97,5 +97,30 @@ struct CategoryContextMenu: View {
         }
         
         return desiredX
+    }
+    
+    // 기기별 추가 오프셋 조절
+    private func adaptiveOffset() -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 20
+        }
+        
+        let screenHeight = window.screen.bounds.height
+        
+        // SE (safeAreaInsets.top < 25) 높이 667pt
+        if window.safeAreaInsets.top < 25 {
+            return 56
+        }
+        
+        // 노치 기기 (14, 15 등) 높이 844pt
+        if screenHeight < 850 {
+            return 32
+        }
+        
+        // 노치 기기 (16 Pro 등) 높이 852pt
+        return 20
     }
 }
