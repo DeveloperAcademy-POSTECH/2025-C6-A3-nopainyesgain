@@ -21,12 +21,12 @@ struct SelectBackgroundGridItem: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                             .clipped()
                     } else if state.isLoading {
                         LoadingAlert(type: .short, message: nil)
                     }
                 }
+                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -44,7 +44,7 @@ struct SelectBackgroundGridItem: View {
                                     .frame(width: 32)
                             }
                             .padding(.top, 7)
-                            .padding(.leading, 10)
+                            .padding(.leading, 3)
                         }
                         
                         Spacer()
@@ -59,7 +59,7 @@ struct SelectBackgroundGridItem: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
-                    .padding(.horizontal, 5)
+                    .padding(.horizontal, 7)
                     .padding(.top, 3)
                     
                     Spacer()

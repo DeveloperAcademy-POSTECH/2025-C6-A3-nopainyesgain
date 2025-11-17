@@ -22,7 +22,6 @@ struct SelectCarabinerGridItem: View {
                             .resizable()
                             .scaledToFit()
                             .clipped()
-                            .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                     } else if state.isLoading {
                         LoadingAlert(type: .short, message: nil)
                     } else {
@@ -31,6 +30,7 @@ struct SelectCarabinerGridItem: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
+                .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                 .background(RoundedRectangle(cornerRadius: 10).fill(.white100))
                 
                 // 유료 재화 표시
@@ -43,8 +43,6 @@ struct SelectCarabinerGridItem: View {
                                     .scaledToFit()
                                     .frame(width: 32)
                             }
-                            .padding(.top, 7)
-                            .padding(.leading, 10)
                         }
                         
                         Spacer()
@@ -59,8 +57,8 @@ struct SelectCarabinerGridItem: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
-                    .padding(.horizontal, 5)
                     .padding(.top, 3)
+                    .padding(.horizontal, 7)
                     
                     Spacer()
                 }
