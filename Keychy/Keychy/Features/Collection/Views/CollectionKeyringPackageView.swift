@@ -119,13 +119,7 @@ struct CollectionKeyringPackageView: View {
             .padding(.top, 1)
         }
         .ignoresSafeArea()
-        //.navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
-//        .toolbar(.hidden, for: .tabBar)
-//        .toolbar {
-//            backToolbarItem
-//            unpackToolbarItem
-//        }
         .onAppear {
             hideTabBar()
             loadPackagedKeyringInfo()

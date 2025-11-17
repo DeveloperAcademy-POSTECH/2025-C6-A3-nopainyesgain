@@ -42,7 +42,7 @@ struct PackageCompleteView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .center) {
+            ZStack {
                 packagedView
                     .blur(radius: shouldApplyBlur ? 10 : 0)
                     .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
@@ -72,13 +72,16 @@ struct PackageCompleteView: View {
                         )
                         .zIndex(101)
                 }
+                
+                customNavigationBar
+                    .blur(radius: shouldApplyBlur ? 15 : 0)
+                    .adaptiveTopPadding()
+                    .zIndex(0)
             }
+            .padding(.top, 1)
         }
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            backToolbarItem
-        }
         .onAppear {
             hideTabBar()
             fetchAuthorName()
@@ -252,36 +255,60 @@ struct PackageCompleteView: View {
     
     
     private var packagedView: some View {
-        ZStack {
-            Image("GreenBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            let heightRatio = geometry.size.height / 852
+            let isSmallScreen = geometry.size.height < 700
             
-            VStack(spacing: 0) {
+            ZStack {
+                Image("GreenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 
-                // 상단 상태 바
-                Text("키링 포장이 완료되었어요!")
-                    .typography(.suit20B)
-                    .foregroundColor(.black100)
-                    .padding(.top, 16)
-                    .padding(.bottom, 9)
-                
-                Text("링크나 QR로 바로 공유할 수 있어요.")
-                    .typography(.suit16M)
-                    .foregroundColor(.black100)
-                    .padding(.bottom, 42)
-                
-                pageScrollView
-                
-                pageIndicator
-                
-                Spacer()
-                    .frame(height: 24)
-                
-                imageSaveSection
-                
-                Spacer()
+                VStack(spacing: 0) {
+                    
+                    Spacer()
+                        .adaptiveTopPadding()
+                    
+                    VStack(spacing: 0) {
+                        Text("키링 포장이 완료되었어요!")
+                            .typography(.suit20B)
+                            .foregroundColor(.black100)
+                            
+                            .padding(.bottom, 9)
+                        
+                        Text("링크나 QR로 바로 공유할 수 있어요.")
+                            .typography(.suit16M)
+                            .foregroundColor(.black100)
+                    }
+                    .padding(.top, isSmallScreen ? -70 : 78)
+                    
+                    Spacer()
+                        .frame(height: isSmallScreen ? 24 : 48)
+                    
+                    PackagedKeyringView(
+                        keyring: keyring,
+                        postOfficeId: postOfficeId,
+                        shareLink: shareLink,
+                        authorName: authorName,
+                        isLoading: $isLoading,
+                        onImageSaved: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showImageSaved = true
+                            }
+                        },
+                        onLinkCopied: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showLinkCopied = true
+                            }
+                        }
+                    )
+                    .frame(height: isSmallScreen ? 500 : 600)
+                    .scaleEffect(heightRatio)
+
+                    Spacer()
+                        .adaptiveBottomPadding()
+                }
             }
         }
     }
@@ -502,6 +529,28 @@ extension PackageCompleteView {
                 Image("dismiss")
                     .foregroundColor(.primary)
             }
+        }
+    }
+}
+
+extension PackageCompleteView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
+            Button {
+                router.reset()
+            } label: {
+                Image("dismiss")
+                    .foregroundColor(.primary)
+            }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            // Center (중앙) - 빈 공간
+            Spacer()
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
+            Spacer()
         }
     }
 }
