@@ -93,7 +93,7 @@ extension UIImage {
         return nil
     }
     
-    func addAcrylicStroke(width: CGFloat = 14, strokeWidth: CGFloat = 1.5) -> UIImage? {
+    func addAcrylicStroke(width: CGFloat = 14, strokeWidth: CGFloat = 1.5) -> (image: UIImage, hookOffsetY: CGFloat)? {
         guard let cgImage = self.cgImage else { return nil }
         let ciImage = CIImage(cgImage: cgImage)
         
@@ -141,6 +141,10 @@ extension UIImage {
 
         // 3. 구멍 중심 좌표 계산
         let topY = findTopOpaqueY(in: dilated) ?? (h + adjustedRadius)
+
+        // hookOffsetY 계산 (이미지 중심 기준)
+        let hookOffsetY = topY - (h / 2)
+
         let circleCenter = CIVector(x: w / 2, y: topY)
         let innerRadius = adjustedRadius / 3.0
         let outerRadius = adjustedRadius / 1.5
@@ -252,8 +256,13 @@ extension UIImage {
         let renderExtent = finalImage.extent.union(ciImage.extent).insetBy(dx: -20, dy: -20)
         guard let output = context.createCGImage(finalImage, from: renderExtent) else { return nil }
 
-        // 15. UIImage 반환
-        return UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
+        // 15. UIImage 및 hookOffsetY 반환
+        let resultImage = UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
+
+        // 정규화 (200px 기준)
+        let normalizedHookOffsetY = hookOffsetY / (maxSide / 200.0)
+
+        return (image: resultImage, hookOffsetY: normalizedHookOffsetY)
     }
     
     // 피사체 영역으로 크롭

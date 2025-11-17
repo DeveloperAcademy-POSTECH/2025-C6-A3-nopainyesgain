@@ -53,7 +53,8 @@ extension KeyringInfoInputView {
 
         if let vm = self.viewModel as? AcrylicPhotoVM {
             templateId = vm.template?.id ?? "AcrylicPhoto"
-            hookOffsetY = vm.template?.hookOffsetY
+            // 계산된 hookOffsetY 사용
+            hookOffsetY = vm.calculatedHookOffsetY
         } else {
             templateId = "AcrylicPhoto"
             hookOffsetY = nil
