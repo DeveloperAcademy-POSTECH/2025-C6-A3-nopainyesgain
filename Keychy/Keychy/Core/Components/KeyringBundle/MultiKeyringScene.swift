@@ -22,6 +22,7 @@ class MultiKeyringScene: SKScene {
         let soundId: String  // 사운드 ID
         let customSoundURL: URL?  // 커스텀 녹음 파일 URL
         let particleId: String  // 파티클 ID
+        let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     }
 
     var keyringDataList: [KeyringData] = []
@@ -352,6 +353,7 @@ class MultiKeyringScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
+                hookOffsetY: data.hookOffsetY,
                 index: data.index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -365,6 +367,7 @@ class MultiKeyringScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -425,6 +428,7 @@ class MultiKeyringScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
+                hookOffsetY: hookOffsetY,
                 index: index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -441,6 +445,7 @@ class MultiKeyringScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -459,6 +464,7 @@ class MultiKeyringScene: SKScene {
                 centerX: centerX,
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
+                hookOffsetY: hookOffsetY,
                 index: index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -475,6 +481,7 @@ class MultiKeyringScene: SKScene {
         centerX: CGFloat,
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
+        hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -487,10 +494,21 @@ class MultiKeyringScene: SKScene {
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-        let connectGap = 12.0
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+        // hookOffsetY를 사용한 정확한 연결 지점 계산
+        // hookOffsetY가 nil이면 0.0을 사용 (바디 중앙 상단에 연결)
+        // hookOffsetY가 양수면 바디 중심에서 위로 이동 (구멍이 더 위에 있음)
+        // hookOffsetY가 음수면 바디 중심에서 아래로 이동 (구멍이 더 아래에 있음)
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight - (hookOffsetY ?? 0.0)
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+
+        // 디버그: 체인 끝 위치 표시 (빨간 선)
+        let chainEndLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
+        chainEndLine.fillColor = .red
+        chainEndLine.strokeColor = .red
+        chainEndLine.position = CGPoint(x: centerX, y: lastChainBottomY)
+        chainEndLine.zPosition = 100
+        addChild(chainEndLine)
 
         // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
         body.zPosition = baseZPosition - 2  // Body는 체인 아래

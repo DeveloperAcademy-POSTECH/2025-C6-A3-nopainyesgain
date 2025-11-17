@@ -17,6 +17,7 @@ class MultiKeyringCaptureScene: SKScene {
         let index: Int
         let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계, 왼쪽 위 기준)
         let bodyImageURL: String
+        let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     }
 
     var keyringDataList: [KeyringData] = []
@@ -278,6 +279,7 @@ class MultiKeyringCaptureScene: SKScene {
                     ring: ring,
                     centerX: spriteKitPosition.x,
                     bodyImageURL: data.bodyImageURL,
+                    hookOffsetY: data.hookOffsetY,
                     baseZPosition: baseZPosition
                 )
             }
@@ -317,6 +319,7 @@ class MultiKeyringCaptureScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
+                hookOffsetY: data.hookOffsetY,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType
             )
@@ -328,6 +331,7 @@ class MultiKeyringCaptureScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
@@ -369,6 +373,7 @@ class MultiKeyringCaptureScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
+                hookOffsetY: hookOffsetY,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType
             )
@@ -382,6 +387,7 @@ class MultiKeyringCaptureScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
@@ -398,8 +404,9 @@ class MultiKeyringCaptureScene: SKScene {
             let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
             let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-            let connectGap = 12.0
-            let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+            // hookOffsetY를 사용한 정확한 연결 지점 계산
+            // hookOffsetY가 nil이면 0.0을 사용 (바디 중앙 상단에 연결)
+            let bodyCenterY = lastChainBottomY - bodyHalfHeight - (hookOffsetY ?? 0.0)
 
             body.position = CGPoint(x: centerX, y: bodyCenterY)
 

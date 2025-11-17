@@ -144,15 +144,32 @@ extension KeyringCellScene {
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
         // hookOffsetY를 사용한 정확한 연결 지점 계산
-        // hookOffsetY가 0이면 바디 중앙 상단에 연결
+        // hookOffsetY가 nil이면 0.0을 사용 (바디 중앙 상단에 연결)
         // hookOffsetY가 양수면 바디 중심에서 위로 이동 (구멍이 더 위에 있음)
         // hookOffsetY가 음수면 바디 중심에서 아래로 이동 (구멍이 더 아래에 있음)
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight - hookOffsetY
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight - (hookOffsetY ?? 0.0)
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         body.zPosition = -1  // Body는 체인 아래
         containerNode.addChild(body)
-        
+
+        // 디버그: 체인 끝 위치 표시 (빨간 선)
+        let chainEndLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
+        chainEndLine.fillColor = .red
+        chainEndLine.strokeColor = .red
+        chainEndLine.position = CGPoint(x: centerX, y: lastChainBottomY)
+        chainEndLine.zPosition = 100
+        containerNode.addChild(chainEndLine)
+
+        // 디버그: 바디 이미지 상단 위치 표시 (파란 선)
+        let bodyTopY = bodyCenterY + bodyHalfHeight
+        let bodyTopLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
+        bodyTopLine.fillColor = .blue
+        bodyTopLine.strokeColor = .blue
+        bodyTopLine.position = CGPoint(x: centerX, y: bodyTopY)
+        bodyTopLine.zPosition = 100
+        containerNode.addChild(bodyTopLine)
+
         // 4. 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
         

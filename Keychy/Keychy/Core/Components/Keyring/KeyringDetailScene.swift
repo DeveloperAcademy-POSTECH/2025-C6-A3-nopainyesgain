@@ -12,14 +12,15 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - Properties
     var bodyImage: String?
+    var hookOffsetY: CGFloat?
     var onLoadingComplete: (() -> Void)?
     var cachedImages: KeyringImages?
     var isReady: Bool = false
-    
+
     // MARK: - 효과 ID 저장용
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"
-    
+
     // MARK: - 선택된 타입들
     var currentRingType: RingType
     var currentChainType: ChainType
@@ -52,13 +53,15 @@ class KeyringDetailScene: SKScene {
         ringType: RingType,
         chainType: ChainType,
         bodyImage: String? = nil,
+        hookOffsetY: CGFloat? = nil,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
+        self.hookOffsetY = hookOffsetY
         self.onLoadingComplete = onLoadingComplete
-        
+
         super.init(size: .zero)
     }
     

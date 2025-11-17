@@ -150,7 +150,8 @@ extension KeyringBundleItem {
                     x: carabiner.keyringXPosition[originalIndex],
                     y: carabiner.keyringYPosition[originalIndex]
                 ),
-                bodyImageURL: keyringInfo.bodyImage
+                bodyImageURL: keyringInfo.bodyImage,
+                hookOffsetY: keyringInfo.hookOffsetY
             )
             keyringDataList.append(data)
         }
@@ -226,8 +227,10 @@ extension KeyringBundleItem {
                   let bodyImage = data["bodyImage"] as? String else {
                 return nil
             }
-            
-            return KeyringInfo(id: keyringId, bodyImage: bodyImage)
+
+            let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
+
+            return KeyringInfo(id: keyringId, bodyImage: bodyImage, hookOffsetY: hookOffsetY)
         } catch {
             print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
@@ -239,5 +242,6 @@ extension KeyringBundleItem {
 struct KeyringInfo {
     let id: String
     let bodyImage: String
+    let hookOffsetY: CGFloat?
 }
 
