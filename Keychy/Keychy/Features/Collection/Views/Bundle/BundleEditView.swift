@@ -928,6 +928,7 @@ extension BundleEditView {
         }
         .background(.white100)
         .presentationDetents([.fraction(0.43)])
+        .adaptiveBottomPadding()
     }
     
     private func cartItemRow(name: String, type: String, price: Int) -> some View {
