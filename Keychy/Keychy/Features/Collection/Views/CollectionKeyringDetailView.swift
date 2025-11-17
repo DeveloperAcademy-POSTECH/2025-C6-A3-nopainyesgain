@@ -78,10 +78,16 @@ struct CollectionKeyringDetailView: View {
                         x: geometry.size.width / 2,
                         y: geometry.size.height / 2
                     )
+                
+                customNavigationBar
+                    .blur(radius: shouldApplyBlur ? 15 : 0)
+                    .adaptiveTopPadding()
+                    .opacity(showUIForCapture ? 1 : 0)
+                    .zIndex(0)
             }
+            
         }
         .ignoresSafeArea()
-        .navigationTitle(showUIForCapture ? keyring.name : "")
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .sheet(isPresented: $isSheetPresented) {
@@ -99,12 +105,6 @@ struct CollectionKeyringDetailView: View {
         .onDisappear {
             handleViewDisappear()
         }
-        .toolbar {
-            backToolbarItem
-            menuToolbarItem
-        }
-        .toolbar(showUIForCapture ? .visible : .hidden, for: .navigationBar)
-        .toolbar(.hidden, for: .tabBar)
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
         }
