@@ -65,8 +65,10 @@ struct BundleAddKeyringView: View {
                 if !isSceneReady {
                     Color.black20
                         .ignoresSafeArea()
+                        .zIndex(100)
                     
                     LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                        .zIndex(101)
                 }
             }
         }
@@ -137,6 +139,7 @@ extension BundleAddKeyringView {
             )
             .position(x: xPos, y: yPos)
             .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
+            .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
             .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
         }
     }

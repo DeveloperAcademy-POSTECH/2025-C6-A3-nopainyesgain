@@ -87,14 +87,21 @@ struct BundleCreateView: View {
                 if !isSceneReady {
                     Color.black20
                         .ignoresSafeArea()
+                        .zIndex(10)
                     LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                        .zIndex(11)
                 }
             } else {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(10)
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(11)
             }
             
-            // Alert들
+            // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
+                .position(x: screenWidth / 2, y: screenHeight / 2)
             
             customNavigationBar
         }
@@ -312,7 +319,16 @@ extension BundleCreateView {
         Group {
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
-                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSheet)
+                Color.black20
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showPurchaseSuccessAlert = false
+                        purchasesSuccessScale = 0.3
+                        router.push(.bundleAddKeyringView)
+                    }
+                
+                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
+                    .scaleEffect(purchasesSuccessScale)
             }
             
             // 구매 실패 Alert
@@ -516,8 +532,8 @@ extension BundleCreateView {
             viewModel.fetchAllBackgrounds { _ in }
             viewModel.fetchAllCarabiners { _ in }
             
-            // 1초 후 알럿 자동 닫기
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
+            // 2.5초 후 알럿 자동 닫기 (Alert duration 2초 + 0.5초 여유)
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
             
             await MainActor.run {
                 showPurchaseSuccessAlert = false

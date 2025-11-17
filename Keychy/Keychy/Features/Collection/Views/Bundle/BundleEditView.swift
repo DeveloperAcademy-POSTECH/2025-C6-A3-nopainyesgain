@@ -104,7 +104,9 @@ struct BundleEditView: View {
                 if !isSceneReady {
                     Color.black20
                         .ignoresSafeArea()
+                        .zIndex(100)
                     LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                        .zIndex(101)
                 }
                 
                 // Dim 오버레이 (키링 시트가 열릴 때)
@@ -122,8 +124,9 @@ struct BundleEditView: View {
                 // 배경/카라비너 시트들
                 sheetContent(geo: geo)
                 
-                // Alert들
+                // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
                 alertContent
+                    .position(x: screenWidth / 2, y: screenHeight / 2)
                 
             }
         }
@@ -215,6 +218,7 @@ struct BundleEditView: View {
                 .position(x: xPos, y: yPos)
                 .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
                 .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+                .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
             }
         }
         .ignoresSafeArea()
@@ -485,7 +489,21 @@ struct BundleEditView: View {
             
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
-                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSheet)
+                Color.black20
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        Task {
+                            await saveBundleChanges()
+                            await MainActor.run {
+                                showPurchaseSuccessAlert = false
+                                purchasesSuccessScale = 0.3
+                                router.pop()
+                            }
+                        }
+                    }
+                
+                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
+                    .scaleEffect(purchasesSuccessScale)
             }
             
             // 구매 실패 Alert
