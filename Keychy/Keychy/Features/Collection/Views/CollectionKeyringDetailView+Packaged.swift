@@ -48,12 +48,12 @@ struct PackagedKeyringView: View {
         .onAppear {
             captureSceneOnAppear()
         }
-//        .onChange(of: shareLink) { oldValue, newValue in
-//            // shareLink가 업데이트되면 QR 코드 생성
-//            if !newValue.isEmpty {
-//                generateQRCodeImage()
-//            }
-//        }
+        .onChange(of: shareLink) { oldValue, newValue in
+            // shareLink가 업데이트되면 QR 코드 생성
+            if !newValue.isEmpty {
+                generateQRCodeImage()
+            }
+        }
     }
     
     // MARK: - 씬을 PNG로 미리 캡처
@@ -190,8 +190,9 @@ extension PackagedKeyringView {
                     .offset(y: -2)
             } else {
                 // PNG 로딩 중
-                ProgressView()
+                LoadingAlert(type: .short, message: nil)
                     .frame(width: 195, height: 300)
+                    .scaleEffect(0.6)
             }
         }
     }

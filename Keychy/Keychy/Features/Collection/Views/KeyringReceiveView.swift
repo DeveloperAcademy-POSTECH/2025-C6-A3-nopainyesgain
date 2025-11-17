@@ -44,7 +44,7 @@ struct KeyringReceiveView: View {
                     VStack(spacing: 0) {
                         if isLoading {
                             // 로딩 상태
-                            ProgressView("로딩 중...")
+                            LoadingAlert(type: .short, message: nil)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                             
                         } else if let keyring = keyring {
