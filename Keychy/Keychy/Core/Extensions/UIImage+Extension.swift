@@ -74,17 +74,35 @@ extension UIImage {
               let data = dataProvider.data else { return nil }
         let buffer = CFDataGetBytePtr(data)!
         
-        let midX = width / 2
-        let alphaThreshold: UInt8 = 30
+        let alphaThreshold: UInt8 = 50
         
-        // 중앙 X좌표에서 위에서 아래로 스캔
+        // 중앙 20% 영역 (40% ~ 60%)
+        let centerStart = width * 2 / 5
+        let centerEnd = width * 3 / 5
+        let requiredOpaqueRatio: CGFloat = 0.8  // 80% 이상 불투명해야 함
+        
+        // 위에서 아래로 스캔
         for y in 0..<height {
-            let pixelIndex = (y * width + midX) * bytesPerPixel
-            let alpha = buffer[pixelIndex + 3]
+            var opaqueCount = 0
+            var totalCount = 0
             
-            if alpha > alphaThreshold {
-                // CGImage의 y를 CIImage 좌표계로 변환
-                // CIImage extent의 minY를 고려
+            // 중앙 영역만 체크
+            for x in centerStart..<centerEnd {
+                let pixelIndex = (y * width + x) * bytesPerPixel
+                
+                guard pixelIndex + 3 < width * height * bytesPerPixel else { continue }
+                
+                let alpha = buffer[pixelIndex + 3]
+                
+                totalCount += 1
+                if alpha > alphaThreshold {
+                    opaqueCount += 1
+                }
+            }
+            
+            // 중앙 영역의 80% 이상이 불투명하면 확정
+            let opaqueRatio = CGFloat(opaqueCount) / CGFloat(totalCount)
+            if opaqueRatio >= requiredOpaqueRatio {
                 let ciImageY = ciImage.extent.minY + CGFloat(height - 1 - y)
                 return ciImageY
             }
@@ -140,7 +158,7 @@ extension UIImage {
         let imageWithShadow = ciImage.composited(over: coloredShadow)
 
         // 3. 구멍 중심 좌표 계산
-        let topY = findTopOpaqueY(in: dilated) ?? (h + adjustedRadius)
+        let topY = findTopOpaqueY(in: imageWithShadow) ?? (h + adjustedRadius)
         let circleCenter = CIVector(x: w / 2, y: topY)
         let innerRadius = adjustedRadius / 2.5
         let outerRadius = adjustedRadius / 1.3
