@@ -182,13 +182,21 @@ struct ChangeNameView: View {
         // 특수문자 체크
         let allowedCharacters = CharacterSet.alphanumerics
             .union(CharacterSet(charactersIn: "가-힣ㄱ-ㅎㅏ-ㅣ"))
-        
+
         if nickname.unicodeScalars.contains(where: { !allowedCharacters.contains($0) }) {
             validationMessage = "영문, 숫자, 한글만 입력 가능해요."
             isValidationPositive = false
             return
         }
-        
+
+        // 욕설 체크
+        let profanityCheck = TextFilter.shared.validateText(nickname)
+        if !profanityCheck.isValid {
+            validationMessage = profanityCheck.message ?? "부적절한 단어가 포함되어 있어요"
+            isValidationPositive = false
+            return
+        }
+
         // Firebase 중복 확인
         checkNicknameDuplicate(nickname)
     }
