@@ -34,7 +34,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
     var isNew: Bool
     var senderId: String?
     var receivedAt: Date?
-    
+    var hookOffsetY: CGFloat  // 템플릿에서 받아온 바디 연결 지점 Y 오프셋
+
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
         var dict: [String: Any] = [
@@ -52,7 +53,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
             "isEditable": isEditable,
             "isPackaged": isPackaged,
             "chainLength": chainLength,
-            "isNew": isNew
+            "isNew": isNew,
+            "hookOffsetY": hookOffsetY
         ]
         
         // Optional 필드 처리
@@ -112,6 +114,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.isPackaged = data["isPackaged"] as? Bool ?? false
         self.chainLength = data["chainLength"] as? Int ?? 5
         self.isNew = data["isNew"] as? Bool ?? true
+        self.hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
 
         // Optional 필드
         self.memo = data["memo"] as? String
@@ -142,7 +145,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
          chainLength: Int,
          isNew: Bool = true,
          senderId: String? = nil,
-         receivedAt: Date? = nil
+         receivedAt: Date? = nil,
+         hookOffsetY: CGFloat = 0.0
     ) {
         self.name = name
         self.bodyImage = bodyImage
@@ -164,5 +168,6 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.isNew = isNew
         self.senderId = senderId
         self.receivedAt = receivedAt
+        self.hookOffsetY = hookOffsetY
     }
 }

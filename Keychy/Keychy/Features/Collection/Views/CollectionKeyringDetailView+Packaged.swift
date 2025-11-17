@@ -65,7 +65,8 @@ struct PackagedKeyringView: View {
                 bodyImage: keyring.bodyImage,
                 targetSize: CGSize(width: 195, height: 300),
                 customBackgroundColor: .clear,
-                zoomScale: 1.8
+                zoomScale: 1.8,
+                hookOffsetY: keyring.hookOffsetY
             )
             
             guard let pngData = await captureScene.captureToPNG(),

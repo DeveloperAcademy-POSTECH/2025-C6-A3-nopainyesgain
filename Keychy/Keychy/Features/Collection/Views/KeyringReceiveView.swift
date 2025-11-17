@@ -223,6 +223,7 @@ struct KeyringReceiveView: View {
             targetSize: CGSize(width: 304, height: 490),
             customBackgroundColor: .clear,
             zoomScale: 2.1,
+            hookOffsetY: keyring.hookOffsetY,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {

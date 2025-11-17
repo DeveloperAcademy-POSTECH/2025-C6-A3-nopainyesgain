@@ -137,20 +137,17 @@ extension KeyringCellScene {
         // Body 위치 계산
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
-        
+
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
-        
+
         let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
         let lastChainBottomY = lastChainY - lastLinkHeight / 2
-        
-        // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
-//        let gapByScreen = size.height * 0.01
-//        let gapByBody = bodyFrame.height * 0.03
-//        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 25.0
-        //let gap = gapByScreen
-        
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+
+        // hookOffsetY를 사용한 정확한 연결 지점 계산
+        // hookOffsetY가 0이면 바디 중앙 상단에 연결
+        // hookOffsetY가 양수면 바디 중심에서 위로 이동 (구멍이 더 위에 있음)
+        // hookOffsetY가 음수면 바디 중심에서 아래로 이동 (구멍이 더 아래에 있음)
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight - hookOffsetY
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         body.zPosition = -1  // Body는 체인 아래
