@@ -75,19 +75,3 @@ private struct TextOutlineModifier: ViewModifier {
         return CGSize(width: x, height: y)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    VStack(spacing: 30) {
-        // 컴포넌트 사용
-        OutlineText(
-            text: "테두리 텍스트",
-            outlineColor: .white,
-            outlineWidth: 3
-        )
-        .typography(.suit17B)
-        .foregroundStyle(.black100)
-    }
-    .padding()
-    .background(.gray200)
-}

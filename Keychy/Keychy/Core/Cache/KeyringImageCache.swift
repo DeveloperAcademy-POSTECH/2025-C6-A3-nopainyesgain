@@ -38,7 +38,7 @@ class KeyringImageCache {
             do {
                 try fileManager.createDirectory(at: keyringCache, withIntermediateDirectories: true)
             } catch {
-                print("❌ [KeyringCache] 캐시 디렉토리 생성 실패: \(error.localizedDescription)")
+                print("[KeyringCache] 캐시 디렉토리 생성 실패: \(error.localizedDescription)")
             }
         }
 
@@ -63,7 +63,7 @@ class KeyringImageCache {
         do {
             try pngData.write(to: fileURL)
         } catch {
-            print("❌ [KeyringCache] 저장 실패: \(keyringID) - \(error.localizedDescription)")
+            print("[KeyringCache] 저장 실패: \(keyringID) - \(error.localizedDescription)")
         }
     }
 
@@ -81,7 +81,7 @@ class KeyringImageCache {
             let data = try Data(contentsOf: fileURL)
             return data
         } catch {
-            print("❌ [KeyringCache] 로드 실패: \(keyringID) - \(error.localizedDescription)")
+            print("[KeyringCache] 로드 실패: \(keyringID) - \(error.localizedDescription)")
             return nil
         }
     }
@@ -99,14 +99,15 @@ class KeyringImageCache {
         do {
             try fileManager.removeItem(at: fileURL)
         } catch {
-            print("❌ [KeyringCache] 삭제 실패: \(keyringID) - \(error.localizedDescription)")
+            print("[KeyringCache] 삭제 실패: \(keyringID) - \(error.localizedDescription)")
         }
     }
 
     // MARK: - 전체 캐시 삭제
 
-    /// 모든 캐시 파일 삭제
+    /// 모든 캐시 파일 및 메타데이터 삭제
     func clearAll() {
+        // 1. 모든 이미지 캐시 삭제
         do {
             let files = try fileManager.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: nil)
 
@@ -114,7 +115,26 @@ class KeyringImageCache {
                 try fileManager.removeItem(at: file)
             }
         } catch {
-            print("❌ [KeyringCache] 전체 캐시 삭제 실패: \(error.localizedDescription)")
+            print("[KeyringCache] 전체 캐시 삭제 실패: \(error.localizedDescription)")
+        }
+
+        // 2. 메타데이터 파일 삭제
+        clearMetadata()
+
+        // 3. 위젯 타임라인 새로고침
+        reloadWidgets()
+    }
+
+    /// 메타데이터 파일 삭제
+    func clearMetadata() {
+        guard let fileURL = metadataFileURL else { return }
+
+        if fileManager.fileExists(atPath: fileURL.path) {
+            do {
+                try fileManager.removeItem(at: fileURL)
+            } catch {
+                print("[KeyringCache] 메타데이터 삭제 실패: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -143,7 +163,7 @@ class KeyringImageCache {
 
             return (files.count, totalSize)
         } catch {
-            print("❌ [KeyringCache] 캐시 정보 조회 실패: \(error.localizedDescription)")
+            print("[KeyringCache] 캐시 정보 조회 실패: \(error.localizedDescription)")
             return (0, 0)
         }
     }

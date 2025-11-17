@@ -47,21 +47,21 @@ struct MainTabView: View {
                 }
                 .tag(0)
 
-            // 보관함
-            CollectionTab(router: collectionRouter, shouldRefresh: $shouldRefreshCollection)
-                .tabItem {
-                    Image("collection")
-                        .renderingMode(.template)
-                    Text("보관함")
-                }
-                .tag(1)
-
             // 공방
             WorkshopTab(router: workshopRouter)
                 .tabItem {
                     Image("workshop")
                         .renderingMode(.template)
                     Text("공방")
+                }
+                .tag(1)
+
+            // 보관함
+            CollectionTab(router: collectionRouter, shouldRefresh: $shouldRefreshCollection)
+                .tabItem {
+                    Image("collection")
+                        .renderingMode(.template)
+                    Text("보관함")
                 }
                 .tag(2)
 
@@ -128,7 +128,7 @@ struct MainTabView: View {
     private func handleDeepLink(postOfficeId: String) {
         print("키링 수신 처리 시작: \(postOfficeId)")
 
-        selectedTab = 1
+        selectedTab = 2  // 보관함 탭 (순서 변경으로 2번으로 이동)
 
         receivedPostOfficeId = postOfficeId
 
