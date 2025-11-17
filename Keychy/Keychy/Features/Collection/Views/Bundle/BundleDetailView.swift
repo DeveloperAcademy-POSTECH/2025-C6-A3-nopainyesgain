@@ -94,15 +94,16 @@ struct BundleDetailView: View {
                             }
                         }
                         .padding(.top, 60)
-                    }
-                    .zIndex(50)
-                    .allowsHitTesting(true)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showMenu = false
+                        .zIndex(50)
+                        .allowsHitTesting(true)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showMenu = false
+                            }
                         }
                     }
+                    
                 } else {
                     // 데이터 로딩 중
                     Color.clear.ignoresSafeArea()

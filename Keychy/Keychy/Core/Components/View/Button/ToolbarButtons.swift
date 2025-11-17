@@ -38,6 +38,8 @@ struct NextToolbarButton: View {
         Button(action: action) {
             Text(title)
                 .typography(.suit17B)
+                .padding(4.5)
+                .foregroundStyle(.black100)
         }
     }
 }
@@ -104,8 +106,8 @@ struct PurchaseToolbarButton: View {
             Text(title)
                 .typography(.suit17B)
                 .foregroundStyle(.white100)
+                .padding(4.5)
         }
-        .frame(width: 73, height: 50)
         .buttonStyle(.glassProminent)
         .tint(.black80)
     }

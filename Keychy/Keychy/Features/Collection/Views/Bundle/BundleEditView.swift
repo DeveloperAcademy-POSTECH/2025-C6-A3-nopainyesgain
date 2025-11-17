@@ -765,7 +765,6 @@ extension BundleEditView {
                         }
                     }
                 }
-                .frame(width: 62, height: 44)
                 .buttonStyle(.glass)
             }
         }

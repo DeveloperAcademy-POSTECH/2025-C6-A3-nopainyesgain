@@ -135,6 +135,7 @@ extension BundleCreateView {
             BackToolbarButton {
                 router.pop()
             }
+            .frame(width: 44, height: 44)
             .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             Text("배경 및 카라비너 선택")
