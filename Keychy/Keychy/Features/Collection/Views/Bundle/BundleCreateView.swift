@@ -136,22 +136,20 @@ extension BundleCreateView {
                 router.pop()
             }
             .glassEffect(.regular.interactive(), in: .circle)
-            .frame(width: 44, height: 44)
         } center: {
             Text("배경 및 카라비너 선택")
                 .typography(.notosans17M)
                 .foregroundStyle(.black100)
         } trailing: {
             if hasUnpurchasedItems {
-                TextToolbarButton(title: "구매 \(payableItemsCount)") {
+                PurchaseToolbarButton(title: "구매 \(payableItemsCount)") {
                     showPurchaseSheet = true
                 }
-                .tint(.black100)
             } else {
                 NextToolbarButton {
                     router.push(.bundleAddKeyringView)
                 }
-                .tint(.white100)
+                .buttonStyle(.glass)
             }
         }
         

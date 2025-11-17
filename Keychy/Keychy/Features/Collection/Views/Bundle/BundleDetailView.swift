@@ -83,6 +83,7 @@ struct BundleDetailView: View {
                             
                             Spacer()
                         }
+                        .padding(.top, 60)
                     }
                     .zIndex(50)
                     .allowsHitTesting(true)
@@ -229,12 +230,6 @@ extension BundleDetailView {
             .frame(width: 44, height: 44)
             .glassEffect(.regular.interactive(), in: .circle)
         } center: {
-            //Center (중앙)
-            if let bundle = viewModel.selectedBundle {
-                Text("\(bundle.name)")
-                    .typography(.notosans17M)
-                    .foregroundStyle(.black100)
-            }
         } trailing: {
             // Trailing (오른쪽)
             MenuToolbarButton {
@@ -242,6 +237,8 @@ extension BundleDetailView {
                     showMenu.toggle()
                 }
             }
+            .frame(width: 44, height: 44)
+            .buttonStyle(.glass)
         }
         
     }
