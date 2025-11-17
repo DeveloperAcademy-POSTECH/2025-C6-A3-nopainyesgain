@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseFirestore
 
 struct AlarmView: View {
+    @Bindable var router: NavigationRouter<HomeRoute>
 
     @State private var notificationManager = NotificationManager.shared
     @State private var isNotiEmpty: Bool = true
@@ -16,12 +17,16 @@ struct AlarmView: View {
     @State private var isNotiOffShown: Bool = true
 
     // 알림 데이터
-    @State private var notifications: [Notification] = []
+    @State private var notifications: [KeychyNotification] = []
     @State private var isLoadingNotifications: Bool = false
 
     // Firebase
     private let db = Firestore.firestore()
     private var userManager = UserManager.shared
+
+    init(router: NavigationRouter<HomeRoute>) {
+        self.router = router
+    }
 
     var body: some View {
         ZStack {
@@ -139,7 +144,7 @@ extension AlarmView {
     /// Firestore에서 알림 가져오기
     private func fetchNotifications() {
         guard let userId = userManager.currentUser?.id else {
-            print("⚠️ 사용자 ID를 찾을 수 없습니다")
+            print("사용자 ID를 찾을 수 없습니다")
             return
         }
 
@@ -153,44 +158,42 @@ extension AlarmView {
                 isLoadingNotifications = false
 
                 if let error = error {
-                    print("❌ 알림 조회 실패: \(error.localizedDescription)")
+                    print("알림 조회 실패: \(error.localizedDescription)")
                     return
                 }
 
                 guard let documents = querySnapshot?.documents else {
-                    print("⚠️ 알림 문서가 없습니다")
+                    print("알림 문서가 없습니다")
                     notifications = []
                     isNotiEmpty = true
                     return
                 }
 
-                // Firestore 문서 → Notification 모델 변환
+                // Firestore 문서 → KeychyNotification 모델 변환
                 notifications = documents.compactMap { document in
-                    try? document.data(as: Notification.self)
+                    KeychyNotification(documentId: document.documentID, data: document.data())
                 }
 
                 // 빈 상태 업데이트
                 isNotiEmpty = notifications.isEmpty
 
-                print("✅ 알림 \(notifications.count)개 로드됨")
+                print("알림 \(notifications.count)개 로드됨")
             }
     }
 
     /// 알림 탭 처리
-    private func handleNotificationTap(_ notification: Notification) {
+    private func handleNotificationTap(_ notification: KeychyNotification) {
         // 1. 읽음 처리
         markNotificationAsRead(notification)
 
-        // 2. 선물 완료 화면으로 이동 (TODO: 라우팅 구현 필요)
-        print("🎁 알림 탭: \(notification.message)")
-        print("📦 PostOffice ID: \(notification.postOfficeId)")
-        // TODO: router.push(.giftCompletionView(postOfficeId: notification.postOfficeId))
+        // 2. 선물 완료 화면으로 이동
+        router.push(.notificationGiftView(postOfficeId: notification.postOfficeId))
     }
 
     /// 알림을 읽음 처리
-    private func markNotificationAsRead(_ notification: Notification) {
-        guard let notificationId = notification.id else {
-            print("⚠️ 알림 ID가 없습니다")
+    private func markNotificationAsRead(_ notification: KeychyNotification) {
+        guard let notificationId = notification.documentId else {
+            print("알림 문서 ID가 없습니다")
             return
         }
 
@@ -203,9 +206,9 @@ extension AlarmView {
             .document(notificationId)
             .updateData(["isRead": true]) { error in
                 if let error = error {
-                    print("❌ 알림 읽음 처리 실패: \(error.localizedDescription)")
+                    print("알림 읽음 처리 실패: \(error.localizedDescription)")
                 } else {
-                    print("✅ 알림 읽음 처리 완료: \(notificationId)")
+                    print("알림 읽음 처리 완료: \(notificationId)")
                 }
             }
     }
