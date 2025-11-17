@@ -55,6 +55,8 @@ struct BundleDetailView: View {
                         }
                     )
                     .ignoresSafeArea()
+                    .blur(radius: isSceneReady ? 0 : 10)
+                    .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                     /// 씬 재생성 조건을 위한 ID 설정
                     /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                     .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
@@ -103,18 +105,25 @@ struct BundleDetailView: View {
                             }
                         }
                     }
+                    if !isSceneReady {
+                        Color.black20
+                            .ignoresSafeArea()
+                        
+                        LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
+                            .zIndex(200)
+                    }
                     
                 } else {
                     // 데이터 로딩 중
                     Color.clear.ignoresSafeArea()
                 }
             }
-            .blur(radius: isSceneReady ? 0 : 15)
 
             if isCapturing {
                 capturingOverlay
             }
             customnavigationBar
+                .ignoresSafeArea()
         }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
@@ -258,7 +267,7 @@ extension BundleDetailView {
                 router.pop()
             }
             .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
+            .glassEffect(.regular, in: .circle)
         } center: {
         } trailing: {
             // Trailing (오른쪽)
@@ -268,7 +277,7 @@ extension BundleDetailView {
                 }
             }
             .frame(width: 44, height: 44)
-            .buttonStyle(.glass)
+            .glassEffect(.regular, in: .circle)
         }
         
     }

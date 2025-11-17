@@ -29,10 +29,10 @@ struct BundleNameEditView: View {
             }
             .padding(.top, 100)
             .frame(maxHeight: .infinity)
+            .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
             
             customNavigationBar
         }
-        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
@@ -112,7 +112,8 @@ extension BundleNameEditView {
             BackToolbarButton {
                 router.pop()
             }
-            .glassEffect(.regular.interactive(), in: .circle)
+            .frame(width: 44, height: 44)
+            .glassEffect(.clear.interactive())
         } center: {
             EmptyView()
         } trailing: {
@@ -120,7 +121,9 @@ extension BundleNameEditView {
                 handleCheckButtonTap()
             }
             .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
+            .frame(width: 62, height: 44)
+            .glassEffect(.regular, in: .rect(cornerRadius: 100))
+            
         }
     }
     

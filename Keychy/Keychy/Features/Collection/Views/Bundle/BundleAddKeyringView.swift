@@ -22,7 +22,7 @@ struct BundleAddKeyringView: View {
     @State private var selectedPosition = 0
     @State private var isCapturing = false
     @State private var sceneRefreshId = UUID()
-
+    @State private var isSceneReady = false
     // 키링 선택 시트 그리드 컬럼
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -61,10 +61,20 @@ struct BundleAddKeyringView: View {
                 if isCapturing {
                     capturingOverlay
                 }
+                
+                if !isSceneReady {
+                    Color.black80
+                        .ignoresSafeArea()
+                    
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                }
             }
         }
         .ignoresSafeArea()
-        .onAppear { fetchData() }
+        .onAppear {
+            fetchData()
+            isSceneReady = false
+        }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             backButton
@@ -91,9 +101,16 @@ extension BundleAddKeyringView {
                 carabinerX: carabiner.carabinerX,
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth,
-                currentCarabinerType: carabiner.type
+                currentCarabinerType: carabiner.type,
+                onAllKeyringsReady: {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isSceneReady = true
+                    }
+                }
             )
             .ignoresSafeArea()
+            .blur(radius: isSceneReady ? 0 : 10)
+            .animation(.easeInOut(duration: 0.3), value: isSceneReady)
             .id("scene_\(background.id ?? "bg")_\(carabiner.id ?? "cb")_\(selectedKeyrings.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들

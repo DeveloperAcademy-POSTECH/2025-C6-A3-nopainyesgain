@@ -76,7 +76,7 @@ extension KeyringBundleItem {
         return Group {
             if isCapturing {
                 // 캡처 중 ProgressView
-                LoadingAlert(type: .short, message: "")
+                LoadingAlert(type: .short, message: nil)
             } else if let cachedImage = cachedImage {
                 cachedImage
                     .resizable()

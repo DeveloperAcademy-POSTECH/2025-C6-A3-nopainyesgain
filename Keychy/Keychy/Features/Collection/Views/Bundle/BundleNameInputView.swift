@@ -127,6 +127,7 @@ extension BundleNameInputView {
             BackToolbarButton {
                 router.pop()
             }
+            .frame(width: 44, height: 44)
             .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             EmptyView()

@@ -24,9 +24,7 @@ struct SelectCarabinerGridItem: View {
                             .clipped()
                             .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                     } else if state.isLoading {
-                        ProgressView()
-                            .aspectRatio(1, contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        LoadingAlert(type: .short, message: nil)
                     } else {
                         Color.clear
                             .aspectRatio(1, contentMode: .fit)

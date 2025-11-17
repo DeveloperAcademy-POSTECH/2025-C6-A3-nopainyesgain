@@ -24,7 +24,7 @@ struct SelectBackgroundGridItem: View {
                             .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                             .clipped()
                     } else if state.isLoading {
-                        ProgressView()
+                        LoadingAlert(type: .short, message: nil)
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 10))

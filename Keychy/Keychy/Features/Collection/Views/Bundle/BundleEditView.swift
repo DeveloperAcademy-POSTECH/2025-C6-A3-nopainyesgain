@@ -14,6 +14,8 @@ struct BundleEditView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
+    @State private var isSceneReady = false
+    
     @State private var selectedCategory: String = ""
     @State private var selectedKeyringPosition: Int = 0
     @State private var newSelectedBackground: BackgroundViewData?
@@ -70,13 +72,15 @@ struct BundleEditView: View {
                     keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
                     
                 } else {
-                    // 데이터 로딩 중이거나 임시 화면
                     if let bg = newSelectedBackground {
                         LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
                                     .scaledToFit()
+                            } else if state.isLoading {
+                                Color.black80
+                                    .ignoresSafeArea()
                             }
                         }
                     }
@@ -92,6 +96,15 @@ struct BundleEditView: View {
                             Spacer()
                         }
                     }
+                }
+                
+                // navigationBar
+                customNavigationBar
+                
+                if !isSceneReady {
+                    Color.black80
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
                 }
                 
                 // Dim 오버레이 (키링 시트가 열릴 때)
@@ -112,8 +125,6 @@ struct BundleEditView: View {
                 // Alert들
                 alertContent
                 
-                // navigationBar
-                customNavigationBar
             }
         }
         .sheet(isPresented: $showPurchaseSheet) {
@@ -174,8 +185,16 @@ struct BundleEditView: View {
                 carabinerX: carabiner.carabiner.carabinerX,
                 carabinerY: carabiner.carabiner.carabinerY,
                 carabinerWidth: carabiner.carabiner.carabinerWidth,
-                currentCarabinerType: carabiner.carabiner.type
+                currentCarabinerType: carabiner.carabiner.type,
+                onAllKeyringsReady: {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isSceneReady = true
+                    }
+                }
             )
+            .ignoresSafeArea()
+            .blur(radius: isSceneReady ? 0 : 10)
+            .animation(.easeInOut(duration: 0.3), value: isSceneReady)
             .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들

@@ -16,6 +16,8 @@ struct BundleCreateView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @State var viewModel: CollectionViewModel
     
+    @State private var isSceneReady = false
+    
     /// 선택한 카테고리 : "Background" 또는 "Carabiner"
     @State private var selectedCategory: String = ""
     
@@ -54,29 +56,41 @@ struct BundleCreateView: View {
     //MARK: 메인 뷰
     var body: some View {
         ZStack(alignment: .bottom) {
-            if let background = selectedBackground,
-               let carabiner = selectedCarabiner {
-                selectedView(
-                    bg: background,
-                    cb: carabiner
+            if let bg = selectedBackground,
+               let cb = selectedCarabiner {
+                // 배경과 카라비너만 보여줌
+                MultiKeyringSceneView(
+                    keyringDataList: [],
+                    ringType: .basic,
+                    chainType: .basic,
+                    backgroundColor: .clear,
+                    backgroundImageURL: bg.background.backgroundImage,
+                    carabinerBackImageURL: cb.carabiner.backImageURL,
+                    carabinerFrontImageURL: cb.carabiner.frontImageURL,
+                    carabinerX: cb.carabiner.carabinerX,
+                    carabinerY: cb.carabiner.carabinerY,
+                    carabinerWidth: cb.carabiner.carabinerWidth,
+                    currentCarabinerType: cb.carabiner.type,
+                    onAllKeyringsReady: {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            isSceneReady = true
+                        }
+                    }
                 )
+                .ignoresSafeArea()
+                .blur(radius: isSceneReady ? 0 : 10)
+                .animation(.easeInOut(duration: 0.3), value: isSceneReady)
+                .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
                 
                 sheetContent()
-            } else {
-                // 로딩 중일 때
-                // 기본 배경 이미지와 로딩 중 애니메이션..
-                Image(.greenBackground)
-                    .resizable()
-                    .scaledToFit()
-                    .ignoresSafeArea()
-                VStack {
-                    Spacer()
-                    Image(.introTypo)
-                        .resizable()
-                        .scaledToFit()
-                    Text("로딩 중이에요")
-                    Spacer()
+                
+                if !isSceneReady {
+                    Color.black20
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
                 }
+            } else {
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
             }
             
             // Alert들
@@ -96,6 +110,7 @@ struct BundleCreateView: View {
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshData()
+                isSceneReady = false
             }
             
             // 화면 첫 진입 시 배경 시트를 보여줌
@@ -211,28 +226,6 @@ extension BundleCreateView {
                 }
             }
         }
-    }
-}
-
-// MARK: - 배경, 카라비너 뷰
-extension BundleCreateView {
-    private func selectedView(bg: BackgroundViewData, cb: CarabinerViewData) -> some View {
-        // 배경과 카라비너만 보여줌
-        MultiKeyringSceneView(
-            keyringDataList: [],
-            ringType: .basic,
-            chainType: .basic,
-            backgroundColor: .clear,
-            backgroundImageURL: bg.background.backgroundImage,
-            carabinerBackImageURL: cb.carabiner.backImageURL,
-            carabinerFrontImageURL: cb.carabiner.frontImageURL,
-            carabinerX: cb.carabiner.carabinerX,
-            carabinerY: cb.carabiner.carabinerY,
-            carabinerWidth: cb.carabiner.carabinerWidth,
-            currentCarabinerType: cb.carabiner.type
-        )
-        .ignoresSafeArea()
-        .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
     }
 }
 
