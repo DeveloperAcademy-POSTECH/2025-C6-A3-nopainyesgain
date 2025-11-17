@@ -130,6 +130,8 @@
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
 		4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */; };
+		4CA9C6D62ECB7AEA00CA546B /* BadWords.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CA9C6D52ECB7AEA00CA546B /* BadWords.json */; };
+		4CA9C6D92ECB7B2800CA546B /* TextFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6D72ECB7B2800CA546B /* TextFilter.swift */; };
 		4CAF11AB2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */; };
 		4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */; };
 		4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */; };
@@ -436,6 +438,8 @@
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+FirebaseSave.swift"; sourceTree = "<group>"; };
+		4CA9C6D52ECB7AEA00CA546B /* BadWords.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BadWords.json; sourceTree = "<group>"; };
+		4CA9C6D72ECB7B2800CA546B /* TextFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFilter.swift; sourceTree = "<group>"; };
 		4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		4CB82EC82EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AcrylicPhotoVM+BGRemover.swift"; sourceTree = "<group>"; };
 		4CB82ECA2EB1FD8500B7458B /* PreviewGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGuiding.swift; sourceTree = "<group>"; };
@@ -885,6 +889,7 @@
 			isa = PBXGroup;
 			children = (
 				4CC3D3C62EC8A47E0009D376 /* OutlineText.swift */,
+				4CA9C6D72ECB7B2800CA546B /* TextFilter.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -1437,6 +1442,7 @@
 		4CEC62912EAE08F70099ECEE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4CA9C6D52ECB7AEA00CA546B /* BadWords.json */,
 				4CEC62872EAE08F70099ECEE /* Assets.xcassets */,
 				4CEC628A2EAE08F70099ECEE /* Lotties */,
 				4CEC628E2EAE08F70099ECEE /* Sounds */,
@@ -1680,6 +1686,7 @@
 				C6B56F0F2EBD8A2E0049F969 /* StoreKit.storekit in Resources */,
 				C6B56F092EBC3D670049F969 /* StoreKit1.storekit in Resources */,
 				4C6622062EAE5FC3001760B5 /* SUIT-ExtraBold.otf in Resources */,
+				4CA9C6D62ECB7AEA00CA546B /* BadWords.json in Resources */,
 				4C6622072EAE5FC3001760B5 /* SUIT-ExtraLight.otf in Resources */,
 				4C6622082EAE5FC3001760B5 /* SUIT-Heavy.otf in Resources */,
 				4C6622092EAE5FC3001760B5 /* SUIT-Light.otf in Resources */,
@@ -1937,6 +1944,7 @@
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
 				38A596732EAFA8D20003D712 /* KeychyUser.swift in Sources */,
 				385425CA2EB3C79A00A06C02 /* KeyringDetailScene.swift in Sources */,
+				4CA9C6D92ECB7B2800CA546B /* TextFilter.swift in Sources */,
 				C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,

@@ -68,12 +68,12 @@ extension KeyringInfoInputView {
             } label: {
                 Text("다음")
                     .typography(.suit17B)
-                    .foregroundStyle(viewModel.nameText.isEmpty ? .gray300 : .black100)
+                    .foregroundStyle(viewModel.nameText.isEmpty || hasProfanity ? .gray300 : .black100)
                     .padding(5)
             }
             .buttonStyle(.glassProminent)
-            .tint(viewModel.nameText.isEmpty ? .clear : .white100)
-            .allowsHitTesting(!viewModel.nameText.isEmpty && !isSavingToFirebase)
+            .tint(viewModel.nameText.isEmpty || hasProfanity ? .clear : .white100)
+            .allowsHitTesting(!viewModel.nameText.isEmpty && !isSavingToFirebase && !hasProfanity)
         }
     }
 }

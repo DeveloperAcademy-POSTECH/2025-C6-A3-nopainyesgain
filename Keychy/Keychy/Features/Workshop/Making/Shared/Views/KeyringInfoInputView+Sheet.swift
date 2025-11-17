@@ -70,41 +70,66 @@ extension KeyringInfoInputView {
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
 
-            HStack {
-                TextField(
-                    "이름을 입력해주세요",
-                    text: $viewModel.nameText
-                )
-                .foregroundStyle(viewModel.nameText.isEmpty ? .gray300 : .black100)
-                .focused($isFocused)
-                .onChange(of: viewModel.nameText) { _, newValue in
-                    let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
-                    var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: .regularExpression)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    TextField(
+                        "이름을 입력해주세요",
+                        text: $viewModel.nameText
+                    )
+                    .foregroundStyle(viewModel.nameText.isEmpty ? .gray300 : .black100)
+                    .focused($isFocused)
+                    .onChange(of: viewModel.nameText) { _, newValue in
+                        let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
+                        var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: .regularExpression)
 
-                    if sanitized.count > viewModel.maxTextCount {
-                        sanitized = String(sanitized.prefix(viewModel.maxTextCount))
+                        if sanitized.count > viewModel.maxTextCount {
+                            sanitized = String(sanitized.prefix(viewModel.maxTextCount))
+                        }
+
+                        if sanitized != viewModel.nameText {
+                            viewModel.nameText = sanitized
+                        }
+
+                        textCount = viewModel.nameText.count
+
+                        // 욕설 체크
+                        if viewModel.nameText.isEmpty {
+                            validationMessage = ""
+                            hasProfanity = false
+                        } else {
+                            let profanityCheck = TextFilter.shared.validateText(viewModel.nameText)
+                            if !profanityCheck.isValid {
+                                validationMessage = profanityCheck.message ?? "부적절한 단어가 포함되어 있어요"
+                                hasProfanity = true
+                            } else {
+                                validationMessage = ""
+                                hasProfanity = false
+                            }
+                        }
                     }
+                    .typography(.notosans15M)
+                    /// 커서 표시기 색상
+                    .tint(.black70)
 
-                    if sanitized != viewModel.nameText {
-                        viewModel.nameText = sanitized
-                    }
-
-                    textCount = viewModel.nameText.count
+                    Text("\(textCount)/\(viewModel.maxTextCount)")
+                        .typography(.suit13M)
+                        .foregroundStyle(.gray300)
                 }
-                .typography(.notosans15M)
-                /// 커서 표시기 색상
-                .tint(.black70)
+                .padding(.vertical, 13.5)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.gray50)
+                )
 
-                Text("\(textCount)/\(viewModel.maxTextCount)")
-                    .typography(.suit13M)
-                    .foregroundStyle(.gray300)
+                // 유효성 메시지
+                if !validationMessage.isEmpty {
+                    Text(validationMessage)
+                        .typography(.suit14M)
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 4)
+                }
             }
-            .padding(.vertical, 13.5)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.gray50)
-            )
         }
     }
 }
