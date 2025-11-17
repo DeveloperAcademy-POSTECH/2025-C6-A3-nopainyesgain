@@ -22,7 +22,7 @@ struct BundleAddKeyringView: View {
     @State private var selectedPosition = 0
     @State private var isCapturing = false
     @State private var sceneRefreshId = UUID()
-
+    @State private var isSceneReady = false
     // 키링 선택 시트 그리드 컬럼
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -47,7 +47,7 @@ struct BundleAddKeyringView: View {
 
                 // Dim 오버레이 (키링 시트가 열릴 때)
                 if showSelectKeyringSheet {
-                    Color.black.opacity(0.3)
+                    Color.black20
                         .ignoresSafeArea()
                         .zIndex(1)
                 }
@@ -61,10 +61,22 @@ struct BundleAddKeyringView: View {
                 if isCapturing {
                     capturingOverlay
                 }
+                
+                if !isSceneReady {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(100)
+                    
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                        .zIndex(101)
+                }
             }
         }
         .ignoresSafeArea()
-        .onAppear { fetchData() }
+        .onAppear {
+            fetchData()
+            isSceneReady = false
+        }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             backButton
@@ -91,9 +103,16 @@ extension BundleAddKeyringView {
                 carabinerX: carabiner.carabinerX,
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth,
-                currentCarabinerType: carabiner.type
+                currentCarabinerType: carabiner.type,
+                onAllKeyringsReady: {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isSceneReady = true
+                    }
+                }
             )
             .ignoresSafeArea()
+            .blur(radius: isSceneReady ? 0 : 10)
+            .animation(.easeInOut(duration: 0.3), value: isSceneReady)
             .id("scene_\(background.id ?? "bg")_\(carabiner.id ?? "cb")_\(selectedKeyrings.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들
@@ -103,9 +122,12 @@ extension BundleAddKeyringView {
 
     /// 키링 추가 버튼들
     private func keyringButtons(carabiner: Carabiner) -> some View {
+        // 키링 추가 버튼들
         ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-            let position = viewModel.buttonPosition(index: index, carabiner: carabiner)
-            
+            //se3상에서 버튼 위치가 아주 조금 안 맞아서 추가적인 패딩값을 줍니다
+            let needsMorePadding: CGFloat = getBottomPadding(34) == 34 ? 5 : 0
+            let xPos = carabiner.keyringXPosition[index] - needsMorePadding
+            let yPos = carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPadding(34) - needsMorePadding
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
                 action: {
@@ -115,9 +137,10 @@ extension BundleAddKeyringView {
                     }
                 }
             )
-            .position(position)
+            .position(x: xPos, y: yPos)
             .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-            .zIndex(selectedPosition == index ? 50 : 1)
+            .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
+            .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
         }
     }
 
@@ -262,18 +285,9 @@ extension BundleAddKeyringView {
     /// 캡처 중 오버레이
     private var capturingOverlay: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            Color.black20
                 .ignoresSafeArea()
-
-            VStack(spacing: 16) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(1.5)
-
-                Text("이미지 생성 중...")
-                    .foregroundColor(.white)
-                    .font(.headline)
-            }
+            LoadingAlert(type: .longWithKeychy, message: "뭉치 생성 중...")
         }
     }
     
@@ -293,7 +307,7 @@ extension BundleAddKeyringView {
             Button {
                 router.pop()
             } label: {
-                Image(systemName: "chevron.left")
+                Image(.backIcon)
             }
         }
     }

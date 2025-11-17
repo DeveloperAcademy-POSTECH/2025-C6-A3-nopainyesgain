@@ -65,6 +65,14 @@ extension IntroViewModel {
             return
         }
 
+        // 욕설 체크
+        let profanityCheck = TextFilter.shared.validateText(nickname)
+        if !profanityCheck.isValid {
+            validationMessage = profanityCheck.message ?? "부적절한 단어가 포함되어 있어요"
+            isValidationPositive = false
+            return
+        }
+
         // Firebase 중복 확인
         checkNicknameDuplicate(nickname)
     }

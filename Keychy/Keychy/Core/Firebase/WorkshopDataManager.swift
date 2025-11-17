@@ -112,14 +112,9 @@ class WorkshopDataManager {
     private func fetchItems<T: WorkshopItem>(collection: String) async -> [T] {
         do {
             let collectionRef = Firestore.firestore().collection(collection)
-            let query: Query
 
-            // Template 컬렉션인 경우에만 isActive 필터 적용
-            if collection == "Template" {
-                query = collectionRef.whereField("isActive", isEqualTo: true)
-            } else {
-                query = collectionRef
-            }
+            // isActive 필터 적용 (모든 컬렉션)
+            let query = collectionRef.whereField("isActive", isEqualTo: true)
 
             let snapshot = try await query.getDocuments()
 
