@@ -36,10 +36,10 @@ enum ChainType {
         switch self {
         case .basic:
             return ChainLink(
-                imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain1.png?alt=media&token=97ce479e-84dd-43ee-8c06-42e469468451",
+                imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain1.png?alt=media&token=5b48f1b1-a820-4c0d-87ae-9beb482e544f",
                 storagePath: "Chains/basicChain1.png",
-                width: 5,
-                height: 22
+                width: 8,
+                height: 30
             )
         }
     }
@@ -51,8 +51,8 @@ enum ChainType {
             return ChainLink(
                 imageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Chains%2FbasicChain2.png?alt=media&token=d12afa09-c0cf-4fe4-b53c-cc459afd7e7b",
                 storagePath: "Chains/basicChain2.png",
-                width: 18,
-                height: 26
+                width: 20,
+                height: 28
             )
         }
     }
