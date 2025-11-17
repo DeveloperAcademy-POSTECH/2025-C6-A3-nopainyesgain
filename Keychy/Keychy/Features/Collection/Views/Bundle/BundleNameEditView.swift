@@ -18,16 +18,21 @@ struct BundleNameEditView: View {
     
     @State private var isUpdating: Bool = false
     var body: some View {
-        VStack(spacing: 20) {
-            viewModel.keyringSceneView()
+        ZStack(alignment: .top) {
+            VStack(spacing: 20) {
+                viewModel.keyringSceneView()
+                
+                bundleNameTextField
+                    .padding(.horizontal, 20)
+                
+                Spacer()
+            }
+            .padding(.top, 100)
+            .frame(maxHeight: .infinity)
             
-            bundleNameTextField
-                .padding(.horizontal, 20)
-            
-            Spacer()
+            customNavigationBar
         }
-        .padding(.top, 100)
-        .frame(maxHeight: .infinity)
+        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
@@ -38,15 +43,10 @@ struct BundleNameEditView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            backButton
-            checkButton
-        }
         .transaction { transaction in
             transaction.animation = nil
             transaction.disablesAnimations = true
         }
-        .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
                 keyboardHeight = keyboardFrame.height
@@ -107,28 +107,35 @@ extension BundleNameEditView {
 // MARK: - 툴바
 
 extension BundleNameEditView {
-    private var backButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
             BackToolbarButton {
                 router.pop()
             }
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            EmptyView()
+        } trailing: {
+            NextToolbarButton {
+                handleCheckButtonTap()
+            }
+            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
         }
     }
     
-    private var checkButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            NextToolbarButton(title: "완료") {
-                viewModel.updateBundleName(bundle: viewModel.selectedBundle!, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
-                    DispatchQueue.main.async {
-                        self.isUpdating = false
-                        if success {
-                            viewModel?.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
-                            router.pop()
-                        }
-                    }
+    private func handleCheckButtonTap() {
+        guard let bundle = viewModel.selectedBundle else { return }
+        
+        isUpdating = true
+        viewModel.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
+            DispatchQueue.main.async {
+                self.isUpdating = false
+                if success {
+                    viewModel?.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    router.pop()
                 }
             }
-            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 }
