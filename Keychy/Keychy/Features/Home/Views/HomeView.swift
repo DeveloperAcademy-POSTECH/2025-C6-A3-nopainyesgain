@@ -78,8 +78,21 @@ struct HomeView: View {
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)        .task {
-            // 뷰가 나타날 때 메인 뭉치 데이터 로드
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
+            if !isSceneReady {
+                Task {
+                    await loadMainBundle()
+                }
+            }
+        }
+        .onDisappear {
+            // 뷰가 사라질 때 씬 준비 상태 초기화
+            isSceneReady = false
+        }
+        .task {
+            // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
         }
         .onChange(of: keyringDataList) { _, _ in

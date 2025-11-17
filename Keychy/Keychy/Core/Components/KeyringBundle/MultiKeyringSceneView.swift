@@ -77,8 +77,8 @@ struct MultiKeyringSceneView: View {
             particleEffectsView
         }
         .onAppear {
-            // 씬이 없을 때만 초기 설정
-            if scene == nil {
+            // 씬이 없고 키링 데이터가 있을 때만 초기 설정
+            if scene == nil, !keyringDataList.isEmpty {
                 loadBackgroundImage()
                 setupScene()
             }
