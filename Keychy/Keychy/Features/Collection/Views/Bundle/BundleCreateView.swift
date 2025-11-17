@@ -153,9 +153,6 @@ extension BundleCreateView {
             .frame(width: 44, height: 44)
             .glassEffect(.regular.interactive(), in: .circle)
         } center: {
-            Text("배경 및 카라비너 선택")
-                .typography(.notosans17M)
-                .foregroundStyle(.black100)
         } trailing: {
             if hasUnpurchasedItems {
                 PurchaseToolbarButton(title: "구매 \(payableItemsCount)") {

@@ -766,7 +766,6 @@ extension BundleEditView {
             .frame(width: 44, height: 44)
             .glassEffect(.regular.interactive(), in: .circle)
         } center: {
-            Text("편집")
         } trailing: {
             let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
             
