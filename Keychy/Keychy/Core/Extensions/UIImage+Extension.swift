@@ -142,8 +142,8 @@ extension UIImage {
         // 3. 구멍 중심 좌표 계산
         let topY = findTopOpaqueY(in: dilated) ?? (h + adjustedRadius)
         let circleCenter = CIVector(x: w / 2, y: topY)
-        let innerRadius = adjustedRadius / 3.0
-        let outerRadius = adjustedRadius / 1.5
+        let innerRadius = adjustedRadius / 2.5
+        let outerRadius = adjustedRadius / 1.3
 
         // 4. 외부/내부 원 생성 및 합성
         let outerCircle = CIFilter(name: "CIRadialGradient", parameters: [
