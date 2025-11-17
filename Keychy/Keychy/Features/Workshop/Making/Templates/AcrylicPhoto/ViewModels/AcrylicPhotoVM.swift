@@ -188,9 +188,10 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
         }
 
         do {
-            // Sound 전체 가져오기
+            // Sound 전체 가져오기 (isActive == true만)
             let soundsSnapshot = try await Firestore.firestore()
                 .collection("Sound")
+                .whereField("isActive", isEqualTo: true)
                 .getDocuments()
 
             let allSounds = try soundsSnapshot.documents.compactMap {
@@ -210,9 +211,10 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
             // 소유한 것 먼저, 그 다음 미소유
             availableSounds = ownedSounds + notOwnedSounds
 
-            // Particle 전체 가져오기
+            // Particle 전체 가져오기 (isActive == true만)
             let particlesSnapshot = try await Firestore.firestore()
                 .collection("Particle")
+                .whereField("isActive", isEqualTo: true)
                 .getDocuments()
 
             let allParticles = try particlesSnapshot.documents.compactMap {
