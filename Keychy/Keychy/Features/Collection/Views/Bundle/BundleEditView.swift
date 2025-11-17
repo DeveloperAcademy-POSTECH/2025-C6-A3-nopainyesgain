@@ -497,24 +497,20 @@ struct BundleEditView: View {
                         purchaseFailScale = 0.3
                     }
                 
-                VStack {
-                    Spacer()
-                    PurchaseFailAlert(
-                        checkmarkScale: purchaseFailScale,
-                        onCancel: {
-                            showPurchaseFailAlert = false
-                            purchaseFailScale = 0.3
-                        },
-                        onCharge: {
-                            showPurchaseFailAlert = false
-                            purchaseFailScale = 0.3
-                            saveCurrentSelection()
-                            router.push(.coinCharge)
-                        }
-                    )
-                    Spacer()
-                }
-
+                PurchaseFailAlert(
+                    checkmarkScale: purchaseFailScale,
+                    onCancel: {
+                        showPurchaseFailAlert = false
+                        purchaseFailScale = 0.3
+                    },
+                    onCharge: {
+                        showPurchaseFailAlert = false
+                        purchaseFailScale = 0.3
+                        saveCurrentSelection()
+                        router.push(.coinCharge)
+                    }
+                )
+                .padding(.horizontal, 51)
             }
         }
     }
@@ -909,10 +905,10 @@ extension BundleEditView {
             }
             purchaseButton
                 .padding(.horizontal, 33.2)
+                .adaptiveBottomPadding()
         }
         .background(.white100)
         .presentationDetents([.fraction(0.43)])
-        .adaptiveBottomPadding()
     }
     
     private func cartItemRow(name: String, type: String, price: Int) -> some View {
