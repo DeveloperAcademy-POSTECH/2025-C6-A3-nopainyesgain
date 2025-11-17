@@ -81,12 +81,10 @@ struct BundleCreateView: View {
             
             // Alert들
             alertContent
+            
+            customNavigationBar
         }
         .ignoresSafeArea()
-        .toolbar {
-            backButton
-            nextButton
-        }
         .navigationBarBackButtonHidden()
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -130,47 +128,33 @@ struct BundleCreateView: View {
     }
 }
 
-// MARK: - 툴바
+// MARK: - 커스텀 네비게이션 바
 extension BundleCreateView {
-    private var backButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
                 router.pop()
-            } label: {
-                Image(.lessThan)
-                    .resizable()
-                    .scaledToFit()
             }
+            .glassEffect(.regular.interactive(), in: .circle)
             .frame(width: 44, height: 44)
-            .buttonStyle(.glass)
-        }
-    }
-    
-    private var nextButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                // 유료 아이템이 있으면 구매 시트 열기
-                if hasUnpurchasedItems {
+        } center: {
+            Text("배경 및 카라비너 선택")
+                .typography(.notosans17M)
+                .foregroundStyle(.black100)
+        } trailing: {
+            if hasUnpurchasedItems {
+                TextToolbarButton(title: "구매 \(payableItemsCount)") {
                     showPurchaseSheet = true
-                } else {
-                    // 무료 아이템 or 보유한 아이템만 있으면 다음 화면으로 이동
+                }
+                .tint(.black100)
+            } else {
+                NextToolbarButton {
                     router.push(.bundleAddKeyringView)
                 }
-            } label: {
-                if hasUnpurchasedItems {
-                    let payableCount = payableItemsCount
-                    Text("구매 \(payableCount)")
-                } else {
-                    Text("다음")
-                        .typography(.suit17B)
-                        .foregroundStyle(.black100)
-                        .padding(.vertical, 7.5)
-                        .padding(.horizontal, 6)
-                }
+                .tint(.white100)
             }
-            .buttonStyle(.glassProminent)
-            .tint(hasUnpurchasedItems ? .black80 : .white)
         }
+        
     }
 }
 
