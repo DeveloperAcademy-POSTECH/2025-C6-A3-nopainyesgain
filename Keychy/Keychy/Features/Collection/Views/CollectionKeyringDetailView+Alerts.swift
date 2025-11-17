@@ -64,7 +64,7 @@ extension CollectionKeyringDetailView {
             showDeleteAlert = false
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")
                 return
@@ -159,7 +159,7 @@ extension CollectionKeyringDetailView {
             showCopyAlert = false
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")
                 return
@@ -201,7 +201,7 @@ extension CollectionKeyringDetailView {
                                 // 복사권 개수 새로고침
                                 self.refreshCopyVoucher()
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                         self.showCopyCompleteAlert = true
                                     }
@@ -256,7 +256,7 @@ extension CollectionKeyringDetailView {
             showPackageAlert = false
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")
                 return
