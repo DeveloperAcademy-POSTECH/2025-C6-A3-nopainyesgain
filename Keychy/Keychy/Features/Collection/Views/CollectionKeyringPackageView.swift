@@ -63,6 +63,10 @@ struct CollectionKeyringPackageView: View {
                             }
                         )
                         .transition(.scale.combined(with: .opacity))
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
                         .zIndex(100)
                     }
                     
@@ -72,6 +76,10 @@ struct CollectionKeyringPackageView: View {
                             type: .unpack,
                             message: "선물 포장을 풀었어요",
                             isPresented: $showUnpackCompleteAlert
+                        )
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
                         )
                         .zIndex(101)
                     }
@@ -83,6 +91,10 @@ struct CollectionKeyringPackageView: View {
                         .zIndex(99)
                     
                     KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $showImageSaved)
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
                         .zIndex(101)
                 }
                 
@@ -92,18 +104,28 @@ struct CollectionKeyringPackageView: View {
                         .zIndex(99)
                     
                     KeychyAlert(type: .linkCopy, message: "링크가 복사되었어요!", isPresented: $showLinkCopied)
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
                         .zIndex(101)
                 }
+                
+                customNavigationBar
+                    .blur(radius: shouldApplyBlur ? 15 : 0)
+                    .adaptiveTopPadding()
+                    .zIndex(0)
             }
+            .padding(.top, 1)
         }
         .ignoresSafeArea()
-        .navigationTitle(keyring.name)
+        //.navigationTitle(keyring.name)
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            backToolbarItem
-            unpackToolbarItem
-        }
+//        .toolbar(.hidden, for: .tabBar)
+//        .toolbar {
+//            backToolbarItem
+//            unpackToolbarItem
+//        }
         .onAppear {
             hideTabBar()
             loadPackagedKeyringInfo()
@@ -154,45 +176,88 @@ struct CollectionKeyringPackageView: View {
 }
 
 extension CollectionKeyringPackageView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
+            BackToolbarButton {
+                router.pop()
+            }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            // Center (중앙) - 빈 공간
+            Text(keyring.name)
+                .typography(.suit17M)
+                .foregroundStyle(.gray600)
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showUnpackAlert = true
+                }
+            }) {
+                Image("UnpackIcon")
+                    .resizable()
+                    .frame(width: 34, height: 34)
+            }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        }
+    }
+}
+
+extension CollectionKeyringPackageView {
     var packagedView: some View {
-        ZStack {
-            // 배경 이미지 (초록 패턴)
-            Image("GreenBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            let heightRatio = geometry.size.height / 852
+            let isSmallScreen = geometry.size.height < 700
             
-            VStack(spacing: 0) {
+            ZStack {
+                // 배경 이미지 (초록 패턴)
+                Image("GreenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 
-                Spacer()
-                    .frame(height: 60)
-                
-                // 상단 상태 바
-                packageStatusBar
-                
-                Spacer()
-                    .frame(height: 48)
-                
-                // 포장된 키링 뷰
-                PackagedKeyringView(
-                    keyring: keyring,
-                    postOfficeId: loadedPostOfficeId,
-                    shareLink: shareLink,
-                    authorName: packageAuthorName,
-                    isLoading: $isLoading,
-                    onImageSaved: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showImageSaved = true
+                VStack(spacing: 0) {
+                    
+                    Spacer()
+                        .adaptiveTopPadding()
+                        
+                    // 상단 상태 바
+                    packageStatusBar
+                        .padding(.top, isSmallScreen ? -70 : 70) // -70 너무 아닌거 같은데 암튼 됨...
+                    
+                    Spacer()
+                        .frame(height: isSmallScreen ? 24 : 48)
+                    
+                    // 포장된 키링 뷰
+                    PackagedKeyringView(
+                        keyring: keyring,
+                        postOfficeId: loadedPostOfficeId,
+                        shareLink: shareLink,
+                        authorName: packageAuthorName,
+                        isLoading: $isLoading,
+                        onImageSaved: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showImageSaved = true
+                            }
+                        },
+                        onLinkCopied: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showLinkCopied = true
+                            }
                         }
-                    },
-                    onLinkCopied: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showLinkCopied = true
-                        }
-                    }
-                )
+                    )
+                    .frame(height: isSmallScreen ? 500 : 600)
+                    .scaleEffect(heightRatio)
+                    
+                    Spacer()
+                        .adaptiveBottomPadding()
+                }
             }
         }
+
     }
     
     var packageStatusBar: some View {
