@@ -123,9 +123,8 @@ extension KeyringScene {
         // 마지막 체인의 "중심 Y": 첫 링크 시작점에서 (링크 수 - 1) * spacing 만큼 아래
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
 
-        // 마지막 체인의 실제 높이를 기반으로 "아래 끝 Y" 계산
-        let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
-        let lastChainBottomY = lastChainY - lastLinkHeight / 2
+        // 마지막 체인의 실제 높이를 기반으로 "아래 끝 Y" 계산 - 15: 체인길이의 절반
+        let lastChainBottomY = lastChainY - 15
 
         // hookOffsetY를 사용한 정확한 연결 지점 계산
         // hookOffsetY가 nil이면 0.0을 사용 (바디 중앙 상단에 연결)
@@ -134,6 +133,15 @@ extension KeyringScene {
         let bodyCenterY = lastChainBottomY - bodyHalfHeight - (hookOffsetY ?? 0.0)
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+        
+        // 디버그: 체인 끝 위치 표시 (빨간 선)
+        let chainEndLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
+        chainEndLine.fillColor = .red
+        chainEndLine.strokeColor = .red
+        chainEndLine.position = CGPoint(x: centerX, y: lastChainBottomY)
+        chainEndLine.zPosition = 100
+        addChild(chainEndLine)
+        
         body.zPosition = -1  // Body는 체인 아래
         addChild(body)
         bodyNode = body
