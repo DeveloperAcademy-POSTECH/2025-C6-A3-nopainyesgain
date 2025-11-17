@@ -73,6 +73,7 @@ struct WorkshopPreview: View {
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
+        .enableSwipeBack()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 BackToolbarButton {
