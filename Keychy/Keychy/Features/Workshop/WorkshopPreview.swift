@@ -19,9 +19,7 @@ struct WorkshopPreview: View {
     @State private var showPurchaseSheet = false
     @State private var purchasePopupScale: CGFloat = 0.3
     @State private var showPurchaseSuccessAlert = false
-    @State private var purchaseSuccessScale: CGFloat = 0.3
     @State private var showPurchaseFailAlert = false
-    @State private var purchaseFailScale: CGFloat = 0.3
 
     let viewModel: WorkshopViewModel
     let item: any WorkshopItem
@@ -124,54 +122,37 @@ struct WorkshopPreview: View {
 
                 // 구매 성공 알림
                 if showPurchaseSuccessAlert {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        }
-
-                    CheckmarkAlert(
-                        checkmarkScale: purchaseSuccessScale,
-                        text: "구매 완료!"
+                    KeychyAlert(
+                        type: .checkmark,
+                        message: "구매가 완료되었어요!",
+                        isPresented: $showPurchaseSuccessAlert
                     )
                 }
 
                 // 구매 실패 알림 (코인 부족)
                 if showPurchaseFailAlert {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
+                    ZStack {
+                        Color.black20
+                            .zIndex(99)
 
-                    BangmarkAlert(
-                        checkmarkScale: purchaseFailScale,
-                        text: "열쇠가 부족해요",
-                        cancelText: "취소",
-                        confirmText: "충전하기",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseFailScale = 0.3
+                        LackPopup(
+                            title: "코인이 부족해요",
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showPurchaseFailAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showPurchaseFailAlert = false
+                                    router.push(.coinCharge)
+                                }
                             }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseFailAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseFailScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseFailAlert = false
-                                router.push(.coinCharge)
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
+                        )
+                        .transition(.scale.combined(with: .opacity))
+                        .zIndex(100)
+                    }
+                    .ignoresSafeArea()
                 }
             }
         }
@@ -341,15 +322,13 @@ extension WorkshopPreview {
         case .success:
             // 성공 시 성공 알림 표시
             showPurchaseSuccessAlert = true
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                purchaseSuccessScale = 1.0
-            }
 
         case .insufficientCoins:
             // 코인 부족 시 실패 알림 표시
-            showPurchaseFailAlert = true
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                purchaseFailScale = 1.0
+            await MainActor.run {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPurchaseFailAlert = true
+                }
             }
 
         case .failed(let message):

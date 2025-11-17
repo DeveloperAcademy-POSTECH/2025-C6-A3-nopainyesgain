@@ -64,7 +64,7 @@ struct CoinChargeView<Route: Hashable>: View {
             // 구매 실패 Alert
             if showPurchaseFailAlert {
                 ZStack {
-                    Color.black40
+                    Color.black20
                         .zIndex(99)
 
                     LackPopup(
