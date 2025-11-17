@@ -279,9 +279,11 @@ extension BundleCreateView {
         // 배경 데이터 로드
         await withCheckedContinuation { continuation in
             viewModel.fetchAllBackgrounds { _ in
-                // 가장 첫 번째 배경을 기본으로 선택
+                // "키치 배경"을 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedBackground == nil {
-                    self.selectedBackground = viewModel.backgroundViewData.first
+                    self.selectedBackground = viewModel.backgroundViewData.first { bg in
+                        bg.background.backgroundName == "키치 배경"
+                    } ?? viewModel.backgroundViewData.first
                 }
                 
                 continuation.resume()
@@ -291,9 +293,11 @@ extension BundleCreateView {
         // 카라비너 데이터 로드
         await withCheckedContinuation { continuation in
             viewModel.fetchAllCarabiners { _ in
-                // 가장 첫 번째 카라비너를 기본으로 선택
+                // "키치 카라비너"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedCarabiner == nil {
-                    self.selectedCarabiner = viewModel.carabinerViewData.first
+                    self.selectedCarabiner = viewModel.carabinerViewData.first { cb in
+                        cb.carabiner.carabinerName == "키치 카라비너"
+                    } ?? viewModel.carabinerViewData.first
                 }
                 
                 continuation.resume()
@@ -333,6 +337,7 @@ extension BundleCreateView {
                             router.push(.coinCharge)
                         }
                     )
+                    .padding(.horizontal, 51)
                 }
             }
         }
@@ -385,6 +390,7 @@ extension BundleCreateView {
             }
             purchaseButton
                 .padding(.horizontal, 33.2)
+                .adaptiveBottomPadding()
         }
         .background(.white100)
         .presentationDetents([.fraction(0.43)])
