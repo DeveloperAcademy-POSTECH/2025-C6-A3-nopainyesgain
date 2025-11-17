@@ -40,7 +40,10 @@ struct Particle: Identifiable, Codable, Equatable, Hashable {
     
     /// 생성일
     let createdAt: Date
-    
+
+    /// 앱 노출 여부 (false면 앱에서 숨김)
+    let isActive: Bool
+
     /// 무료 파티클 여부
     var isFree: Bool {
         return price == 0

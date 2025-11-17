@@ -49,7 +49,10 @@ struct Carabiner: Identifiable, Codable, Equatable, Hashable {
     
     /// 생성일
     let createdAt: Date
-    
+
+    /// 앱 노출 여부 (false면 앱에서 숨김)
+    let isActive: Bool
+
     /// 카라비너 왼쪽상단 좌표
     let carabinerX: CGFloat
     
