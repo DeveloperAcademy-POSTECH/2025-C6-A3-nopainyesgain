@@ -190,10 +190,11 @@ extension WorkshopPreview {
                         .aspectRatio(1, contentMode: .fit)
                         .cornerRadius(20)
                 } else {
-                    ProgressView()
-                        .task {
-                            await ensureParticleReady(particle)
-                        }
+                    LoadingAlert(type: .short, message: nil)
+                        .scaleEffect(0.5)
+                    .task {
+                        await ensureParticleReady(particle)
+                    }
                 }
             }
 

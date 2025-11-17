@@ -20,7 +20,8 @@ struct ItemDetailImage: View {
                     .resizable()
                     .scaledToFit()
             } else if state.isLoading {
-                ProgressView()
+                LoadingAlert(type: .short, message: nil)
+                    .scaleEffect(0.5)
             } else {
                 Color.gray.opacity(0.1)
             }
