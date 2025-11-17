@@ -156,7 +156,7 @@ extension BundleNameEditView {
             NextToolbarButton {
                 handleCheckButtonTap()
             }
-            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || hasProfanity)
             .frame(width: 62, height: 44)
             .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
         }
@@ -174,7 +174,6 @@ extension BundleNameEditView {
                     router.pop()
                 }
             }
-            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || hasProfanity)
         }
     }
 }
