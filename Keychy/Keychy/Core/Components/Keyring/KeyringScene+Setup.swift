@@ -127,33 +127,20 @@ extension KeyringScene {
         let lastChainBottomY = lastChainY - 15
 
         // hookOffsetY를 사용한 정확한 연결 지점 계산
-        // hookOffsetY는 이미지 높이 대비 비율 (0.0 ~ 1.0)
-        // 실제 body 높이에 맞게 변환
+        // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
+        //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
+        // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
         let hookOffsetYRatio = hookOffsetY ?? 0.0
         let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
 
-        print("🔗 Body 연결 계산:")
-        print("  bodyFrame.height: \(bodyFrame.height)pt")
-        print("  hookOffsetYRatio: \(hookOffsetYRatio) (\(hookOffsetYRatio * 100)%)")
-        print("  actualHookOffsetY: \(actualHookOffsetY)pt")
-
         // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
 
         body.zPosition = -1  // Body는 체인 아래
         addChild(body)
         bodyNode = body
-
-        // 🎨 디버그: 시각화 추가
-        addDebugVisualization(
-            bodyFrame: bodyFrame,
-            bodyCenterY: bodyCenterY,
-            centerX: centerX,
-            lastChainBottomY: lastChainBottomY,
-            actualHookOffsetY: actualHookOffsetY
-        )
 
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
@@ -286,105 +273,5 @@ extension KeyringScene {
             bodyPhysics.categoryBitMask = bodyCategory
             bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
         }
-    }
-
-    // MARK: - Debug Visualization
-    /// 디버그용 시각화 (Body 영역 + 체인 끝 + 구멍 위치)
-    private func addDebugVisualization(
-        bodyFrame: CGRect,
-        bodyCenterY: CGFloat,
-        centerX: CGFloat,
-        lastChainBottomY: CGFloat,
-        actualHookOffsetY: CGFloat
-    ) {
-        // 1. Body 영역 표시 (파란색 테두리)
-        let bodyOutline = SKShapeNode(rect: CGRect(
-            x: -bodyFrame.width / 2,
-            y: -bodyFrame.height / 2,
-            width: bodyFrame.width,
-            height: bodyFrame.height
-        ))
-        bodyOutline.position = CGPoint(x: centerX, y: bodyCenterY)
-        bodyOutline.strokeColor = .systemBlue
-        bodyOutline.lineWidth = 2
-        bodyOutline.fillColor = .clear
-        bodyOutline.zPosition = 100
-        addChild(bodyOutline)
-
-        // 2. 체인 끝 위치 (빨간색 가로선)
-        let chainEndLine = SKShapeNode(
-            rect: CGRect(
-                x: centerX - 100,
-                y: lastChainBottomY - 1,
-                width: 200,
-                height: 2
-            )
-        )
-        chainEndLine.fillColor = .systemRed
-        chainEndLine.strokeColor = .systemRed
-        chainEndLine.zPosition = 100
-        addChild(chainEndLine)
-
-        // 3. 구멍 위치 (초록색 가로선) - Body 상단 + actualHookOffsetY
-        let bodyTopY = bodyCenterY + bodyFrame.height / 2
-        let holeY = bodyTopY - actualHookOffsetY
-        let holeLine = SKShapeNode(
-            rect: CGRect(
-                x: centerX - 100,
-                y: holeY - 1,
-                width: 200,
-                height: 2
-            )
-        )
-        holeLine.fillColor = .systemGreen
-        holeLine.strokeColor = .systemGreen
-        holeLine.zPosition = 100
-        addChild(holeLine)
-
-        // 4. Body 상단 (노란색 가로선)
-        let bodyTopLine = SKShapeNode(
-            rect: CGRect(
-                x: centerX - 100,
-                y: bodyTopY - 1,
-                width: 200,
-                height: 2
-            )
-        )
-        bodyTopLine.fillColor = .systemYellow
-        bodyTopLine.strokeColor = .systemYellow
-        bodyTopLine.zPosition = 100
-        addChild(bodyTopLine)
-
-        // 5. Body 중심 (회색 십자선)
-        let centerHLine = SKShapeNode(
-            rect: CGRect(
-                x: centerX - 50,
-                y: bodyCenterY - 0.5,
-                width: 100,
-                height: 1
-            )
-        )
-        centerHLine.fillColor = .gray
-        centerHLine.zPosition = 100
-        addChild(centerHLine)
-
-        let centerVLine = SKShapeNode(
-            rect: CGRect(
-                x: centerX - 0.5,
-                y: bodyCenterY - 50,
-                width: 1,
-                height: 100
-            )
-        )
-        centerVLine.fillColor = .gray
-        centerVLine.zPosition = 100
-        addChild(centerVLine)
-
-        print("📏 시각화 가이드:")
-        print("  🔵 파란색 테두리: Body 이미지 영역")
-        print("  🔴 빨간색 선: 체인 끝 위치 (Y: \(lastChainBottomY))")
-        print("  🟡 노란색 선: Body 상단 (Y: \(bodyTopY))")
-        print("  🟢 초록색 선: 구멍(고리) 위치 (Y: \(holeY))")
-        print("  ⚫️ 회색 십자: Body 중심 (Y: \(bodyCenterY))")
     }
 }

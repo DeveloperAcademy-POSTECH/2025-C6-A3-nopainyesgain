@@ -252,23 +252,20 @@ extension UIImage {
         let renderExtent = finalImage.extent.union(ciImage.extent).insetBy(dx: -20, dy: -20)
         guard let output = context.createCGImage(finalImage, from: renderExtent) else { return nil }
 
-        // 15. hookOffsetY 계산 (이미지 높이 대비 비율로 저장)
-        // CIImage 좌표계 (bottom-left origin):
-        // - renderExtent.height: 최종 이미지 상단의 Y 위치 (from bottom)
-        // - topY: 구멍 중심의 Y 위치 (from bottom)
-        // - 상단에서 구멍까지의 거리: renderExtent.height - topY
-        let renderHeight = renderExtent.height
-        let hookOffsetYFromTop = renderHeight - topY
+        // 15. hookOffsetY 계산 ✅ 올바른 방법
+        // renderExtent의 minY = bottom 위치 (좌표계 시작점)
+        let finalImageHeight = renderExtent.height  // 최종 렌더링된 전체 높이
+        let renderMinY = renderExtent.minY          // 렌더 영역의 bottom Y 좌표
 
-        // 이미지 높이 대비 비율로 저장 (0.0 ~ 1.0)
-        // Scene에서 실제 body 크기에 맞게 자동 조정됨
-        let hookOffsetYRatio = hookOffsetYFromTop / renderHeight
+        // topY는 ciImage 좌표계 기준이므로, renderExtent 기준으로 변환 필요
+        let topYInRenderCoords = topY - renderMinY  // renderExtent 기준 구멍 위치
 
-        print("🎯 hookOffsetY 계산 (비율 방식):")
-        print("  renderHeight: \(renderHeight)px")
-        print("  hookOffsetYFromTop: \(hookOffsetYFromTop)px")
-        print("  hookOffsetYRatio: \(hookOffsetYRatio) (\(hookOffsetYRatio * 100)%)")
+        // 최종 이미지 top에서 구멍까지의 거리
+        let hookOffsetYFromTop = finalImageHeight - topYInRenderCoords
 
+        // 최종 이미지 높이 대비 비율
+        let hookOffsetYRatio = hookOffsetYFromTop / finalImageHeight
+        
         // 16. UIImage 반환
         let resultImage = UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
 
