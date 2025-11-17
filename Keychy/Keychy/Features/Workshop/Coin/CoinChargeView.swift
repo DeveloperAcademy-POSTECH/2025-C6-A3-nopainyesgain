@@ -37,6 +37,7 @@ struct CoinChargeView<Route: Hashable>: View {
                     otherItemsSection
                 }
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
@@ -46,8 +47,6 @@ struct CoinChargeView<Route: Hashable>: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden(showPurchaseSuccessAlert || showPurchaseFailAlert)
-            .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
-            .animation(.easeInOut(duration: 0.2), value: showPurchaseFailAlert)
             .sheet(isPresented: $showPurchaseSheet) {
                 purchaseSheet
             }
@@ -64,25 +63,27 @@ struct CoinChargeView<Route: Hashable>: View {
 
             // 구매 실패 Alert
             if showPurchaseFailAlert {
-                Color.black40
-                    .ignoresSafeArea()
-                    .zIndex(99)
+                ZStack {
+                    Color.black40
+                        .zIndex(99)
 
-                LackPopup(
-                    title: "코인이 부족해요",
-                    onCancel: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showPurchaseFailAlert = false
+                    LackPopup(
+                        title: "코인이 부족해요",
+                        onCancel: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showPurchaseFailAlert = false
+                            }
+                        },
+                        onConfirm: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showPurchaseFailAlert = false
+                            }
                         }
-                    },
-                    onConfirm: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showPurchaseFailAlert = false
-                        }
-                    }
-                )
-                .transition(.scale.combined(with: .opacity))
-                .zIndex(100)
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+                .ignoresSafeArea()
             }
         }
     }
