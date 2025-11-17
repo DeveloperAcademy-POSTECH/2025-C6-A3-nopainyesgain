@@ -33,58 +33,66 @@ struct HomeView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            if let bundle = collectionViewModel.selectedBundle,
-               let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-               let background = collectionViewModel.selectedBackground {
+            // 블러 영역
+            ZStack(alignment: .top) {
+                if let bundle = collectionViewModel.selectedBundle,
+                   let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+                   let background = collectionViewModel.selectedBackground {
 
-                MultiKeyringSceneView(
-                    keyringDataList: keyringDataList,
-                    ringType: .basic,
-                    chainType: .basic,
-                    backgroundColor: .clear,
-                    backgroundImageURL: background.backgroundImage,
-                    carabinerBackImageURL: carabiner.backImageURL,
-                    carabinerFrontImageURL: carabiner.frontImageURL,
-                    carabinerX: carabiner.carabinerX,
-                    carabinerY: carabiner.carabinerY,
-                    carabinerWidth: carabiner.carabinerWidth,
-                    currentCarabinerType: carabiner.type,
-                    onBackgroundLoaded: onBackgroundLoaded,
-                    onAllKeyringsReady: {
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            isSceneReady = true
+                    MultiKeyringSceneView(
+                        keyringDataList: keyringDataList,
+                        ringType: .basic,
+                        chainType: .basic,
+                        backgroundColor: .clear,
+                        backgroundImageURL: background.backgroundImage,
+                        carabinerBackImageURL: carabiner.backImageURL,
+                        carabinerFrontImageURL: carabiner.frontImageURL,
+                        carabinerX: carabiner.carabinerX,
+                        carabinerY: carabiner.carabinerY,
+                        carabinerWidth: carabiner.carabinerWidth,
+                        currentCarabinerType: carabiner.type,
+                        onBackgroundLoaded: onBackgroundLoaded,
+                        onAllKeyringsReady: {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                isSceneReady = true
+                            }
                         }
-                    }
-                )
-                .ignoresSafeArea()
-                /// 씬 재생성 조건을 위한 ID 설정
-                /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
-            } else {
-                // 데이터 로딩 중
-                Color.clear.ignoresSafeArea()
-            }
+                    )
+                    .ignoresSafeArea()
+                    /// 씬 재생성 조건을 위한 ID 설정
+                    /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
+                    .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
+                } else {
+                    // 데이터 로딩 중
+                    Color.clear.ignoresSafeArea()
+                }
 
-            // 상단 네비게이션 버튼들
-            navigationButtons
+                // 상단 네비게이션 버튼들
+                navigationButtons
+            }
+            .blur(radius: isSceneReady ? 0 : 15)
 
             // 로딩 알림 (씬 준비 전까지 표시)
             if !isSceneReady {
-                ZStack {
-                    // 블러 배경
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(Color.black.opacity(0.2))
-                        .ignoresSafeArea()
-
-                    // 로딩 알림
-                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                }
+                // 로딩 알림
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
+            if !isSceneReady {
+                Task {
+                    await loadMainBundle()
+                }
+            }
+        }
+        .onDisappear {
+            // 뷰가 사라질 때 씬 준비 상태 초기화
+            isSceneReady = false
+        }
         .task {
-            // 뷰가 나타날 때 메인 뭉치 데이터 로드
+            // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
         }
         .onChange(of: keyringDataList) { _, _ in

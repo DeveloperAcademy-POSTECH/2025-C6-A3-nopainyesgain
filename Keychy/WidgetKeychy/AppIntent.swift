@@ -47,11 +47,9 @@ struct KeyringEntityQuery: EntityQuery {
         return availableKeyrings.map { KeyringEntity(id: $0.id, name: $0.name) }
     }
 
-    /// 기본 선택 키링 (목록의 첫 번째 키링)
+    /// 기본 선택 키링 (없음 - 사용자가 직접 선택하도록)
     func defaultResult() async -> KeyringEntity? {
-        let availableKeyrings = KeyringImageCache.shared.loadAvailableKeyrings()
-        guard let first = availableKeyrings.first else { return nil }
-        return KeyringEntity(id: first.id, name: first.name)
+        return nil
     }
 }
 
