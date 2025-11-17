@@ -375,8 +375,8 @@ class MultiKeyringScene: SKScene {
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 19
+        let chainStartY = ringBottomY + 2
+        let chainSpacing: CGFloat = 20
 
         // 카라비너 타입에 따라 체인 개수 설정
         let chainCount: Int = {
@@ -490,9 +490,17 @@ class MultiKeyringScene: SKScene {
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
 
-        let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
-        let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
-        let lastChainBottomY = lastChainY - lastLinkHeight / 2
+        // 마지막 체인의 실제 하단 위치를 정확하게 계산
+        let lastChainBottomY: CGFloat
+        if let lastChain = chains.last {
+            let lastChainFrame = lastChain.calculateAccumulatedFrame()
+            lastChainBottomY = lastChain.position.y - lastChainFrame.height / 2
+        } else {
+            // 체인이 없는 경우 (fallback)
+            let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
+            let estimatedChainHeight = chainSpacing
+            lastChainBottomY = lastChainY - estimatedChainHeight / 2
+        }
 
         // hookOffsetY를 사용한 정확한 연결 지점 계산
         // hookOffsetY가 nil이면 0.0을 사용 (바디 중앙 상단에 연결)

@@ -337,8 +337,8 @@ class MultiKeyringCaptureScene: SKScene {
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 19
+        let chainStartY = ringBottomY - 2
+        let chainSpacing: CGFloat = 20
 
         // 카라비너 타입에 따라 체인 개수 설정
         let chainCount: Int = {
