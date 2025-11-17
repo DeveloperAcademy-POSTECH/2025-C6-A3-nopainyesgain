@@ -153,14 +153,6 @@ extension KeyringCellScene {
         body.zPosition = -1  // Body는 체인 아래
         containerNode.addChild(body)
 
-        // 디버그: 체인 끝 위치 표시 (빨간 선)
-        let chainEndLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
-        chainEndLine.fillColor = .red
-        chainEndLine.strokeColor = .red
-        chainEndLine.position = CGPoint(x: centerX, y: lastChainBottomY)
-        chainEndLine.zPosition = 100
-        containerNode.addChild(chainEndLine)
-
         // 디버그: 바디 이미지 상단 위치 표시 (파란 선)
         let bodyTopY = bodyCenterY + bodyHalfHeight
         let bodyTopLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))

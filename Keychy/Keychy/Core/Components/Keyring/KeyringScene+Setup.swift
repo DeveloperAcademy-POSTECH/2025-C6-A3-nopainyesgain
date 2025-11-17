@@ -134,14 +134,6 @@ extension KeyringScene {
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         
-        // 디버그: 체인 끝 위치 표시 (빨간 선)
-        let chainEndLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
-        chainEndLine.fillColor = .red
-        chainEndLine.strokeColor = .red
-        chainEndLine.position = CGPoint(x: centerX, y: lastChainBottomY)
-        chainEndLine.zPosition = 100
-        addChild(chainEndLine)
-        
         body.zPosition = -1  // Body는 체인 아래
         addChild(body)
         bodyNode = body
