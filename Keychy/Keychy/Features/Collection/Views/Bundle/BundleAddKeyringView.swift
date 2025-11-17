@@ -47,7 +47,7 @@ struct BundleAddKeyringView: View {
 
                 // Dim 오버레이 (키링 시트가 열릴 때)
                 if showSelectKeyringSheet {
-                    Color.black.opacity(0.3)
+                    Color.black20
                         .ignoresSafeArea()
                         .zIndex(1)
                 }
@@ -63,7 +63,7 @@ struct BundleAddKeyringView: View {
                 }
                 
                 if !isSceneReady {
-                    Color.black80
+                    Color.black20
                         .ignoresSafeArea()
                     
                     LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
@@ -282,7 +282,7 @@ extension BundleAddKeyringView {
     /// 캡처 중 오버레이
     private var capturingOverlay: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            Color.black20
                 .ignoresSafeArea()
             LoadingAlert(type: .longWithKeychy, message: "뭉치 생성 중...")
         }

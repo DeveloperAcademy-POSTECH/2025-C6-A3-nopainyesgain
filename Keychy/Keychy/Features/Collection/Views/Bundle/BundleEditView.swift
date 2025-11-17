@@ -79,7 +79,7 @@ struct BundleEditView: View {
                                     .resizable()
                                     .scaledToFit()
                             } else if state.isLoading {
-                                Color.black80
+                                Color.black20
                                     .ignoresSafeArea()
                             }
                         }
@@ -102,7 +102,7 @@ struct BundleEditView: View {
                 customNavigationBar
                 
                 if !isSceneReady {
-                    Color.black80
+                    Color.black20
                         .ignoresSafeArea()
                     LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
                 }

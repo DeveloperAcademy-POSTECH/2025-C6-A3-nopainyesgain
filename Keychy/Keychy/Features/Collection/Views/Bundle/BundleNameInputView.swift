@@ -46,7 +46,7 @@ struct BundleNameInputView: View {
             .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
             
             if isUploading {
-                Color.black80
+                Color.black20
                     .ignoresSafeArea()
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 생성하고 있어요")
             }

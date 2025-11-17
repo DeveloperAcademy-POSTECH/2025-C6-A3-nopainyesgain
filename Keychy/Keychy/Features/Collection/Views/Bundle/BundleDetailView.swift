@@ -153,7 +153,7 @@ struct BundleDetailView: View {
             ZStack(alignment: .center) {
                 // 삭제 확인 Alert
                 if showDeleteAlert {
-                    Color.black.opacity(0.4)
+                    Color.black40
                         .ignoresSafeArea()
                     if let bundle = viewModel.selectedBundle {
                         DeletePopup(
@@ -173,14 +173,14 @@ struct BundleDetailView: View {
                     }
                 }
                 if showDeleteCompleteToast {
-                    Color.black.opacity(0.4)
+                    Color.black40
                         .ignoresSafeArea()
                     DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
                         .zIndex(100)
                 }
                 
                 if showChangeMainBundleAlert {
-                    Color.black.opacity(0.4)
+                    Color.black40
                         .ignoresSafeArea()
                     changeMainBundleAlert
                         .padding(.horizontal, 51)
