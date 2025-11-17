@@ -88,6 +88,7 @@ struct KeyringBodyComponent {
         node.fillColor = .white
         node.strokeColor = UIColor(white: 0.8, alpha: 0.4)
         node.lineWidth = 1.0
+        node.zPosition = -1  // Body는 체인 아래
 
         // 물리 바디 설정 (원형 - 기본값으로 설정, 씬에서 조정됨)
         let physicsBody = SKPhysicsBody(circleOfRadius: radius - 2)
@@ -110,6 +111,7 @@ struct KeyringBodyComponent {
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+        spriteNode.zPosition = -1  // Body는 체인 아래
 
         // 물리 바디 설정 (원본 크기에 맞게)
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
@@ -134,6 +136,7 @@ struct KeyringBodyComponent {
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear   // 부드럽게 렌더링
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+        spriteNode.zPosition = -1  // Body는 체인 아래
 
         // 물리 바디 설정 (원본 크기에 맞게)
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
@@ -168,6 +171,7 @@ struct KeyringBodyComponent {
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+        spriteNode.zPosition = -1  // Body는 체인 아래
 
         // 물리 바디 설정
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
