@@ -24,6 +24,9 @@ extension IntroViewModel {
 
         try await addKeyringToUser(uid: uid, keyringId: keyringId)
 
+        // 웰컴 카라비너를 사용자의 carabiners 필드에 추가
+        try await addWelcomeCarabinerToUser(uid: uid)
+
         Task.detached {
             await self.cacheWelcomeKeyring(
                 keyringId: keyringId,
@@ -82,6 +85,14 @@ extension IntroViewModel {
             .collection("User")
             .document(uid)
             .updateData(["keyrings": FieldValue.arrayUnion([keyringId])])
+    }
+
+    // MARK: - User carabiners 배열에 웰컴 카라비너 추가
+    private func addWelcomeCarabinerToUser(uid: String) async throws {
+        try await Firestore.firestore()
+            .collection("User")
+            .document(uid)
+            .updateData(["carabiners": FieldValue.arrayUnion(["Welcome"])])
     }
 
     // MARK: - 위젯용 캐싱 (KeyringCompleteView 로직 재사용)
