@@ -1,0 +1,233 @@
+//
+//  DataInitializer.swift
+//  Keychy
+//
+//  Firestore에 새 아이템을 추가할 때 사용하는 초기화 도구
+//  각 함수의 배열에 데이터를 추가하고 initializeData()를 호출하면 Firestore에 업로드됩니다.
+//
+//  <길지훈의 따끔한 경고!>
+//  isActive는 기본적으로 false로 설정되어 있습니다.
+//  배포 전에 Firestore에서 isActive를 true로 변경하세요.
+//
+//  지원 컬렉션:
+//  - Template: 키링 템플릿
+//  - Background: 번들 배경
+//  - Carabiner: 카라비너
+//  - Sound: 사운드 이펙트
+//  - Particle: 파티클 이펙트
+
+import FirebaseFirestore
+
+/// 앱 실행 시 한 번만 호출하세요
+/// - 원하는 함수를 수정하고, 아래 함수를 호출하세요.
+func initializeData() async {
+    await initializeTemplates()
+    await initializeBackgrounds()
+    await initializeCarabiners()
+    await initializeParticles()
+    await initializeSounds()
+}
+
+// MARK: - Background Initialization
+func initializeBackgrounds() async {
+    let backgrounds: [[String: Any]] = [
+        [
+            "id": "ExampleBackground",
+            "backgroundName": "예시 배경",
+            "description": "새로운 배경 설명을 입력하세요",
+            "backgroundImage": "https://firebasestorage.googleapis.com/...",
+            "tags": ["태그1", "태그2"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ]
+    ]
+    
+    let db = Firestore.firestore()
+    
+    for background in backgrounds {
+        guard let id = background["id"] as? String else { continue }
+        
+        var data = background
+        data.removeValue(forKey: "id")
+        
+        do {
+            let doc = try await db.collection("Background").document(id).getDocument()
+            
+            if !doc.exists {
+                data["createdAt"] = Timestamp(date: Date())
+            }
+            
+            try await db.collection("Background").document(id).setData(data, merge: true)
+        } catch {
+            print("Background \(id) 오류: \(error)")
+        }
+    }
+}
+
+// MARK: - Carabiner Initialization
+func initializeCarabiners() async {
+    let carabiners: [[String: Any]] = [
+        [
+            "id": "ExampleCarabiner",
+            "carabinerName": "예시 카라비너",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/..."],
+            "carabinerType": "plain",  // "plain" 또는 "hamburger"
+            "description": "새로운 카라비너 설명을 입력하세요",
+            "maxKeyringCount": 5,
+            "tags": ["태그1", "태그2"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 0.0,
+            "carabinerY": 0.0,
+            "carabinerWidth": 100.0,
+            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
+            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5],
+            "isActive": false
+        ]
+    ]
+    
+    let db = Firestore.firestore()
+    
+    for carabiner in carabiners {
+        guard let id = carabiner["id"] as? String else { continue }
+        
+        var data = carabiner
+        data.removeValue(forKey: "id")
+        
+        do {
+            let doc = try await db.collection("Carabiner").document(id).getDocument()
+            
+            if !doc.exists {
+                data["createdAt"] = Timestamp(date: Date())
+            }
+            
+            try await db.collection("Carabiner").document(id).setData(data, merge: true)
+        } catch {
+            print("Carabiner \(id) 오류: \(error)")
+        }
+    }
+}
+
+// MARK: - Particle Initialization
+func initializeParticles() async {
+    let particles: [[String: Any]] = [
+        [
+            "id": "ExampleParticle",
+            "particleName": "예시 파티클",
+            "description": "새로운 파티클 설명을 입력하세요",
+            "particleData": "https://firebasestorage.googleapis.com/...",
+            "thumbnail": "https://firebasestorage.googleapis.com/...",
+            "tags": ["태그1", "태그2"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ]
+    ]
+    
+    let db = Firestore.firestore()
+    
+    for particle in particles {
+        guard let id = particle["id"] as? String else { continue }
+        
+        var data = particle
+        data.removeValue(forKey: "id")
+        
+        do {
+            let doc = try await db.collection("Particle").document(id).getDocument()
+            
+            if !doc.exists {
+                data["createdAt"] = Timestamp(date: Date())
+            }
+            
+            try await db.collection("Particle").document(id).setData(data, merge: true)
+        } catch {
+            print("Particle \(id) 오류: \(error)")
+        }
+    }
+}
+
+// MARK: - Sound Initialization
+func initializeSounds() async {
+    let sounds: [[String: Any]] = [
+        [
+            "id": "ExampleSound",
+            "soundName": "예시 사운드",
+            "description": "새로운 사운드 설명을 입력하세요",
+            "soundData": "https://firebasestorage.googleapis.com/...",
+            "thumbnail": "https://firebasestorage.googleapis.com/...",
+            "tags": ["태그1", "태그2"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ]
+    ]
+    
+    let db = Firestore.firestore()
+    
+    for sound in sounds {
+        guard let id = sound["id"] as? String else { continue }
+        
+        var data = sound
+        data.removeValue(forKey: "id")
+        
+        do {
+            let doc = try await db.collection("Sound").document(id).getDocument()
+            
+            if !doc.exists {
+                data["createdAt"] = Timestamp(date: Date())
+            }
+            
+            try await db.collection("Sound").document(id).setData(data, merge: true)
+        } catch {
+            print("Sound \(id) 오류: \(error)")
+        }
+    }
+}
+
+// MARK: - Template Initialization
+func initializeTemplates() async {
+    let templates: [[String: Any]] = [
+        [
+            "id": "ExampleTemplate",
+            "templateName": "예시 템플릿",
+            "description": "새로운 템플릿 설명을 입력하세요",
+            "interactions": ["tap"],
+            "thumbnailURL": "https://firebasestorage.googleapis.com/...",
+            "previewURL": "https://firebasestorage.googleapis.com/...",
+            "guidingImageURL": "https://firebasestorage.googleapis.com/...",
+            "guidingText": "가이드 텍스트를 입력하세요",
+            "tags": ["태그1", "태그2"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ]
+    ]
+    
+    let db = Firestore.firestore()
+    
+    for template in templates {
+        guard let id = template["id"] as? String else { continue }
+        
+        var data = template
+        data.removeValue(forKey: "id")
+        
+        do {
+            let doc = try await db.collection("Template").document(id).getDocument()
+            
+            if !doc.exists {
+                data["createdAt"] = Timestamp(date: Date())
+            }
+            
+            try await db.collection("Template").document(id).setData(data, merge: true)
+        } catch {
+            print("Template \(id) 오류: \(error)")
+        }
+    }
+}
+

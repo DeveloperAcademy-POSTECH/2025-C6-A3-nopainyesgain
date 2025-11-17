@@ -339,27 +339,3 @@ extension WorkshopPreview {
         }
     }
 }
-
-#Preview {
-    // 프리뷰용 샘플 Sound
-    let sampleSound = Sound(
-        id: "sample_sound_1",
-        soundName: "딸랑딸랑",
-        description: "귀여운 종소리 효과음",
-        soundData: "sample_bell.mp3",
-        thumbnail: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FCloudHangerBack.png?alt=media&token=74b8d537-6b27-4562-8536-3b97624e1e9f"
-,
-        tags: ["귀여움", "종소리"],
-        price: 100,
-        downloadCount: 42,
-        useCount: 123,
-        createdAt: Date()
-    )
-    
-    return WorkshopPreview(
-        router: NavigationRouter<WorkshopRoute>(),
-        viewModel: WorkshopViewModel(userManager: UserManager.shared),
-        item: sampleSound
-    )
-    .environment(UserManager.shared)
-}
