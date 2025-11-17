@@ -141,10 +141,6 @@ extension UIImage {
 
         // 3. 구멍 중심 좌표 계산
         let topY = findTopOpaqueY(in: dilated) ?? (h + adjustedRadius)
-
-        // hookOffsetY 계산 (이미지 중심 기준)
-        let hookOffsetY = topY - (h / 2)
-
         let circleCenter = CIVector(x: w / 2, y: topY)
         let innerRadius = adjustedRadius / 3.0
         let outerRadius = adjustedRadius / 1.5
@@ -256,11 +252,20 @@ extension UIImage {
         let renderExtent = finalImage.extent.union(ciImage.extent).insetBy(dx: -20, dy: -20)
         guard let output = context.createCGImage(finalImage, from: renderExtent) else { return nil }
 
-        // 15. UIImage 및 hookOffsetY 반환
-        let resultImage = UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
+        // 15. hookOffsetY 계산 (최종 렌더링된 이미지의 상단에서 구멍 중심까지의 거리)
+        // CIImage 좌표계 (bottom-left origin):
+        // - renderExtent.height: 최종 이미지 상단의 Y 위치 (from bottom)
+        // - topY: 구멍 중심의 Y 위치 (from bottom)
+        // - 상단에서 구멍까지의 거리 (아래 방향 양수): renderExtent.height - topY
+        let renderHeight = renderExtent.height
+        let hookOffsetYFromTop = renderHeight - topY
 
         // 정규화 (200px 기준)
-        let normalizedHookOffsetY = hookOffsetY / (maxSide / 200.0)
+        let renderMaxSide = max(renderExtent.width, renderExtent.height)
+        let normalizedHookOffsetY = hookOffsetYFromTop / (renderMaxSide / 200.0)
+
+        // 16. UIImage 반환
+        let resultImage = UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
 
         return (image: resultImage, hookOffsetY: normalizedHookOffsetY)
     }
