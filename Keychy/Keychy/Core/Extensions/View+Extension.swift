@@ -27,26 +27,48 @@ extension View {
     func dismissKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
-
-    /// 네비게이션 스와이프 제스처를 활성화합니다.
-    /// `.navigationBarBackButtonHidden(true)` 사용 시에도 스와이프로 뒤로가기가 가능하도록 합니다.
-    func enableSwipeBack() -> some View {
-        self.background(SwipeBackHelper())
-    }
 }
 
-/// 네비게이션 스와이프 제스처를 활성화하는 Helper
+// MARK: - SwipeBack 관리
+
+/// 네비게이션 스와이프 제스처를 제어하는 Helper
 struct SwipeBackHelper: UIViewControllerRepresentable {
+    let isEnabled: Bool
+    
+    init(isEnabled: Bool = true) {
+        self.isEnabled = isEnabled
+    }
+    
     func makeUIViewController(context: Context) -> UIViewController {
         UIViewController()
     }
-
+    
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         DispatchQueue.main.async {
+            // 현재 뷰컨트롤러에서 네비게이션 컨트롤러 찾기
             if let navigationController = uiViewController.navigationController {
-                navigationController.interactivePopGestureRecognizer?.isEnabled = true
-                navigationController.interactivePopGestureRecognizer?.delegate = nil
+                navigationController.interactivePopGestureRecognizer?.isEnabled = isEnabled
+                navigationController.interactivePopGestureRecognizer?.delegate = isEnabled ? nil : context.coordinator
             }
         }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            return false
+        }
+    }
+}
+
+// MARK: - View Extension for SwipeBack
+extension View {
+    /// 네비게이션 스와이프 백 제스처 활성화/비활성화
+    /// - Parameter enabled: true면 스와이프 백 활성화, false면 비활성화
+    func swipeBackGesture(enabled: Bool) -> some View {
+        self.background(SwipeBackHelper(isEnabled: enabled))
     }
 }

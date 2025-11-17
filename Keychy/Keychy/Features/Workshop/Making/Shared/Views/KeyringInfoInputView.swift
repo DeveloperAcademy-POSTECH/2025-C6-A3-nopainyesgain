@@ -37,6 +37,10 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State var showSheet: Bool = true
     @FocusState var isFocused: Bool
 
+    // MARK: - Profanity Filtering
+    @State var validationMessage: String = ""
+    @State var hasProfanity: Bool = false
+
     // MARK: - Firebase Saving States
     @State var isSavingToFirebase: Bool = false
 

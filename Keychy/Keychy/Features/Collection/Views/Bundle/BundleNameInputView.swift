@@ -16,12 +16,16 @@ struct BundleNameInputView: View {
     @State private var bundleName: String = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var keyboardHeight: CGFloat = 0
-    
+
     @State private var textColor: Color = .gray300
-    
+
     // 업로드 상태
     @State private var isUploading: Bool = false
     @State private var uploadError: String?
+
+    // 욕설 필터링
+    @State private var validationMessage: String = ""
+    @State private var hasProfanity: Bool = false
     
     @State private var morePadding: CGFloat = 0
     
@@ -89,38 +93,63 @@ struct BundleNameInputView: View {
 // MARK: - 이름 입력
 extension BundleNameInputView {
     private func bundleNameTextField() -> some View {
-        HStack {
-            TextField(
-                "뭉치 이름을 입력해주세요",
-                text: $bundleName
-            )
-            .typography(.notosans16R)
-            .foregroundStyle(textColor)
-            .focused($isTextFieldFocused)
-            .onChange(of: bundleName) { _, newValue in
-                let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
-                var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: NSString.CompareOptions.regularExpression)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                TextField(
+                    "뭉치 이름을 입력해주세요",
+                    text: $bundleName
+                )
+                .typography(.notosans16R)
+                .foregroundStyle(textColor)
+                .focused($isTextFieldFocused)
+                .onChange(of: bundleName) { _, newValue in
+                    let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
+                    var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: NSString.CompareOptions.regularExpression)
 
-                if sanitized.count > viewModel.maxBundleNameCount {
-                    sanitized = String(sanitized.prefix(viewModel.maxBundleNameCount))
+                    if sanitized.count > viewModel.maxBundleNameCount {
+                        sanitized = String(sanitized.prefix(viewModel.maxBundleNameCount))
+                    }
+
+                    if sanitized != bundleName {
+                        bundleName = sanitized
+                    }
+
+                    textColor = (bundleName.count == 0 ? .gray300 : .black100)
+
+                    // 욕설 체크
+                    if bundleName.isEmpty {
+                        validationMessage = ""
+                        hasProfanity = false
+                    } else {
+                        let profanityCheck = TextFilter.shared.validateText(bundleName)
+                        if !profanityCheck.isValid {
+                            validationMessage = profanityCheck.message ?? "부적절한 단어가 포함되어 있어요"
+                            hasProfanity = true
+                        } else {
+                            validationMessage = ""
+                            hasProfanity = false
+                        }
+                    }
                 }
-                
-                if sanitized != bundleName {
-                    bundleName = sanitized
-                }
-                
-                textColor = (bundleName.count == 0 ? .gray300 : .black100)
+                Spacer()
+                Text("\(bundleName.count) / \(viewModel.maxBundleNameCount)")
+                    .typography(.suit13M)
             }
-            Spacer()
-            Text("\(bundleName.count) / \(viewModel.maxBundleNameCount)")
-                .typography(.suit13M)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.gray50)
+            )
+
+            // 유효성 메시지
+            if !validationMessage.isEmpty {
+                Text(validationMessage)
+                    .typography(.suit14M)
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 4)
+            }
         }
-        .padding(.vertical, 14)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.gray50)
-        )
     }
 }
 
@@ -141,7 +170,8 @@ extension BundleNameInputView {
             }
             .disabled(
                 isUploading ||
-                bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                hasProfanity
             )
             .frame(width: 62, height: 44)
             .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
