@@ -284,16 +284,7 @@ extension BundleAddKeyringView {
         ZStack {
             Color.black.opacity(0.5)
                 .ignoresSafeArea()
-
-            VStack(spacing: 16) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(1.5)
-
-                Text("이미지 생성 중...")
-                    .foregroundColor(.white)
-                    .font(.headline)
-            }
+            LoadingAlert(type: .longWithKeychy, message: "뭉치 생성 중...")
         }
     }
     
@@ -313,7 +304,7 @@ extension BundleAddKeyringView {
             Button {
                 router.pop()
             } label: {
-                Image(systemName: "chevron.left")
+                Image(.backIcon)
             }
         }
     }
