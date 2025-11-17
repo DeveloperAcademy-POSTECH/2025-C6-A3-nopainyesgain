@@ -47,6 +47,7 @@ struct NotificationItemView: View {
             .padding(.horizontal, 25)
             .padding(.vertical, 15)
             .background(notification.isRead ? .white100 : .mainOpacity15)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .buttonStyle(.plain)
     }

@@ -68,7 +68,7 @@ extension AlarmView {
     /// 알림 리스트 뷰
     private var notificationListView: some View {
         ScrollView {
-            LazyVStack(spacing: 8) {
+            LazyVStack(spacing: 0) {
                 ForEach(notifications) { notification in
                     NotificationItemView(
                         notification: notification,
@@ -78,7 +78,6 @@ extension AlarmView {
                     )
                 }
             }
-            .padding(.horizontal, 20)
             .padding(.top, isNotiOff && isNotiOffShown ? 8 : 0)
         }
     }
