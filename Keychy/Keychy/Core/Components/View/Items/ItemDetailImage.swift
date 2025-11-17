@@ -14,15 +14,24 @@ struct ItemDetailImage: View {
     let itemURL: String
     
     var body: some View {
-        LazyImage(url: URL(string: itemURL)) { state in
-            if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            } else if state.isLoading {
-                ProgressView()
-            } else {
-                Color.gray.opacity(0.1)
+        ZStack {
+            LazyImage(url: URL(string: itemURL)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } else if state.isLoading {
+                    Color.clear
+                } else {
+                    Color.gray.opacity(0.1)
+                }
+            }
+
+            // 로딩 중앙 배치
+            LazyImage(url: URL(string: itemURL)) { state in
+                if state.isLoading {
+                    LoadingAlert(type: .short, message: nil)
+                }
             }
         }
     }

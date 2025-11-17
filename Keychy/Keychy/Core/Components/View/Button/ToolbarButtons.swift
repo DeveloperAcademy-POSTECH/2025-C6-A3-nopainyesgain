@@ -54,6 +54,17 @@ struct CloseToolbarButton: View {
     }
 }
 
+// MARK: - 네비게이션 타이틀
+struct NavigationTitle: View {
+    let title: String
+    var body: some View {
+        Text(title)
+            .typography(.notosans17B)
+            .foregroundStyle(.gray600)
+    }
+}
+
+
 // MARK: - Plus Toolbar Button (+ 버튼)
 struct PlusToolbarButton: View {
     let action: () -> Void
@@ -113,3 +124,4 @@ struct TextToolbarButton: View {
         }
     }
 }
+

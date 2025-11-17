@@ -804,7 +804,7 @@ extension MyPageView {
     /// 메뉴 아이템 텍스트 (검은색, suit17M)
     private func menuItemText(_ text: String) -> some View {
         Text(text)
-            .typography(.suit17M)
+            .typography(.suit16M)
             .foregroundStyle(.black100)
     }
     

@@ -28,9 +28,8 @@ extension CoinChargeView {
             }
             try? await Task.sleep(nanoseconds: 300_000_000)
             await MainActor.run {
-                showPurchaseFailAlert = true
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                    purchaseFailScale = 1.0
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPurchaseFailAlert = true
                 }
             }
             return
@@ -84,9 +83,6 @@ extension CoinChargeView {
             await MainActor.run {
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                    purchaseSuccessScale = 1.0
-                }
             }
 
         } catch {
@@ -96,9 +92,8 @@ extension CoinChargeView {
             }
             try? await Task.sleep(nanoseconds: 300_000_000)
             await MainActor.run {
-                showPurchaseFailAlert = true
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                    purchaseFailScale = 1.0
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPurchaseFailAlert = true
                 }
             }
         }

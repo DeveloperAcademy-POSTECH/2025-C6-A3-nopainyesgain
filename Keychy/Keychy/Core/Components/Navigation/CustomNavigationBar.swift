@@ -48,7 +48,7 @@ struct CustomNavigationBar<Leading: View, Center: View, Trailing: View>: View {
 
     /// 기기별 safeArea 계산
     /// 다이나믹아일랜드, 노치 이런거 크기를 계산할 수 있는 방법
-    private func getSafeAreaTop() -> CGFloat {
+    func getSafeAreaTop() -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows

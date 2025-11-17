@@ -37,36 +37,43 @@ extension KeyringInfoInputView {
     }
 }
 
-// MARK: - Toolbar
+// MARK: - CustomNavigationBar
 extension KeyringInfoInputView {
-    var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
+    var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽)
+            BackToolbarButton {
                 showSheet = false
                 viewModel.resetInfoData()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     router.pop()
                 }
-            } label: {
-                Image("backIcon")
             }
-            .disabled(showAddTagAlert)
-        }
-    }
-    
-    var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            NextToolbarButton(title: "다음") {
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            // Center (중앙)
+            Spacer()
+        } trailing: {
+            // Trailing (오른쪽)
+            Button {
+                // 1. 키보드 닫기 & 시트 내리기
                 dismissKeyboard()
                 showSheet = false
-                router.push(nextRoute)
-                showAddTagAlert = false
-                showTagNameAlreadyExistsToast = false
-                showTagNameEmptyToast = false
-                viewModel.createdAt = Date()
+
+                // 2. 시트 애니메이션 후 Firebase 저장 시작
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    saveKeyringToFirebase()
+                }
+            } label: {
+                Text("다음")
+                    .typography(.suit17B)
+                    .foregroundStyle(viewModel.nameText.isEmpty ? .gray300 : .black100)
+                    .padding(5)
             }
-            .foregroundStyle(.gray600)
-            .disabled(viewModel.nameText.isEmpty)
+            .buttonStyle(.glassProminent)
+            .tint(viewModel.nameText.isEmpty ? .clear : .white100)
+            .allowsHitTesting(!viewModel.nameText.isEmpty && !isSavingToFirebase)
         }
     }
 }

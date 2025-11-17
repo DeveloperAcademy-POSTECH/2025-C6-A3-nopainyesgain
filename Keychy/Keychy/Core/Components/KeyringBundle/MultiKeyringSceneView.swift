@@ -77,7 +77,7 @@ struct MultiKeyringSceneView: View {
             particleEffectsView
         }
         .onAppear {
-            // 씬이 없을 때만 초기 설정
+            // 씬이 없을 때 초기 설정 (키링이 없어도 배경과 카라비너는 표시)
             if scene == nil {
                 loadBackgroundImage()
                 setupScene()

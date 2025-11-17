@@ -9,17 +9,17 @@ import SwiftUI
 
 extension View {
     // 직각형 기기(SE2, 3? 더 있나)에서만 패딩 추가합니다.
-    
+
     /// 하단
     func adaptiveBottomPadding(_ defaultPadding: CGFloat = 34) -> some View {
         self.padding(.bottom, getBottomPadding(defaultPadding))
     }
-    
+
     /// 상단
     func adaptiveTopPadding(_ defaultPadding: CGFloat = 20) -> some View {
         self.padding(.top, getTopPadding(defaultPadding))
     }
-    
+
     /// 하단 safeArea 값 반환
     func getBottomPadding(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
@@ -45,5 +45,4 @@ extension View {
         // se3 topPadding: 20, 16 topPadding: 59
         return window.safeAreaInsets.top < 25 ? 39 : 0
     }
-    
 }

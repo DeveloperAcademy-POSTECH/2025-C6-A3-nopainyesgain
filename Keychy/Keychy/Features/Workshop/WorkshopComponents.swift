@@ -154,7 +154,10 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                         .clipped()
                 } else if state.isLoading {
                     Color.gray50
-                        .overlay { ProgressView() }
+                        .overlay {
+                            LoadingAlert(type: .short, message: nil)
+                                .scaleEffect(0.5)
+                        }
                 } else {
                     Color.gray50
                         .overlay {
@@ -229,13 +232,17 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                         } else if state.isLoading {
-                            ProgressView()
+                            Color.gray50
+                                .overlay {
+                                    LoadingAlert(type: .short, message: nil)
+                                        .scaleEffect(0.5)
+                                }
                         } else {
                             Color.gray50
                         }
                     }
                     .scaledToFit()
-                    
+
                     if !item.isFree {
                         VStack {
                             HStack {
@@ -243,18 +250,18 @@ struct CurrentUsedCard<Item: WorkshopItem>: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 24)
-                                
+
                                 Spacer()
-                                
+
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.top, 3)
                             .padding(.leading, 7)
-                            
+
                             Spacer()
                         }
                     }
-                    
+
                 }
                 .frame(width:112, height:112)
                 .background(Color.white)

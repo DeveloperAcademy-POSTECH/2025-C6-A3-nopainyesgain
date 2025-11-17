@@ -20,9 +20,7 @@ struct CoinChargeView<Route: Hashable>: View {
     
     // 성공/실패 Alert
     @State var showPurchaseSuccessAlert = false
-    @State var purchaseSuccessScale: CGFloat = 0.3
     @State var showPurchaseFailAlert = false
-    @State var purchaseFailScale: CGFloat = 0.3
     
     var body: some View {
         ZStack {
@@ -38,6 +36,8 @@ struct CoinChargeView<Route: Hashable>: View {
                     // 기타 아이템 섹션
                     otherItemsSection
                 }
+                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
@@ -47,79 +47,43 @@ struct CoinChargeView<Route: Hashable>: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden(showPurchaseSuccessAlert || showPurchaseFailAlert)
-            .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
-            .animation(.easeInOut(duration: 0.2), value: showPurchaseFailAlert)
             .sheet(isPresented: $showPurchaseSheet) {
                 purchaseSheet
             }
             .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
-            
-            // 구매 성공 Alert
+
+            // 구매 성공 Alert - KeychyAlert 사용
             if showPurchaseSuccessAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
-                    
-                    BangmarkAlert(
-                        checkmarkScale: purchaseSuccessScale,
-                        text: "구매 완료!",
-                        cancelText: "닫기",
-                        confirmText: "확인",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
-                }
+                KeychyAlert(
+                    type: .checkmark,
+                    message: "구매가 완료되었어요!",
+                    isPresented: $showPurchaseSuccessAlert
+                )
             }
-            
+
             // 구매 실패 Alert
             if showPurchaseFailAlert {
                 ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
-                    
-                    BangmarkAlert(
-                        checkmarkScale: purchaseFailScale,
-                        text: "열쇠가 부족해요",
-                        cancelText: "취소",
-                        confirmText: "확인",
+                    Color.black20
+                        .zIndex(99)
+
+                    LackPopup(
+                        title: "코인이 부족해요",
                         onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseFailScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showPurchaseFailAlert = false
                             }
                         },
                         onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseFailScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showPurchaseFailAlert = false
                             }
                         }
                     )
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 30)
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
                 }
+                .ignoresSafeArea()
             }
         }
     }

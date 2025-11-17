@@ -23,65 +23,75 @@ struct BundleDetailView: View {
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
-    
+
+    /// 씬 준비 완료 여부
+    @State private var isSceneReady = false
+
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
-            
-            if let bundle = viewModel.selectedBundle,
-               let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-               let background = viewModel.selectedBackground {
-                
-                MultiKeyringSceneView(
-                    keyringDataList: keyringDataList,
-                    ringType: .basic,
-                    chainType: .basic,
-                    backgroundColor: .clear,
-                    backgroundImageURL: background.backgroundImage,
-                    carabinerBackImageURL: carabiner.backImageURL,
-                    carabinerFrontImageURL: carabiner.frontImageURL,
-                    carabinerX: carabiner.carabinerX,
-                    carabinerY: carabiner.carabinerY,
-                    carabinerWidth: carabiner.carabinerWidth,
-                    currentCarabinerType: carabiner.type
-                )
-                .ignoresSafeArea()
-                /// 씬 재생성 조건을 위한 ID 설정
-                /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
-                
-                // 하단 섹션을 ZStack 안에서 직접 배치
-                VStack {
-                    Spacer()
-                    bottomSection
-                }
-                .ignoresSafeArea(.keyboard, edges: .bottom)
-                
-                if showMenu {
-                    HStack {
+            // 블러 영역
+            ZStack(alignment: .top) {
+                if let bundle = viewModel.selectedBundle,
+                   let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+                   let background = viewModel.selectedBackground {
+
+                    MultiKeyringSceneView(
+                        keyringDataList: keyringDataList,
+                        ringType: .basic,
+                        chainType: .basic,
+                        backgroundColor: .clear,
+                        backgroundImageURL: background.backgroundImage,
+                        carabinerBackImageURL: carabiner.backImageURL,
+                        carabinerFrontImageURL: carabiner.frontImageURL,
+                        carabinerX: carabiner.carabinerX,
+                        carabinerY: carabiner.carabinerY,
+                        carabinerWidth: carabiner.carabinerWidth,
+                        currentCarabinerType: carabiner.type,
+                        onAllKeyringsReady: {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                isSceneReady = true
+                            }
+                        }
+                    )
+                    .ignoresSafeArea()
+                    /// 씬 재생성 조건을 위한 ID 설정
+                    /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
+                    .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
+
+                    // 하단 섹션을 ZStack 안에서 직접 배치
+                    VStack {
                         Spacer()
-                        VStack {
-                            BundleMenu(
-                                onNameEdit: {
-                                    showMenu = false
-                                    router.push(.bundleNameEditView)
-                                },
-                                onEdit: {
-                                    showMenu = false
-                                    router.push(.bundleEditView)
-                                },
-                                onDelete: {
-                                    showMenu = false
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showDeleteAlert = true
-                                    }
-                                },
-                                isMain: bundle.isMain
-                            )
-                            .padding(.trailing, 16)
-                            .padding(.top, 8)
-                            
+                        bottomSection
+                    }
+                    .ignoresSafeArea(.keyboard, edges: .bottom)
+
+                    if showMenu {
+                        HStack {
                             Spacer()
+                            VStack {
+                                BundleMenu(
+                                    onNameEdit: {
+                                        showMenu = false
+                                        router.push(.bundleNameEditView)
+                                    },
+                                    onEdit: {
+                                        showMenu = false
+                                        router.push(.bundleEditView)
+                                    },
+                                    onDelete: {
+                                        showMenu = false
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                            showDeleteAlert = true
+                                        }
+                                    },
+                                    isMain: bundle.isMain
+                                )
+                                .padding(.trailing, 16)
+                                .padding(.top, 8)
+
+                                Spacer()
+                            }
                         }
                         .padding(.top, 60)
                     }
@@ -93,12 +103,13 @@ struct BundleDetailView: View {
                             showMenu = false
                         }
                     }
+                } else {
+                    // 데이터 로딩 중
+                    Color.clear.ignoresSafeArea()
                 }
-            } else {
-                // 데이터 로딩 중
-                Color.clear.ignoresSafeArea()
             }
-            
+            .blur(radius: isSceneReady ? 0 : 15)
+
             if isCapturing {
                 capturingOverlay
             }
@@ -106,9 +117,27 @@ struct BundleDetailView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
+            if !isSceneReady {
+                Task {
+                    await loadBundleData()
+                }
+            }
+        }
+        .onDisappear {
+            // 뷰가 사라질 때 씬 준비 상태 초기화
+            isSceneReady = false
+        }
         .task {
-            // 뷰가 나타날 때 뭉치 데이터 로드
+            // 최초 뷰가 나타날 때 뭉치 데이터 로드
             await loadBundleData()
+        }
+        .onChange(of: keyringDataList) { _, _ in
+            // 키링 데이터가 변경되면 씬 준비 상태 초기화
+            withAnimation(.easeIn(duration: 0.2)) {
+                isSceneReady = false
+            }
         }
         .overlay {
             ZStack(alignment: .center) {
