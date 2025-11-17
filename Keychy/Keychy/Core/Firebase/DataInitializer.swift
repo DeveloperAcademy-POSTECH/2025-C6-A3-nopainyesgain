@@ -1,21 +1,25 @@
 //
 //  DataInitializer.swift
-//  KeytschPrototype
+//  Keychy
 //
-//  앱 실행 시 데이터를 자동으로 Firestore에 업로드 (이미 있으면 스킵)
+//  Firestore에 새 아이템을 추가할 때 사용하는 초기화 도구
+//  각 함수의 배열에 데이터를 추가하고 initializeData()를 호출하면 Firestore에 업로드됩니다.
 //
-// Background
-// Carabiner
-// Chain
-// Ring
-// Sound
-// Particle
-// Template (얜 있음)
-// Festival
+//  <길지훈의 따끔한 경고!>
+//  isActive는 기본적으로 false로 설정되어 있습니다.
+//  배포 전에 Firestore에서 isActive를 true로 변경하세요.
+//
+//  지원 컬렉션:
+//  - Template: 키링 템플릿
+//  - Background: 번들 배경
+//  - Carabiner: 카라비너
+//  - Sound: 사운드 이펙트
+//  - Particle: 파티클 이펙트
 
 import FirebaseFirestore
 
 /// 앱 실행 시 한 번만 호출하세요
+/// - 원하는 함수를 수정하고, 아래 함수를 호출하세요.
 func initializeData() async {
     await initializeTemplates()
     await initializeBackgrounds()
@@ -28,44 +32,15 @@ func initializeData() async {
 func initializeBackgrounds() async {
     let backgrounds: [[String: Any]] = [
         [
-            "id": "PastelPink",
-            "backgroundName": "파스텔 핑크",
-            "description": "부드럽고 따뜻한 핑크 배경",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 80,
-            "downloadCount": 723,
-            "useCount": 645
-        ],
-        [
-            "id": "NeonCity",
-            "backgroundName": "네온 도시",
-            "description": "화려한 도시의 네온 불빛",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
-            "price": 150,
-            "downloadCount": 567,
-            "useCount": 489
-        ],
-        [
-            "id": "MinimalWhite",
-            "backgroundName": "미니멀 화이트",
-            "description": "깔끔하고 심플한 화이트",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
+            "id": "ExampleBackground",
+            "backgroundName": "예시 배경",
+            "description": "새로운 배경 설명을 입력하세요",
+            "backgroundImage": "https://firebasestorage.googleapis.com/...",
+            "tags": ["태그1", "태그2"],
             "price": 0,
-            "downloadCount": 891,
-            "useCount": 756
-        ],
-        [
-            "id": "DarkMoon",
-            "backgroundName": "다크 문",
-            "description": "신비로운 달빛의 어둠",
-            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
-            "price": 0,
-            "downloadCount": 512,
-            "useCount": 423
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
         ]
     ]
     
@@ -95,134 +70,22 @@ func initializeBackgrounds() async {
 func initializeCarabiners() async {
     let carabiners: [[String: Any]] = [
         [
-            "id": "BasicSilver",
-            "carabinerName": "베이직 실버",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "심플한 실버 카라비너",
+            "id": "ExampleCarabiner",
+            "carabinerName": "예시 카라비너",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/..."],
+            "carabinerType": "plain",  // "plain" 또는 "hamburger"
+            "description": "새로운 카라비너 설명을 입력하세요",
             "maxKeyringCount": 5,
-            "tags": ["심플"],
+            "tags": ["태그1", "태그2"],
             "price": 0,
-            "downloadCount": 1234,
-            "useCount": 1023,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 0.0,
+            "carabinerY": 0.0,
+            "carabinerWidth": 100.0,
             "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5]
-        ],
-        [
-            "id": "GoldLuxury",
-            "carabinerName": "골드 럭셔리",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "고급스러운 골드 카라비너",
-            "maxKeyringCount": 7,
-            "tags": ["심플"],
-            "price": 200,
-            "downloadCount": 567,
-            "useCount": 478,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.2, 0.8, 0.4, 0.6],
-            "keyringYPosition": [0.35, 0.45, 0.45, 0.55, 0.55, 0.65, 0.65]
-        ],
-        [
-            "id": "RainbowColor",
-            "carabinerName": "레인보우 컬러",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "알록달록 무지개 카라비너",
-            "maxKeyringCount": 6,
-            "tags": ["귀여움"],
-            "price": 150,
-            "downloadCount": 789,
-            "useCount": 645,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.2, 0.8, 0.5],
-            "keyringYPosition": [0.32, 0.42, 0.42, 0.52, 0.52, 0.62]
-        ],
-        [
-            "id": "HeartShape",
-            "carabinerName": "하트 모양",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "사랑스러운 하트 카라비너",
-            "maxKeyringCount": 4,
-            "tags": ["귀여움"],
-            "price": 100,
-            "downloadCount": 923,
-            "useCount": 812,
-            "keyringXPosition": [0.1, 0.8, 0.2, 0.8],
-            "keyringYPosition": [0.35, 0.2, 0.8, 0.8]
-        ],
-        [
-            "id": "StarDesign",
-            "carabinerName": "별 디자인",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "반짝이는 별 모양 카라비너",
-            "maxKeyringCount": 5,
-            "tags": ["귀여움"],
-            "price": 120,
-            "downloadCount": 634,
-            "useCount": 556,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5]
-        ],
-        [
-            "id": "MiniSize",
-            "carabinerName": "미니 사이즈",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "작고 귀여운 미니 카라비너",
-            "maxKeyringCount": 3,
-            "tags": ["귀여움"],
-            "price": 0,
-            "downloadCount": 1456,
-            "useCount": 1234,
-            "keyringXPosition": [0.5, 0.3, 0.7],
-            "keyringYPosition": [0.25, 0.35, 0.35]
-        ],
-        [
-            "id": "LargeCapacity",
-            "carabinerName": "라지 캐퍼시티",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "많이 걸 수 있는 대용량 카라비너",
-            "maxKeyringCount": 10,
-            "tags": ["심플"],
-            "price": 250,
-            "downloadCount": 445,
-            "useCount": 367,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.2, 0.8, 0.4, 0.6, 0.3, 0.7, 0.5],
-            "keyringYPosition": [0.4, 0.5, 0.5, 0.6, 0.6, 0.7, 0.7, 0.8, 0.8, 0.9]
-        ],
-        [
-            "id": "PastelPink",
-            "carabinerName": "파스텔 핑크",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "부드러운 핑크 카라비너",
-            "maxKeyringCount": 5,
-            "tags": ["귀여움"],
-            "price": 80,
-            "downloadCount": 867,
-            "useCount": 723,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5]
-        ],
-        [
-            "id": "BlackMatte",
-            "carabinerName": "블랙 매트",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "세련된 블랙 매트 카라비너",
-            "maxKeyringCount": 6,
-            "tags": ["심플"],
-            "price": 0,
-            "downloadCount": 1089,
-            "useCount": 934,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.2, 0.8, 0.5],
-            "keyringYPosition": [0.33, 0.4, 0.4, 0.5, 0.5, 0.6]
-        ],
-        [
-            "id": "ClearTransparent",
-            "carabinerName": "클리어 투명",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24"],
-            "description": "투명한 아크릴 카라비너",
-            "maxKeyringCount": 5,
-            "tags": ["심플"],
-            "price": 130,
-            "downloadCount": 723,
-            "useCount": 612,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5]
+            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5],
+            "isActive": false
         ]
     ]
     
@@ -248,95 +111,20 @@ func initializeCarabiners() async {
     }
 }
 
-// MARK: - Chain Initialization
-func initializeChain() async {
-    
-}
-
-// MARK: - Ring Initialization
-func initializeRing() async {
-    
-}
-
 // MARK: - Particle Initialization
 func initializeParticles() async {
     let particles: [[String: Any]] = [
         [
-            "id": "Sparkle",
-            "particleName": "반짝반짝",
-            "description": "반짝이는 별 파티클",
-            "particleData": "sparkle_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
+            "id": "ExampleParticle",
+            "particleName": "예시 파티클",
+            "description": "새로운 파티클 설명을 입력하세요",
+            "particleData": "https://firebasestorage.googleapis.com/...",
+            "thumbnail": "https://firebasestorage.googleapis.com/...",
+            "tags": ["태그1", "태그2"],
             "price": 0,
-            "downloadCount": 1567,
-            "useCount": 1345
-        ],
-        [
-            "id": "HeartBurst",
-            "particleName": "하트 버스트",
-            "description": "하트가 터지는 이펙트",
-            "particleData": "heart_burst_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 100,
-            "downloadCount": 934,
-            "useCount": 812
-        ],
-        [
-            "id": "Confetti",
-            "particleName": "컨페티",
-            "description": "알록달록 종이 조각",
-            "particleData": "confetti_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 80,
-            "downloadCount": 1123,
-            "useCount": 978
-        ],
-        [
-            "id": "Fireworks",
-            "particleName": "불꽃놀이",
-            "description": "화려한 불꽃 효과",
-            "particleData": "fireworks_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 150,
-            "downloadCount": 845,
-            "useCount": 723
-        ],
-        [
-            "id": "BubbleFloat",
-            "particleName": "비눗방울",
-            "description": "둥둥 떠다니는 비눗방울",
-            "particleData": "bubble_float_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 70,
-            "downloadCount": 1234,
-            "useCount": 1067
-        ],
-        [
-            "id": "MagicDust",
-            "particleName": "마법 가루",
-            "description": "신비로운 마법 가루 효과",
-            "particleData": "magic_dust_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 0,
-            "downloadCount": 1478,
-            "useCount": 1289
-        ],
-        [
-            "id": "Galaxy",
-            "particleName": "은하수",
-            "description": "우주 은하수 효과",
-            "particleData": "galaxy_particle_data",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
-            "price": 180,
-            "downloadCount": 667,
-            "useCount": 556
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
         ]
     ]
     
@@ -366,81 +154,16 @@ func initializeParticles() async {
 func initializeSounds() async {
     let sounds: [[String: Any]] = [
         [
-            "id": "BellRing",
-            "soundName": "종소리",
-            "description": "맑은 종소리",
-            "soundData": "bell_ring_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
+            "id": "ExampleSound",
+            "soundName": "예시 사운드",
+            "description": "새로운 사운드 설명을 입력하세요",
+            "soundData": "https://firebasestorage.googleapis.com/...",
+            "thumbnail": "https://firebasestorage.googleapis.com/...",
+            "tags": ["태그1", "태그2"],
             "price": 0,
-            "downloadCount": 2134,
-            "useCount": 1890
-        ],
-        [
-            "id": "PianoNote",
-            "soundName": "피아노 음",
-            "description": "부드러운 피아노 소리",
-            "soundData": "piano_note_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
-            "price": 80,
-            "downloadCount": 1678,
-            "useCount": 1456
-        ],
-        [
-            "id": "Chime",
-            "soundName": "차임벨",
-            "description": "영롱한 차임벨 소리",
-            "soundData": "chime_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
-            "price": 100,
-            "downloadCount": 1345,
-            "useCount": 1178
-        ],
-        [
-            "id": "GuitarStrum",
-            "soundName": "기타 스트럼",
-            "description": "경쾌한 기타 소리",
-            "soundData": "guitar_strum_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["심플"],
-            "price": 90,
-            "downloadCount": 1123,
-            "useCount": 967
-        ],
-        [
-            "id": "Xylophone",
-            "soundName": "실로폰",
-            "description": "톡톡 실로폰 소리",
-            "soundData": "xylophone_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 70,
-            "downloadCount": 1456,
-            "useCount": 1267
-        ],
-        [
-            "id": "MusicBox",
-            "soundName": "오르골",
-            "description": "감미로운 오르골 소리",
-            "soundData": "music_box_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 150,
-            "downloadCount": 1678,
-            "useCount": 1489
-        ],
-        [
-            "id": "HeartBeat",
-            "soundName": "심장박동",
-            "description": "두근두근 심장 소리",
-            "soundData": "heart_beat_sound.mp3",
-            "thumbnail": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "tags": ["귀여움"],
-            "price": 110,
-            "downloadCount": 989,
-            "useCount": 856
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
         ]
     ]
     
@@ -470,20 +193,20 @@ func initializeSounds() async {
 func initializeTemplates() async {
     let templates: [[String: Any]] = [
         [
-            "id": "HeartKeyring",
-            "templateName": "하트 키링",
-            "description": "사랑스러운 하트 모양 키링",
+            "id": "ExampleTemplate",
+            "templateName": "예시 템플릿",
+            "description": "새로운 템플릿 설명을 입력하세요",
             "interactions": ["tap"],
-            "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
-            "guidingImageURL": "",
-            "guidingText": "",
-            "tags": ["드로잉형"],
-            "price": 100,
-            "downloadCount": 234,
-            "useCount": 178,
-            "isActive": true
-        ],
+            "thumbnailURL": "https://firebasestorage.googleapis.com/...",
+            "previewURL": "https://firebasestorage.googleapis.com/...",
+            "guidingImageURL": "https://firebasestorage.googleapis.com/...",
+            "guidingText": "가이드 텍스트를 입력하세요",
+            "tags": ["태그1", "태그2"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ]
     ]
     
     let db = Firestore.firestore()
@@ -508,7 +231,3 @@ func initializeTemplates() async {
     }
 }
 
-// MARK: - Festival Initialization
-func initializeFestival() async {
-    
-}
