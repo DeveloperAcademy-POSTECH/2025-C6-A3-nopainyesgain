@@ -284,35 +284,6 @@ extension CollectionKeyringPackageView {
     }
 }
 
-// MARK: - Toolbar
-extension CollectionKeyringPackageView {
-    var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                router.pop()
-            } label: {
-                Image("backIcon")
-                    .resizable()
-                    .frame(width: 32, height: 32)
-            }
-        }
-    }
-    
-    var unpackToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showUnpackAlert = true
-                }
-            }) {
-                Image("UnpackIcon")
-                    .resizable()
-                    .frame(width: 34, height: 34)
-            }
-        }
-    }
-}
-
 // MARK: - Data Loading
 extension CollectionKeyringPackageView {
     func loadPackagedKeyringInfo() {
