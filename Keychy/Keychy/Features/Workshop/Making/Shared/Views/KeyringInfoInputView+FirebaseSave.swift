@@ -49,10 +49,14 @@ extension KeyringInfoInputView {
     // MARK: - 키링 생성 헬퍼 메서드
     private func createKeyringWithData(uid: String, imageURL: String, soundId: String) {
         let templateId: String
+        let hookOffsetY: CGFloat?
+
         if let vm = self.viewModel as? AcrylicPhotoVM {
             templateId = vm.template?.id ?? "AcrylicPhoto"
+            hookOffsetY = vm.template?.hookOffsetY
         } else {
             templateId = "AcrylicPhoto"
+            hookOffsetY = nil
         }
 
         self.createKeyring(
@@ -67,11 +71,12 @@ extension KeyringInfoInputView {
             selectedRing: "basic",
             selectedChain: "basic",
             chainLength: 5,
-            isNew: true
+            isNew: true,
+            hookOffsetY: hookOffsetY
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
-                // viewModel이 reset되기 전에 이름을 미리 캡처
+                // viewModel이 reset되기 전에 이름과 hookOffsetY를 미리 캡처
                 let keyringName = self.viewModel.nameText
 
                 // 최근 사용 템플릿에 추가
@@ -84,7 +89,8 @@ extension KeyringInfoInputView {
                         keyringName: keyringName,
                         bodyImage: imageURL,
                         ringType: .basic,
-                        chainType: .basic
+                        chainType: .basic,
+                        hookOffsetY: hookOffsetY
                     )
 
                     // 모든 작업 완료 후 CompleteView로 이동
@@ -152,6 +158,7 @@ extension KeyringInfoInputView {
         selectedChain: String,
         chainLength: Int,
         isNew: Bool,
+        hookOffsetY: CGFloat? = nil,
         completion: @escaping (Bool, String?) -> Void
     ) {
         let newKeyring = Keyring(
@@ -167,7 +174,8 @@ extension KeyringInfoInputView {
             selectedRing: selectedRing,
             selectedChain: selectedChain,
             chainLength: chainLength,
-            isNew: isNew
+            isNew: isNew,
+            hookOffsetY: hookOffsetY
         )
 
         let keyringData = newKeyring.toDictionary()
@@ -224,7 +232,8 @@ extension KeyringInfoInputView {
         keyringName: String,
         bodyImage: String,
         ringType: RingType,
-        chainType: ChainType
+        chainType: ChainType,
+        hookOffsetY: CGFloat?
     ) async {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
@@ -238,6 +247,7 @@ extension KeyringInfoInputView {
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
+                hookOffsetY: hookOffsetY,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
