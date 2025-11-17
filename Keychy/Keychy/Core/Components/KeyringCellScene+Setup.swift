@@ -107,8 +107,8 @@ extension KeyringCellScene {
         // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY
-        let chainSpacing: CGFloat = 17
+        let chainStartY = ringBottomY - 2
+        let chainSpacing: CGFloat = 20
         
         var chains: [SKSpriteNode] = []
         for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {
@@ -152,15 +152,6 @@ extension KeyringCellScene {
         body.position = CGPoint(x: centerX, y: bodyCenterY)
         body.zPosition = -1  // Body는 체인 아래
         containerNode.addChild(body)
-
-        // 디버그: 바디 이미지 상단 위치 표시 (파란 선)
-        let bodyTopY = bodyCenterY + bodyHalfHeight
-        let bodyTopLine = SKShapeNode(rectOf: CGSize(width: 200, height: 2))
-        bodyTopLine.fillColor = .blue
-        bodyTopLine.strokeColor = .blue
-        bodyTopLine.position = CGPoint(x: centerX, y: bodyTopY)
-        bodyTopLine.zPosition = 100
-        containerNode.addChild(bodyTopLine)
 
         // 4. 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
