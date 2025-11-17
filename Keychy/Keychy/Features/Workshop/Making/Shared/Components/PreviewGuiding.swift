@@ -88,19 +88,28 @@ extension PreviewGuiding {
     }
 
     private var guidingImage: some View {
-        LazyImage(url: URL(string: guidingImageURL)) { state in
-            if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            } else if state.isLoading {
-                ProgressView()
-            } else {
-                Color.gray.opacity(0.1)
+        ZStack {
+            LazyImage(url: URL(string: guidingImageURL)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } else if state.isLoading {
+                    Color.clear
+                } else {
+                    Color.gray.opacity(0.1)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            // 로딩 중앙 배치
+            LazyImage(url: URL(string: guidingImageURL)) { state in
+                if state.isLoading {
+                    LoadingAlert(type: .short, message: nil)
+                }
             }
         }
-        .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

@@ -42,9 +42,12 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State var purchaseFailScale: CGFloat = 0.3
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                ZStack(alignment: .center) {
+        GeometryReader { geometry in
+            ZStack {
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    ZStack(alignment: .center) {
                     KeyringSceneView(viewModel: viewModel, onSceneReady: {
                         withAnimation(.easeIn(duration: 0.4)) {
                             isSceneReady = true
@@ -53,12 +56,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     })
                     // 준비되면 fade-in하게 했음.
                     .opacity(isSceneReady ? 1.0 : 0.0)
-                    
-                    // 로딩 인디케이터 (키링씬 중앙)
-//                    if isLoadingResources || !isSceneReady {
-//                        loadingIndicator()
-//                    }
-                    
+
                     // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
                         ForEach(viewModel.availableCustomizingModes) { mode in
@@ -70,41 +68,38 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .padding(18)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 }
-                
+
                 // MARK: - 하단 영역
                 bottomContentView
                     .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: geometry.size.height * 0.35,
+                        alignment: .topLeading)
             }
             .background(.gray50)
+            .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
             .disabled(isLoadingResources || !isSceneReady)
-            
-            // MARK: - 딤 처리 (Alert/Progress 표시 시)
-            if showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert {
-                Color.black.opacity(0.6)
+
+            // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
+            if showPurchaseFailAlert {
+                Color.black.opacity(0.4)
                     .ignoresSafeArea()
+                    .zIndex(1)
             }
-            
-            // MARK: - 구매 중 프로그레스
+
+            // MARK: - 구매 중 로딩
             if showPurchaseProgress {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        .scaleEffect(1.5)
-                    
-                    Text("구매 중...")
-                        .typography(.suit17B)
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingAlert(type: .short, message: nil)
             }
-            
+
             // MARK: - Purchase Alerts
             if showPurchaseSuccessAlert {
                 PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
                     .padding(.bottom, 60)
                     .padding(.horizontal, 51)
             }
-            
+
             if showPurchaseFailAlert {
                 PurchaseFailAlert(
                     checkmarkScale: purchaseFailScale,
@@ -132,14 +127,29 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     }
                 )
                 .padding(.horizontal, 51)
-                .padding(.bottom, 60)
+                .zIndex(2)
+            }
+
+            // MARK: - 커스텀 네비게이션 바
+            customNavigationBar
+                .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || isLoadingResources || !isSceneReady ? 15 : 0)
+                .opacity(showPurchaseProgress || showPurchaseSuccessAlert ? 0 : 1)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseProgress)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
+                .zIndex(0)
             }
         }
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
-        .toolbar {
-            backToolbarItem
-            nextToolbarItem
+        .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
+            Button("취소", role: .cancel) { }
+            Button("확인", role: .destructive) {
+                viewModel.resetAll()
+                router.reset()
+            }
+        } message: {
+            Text("지금까지 작업한 내용이 모두 초기화됩니다.")
         }
         .task {
             // Firebase에서 이펙트 데이터 가져오기
@@ -234,29 +244,21 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     }
 }
 
-// MARK: - Toolbar Section
+// MARK: - Custom Navigation Bar
 extension KeyringCustomizingView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
                 showResetAlert = true
             }
-            .disabled(showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert)
-            .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
-                Button("취소", role: .cancel) { }
-                Button("확인", role: .destructive) {
-                    viewModel.resetAll()
-                    router.reset()
-                }
-            } message: {
-                Text("지금까지 작업한 내용이 모두 초기화됩니다.")
-            }
-        }
-    }
-    private var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            
-            // 여러 조건부 버튼이기에 컴포넌트 사용 X
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            // Center (중앙) - 빈 공간
+            Spacer()
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
             Button {
                 if hasCartItems {
                     showPurchaseSheet = true
@@ -265,37 +267,18 @@ extension KeyringCustomizingView {
                 }
             } label: {
                 Text(hasCartItems ? "구매 \(cartItems.count)" : "다음")
-                    .foregroundStyle(hasCartItems ? .white : .black100)
-                    .fontWeight(hasCartItems ? .bold : .regular)
+                    .typography(.suit17B)
+                    .foregroundStyle(hasCartItems ? .white100 : .black100)
+                    .padding(5)
             }
             .buttonStyle(.glassProminent)
-            .tint(hasCartItems ? .black100 : .white)
-            .disabled(showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert)
+            .tint(hasCartItems ? .black100 : .white100)
         }
     }
 }
 
 // MARK: - Mode Selection & Bottom Content Section
 extension KeyringCustomizingView {
-    /// 로딩 인디케이터
-    private func loadingIndicator() -> some View {
-        VStack(spacing: 23) {
-            Image("appIcon")
-                .resizable()
-                .frame(width: 80, height: 80)
-
-            Text("키링을 만들고 있어요")
-                .typography(.suit17SB)
-        }
-        .scaleEffect(loadingScale)
-        .opacity(loadingScale > 0.5 ? 1 : 0)
-        .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
-                loadingScale = 1.0
-            }
-        }
-    }
-    
     /// 모드 선택 버튼
     private func modeButton(for mode: CustomizingMode) -> some View {
         Button {
@@ -338,16 +321,15 @@ extension KeyringCustomizingView {
             VStack(alignment: .leading, spacing: 24) {
                 // 탭 사운드 섹션
                 soundEffectSelector
-                
+
                 // 흔들기 효과 섹션
                 particleEffectSelector
-                
                 Spacer()
             }
-            .frame(
-                maxWidth: .infinity,
-                maxHeight: geometry.size.height * 0.36,
-                alignment: .topLeading)
+//            .frame(
+//                maxWidth: .infinity,
+//                maxHeight: geometry.size.height * 0.25,
+//                alignment: .topLeading)
         }
         .background(
             UnevenRoundedRectangle(
@@ -573,12 +555,12 @@ extension KeyringCustomizingView {
                         if isOwned {
                             // 유료 + 보유
                             if isSelected {
-                                Image("selectPaid")
+                                Image("whiteEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("ownPaid")
+                                Image("grayEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -586,12 +568,12 @@ extension KeyringCustomizingView {
                         } else {
                             // 유료 + 미보유
                             if isSelected {
-                                Image("selectPaid")
+                                Image("whiteEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("deselectPaid")
+                                Image("gradientEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -747,12 +729,12 @@ extension KeyringCustomizingView {
                         if isOwned {
                             // 유료 + 보유
                             if isSelected {
-                                Image("selectPaid")
+                                Image("whiteEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("ownPaid")
+                                Image("grayEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -760,12 +742,12 @@ extension KeyringCustomizingView {
                         } else {
                             // 유료 + 미보유
                             if isSelected {
-                                Image("selectPaid")
+                                Image("whiteEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("deselectPaid")
+                                Image("gradientEffectSelect")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)

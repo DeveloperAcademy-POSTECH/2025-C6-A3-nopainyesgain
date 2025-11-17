@@ -50,6 +50,7 @@ struct TemplatePreviewBody: View {
 
             // 액션 버튼
             actionButton
+                .adaptiveBottomPadding()
         }
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)

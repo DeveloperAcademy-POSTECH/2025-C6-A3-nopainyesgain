@@ -37,6 +37,12 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State var showSheet: Bool = true
     @FocusState var isFocused: Bool
 
+    // MARK: - Firebase Saving States
+    @State var isSavingToFirebase: Bool = false
+
+    // Firebase
+    let db = Firestore.firestore()
+
     // MARK: - Dynamic Sheet Heights
     /// 고정된 detents (태그 줄 수에 따라 단계별로)
     private var dynamicDetents: Set<PresentationDetent> {
@@ -61,6 +67,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                 keyringScene
                     .frame(maxWidth: .infinity)
             }
+            .blur(radius: isSavingToFirebase ? 15 : 0)
             .ignoresSafeArea()
             .navigationBarBackButtonHidden(true)
             .interactiveDismissDisabled(true)
@@ -91,10 +98,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                         }
                     }
             }
-            .toolbar {
-                backToolbarItem
-                nextToolbarItem
-            }
+            .blur(radius: isSavingToFirebase ? 15 : 0)
             .dismissKeyboardOnTap()
 
             // Alert overlay
@@ -107,6 +111,22 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                     .padding(.horizontal, 51)
                     .zIndex(100)
             }
+
+            // Firebase 저장 중 로딩
+            if isSavingToFirebase {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .zIndex(98)
+
+                LoadingAlert(type: .longWithKeychy, message: "키링을 만드는 중이에요!")
+                    .zIndex(99)
+            }
+
+            // 커스텀 네비게이션 바
+            customNavigationBar
+                .blur(radius: isSavingToFirebase ? 15 : 0)
+                .zIndex(0)
         }
+        .ignoresSafeArea()
     }
 }

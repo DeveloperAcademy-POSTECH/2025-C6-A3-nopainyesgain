@@ -181,10 +181,14 @@ class UserManager {
         currentUser = nil
         isLoaded = false
 
+        // UserDefaults 삭제
         UserDefaults.standard.removeObject(forKey: "userNickname")
         UserDefaults.standard.removeObject(forKey: "userEmail")
         UserDefaults.standard.removeObject(forKey: "userUID")
         UserDefaults.standard.removeObject(forKey: "userMarketingAgreed")
+
+        // 키링 캐시 전체 삭제
+        KeyringImageCache.shared.clearAll()
     }
 
     // MARK: - 회원탈퇴

@@ -61,22 +61,12 @@ extension KeyringCompleteView {
             }) { [self] success, error in
                 DispatchQueue.main.async {
                     if success {
-                        // 저장 성공 애니메이션
+                        // 저장 성공 alert 표시
                         showImageSaved = true
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                            checkmarkScale = 1.0
-                            checkmarkOpacity = 1.0
 
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                                    checkmarkScale = 0.0
-                                    checkmarkOpacity = 0.0
-                                    showImageSaved = false
-                                }
-                            }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            showImageSaved = false
                         }
-                    } else if let error = error {
-                        print("Error saving image: \(error.localizedDescription)")
                     }
                 }
             }
@@ -86,11 +76,8 @@ extension KeyringCompleteView {
     /// 이미지 캡처 및 저장 (메인 함수)
     func captureAndSaveImage() {
         // 1. 저장 버튼과 toolbar 임시 숨기기 (애니메이션 없이)
-        let originalShowDismissButton = showDismissButton
-
         withAnimation(.none) {
-            showDismissButton = false
-            showSaveButton = false
+            isCapturingImage = true
         }
 
         // 2. UI 업데이트 완전히 대기 후 캡처 (0.5초로 증가)
@@ -99,8 +86,7 @@ extension KeyringCompleteView {
                 print("Failed to capture image")
                 // UI 복원 (애니메이션 없이)
                 withAnimation(.none) {
-                    self.showDismissButton = originalShowDismissButton
-                    self.showSaveButton = true
+                    self.isCapturingImage = false
                 }
                 return
             }
@@ -110,8 +96,7 @@ extension KeyringCompleteView {
 
             // 4. UI 복원 (애니메이션 없이)
             withAnimation(.none) {
-                self.showDismissButton = originalShowDismissButton
-                self.showSaveButton = true
+                self.isCapturingImage = false
             }
         }
     }

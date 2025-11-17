@@ -3,7 +3,9 @@ import SwiftUI
 struct AcrylicPhotoCropView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: AcrylicPhotoVM
-    
+
+    @State private var isImageLoading = true
+
     var body: some View {
         ZStack {
             // 배경색
@@ -18,43 +20,61 @@ struct AcrylicPhotoCropView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .opacity(isImageLoading ? 0 : 1)
                             .onAppear {
-                                viewModel.imageViewSize = geo.size
-                                viewModel.fixedImage = viewModel.selectedImage?.fixedOrientation()
-                                if !viewModel.hasCropAreaBeenSet {
-                                    viewModel.resetToCenter()
-                                }
+                                setupImageAndCropArea(containerSize: geo.size)
                             }
                             .onChange(of: geo.size) { _, newSize in
                                 viewModel.imageViewSize = newSize
-                                // 무조건 다시 계산 (처음 설정이 잘못된 거 보정)
                                 viewModel.resetToCenter()
                             }
                     }
 
                     // 크롭박스 바깥 영역 어둡게 (이미지 영역 내에서만)
-                    DimmingOverlay(
-                        cropRect: viewModel.cropArea,
-                        imageRect: viewModel.getDisplayedImageRect()
-                    )
+                    if !isImageLoading {
+                        DimmingOverlay(
+                            cropRect: viewModel.cropArea,
+                            imageRect: viewModel.getDisplayedImageRect()
+                        )
 
-                    // 크롭박스
-                    CropBoxView(
-                        rect: $viewModel.cropArea,
-                        onDragChanged: viewModel.onDragChanged,
-                        onDragEnd: viewModel.onDragEnd
-                    )
+                        // 크롭박스
+                        CropBoxView(
+                            rect: $viewModel.cropArea,
+                            onDragChanged: viewModel.onDragChanged,
+                            onDragEnd: viewModel.onDragEnd
+                        )
+                    }
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 70)
+
+            // 로딩 인디케이터
+            if isImageLoading {
+                LoadingAlert(type: .short, message: nil)
+            }
         }
-        .navigationTitle("누끼 영역을 지정해주세요")
         .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(true)
         .toolbar {
             backToolbarItem
+            naivgationTitle
             nextToolbarItem
+        }
+    }
+
+    // MARK: - Setup Methods
+    private func setupImageAndCropArea(containerSize: CGSize) {
+        viewModel.imageViewSize = containerSize
+        viewModel.fixedImage = viewModel.selectedImage?.fixedOrientation()
+
+        if !viewModel.hasCropAreaBeenSet {
+            viewModel.resetToCenter()
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            isImageLoading = false
         }
     }
 }
@@ -67,6 +87,12 @@ extension AcrylicPhotoCropView {
                 viewModel.resetImageData()
                 router.pop()
             }
+        }
+    }
+    
+    private var naivgationTitle: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            NavigationTitle(title: "누끼 영역을 지정해주세요")
         }
     }
 
