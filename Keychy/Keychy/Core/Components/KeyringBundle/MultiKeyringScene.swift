@@ -540,6 +540,10 @@ class MultiKeyringScene: SKScene {
 
     /// 키링 구성 요소들을 Joint로 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
+        // Physics 카테고리 정의
+        let chainCategory: UInt32 = 0x1 << 0  // 1
+        let bodyCategory: UInt32 = 0x1 << 1   // 2
+
         var previousNode: SKNode = ring
 
         // Ring과 첫 번째 Chain 연결
@@ -600,6 +604,10 @@ class MultiKeyringScene: SKScene {
             firstChain.physicsBody?.linearDamping = 2.0  // 첫 번째 체인을 거의 고정
             firstChain.physicsBody?.angularDamping = 3.0
 
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            firstChain.physicsBody?.categoryBitMask = chainCategory
+            firstChain.physicsBody?.collisionBitMask = chainCategory
+
             previousNode = firstChain
         }
 
@@ -634,6 +642,10 @@ class MultiKeyringScene: SKScene {
 
                 current.physicsBody?.linearDamping = 0.05
                 current.physicsBody?.angularDamping = 0.05
+
+                // Physics 카테고리 설정 (체인끼리만 충돌)
+                current.physicsBody?.categoryBitMask = chainCategory
+                current.physicsBody?.collisionBitMask = chainCategory
             }
             previousNode = current
         }
@@ -665,6 +677,10 @@ class MultiKeyringScene: SKScene {
 
             bodyPhysics.linearDamping = 0.5
             bodyPhysics.angularDamping = 0.5
+
+            // Physics 카테고리 설정 (Body는 아무것과도 충돌하지 않음, Joint로만 연결)
+            bodyPhysics.categoryBitMask = bodyCategory
+            bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
         }
 
         // Plain 타입에서는 Ring을 dynamic으로 유지하되 위치 제한 (anchor에 의해 제어됨)

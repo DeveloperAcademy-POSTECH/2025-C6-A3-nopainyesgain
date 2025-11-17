@@ -312,9 +312,12 @@ extension KeyringCellScene {
     
     // MARK: - 조인트 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
-        
+        // Physics 카테고리 정의
+        let chainCategory: UInt32 = 0x1 << 0  // 1
+        let bodyCategory: UInt32 = 0x1 << 1   // 2
+
         var previousNode: SKNode = ring
-        
+
         // Ring과 첫 번째 Chain 연결
         if let firstChain = chains.first {
             let ringWorldPos = containerNode.convert(ring.position, to: self)
@@ -348,6 +351,11 @@ extension KeyringCellScene {
             
             firstChain.physicsBody?.linearDamping = 0.7
             firstChain.physicsBody?.angularDamping = 0.7
+
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            firstChain.physicsBody?.categoryBitMask = chainCategory
+            firstChain.physicsBody?.collisionBitMask = chainCategory
+
             previousNode = firstChain
         }
         
@@ -386,6 +394,11 @@ extension KeyringCellScene {
             
             current.physicsBody?.linearDamping = 0.7
             current.physicsBody?.angularDamping = 0.7
+
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            current.physicsBody?.categoryBitMask = chainCategory
+            current.physicsBody?.collisionBitMask = chainCategory
+
             previousNode = current
         }
         
@@ -416,6 +429,10 @@ extension KeyringCellScene {
             
             bodyPhysics.linearDamping = 0.7
             bodyPhysics.angularDamping = 0.7
+
+            // Physics 카테고리 설정 (Body는 아무것과도 충돌하지 않음, Joint로만 연결)
+            bodyPhysics.categoryBitMask = bodyCategory
+            bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
         }
     }
 }
