@@ -780,9 +780,6 @@ extension BundleEditView {
         } label: {
             VStack(spacing: 0) {
                 Image(showBackgroundSheet ? .backgroundIconWhite100 : .backgroundIconGray600)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 23.96, height: 25.8)
                 Text("배경")
                     .typography(.suit9SB)
                     .foregroundStyle(showBackgroundSheet ? .white100 : .gray600)
@@ -803,9 +800,6 @@ extension BundleEditView {
         } label: {
             VStack(spacing: 0) {
                 Image(showCarabinerSheet ? .carabinerIconWhite100 : .carabinerIconGray600)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 26.83, height: 23)
                 Text("카라비너")
                     .typography(.suit9SB)
                     .foregroundStyle(showCarabinerSheet ? .white100 : .gray600)
