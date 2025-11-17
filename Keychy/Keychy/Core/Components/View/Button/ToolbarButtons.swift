@@ -17,8 +17,6 @@ struct BackToolbarButton: View {
     var body: some View {
         Button(action: action) {
             Image("backIcon")
-                .resizable()
-                .frame(width: 32, height: 32)
         }
     }
 }
@@ -77,6 +75,29 @@ struct MenuToolbarButton: View {
             Image(.menuIcon)
         }
         .frame(width: 44, height: 44)
+    }
+}
+
+//MARK: - Purchase Toolbar Button (구매 버튼)
+struct PurchaseToolbarButton: View {
+    let title: String
+    let action: () -> Void
+    
+    init(title: String, action: @escaping () -> Void) {
+        self.title = title
+        self.action = action
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .typography(.suit17B)
+                .foregroundStyle(.white100)
+                .padding(.vertical, 11.5)
+                .padding(.horizontal, 16)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(.black80)
     }
 }
 
