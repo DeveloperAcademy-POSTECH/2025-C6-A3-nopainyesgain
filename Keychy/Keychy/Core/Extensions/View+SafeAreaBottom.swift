@@ -15,9 +15,14 @@ extension View {
         self.padding(.bottom, getBottomPadding(defaultPadding))
     }
 
-    /// 상단
+    /// 상단 - 기본 (safeAreaInsets.top == 0 체크)
     func adaptiveTopPadding(_ defaultPadding: CGFloat = 20) -> some View {
         self.padding(.top, getTopPadding(defaultPadding))
+    }
+    
+    /// 상단 - 대체 로직 (safeAreaInsets.top < 25 체크)
+    func adaptiveTopPaddingAlt(_ defaultPadding: CGFloat = 39) -> some View {
+        self.padding(.top, getTopPaddingAlt(defaultPadding))
     }
 
     /// 하단 safeArea 값 반환
@@ -34,6 +39,19 @@ extension View {
     
     /// 상단 safeArea 값 반환
     func getTopPadding(_ defaultPadding: CGFloat) -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return defaultPadding
+        }
+        
+        // safeAreaInsets.top이 0이면 직각형 기기임!
+        return window.safeAreaInsets.top == 0 ? defaultPadding : 0
+    }
+
+
+    func getTopPaddingAlt(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows

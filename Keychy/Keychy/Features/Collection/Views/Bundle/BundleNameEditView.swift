@@ -39,7 +39,7 @@ struct BundleNameEditView: View {
         .navigationBarBackButtonHidden(true)
         .overlay(alignment: .top) {
             customNavigationBar
-                .adaptiveTopPadding()
+                .adaptiveTopPaddingAlt()
                 .padding(.top, morePadding)
         }
         .onAppear {
