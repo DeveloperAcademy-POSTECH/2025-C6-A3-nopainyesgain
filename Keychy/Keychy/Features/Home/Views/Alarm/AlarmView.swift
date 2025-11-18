@@ -52,6 +52,7 @@ struct AlarmView: View {
         .padding(.top, 10)
         .navigationTitle("알림")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             checkNotificationPermission()
             fetchNotifications()
