@@ -79,7 +79,7 @@ extension UIImage {
         // 중앙 6% 영역 (47% ~ 53%)
         let centerStart = width * 47 / 100
         let centerEnd = width * 53 / 100
-        let requiredOpaqueRatio: CGFloat = 0.8  // 80% 이상 불투명해야 함
+        let requiredOpaqueRatio: CGFloat = 0.1  // 10% 이상 불투명해야 함
         
         // 위에서 아래로 스캔
         for y in 0..<height {
@@ -100,14 +100,13 @@ extension UIImage {
                 }
             }
             
-            // 중앙 영역의 80% 이상이 불투명하면 확정
+            // 중앙 영역의 10% 이상이 불투명하면 확정
             let opaqueRatio = CGFloat(opaqueCount) / CGFloat(totalCount)
             if opaqueRatio >= requiredOpaqueRatio {
                 let ciImageY = ciImage.extent.minY + CGFloat(height - 1 - y)
                 return ciImageY
             }
         }
-        
         return nil
     }
     
