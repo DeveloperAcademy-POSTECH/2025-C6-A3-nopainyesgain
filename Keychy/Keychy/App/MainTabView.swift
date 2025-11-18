@@ -18,7 +18,9 @@ struct MainTabView: View {
     @State private var collectionViewModel = CollectionViewModel()
 
     @State private var showReceiveSheet = false
+    @State private var showCollectSheet = false
     @State private var receivedPostOfficeId: String?
+    @State private var collectedPostOfficeId: String?
     @State private var shouldRefreshCollection = false
 
     /// 스플래시 표시 여부
@@ -101,6 +103,22 @@ struct MainTabView: View {
                     }
                 }
             }
+            .fullScreenCover(isPresented: $showCollectSheet) {
+                if collectedPostOfficeId != nil {
+                    shouldRefreshCollection = true
+                }
+                collectedPostOfficeId = nil
+            } content: {
+                if let postOfficeId = collectedPostOfficeId {
+                    KeyringCollectView(
+                        viewModel: collectionViewModel,
+                        postOfficeId: postOfficeId
+                    )
+                    .onDisappear {
+                        collectedPostOfficeId = nil
+                    }
+                }
+            }
 
             // 스플래시 화면
             if showSplash {
@@ -119,21 +137,28 @@ struct MainTabView: View {
     
     private func checkPendingDeepLink() {
         // 저장된 딥링크가 있는지 확인
-        if let postOfficeId = deepLinkManager.consumePendingDeepLink() {
-            print("저장된 딥링크 처리: \(postOfficeId)")
-            handleDeepLink(postOfficeId: postOfficeId)
+        if let (postOfficeId, type) = deepLinkManager.consumePendingDeepLink() {
+            print("저장된 딥링크 처리: \(postOfficeId), 타입: \(type)")
+            handleDeepLink(postOfficeId: postOfficeId, type: type)
         }
     }
     
-    private func handleDeepLink(postOfficeId: String) {
+    private func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
         print("키링 수신 처리 시작: \(postOfficeId)")
 
         selectedTab = 2  // 보관함 탭 (순서 변경으로 2번으로 이동)
 
-        receivedPostOfficeId = postOfficeId
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            showReceiveSheet = true
+        switch type {
+        case .receive:
+            receivedPostOfficeId = postOfficeId
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showReceiveSheet = true
+            }
+        case .collect:
+            collectedPostOfficeId = postOfficeId
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showCollectSheet = true
+            }
         }
     }
 }

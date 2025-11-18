@@ -22,7 +22,7 @@ extension CollectionKeyringDetailView {
         } center: {
             // Center (중앙) - 빈 공간
             Text(showUIForCapture ? keyring.name : "")
-                .typography(.suit17M)
+                .typography(.notosans17M)
                 .foregroundStyle(.gray600)
         } trailing: {
             // Trailing (오른쪽) - 다음/구매 버튼
