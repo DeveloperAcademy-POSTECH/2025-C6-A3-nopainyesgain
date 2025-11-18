@@ -39,6 +39,9 @@ struct MyPageView: View {
     @State private var authCoordinator: AppleAuthCoordinator?
     @State private var isShowingAppleSignIn = false
 
+    // 타이틀 표시 여부
+    @State private var showTitle = true
+
     var body: some View {
         ZStack {
             // 메인 컨텐츠
@@ -60,6 +63,23 @@ struct MyPageView: View {
                 .adaptiveTopPaddingAlt()
             }
             .scrollIndicators(.never)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 10)
+                    .onChanged { value in
+                        // 아래로 드래그 (스크롤 위로)
+                        if value.translation.height < -10 {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                showTitle = false
+                            }
+                        }
+                        // 위로 드래그 (스크롤 아래로)
+                        else if value.translation.height > 10 {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                showTitle = true
+                            }
+                        }
+                    }
+            )
             .onAppear {
                 notificationManager.checkPermission { isAuthorized in
                     isPushNotificationEnabled = isAuthorized
@@ -842,6 +862,7 @@ extension MyPageView {
             Text("마이페이지")
                 .typography(.notosans17B)
                 .foregroundStyle(.black100)
+                .opacity(showTitle ? 1 : 0)
         } trailing: {
             // Trailing (오른쪽) - 빈 공간
             Spacer()
