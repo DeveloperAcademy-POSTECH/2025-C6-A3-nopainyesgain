@@ -78,6 +78,7 @@ struct PlusToolbarButton: View {
             Image(.plus)
         }
         .frame(width: 44, height: 44)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }
 
@@ -90,6 +91,7 @@ struct MenuToolbarButton: View {
             Image(.menuIcon)
         }
         .frame(width: 44, height: 44)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }
 
