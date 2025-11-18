@@ -57,6 +57,7 @@ struct MyPageView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
+                .adaptiveTopPaddingAlt()
             }
             .scrollIndicators(.never)
             .onAppear {
@@ -196,12 +197,14 @@ struct MyPageView: View {
                     LoadingAlert(type: .short, message: nil)
                 }
             }
+
+            // 커스텀 네비게이션 바
+            customNavigationBar
+                .opacity(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn ? 0 : 1)
+                .adaptiveTopPadding()
         }
-        
-        // 각 alert가 뜰 때, backBtn 숨기기
-        .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn)
-        .navigationTitle("마이페이지")
-        .navigationBarTitleDisplayMode(.inline)
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
     }
 }
@@ -823,6 +826,27 @@ extension MyPageView {
             } label: {
                 Image(systemName: "chevron.left")
             }
+        }
+    }
+}
+
+// MARK: - 커스텀 네비게이션 바
+extension MyPageView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽)
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            // Center (중앙)
+            Text("마이페이지")
+                .typography(.notosans17B)
+                .foregroundStyle(.black100)
+        } trailing: {
+            // Trailing (오른쪽) - 빈 공간
+            Spacer()
+                .frame(width: 44, height: 44)
         }
     }
 }
