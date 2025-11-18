@@ -45,44 +45,49 @@ struct WorkshopPreview: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            
-            Spacer()
-            
-            itemPreview
-            
-            Spacer()
-            
-            HStack {
-                ItemDetailInfoSection(item: item)
+        ZStack {
+            VStack(alignment: .leading, spacing: 0) {
                 
                 Spacer()
                 
-                // 사운드일 경우 재생 버튼 표시
-                if item is Sound {
-                    VStack {
-                        Spacer()
-                        effectPlayButton
+                itemPreview
+                
+                Spacer()
+                
+                HStack {
+                    ItemDetailInfoSection(item: item)
+                    
+                    Spacer()
+                    
+                    // 사운드일 경우 재생 버튼 표시
+                    if item is Sound {
+                        VStack {
+                            Spacer()
+                            effectPlayButton
+                        }
                     }
                 }
+                .padding(.bottom, 40)
+                .frame(height: 120)
+                
+                actionButton
+                    .adaptiveBottomPadding()
+                    .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
             }
-            .padding(.bottom, 40)
-            .frame(height: 120)
+            .padding(.horizontal, 30)
             
-            actionButton
-                .adaptiveBottomPadding()
-        }
-        .padding(.horizontal, 30)
-        .toolbar(.hidden, for: .tabBar)
-        .navigationBarBackButtonHidden(true)
-        .swipeBackGesture(enabled: true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
+            CustomNavigationBar {
                 BackToolbarButton {
                     router.pop()
                 }
+            } center: {
+                Spacer()
             }
         }
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .swipeBackGesture(enabled: true)
         .overlay {
             ZStack(alignment: .center) {
                 // 구매 확인 팝업
