@@ -35,33 +35,39 @@ struct TemplatePreviewBody: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer()
-
-            // 프리뷰 이미지
-            templatePreview
-
-            Spacer()
-
-            // 템플릿 정보
-            infoSection
-                .padding(.bottom, 40)
-                .frame(minHeight: 120, alignment: .top)
-
-            // 액션 버튼
-            actionButton
-                .adaptiveBottomPadding()
-        }
-        .padding(.horizontal, 30)
-        .toolbar(.hidden, for: .tabBar)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
+        ZStack {
+            VStack(alignment: .leading, spacing: 0) {
+                Spacer()
+                
+                // 프리뷰 이미지
+                templatePreview
+                
+                Spacer()
+                
+                // 템플릿 정보
+                infoSection
+                    .padding(.bottom, 40)
+                    .frame(minHeight: 120, alignment: .top)
+                
+                // 액션 버튼
+                actionButton
+                    .adaptiveBottomPadding()
+                    .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+            }
+            .padding(.horizontal, 30)
+            
+            CustomNavigationBar {
                 BackToolbarButton {
                     router?.pop()
                 }
+            } center: {
+                Spacer()
             }
         }
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .swipeBackGesture(enabled: true)
         .task {
             await fetchTemplate()
         }

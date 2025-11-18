@@ -39,6 +39,9 @@ struct MyPageView: View {
     @State private var authCoordinator: AppleAuthCoordinator?
     @State private var isShowingAppleSignIn = false
 
+    // 타이틀 표시 여부
+    @State private var showTitle = true
+
     var body: some View {
         ZStack {
             // 메인 컨텐츠
@@ -57,8 +60,26 @@ struct MyPageView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
+                .adaptiveTopPaddingAlt()
             }
             .scrollIndicators(.never)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 10)
+                    .onChanged { value in
+                        // 아래로 드래그 (스크롤 위로)
+                        if value.translation.height < -10 {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                showTitle = false
+                            }
+                        }
+                        // 위로 드래그 (스크롤 아래로)
+                        else if value.translation.height > 10 {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                showTitle = true
+                            }
+                        }
+                    }
+            )
             .onAppear {
                 notificationManager.checkPermission { isAuthorized in
                     isPushNotificationEnabled = isAuthorized
@@ -196,12 +217,13 @@ struct MyPageView: View {
                     LoadingAlert(type: .short, message: nil)
                 }
             }
+
+            // 커스텀 네비게이션 바
+            customNavigationBar
+                .opacity(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn ? 0 : 1)
         }
-        
-        // 각 alert가 뜰 때, backBtn 숨기기
-        .navigationBarBackButtonHidden(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn)
-        .navigationTitle("마이페이지")
-        .navigationBarTitleDisplayMode(.inline)
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
     }
 }
@@ -823,6 +845,28 @@ extension MyPageView {
             } label: {
                 Image(systemName: "chevron.left")
             }
+        }
+    }
+}
+
+// MARK: - 커스텀 네비게이션 바
+extension MyPageView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽)
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            // Center (중앙)
+            Text("마이페이지")
+                .typography(.notosans17B)
+                .foregroundStyle(.black100)
+                .opacity(showTitle ? 1 : 0)
+        } trailing: {
+            // Trailing (오른쪽) - 빈 공간
+            Spacer()
+                .frame(width: 44, height: 44)
         }
     }
 }

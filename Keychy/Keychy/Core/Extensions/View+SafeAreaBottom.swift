@@ -20,7 +20,7 @@ extension View {
         self.padding(.top, getTopPadding(defaultPadding))
     }
     
-    /// 상단 - 대체 로직 (safeAreaInsets.top < 25 체크)
+    /// 제가 테스트 햇을땐 이게 딱 맞았음. 그냥 Alt버전은 SE만 대응이 된다.
     func adaptiveTopPaddingAlt(_ defaultPadding: CGFloat = 39) -> some View {
         self.padding(.top, getTopPaddingAlt(defaultPadding))
     }
@@ -49,8 +49,8 @@ extension View {
         // safeAreaInsets.top이 0이면 직각형 기기임!
         return window.safeAreaInsets.top == 0 ? defaultPadding : 0
     }
-
-
+    
+    /// 위 로직이 맞나? 헷갈려서 새로 만듬 -길
     func getTopPaddingAlt(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
@@ -58,9 +58,8 @@ extension View {
             .first(where: { $0.isKeyWindow }) else {
             return defaultPadding
         }
-        
-        // 25보다 작으면 홈버튼 있는 모델
-        // se3 topPadding: 20, 16 topPadding: 59
-        return window.safeAreaInsets.top < 25 ? 39 : 0
+
+        // 실제 safeArea top 값 + 추가 패딩
+        return window.safeAreaInsets.top + defaultPadding
     }
 }

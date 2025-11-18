@@ -66,12 +66,13 @@ extension IntroViewModel {
             """,
             tags: [],
             createdAt: Date(),
-            authorId: uid,
+            authorId: "KEYCHY",
             selectedTemplate: "welcome",
             selectedRing: "basicRing",
             selectedChain: "basicChain1",
             chainLength: 5,
-            isEditable: false
+            isEditable: false,
+            hookOffsetY: 0.08
         )
 
         let docRef = Firestore.firestore().collection("Keyring").document()

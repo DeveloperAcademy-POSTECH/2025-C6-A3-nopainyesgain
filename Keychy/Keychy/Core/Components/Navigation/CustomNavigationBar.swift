@@ -31,7 +31,10 @@ struct CustomNavigationBar<Leading: View, Center: View, Trailing: View>: View {
 
                 Spacer()
 
+                
                 center
+                    .typography(.notosans17M)
+                    
 
                 Spacer()
 
@@ -44,6 +47,7 @@ struct CustomNavigationBar<Leading: View, Center: View, Trailing: View>: View {
 
             Spacer()
         }
+        .adaptiveTopPadding()
     }
 
     /// 기기별 safeArea 계산
