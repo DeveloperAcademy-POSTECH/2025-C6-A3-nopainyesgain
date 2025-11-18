@@ -81,8 +81,8 @@ extension MultiKeyringCaptureScene {
             return nil
         }
         
-        // 고정 캡처 사이즈 (iPhone 14 기준)
-        let captureSize = CGSize(width: 390, height: 844)
+        // 고정 캡처 사이즈 (iPhone 16 Pro 기준)
+        let captureSize = CGSize(width: 402, height: 874)
 
 
         return await withCheckedContinuation { continuation in
