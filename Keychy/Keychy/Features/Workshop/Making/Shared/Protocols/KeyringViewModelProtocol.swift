@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-/// 키링 커스터마이징 모드
+// MARK: 키링 커스터마이징 모드 정의
 enum CustomizingMode: String, CaseIterable, Identifiable {
     case effect = "이펙트"
     case drawing = "그리기"
@@ -21,7 +21,7 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
         case .effect:
             return "interactionSelector"
         case .drawing:
-            return "drawingSelector"
+            return "아직 없음"
         }
     }
 }
@@ -39,9 +39,6 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
     /// 키링 바디 이미지 (혹시나 특이한 템플릿이 있다면 안쓸수도 있어서 Optional)
     var bodyImage: UIImage? { get }
-
-    /// 바디 연결 지점 Y 오프셋 (템플릿별로 다름, AcrylicPhoto 등에서 사용)
-    var calculatedHookOffsetY: CGFloat { get set }
 
     /// 커스터마이징 모드 (템플릿마다 다름)
     var availableCustomizingModes: [CustomizingMode] { get }
@@ -109,10 +106,6 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
         cartItems: Binding<[EffectItem]>
     ) -> AnyView
 
-    // MARK: - Drawing Composition (NeonSign 등 그리기 지원 템플릿)
-    /// 그림을 bodyImage와 합성 (그리기 모드 지원 템플릿만 구현)
-    func composeDrawingWithBodyImage()
-
     // MARK: - Reset Methods
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
@@ -124,19 +117,8 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     func resetAll()
 }
 
-// MARK: - Default Implementations
+// MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
 extension KeyringViewModelProtocol {
-    /// 기본값: hookOffsetY 사용 안함 (AcrylicPhotoVM에서만 override)
-    var calculatedHookOffsetY: CGFloat {
-        get { 0.0 }
-        set { }
-    }
-
-    /// 기본값: 그리기 합성 사용 안함 (NeonSignVM 등에서만 override)
-    func composeDrawingWithBodyImage() {
-        // 기본적으로는 아무것도 하지 않음 (그리기 지원 템플릿만 구현)
-    }
-
     /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {

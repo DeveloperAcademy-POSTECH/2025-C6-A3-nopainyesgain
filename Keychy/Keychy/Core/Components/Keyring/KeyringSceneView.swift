@@ -28,12 +28,20 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         }
         .onAppear {
             if scene == nil {
+                // hookOffsetY는 AcrylicPhotoVM에서만 사용
+                let hookOffset: CGFloat? = {
+                    if let acrylicVM = viewModel as? AcrylicPhotoVM {
+                        return acrylicVM.calculatedHookOffsetY != 0 ? acrylicVM.calculatedHookOffsetY : nil
+                    }
+                    return nil
+                }()
+
                 let newScene = KeyringScene(
                     ringType: .basic,
                     chainType: .basic,
                     bodyImage: viewModel.bodyImage,
                     backgroundColor: backgroundColor,
-                    hookOffsetY: viewModel.calculatedHookOffsetY != 0 ? viewModel.calculatedHookOffsetY : nil
+                    hookOffsetY: hookOffset
                 )
                 newScene.scaleMode = .resizeFill
                 newScene.bind(to: viewModel)
