@@ -30,6 +30,7 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             
             customNavigationBar
         }
+        .adaptiveTopPadding()
         .ignoresSafeArea()
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .tabBar)
@@ -42,14 +43,12 @@ struct BundleInventoryView<Route: BundleRoute>: View {
                 viewModel.showTabBar()
             }
         }
-        .padding(.top, 20)
         .navigationBarBackButtonHidden(true)
 #if DEBUG
         .sheet(isPresented: $showCachedBundlesDebug) {
             CachedBundlesDebugView()
         }
 #endif
-        .navigationTitle("뭉치함")
         .scrollIndicators(.hidden)
         .onAppear {
             // 현재 로그인된 유저의 뭉치 로드
