@@ -6,7 +6,7 @@
 //
 
 /// 홈 탭
-enum HomeRoute: Hashable {
+enum HomeRoute: Hashable, BundleRoute {
     // 나중에 추가
     case bundleInventoryView
     case bundleDetailView

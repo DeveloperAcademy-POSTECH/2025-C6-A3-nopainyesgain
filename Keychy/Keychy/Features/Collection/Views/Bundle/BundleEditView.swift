@@ -10,8 +10,8 @@ import NukeUI
 import SceneKit
 import FirebaseFirestore
 
-struct BundleEditView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleEditView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     @State private var isSceneReady = false
@@ -134,6 +134,7 @@ struct BundleEditView: View {
             purchaseSheetView
         }
         .navigationBarBackButtonHidden()
+        .toolbar(.hidden, for: .tabBar)
         .task {
             await initializeData()
         }
@@ -142,7 +143,7 @@ struct BundleEditView: View {
             Task {
                 await refreshEditData()
             }
-            
+            viewModel.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true

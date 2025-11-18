@@ -10,10 +10,10 @@ import NukeUI
 import SceneKit
 import FirebaseFirestore
 
-struct BundleCreateView: View {
+struct BundleCreateView<Route: BundleRoute>: View {
     
     //MARK: - 프로퍼티들
-    @Bindable var router: NavigationRouter<HomeRoute>
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     @State private var isSceneReady = false
@@ -107,6 +107,7 @@ struct BundleCreateView: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
+        .toolbar(.hidden, for: .tabBar)
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
         }
@@ -119,7 +120,7 @@ struct BundleCreateView: View {
                 await refreshData()
                 isSceneReady = false
             }
-            
+            viewModel.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
@@ -316,7 +317,7 @@ extension BundleCreateView {
 // MARK: - Alert 컨텐츠
 extension BundleCreateView {
     private var alertContent: some View {
-        Group {
+        ZStack {
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
                 Color.black20

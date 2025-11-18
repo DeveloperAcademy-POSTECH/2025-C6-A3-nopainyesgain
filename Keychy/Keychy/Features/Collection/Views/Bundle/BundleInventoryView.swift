@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-struct BundleInventoryView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleInventoryView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
+    
+    @State var isNavigatingDeeper: Bool = false
     
 #if DEBUG
     @State private var showCachedBundlesDebug = false
@@ -21,38 +23,47 @@ struct BundleInventoryView: View {
     ]
     
     var body: some View {
-            VStack {
-                bundleGrid()
+        VStack {
+            bundleGrid()
+        }
+        .padding(.horizontal, 20)
+        .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            isNavigatingDeeper = false
+            viewModel.hideTabBar()
+        }
+        .onDisappear {
+            if !isNavigatingDeeper {
+                viewModel.showTabBar()
             }
-            .padding(.horizontal, 20)
-            .toolbar(.hidden, for: .tabBar)
-            .toolbar {
-                backToolbarItem
+        }
+        .toolbar {
+            backToolbarItem
 #if DEBUG
-                debugToolbarItem
+            debugToolbarItem
 #endif
-                nextToolbarItem
-                
-            }
-            .padding(.top, 20)
-            .navigationBarBackButtonHidden(true)
+            nextToolbarItem
+            
+        }
+        .padding(.top, 20)
+        .navigationBarBackButtonHidden(true)
 #if DEBUG
-            .sheet(isPresented: $showCachedBundlesDebug) {
-                CachedBundlesDebugView()
-            }
+        .sheet(isPresented: $showCachedBundlesDebug) {
+            CachedBundlesDebugView()
+        }
 #endif
-            .navigationTitle("뭉치함")
-            .scrollIndicators(.hidden)
-            .onAppear {
-                // 현재 로그인된 유저의 뭉치 로드
-                let uid = UserManager.shared.userUID
-                guard !uid.isEmpty else { return }
-                viewModel.fetchAllBundles(uid: uid) { success in
-                    if !success {
-                        print("뭉치 로드 실패")
-                    }
+        .navigationTitle("뭉치함")
+        .scrollIndicators(.hidden)
+        .onAppear {
+            // 현재 로그인된 유저의 뭉치 로드
+            let uid = UserManager.shared.userUID
+            guard !uid.isEmpty else { return }
+            viewModel.fetchAllBundles(uid: uid) { success in
+                if !success {
+                    print("뭉치 로드 실패")
                 }
             }
+        }
     }
 }
 
@@ -69,6 +80,7 @@ extension BundleInventoryView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             PlusToolbarButton {
+                isNavigatingDeeper = true
                 router.push(.bundleCreateView)
             }
         }
@@ -109,6 +121,7 @@ extension BundleInventoryView {
                         viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
                         
                         // 상세 화면으로 이동
+                        isNavigatingDeeper = true
                         router.push(.bundleDetailView)
                     } label: {
                         KeyringBundleItem(bundle: bundle)
@@ -119,3 +132,16 @@ extension BundleInventoryView {
     }
 }
 
+//MARK: - 뷰 lifeCycle 관리
+extension BundleInventoryView {
+    func handleViewAppear() {
+        isNavigatingDeeper = false
+        viewModel.hideTabBar()
+    }
+    
+    func handleViewDisappear() {
+        if !isNavigatingDeeper {
+            viewModel.showTabBar()
+        }
+    }
+}
