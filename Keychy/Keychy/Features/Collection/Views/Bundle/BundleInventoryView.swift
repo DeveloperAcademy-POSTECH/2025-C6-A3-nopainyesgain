@@ -27,8 +27,8 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             VStack {
                 bundleGrid()
             }
-            .padding(.top, 100)
-            .adaptiveTopPadding()
+            .padding(.top, 20)
+            .adaptiveTopPaddingAlt()
             
             customNavigationBar
         }
