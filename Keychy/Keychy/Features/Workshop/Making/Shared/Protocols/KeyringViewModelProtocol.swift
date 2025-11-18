@@ -121,10 +121,23 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
     /// 완전 초기화 (완성뷰 dismiss, 커스터마이징뷰 alert 후)
     func resetAll()
+
+    // MARK: - Lifecycle Callbacks
+    /// 모드 변경 시 호출 (템플릿별 처리 필요 시 구현)
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode)
+
+    /// 다음 화면으로 이동하기 전 호출 (템플릿별 처리 필요 시 구현)
+    func beforeNavigateToNext()
 }
 
 // MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
 extension KeyringViewModelProtocol {
+    /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {}
+
+    /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
+    func beforeNavigateToNext() {}
+
     /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {

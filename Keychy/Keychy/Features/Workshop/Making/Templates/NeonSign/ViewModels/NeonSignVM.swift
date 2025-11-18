@@ -212,4 +212,17 @@ class NeonSignVM: KeyringViewModelProtocol {
         if !isFree && !isDownloaded { return 4 }
         return 99
     }
+
+    // MARK: - Lifecycle Callbacks
+    /// 모드 변경 시 그리기 → 다른 모드로 전환되면 그림 합성
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
+        if oldMode == .drawing && newMode != .drawing {
+            composeDrawingWithBodyImage()
+        }
+    }
+
+    /// 다음 화면으로 이동하기 전 그림 합성
+    func beforeNavigateToNext() {
+        composeDrawingWithBodyImage()
+    }
 }

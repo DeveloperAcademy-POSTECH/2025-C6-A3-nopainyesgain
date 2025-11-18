@@ -170,12 +170,8 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             purchaseSheet
         }
         .onChange(of: selectedMode) { oldMode, newMode in
-            // 그리기 모드에서 다른 모드로 전환 시 그림 합성 (NeonSignVM에서만)
-            if oldMode == .drawing && newMode != .drawing {
-                if let neonSignVM = viewModel as? NeonSignVM {
-                    neonSignVM.composeDrawingWithBodyImage()
-                }
-            }
+            // 모드 변경 시 템플릿별 처리
+            viewModel.onModeChanged(from: oldMode, to: newMode)
         }
     }
 
@@ -271,10 +267,8 @@ extension KeyringCustomizingView {
                 if hasCartItems {
                     showPurchaseSheet = true
                 } else {
-                    // 다음으로 넘어가기 전에 그림 합성 (NeonSignVM에서만)
-                    if let neonSignVM = viewModel as? NeonSignVM {
-                        neonSignVM.composeDrawingWithBodyImage()
-                    }
+                    // 다음으로 넘어가기 전 템플릿별 처리
+                    viewModel.beforeNavigateToNext()
                     router.push(nextRoute)
                 }
             } label: {
