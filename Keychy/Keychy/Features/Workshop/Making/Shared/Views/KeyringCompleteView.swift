@@ -38,25 +38,26 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                 VStack(spacing: 0) {
                     Spacer()
                     // 키링 씬
-                    keyringScene
-                        .frame(height: geometry.size.height * 0.72)
-                        .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
-                        .scaleEffect(
-                            getBottomPadding(0) == 0 ? 0.8 : 1.0
-                        )
-
-                    // 키링 정보
-                    keyringInfo
-                        .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
-
-                    // 이미지 저장 버튼
-                    saveButton
-                        .padding(.top, 10)
-                        .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
-                        .opacity(isCapturingImage ? 0 : 1)
-                        //.adaptiveBottomPadding()
                     
-                    Spacer()
+                    ZStack(alignment: .center) {
+                        keyringScene
+                            .frame(height: geometry.size.height * 0.72)
+                            .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
+                        
+                        VStack {
+                            // 키링 정보
+                            keyringInfo
+                                .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
+                            
+                            // 이미지 저장 버튼
+                            saveButton
+                                .padding(.top, 10)
+                                .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
+                                .opacity(isCapturingImage ? 0 : 1)
+                            //.adaptiveBottomPadding()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
                 .blur(radius: showImageSaved ? 15 : 0)
 
