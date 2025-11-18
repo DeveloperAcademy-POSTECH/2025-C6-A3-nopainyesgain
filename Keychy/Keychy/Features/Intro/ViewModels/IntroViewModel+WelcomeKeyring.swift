@@ -66,7 +66,7 @@ extension IntroViewModel {
             """,
             tags: [],
             createdAt: Date(),
-            authorId: uid,
+            authorId: "KEYCHY",
             selectedTemplate: "welcome",
             selectedRing: "basicRing",
             selectedChain: "basicChain1",
