@@ -29,7 +29,7 @@ struct KeyringBundleItem: View {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
-                    .frame(width: twoGridCellWidth, height: twoGridCellHeight)
+                    .frame(width: twoGrid5to7CellWidth, height: twoGrid5to7CellHeight)
                     .cornerRadius(10)
                 
                 if bundle.isMain {

@@ -23,6 +23,11 @@ var twoSquareGridCellSize: CGFloat {
     UIApplication.gridCellWidth(columns: 2)
 }
 
+/// 2열 그리드 셀의 높이 (비율 5:7) - 뭉치 보관함에서 사용
+var twoGrid5to7CellWidth: CGFloat {
+    UIApplication.gridCellWidth(columns: 2, spacing: 12.5)
+}
+
 /// 3열 그리드 셀의 너비 (비율 3:4)
 var threeGridCellWidth: CGFloat {
     UIApplication.gridCellWidth(columns: 3, spacing: 10)
@@ -36,6 +41,11 @@ var threeGridCellHeight: CGFloat {
 /// 3열 정사각형 그리드 셀의 크기 (1:1 비율)
 var threeSquareGridCellSize: CGFloat {
     UIApplication.gridCellWidth(columns: 3, spacing: 10)
+}
+
+/// 3열 그리드 셀의 높이 (비율 5:7) - 뭉치 보관함에서 사용
+var twoGrid5to7CellHeight: CGFloat {
+    UIApplication.gridCellHeight(columns: 2, aspectRatio: 7/5, spacing: 12.5)
 }
 
 /// 화면 가로 너비
