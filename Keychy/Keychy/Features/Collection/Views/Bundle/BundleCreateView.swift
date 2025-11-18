@@ -16,8 +16,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
-    @State private var isSceneReady = false
-    
     /// 선택한 카테고리 : "Background" 또는 "Carabiner"
     @State private var selectedCategory: String = ""
     
@@ -59,39 +57,22 @@ struct BundleCreateView<Route: BundleRoute>: View {
             if let bg = selectedBackground,
                let cb = selectedCarabiner {
                 // 배경과 카라비너만 보여줌
-                ZStack {
-                    MultiKeyringSceneView(
-                        keyringDataList: [],
-                        ringType: .basic,
-                        chainType: .basic,
-                        backgroundColor: .clear,
-                        backgroundImageURL: bg.background.backgroundImage,
-                        carabinerBackImageURL: cb.carabiner.backImageURL,
-                        carabinerFrontImageURL: cb.carabiner.frontImageURL,
-                        carabinerX: cb.carabiner.carabinerX,
-                        carabinerY: cb.carabiner.carabinerY,
-                        carabinerWidth: cb.carabiner.carabinerWidth,
-                        currentCarabinerType: cb.carabiner.type,
-                        onAllKeyringsReady: {
-                            withAnimation(.easeOut(duration: 0.3)) {
-                                isSceneReady = true
-                            }
-                        }
-                    )
-                    .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
-                    sheetContent()
-                    customNavigationBar
-                }
-                .animation(.easeInOut(duration: 0.3), value: isSceneReady)
-                .blur(radius: isSceneReady ? 0 : 10)
-                
-                if !isSceneReady {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(10)
-                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                        .zIndex(11)
-                }
+                MultiKeyringSceneView(
+                    keyringDataList: [],
+                    ringType: .basic,
+                    chainType: .basic,
+                    backgroundColor: .clear,
+                    backgroundImageURL: bg.background.backgroundImage,
+                    carabinerBackImageURL: cb.carabiner.backImageURL,
+                    carabinerFrontImageURL: cb.carabiner.frontImageURL,
+                    carabinerX: cb.carabiner.carabinerX,
+                    carabinerY: cb.carabiner.carabinerY,
+                    carabinerWidth: cb.carabiner.carabinerWidth,
+                    currentCarabinerType: cb.carabiner.type
+                )
+                .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
+                sheetContent()
+                customNavigationBar
             }
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
@@ -124,7 +105,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshData()
-                isSceneReady = false
             }
             viewModel.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌

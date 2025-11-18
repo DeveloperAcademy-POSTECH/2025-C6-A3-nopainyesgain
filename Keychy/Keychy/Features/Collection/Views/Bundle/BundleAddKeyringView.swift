@@ -46,11 +46,11 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 }
                 customNavigationBar
             }
-            .blur(radius: (isSceneReady && !showSelectKeyringSheet && !isCapturing) ? 0 : 10)
+            .blur(radius: (!showSelectKeyringSheet && !isCapturing) ? 0 : 10)
             
             
             // Dim 오버레이 (키링 시트가 열릴 때)
-            if !isSceneReady || showSelectKeyringSheet || isCapturing {
+            if showSelectKeyringSheet || isCapturing {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(1)
@@ -62,15 +62,14 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 LoadingAlert(type: .longWithKeychy, message: "뭉치 만드는 중...")
                     .opacity(isCapturing ? 1 : 0)
                 
-                LoadingAlert(type: .longWithKeychy, message: "만들기 불러오는 중...")
-                    .zIndex(101)
-                    .opacity(isSceneReady ? 0 : 1)
+//                LoadingAlert(type: .longWithKeychy, message: "만들기 불러오는 중...")
+//                    .zIndex(101)
+//                    .opacity(isSceneReady ? 0 : 1)
             }
         }
         .ignoresSafeArea()
         .onAppear {
             fetchData()
-            isSceneReady = false
             viewModel.hideTabBar()
         }
         .navigationBarBackButtonHidden(true)
@@ -115,16 +114,9 @@ extension BundleAddKeyringView {
                 carabinerX: carabiner.carabinerX,
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth,
-                currentCarabinerType: carabiner.type,
-                onAllKeyringsReady: {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        isSceneReady = true
-                    }
-                }
+                currentCarabinerType: carabiner.type
             )
             .ignoresSafeArea()
-            .blur(radius: isSceneReady ? 0 : 10)
-            .animation(.easeInOut(duration: 0.3), value: isSceneReady)
             .id("scene_\(background.id ?? "bg")_\(carabiner.id ?? "cb")_\(selectedKeyrings.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들
@@ -151,7 +143,6 @@ extension BundleAddKeyringView {
             )
             .position(x: xPos, y: yPos)
             .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-            .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
             .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
         }
     }
