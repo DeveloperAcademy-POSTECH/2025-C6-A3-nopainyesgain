@@ -82,7 +82,7 @@ struct KeyringMenu: View {
                 .opacity(isAppearing ? 1.0 : 0.0)
                 .position(
                     x: geometry.size.width - menuWidth / 2 - 16,
-                    y: (isMyKeyring ? position.maxY + menuHeight + 28 : position.maxY + menuHeight + 56)
+                    y: position.maxY + 8 + menuHeight / 2
                 )
             }
         }

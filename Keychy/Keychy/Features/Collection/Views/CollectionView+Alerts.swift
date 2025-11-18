@@ -17,14 +17,20 @@ extension CollectionView {
         
         if showRenameAlert {
             renameAlertOverlay
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
         }
         
         if showDeleteAlert || showDeleteCompleteAlert {
             deleteAlertOverlay
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
         }
         
         if showInvenExpandAlert || showPurchaseSuccessAlert || showPurchaseFailAlert {
             invenAlertOverlay
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
         }
     }
     

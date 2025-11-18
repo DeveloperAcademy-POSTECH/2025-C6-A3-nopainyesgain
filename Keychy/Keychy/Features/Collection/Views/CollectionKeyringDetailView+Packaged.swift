@@ -190,8 +190,9 @@ extension PackagedKeyringView {
                     .offset(y: -2)
             } else {
                 // PNG 로딩 중
-                ProgressView()
+                LoadingAlert(type: .short, message: nil)
                     .frame(width: 195, height: 300)
+                    .scaleEffect(0.6)
             }
         }
     }
@@ -276,22 +277,19 @@ extension PackagedKeyringView {
     
     private var qrCodeContainer: some View {
         ZStack {
-            Rectangle()
-                .fill(.white100)
-                .frame(width: 215, height: 215)
-            
             if let qrCodeImage = qrCodeImage {
                 Image(uiImage: qrCodeImage)
                     .resizable()
                     .interpolation(.none)
                     .scaledToFit()
-                    .frame(width: 210, height: 210)
+                    .frame(width: 205, height: 205)
             } else {
-                ProgressView()
-                    .frame(width: 210, height: 210)
+                LoadingAlert(type: .short, message: nil)
+                    .frame(width: 205, height: 205)
+                    .scaleEffect(0.6)
             }
         }
-        .offset(y: -12)
+        .offset(x: -3, y: -24)
     }
 }
 

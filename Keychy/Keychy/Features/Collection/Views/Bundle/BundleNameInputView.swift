@@ -57,7 +57,7 @@ struct BundleNameInputView: View {
         }
         .overlay(alignment: .top) {
             customNavigationBar
-                .adaptiveTopPadding()
+                .adaptiveTopPaddingAlt()
                 .padding(.top, morePadding)
         }
         .navigationBarBackButtonHidden(true)

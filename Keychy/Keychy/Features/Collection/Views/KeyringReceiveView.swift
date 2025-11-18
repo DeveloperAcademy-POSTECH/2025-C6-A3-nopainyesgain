@@ -30,86 +30,117 @@ struct KeyringReceiveView: View {
     }
     
     var body: some View {
-        ZStack {
-            Group {
-                Image("GreenBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 10) {
-                    if isLoading {
-                        // 로딩 상태
-                        ProgressView("로딩 중...")
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        
-                    } else if let keyring = keyring {
-                        // 키링 로드 성공
-                        headerSection
-                        
-                        messageSection(keyring: keyring)
-                        
-                        keyringImage(keyring: keyring)
-                        
-                        Spacer()
-                            .frame(height: 80)
-                        
-                        receiveButton
-                    } else {
-                        // 에러 상태
-                        VStack(spacing: 20) {
-                            VStack(spacing: 0) {
-                                Image("EmptyViewIcon")
-                                    .resizable()
-                                    .frame(width: 124, height: 111)
-                                
-                                Text("키링을 불러올 수 없습니다.")
-                                    .typography(.suit15R)
-                                    .foregroundColor(.black100)
-                                    .padding(.vertical, 15)
-                                
-                                Button {
-                                    dismiss()
-                                } label: {
-                                    Text("닫기")
+        GeometryReader { geometry in
+            let heightRatio = geometry.size.height / 852
+            let isSmallScreen = geometry.size.height < 700
+            
+            ZStack {
+                Group {
+                    Image("GreenBackground")
+                        .resizable()
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 0) {
+                        if isLoading {
+                            // 로딩 상태
+                            LoadingAlert(type: .short, message: nil)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            
+                        } else if let keyring = keyring {
+                            // 키링 로드 성공
+                            Spacer()
+                                .adaptiveTopPadding()
+                            
+                            messageSection(keyring: keyring)
+                                .padding(.top, isSmallScreen ? -80 : 90)
+                            
+                            Spacer()
+                                .frame(height: isSmallScreen ? 0 : 20)
+                            
+                            keyringImage(keyring: keyring)
+                                .frame(height: isSmallScreen ? 400 : 490)
+                                .scaleEffect(heightRatio)
+                                .padding(.bottom, isSmallScreen ? 36 : 78)
+                            
+                            receiveButton
+                            
+                            Spacer()
+                                .adaptiveBottomPadding()
+                        } else {
+                            // 에러 상태
+                            VStack(spacing: 20) {
+                                VStack(spacing: 0) {
+                                    Image("EmptyViewIcon")
+                                        .resizable()
+                                        .frame(width: 124, height: 111)
+                                    
+                                    Text("키링을 불러올 수 없습니다.")
                                         .typography(.suit15R)
-                                        .foregroundColor(.main500)
+                                        .foregroundColor(.black100)
                                         .padding(.vertical, 15)
+                                    
+                                    Button {
+                                        dismiss()
+                                    } label: {
+                                        Text("닫기")
+                                            .typography(.suit15R)
+                                            .foregroundColor(.main500)
+                                            .padding(.vertical, 15)
+                                    }
                                 }
                             }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
-            }
-            .blur(radius: shouldApplyBlur ? 10 : 0)
-            .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
-            
-            if isAccepting || showAcceptCompleteAlert || showInvenFullAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(99)
+                .blur(radius: shouldApplyBlur ? 10 : 0)
+                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
-                if isAccepting {
-                    LoadingAlert(type: .short, message: nil)
+                if isAccepting || showAcceptCompleteAlert || showInvenFullAlert {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .zIndex(99)
+                    
+                    if isAccepting {
+                        LoadingAlert(type: .short, message: nil)
+                            .position(
+                                x: geometry.size.width / 2,
+                                y: geometry.size.height / 2
+                            )
+                            .zIndex(101)
+                    }
+                    
+                    if showAcceptCompleteAlert {
+                        KeychyAlert(
+                            type: .addToCollection,
+                            message: "키링이 내 보관함에 추가되었어요!",
+                            isPresented: $showAcceptCompleteAlert
+                        )
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
                         .zIndex(101)
+                    }
+                    
+                    if showInvenFullAlert {
+                        InvenLackPopup(isPresented: $showInvenFullAlert)
+                            .position(
+                                x: geometry.size.width / 2,
+                                y: geometry.size.height / 2
+                            )
+                            .zIndex(100)
+                    }
                 }
                 
-                if showAcceptCompleteAlert {
-                    KeychyAlert(
-                        type: .addToCollection,
-                        message: "키링이 내 보관함에 추가되었어요!",
-                        isPresented: $showAcceptCompleteAlert
-                    )
-                    .zIndex(101)
-                }
-                
-                if showInvenFullAlert {
-                    InvenLackPopup(isPresented: $showInvenFullAlert)
-                        .zIndex(100)
-                }
+                customNavigationBar
+                    .blur(radius: shouldApplyBlur ? 15 : 0)
+                    .adaptiveTopPadding()
+                    .zIndex(0)
             }
         }
+        .ignoresSafeArea()
         .onAppear {
             loadKeyringData()
         }
@@ -256,7 +287,7 @@ extension KeyringReceiveView {
         VStack(spacing: 10) {
             HStack(spacing: 0) {
                 Text(senderName)
-                    .typography(.notosans20B) // 요기////
+                    .typography(.notosans19B)
                     .foregroundColor(.main500)
                 
                 Text("님이 키링을 선물했어요!")
@@ -338,6 +369,25 @@ extension KeyringReceiveView {
                     }
                 }
             }
+        }
+    }
+}
+
+extension KeyringReceiveView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
+            CloseToolbarButton {
+                dismiss()
+            }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        } center: {
+            // Center (중앙) - 빈 공간
+            Spacer()
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
+            Spacer()
         }
     }
 }

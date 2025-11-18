@@ -1,8 +1,19 @@
 {
   "images" : [
     {
-      "filename" : "QRKeyring.pdf",
-      "idiom" : "universal"
+      "filename" : "QRKeyring.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "QRKeyring@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "QRKeyring@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {

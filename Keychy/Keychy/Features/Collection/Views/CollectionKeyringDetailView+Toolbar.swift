@@ -9,22 +9,23 @@ import SwiftUI
 
 // MARK: - 툴바
 extension CollectionKeyringDetailView {
-    var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
+    var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
+            BackToolbarButton {
                 isSheetPresented = false
                 router.pop()
-            } label: {
-                Image("backIcon")
-                    .resizable()
-                    .frame(width: 32, height: 32)
             }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
             .opacity(showUIForCapture ? 1 : 0)
-        }
-    }
-
-    var menuToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
+        } center: {
+            // Center (중앙) - 빈 공간
+            Text(showUIForCapture ? keyring.name : "")
+                .typography(.suit17M)
+                .foregroundStyle(.gray600)
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     showMenu.toggle()
@@ -32,7 +33,7 @@ extension CollectionKeyringDetailView {
             }) {
                 Image("MenuIcon")
                     .resizable()
-                    .frame(width: 32, height: 32)
+                    .frame(width: 34, height: 34)
                     .contentShape(Rectangle())
                     .background(
                         GeometryReader { geometry in
@@ -43,6 +44,8 @@ extension CollectionKeyringDetailView {
                         }
                     )
             }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
             .opacity(showUIForCapture ? 1 : 0)
         }
     }
