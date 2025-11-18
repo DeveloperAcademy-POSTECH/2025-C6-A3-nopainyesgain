@@ -57,11 +57,12 @@ struct NotificationGiftView: View {
     }
 
     private var contentView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 15) {
             Spacer()
 
             if let keyring = keyring {
                 keyringImage(keyring: keyring)
+                    .scaleEffect(calculateScale())
             }
 
             // 전달 정보
@@ -80,7 +81,9 @@ struct NotificationGiftView: View {
                         .foregroundStyle(.gray400)
                 }
             }
+
             Spacer()
+                .frame(maxHeight: 80)
         }
     }
 
@@ -212,4 +215,33 @@ struct NotificationGiftView: View {
         scene.scaleMode = .aspectFill
         return scene
     }
+    
+    // 기기별 스케일 계산
+    private func calculateScale() -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 1.0
+        }
+        
+        let screenHeight = window.screen.bounds.height
+        
+        // SE
+        if window.safeAreaInsets.top < 25 {
+            return 0.8
+        }
+        
+        // iPhone 14/15
+        if screenHeight < 850 {
+            return 0.95
+        }
+        
+        // iPhone 16 Pro
+        return 1.0
+    }
+}
+
+#Preview {
+    NotificationGiftView(router: NavigationRouter<HomeRoute>(), viewModel: CollectionViewModel(), postOfficeId: "QaLswDgjUUIsMnvYXEQK")
 }
