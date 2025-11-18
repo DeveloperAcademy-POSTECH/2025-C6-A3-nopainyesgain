@@ -208,6 +208,7 @@ extension IntroView {
         .tint(canProceed ? .main500 : .black20)
         .foregroundStyle(canProceed ? .white100 : .black40)
         .disabled(!canProceed)
+        .adaptiveBottomPadding()
     }
 
     /// 모두 동의 토글

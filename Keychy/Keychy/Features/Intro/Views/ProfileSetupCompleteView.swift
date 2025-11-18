@@ -217,6 +217,7 @@ extension ProfileSetupCompleteView {
         .disabled(isSaving || isLoadingResources || !isSceneReady)
         .opacity(showNextButton ? 1 : 0)
         .scaleEffect(showNextButton ? 1 : 0.3)
+        .adaptiveBottomPadding()
     }
 }
 
