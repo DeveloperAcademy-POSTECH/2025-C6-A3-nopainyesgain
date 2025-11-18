@@ -1,14 +1,14 @@
 //
-//  KeyringReceiveView.swift
+//  KeyringCollectView.swift
 //  Keychy
 //
-//  Created by Jini on 11/8/25.
+//  Created by Jini on 11/19/25.
 //
 
 import SwiftUI
 import SpriteKit
 
-struct KeyringReceiveView: View {
+struct KeyringCollectView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: CollectionViewModel
     @State private var keyring: Keyring?
@@ -21,10 +21,6 @@ struct KeyringReceiveView: View {
     @State private var isAccepted: Bool = false
     @State private var showAcceptCompleteAlert: Bool = false
     @State private var showInvenFullAlert: Bool = false
-    
-    // 이미 수령처리된 로직 관련
-    @State private var showAlreadyAcceptedAlert: Bool = false
-    @State private var isAlreadyReceived: Bool = false
     
     let postOfficeId: String
     
@@ -50,31 +46,6 @@ struct KeyringReceiveView: View {
                             // 로딩 상태
                             LoadingAlert(type: .short, message: nil)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                          
-                        } else if isAlreadyReceived {
-                            // 이미 수락된 선물
-                            VStack(spacing: 20) {
-                                VStack(spacing: 0) {
-                                    Image("EmptyViewIcon")
-                                        .resizable()
-                                        .frame(width: 124, height: 111)
-                                    
-                                    Text("이미 수락된 선물이에요")
-                                        .typography(.suit15R)
-                                        .foregroundColor(.black100)
-                                        .padding(.vertical, 15)
-                                    
-                                    Button {
-                                        dismiss()
-                                    } label: {
-                                        Text("닫기")
-                                            .typography(.suit15R)
-                                            .foregroundColor(.main500)
-                                            .padding(.vertical, 15)
-                                    }
-                                }
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                           
                         } else if let keyring = keyring {
                             // 키링 로드 성공
@@ -126,7 +97,7 @@ struct KeyringReceiveView: View {
                 .blur(radius: shouldApplyBlur ? 10 : 0)
                 .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
-                if isAccepting || showAcceptCompleteAlert || showInvenFullAlert || showAlreadyAcceptedAlert{
+                if isAccepting || showAcceptCompleteAlert || showInvenFullAlert {
                     Color.black20
                         .ignoresSafeArea()
                         .zIndex(99)
@@ -161,19 +132,6 @@ struct KeyringReceiveView: View {
                             )
                             .zIndex(100)
                     }
-                    
-                    if showAlreadyAcceptedAlert {
-                        KeychyAlert(
-                            type: .fail,
-                            message: "이미 누군가 받은 키링이에요",
-                            isPresented: $showAlreadyAcceptedAlert
-                        )
-                        .position(
-                            x: geometry.size.width / 2,
-                            y: geometry.size.height / 2
-                        )
-                        .zIndex(101)
-                    }
                 }
                 
                 customNavigationBar
@@ -193,7 +151,6 @@ struct KeyringReceiveView: View {
         isAccepting ||
         showAcceptCompleteAlert ||
         showInvenFullAlert ||
-        showAlreadyAcceptedAlert ||
         false
     }
     
@@ -204,18 +161,9 @@ struct KeyringReceiveView: View {
         viewModel.fetchPostOfficeData(postOfficeId: postOfficeId) { postOfficeData in
             guard let postOfficeData = postOfficeData,
                   let senderId = postOfficeData["senderId"] as? String,
-                  let keyringId = postOfficeData["keyringId"] as? String else { 
+                  let keyringId = postOfficeData["keyringId"] as? String else {
                 print("PostOffice 데이터 로드 실패")
                 isLoading = false
-                return
-            }
-            
-            // receiverId 존재 여부 확인
-            if let receiverId = postOfficeData["receiverId"] as? String, !receiverId.isEmpty {
-                // 이미 수락된 선물
-                print("이미 수락된 선물: receiverId = \(receiverId)")
-                self.isAlreadyReceived = true
-                self.isLoading = false
                 return
             }
             
@@ -321,7 +269,7 @@ struct KeyringReceiveView: View {
     
     private var backgroundImageName: String {
         // 로딩 중이 아니고, (이미 수락됨 또는 에러 또는 keyring이 nil)
-        if !isLoading && (isAlreadyReceived || keyring == nil) {
+        if !isLoading && (keyring == nil) {
             return "WhiteBackground"
         }
         return "GreenBackground"
@@ -329,7 +277,7 @@ struct KeyringReceiveView: View {
 }
 
 // 헤더 (버튼 + 수신 정보)
-extension KeyringReceiveView {
+extension KeyringCollectView {    
     private func messageSection(keyring: Keyring) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 0) {
@@ -351,7 +299,7 @@ extension KeyringReceiveView {
 }
 
 // 하단 버튼
-extension KeyringReceiveView {
+extension KeyringCollectView {
     private var receiveButton: some View {
         Button {
             if !isAccepted {
@@ -380,70 +328,38 @@ extension KeyringReceiveView {
             return
         }
         
-        // 수락 전 receiverId 필드 재확인
-        viewModel.fetchPostOfficeData(postOfficeId: postOfficeId) { postOfficeData in
-            guard let postOfficeData = postOfficeData else {
-                print("PostOffice 조회 실패")
-                return
-            }
-            
-            // receiverId 필드가 존재하고 값이 있으면 이미 수락된 상태
-            if let existingReceiverId = postOfficeData["receiverId"] as? String, !existingReceiverId.isEmpty {
+        viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
+            if !hasSpace {
+                // 보관함 가득 참
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    self.showAlreadyAcceptedAlert = true
+                    self.showInvenFullAlert = true
                 }
                 return
             }
             
-            viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
-                if !hasSpace {
-                    // 보관함 가득 참
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        self.showInvenFullAlert = true
-                    }
-                    return
-                }
-                
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    self.isAccepting = true
-                }
-                
-                // 보관함 여유 있음 - 수락 진행
-                self.viewModel.acceptKeyring(
-                    postOfficeId: self.postOfficeId,
-                    keyringId: keyringId,
-                    senderId: senderId,
-                    receiverId: receiverId
-                ) { success in
-                    DispatchQueue.main.async {
-                        self.isAccepting = false
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                self.isAccepting = true
+            }
+            
+            // 배포용 수령 로직
+            self.viewModel.collectKeyring(
+                keyringId: keyringId,
+                senderId: senderId,
+                receiverId: receiverId
+            ) { success, errorMessage in
+                DispatchQueue.main.async {
+                    self.isAccepting = false
+                    
+                    if success {
+                        self.isAccepted = true
                         
-                        if success {
-                            self.isAccepted = true
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    self.showAcceptCompleteAlert = true
-                                }
-                            }
-                        } else {
-                            print("키링 수락 실패 - 중복 수락 가능성")
-                            
-                            // receiverId 확인해서 중복 수락인지 체크
-                            self.viewModel.fetchPostOfficeData(postOfficeId: self.postOfficeId) { postOfficeData in
-                                if let postOfficeData = postOfficeData,
-                                   let existingReceiverId = postOfficeData["receiverId"] as? String,
-                                   !existingReceiverId.isEmpty {
-                                    // 중복 수락
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        self.showAlreadyAcceptedAlert = true
-                                    }
-                                } else {
-                                    // 다른 이유로 실패
-                                    print("키링 수락 실패 - 기타 이유")
-                                }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                self.showAcceptCompleteAlert = true
                             }
                         }
+                    } else {
+                        print("키링 수령 실패")
                     }
                 }
             }
@@ -451,7 +367,7 @@ extension KeyringReceiveView {
     }
 }
 
-extension KeyringReceiveView {
+extension KeyringCollectView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
