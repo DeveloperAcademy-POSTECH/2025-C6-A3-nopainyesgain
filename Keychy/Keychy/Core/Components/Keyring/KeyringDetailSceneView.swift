@@ -34,13 +34,10 @@ struct KeyringDetailSceneView: View {
             .onAppear {
                 if scene == nil {
                     initializeScene()
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            self.isLoading = false
-                        }
-                    }
                 }
+            }
+            .onDisappear {
+                cleanupScene()
             }
         }
     
@@ -92,6 +89,19 @@ struct KeyringDetailSceneView: View {
         
         scene = newScene
     }
+    
+    // 메모리 정리
+    private func cleanupScene() {
+        scene?.removeAllChildren()
+        scene?.removeAllActions()
+        scene?.physicsWorld.removeAllJoints()
+        scene?.view?.presentScene(nil)
+        scene = nil
+        
+        // 이펙트 정리
+        showEffect = false
+        currentEffect = ""
+    }
 }
 
 extension KeyringDetailSceneView {
@@ -102,6 +112,12 @@ extension KeyringDetailSceneView {
                 SpriteView(scene: scene, options: [.allowsTransparency])
                     .contentShape(Rectangle())
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .onAppear {
+                        scene.isPaused = false
+                    }
+                    .onDisappear {
+                        scene.isPaused = true
+                    }
             } else {
                 Color.gray.opacity(0.1)
             }

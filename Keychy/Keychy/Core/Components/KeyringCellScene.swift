@@ -20,10 +20,9 @@ class KeyringCellScene: SKScene {
     var currentChainType: ChainType
 
     // MARK: - 크기 조절용 컨테이너 노드
-    var containerNode: SKNode!
+    weak var containerNode: SKNode!
     let scaleFactor: CGFloat // 크기 비율
-    // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
-    let originalSize = CGSize(width: 393, height: 852)
+    let originalSize = CGSize(width: 393, height: 852) // 기준 사이즈
     
     var customBackgroundColor: UIColor = .gray50
     
@@ -58,8 +57,7 @@ class KeyringCellScene: SKScene {
     }
     
     deinit {
-        removeAllChildren()
-        removeAllActions()
+        cleanup()
     }
     
     // MARK: - Scene Lifecycle
@@ -74,11 +72,27 @@ class KeyringCellScene: SKScene {
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
         // 컨테이너 설정
-        containerNode = SKNode()
-        containerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        containerNode.setScale(scaleFactor)
-        addChild(containerNode)
+        let newContainerNode = SKNode()
+        newContainerNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        newContainerNode.setScale(scaleFactor)
+        addChild(newContainerNode)
+        containerNode = newContainerNode
 
         setupKeyring()
+    }
+    
+    override func willMove(from view: SKView) {
+        super.willMove(from: view)
+        cleanup()
+    }
+    
+    // MARK: - 메모리 정리
+    private func cleanup() {
+        onLoadingComplete = nil
+        containerNode = nil
+        
+        removeAllChildren()
+        removeAllActions()
+        physicsWorld.removeAllJoints()
     }
 }
