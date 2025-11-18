@@ -10,10 +10,10 @@ import NukeUI
 import SceneKit
 import FirebaseFirestore
 
-struct BundleCreateView: View {
+struct BundleCreateView<Route: BundleRoute>: View {
     
     //MARK: - 프로퍼티들
-    @Bindable var router: NavigationRouter<HomeRoute>
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     @State private var isSceneReady = false
@@ -316,7 +316,7 @@ extension BundleCreateView {
 // MARK: - Alert 컨텐츠
 extension BundleCreateView {
     private var alertContent: some View {
-        Group {
+        ZStack {
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
                 Color.black20

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct BundleInventoryView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleInventoryView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
 #if DEBUG
@@ -21,38 +21,44 @@ struct BundleInventoryView: View {
     ]
     
     var body: some View {
-            VStack {
-                bundleGrid()
-            }
-            .padding(.horizontal, 20)
-            .toolbar(.hidden, for: .tabBar)
-            .toolbar {
-                backToolbarItem
+        VStack {
+            bundleGrid()
+        }
+        .padding(.horizontal, 20)
+        .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            hideTabBar()
+        }
+        .onDisappear {
+            showTabBar()
+        }
+        .toolbar {
+            backToolbarItem
 #if DEBUG
-                debugToolbarItem
+            debugToolbarItem
 #endif
-                nextToolbarItem
-                
-            }
-            .padding(.top, 20)
-            .navigationBarBackButtonHidden(true)
+            nextToolbarItem
+            
+        }
+        .padding(.top, 20)
+        .navigationBarBackButtonHidden(true)
 #if DEBUG
-            .sheet(isPresented: $showCachedBundlesDebug) {
-                CachedBundlesDebugView()
-            }
+        .sheet(isPresented: $showCachedBundlesDebug) {
+            CachedBundlesDebugView()
+        }
 #endif
-            .navigationTitle("뭉치함")
-            .scrollIndicators(.hidden)
-            .onAppear {
-                // 현재 로그인된 유저의 뭉치 로드
-                let uid = UserManager.shared.userUID
-                guard !uid.isEmpty else { return }
-                viewModel.fetchAllBundles(uid: uid) { success in
-                    if !success {
-                        print("뭉치 로드 실패")
-                    }
+        .navigationTitle("뭉치함")
+        .scrollIndicators(.hidden)
+        .onAppear {
+            // 현재 로그인된 유저의 뭉치 로드
+            let uid = UserManager.shared.userUID
+            guard !uid.isEmpty else { return }
+            viewModel.fetchAllBundles(uid: uid) { success in
+                if !success {
+                    print("뭉치 로드 실패")
                 }
             }
+        }
     }
 }
 
@@ -119,3 +125,26 @@ extension BundleInventoryView {
     }
 }
 
+// MARK: - 탭바 제어
+extension BundleInventoryView {
+    func hideTabBar() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let tabBarController = window.rootViewController?.findTabBarController() {
+            UIView.animate(withDuration: 0.3) {
+                tabBarController.tabBar.isHidden = true
+            }
+        }
+    }
+    
+    func showTabBar() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let tabBarController = window.rootViewController?.findTabBarController() {
+            UIView.animate(withDuration: 0.3) {
+                tabBarController.tabBar.isHidden = false
+            }
+        }
+    }
+
+}

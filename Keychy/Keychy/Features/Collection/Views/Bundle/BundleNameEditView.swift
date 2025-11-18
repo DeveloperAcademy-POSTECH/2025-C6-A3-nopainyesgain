@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct BundleNameEditView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleNameEditView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     @State private var bundleName: String = ""

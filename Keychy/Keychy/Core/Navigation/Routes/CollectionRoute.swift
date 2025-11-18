@@ -6,7 +6,7 @@
 //
 
 /// 보관함 탭
-enum CollectionRoute: Hashable {
+enum CollectionRoute: Hashable, BundleRoute {
 
     // 키링 상세보기
     case collectionKeyringDetailView(Keyring) // 평소
@@ -17,6 +17,12 @@ enum CollectionRoute: Hashable {
     
     // 뭉치함
     case bundleInventoryView
+    case bundleDetailView
+    case bundleCreateView
+    case bundleAddKeyringView
+    case bundleNameInputView
+    case bundleNameEditView
+    case bundleEditView
     
     // 위젯 안내
     case widgetSettingView

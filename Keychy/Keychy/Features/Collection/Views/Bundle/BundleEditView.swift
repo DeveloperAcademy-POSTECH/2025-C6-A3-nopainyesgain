@@ -10,8 +10,8 @@ import NukeUI
 import SceneKit
 import FirebaseFirestore
 
-struct BundleEditView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleEditView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     @State private var isSceneReady = false

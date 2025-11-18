@@ -10,10 +10,10 @@ import SpriteKit
 import NukeUI
 
 /// 번들에 키링을 추가하는 뷰
-struct BundleAddKeyringView: View {
+struct BundleAddKeyringView<Route: BundleRoute>: View {
     // MARK: - Properties
 
-    @Bindable var router: NavigationRouter<HomeRoute>
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
 
     @State private var showSelectKeyringSheet = false

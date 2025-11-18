@@ -25,7 +25,19 @@ struct CollectionTab: View {
                     case .keyringEditView(let keyring):
                         KeyringEditView(router: router, viewModel: collectionViewModel, keyring: keyring)
                     case .bundleInventoryView:
-                        EmptyView()
+                        BundleInventoryView(router: router, viewModel: collectionViewModel)
+                    case .bundleDetailView:
+                        BundleDetailView(router: router, viewModel: collectionViewModel)
+                    case .bundleCreateView:
+                        BundleCreateView(router: router, viewModel: collectionViewModel)
+                    case .bundleAddKeyringView:
+                        BundleAddKeyringView(router: router, viewModel: collectionViewModel)
+                    case .bundleNameInputView:
+                        BundleNameInputView(router: router, viewModel: collectionViewModel)
+                    case .bundleNameEditView:
+                        BundleNameEditView(router: router, viewModel: collectionViewModel)
+                    case .bundleEditView:
+                        BundleEditView(router: router, viewModel: collectionViewModel)
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
                     case .packageCompleteView(let keyring, let postOfficeId):

@@ -8,8 +8,8 @@
 import SwiftUI
 import SpriteKit
 
-struct BundleNameInputView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleNameInputView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     /// 번들 이름 입력용 State

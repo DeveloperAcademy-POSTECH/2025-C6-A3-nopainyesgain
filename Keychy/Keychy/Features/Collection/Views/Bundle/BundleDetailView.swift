@@ -10,8 +10,8 @@ import SwiftUI
 import NukeUI
 import FirebaseFirestore
 
-struct BundleDetailView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
+struct BundleDetailView<Route: BundleRoute>: View {
+    @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     // MARK: - State Management
