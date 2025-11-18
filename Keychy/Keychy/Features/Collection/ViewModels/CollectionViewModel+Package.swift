@@ -250,12 +250,13 @@ extension CollectionViewModel {
     ) {
         let db = Firestore.firestore()
 
-        // 1. Keyring 문서 조회 (bodyImage, soundId 가져오기)
+        // 1. Keyring 문서 조회 (bodyImage, soundId, name 가져오기)
         db.collection("Keyring").document(keyringId).getDocument { [weak self] snapshot, error in
             guard let self = self,
                   let data = snapshot?.data(),
                   let bodyImage = data["bodyImage"] as? String,
-                  let soundId = data["soundId"] as? String else {
+                  let soundId = data["soundId"] as? String,
+                  let keyringName = data["name"] as? String else {
                 print("키링 수락 실패: Keyring 문서 조회 실패")
                 completion(false)
                 return
@@ -325,6 +326,14 @@ extension CollectionViewModel {
                         // 위젯 캐시 제거 (새 이미지로 갱신 필요)
                         KeyringImageCache.shared.removeKeyring(id: keyringId)
 
+                        // 알림 전송 로직 - 원래 키링 소유자에게 "XX님이 선물을 수락했어요!"
+                        self?.createGiftAcceptedNotification(
+                            keyringOriginalOwnerId: senderId,
+                            giftRecipientId: receiverId,
+                            keyringName: keyringName,
+                            postOfficeId: postOfficeId
+                        )
+
                         print("키링 수락 완료")
                         completion(true)
                     }
@@ -381,5 +390,46 @@ extension CollectionViewModel {
         }
 
 
+    }
+
+    // MARK: - 선물 수락 알림 생성
+    /// 키링 원래 소유자에게 "XX님이 선물을 수락했어요!" 알림 전송
+    private func createGiftAcceptedNotification(
+        keyringOriginalOwnerId: String,  // 키링 원래 소유자 (알림 받을 사람)
+        giftRecipientId: String,         // 선물 받은 사람 (알림에 표시될 이름)
+        keyringName: String,
+        postOfficeId: String
+    ) {
+        let db = Firestore.firestore()
+
+        // 1. 선물 받은 사람의 닉네임 조회
+        db.collection("User").document(giftRecipientId).getDocument { snapshot, error in
+            guard let data = snapshot?.data(),
+                  let giftRecipientNickname = data["nickname"] as? String else {
+                print("알림 생성 실패: 선물 받은 사람 닉네임 조회 실패")
+                return
+            }
+
+            // 2. KeychyNotification 생성
+            let notification = KeychyNotification(
+                type: .giftAccepted,
+                receiverId: keyringOriginalOwnerId,  // 알림 받을 사람 = 키링 원래 소유자
+                senderId: giftRecipientId,           // 알림 발신자 = 선물 받은 사람
+                senderNickname: giftRecipientNickname,  // "영희님이 선물을 수락했어요!"
+                keyringName: keyringName,
+                postOfficeId: postOfficeId,
+                isRead: false,
+                createdAt: Date()
+            )
+
+            // 3. Firestore에 알림 문서 추가
+            db.collection("Notifications").addDocument(data: notification.toDictionary()) { error in
+                if let error = error {
+                    print("알림 생성 실패: \(error.localizedDescription)")
+                } else {
+                    print("알림 생성 완료: \(giftRecipientNickname)님이 '\(keyringName)' 선물을 수락했습니다")
+                }
+            }
+        }
     }
 }

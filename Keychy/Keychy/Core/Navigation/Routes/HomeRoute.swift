@@ -19,6 +19,7 @@ enum HomeRoute: Hashable {
     case myPageView
     case changeName
     case alarmView
+    case notificationGiftView(postOfficeId: String)
     case introView
     case termsAndPolicy
 }

@@ -70,7 +70,8 @@ extension IntroViewModel {
             selectedTemplate: "welcome",
             selectedRing: "basicRing",
             selectedChain: "basicChain1",
-            chainLength: 5
+            chainLength: 5,
+            isEditable: false
         )
 
         let docRef = Firestore.firestore().collection("Keyring").document()
@@ -131,7 +132,7 @@ extension IntroViewModel {
                 }
 
                 if !loadingCompleted {
-                    print("⚠️ [WelcomeKeyring] 위젯 캐싱 타임아웃: \(keyringId)")
+                    print("[WelcomeKeyring] 위젯 캐싱 타임아웃: \(keyringId)")
                 } else {
                     try? await Task.sleep(nanoseconds: 200_000_000)
                 }
@@ -144,9 +145,9 @@ extension IntroViewModel {
                         name: nickname,
                         imageData: pngData
                     )
-                    print("✅ [WelcomeKeyring] 위젯 캐싱 완료: \(keyringId)")
+                    print("[WelcomeKeyring] 위젯 캐싱 완료: \(keyringId)")
                 } else {
-                    print("❌ [WelcomeKeyring] 위젯 캐싱 실패: \(keyringId)")
+                    print("[WelcomeKeyring] 위젯 캐싱 실패: \(keyringId)")
                 }
 
                 continuation.resume()

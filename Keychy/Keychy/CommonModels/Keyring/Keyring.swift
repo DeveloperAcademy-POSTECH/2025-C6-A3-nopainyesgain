@@ -140,6 +140,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
          selectedChain: String,
          originalId: String? = nil,
          chainLength: Int,
+         isEditable: Bool = true,
          isNew: Bool = true,
          senderId: String? = nil,
          receivedAt: Date? = nil
@@ -157,7 +158,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.selectedTemplate = selectedTemplate
         self.selectedRing = selectedRing
         self.selectedChain = selectedChain
-        self.isEditable = true
+        self.isEditable = isEditable
         self.isPackaged = false
         self.originalId = originalId
         self.chainLength = chainLength

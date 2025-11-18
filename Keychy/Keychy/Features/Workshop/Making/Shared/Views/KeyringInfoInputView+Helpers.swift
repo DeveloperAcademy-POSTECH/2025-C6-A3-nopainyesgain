@@ -93,13 +93,13 @@ final class KeyboardResponder {
     deinit {
         notificationCenter.removeObserver(self)
     }
-    
+
     @objc func keyBoardWillShow(notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             currentHeight = keyboardSize.height
         }
     }
-    
+
     @objc func keyBoardWillHide(notification: Notification) {
         currentHeight = 0
     }
