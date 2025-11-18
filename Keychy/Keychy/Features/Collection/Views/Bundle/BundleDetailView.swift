@@ -24,19 +24,18 @@ struct BundleDetailView<Route: BundleRoute>: View {
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
-
+    
     /// 씬 준비 완료 여부
     @State private var isSceneReady = false
-
+    
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
-            // 블러 영역
             ZStack(alignment: .top) {
                 if let bundle = viewModel.selectedBundle,
                    let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
                    let background = viewModel.selectedBackground {
-
+                    
                     MultiKeyringSceneView(
                         keyringDataList: keyringDataList,
                         ringType: .basic,
@@ -55,18 +54,17 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             }
                         }
                     )
-                    .blur(radius: isSceneReady ? 0 : 10)
                     .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                     /// 씬 재생성 조건을 위한 ID 설정
                     /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                     .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
-
+                    
                     // 하단 섹션을 ZStack 안에서 직접 배치
                     VStack {
                         Spacer()
                         bottomSection
                     }
-
+                    
                     if showMenu {
                         HStack {
                             Spacer()
@@ -92,7 +90,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                 )
                                 .padding(.trailing, 16)
                                 .padding(.top, 8)
-
+                                
                                 Spacer()
                             }
                         }
@@ -106,24 +104,23 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             }
                         }
                     }
-                    if !isSceneReady {
-                        Color.black20
-                            .ignoresSafeArea()
-                        
-                        LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
-                            .zIndex(200)
-                    }
-                    
-                } else {
-                    // 데이터 로딩 중
-                    Color.clear.ignoresSafeArea()
                 }
+                customnavigationBar
             }
-
-            if isCapturing {
-                capturingOverlay
+            .blur(radius: isSceneReady ? 0 : 15)
+            
+            if !isSceneReady {
+                Color.black20
+                    .ignoresSafeArea()
+                
+                LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
+                    .zIndex(200)
             }
-            customnavigationBar
+            
+            capturingOverlay
+                .opacity(isCapturing ? 1 : 0)
+            
+            
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
