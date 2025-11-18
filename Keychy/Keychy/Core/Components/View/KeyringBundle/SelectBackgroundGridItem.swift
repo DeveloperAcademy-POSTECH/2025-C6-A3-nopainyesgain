@@ -14,7 +14,7 @@ struct SelectBackgroundGridItem: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            ZStack {
+            ZStack(alignment: .top) {
                 // 배경 이미지
                 LazyImage(url: URL(string: background.background.backgroundImage)) { state in
                     if let image = state.image {
@@ -36,34 +36,32 @@ struct SelectBackgroundGridItem: View {
                 VStack {
                     HStack {
                         // 유료 아이콘
-                        if !background.background.isFree {
-                            HStack {
-                                Image(.paidIcon)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 32)
-                            }
-                            .padding(.top, 7)
-                            .padding(.leading, 3)
-                        }
-                        
+                        Image(.paidIcon)
+                            .padding(.top, 3)
+                            .opacity(background.background.isFree ? 0 : 1)
                         Spacer()
-                        // 보유 표시
-                        if background.isOwned {
-                            Text("보유")
-                                .typography(.suit13M)
-                                .foregroundStyle(.white100)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
                     }
-                    .padding(.horizontal, 7)
-                    .padding(.top, 3)
-                    
                     Spacer()
                 }
+                .padding(.top, 3)
+                .padding(.leading, 7)
+                
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("보유")
+                            .typography(.suit13M)
+                            .foregroundStyle(.white100)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .opacity(background.isOwned ? 1 : 0)
+                    }
+                    Spacer()
+                }
+                .padding(.top, 5)
+                .padding(.trailing, 7)
             }
             // 이름 라벨
             Text(background.background.backgroundName)
