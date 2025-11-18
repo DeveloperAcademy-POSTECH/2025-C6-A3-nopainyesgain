@@ -46,7 +46,7 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 }
                 customNavigationBar
             }
-            .blur(radius: (!showSelectKeyringSheet && !isCapturing) ? 0 : 10)
+            .blur(radius: !isCapturing ? 0 : 10)
             
             
             // Dim 오버레이 (키링 시트가 열릴 때)
