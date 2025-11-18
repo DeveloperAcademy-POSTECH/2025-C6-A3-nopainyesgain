@@ -75,9 +75,15 @@ struct NotificationGiftView: View {
                     .typography(.suit16M)
                     .foregroundStyle(.gray400)
 
-                Text("\(recipientNickname)님에게 전달됨")
-                    .typography(.notosans15SB)
-                    .foregroundStyle(.gray400)
+                HStack(spacing: 0) {
+                    Text("\(recipientNickname)")
+                        .typography(.notosans15SB)
+                        .foregroundStyle(.gray400)
+                    
+                    Text("님에게 전달됨")
+                        .typography(.suit16M)
+                        .foregroundStyle(.gray400)
+                }
             }
             Spacer()
         }
