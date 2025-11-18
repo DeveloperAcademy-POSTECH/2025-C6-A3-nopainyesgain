@@ -63,50 +63,53 @@ extension UIImage {
     }
     
     private func findTopOpaqueY(in ciImage: CIImage) -> CGFloat? {
-        let context = CIContext()
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+        let extent = ciImage.extent
+        let w = extent.width
+        let h = extent.height
+        
+        // 중앙 ±5% 폭만 스캔 (좁은 세로 라인)
+        let cropX = extent.minX + w * 0.475
+        let cropWidth = w * 0.05
+        let focusRegion = CGRect(x: cropX, y: extent.minY, width: cropWidth, height: h)
+        
+        // 알파 채널만 추출
+        let alphaMask = ciImage
+            .applyingFilter("CIColorMatrix", parameters: [
+                "inputRVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputGVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputBVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputAVector": CIVector(x: 0, y: 0, z: 0, w: 1)
+            ])
+            .cropped(to: focusRegion)
+            .applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 1])
+        
+        // CPU에서 한 줄의 알파 데이터 직접 읽기 (얇은 세로 라인만)
+        let context = CIContext(options: [.useSoftwareRenderer: false])
+        guard let cgImage = context.createCGImage(alphaMask, from: alphaMask.extent) else { return nil }
         
         let width = cgImage.width
         let height = cgImage.height
-        let bytesPerPixel = 4
-        
         guard let dataProvider = cgImage.dataProvider,
               let data = dataProvider.data else { return nil }
+        
         let buffer = CFDataGetBytePtr(data)!
+        let bytesPerPixel = 4
+        let alphaThreshold: UInt8 = 160
         
-        let alphaThreshold: UInt8 = 50
-        
-        // 중앙 6% 영역 (47% ~ 53%)
-        let centerStart = width * 47 / 100
-        let centerEnd = width * 53 / 100
-        let requiredOpaqueRatio: CGFloat = 0.1  // 10% 이상 불투명해야 함
-        
-        // 위에서 아래로 스캔
+        // 위 → 아래로 스캔하면서 α > threshold 만나는 첫 y 찾기
+        let sampleX = width / 2
         for y in 0..<height {
-            var opaqueCount = 0
-            var totalCount = 0
-            
-            // 중앙 영역만 체크
-            for x in centerStart..<centerEnd {
-                let pixelIndex = (y * width + x) * bytesPerPixel
-                
-                guard pixelIndex + 3 < width * height * bytesPerPixel else { continue }
-                
-                let alpha = buffer[pixelIndex + 3]
-                
-                totalCount += 1
-                if alpha > alphaThreshold {
-                    opaqueCount += 1
-                }
-            }
-            
-            // 중앙 영역의 10% 이상이 불투명하면 확정
-            let opaqueRatio = CGFloat(opaqueCount) / CGFloat(totalCount)
-            if opaqueRatio >= requiredOpaqueRatio {
-                let ciImageY = ciImage.extent.minY + CGFloat(height - 1 - y)
-                return ciImageY
+            let idx = (y * width + sampleX) * bytesPerPixel
+            if idx + 3 >= width * height * bytesPerPixel { break }
+            let alpha = buffer[idx + 3]
+            if alpha > alphaThreshold {
+                // Y 반전 (CGImage는 top-left, CI는 bottom-left)
+                let flippedY = CGFloat(height - y)
+                let ciY = focusRegion.minY + (flippedY / CGFloat(height)) * focusRegion.height
+                return ciY
             }
         }
+        
         return nil
     }
     
