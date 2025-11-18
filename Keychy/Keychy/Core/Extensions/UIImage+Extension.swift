@@ -76,9 +76,9 @@ extension UIImage {
         
         let alphaThreshold: UInt8 = 50
         
-        // 중앙 20% 영역 (40% ~ 60%)
-        let centerStart = width * 2 / 5
-        let centerEnd = width * 3 / 5
+        // 중앙 6% 영역 (47% ~ 53%)
+        let centerStart = width * 47 / 100
+        let centerEnd = width * 53 / 100
         let requiredOpaqueRatio: CGFloat = 0.8  // 80% 이상 불투명해야 함
         
         // 위에서 아래로 스캔
@@ -158,7 +158,9 @@ extension UIImage {
         let imageWithShadow = ciImage.composited(over: coloredShadow)
 
         // 3. 구멍 중심 좌표 계산
-        let topY = findTopOpaqueY(in: imageWithShadow) ?? (h + adjustedRadius)
+        let foundY = findTopOpaqueY(in: ciImage) ?? h
+        let topY = foundY + adjustedRadius
+        
         let circleCenter = CIVector(x: w / 2, y: topY)
         let innerRadius = adjustedRadius / 2.5
         let outerRadius = adjustedRadius / 1.3
