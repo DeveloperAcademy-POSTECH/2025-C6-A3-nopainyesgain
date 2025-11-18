@@ -40,7 +40,7 @@ struct KeyringReceiveView: View {
             
             ZStack {
                 Group {
-                    Image("GreenBackground")
+                    Image(backgroundImageName)
                         .resizable()
                         .scaledToFill()
                         .ignoresSafeArea()
@@ -317,6 +317,14 @@ struct KeyringReceiveView: View {
         )
         scene.scaleMode = .aspectFill
         return scene
+    }
+    
+    private var backgroundImageName: String {
+        // 로딩 중이 아니고, (이미 수락됨 또는 에러 또는 keyring이 nil)
+        if !isLoading && (isAlreadyReceived || keyring == nil) {
+            return "WhiteBackground"
+        }
+        return "GreenBackground"
     }
 }
 
