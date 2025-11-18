@@ -8,10 +8,10 @@
 import SwiftUI
 import Combine
 
-/// 키링 커스터마이징 모드
+// MARK: 키링 커스터마이징 모드 정의
 enum CustomizingMode: String, CaseIterable, Identifiable {
     case effect = "이펙트"
-    // 나중에 추가 가능: case drawing = "그리기"
+    case drawing = "그리기"
 
     var id: String { rawValue }
 
@@ -20,6 +20,8 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
         switch self {
         case .effect:
             return "interactionSelector"
+        case .drawing:
+            return "아직 없음"
         }
     }
 }
@@ -38,8 +40,11 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 키링 바디 이미지 (혹시나 특이한 템플릿이 있다면 안쓸수도 있어서 Optional)
     var bodyImage: UIImage? { get }
 
-    /// 바디 연결 지점 Y 오프셋 (템플릿별로 다름, AcrylicPhoto 등에서 사용)
-    var calculatedHookOffsetY: CGFloat { get set }
+    /// 키링 훅 오프셋 (기본값 0)
+    var hookOffsetY: CGFloat { get set }
+
+    /// 템플릿 ID
+    var templateId: String { get }
 
     /// 커스터마이징 모드 (템플릿마다 다름)
     var availableCustomizingModes: [CustomizingMode] { get }
@@ -96,6 +101,17 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     func downloadSound(_ sound: Sound) async
     func downloadParticle(_ particle: Particle) async
 
+    // MARK: - View Providers (모드별 뷰 제공)
+    /// 모드에 따른 씬 뷰 제공 (중앙 영역)
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView
+
+    /// 모드에 따른 하단 콘텐츠 뷰 제공
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView
+
     // MARK: - Reset Methods
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
@@ -105,13 +121,46 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
     /// 완전 초기화 (완성뷰 dismiss, 커스터마이징뷰 alert 후)
     func resetAll()
+
+    // MARK: - Lifecycle Callbacks
+    /// 모드 변경 시 호출 (템플릿별 처리 필요 시 구현)
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode)
+
+    /// 다음 화면으로 이동하기 전 호출 (템플릿별 처리 필요 시 구현)
+    func beforeNavigateToNext()
 }
 
-// MARK: - Default Implementations
+// MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
 extension KeyringViewModelProtocol {
-    /// 기본값: hookOffsetY 사용 안함 (AcrylicPhotoVM에서만 override)
-    var calculatedHookOffsetY: CGFloat {
-        get { 0.0 }
-        set { }
+    /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {}
+
+    /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
+    func beforeNavigateToNext() {}
+
+    /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        case .drawing:
+            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+            return AnyView(EmptyView())
+        }
+    }
+
+    /// 기본 하단 콘텐츠 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        case .drawing:
+            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+            return AnyView(EmptyView())
+        }
     }
 }

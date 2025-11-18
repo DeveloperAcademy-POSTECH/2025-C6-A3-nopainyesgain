@@ -33,7 +33,7 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
                     chainType: .basic,
                     bodyImage: viewModel.bodyImage,
                     backgroundColor: backgroundColor,
-                    hookOffsetY: viewModel.calculatedHookOffsetY != 0 ? viewModel.calculatedHookOffsetY : nil
+                    hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil
                 )
                 newScene.scaleMode = .resizeFill
                 newScene.bind(to: viewModel)

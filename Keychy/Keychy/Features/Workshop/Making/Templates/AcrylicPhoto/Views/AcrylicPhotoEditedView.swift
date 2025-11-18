@@ -136,7 +136,7 @@ extension AcrylicPhotoEditedView {
         AcrylicPhotoVM.removeBackgroundAndCrop(from: viewModel.removedBackgroundImage) { result in
             if let (image, hookOffsetY) = result {
                 viewModel.bodyImage = image
-                viewModel.calculatedHookOffsetY = hookOffsetY
+                viewModel.hookOffsetY = hookOffsetY
                 router.push(.acrylicPhotoCustomizing)
             }
         }

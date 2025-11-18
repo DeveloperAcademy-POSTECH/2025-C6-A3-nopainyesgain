@@ -18,6 +18,12 @@ class WelcomeKeyringViewModel: KeyringViewModelProtocol {
     var selectedTags: [String] = []
 
     var bodyImage: UIImage?
+    var hookOffsetY: CGFloat = 0.0
+
+    /// 템플릿 ID
+    var templateId: String {
+        "Welcome"
+    }
 
     var availableCustomizingModes: [CustomizingMode] = []
 
