@@ -41,8 +41,9 @@ extension WorkshopView {
     var categoryContent: some View {
         Group {
             switch viewModel.selectedCategory {
-            case "KEYCHY!":
-                keychyContentView
+                
+            //case "KEYCHY!": keychyContentView
+                
             case "키링":
                 itemGridView(items: viewModel.filteredTemplates,
                            isOwnedCheck: viewModel.isTemplateOwned)
@@ -86,21 +87,22 @@ extension WorkshopView {
         )
     }
 
-    /// KEYCHY! 전용 콘텐츠 (준비 중)
-    var keychyContentView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "sparkles")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.purple).opacity(0.6)
-
-            Text("KEYCHY! 디자이너 열일중..")
-                .typography(.suit14SB18)
-                .foregroundColor(.gray500)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity, minHeight: 300)
-        .padding(.top, 50)
-    }
+    // MARK: - KEYCHY! 탭 (향후 추가 시 사용)
+    // /// KEYCHY! 전용 콘텐츠 (준비 중)
+    // var keychyContentView: some View {
+    //     VStack(spacing: 12) {
+    //         Image(systemName: "sparkles")
+    //             .font(.system(size: 20, weight: .semibold))
+    //             .foregroundStyle(.purple).opacity(0.6)
+    //
+    //         Text("KEYCHY! 디자이너 열일중..")
+    //             .typography(.suit14SB18)
+    //             .foregroundColor(.gray500)
+    //             .multilineTextAlignment(.center)
+    //     }
+    //     .frame(maxWidth: .infinity, minHeight: 300)
+    //     .padding(.top, 50)
+    // }
 
     /// 빈 콘텐츠 뷰
     var emptyContentView: some View {

@@ -15,7 +15,7 @@ import SwiftUI
 /// **사용 예시:**
 /// ```swift
 /// @State private var selectedCategory = "키링"
-/// let categories = ["KEYCHY!", "키링", "카라비너", "이펫트", "배경"]
+/// let categories = ["키링", "카라비너", "이펫트", "배경"]
 ///
 /// CategoryTabBar(
 ///     categories: categories,
@@ -81,14 +81,14 @@ private struct CategoryTabButton: View {
 
 #Preview("예시 프리뷰") {
     @Previewable @State var selectedCategory = "키링"
-    let categories = ["KEYCHY!", "키링", "카라비너", "이펫트", "배경"]
-    
+    let categories = ["키링", "카라비너", "이펫트", "배경"]
+
     VStack() {
         CategoryTabBar(
             categories: categories,
             selectedCategory: $selectedCategory
         )
-        
+
         Spacer()
     }
     .padding()
