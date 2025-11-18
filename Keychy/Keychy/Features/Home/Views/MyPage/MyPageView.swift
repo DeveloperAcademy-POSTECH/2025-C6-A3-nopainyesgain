@@ -201,7 +201,6 @@ struct MyPageView: View {
             // 커스텀 네비게이션 바
             customNavigationBar
                 .opacity(showSettingsAlert || showDeleteAccountAlert || showLogoutAlert || showReauthAlert || showLoadingAlert || isShowingAppleSignIn ? 0 : 1)
-                .adaptiveTopPadding()
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
