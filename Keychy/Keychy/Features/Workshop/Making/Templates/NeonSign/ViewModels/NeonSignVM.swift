@@ -225,4 +225,77 @@ class NeonSignVM: KeyringViewModelProtocol {
     func beforeNavigateToNext() {
         composeDrawingWithBodyImage()
     }
+
+    // MARK: - Customizing Modes
+    /// 커스터마이징 모드 (네온 사인은 그리기 + 이펙트 지원)
+    var availableCustomizingModes: [CustomizingMode] {
+        [.drawing, .effect]
+    }
+
+    // MARK: - View Providers
+    /// 씬 뷰 제공 (모드별)
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        case .drawing:
+            return AnyView(DrawingCanvasView(viewModel: self))
+        }
+    }
+
+    /// 하단 콘텐츠 뷰 제공 (모드별)
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(
+                EffectSelectorView(viewModel: self, cartItems: cartItems)
+                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
+            )
+        case .drawing:
+            return AnyView(
+                DrawingToolsView(viewModel: self)
+                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
+            )
+        }
+    }
+
+    // MARK: - Reset
+    /// 커스터마이징 데이터 초기화 (이펙트 + 그리기)
+    func resetCustomizingData() {
+        // 이펙트 초기화
+        selectedSound = nil
+        selectedParticle = nil
+        customSoundURL = nil
+        soundId = "none"
+        particleId = "none"
+        downloadingItemIds.removeAll()
+        downloadProgress.removeAll()
+
+        // 그리기 상태 초기화
+        drawingPaths.removeAll()
+        currentDrawingColor = .white
+        currentLineWidth = 3.0
+
+        // 원본 이미지로 복원
+        if let original = originalBodyImage {
+            bodyImage = original
+        }
+    }
+
+    /// 정보 입력 데이터 초기화
+    func resetInfoData() {
+        nameText = ""
+        memoText = ""
+        selectedTags = []
+    }
+
+    /// 완전 초기화
+    func resetAll() {
+        resetCustomizingData()
+        resetInfoData()
+    }
 }

@@ -254,6 +254,7 @@
 		C67B753B2ECC9E6C00D6E3FA /* EffectSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */; };
 		C67B753E2ECCA32A00D6E3FA /* DrawingToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */; };
 		C67B753F2ECCA32A00D6E3FA /* DrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */; };
+		C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B754E2ECD373200D6E3FA /* NeonSignVM+Drawing.swift */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -571,6 +572,7 @@
 		C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSelectorView.swift; sourceTree = "<group>"; };
 		C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvasView.swift; sourceTree = "<group>"; };
 		C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingToolsView.swift; sourceTree = "<group>"; };
+		C67B754E2ECD373200D6E3FA /* NeonSignVM+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NeonSignVM+Drawing.swift"; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -1569,6 +1571,7 @@
 		C6B56F172EBF28170049F969 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				C67B754E2ECD373200D6E3FA /* NeonSignVM+Drawing.swift */,
 				C6B56F162EBF28170049F969 /* NeonSignVM.swift */,
 				C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */,
 			);
@@ -1839,6 +1842,7 @@
 				4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */,
 				4C7775342EB0EF8800981C3E /* ItemDetailInfoSection.swift in Sources */,
 				4CC3D3992EC4C16B0009D376 /* ToolbarButtons.swift in Sources */,
+				C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
