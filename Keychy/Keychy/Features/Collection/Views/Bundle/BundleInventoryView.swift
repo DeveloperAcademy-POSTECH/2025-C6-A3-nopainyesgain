@@ -29,11 +29,11 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             }
             .padding(.top, 20)
             .adaptiveTopPaddingAlt()
+            .padding(.horizontal, 20)
             
             customNavigationBar
         }
         .ignoresSafeArea()
-        .padding(.horizontal, 20)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
             isNavigatingDeeper = false
