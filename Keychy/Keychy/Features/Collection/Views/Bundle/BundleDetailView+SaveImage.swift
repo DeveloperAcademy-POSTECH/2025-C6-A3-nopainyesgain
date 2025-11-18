@@ -75,7 +75,9 @@ extension BundleDetailView {
         guard let cb = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
               let bg = WorkshopDataManager.shared.backgrounds.first(where: { $0.id == bundle.selectedBackground }) else {
             await MainActor.run {
-                isCapturing = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    isCapturing = false
+                }
             }
             return
         }

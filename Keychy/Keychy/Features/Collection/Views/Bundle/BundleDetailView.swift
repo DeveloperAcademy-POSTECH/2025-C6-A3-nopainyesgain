@@ -19,6 +19,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var showDeleteAlert: Bool = false
     @State private var showDeleteCompleteToast: Bool = false
     @State private var showChangeMainBundleAlert: Bool = false
+    @State private var isMainBundleChange: Bool = false
     @State var isCapturing: Bool = false
     @State private var isNavigatingDeeper: Bool = true
     
@@ -107,20 +108,23 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 }
                 customnavigationBar
             }
-            .blur(radius: isSceneReady ? 0 : 15)
+            .blur(radius: (isSceneReady && !isMainBundleChange && !isCapturing) ? 0 : 15)
             
-            if !isSceneReady {
+            if !isSceneReady || isMainBundleChange || isCapturing {
                 Color.black20
                     .ignoresSafeArea()
                 
                 LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
                     .zIndex(200)
+                    .opacity(isSceneReady ? 0 : 1)
+                
+                KeychyAlert(type: .checkmark, message: "대표 뭉치가 변경되었어요!", isPresented: $isMainBundleChange)
+                    .zIndex(200)
+                
+                KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $isCapturing)
+                
+                
             }
-            
-            capturingOverlay
-                .opacity(isCapturing ? 1 : 0)
-            
-            
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
@@ -223,7 +227,9 @@ extension BundleDetailView {
         do {
             // 1. 삭제 확인 Alert 닫기
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteAlert = false
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {
+                    showDeleteAlert = false
+                }
             }
             
             let db = Firestore.firestore()
@@ -388,6 +394,7 @@ extension BundleDetailView {
                 Button {
                     viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
                     showChangeMainBundleAlert = false
+                    isMainBundleChange = true
                 } label: {
                     Text("확인")
                         .typography(.suit17SB)
@@ -402,19 +409,5 @@ extension BundleDetailView {
         .padding(14)
         .glassEffect(in: .rect(cornerRadius: 34))
         .frame(maxWidth: .infinity)
-        .position(y: screenHeight/2)
-    }
-}
-
-//MARK: 캡쳐 오버레이
-extension BundleDetailView {
-    private var capturingOverlay: some View {
-        ZStack {
-            Color.black20
-                .ignoresSafeArea()
-                .blur(radius: 15)
-            
-            Image(.imageSaved)
-        }
     }
 }
