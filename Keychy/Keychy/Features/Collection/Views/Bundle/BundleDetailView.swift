@@ -150,6 +150,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 }
                 
                 DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
+                    .opacity(showDeleteCompleteToast ? 1 : 0)
                     .zIndex(200)
                     .position(x: screenWidth/2, y: screenHeight/2)
                 
@@ -171,11 +172,24 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 }
             }
             isNavigatingDeeper = false
+            showDeleteCompleteToast = false
+            showAlreadyMainBundleToast = false
+            showChangeMainBundleAlert = false
+            isMainBundleChange = false
+            showDeleteAlert = false
+            showMenu = false
             viewModel.hideTabBar()
         }
         .onDisappear {
             // 뷰가 사라질 때 씬 준비 상태 초기화
             isSceneReady = false
+            // Alert/Toast 상태 초기화
+            showDeleteCompleteToast = false
+            showAlreadyMainBundleToast = false
+            showChangeMainBundleAlert = false
+            isMainBundleChange = false
+            showDeleteAlert = false
+            showMenu = false
         }
         .task {
             // 최초 뷰가 나타날 때 뭉치 데이터 로드
