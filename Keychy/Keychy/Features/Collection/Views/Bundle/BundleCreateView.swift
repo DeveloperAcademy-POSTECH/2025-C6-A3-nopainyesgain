@@ -113,13 +113,16 @@ struct BundleCreateView<Route: BundleRoute>: View {
         .task {
             await initializeData()
         }
+        .onDisappear {
+            viewModel.showTabBar()
+        }
         .onAppear {
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshData()
                 isSceneReady = false
             }
-            
+            viewModel.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true

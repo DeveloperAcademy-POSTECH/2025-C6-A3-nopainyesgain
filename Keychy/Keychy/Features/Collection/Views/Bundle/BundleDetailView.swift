@@ -125,6 +125,12 @@ struct BundleDetailView<Route: BundleRoute>: View {
             customnavigationBar
                 .ignoresSafeArea()
         }
+        .onAppear {
+            viewModel.hideTabBar()
+        }
+        .onDisappear {
+            viewModel.showTabBar()
+        }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .onAppear {

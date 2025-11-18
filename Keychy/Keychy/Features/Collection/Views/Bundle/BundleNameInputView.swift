@@ -70,6 +70,10 @@ struct BundleNameInputView<Route: BundleRoute>: View {
             if getBottomPadding(0) == 0 {
                 morePadding = 20
             }
+            viewModel.hideTabBar()
+        }
+        .onDisappear {
+            viewModel.showTabBar()
         }
         .transaction { transaction in
             transaction.animation = nil

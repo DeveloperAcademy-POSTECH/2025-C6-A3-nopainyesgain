@@ -27,10 +27,10 @@ struct BundleInventoryView<Route: BundleRoute>: View {
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
-            hideTabBar()
+            viewModel.hideTabBar()
         }
         .onDisappear {
-            showTabBar()
+            viewModel.showTabBar()
         }
         .toolbar {
             backToolbarItem
@@ -125,26 +125,3 @@ extension BundleInventoryView {
     }
 }
 
-// MARK: - 탭바 제어
-extension BundleInventoryView {
-    func hideTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = true
-            }
-        }
-    }
-    
-    func showTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = false
-            }
-        }
-    }
-
-}

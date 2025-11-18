@@ -76,6 +76,10 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         .onAppear {
             fetchData()
             isSceneReady = false
+            viewModel.hideTabBar()
+        }
+        .onDisappear {
+            viewModel.showTabBar()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
