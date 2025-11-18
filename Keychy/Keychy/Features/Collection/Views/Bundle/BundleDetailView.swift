@@ -55,7 +55,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             }
                         }
                     )
-                    .ignoresSafeArea()
                     .blur(radius: isSceneReady ? 0 : 10)
                     .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                     /// 씬 재생성 조건을 위한 ID 설정
@@ -67,7 +66,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         Spacer()
                         bottomSection
                     }
-                    .ignoresSafeArea(.keyboard, edges: .bottom)
 
                     if showMenu {
                         HStack {
@@ -126,9 +124,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 capturingOverlay
             }
             customnavigationBar
-                .ignoresSafeArea()
         }
-        .ignoresSafeArea(edges: .bottom)
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
