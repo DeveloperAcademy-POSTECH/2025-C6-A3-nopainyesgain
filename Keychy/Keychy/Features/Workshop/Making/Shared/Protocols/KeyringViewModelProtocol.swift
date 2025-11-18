@@ -96,6 +96,17 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     func downloadSound(_ sound: Sound) async
     func downloadParticle(_ particle: Particle) async
 
+    // MARK: - View Providers (모드별 뷰 제공)
+    /// 모드에 따른 씬 뷰 제공 (중앙 영역)
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView
+
+    /// 모드에 따른 하단 콘텐츠 뷰 제공
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView
+
     // MARK: - Reset Methods
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
@@ -113,5 +124,25 @@ extension KeyringViewModelProtocol {
     var calculatedHookOffsetY: CGFloat {
         get { 0.0 }
         set { }
+    }
+
+    /// 기본 씬 뷰 제공 (effect 모드만 지원)
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        }
+    }
+
+    /// 기본 하단 콘텐츠 뷰 제공 (effect 모드만 지원)
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        }
     }
 }

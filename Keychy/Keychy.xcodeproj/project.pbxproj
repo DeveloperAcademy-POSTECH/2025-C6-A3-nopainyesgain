@@ -248,6 +248,7 @@
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */; };
+		C67B753B2ECC9E6C00D6E3FA /* EffectSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -559,6 +560,7 @@
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSelectorView.swift; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -1313,6 +1315,7 @@
 		4CEC62562EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */,
 				4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */,
 				4C65304D2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift */,
 				4C65304A2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift */,
@@ -1959,6 +1962,7 @@
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
 				C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
+				C67B753B2ECC9E6C00D6E3FA /* EffectSelectorView.swift in Sources */,
 				AA3908F82EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift in Sources */,
 				AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */,
 				4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */,
