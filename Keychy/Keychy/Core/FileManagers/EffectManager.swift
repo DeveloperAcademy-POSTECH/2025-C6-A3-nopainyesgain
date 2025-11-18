@@ -199,11 +199,6 @@ class EffectManager {
     func playSound(_ sound: Sound, userManager: UserManager) async {
         guard let soundId = sound.id else { return }
 
-        // 무료 아이템이고 아직 소유하지 않은 경우 Firestore에 추가
-        if sound.isFree && !isOwned(soundId: soundId, userManager: userManager) {
-            await addFreeItemOwnership(soundId: soundId, type: .sound, userManager: userManager)
-        }
-
         // 이미 캐시 또는 Bundle에 있으면 바로 재생
         if isInCache(soundId: soundId) || isInBundle(soundId: soundId) {
             SoundEffectComponent.shared.playSound(named: soundId)
@@ -220,11 +215,6 @@ class EffectManager {
     /// 파티클 재생 (다운로드 후 자동 재생)
     func playParticle(_ particle: Particle, userManager: UserManager) async {
         guard let particleId = particle.id else { return }
-
-        // 무료 아이템이고 아직 소유하지 않은 경우 Firestore에 추가
-        if particle.isFree && !isOwned(particleId: particleId, userManager: userManager) {
-            await addFreeItemOwnership(particleId: particleId, type: .particle, userManager: userManager)
-        }
 
         // 이미 캐시 또는 Bundle에 있으면 바로 재생
         if isInCache(particleId: particleId) || isInBundle(particleId: particleId) {
@@ -269,35 +259,6 @@ class EffectManager {
             case .sound: return "soundEffects"
             case .particle: return "particleEffects"
             }
-        }
-    }
-
-    /// 무료 아이템 소유권을 Firestore에 추가
-    private func addFreeItemOwnership(soundId: String? = nil, particleId: String? = nil, type: ItemType, userManager: UserManager) async {
-        let itemId = soundId ?? particleId ?? ""
-
-        guard !itemId.isEmpty else {
-            print("❌ EffectManager: Item ID is empty")
-            return
-        }
-
-        guard let userId = userManager.currentUser?.id else {
-            print("❌ EffectManager: User ID not found for free \(type.firestoreField) ownership")
-            return
-        }
-
-        do {
-            try await Firestore.firestore()
-                .collection("User")
-                .document(userId)
-                .updateData([
-                    type.firestoreField: FieldValue.arrayUnion([itemId])
-                ])
-
-            // UserManager 업데이트
-            await refreshUserData(userManager: userManager)
-        } catch {
-            print("❌ EffectManager: Failed to add \(itemId) to Firestore: \(error.localizedDescription)")
         }
     }
 
