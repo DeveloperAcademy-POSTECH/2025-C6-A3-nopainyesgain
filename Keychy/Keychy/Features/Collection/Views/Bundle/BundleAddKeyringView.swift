@@ -250,7 +250,7 @@ extension BundleAddKeyringView {
                         .fill(isSelectedHere ? .main500 : .clear)
                         .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
                         .frame(width: 26.14, height: 26.14)
-                    Image(.recCheck)
+                    Image(.keyringCheck)
                         .foregroundStyle(.white)
                         .opacity(isSelectedHere ? 1 : 0)
                 }
@@ -279,7 +279,6 @@ extension BundleAddKeyringView {
                 }
             }
         }
-        .buttonStyle(PlainButtonStyle())
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
         .opacity(1.0) // 강제로 투명도 1.0 유지
     }

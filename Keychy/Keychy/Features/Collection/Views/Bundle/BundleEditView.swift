@@ -617,7 +617,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// Firebase 데이터를 로컬 상태로 한 번만 초기화
     private func initializeSelectedKeyringsFromFirebase() async {
         guard let bundle = viewModel.selectedBundle else {
-            return 
+            return
         }
         
         let result = await viewModel.convertBundleToSelectedKeyrings(bundle: bundle)
@@ -656,7 +656,7 @@ struct BundleEditView<Route: BundleRoute>: View {
               let documentId = bundle.documentId,
               let background = newSelectedBackground,
               let carabiner = newSelectedCarabiner else {
-            return 
+            return
         }
         
         // ID 안전성 체크

@@ -186,8 +186,7 @@ extension BundleCreateView {
                             onBackgroundTap: { bg in
                                 selectedBackground = bg
                             }
-                        ),
-                        screenHeight: screenHeight
+                        )
                     )
                 }
             }
@@ -211,8 +210,7 @@ extension BundleCreateView {
                             onCarabinerTap: { carabiner in
                                 selectedCarabiner = carabiner
                             }
-                        ),
-                        screenHeight: screenHeight
+                        )
                     )
                 }
             }
