@@ -37,8 +37,8 @@ struct MultiKeyringSceneView: View {
     @State private var particleEffects: [ParticleEffect] = []
     @State private var backgroundImage: UIImage?
 
-    // 기본 화면 크기 (iPhone 14 기준)
-    private let defaultSceneSize = CGSize(width: 393, height: 852)
+    // 기본 화면 크기 (iPhone 16 Pro 기준)
+    private let defaultSceneSize = CGSize(width: 402, height: 874)
 
     init(
         keyringDataList: [MultiKeyringScene.KeyringData],
