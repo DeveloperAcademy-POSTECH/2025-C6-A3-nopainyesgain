@@ -51,7 +51,7 @@ struct HomeTab: View {
                     case .alarmView:
                         AlarmView(router: router)
                     case .notificationGiftView(let postOfficeId):
-                        NotificationGiftView(router: router, postOfficeId: postOfficeId)
+                        NotificationGiftView(router: router, viewModel: collectionViewModel, postOfficeId: postOfficeId)
                     case .introView:
                         IntroView(viewModel: introViewModel)
                     case .termsAndPolicy:

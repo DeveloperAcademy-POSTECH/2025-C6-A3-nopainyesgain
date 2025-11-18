@@ -50,7 +50,7 @@ struct CollectionKeyringDetailView: View {
             
             ZStack {
                 Group {
-                    Image("CollectionBackground")
+                    Image("WhiteBackground")
                         .resizable()
                         .scaledToFill()
                         .ignoresSafeArea()

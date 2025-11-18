@@ -22,6 +22,10 @@ struct KeyringReceiveView: View {
     @State private var showAcceptCompleteAlert: Bool = false
     @State private var showInvenFullAlert: Bool = false
     
+    // 이미 수령처리된 로직 관련
+    @State private var showAlreadyAcceptedAlert: Bool = false
+    @State private var isAlreadyReceived: Bool = false
+    
     let postOfficeId: String
     
     init(viewModel: CollectionViewModel, postOfficeId: String) {
@@ -36,7 +40,7 @@ struct KeyringReceiveView: View {
             
             ZStack {
                 Group {
-                    Image("GreenBackground")
+                    Image(backgroundImageName)
                         .resizable()
                         .scaledToFill()
                         .ignoresSafeArea()
@@ -46,7 +50,32 @@ struct KeyringReceiveView: View {
                             // 로딩 상태
                             LoadingAlert(type: .short, message: nil)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            
+                          
+                        } else if isAlreadyReceived {
+                            // 이미 수락된 선물
+                            VStack(spacing: 20) {
+                                VStack(spacing: 0) {
+                                    Image("EmptyViewIcon")
+                                        .resizable()
+                                        .frame(width: 124, height: 111)
+                                    
+                                    Text("이미 수락된 선물이에요")
+                                        .typography(.suit15R)
+                                        .foregroundColor(.black100)
+                                        .padding(.vertical, 15)
+                                    
+                                    Button {
+                                        dismiss()
+                                    } label: {
+                                        Text("닫기")
+                                            .typography(.suit15R)
+                                            .foregroundColor(.main500)
+                                            .padding(.vertical, 15)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                          
                         } else if let keyring = keyring {
                             // 키링 로드 성공
                             Spacer()
@@ -97,7 +126,7 @@ struct KeyringReceiveView: View {
                 .blur(radius: shouldApplyBlur ? 10 : 0)
                 .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
-                if isAccepting || showAcceptCompleteAlert || showInvenFullAlert {
+                if isAccepting || showAcceptCompleteAlert || showInvenFullAlert || showAlreadyAcceptedAlert{
                     Color.black20
                         .ignoresSafeArea()
                         .zIndex(99)
@@ -132,6 +161,19 @@ struct KeyringReceiveView: View {
                             )
                             .zIndex(100)
                     }
+                    
+                    if showAlreadyAcceptedAlert {
+                        KeychyAlert(
+                            type: .fail,
+                            message: "이미 누군가 받은 키링이에요",
+                            isPresented: $showAlreadyAcceptedAlert
+                        )
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
+                        .zIndex(101)
+                    }
                 }
                 
                 customNavigationBar
@@ -151,6 +193,7 @@ struct KeyringReceiveView: View {
         isAccepting ||
         showAcceptCompleteAlert ||
         showInvenFullAlert ||
+        showAlreadyAcceptedAlert ||
         false
     }
     
@@ -164,6 +207,15 @@ struct KeyringReceiveView: View {
                   let keyringId = postOfficeData["keyringId"] as? String else { 
                 print("PostOffice 데이터 로드 실패")
                 isLoading = false
+                return
+            }
+            
+            // receiverId 존재 여부 확인
+            if let receiverId = postOfficeData["receiverId"] as? String, !receiverId.isEmpty {
+                // 이미 수락된 선물
+                print("이미 수락된 선물: receiverId = \(receiverId)")
+                self.isAlreadyReceived = true
+                self.isLoading = false
                 return
             }
             
@@ -266,6 +318,14 @@ struct KeyringReceiveView: View {
         scene.scaleMode = .aspectFill
         return scene
     }
+    
+    private var backgroundImageName: String {
+        // 로딩 중이 아니고, (이미 수락됨 또는 에러 또는 keyring이 nil)
+        if !isLoading && (isAlreadyReceived || keyring == nil) {
+            return "WhiteBackground"
+        }
+        return "GreenBackground"
+    }
 }
 
 // 헤더 (버튼 + 수신 정보)
@@ -334,39 +394,70 @@ extension KeyringReceiveView {
             return
         }
         
-        viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
-            if !hasSpace {
-                // 보관함 가득 참
+        // 수락 전 receiverId 필드 재확인
+        viewModel.fetchPostOfficeData(postOfficeId: postOfficeId) { postOfficeData in
+            guard let postOfficeData = postOfficeData else {
+                print("PostOffice 조회 실패")
+                return
+            }
+            
+            // receiverId 필드가 존재하고 값이 있으면 이미 수락된 상태
+            if let existingReceiverId = postOfficeData["receiverId"] as? String, !existingReceiverId.isEmpty {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    self.showInvenFullAlert = true
+                    self.showAlreadyAcceptedAlert = true
                 }
                 return
             }
             
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                self.isAccepting = true
-            }
-            
-            // 보관함 여유 있음 - 수락 진행
-            self.viewModel.acceptKeyring(
-                postOfficeId: self.postOfficeId,
-                keyringId: keyringId,
-                senderId: senderId,
-                receiverId: receiverId
-            ) { success in
-                DispatchQueue.main.async {
-                    self.isAccepting = false
+            viewModel.checkInventoryCapacity(userId: receiverId) { hasSpace in
+                if !hasSpace {
+                    // 보관함 가득 참
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showInvenFullAlert = true
+                    }
+                    return
+                }
                 
-                    if success {
-                        self.isAccepted = true
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    self.isAccepting = true
+                }
+                
+                // 보관함 여유 있음 - 수락 진행
+                self.viewModel.acceptKeyring(
+                    postOfficeId: self.postOfficeId,
+                    keyringId: keyringId,
+                    senderId: senderId,
+                    receiverId: receiverId
+                ) { success in
+                    DispatchQueue.main.async {
+                        self.isAccepting = false
                         
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                self.showAcceptCompleteAlert = true
+                        if success {
+                            self.isAccepted = true
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    self.showAcceptCompleteAlert = true
+                                }
+                            }
+                        } else {
+                            print("키링 수락 실패 - 중복 수락 가능성")
+                            
+                            // receiverId 확인해서 중복 수락인지 체크
+                            self.viewModel.fetchPostOfficeData(postOfficeId: self.postOfficeId) { postOfficeData in
+                                if let postOfficeData = postOfficeData,
+                                   let existingReceiverId = postOfficeData["receiverId"] as? String,
+                                   !existingReceiverId.isEmpty {
+                                    // 중복 수락
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        self.showAlreadyAcceptedAlert = true
+                                    }
+                                } else {
+                                    // 다른 이유로 실패
+                                    print("키링 수락 실패 - 기타 이유")
+                                }
                             }
                         }
-                    } else {
-                        print("키링 수락 실패")
                     }
                 }
             }

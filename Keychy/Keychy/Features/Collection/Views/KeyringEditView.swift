@@ -63,17 +63,17 @@ struct KeyringEditView: View {
     
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 0) {
                 keyringSection
                 
                 ScrollView {
-                    infoInputSection
-                    
-                    tagSection
+                    VStack(spacing: 0) {
+                        infoInputSection
+                        
+                        tagSection
+                    }
                 }
                 .scrollIndicators(.hidden)
-                
-                Spacer()
             }
             
             if showAddTagAlert {
@@ -98,6 +98,7 @@ struct KeyringEditView: View {
                             showAddTagAlert = false
                         }
                         viewModel.addNewTag(uid: userManager.userUID, newTagName: tag)
+                        newTagName = ""
                     }
                 )
                 .transition(.scale.combined(with: .opacity))
