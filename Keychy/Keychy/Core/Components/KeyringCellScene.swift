@@ -13,6 +13,7 @@ class KeyringCellScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var onLoadingComplete: (() -> Void)?
+    var hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType
@@ -35,11 +36,13 @@ class KeyringCellScene: SKScene {
         targetSize: CGSize,
         customBackgroundColor: UIColor = .gray50,
         zoomScale: CGFloat = 1.5,
+        hookOffsetY: CGFloat? = nil,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
+        self.hookOffsetY = hookOffsetY
         self.onLoadingComplete = onLoadingComplete
         self.customBackgroundColor = customBackgroundColor
         

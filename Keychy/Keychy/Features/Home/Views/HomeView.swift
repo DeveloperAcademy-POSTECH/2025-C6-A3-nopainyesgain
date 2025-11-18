@@ -235,7 +235,8 @@ extension HomeView {
                 bodyImageURL: keyringInfo.bodyImage,
                 soundId: keyringInfo.soundId,
                 customSoundURL: customSoundURL,
-                particleId: keyringInfo.particleId
+                particleId: keyringInfo.particleId,
+                hookOffsetY: keyringInfo.hookOffsetY
             )
             dataList.append(data)
         }
@@ -256,11 +257,14 @@ extension HomeView {
                 return nil
             }
 
+            let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
+
             return KeyringInfo(
                 id: keyringId,
                 bodyImage: bodyImage,
                 soundId: soundId,
-                particleId: particleId
+                particleId: particleId,
+                hookOffsetY: hookOffsetY
             )
         } catch {
             return nil
@@ -273,5 +277,6 @@ extension HomeView {
         let bodyImage: String
         let soundId: String
         let particleId: String
+        let hookOffsetY: CGFloat?
     }
 }

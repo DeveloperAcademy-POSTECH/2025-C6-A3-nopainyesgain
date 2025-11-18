@@ -223,14 +223,15 @@ extension CollectionViewModel {
                 x: carabiner.keyringXPosition[index],
                 y: carabiner.keyringYPosition[index]
             )
-            
+
             let data = MultiKeyringScene.KeyringData(
                 index: index, // 카라비너 위치 인덱스
                 position: relativePosition,
                 bodyImageURL: keyring.bodyImage,
                 soundId: soundId,
                 customSoundURL: customSoundURL,
-                particleId: keyring.particleId
+                particleId: keyring.particleId,
+                hookOffsetY: keyring.hookOffsetY
             )
             dataList.append(data)
         }
@@ -523,14 +524,15 @@ extension CollectionViewModel {
                 x: carabiner.keyringXPosition[index],
                 y: carabiner.keyringYPosition[index]
             )
-            
+
             let data = MultiKeyringScene.KeyringData(
                 index: index,
                 position: position,
                 bodyImageURL: keyring.bodyImage,
                 soundId: soundId,
                 customSoundURL: customSoundURL,
-                particleId: particleId
+                particleId: particleId,
+                hookOffsetY: keyring.hookOffsetY
             )
             dataList.append(data)
         }

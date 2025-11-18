@@ -224,6 +224,7 @@ extension KeyringEditView {
             targetSize: CGSize(width: 175, height: 233),
             customBackgroundColor: .clear,
             zoomScale: 2.0,
+            hookOffsetY: keyring.hookOffsetY,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {

@@ -55,6 +55,7 @@ struct KeyringDetailSceneView: View {
             ringType: ringType,
             chainType: chainType,
             bodyImage: keyring.bodyImage,
+            hookOffsetY: keyring.hookOffsetY,
             onLoadingComplete: nil
         )
         

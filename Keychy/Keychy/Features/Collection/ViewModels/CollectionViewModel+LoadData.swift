@@ -392,7 +392,8 @@ extension CollectionViewModel {
                 bodyImageURL: keyringInfo.bodyImage,
                 soundId: keyringInfo.soundId,
                 customSoundURL: customSoundURL,
-                particleId: keyringInfo.particleId
+                particleId: keyringInfo.particleId,
+                hookOffsetY: keyringInfo.hookOffsetY
             )
             dataList.append(data)
         }
@@ -411,12 +412,15 @@ extension CollectionViewModel {
                   let particleId = data["particleId"] as? String else {
                 return nil
             }
-            
+
+            let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
+
             return KeyringInfo(
                 id: keyringId,
                 bodyImage: bodyImage,
                 soundId: soundId,
-                particleId: particleId
+                particleId: particleId,
+                hookOffsetY: hookOffsetY
             )
         } catch {
             return nil
@@ -429,5 +433,6 @@ extension CollectionViewModel {
         let bodyImage: String
         let soundId: String
         let particleId: String
+        let hookOffsetY: CGFloat?
     }
 }

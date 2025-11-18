@@ -133,9 +133,10 @@ extension AcrylicPhotoEditedView {
 
     /// 다음 단계로 진행
     private func proceedToNextStep() {
-        AcrylicPhotoVM.removeBackgroundAndCrop(from: viewModel.removedBackgroundImage) { croppedImage in
-            if let croppedImage = croppedImage {
-                viewModel.bodyImage = croppedImage
+        AcrylicPhotoVM.removeBackgroundAndCrop(from: viewModel.removedBackgroundImage) { result in
+            if let (image, hookOffsetY) = result {
+                viewModel.bodyImage = image
+                viewModel.calculatedHookOffsetY = hookOffsetY
                 router.push(.acrylicPhotoCustomizing)
             }
         }

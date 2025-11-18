@@ -89,7 +89,7 @@ extension AcrylicPhotoVM {
     // MARK: - 배경 제거 + 완전 크롭 + 리사이즈 + 아크릴 효과
     static func removeBackgroundAndCrop(
         from originalImage: UIImage,
-        completion: @escaping (UIImage?) -> Void
+        completion: @escaping ((image: UIImage, hookOffsetY: CGFloat)?) -> Void
     ) {
         DispatchQueue.global(qos: .userInitiated).async {
             // 0. 미리 화질 줄이기 (긴 변 1024px)
@@ -115,13 +115,13 @@ extension AcrylicPhotoVM {
                 }
 
                 // 4. 아크릴 테두리 적용
-                guard let stroked = resized.addAcrylicStroke() else {
+                guard let (stroked, hookOffsetY) = resized.addAcrylicStroke() else {
                     DispatchQueue.main.async { completion(nil) }
                     return
                 }
 
                 DispatchQueue.main.async {
-                    completion(stroked)
+                    completion((image: stroked, hookOffsetY: hookOffsetY))
                 }
             }
         }

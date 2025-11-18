@@ -108,6 +108,7 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
     var croppedImage: UIImage = UIImage()
     var removedBackgroundImage: UIImage = UIImage()
     var bodyImage: UIImage? = nil
+    var calculatedHookOffsetY: CGFloat = 0.0  // addAcrylicStroke에서 계산한 값
 
     let minimumCropSize: CGSize = CGSize(width: 100, height: 100)
 

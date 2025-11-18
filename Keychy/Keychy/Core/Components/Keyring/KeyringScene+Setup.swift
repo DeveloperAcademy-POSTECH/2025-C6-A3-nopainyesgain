@@ -35,9 +35,9 @@ extension KeyringScene {
     private func setupChain(ring: SKSpriteNode, centerX: CGFloat) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        // ringBottomY 그대로가 아니라 +0.5로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 16
+        // ringBottomY 그대로가 아니라 -2로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
+        let chainStartY = ringBottomY - 2
+        let chainSpacing: CGFloat = 20
         
         
         KeyringChainComponent.createLinks(
@@ -123,22 +123,21 @@ extension KeyringScene {
         // 마지막 체인의 "중심 Y": 첫 링크 시작점에서 (링크 수 - 1) * spacing 만큼 아래
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
 
-        // 마지막 체인의 실제 높이를 기반으로 "아래 끝 Y" 계산
-        let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
-        let lastChainBottomY = lastChainY - lastLinkHeight / 2
+        // 마지막 체인의 실제 높이를 기반으로 "아래 끝 Y" 계산 - 15: 체인길이의 절반
+        let lastChainBottomY = lastChainY - 15
 
-        // 체인과 바디 사이 여유 간격: 화면 비율 또는 바디 크기 비율(중 하나 선택)
-//        let gapByScreen = size.height * 0.01
-//        let gapByBody = bodyFrame.height * 0.03
-//        let gap = max(gapByScreen, gapByBody)
-        let connectGap = 25.0
-        //let gap = gapByScreen
+        // hookOffsetY를 사용한 정확한 연결 지점 계산
+        // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
+        //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
+        // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
+        let hookOffsetYRatio = hookOffsetY ?? 0.0
+        let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
 
-        // 바디 중심 Y를 계산:
-        // 중앙선 기준 top(= bodyCenterY + bodyHalfHeight)이 lastChainBottomY - gap에 오도록 배치
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+        // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
+
         body.zPosition = -1  // Body는 체인 아래
         addChild(body)
         bodyNode = body
@@ -152,6 +151,10 @@ extension KeyringScene {
 
     // 키링 구성 요소들을 Joint로 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
+        // Physics 카테고리 정의
+        let chainCategory: UInt32 = 0x1 << 0  // 1
+        let bodyCategory: UInt32 = 0x1 << 1   // 2
+
         var previousNode: SKNode = ring
 
         // Ring과 첫 번째 Chain 연결
@@ -187,7 +190,11 @@ extension KeyringScene {
             // 체인의 물리 속성 조정 (더 유연하게)
             firstChain.physicsBody?.linearDamping = 0.5
             firstChain.physicsBody?.angularDamping = 0.5
-            
+
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            firstChain.physicsBody?.categoryBitMask = chainCategory
+            firstChain.physicsBody?.collisionBitMask = chainCategory
+
             previousNode = firstChain
         }
 
@@ -224,6 +231,10 @@ extension KeyringScene {
                 // 체인의 물리 속성 조정
                 current.physicsBody?.linearDamping = 0.05
                 current.physicsBody?.angularDamping = 0.05
+
+                // Physics 카테고리 설정 (체인끼리만 충돌)
+                current.physicsBody?.categoryBitMask = chainCategory
+                current.physicsBody?.collisionBitMask = chainCategory
             }
             previousNode = current
         }
@@ -257,6 +268,10 @@ extension KeyringScene {
             // Body의 물리 속성 조정
             bodyPhysics.linearDamping = 0.5
             bodyPhysics.angularDamping = 0.5
+
+            // Physics 카테고리 설정 (Body는 아무것과도 충돌하지 않음, Joint로만 연결)
+            bodyPhysics.categoryBitMask = bodyCategory
+            bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
         }
     }
 }

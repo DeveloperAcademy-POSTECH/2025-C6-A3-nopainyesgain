@@ -17,6 +17,7 @@ class MultiKeyringCaptureScene: SKScene {
         let index: Int
         let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계, 왼쪽 위 기준)
         let bodyImageURL: String
+        let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     }
 
     var keyringDataList: [KeyringData] = []
@@ -278,6 +279,7 @@ class MultiKeyringCaptureScene: SKScene {
                     ring: ring,
                     centerX: spriteKitPosition.x,
                     bodyImageURL: data.bodyImageURL,
+                    hookOffsetY: data.hookOffsetY,
                     baseZPosition: baseZPosition
                 )
             }
@@ -317,6 +319,7 @@ class MultiKeyringCaptureScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
+                hookOffsetY: data.hookOffsetY,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType
             )
@@ -328,13 +331,14 @@ class MultiKeyringCaptureScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 19
+        let chainStartY = ringBottomY - 2
+        let chainSpacing: CGFloat = 20
 
         // 카라비너 타입에 따라 체인 개수 설정
         let chainCount: Int = {
@@ -369,6 +373,7 @@ class MultiKeyringCaptureScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
+                hookOffsetY: hookOffsetY,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType
             )
@@ -382,6 +387,7 @@ class MultiKeyringCaptureScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
@@ -398,8 +404,15 @@ class MultiKeyringCaptureScene: SKScene {
             let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
             let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-            let connectGap = 12.0
-            let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+            // hookOffsetY를 사용한 정확한 연결 지점 계산
+            // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
+            //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
+            // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
+            let hookOffsetYRatio = hookOffsetY ?? 0.0
+            let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
+
+            // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
+            let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
 
             body.position = CGPoint(x: centerX, y: bodyCenterY)
 

@@ -55,6 +55,12 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     /// 앱 노출 여부 (관리자용이라고 보면됨. -> false면 앱에서 숨김)
     let isActive: Bool
 
+    /// 키링 바디의 연결 지점 Y 오프셋 (아크릴 스트로크 적용 시 구멍 위치)
+    /// - nil이면 바디 이미지 중앙 상단(0)을 기본값으로 사용
+    /// - 양수: 바디 중심에서 위로 이동 (구멍이 더 위에 있음)
+    /// - 음수: 바디 중심에서 아래로 이동 (구멍이 더 아래에 있음)
+    let hookOffsetY: CGFloat?
+
     /// 무료 템플릿 여부
     var isFree: Bool {
         return price == nil || price == 0
@@ -78,7 +84,8 @@ extension KeyringTemplate {
             downloadCount: 0,
             useCount: 0,
             createdAt: Date(),
-            isActive: true
+            isActive: true,
+            hookOffsetY: nil
         )
         template.id = "AcrylicPhoto"
         return template

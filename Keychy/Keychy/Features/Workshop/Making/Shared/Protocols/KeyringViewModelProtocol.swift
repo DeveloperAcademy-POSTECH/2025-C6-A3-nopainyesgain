@@ -38,6 +38,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 키링 바디 이미지 (혹시나 특이한 템플릿이 있다면 안쓸수도 있어서 Optional)
     var bodyImage: UIImage? { get }
 
+    /// 바디 연결 지점 Y 오프셋 (템플릿별로 다름, AcrylicPhoto 등에서 사용)
+    var calculatedHookOffsetY: CGFloat { get set }
+
     /// 커스터마이징 모드 (템플릿마다 다름)
     var availableCustomizingModes: [CustomizingMode] { get }
 
@@ -102,4 +105,13 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
     /// 완전 초기화 (완성뷰 dismiss, 커스터마이징뷰 alert 후)
     func resetAll()
+}
+
+// MARK: - Default Implementations
+extension KeyringViewModelProtocol {
+    /// 기본값: hookOffsetY 사용 안함 (AcrylicPhotoVM에서만 override)
+    var calculatedHookOffsetY: CGFloat {
+        get { 0.0 }
+        set { }
+    }
 }

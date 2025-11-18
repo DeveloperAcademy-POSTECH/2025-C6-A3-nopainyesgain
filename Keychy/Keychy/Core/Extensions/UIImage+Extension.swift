@@ -63,37 +63,57 @@ extension UIImage {
     }
     
     private func findTopOpaqueY(in ciImage: CIImage) -> CGFloat? {
-        let context = CIContext()
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+        let extent = ciImage.extent
+        let w = extent.width
+        let h = extent.height
+        
+        // 중앙 ±5% 폭만 스캔 (좁은 세로 라인)
+        let cropX = extent.minX + w * 0.475
+        let cropWidth = w * 0.05
+        let focusRegion = CGRect(x: cropX, y: extent.minY, width: cropWidth, height: h)
+        
+        // 알파 채널만 추출
+        let alphaMask = ciImage
+            .applyingFilter("CIColorMatrix", parameters: [
+                "inputRVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputGVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputBVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputAVector": CIVector(x: 0, y: 0, z: 0, w: 1)
+            ])
+            .cropped(to: focusRegion)
+            .applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 1])
+        
+        // CPU에서 한 줄의 알파 데이터 직접 읽기 (얇은 세로 라인만)
+        let context = CIContext(options: [.useSoftwareRenderer: false])
+        guard let cgImage = context.createCGImage(alphaMask, from: alphaMask.extent) else { return nil }
         
         let width = cgImage.width
         let height = cgImage.height
-        let bytesPerPixel = 4
-        
         guard let dataProvider = cgImage.dataProvider,
               let data = dataProvider.data else { return nil }
+        
         let buffer = CFDataGetBytePtr(data)!
+        let bytesPerPixel = 4
+        let alphaThreshold: UInt8 = 160
         
-        let midX = width / 2
-        let alphaThreshold: UInt8 = 30
-        
-        // 중앙 X좌표에서 위에서 아래로 스캔
+        // 위 → 아래로 스캔하면서 α > threshold 만나는 첫 y 찾기
+        let sampleX = width / 2
         for y in 0..<height {
-            let pixelIndex = (y * width + midX) * bytesPerPixel
-            let alpha = buffer[pixelIndex + 3]
-            
+            let idx = (y * width + sampleX) * bytesPerPixel
+            if idx + 3 >= width * height * bytesPerPixel { break }
+            let alpha = buffer[idx + 3]
             if alpha > alphaThreshold {
-                // CGImage의 y를 CIImage 좌표계로 변환
-                // CIImage extent의 minY를 고려
-                let ciImageY = ciImage.extent.minY + CGFloat(height - 1 - y)
-                return ciImageY
+                // Y 반전 (CGImage는 top-left, CI는 bottom-left)
+                let flippedY = CGFloat(height - y)
+                let ciY = focusRegion.minY + (flippedY / CGFloat(height)) * focusRegion.height
+                return ciY
             }
         }
         
         return nil
     }
     
-    func addAcrylicStroke(width: CGFloat = 14, strokeWidth: CGFloat = 1.5) -> UIImage? {
+    func addAcrylicStroke(width: CGFloat = 14, strokeWidth: CGFloat = 1.5) -> (image: UIImage, hookOffsetY: CGFloat)? {
         guard let cgImage = self.cgImage else { return nil }
         let ciImage = CIImage(cgImage: cgImage)
         
@@ -140,10 +160,12 @@ extension UIImage {
         let imageWithShadow = ciImage.composited(over: coloredShadow)
 
         // 3. 구멍 중심 좌표 계산
-        let topY = findTopOpaqueY(in: dilated) ?? (h + adjustedRadius)
+        let foundY = findTopOpaqueY(in: ciImage) ?? h
+        let topY = foundY + adjustedRadius
+        
         let circleCenter = CIVector(x: w / 2, y: topY)
-        let innerRadius = adjustedRadius / 3.0
-        let outerRadius = adjustedRadius / 1.5
+        let innerRadius = adjustedRadius / 2.5
+        let outerRadius = adjustedRadius / 1.3
 
         // 4. 외부/내부 원 생성 및 합성
         let outerCircle = CIFilter(name: "CIRadialGradient", parameters: [
@@ -252,8 +274,24 @@ extension UIImage {
         let renderExtent = finalImage.extent.union(ciImage.extent).insetBy(dx: -20, dy: -20)
         guard let output = context.createCGImage(finalImage, from: renderExtent) else { return nil }
 
-        // 15. UIImage 반환
-        return UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
+        // 15. hookOffsetY 계산 ✅ 올바른 방법
+        // renderExtent의 minY = bottom 위치 (좌표계 시작점)
+        let finalImageHeight = renderExtent.height  // 최종 렌더링된 전체 높이
+        let renderMinY = renderExtent.minY          // 렌더 영역의 bottom Y 좌표
+
+        // topY는 ciImage 좌표계 기준이므로, renderExtent 기준으로 변환 필요
+        let topYInRenderCoords = topY - renderMinY  // renderExtent 기준 구멍 위치
+
+        // 최종 이미지 top에서 구멍까지의 거리
+        let hookOffsetYFromTop = finalImageHeight - topYInRenderCoords
+
+        // 최종 이미지 높이 대비 비율
+        let hookOffsetYRatio = hookOffsetYFromTop / finalImageHeight
+        
+        // 16. UIImage 반환
+        let resultImage = UIImage(cgImage: output, scale: self.scale, orientation: self.imageOrientation)
+
+        return (image: resultImage, hookOffsetY: hookOffsetYRatio)
     }
     
     // 피사체 영역으로 크롭

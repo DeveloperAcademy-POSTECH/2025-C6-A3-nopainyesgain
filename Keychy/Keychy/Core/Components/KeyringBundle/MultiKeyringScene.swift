@@ -22,6 +22,7 @@ class MultiKeyringScene: SKScene {
         let soundId: String  // 사운드 ID
         let customSoundURL: URL?  // 커스텀 녹음 파일 URL
         let particleId: String  // 파티클 ID
+        let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     }
 
     var keyringDataList: [KeyringData] = []
@@ -352,6 +353,7 @@ class MultiKeyringScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
+                hookOffsetY: data.hookOffsetY,
                 index: data.index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -365,6 +367,7 @@ class MultiKeyringScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -372,8 +375,8 @@ class MultiKeyringScene: SKScene {
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
-        let chainStartY = ringBottomY + 0.5
-        let chainSpacing: CGFloat = 19
+        let chainStartY = ringBottomY + 2
+        let chainSpacing: CGFloat = 20
 
         // 카라비너 타입에 따라 체인 개수 설정
         let chainCount: Int = {
@@ -425,6 +428,7 @@ class MultiKeyringScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
+                hookOffsetY: hookOffsetY,
                 index: index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -441,6 +445,7 @@ class MultiKeyringScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
+        hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -459,6 +464,7 @@ class MultiKeyringScene: SKScene {
                 centerX: centerX,
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
+                hookOffsetY: hookOffsetY,
                 index: index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -475,6 +481,7 @@ class MultiKeyringScene: SKScene {
         centerX: CGFloat,
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
+        hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -483,12 +490,22 @@ class MultiKeyringScene: SKScene {
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
 
+        // Body 위치 설정
+        // 마지막 체인의 "중심 Y": 첫 링크 시작점에서 (링크 수 - 1) * spacing 만큼 아래
         let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
-        let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
-        let lastChainBottomY = lastChainY - lastLinkHeight / 2
 
-        let connectGap = 12.0
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight + connectGap
+        // 마지막 체인의 실제 높이를 기반으로 "아래 끝 Y" 계산 - 15: 체인길이의 절반
+        let lastChainBottomY = lastChainY - 15
+
+        // hookOffsetY를 사용한 정확한 연결 지점 계산
+        // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
+        //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
+        // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
+        let hookOffsetYRatio = hookOffsetY ?? 0.0
+        let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
+
+        // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
 
         body.position = CGPoint(x: centerX, y: bodyCenterY)
 
@@ -523,6 +540,10 @@ class MultiKeyringScene: SKScene {
 
     /// 키링 구성 요소들을 Joint로 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
+        // Physics 카테고리 정의
+        let chainCategory: UInt32 = 0x1 << 0  // 1
+        let bodyCategory: UInt32 = 0x1 << 1   // 2
+
         var previousNode: SKNode = ring
 
         // Ring과 첫 번째 Chain 연결
@@ -583,6 +604,10 @@ class MultiKeyringScene: SKScene {
             firstChain.physicsBody?.linearDamping = 2.0  // 첫 번째 체인을 거의 고정
             firstChain.physicsBody?.angularDamping = 3.0
 
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            firstChain.physicsBody?.categoryBitMask = chainCategory
+            firstChain.physicsBody?.collisionBitMask = chainCategory
+
             previousNode = firstChain
         }
 
@@ -617,6 +642,10 @@ class MultiKeyringScene: SKScene {
 
                 current.physicsBody?.linearDamping = 0.05
                 current.physicsBody?.angularDamping = 0.05
+
+                // Physics 카테고리 설정 (체인끼리만 충돌)
+                current.physicsBody?.categoryBitMask = chainCategory
+                current.physicsBody?.collisionBitMask = chainCategory
             }
             previousNode = current
         }
@@ -648,6 +677,10 @@ class MultiKeyringScene: SKScene {
 
             bodyPhysics.linearDamping = 0.5
             bodyPhysics.angularDamping = 0.5
+
+            // Physics 카테고리 설정 (Body는 아무것과도 충돌하지 않음, Joint로만 연결)
+            bodyPhysics.categoryBitMask = bodyCategory
+            bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
         }
 
         // Plain 타입에서는 Ring을 dynamic으로 유지하되 위치 제한 (anchor에 의해 제어됨)
