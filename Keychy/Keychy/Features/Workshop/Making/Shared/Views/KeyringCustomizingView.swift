@@ -16,7 +16,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State var viewModel: VM
     let nextRoute: WorkshopRoute
 
-    @State private var selectedMode: CustomizingMode = .effect
+    @State private var selectedMode: CustomizingMode = .effect  // onAppear에서 첫 번째 모드로 재설정됨
     @State private var isLoadingResources = true
     @State private var isSceneReady = false
     @State private var loadingScale: CGFloat = 0.3
@@ -147,6 +147,11 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             Text("지금까지 작업한 내용이 모두 초기화됩니다.")
         }
         .task {
+            // 첫 번째 모드를 기본 선택
+            if let firstMode = viewModel.availableCustomizingModes.first {
+                selectedMode = firstMode
+            }
+
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
 
