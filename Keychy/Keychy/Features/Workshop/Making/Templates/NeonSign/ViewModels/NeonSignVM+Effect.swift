@@ -7,12 +7,39 @@
 
 import Combine
 import Foundation
+import SwiftUI
 
 extension NeonSignVM {
 
-    /// 커스터마이징 모드 (네온 사인은 이펙트만 지원)
+    /// 커스터마이징 모드 (네온 사인은 그리기 + 이펙트 지원, 이펙트가 마지막)
     var availableCustomizingModes: [CustomizingMode] {
-        [.effect]
+        [.drawing, .effect]
+    }
+
+    // MARK: - View Providers (모드별 뷰 제공)
+
+    /// 씬 뷰 제공 (모드별)
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        case .drawing:
+            return AnyView(DrawingCanvasView(viewModel: self))
+        }
+    }
+
+    /// 하단 콘텐츠 뷰 제공 (모드별)
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        case .drawing:
+            return AnyView(DrawingToolsView(viewModel: self))
+        }
     }
 
     /// 사운드 업데이트
@@ -85,6 +112,25 @@ extension NeonSignVM {
     /// 파티클이 Cache에 다운로드되어 있는지
     func isInCache(particleId: String) -> Bool {
         return EffectManager.shared.isInCache(particleId: particleId)
+    }
+
+    // MARK: - Reset (그리기 상태 포함)
+
+    /// 커스터마이징 데이터 초기화 (이펙트 + 그리기)
+    func resetCustomizingData() {
+        // 기본 이펙트 초기화
+        selectedSound = nil
+        selectedParticle = nil
+        customSoundURL = nil
+        soundId = "none"
+        particleId = "none"
+        downloadingItemIds.removeAll()
+        downloadProgress.removeAll()
+
+        // 그리기 상태 초기화
+        drawingPaths.removeAll()
+        currentDrawingColor = .white
+        currentLineWidth = 3.0
     }
 
     // MARK: - Download (EffectManager 위임)

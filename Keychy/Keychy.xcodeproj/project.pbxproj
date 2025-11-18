@@ -249,6 +249,8 @@
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */; };
 		C67B753B2ECC9E6C00D6E3FA /* EffectSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */; };
+		C67B753E2ECCA32A00D6E3FA /* DrawingToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */; };
+		C67B753F2ECCA32A00D6E3FA /* DrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -561,6 +563,8 @@
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSelectorView.swift; sourceTree = "<group>"; };
+		C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvasView.swift; sourceTree = "<group>"; };
+		C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingToolsView.swift; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -1583,6 +1587,8 @@
 		C6C402802EB26C10006B58DF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */,
+				C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */,
 				C6C402852EB26C66006B58DF /* NeonSignPreview.swift */,
 			);
 			path = Views;
@@ -1754,6 +1760,8 @@
 				AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */,
 				AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
+				C67B753E2ECCA32A00D6E3FA /* DrawingToolsView.swift in Sources */,
+				C67B753F2ECCA32A00D6E3FA /* DrawingCanvasView.swift in Sources */,
 				C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */,
 				C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */,
 				C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */,

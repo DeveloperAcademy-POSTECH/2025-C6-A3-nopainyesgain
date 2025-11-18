@@ -11,7 +11,7 @@ import Combine
 /// 키링 커스터마이징 모드
 enum CustomizingMode: String, CaseIterable, Identifiable {
     case effect = "이펙트"
-    // 나중에 추가 가능: case drawing = "그리기"
+    case drawing = "그리기"
 
     var id: String { rawValue }
 
@@ -20,6 +20,8 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
         switch self {
         case .effect:
             return "interactionSelector"
+        case .drawing:
+            return "drawingSelector"
         }
     }
 }
@@ -126,15 +128,18 @@ extension KeyringViewModelProtocol {
         set { }
     }
 
-    /// 기본 씬 뷰 제공 (effect 모드만 지원)
+    /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        case .drawing:
+            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+            return AnyView(EmptyView())
         }
     }
 
-    /// 기본 하단 콘텐츠 뷰 제공 (effect 모드만 지원)
+    /// 기본 하단 콘텐츠 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func bottomContentView(
         for mode: CustomizingMode,
         showPurchaseSheet: Binding<Bool>,
@@ -143,6 +148,9 @@ extension KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        case .drawing:
+            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+            return AnyView(EmptyView())
         }
     }
 }

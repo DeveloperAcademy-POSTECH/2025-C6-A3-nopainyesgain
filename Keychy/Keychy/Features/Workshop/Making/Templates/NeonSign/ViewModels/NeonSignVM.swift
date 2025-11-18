@@ -88,6 +88,11 @@ class NeonSignVM: KeyringViewModelProtocol {
     var bodyImage: UIImage? = nil
     var errorMessage: String?
 
+    // MARK: - Drawing State (그리기 모드)
+    var drawingPaths: [DrawnPath] = []
+    var currentDrawingColor: Color = .white
+    var currentLineWidth: CGFloat = 3.0
+
     // MARK: - 정보 입력
     var nameText: String = ""
     var maxTextCount: Int = 30
