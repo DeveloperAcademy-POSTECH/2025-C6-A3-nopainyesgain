@@ -155,5 +155,6 @@ extension ProfileSetupView {
         .foregroundStyle(isNicknameValid ? .white100 : .black40)
         .disabled(!isNicknameValid)
         .animation(.easeInOut(duration: 0.2), value: isNicknameValid)
+        .adaptiveBottomPadding()
     }
 }

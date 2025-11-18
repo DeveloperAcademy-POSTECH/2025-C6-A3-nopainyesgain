@@ -171,13 +171,13 @@ extension IntroView {
             .padding(.trailing, 15)
 
             Text(text)
-                .typography(.suit15M25)
+                .typography(getBottomPadding(0) == 0 ? .suit13M : .suit15M25)
                 .foregroundStyle(.gray700)
                 .padding(.vertical, 4.5)
                 .padding(.trailing, 5)
 
             Text(initial ? "(필수)" : "(선택)")
-                .typography(.suit15M25)
+                .typography(getBottomPadding(0) == 0 ? .suit13M : .suit15M25)
                 .foregroundStyle(initial ? .main500 : .gray700)
 
             if initial {
@@ -208,6 +208,7 @@ extension IntroView {
         .tint(canProceed ? .main500 : .black20)
         .foregroundStyle(canProceed ? .white100 : .black40)
         .disabled(!canProceed)
+        .adaptiveBottomPadding()
     }
 
     /// 모두 동의 토글
@@ -230,5 +231,3 @@ extension IntroView {
         isAllChecked = isTermsChecked && isMarketingChecked
     }
 }
-
-

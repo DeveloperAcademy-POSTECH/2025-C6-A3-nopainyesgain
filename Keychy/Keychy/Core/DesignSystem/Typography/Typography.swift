@@ -119,6 +119,7 @@ struct Typography {
     static let malang15B = Typography(font: .custom(.malangBold, size: 15), lineSpacing: 0)
     
     static let malang24B = Typography(font: .custom(.malangBold, size: 24), lineSpacing: 0)
+    static let malang26B = Typography(font: .custom(.malangBold, size: 26), lineSpacing: 0)
 }
 
 // MARK: - View Extension

@@ -18,6 +18,7 @@ struct WorkshopPreview: View {
     // 구매 관련 상태
     @State private var showPurchaseSheet = false
     @State private var purchasePopupScale: CGFloat = 0.3
+    @State private var showPurchasingLoading = false
     @State private var showPurchaseSuccessAlert = false
     @State private var showPurchaseFailAlert = false
 
@@ -69,6 +70,7 @@ struct WorkshopPreview: View {
             .frame(height: 120)
             
             actionButton
+                .adaptiveBottomPadding()
         }
         .padding(.horizontal, 30)
         .toolbar(.hidden, for: .tabBar)
@@ -109,6 +111,11 @@ struct WorkshopPreview: View {
                     )
                     .padding(.horizontal, 40)
                     .padding(.bottom, 30)
+                }
+
+                // 구매 중 로딩
+                if showPurchasingLoading {
+                    LoadingAlert(type: .short, message: nil)
                 }
 
                 // 구매 성공 알림
@@ -161,7 +168,7 @@ extension WorkshopPreview {
                 if item is Background {
                     ItemDetailImage(itemURL: getPreviewURL())
                         .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: 501)
+                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(0) == 0 ? 380 : 501)
                         .cornerRadius(20)
                 } else {
                     // 카라비너, 사운드: 1:1 비율
@@ -192,7 +199,7 @@ extension WorkshopPreview {
             Spacer()
         }
         .padding(.horizontal, 30)
-        .frame(height: 500)
+        .frame(maxHeight: 500)
     }
 
     /// 파티클 다운로드 및 소유권 처리
@@ -292,9 +299,6 @@ extension WorkshopPreview {
 
     /// 구매 처리
     private func handlePurchase() async {
-        // ItemPurchaseManager를 통해 구매 처리
-        let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(item, userManager: userManager)
-
         // 팝업 닫기 애니메이션
         await MainActor.run {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
@@ -306,6 +310,21 @@ extension WorkshopPreview {
 
         await MainActor.run {
             showPurchaseSheet = false
+        }
+
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        // 로딩 시작
+        await MainActor.run {
+            showPurchasingLoading = true
+        }
+
+        // ItemPurchaseManager를 통해 구매 처리
+        let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(item, userManager: userManager)
+
+        // 로딩 종료
+        await MainActor.run {
+            showPurchasingLoading = false
         }
 
         try? await Task.sleep(nanoseconds: 100_000_000)

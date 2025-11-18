@@ -22,8 +22,8 @@ struct TemplatePreviewBody: View {
     // 구매 관련 상태
     @State private var showPurchaseSheet = false
     @State private var purchasePopupScale: CGFloat = 0.3
+    @State private var showPurchasingLoading = false
     @State private var showPurchaseSuccessAlert = false
-    @State private var purchaseSuccessScale: CGFloat = 0.3
     @State private var showPurchaseFailAlert = false
     @State private var purchaseFailScale: CGFloat = 0.3
 
@@ -97,25 +97,21 @@ struct TemplatePreviewBody: View {
                     }
                 }
 
+                // 구매 중 로딩
+                if showPurchasingLoading {
+                    LoadingAlert(type: .short, message: nil)
+                }
+
                 // 구매 성공 알림
                 if showPurchaseSuccessAlert {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseSuccessScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSuccessAlert = false
-                            }
-                        }
-
-                    CheckmarkAlert(
-                        checkmarkScale: purchaseSuccessScale,
-                        text: "구매 완료!"
+                    KeychyAlert(
+                        type: .checkmark,
+                        message: "구매 완료!",
+                        isPresented: $showPurchaseSuccessAlert
                     )
                 }
 
+                // TODO: - 구버전 Alert 사용중, Popup으로 전환 필요
                 // 구매 실패 알림 (코인 부족)
                 if showPurchaseFailAlert {
                     Color.black.opacity(0.4)
@@ -173,7 +169,7 @@ extension TemplatePreviewBody {
             Spacer()
         }
         .padding(.horizontal, 30)
-        .frame(height: 500)
+        .frame(maxHeight: 500)
     }
 
     /// 템플릿 정보 섹션
@@ -212,9 +208,6 @@ extension TemplatePreviewBody {
     private func handlePurchase() async {
         guard let template = template else { return }
 
-        // ItemPurchaseManager를 통해 구매 처리
-        let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(template, userManager: userManager)
-
         // 팝업 닫기 애니메이션
         await MainActor.run {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
@@ -230,13 +223,25 @@ extension TemplatePreviewBody {
 
         try? await Task.sleep(nanoseconds: 100_000_000)
 
+        // 로딩 시작
+        await MainActor.run {
+            showPurchasingLoading = true
+        }
+
+        // ItemPurchaseManager를 통해 구매 처리
+        let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(template, userManager: userManager)
+
+        // 로딩 종료
+        await MainActor.run {
+            showPurchasingLoading = false
+        }
+
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
         switch result {
         case .success:
             // 성공 시 성공 알림 표시
             showPurchaseSuccessAlert = true
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                purchaseSuccessScale = 1.0
-            }
 
         case .insufficientCoins:
             // 코인 부족 시 실패 알림 표시
