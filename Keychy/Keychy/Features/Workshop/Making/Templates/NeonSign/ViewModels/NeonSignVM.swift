@@ -86,12 +86,14 @@ class NeonSignVM: KeyringViewModelProtocol {
 
     // MARK: - Body Image (템플릿에 미리 정의된 이미지)
     var bodyImage: UIImage? = nil
+    var originalBodyImage: UIImage? = nil  // 원본 이미지 (합성 전)
     var errorMessage: String?
 
     // MARK: - Drawing State (그리기 모드)
     var drawingPaths: [DrawnPath] = []
     var currentDrawingColor: Color = .white
     var currentLineWidth: CGFloat = 3.0
+    var imageFrame: CGRect = .zero  // 그리기 영역 (DrawingCanvasView에서 설정)
 
     // MARK: - 정보 입력
     var nameText: String = ""
@@ -129,7 +131,9 @@ class NeonSignVM: KeyringViewModelProtocol {
             template = try document.data(as: KeyringTemplate.self)
 
             // 네온사인 템플릿 전용 고정 이미지 (Assets)
-            bodyImage = UIImage(named: "bangMark")
+            let image = UIImage(named: "bangMark")
+            bodyImage = image
+            originalBodyImage = image  // 원본 저장
 
         } catch {
             errorMessage = "템플릿을 불러오는데 실패했습니다."

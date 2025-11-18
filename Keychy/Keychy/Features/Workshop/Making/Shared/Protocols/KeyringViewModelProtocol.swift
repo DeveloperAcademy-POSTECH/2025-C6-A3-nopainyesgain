@@ -109,6 +109,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
         cartItems: Binding<[EffectItem]>
     ) -> AnyView
 
+    // MARK: - Drawing Composition (NeonSign 등 그리기 지원 템플릿)
+    /// 그림을 bodyImage와 합성 (그리기 모드 지원 템플릿만 구현)
+    func composeDrawingWithBodyImage()
+
     // MARK: - Reset Methods
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
@@ -126,6 +130,11 @@ extension KeyringViewModelProtocol {
     var calculatedHookOffsetY: CGFloat {
         get { 0.0 }
         set { }
+    }
+
+    /// 기본값: 그리기 합성 사용 안함 (NeonSignVM 등에서만 override)
+    func composeDrawingWithBodyImage() {
+        // 기본적으로는 아무것도 하지 않음 (그리기 지원 템플릿만 구현)
     }
 
     /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)

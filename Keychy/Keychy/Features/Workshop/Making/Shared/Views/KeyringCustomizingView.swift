@@ -164,6 +164,12 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheet
         }
+        .onChange(of: selectedMode) { oldMode, newMode in
+            // 그리기 모드에서 다른 모드로 전환 시 그림 합성
+            if oldMode == .drawing && newMode != .drawing {
+                viewModel.composeDrawingWithBodyImage()
+            }
+        }
     }
 
     // MARK: - Loading Helper
@@ -258,6 +264,8 @@ extension KeyringCustomizingView {
                 if hasCartItems {
                     showPurchaseSheet = true
                 } else {
+                    // 다음으로 넘어가기 전에 그림 합성 (그리기 지원 템플릿만 실행)
+                    viewModel.composeDrawingWithBodyImage()
                     router.push(nextRoute)
                 }
             } label: {
