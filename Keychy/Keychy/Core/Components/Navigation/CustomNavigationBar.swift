@@ -31,7 +31,10 @@ struct CustomNavigationBar<Leading: View, Center: View, Trailing: View>: View {
 
                 Spacer()
 
+                
                 center
+                    .typography(.notosans17M)
+                    
 
                 Spacer()
 

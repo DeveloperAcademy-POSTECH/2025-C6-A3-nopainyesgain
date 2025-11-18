@@ -18,6 +18,8 @@ struct BackToolbarButton: View {
         Button(action: action) {
             Image("backIcon")
         }
+        .frame(width: 44, height: 44)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }
 
@@ -38,7 +40,7 @@ struct NextToolbarButton: View {
         Button(action: action) {
             Text(title)
                 .typography(.suit17B)
-                .padding(4.5)
+                .padding(4)
                 .foregroundStyle(.black100)
         }
     }
