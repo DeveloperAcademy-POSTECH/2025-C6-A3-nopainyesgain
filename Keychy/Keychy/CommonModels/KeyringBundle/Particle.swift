@@ -23,6 +23,9 @@ struct Particle: Identifiable, Codable, Equatable, Hashable {
     /// 파티클 데이터
     let particleData: String
     
+    /// 파티클 썸네일 이미지 URL
+    let thumbnail: String
+    
     /// 파티클 분류 태그 (ex. ["귀여움", "#키워드"])
     let tags: [String]
     
