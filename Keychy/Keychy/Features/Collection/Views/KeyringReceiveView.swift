@@ -261,7 +261,7 @@ struct KeyringReceiveView: View {
                 )
                 .frame(width: 195, height: 300)
                 .rotationEffect(.degrees(10))
-                .offset(y: -8)
+                .offset(y: -15)
             }
             
             VStack(spacing: 0) {
@@ -330,20 +330,6 @@ struct KeyringReceiveView: View {
 
 // 헤더 (버튼 + 수신 정보)
 extension KeyringReceiveView {
-    private var headerSection: some View {
-        HStack {
-            CircleGlassButton(
-                imageName: "dismiss_gray600",
-                action: {
-                    dismiss()
-                }
-            )
-            
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-    }
-    
     private func messageSection(keyring: Keyring) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 0) {

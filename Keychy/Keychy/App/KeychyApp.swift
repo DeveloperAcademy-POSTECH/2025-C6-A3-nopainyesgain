@@ -86,15 +86,21 @@ struct KeychyApp: App {
         
         // Custom URL Scheme 처리
         if url.scheme == "keychy" {
-            guard url.host == "receive",
-                  let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                  let postOfficeId = components.queryItems?.first(where: { $0.name == "postOfficeId" })?.value else {
-                print("Custom URL Scheme 파싱 실패")
-                return
+            if url.host == "receive" {
+                guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                      let postOfficeId = components.queryItems?.first(where: { $0.name == "postOfficeId" })?.value else {
+                    return
+                }
+                print("Custom URL Scheme - receive postOfficeId: \(postOfficeId)")
+                DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .receive)
+            } else if url.host == "collect" {
+                guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                      let postOfficeId = components.queryItems?.first(where: { $0.name == "postOfficeId" })?.value else {
+                    return
+                }
+                print("Custom URL Scheme - collect postOfficeId: \(postOfficeId)")
+                DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .collect)
             }
-            
-            print("Custom URL Scheme - postOfficeId: \(postOfficeId)")
-            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId)
         }
     }
     
@@ -109,10 +115,14 @@ struct KeychyApp: App {
         // https://keychy-f6011.web.app/receive/POSTOFFICE_ID
         if path.hasPrefix("/receive/") {
             let postOfficeId = String(path.dropFirst("/receive/".count))
-            print("keyringId 추출 성공: \(postOfficeId)")
-            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId)
+            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .receive)
+        }
+        // https://keychy-f6011.web.app/collect/POSTOFFICE_ID
+        else if path.hasPrefix("/collect/") {
+            let postOfficeId = String(path.dropFirst("/collect/".count))
+            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .collect)
         } else {
-               print("경로 파싱 실패")
+            print("경로 파싱 실패")
         }
     }
 }
