@@ -109,7 +109,7 @@ extension AcrylicPhotoVM {
                 }
 
                 // 3. 200x200에 맞게 비율 유지 리사이즈
-                guard let resized = subjectCropped.resizeToFit(size: CGSize(width: 210, height: 210)) else {
+                guard let resized = subjectCropped.resizeToFit(size: CGSize(width: 155, height: 155)) else {
                     DispatchQueue.main.async { completion(nil) }
                     return
                 }

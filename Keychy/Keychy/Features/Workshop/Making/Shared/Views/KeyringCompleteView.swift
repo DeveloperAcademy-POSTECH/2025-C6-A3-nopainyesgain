@@ -43,6 +43,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                         keyringScene
                             .frame(height: geometry.size.height * 0.72)
                             .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.4)
                         
                         VStack {
                             // 키링 정보
@@ -57,6 +58,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                             //.adaptiveBottomPadding()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .position(x: geometry.size.width / 2, y: geometry.size.height * 0.8)
                     }
                 }
                 .blur(radius: showImageSaved ? 15 : 0)
