@@ -16,8 +16,6 @@ extension CollectionKeyringDetailView {
                 isSheetPresented = false
                 router.pop()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
             .opacity(showUIForCapture ? 1 : 0)
         } center: {
             // Center (중앙) - 빈 공간
