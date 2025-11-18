@@ -11,6 +11,8 @@ struct BundleInventoryView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
+    @State var isNavigatingDeeper: Bool = false
+    
 #if DEBUG
     @State private var showCachedBundlesDebug = false
 #endif
@@ -27,10 +29,13 @@ struct BundleInventoryView<Route: BundleRoute>: View {
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
+            isNavigatingDeeper = false
             viewModel.hideTabBar()
         }
         .onDisappear {
-            viewModel.showTabBar()
+            if !isNavigatingDeeper {
+                viewModel.showTabBar()
+            }
         }
         .toolbar {
             backToolbarItem
@@ -75,6 +80,7 @@ extension BundleInventoryView {
     private var nextToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             PlusToolbarButton {
+                isNavigatingDeeper = true
                 router.push(.bundleCreateView)
             }
         }
@@ -115,6 +121,7 @@ extension BundleInventoryView {
                         viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
                         
                         // 상세 화면으로 이동
+                        isNavigatingDeeper = true
                         router.push(.bundleDetailView)
                     } label: {
                         KeyringBundleItem(bundle: bundle)
@@ -125,3 +132,16 @@ extension BundleInventoryView {
     }
 }
 
+//MARK: - 뷰 lifeCycle 관리
+extension BundleInventoryView {
+    func handleViewAppear() {
+        isNavigatingDeeper = false
+        viewModel.hideTabBar()
+    }
+    
+    func handleViewDisappear() {
+        if !isNavigatingDeeper {
+            viewModel.showTabBar()
+        }
+    }
+}

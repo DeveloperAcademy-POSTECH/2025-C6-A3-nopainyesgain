@@ -78,10 +78,8 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
             isSceneReady = false
             viewModel.hideTabBar()
         }
-        .onDisappear {
-            viewModel.showTabBar()
-        }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             backButton
             nextButton

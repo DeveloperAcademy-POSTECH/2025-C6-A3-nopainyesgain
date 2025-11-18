@@ -134,6 +134,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             purchaseSheetView
         }
         .navigationBarBackButtonHidden()
+        .toolbar(.hidden, for: .tabBar)
         .task {
             await initializeData()
         }
@@ -147,9 +148,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
             }
-        }
-        .onDisappear {
-            viewModel.showTabBar()
         }
         .ignoresSafeArea()
         .onChange(of: showBackgroundSheet) { oldValue, newValue in

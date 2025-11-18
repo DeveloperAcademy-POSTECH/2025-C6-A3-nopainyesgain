@@ -20,6 +20,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var showDeleteCompleteToast: Bool = false
     @State private var showChangeMainBundleAlert: Bool = false
     @State var isCapturing: Bool = false
+    @State private var isNavigatingDeeper: Bool = true
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -75,10 +76,12 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                 BundleMenu(
                                     onNameEdit: {
                                         showMenu = false
+                                        isNavigatingDeeper = true
                                         router.push(.bundleNameEditView)
                                     },
                                     onEdit: {
                                         showMenu = false
+                                        isNavigatingDeeper = true
                                         router.push(.bundleEditView)
                                     },
                                     onDelete: {
@@ -125,14 +128,9 @@ struct BundleDetailView<Route: BundleRoute>: View {
             customnavigationBar
                 .ignoresSafeArea()
         }
-        .onAppear {
-            viewModel.hideTabBar()
-        }
-        .onDisappear {
-            viewModel.showTabBar()
-        }
-        .toolbar(.hidden, for: .tabBar)
+        .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
             if !isSceneReady {
@@ -140,6 +138,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     await loadBundleData()
                 }
             }
+            isNavigatingDeeper = false
+            viewModel.hideTabBar()
         }
         .onDisappear {
             // 뷰가 사라질 때 씬 준비 상태 초기화

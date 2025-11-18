@@ -107,14 +107,12 @@ struct BundleCreateView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
+        .toolbar(.hidden, for: .tabBar)
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
         }
         .task {
             await initializeData()
-        }
-        .onDisappear {
-            viewModel.showTabBar()
         }
         .onAppear {
             // 화면이 나타날 때마다 데이터 새로고침
