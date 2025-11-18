@@ -12,10 +12,10 @@ import NukeUI
 /// 번들에 키링을 추가하는 뷰
 struct BundleAddKeyringView<Route: BundleRoute>: View {
     // MARK: - Properties
-
+    
     @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
-
+    
     @State private var showSelectKeyringSheet = false
     @State private var selectedKeyrings: [Int: Keyring] = [:]
     @State private var keyringOrder: [Int] = []
@@ -33,43 +33,41 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
     //임시 초기값
     private let screenSize = CGSize(width: 390, height: 844)
     private let sheetHeightRatio: CGFloat = 0.5
-
+    
     // MARK: - Body
-
+    
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .bottom) {
-                // 배경 + 카라비너 + 키링 씬
-                if let carabiner = viewModel.selectedCarabiner,
-                   let background = viewModel.selectedBackground {
-                    keyringEditSceneView(background: background, carabiner: carabiner)
-                }
-
-                // Dim 오버레이 (키링 시트가 열릴 때)
-                if showSelectKeyringSheet {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(1)
-                }
-
-                // 키링 선택 시트
-                if showSelectKeyringSheet {
-                    keyringSelectionSheet(geo: geo)
-                }
-
-                // 캡처 중 오버레이
-                if isCapturing {
-                    capturingOverlay
-                }
+        ZStack(alignment: .bottom) {
+            // 배경 + 카라비너 + 키링 씬
+            if let carabiner = viewModel.selectedCarabiner,
+               let background = viewModel.selectedBackground {
+                keyringEditSceneView(background: background, carabiner: carabiner)
+            }
+            
+            // Dim 오버레이 (키링 시트가 열릴 때)
+            if showSelectKeyringSheet || isCapturing {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(1)
+            }
+            
+            // 키링 선택 시트
+            if showSelectKeyringSheet {
+                keyringSelectionSheet()
+            }
+            
+            // 캡처 중 오버레이
+            if isCapturing {
+                capturingOverlay
+            }
+            
+            if !isSceneReady {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
                 
-                if !isSceneReady {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(100)
-                    
-                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                        .zIndex(101)
-                }
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
             }
         }
         .ignoresSafeArea()
@@ -121,7 +119,7 @@ extension BundleAddKeyringView {
             keyringButtons(carabiner: carabiner)
         }
     }
-
+    
     /// 키링 추가 버튼들
     private func keyringButtons(carabiner: Carabiner) -> some View {
         // 키링 추가 버튼들
@@ -145,9 +143,9 @@ extension BundleAddKeyringView {
             .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
         }
     }
-
+    
     /// 키링 선택 시트
-    private func keyringSelectionSheet(geo: GeometryProxy) -> some View {
+    private func keyringSelectionSheet() -> some View {
         VStack {
             HStack {
                 Spacer()
@@ -181,12 +179,12 @@ extension BundleAddKeyringView {
                 .padding(.bottom, 77)
                 .padding(.top, 62)
                 .frame(maxWidth: .infinity)
-                    
+                
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
                         ForEach(viewModel.keyring, id: \.self) { keyring in
-                            keyringCell(keyring: keyring, geo: geo)
+                            keyringCell(keyring: keyring)
                         }
                     }
                 }
@@ -195,7 +193,7 @@ extension BundleAddKeyringView {
         }
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
         .frame(maxWidth: .infinity)
-        .frame(height: geo.size.height * sheetHeightRatio)
+        .frame(height: screenHeight * sheetHeightRatio)
         .background(.white100)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 10)
@@ -203,15 +201,13 @@ extension BundleAddKeyringView {
         .transition(.move(edge: .bottom))
         .zIndex(2)
     }
-
+    
     /// 키링 셀 (체크 토글 + 시트 유지)
-    private func keyringCell(keyring: Keyring, geo: GeometryProxy) -> some View {
+    private func keyringCell(keyring: Keyring) -> some View {
         // 현재 선택된 위치에 이 키링이 선택되어 있는지
         let isSelectedHere: Bool = selectedKeyrings[selectedPosition]?.id == keyring.id
         // 다른 위치에 이미 선택된 키링인지 체크
         let isSelectedElsewhere: Bool = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
-        let widthSize = (geo.size.width - 60) / 3
-        let heightSize = widthSize * 4/3
         
         return Button {
             // 토글
@@ -234,7 +230,7 @@ extension BundleAddKeyringView {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 10) {
                     CollectionCellView(keyring: keyring)
-                        .frame(width: widthSize, height: heightSize)
+                        .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                         .cornerRadius(10)
                     
                     Text("\(keyring.name)")
@@ -283,7 +279,7 @@ extension BundleAddKeyringView {
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
         .opacity(1.0) // 강제로 투명도 1.0 유지
     }
-
+    
     /// 캡처 중 오버레이
     private var capturingOverlay: some View {
         ZStack {
@@ -313,7 +309,7 @@ extension BundleAddKeyringView {
             }
         }
     }
-
+    
     /// 다음 버튼
     private var nextButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
@@ -336,13 +332,13 @@ extension BundleAddKeyringView {
               let background = viewModel.selectedBackground else {
             return
         }
-
+        
         // 캡처 시작
         await MainActor.run {
             isCapturing = true
             viewModel.selectedKeyringsForBundle = selectedKeyrings
         }
-
+        
         // 배경 이미지 미리 로드
         guard let _ = try? await StorageManager.shared.getImage(path: background.backgroundImage) else {
             await MainActor.run {
@@ -350,10 +346,10 @@ extension BundleAddKeyringView {
             }
             return
         }
-
+        
         // 캡처용 키링 데이터 생성
         var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
-
+        
         for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
             let data = MultiKeyringCaptureScene.KeyringData(
                 index: index,
@@ -366,12 +362,12 @@ extension BundleAddKeyringView {
             )
             keyringDataList.append(data)
         }
-
+        
         // 카라비너 이미지 추출
         let carabinerType = CarabinerType.from(carabiner.carabinerType)
         let carabinerBackURL: String?
         let carabinerFrontURL: String?
-
+        
         if carabinerType == .hamburger {
             carabinerBackURL = carabiner.carabinerImage[1]
             carabinerFrontURL = carabiner.carabinerImage[2]
@@ -380,7 +376,7 @@ extension BundleAddKeyringView {
             carabinerBackURL = carabiner.carabinerImage[0]
             carabinerFrontURL = nil
         }
-
+        
         // 씬 캡처
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
@@ -398,7 +394,7 @@ extension BundleAddKeyringView {
         } else {
             print("❌ [BundleAddKeyring] 캡처 실패")
         }
-
+        
         // 캡처 완료 후 다음 화면으로 이동
         await MainActor.run {
             isCapturing = false
@@ -413,7 +409,7 @@ extension BundleAddKeyringView {
     /// 사용자 데이터 가져오기
     private func fetchData() {
         let uid = UserManager.shared.userUID
-
+        
         viewModel.fetchUserCollectionData(uid: uid) { success in
             if success {
                 viewModel.fetchUserKeyrings(uid: uid) { _ in }
@@ -428,12 +424,12 @@ extension BundleAddKeyringView {
     /// 키링 데이터 리스트 생성
     private func createKeyringDataList(carabiner: Carabiner) -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-
+        
         // 추가된 순서대로 처리
         for index in keyringOrder {
             guard let keyring = selectedKeyrings[index] else { continue }
             let soundId = keyring.soundId
-
+            
             // 커스텀 사운드 URL 처리
             let customSoundURL: URL? = {
                 if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
@@ -441,15 +437,15 @@ extension BundleAddKeyringView {
                 }
                 return nil
             }()
-
+            
             let particleId = keyring.particleId
-
+            
             // 절대 좌표 사용 (이미 절대 좌표로 저장됨)
             let position = CGPoint(
                 x: carabiner.keyringXPosition[index],
                 y: carabiner.keyringYPosition[index]
             )
-
+            
             let data = MultiKeyringScene.KeyringData(
                 index: index,
                 position: position,
@@ -461,7 +457,7 @@ extension BundleAddKeyringView {
             )
             dataList.append(data)
         }
-
+        
         return dataList
     }
 }
