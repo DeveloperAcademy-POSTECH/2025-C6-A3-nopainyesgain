@@ -180,7 +180,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 }
                 
                 if showChangeMainBundleAlert {
-                    Color.black40
+                    Color.black20
                         .ignoresSafeArea()
                     changeMainBundleAlert
                         .padding(.horizontal, 51)
@@ -269,6 +269,9 @@ extension BundleDetailView {
             .frame(width: 44, height: 44)
             .glassEffect(.regular, in: .circle)
         } center: {
+            if let bundle = viewModel.selectedBundle {
+                Text("\(bundle.name)")
+            }
         } trailing: {
             // Trailing (오른쪽)
             MenuToolbarButton {
@@ -377,7 +380,7 @@ extension BundleDetailView {
                         .typography(.suit17SB)
                         .foregroundStyle(.black100)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13.5)
+                        .padding(.vertical, 6)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.black10)
@@ -390,7 +393,7 @@ extension BundleDetailView {
                         .typography(.suit17SB)
                         .foregroundStyle(.white100)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 13.5)
+                        .padding(.vertical, 6)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.main500)
@@ -398,7 +401,8 @@ extension BundleDetailView {
         }
         .padding(14)
         .glassEffect(in: .rect(cornerRadius: 34))
-        .frame(minWidth: 200)
+        .frame(maxWidth: .infinity)
+        .position(y: screenHeight/2)
     }
 }
 
