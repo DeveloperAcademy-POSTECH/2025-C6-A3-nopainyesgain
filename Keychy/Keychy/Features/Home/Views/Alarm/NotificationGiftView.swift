@@ -7,17 +7,21 @@
 
 import SwiftUI
 import FirebaseFirestore
+import SpriteKit
 
 struct NotificationGiftView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
+    @State var viewModel: CollectionViewModel
     let postOfficeId: String
 
     @State private var keyringId: String = ""
     @State private var keyringName: String = ""
     @State private var recipientNickname: String = ""
+    @State private var authorName: String = ""
     @State private var completedDate: Date = Date()
     @State private var isLoading: Bool = true
     @State private var loadError: String?
+    @State private var keyring: Keyring?
 
     private let db = Firestore.firestore()
 
@@ -56,18 +60,9 @@ struct NotificationGiftView: View {
         VStack(spacing: 24) {
             Spacer()
 
-            // TODO: 포장된 키링 뷰가 여기 나오면 돼요 리엘
-            // keyringId << 변수를 선언해두어서 해당 변수로 포장된 키링 가져오면 될듯!
-            Rectangle()
-                .fill(.gray100)
-                .frame(width: 200, height: 280)
-                .cornerRadius(12)
-                .overlay(
-                    Text("포장된 키링 뷰\n(구현 예정)\nkeyringId: \(keyringId)")
-                        .typography(.suit13M)
-                        .foregroundStyle(.gray400)
-                        .multilineTextAlignment(.center)
-                )
+            if let keyring = keyring {
+                keyringImage(keyring: keyring)
+            }
 
             // 전달 정보
             VStack(spacing: 4) {
@@ -121,30 +116,100 @@ struct NotificationGiftView: View {
             self.completedDate = endedTimestamp.dateValue()
             self.keyringId = keyringId
 
-            // 2. Keyring 조회
-            db.collection("Keyring").document(keyringId).getDocument { snapshot, error in
-                guard let keyringData = snapshot?.data(),
-                      let name = keyringData["name"] as? String else {
+            viewModel.fetchKeyringById(keyringId: keyringId) { fetchedKeyring in
+                guard let keyring = fetchedKeyring else {
                     self.loadError = "키링 정보를 찾을 수 없습니다"
                     self.isLoading = false
                     return
                 }
 
-                self.keyringName = name
+                self.keyring = keyring
+                self.keyringName = keyring.name
 
-                // 3. User 조회 (수신자 닉네임)
-                db.collection("User").document(receiverId).getDocument { snapshot, error in
-                    guard let userData = snapshot?.data(),
-                          let nickname = userData["nickname"] as? String else {
-                        self.loadError = "사용자 정보를 찾을 수 없습니다"
-                        self.isLoading = false
-                        return
-                    }
+                // 제작자 이름 로드
+                viewModel.fetchUserName(userId: keyring.authorId) { name in
+                    self.authorName = name
+                }
 
+                // 수신자 닉네임 로드
+                viewModel.fetchUserName(userId: receiverId) { nickname in
                     self.recipientNickname = nickname
                     self.isLoading = false
                 }
             }
         }
+    }
+    
+    // MARK: - 수신된 키링 이미지
+    private func keyringImage(keyring: Keyring) -> some View {
+        ZStack(alignment: .bottom) {
+            ZStack {
+                Image("PackageBG")
+                    .resizable()
+                    .frame(width: 280, height: 347)
+                    .offset(y: -24)
+                
+                SpriteView(
+                    scene: createMiniScene(keyring: keyring),
+                    options: [.allowsTransparency]
+                )
+                .frame(width: 195, height: 300)
+                .rotationEffect(.degrees(10))
+                .offset(y: -8)
+            }
+            
+            VStack(spacing: 0) {
+                Image("PackageFG_T")
+                    .resizable()
+                    .frame(width: 304, height: 113)
+                
+                Image("PackageFG_B")
+                    .resizable()
+                    .frame(width: 304, height: 389)
+                    .blendMode(.darken)
+                    .offset(y: -12)
+            }
+            .frame(width: 304, height: 490)
+            .overlay(alignment: .topLeading) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(keyring.name)
+                        .typography(.notosans20B)
+                        .foregroundColor(.white100)
+                    
+                    Text("@\(authorName)")
+                        .typography(.notosans12SB)
+                        .foregroundColor(.white100)
+                }
+                .padding(.leading, 23)
+                .padding(.top, 42)
+            }
+            
+
+
+        }
+    }
+    
+    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
+        let ringType = RingType.fromID(keyring.selectedRing)
+        let chainType = ChainType.fromID(keyring.selectedChain)
+        
+        let scene = KeyringCellScene(
+            ringType: ringType,
+            chainType: chainType,
+            bodyImage: keyring.bodyImage,
+            targetSize: CGSize(width: 304, height: 490),
+            customBackgroundColor: .clear,
+            zoomScale: 2.1,
+            hookOffsetY: keyring.hookOffsetY,
+            onLoadingComplete: {
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.isLoading = false
+                    }
+                }
+            }
+        )
+        scene.scaleMode = .aspectFill
+        return scene
     }
 }
