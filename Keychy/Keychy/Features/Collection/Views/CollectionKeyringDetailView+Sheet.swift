@@ -141,7 +141,7 @@ extension CollectionKeyringDetailView {
     
     private var memoSection: some View {
         ZStack {
-            MemoView(memo: keyring.memo ?? "")
+            MemoView(memo: keyring.memo ?? "", sheetDetent: $sheetDetent)
         }
         .padding(.top, 15)
         
@@ -150,10 +150,13 @@ extension CollectionKeyringDetailView {
     private struct MemoView: View {
         let memo: String
         @State private var textHeight: CGFloat = 0
+        @State private var scrollOffset: CGFloat = 0
+        @Binding var sheetDetent: PresentationDetent
         
         private let minHeight: CGFloat = 60 // 최소 높이
         private let maxHeight: CGFloat = 420  // 최대 높이
         private let lineHeight: CGFloat = 25
+        private let scrollThreshold: CGFloat = 100 // 100포인트 이상 스크롤해야 시트 확대
         
         private var needsScroll: Bool {
             textHeight > maxHeight
@@ -167,7 +170,7 @@ extension CollectionKeyringDetailView {
         var body: some View {
             Group {
                 if needsScroll {
-                    // 16줄 초과일 때 스크롤 가능
+                    // 스크롤 가능
                     ScrollView {
                         Text(memo.byCharWrapping)
                             .typography(.notosans16R25)
@@ -182,6 +185,22 @@ extension CollectionKeyringDetailView {
                             )
                     }
                     .scrollIndicators(.hidden)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                let newOffset = value.translation.height
+                                
+                                // 아래로 스크롤 (음수) && 임계값 초과 && 시트가 최대 높이가 아닐 때
+                                if newOffset < -scrollThreshold && sheetDetent != .height(758) {
+                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                                        sheetDetent = .height(758)
+                                    }
+                                }
+                            }
+                            .onEnded { _ in
+                                scrollOffset = 0  // 제스처 종료 시 리셋
+                            }
+                    )
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .frame(height: displayHeight)
@@ -190,7 +209,7 @@ extension CollectionKeyringDetailView {
                             .stroke(.gray100, lineWidth: 1)
                     )
                 } else {
-                    // 16줄 이하일 때 스크롤 없음
+                    // 스크롤 없음
                     Text(memo.byCharWrapping)
                         .typography(.notosans16R25)
                         .foregroundColor(.black100)
