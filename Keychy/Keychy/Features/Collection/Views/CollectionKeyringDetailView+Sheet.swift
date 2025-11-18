@@ -14,7 +14,7 @@ extension CollectionKeyringDetailView {
             ScrollView {
                 VStack(spacing: 0) {
                     topSection
-                        .padding(.top, sheetDetent == .height(395) ? 10 : 10)
+                        .padding(.top, sheetDetent == .fraction(0.48) ? 10 : 10)
                         .padding(.bottom, sheetDetent == .height(76) ? 14 : 0)
                         .animation(.easeInOut(duration: 0.35), value: sheetDetent)
                     
@@ -191,9 +191,9 @@ extension CollectionKeyringDetailView {
                                 let newOffset = value.translation.height
                                 
                                 // 아래로 스크롤 (음수) && 임계값 초과 && 시트가 최대 높이가 아닐 때
-                                if newOffset < -scrollThreshold && sheetDetent != .height(758) {
+                                if newOffset < -scrollThreshold && sheetDetent != .fraction(0.93) {
                                     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-                                        sheetDetent = .height(758)
+                                        sheetDetent = .fraction(0.93)
                                     }
                                 }
                             }

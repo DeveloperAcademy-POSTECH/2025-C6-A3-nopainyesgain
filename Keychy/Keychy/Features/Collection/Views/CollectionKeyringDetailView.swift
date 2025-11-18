@@ -92,9 +92,9 @@ struct CollectionKeyringDetailView: View {
         .interactiveDismissDisabled(true)
         .sheet(isPresented: $isSheetPresented) {
             infoSheet
-                .presentationDetents([.height(76), .height(395), .height(758)], selection: $sheetDetent)
+                .presentationDetents([.height(76), .fraction(0.48), .fraction(0.93)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
-                .presentationBackgroundInteraction(.enabled(upThrough: .height(395)))
+                .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.48)))
                 .interactiveDismissDisabled()
         }
         
