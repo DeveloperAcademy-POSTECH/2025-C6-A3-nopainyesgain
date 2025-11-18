@@ -27,10 +27,11 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             VStack {
                 bundleGrid()
             }
+            .padding(.top, 100)
+            .adaptiveTopPadding()
             
             customNavigationBar
         }
-        .adaptiveTopPadding()
         .ignoresSafeArea()
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .tabBar)
