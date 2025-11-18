@@ -30,6 +30,7 @@ struct SelectCarabinerGridItem: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
+                .padding(3.55)
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                 .background(RoundedRectangle(cornerRadius: 10).fill(.white100))
                 
