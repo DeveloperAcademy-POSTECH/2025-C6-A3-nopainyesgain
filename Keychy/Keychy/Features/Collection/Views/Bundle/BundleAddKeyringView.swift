@@ -39,35 +39,32 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             // 배경 + 카라비너 + 키링 씬
-            if let carabiner = viewModel.selectedCarabiner,
-               let background = viewModel.selectedBackground {
-                keyringEditSceneView(background: background, carabiner: carabiner)
+            ZStack(alignment: .top) {
+                if let carabiner = viewModel.selectedCarabiner,
+                   let background = viewModel.selectedBackground {
+                    keyringEditSceneView(background: background, carabiner: carabiner)
+                }
+                customNavigationBar
             }
+            .blur(radius: (isSceneReady && !showSelectKeyringSheet && !isCapturing) ? 0 : 10)
+            
             
             // Dim 오버레이 (키링 시트가 열릴 때)
-            if showSelectKeyringSheet || isCapturing {
+            if !isSceneReady || showSelectKeyringSheet || isCapturing {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(1)
-            }
-            
-            // 키링 선택 시트
-            if showSelectKeyringSheet {
-                keyringSelectionSheet()
-            }
-            
-            // 캡처 중 오버레이
-            if isCapturing {
-                capturingOverlay
-            }
-            
-            if !isSceneReady {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(100)
                 
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                // 키링 선택 시트
+                keyringSelectionSheet()
+                    .opacity(showSelectKeyringSheet ? 1 : 0)
+                
+                LoadingAlert(type: .longWithKeychy, message: "뭉치 만드는 중...")
+                    .opacity(isCapturing ? 1 : 0)
+                
+                LoadingAlert(type: .longWithKeychy, message: "만들기 불러오는 중...")
                     .zIndex(101)
+                    .opacity(isSceneReady ? 0 : 1)
             }
         }
         .ignoresSafeArea()
@@ -78,15 +75,30 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            backButton
-            nextButton
+    }
+}
+
+// MARK: - Toolbar
+extension BundleAddKeyringView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            
+        } trailing: {
+            NextToolbarButton {
+                Task {
+                    await captureAndSaveScene()
+                }
+            }
+            .disabled(isCapturing)
         }
     }
 }
 
 // MARK: - View Components
-
 extension BundleAddKeyringView {
     /// 키링 편집 씬 뷰
     private func keyringEditSceneView(background: Background, carabiner: Carabiner) -> some View {
@@ -245,10 +257,11 @@ extension BundleAddKeyringView {
                     Circle()
                         .stroke(.white100)
                         .fill(isSelectedHere ? .main500 : .clear)
-                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 0)
+                        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
                         .frame(width: 26.14, height: 26.14)
                     Image(.recCheck)
                         .foregroundStyle(.white)
+                        .opacity(isSelectedHere ? 1 : 0)
                 }
                 .padding(.bottom, 35.86)
                 .padding(.trailing, 8.86)
@@ -279,47 +292,12 @@ extension BundleAddKeyringView {
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
         .opacity(1.0) // 강제로 투명도 1.0 유지
     }
-    
-    /// 캡처 중 오버레이
-    private var capturingOverlay: some View {
-        ZStack {
-            Color.black20
-                .ignoresSafeArea()
-            LoadingAlert(type: .longWithKeychy, message: "뭉치 생성 중...")
-        }
-    }
+
     
     /// 키링 데이터 리스트 업데이트
     private func updateKeyringDataList() {
         // 씬을 강제로 리프레시하여 키링 변경사항 즉시 반영
         sceneRefreshId = UUID()
-    }
-}
-
-// MARK: - Toolbar
-
-extension BundleAddKeyringView {
-    /// 뒤로가기 버튼
-    private var backButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                router.pop()
-            } label: {
-                Image(.backIcon)
-            }
-        }
-    }
-    
-    /// 다음 버튼
-    private var nextButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button("다음") {
-                Task {
-                    await captureAndSaveScene()
-                }
-            }
-            .disabled(isCapturing)
-        }
     }
 }
 
