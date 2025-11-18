@@ -154,9 +154,13 @@ extension CollectionKeyringDetailView {
         @Binding var sheetDetent: PresentationDetent
         
         private let minHeight: CGFloat = 60 // 최소 높이
-        private let maxHeight: CGFloat = 420  // 최대 높이
         private let lineHeight: CGFloat = 25
         private let scrollThreshold: CGFloat = 100 // 100포인트 이상 스크롤해야 시트 확대
+        
+        // 기기별 최대 높이 설정
+        private var maxHeight: CGFloat {
+            getBottomPadding(0) == 0 ? 340 : 420
+        }
         
         private var needsScroll: Bool {
             textHeight > maxHeight
@@ -164,7 +168,7 @@ extension CollectionKeyringDetailView {
         
         private var displayHeight: CGFloat {
             // 최소 60, 최대 420, 그 사이는 실제 텍스트 높이에 맞춤
-            return max(60, min(textHeight + 24, 420))
+            return max(60, min(textHeight + 24, maxHeight))
         }
         
         var body: some View {
