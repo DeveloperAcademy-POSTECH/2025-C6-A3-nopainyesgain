@@ -122,6 +122,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     var router: NavigationRouter<WorkshopRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
 
+    @State private var isParticleReady = false
     @State private var effectManager = EffectManager.shared
     @Environment(UserManager.self) private var userManager
 
@@ -144,26 +145,44 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     /// 썸네일 이미지 + 가격 오버레이
     private var thumbnailImage: some View {
         ZStack(alignment: .top) {
-            LazyImage(url: URL(string: item.thumbnailURL)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
-                        .padding(.horizontal, item is Carabiner ? 5 : 0)
-                        .frame(width: twoGridCellWidth, height: itemHeight)
-                        .clipped()
-                } else if state.isLoading {
-                    Color.gray50
-                        .overlay {
-                            LoadingAlert(type: .short, message: nil)
-                                .scaleEffect(0.5)
-                        }
-                } else {
-                    Color.gray50
-                        .overlay {
-                            Image(systemName: "photo")
-                                .foregroundStyle(.gray300)
-                        }
+            // Particle일 경우 Lottie 애니메이션, Sound는 이미지
+            if let particle = item as? Particle {
+                if let particleId = item.id {
+                    if isParticleReady {
+                        LottieView(name: particleId, loopMode: .loop, speed: 1.0)
+                            .frame(width: twoGridCellWidth, height: twoGridCellHeight)
+                            .clipped()
+                    } else {
+                        LoadingAlert(type: .short, message: nil)
+                            .scaleEffect(0.5)
+                            .task {
+                                await ensureParticleReady(particle)
+                            }
+                    }
+                }
+            } else {
+                // Sound, Background, Carabiner 등은 기존처럼 이미지로 처리
+                LazyImage(url: URL(string: item.thumbnailURL)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
+                            .padding(.horizontal, item is Carabiner ? 5 : 0)
+                            .frame(width: twoGridCellWidth, height: itemHeight)
+                            .clipped()
+                    } else if state.isLoading {
+                        Color.gray50
+                            .overlay {
+                                LoadingAlert(type: .short, message: nil)
+                                    .scaleEffect(0.5)
+                            }
+                    } else {
+                        Color.gray50
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.gray300)
+                            }
+                    }
                 }
             }
 
@@ -211,6 +230,21 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         } else if let sound = item as? Sound {
             router.push(.workshopPreview(item: AnyHashable(sound)))
         }
+    }
+    
+    private func ensureParticleReady(_ particle: Particle) async {
+        guard let particleId = particle.id else { return }
+        
+        // 이미 캐시 또는 Bundle에 있으면 바로 준비 완료
+        if effectManager.isInCache(particleId: particleId) || effectManager.isInBundle(particleId: particleId) {
+            isParticleReady = true
+            return
+        }
+
+        // 다운로드 필요
+        await effectManager.downloadParticle(particle, userManager: userManager)
+        
+        isParticleReady = true
     }
 }
 
