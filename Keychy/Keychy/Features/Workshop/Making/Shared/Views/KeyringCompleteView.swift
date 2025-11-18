@@ -37,10 +37,13 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                 
                 VStack(spacing: 0) {
                     Spacer()
-                    // 키링 씬 (화면 높이의 60%로 제한)
+                    // 키링 씬
                     keyringScene
-                        .frame(height: geometry.size.height * 0.6)
+                        .frame(height: geometry.size.height * 0.72)
                         .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
+                        .scaleEffect(
+                            getBottomPadding(0) == 0 ? 0.8 : 1.0
+                        )
 
                     // 키링 정보
                     keyringInfo
@@ -48,10 +51,10 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 
                     // 이미지 저장 버튼
                     saveButton
-                        .padding(.top, 20)
+                        .padding(.top, 10)
                         .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
                         .opacity(isCapturingImage ? 0 : 1)
-                        .adaptiveBottomPadding()
+                        //.adaptiveBottomPadding()
                     
                     Spacer()
                 }
@@ -125,17 +128,17 @@ extension KeyringCompleteView {
     private var keyringInfo: some View {
         VStack(spacing: 0) {
             Text(viewModel.nameText)
-                .typography(.notosans24M)
+                .typography(getBottomPadding(0) == 0 ? .malang24B : .malang26B)
                 .foregroundStyle(.black100)
             
             Text(formattedDate(date: viewModel.createdAt))
                 .typography(.suit14M)
                 .foregroundStyle(.black100)
-                .padding(.bottom, 15)
+                .padding(.bottom, 10)
             
             if let nickname = userManager.currentUser?.nickname {
                 Text("@\(nickname)")
-                    .typography(.notosans15M)
+                    .typography(getBottomPadding(0) == 0 ? .notosans12R : .notosans14R)
                     .foregroundStyle(.black100)
                     .padding(.vertical, 1)
             }
@@ -160,7 +163,10 @@ extension KeyringCompleteView {
             }) {
                 Image("imageDownload")
             }
-            .frame(width: 65, height: 65)
+            .frame(
+                width: getBottomPadding(0) == 0 ? 55 : 65,
+                height: getBottomPadding(0) == 0 ? 55 : 65
+            )
             .buttonStyle(.plain)
             .glassEffect(.regular.interactive(), in: .circle)
             
@@ -172,11 +178,11 @@ extension KeyringCompleteView {
 }
 
 
-//// MARK: - 프리뷰
-//#Preview("iPhone 16 Pro") {
-//    KeyringCompleteView(
-//        router: NavigationRouter<WorkshopRoute>(),
-//        viewModel: AcrylicPhotoVM(),
-//        navigationTitle: "키링 완성"
-//    )
-//}
+// MARK: - 프리뷰
+#Preview("iPhone 16 Pro") {
+    KeyringCompleteView(
+        router: NavigationRouter<WorkshopRoute>(),
+        viewModel: AcrylicPhotoVM(),
+        navigationTitle: "키링 완성"
+    )
+}

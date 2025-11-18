@@ -21,7 +21,7 @@ struct ChangeNameView: View {
 
     // 성공 Alert
     @State private var showSuccessAlert = false
-    @State private var successAlertScale: CGFloat = 0.3
+    @State private var isUpdating = false
 
     private let maxNicknameLength = 9
     
@@ -119,14 +119,19 @@ struct ChangeNameView: View {
             .toolbar(.hidden, for: .tabBar)
             .dismissKeyboardOnTap()
             .ignoresSafeArea(.keyboard)
-            
+
+            // 업데이트 중 로딩
+            if isUpdating {
+                LoadingAlert(type: .short, message: nil)
+            }
+
             // 성공 Alert
             if showSuccessAlert {
-                CheckmarkAlert(
-                    checkmarkScale: successAlertScale,
-                    text: "닉네임이 변경되었습니다."
+                KeychyAlert(
+                    type: .checkmark,
+                    message: "닉네임이 변경되었습니다.",
+                    isPresented: $showSuccessAlert
                 )
-                .padding(.bottom, 30)
             }
         }
     }
@@ -255,30 +260,27 @@ struct ChangeNameView: View {
             return
         }
 
+        // 로딩 시작
+        isUpdating = true
+
         // Firebase 업데이트
         let db = Firestore.firestore()
         db.collection("User").document(currentUser.id)
             .updateData(["nickname": nickname]) { error in
-                if error == nil {
-                    DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    // 로딩 종료
+                    isUpdating = false
+
+                    if error == nil {
                         // 성공 Alert 표시
                         showSuccessAlert = true
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                            successAlertScale = 1.0
-                        }
 
                         // UserManager 업데이트
                         userManager.loadUserInfo(uid: currentUser.id) { _ in }
 
-                        // 1.5초 후 Alert 닫고 뒤로가기
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                successAlertScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showSuccessAlert = false
-                                router.pop()
-                            }
+                        // 2초 후 뒤로가기 (KeychyAlert duration이 2초)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+                            router.pop()
                         }
                     }
                 }
