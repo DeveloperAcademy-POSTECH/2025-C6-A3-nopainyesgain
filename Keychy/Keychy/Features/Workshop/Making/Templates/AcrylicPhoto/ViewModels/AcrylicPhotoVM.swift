@@ -255,4 +255,10 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
         if !isFree && !isDownloaded { return 4 }
         return 99
     }
+
+    // MARK: - Customizing Modes
+    /// 커스터마이징 모드 (아크릴 포토는 이펙트만 지원)
+    var availableCustomizingModes: [CustomizingMode] {
+        [.effect]
+    }
 }

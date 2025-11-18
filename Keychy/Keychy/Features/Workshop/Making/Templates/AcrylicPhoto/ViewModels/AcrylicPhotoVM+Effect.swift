@@ -3,6 +3,7 @@
 //  KeytschPrototype
 //
 //  Created by rundo on 10/22/25.
+//  사운드, 파티클 관련 로직
 //
 
 import Combine
@@ -10,10 +11,7 @@ import Foundation
 
 extension AcrylicPhotoVM {
 
-    /// 커스터마이징 모드 (아크릴 포토는 이펙트만 지원)
-    var availableCustomizingModes: [CustomizingMode] {
-        [.effect]
-    }
+    // MARK: - Sound & Particle Update
 
     /// 사운드 업데이트
     func updateSound(_ sound: Sound?) {
