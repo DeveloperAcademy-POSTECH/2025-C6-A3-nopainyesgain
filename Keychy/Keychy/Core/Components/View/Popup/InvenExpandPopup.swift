@@ -24,9 +24,9 @@ struct InvenExpandPopup: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
                 
-                Image("copyVoucher")
+                Image("expandIcon")
                     .resizable()
-                    .frame(width: 75, height: 45)
+                    .frame(width: 111, height: 70)
                     .padding(.vertical, 8)
 
                 Text("보관함을 확장할까요? (+10)")
@@ -44,7 +44,7 @@ struct InvenExpandPopup: View {
                     .typography(.nanum16EB)
                     .foregroundColor(.main500)
             }
-            .padding(.bottom, 4)
+            .padding(.bottom, 6)
 
             // 버튼
             HStack(spacing: 8) {

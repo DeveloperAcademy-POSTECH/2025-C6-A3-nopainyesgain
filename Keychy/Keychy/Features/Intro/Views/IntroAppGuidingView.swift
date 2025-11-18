@@ -118,6 +118,6 @@ extension IntroAppGuidingView {
         .buttonStyle(.glassProminent)
         .tint(.main500)
         .foregroundStyle(.white100)
+        .adaptiveBottomPadding()
     }
 }
-
