@@ -241,7 +241,3 @@ struct NotificationGiftView: View {
         return 1.0
     }
 }
-
-#Preview {
-    NotificationGiftView(router: NavigationRouter<HomeRoute>(), viewModel: CollectionViewModel(), postOfficeId: "QaLswDgjUUIsMnvYXEQK")
-}
