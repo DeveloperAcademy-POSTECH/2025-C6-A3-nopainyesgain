@@ -171,13 +171,13 @@ extension IntroView {
             .padding(.trailing, 15)
 
             Text(text)
-                .typography(.suit15M25)
+                .typography(getBottomPadding(0) == 0 ? .suit13M : .suit15M25)
                 .foregroundStyle(.gray700)
                 .padding(.vertical, 4.5)
                 .padding(.trailing, 5)
 
             Text(initial ? "(필수)" : "(선택)")
-                .typography(.suit15M25)
+                .typography(getBottomPadding(0) == 0 ? .suit13M : .suit15M25)
                 .foregroundStyle(initial ? .main500 : .gray700)
 
             if initial {
@@ -230,5 +230,3 @@ extension IntroView {
         isAllChecked = isTermsChecked && isMarketingChecked
     }
 }
-
-

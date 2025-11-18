@@ -157,3 +157,7 @@ extension ProfileSetupView {
         .animation(.easeInOut(duration: 0.2), value: isNicknameValid)
     }
 }
+
+#Preview {
+    ProfileSetupView(viewModel: IntroViewModel())
+}

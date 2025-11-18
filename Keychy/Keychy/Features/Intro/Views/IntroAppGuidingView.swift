@@ -121,3 +121,6 @@ extension IntroAppGuidingView {
     }
 }
 
+#Preview {
+    IntroAppGuidingView(viewModel: IntroViewModel())
+}

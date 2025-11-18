@@ -219,3 +219,7 @@ extension ProfileSetupCompleteView {
         .scaleEffect(showNextButton ? 1 : 0.3)
     }
 }
+
+#Preview {
+    ProfileSetupCompleteView(viewModel: IntroViewModel())
+}
