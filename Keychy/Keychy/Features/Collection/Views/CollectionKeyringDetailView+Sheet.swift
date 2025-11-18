@@ -159,7 +159,7 @@ extension CollectionKeyringDetailView {
         
         // 기기별 최대 높이 설정
         private var maxHeight: CGFloat {
-            getBottomPadding(0) == 0 ? 340 : 420
+            getBottomPadding(0) == 0 ? 320 : 420
         }
         
         private var needsScroll: Bool {
