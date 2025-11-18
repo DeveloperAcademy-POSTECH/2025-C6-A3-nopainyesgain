@@ -331,16 +331,30 @@ extension KeyringEditView {
                         .allowsHitTesting(false)
                 }
                 
-                TextEditor(text: $editedMemo)
-                    .typography(.notosans16R25)
-                    .foregroundColor(.black100)
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
+                if canEdit {
+                    // 편집 가능
+                    TextEditor(text: $editedMemo)
+                        .typography(.notosans16R25)
+                        .foregroundColor(.black100)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.clear)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .scrollIndicators(.hidden)
+                        .focused($focusedField, equals: .memo)
+                } else {
+                    // 편집 불가 : 스크롤만 가능
+                    ScrollView {
+                        Text(editedMemo.byCharWrapping)
+                            .typography(.notosans16R25)
+                            .foregroundColor(.black100)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                    }
                     .scrollIndicators(.hidden)
-                    .focused($focusedField, equals: .memo)
-                    .disabled(!canEdit)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                }
             }
             .frame(height: 140)
             .background(
