@@ -23,9 +23,14 @@ struct BundleInventoryView<Route: BundleRoute>: View {
     ]
     
     var body: some View {
-        VStack {
-            bundleGrid()
+        ZStack(alignment: .top) {
+            VStack {
+                bundleGrid()
+            }
+            
+            customNavigationBar
         }
+        .ignoresSafeArea()
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
@@ -36,14 +41,6 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             if !isNavigatingDeeper {
                 viewModel.showTabBar()
             }
-        }
-        .toolbar {
-            backToolbarItem
-#if DEBUG
-            debugToolbarItem
-#endif
-            nextToolbarItem
-            
         }
         .padding(.top, 20)
         .navigationBarBackButtonHidden(true)
@@ -69,23 +66,21 @@ struct BundleInventoryView<Route: BundleRoute>: View {
 
 // MARK: - 툴바
 extension BundleInventoryView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
             BackToolbarButton {
                 router.pop()
             }
-        }
-    }
-    
-    private var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
+        } center : {
+            Text("뭉치함")
+        } trailing: {
             PlusToolbarButton {
                 isNavigatingDeeper = true
                 router.push(.bundleCreateView)
             }
         }
     }
-    
+    //TODO: 이거 런도한테 물어보구 지우기~~~
 #if DEBUG
     private var debugToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
