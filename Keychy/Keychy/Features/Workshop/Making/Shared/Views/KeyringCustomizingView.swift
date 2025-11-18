@@ -65,7 +65,6 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
 
                 // MARK: - 하단 영역 (모드별로 다른 콘텐츠)
                 currentBottomView
-                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
                     .frame(
                         maxWidth: .infinity,
                         maxHeight: geometry.size.height * 0.35,

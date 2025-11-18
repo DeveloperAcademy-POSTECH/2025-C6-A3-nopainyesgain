@@ -36,9 +36,15 @@ extension NeonSignVM {
     ) -> AnyView {
         switch mode {
         case .effect:
-            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+            return AnyView(
+                EffectSelectorView(viewModel: self, cartItems: cartItems)
+                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
+            )
         case .drawing:
-            return AnyView(DrawingToolsView(viewModel: self))
+            return AnyView(
+                DrawingToolsView(viewModel: self)
+                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
+            )
         }
     }
 
