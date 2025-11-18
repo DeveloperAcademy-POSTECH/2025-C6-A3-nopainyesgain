@@ -62,74 +62,73 @@ struct BundleEditView<Route: BundleRoute>: View {
     private let sheetHeightRatio: CGFloat = 0.5
     
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .bottom) {
-                // MultiKeyringScene 또는 키링 편집 뷰
-                if let bundle = viewModel.selectedBundle,
-                   let background = newSelectedBackground,
-                   let carabiner = newSelectedCarabiner {
-                    
-                    keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
-                    
-                } else {
-                    if let bg = newSelectedBackground {
-                        LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
+        ZStack(alignment: .bottom) {
+            // MultiKeyringScene 또는 키링 편집 뷰
+            if let bundle = viewModel.selectedBundle,
+               let background = newSelectedBackground,
+               let carabiner = newSelectedCarabiner {
+                
+                keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
+                
+            } else {
+                if let bg = newSelectedBackground {
+                    LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } else if state.isLoading {
+                            Color.black20
+                                .ignoresSafeArea()
+                        }
+                    }
+                }
+                if let cb = newSelectedCarabiner {
+                    VStack {
+                        LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
                                     .scaledToFit()
-                            } else if state.isLoading {
-                                Color.black20
-                                    .ignoresSafeArea()
                             }
                         }
-                    }
-                    if let cb = newSelectedCarabiner {
-                        VStack {
-                            LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
-                                if let image = state.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                }
-                            }
-                            Spacer()
-                        }
+                        Spacer()
                     }
                 }
-                
-                // navigationBar
-                customNavigationBar
-                
-                if !isSceneReady {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(100)
-                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                        .zIndex(101)
-                }
-                
-                // Dim 오버레이 (키링 시트가 열릴 때)
-                if showSelectKeyringSheet {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                        .zIndex(1)
-                }
-                
-                // 키링 선택 시트
-                if showSelectKeyringSheet {
-                    keyringSelectionSheet(geo: geo)
-                }
-                
-                // 배경/카라비너 시트들
-                sheetContent(geo: geo)
-                
-                // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
-                alertContent
-                    .position(x: screenWidth / 2, y: screenHeight / 2)
-                
             }
+            
+            // navigationBar
+            customNavigationBar
+            
+            if !isSceneReady {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            
+            // Dim 오버레이 (키링 시트가 열릴 때)
+            if showSelectKeyringSheet {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .zIndex(1)
+            }
+            
+            // 키링 선택 시트
+            if showSelectKeyringSheet {
+                keyringSelectionSheet()
+            }
+            
+            // 배경/카라비너 시트들
+            sheetContent()
+            
+            // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
+            alertContent
+                .position(x: screenWidth / 2, y: screenHeight / 2)
+            
         }
+        
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
         }
@@ -226,7 +225,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
     
     /// 키링 선택 시트
-    private func keyringSelectionSheet(geo: GeometryProxy) -> some View {
+    private func keyringSelectionSheet() -> some View {
         VStack {
             HStack {
                 Spacer()
@@ -259,12 +258,12 @@ struct BundleEditView<Route: BundleRoute>: View {
                 .padding(.bottom, 77)
                 .padding(.top, 62)
                 .frame(maxWidth: .infinity)
-                    
+                
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
                         ForEach(viewModel.keyring, id: \.self) { keyring in
-                            keyringCell(keyring: keyring, geo: geo)
+                            keyringCell(keyring: keyring)
                         }
                     }
                 }
@@ -273,7 +272,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
         .frame(maxWidth: .infinity)
-        .frame(height: geo.size.height * sheetHeightRatio)
+        .frame(height: screenHeight * sheetHeightRatio)
         .background(.white100)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 10)
@@ -283,13 +282,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
     
     /// 키링 셀 (체크 토글 + 시트 유지)
-    private func keyringCell(keyring: Keyring, geo: GeometryProxy) -> some View {
+    private func keyringCell(keyring: Keyring) -> some View {
         // 현재 선택된 위치에 이 키링이 선택되어 있는지
         let isSelectedHere: Bool = selectedKeyrings[selectedPosition]?.id == keyring.id
         // 다른 위치에 이미 선택된 키링인지 체크
         let isSelectedElsewhere: Bool = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
-        let widthSize = (geo.size.width - 60) / 3
-        let heightSize = widthSize * 4/3
         
         return Button {
             // 토글
@@ -312,7 +309,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 10) {
                     CollectionCellView(keyring: keyring)
-                        .frame(width: widthSize, height: heightSize)
+                        .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                         .cornerRadius(10)
                     
                     Text("\(keyring.name)")
@@ -394,7 +391,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
     
     /// 배경/카라비너 시트 컨텐츠
-    private func sheetContent(geo: GeometryProxy) -> some View {
+    private func sheetContent() -> some View {
         Group {
             // 배경 시트
             if showBackgroundSheet {
@@ -409,8 +406,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectBackgroundSheet(geo: geo),
-                        screenHeight: geo.size.height
+                        content: selectBackgroundSheet()
                     )
                 }
             }
@@ -428,8 +424,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectCarabinerSheet(geo: geo),
-                        screenHeight: geo.size.height
+                        content: selectCarabinerSheet()
                     )
                 }
             }
@@ -624,7 +619,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         guard let bundle = viewModel.selectedBundle else {
             return 
         }
-
+        
         let result = await viewModel.convertBundleToSelectedKeyrings(bundle: bundle)
         selectedKeyrings = result.0
         keyringOrder = result.1
@@ -833,7 +828,7 @@ extension BundleEditView {
 
 // MARK: - 시트 뷰
 extension BundleEditView {
-    private func selectBackgroundSheet(geo: GeometryProxy) -> some View {
+    private func selectBackgroundSheet() -> some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(viewModel.backgroundViewData) { bg in
                 SelectBackgroundGridItem(
@@ -856,7 +851,7 @@ extension BundleEditView {
         .padding(.vertical, 30)
     }
     
-    private func selectCarabinerSheet(geo: GeometryProxy) -> some View {
+    private func selectCarabinerSheet() -> some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(viewModel.carabinerViewData) { cb in
                 SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb)
@@ -932,10 +927,7 @@ extension BundleEditView {
     
     private func cartItemRow(name: String, type: String, price: Int) -> some View {
         HStack(spacing: 6) {
-            Image(.selected)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 22.5, height: 22.5)
+            Image(.selectedIcon)
             
             Text(name)
                 .typography(.suit16B)
