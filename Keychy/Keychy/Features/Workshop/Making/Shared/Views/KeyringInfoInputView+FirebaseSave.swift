@@ -48,17 +48,9 @@ extension KeyringInfoInputView {
 
     // MARK: - 키링 생성 헬퍼 메서드
     private func createKeyringWithData(uid: String, imageURL: String, soundId: String) {
-        let templateId: String
-        let hookOffsetY: CGFloat?
-
-        if let vm = self.viewModel as? AcrylicPhotoVM {
-            templateId = vm.template?.id ?? "AcrylicPhoto"
-            // 계산된 hookOffsetY 사용
-            hookOffsetY = vm.calculatedHookOffsetY
-        } else {
-            templateId = "AcrylicPhoto"
-            hookOffsetY = nil
-        }
+        // hookOffsetY는 0이 아니면 사용, 0이면 nil로 전달
+        let hookOffsetY: CGFloat? = viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil
+        let templateId = viewModel.templateId
 
         self.createKeyring(
             uid: uid,

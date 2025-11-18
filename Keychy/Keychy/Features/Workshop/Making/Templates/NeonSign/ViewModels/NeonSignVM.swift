@@ -87,6 +87,13 @@ class NeonSignVM: KeyringViewModelProtocol {
     // MARK: - Body Image (템플릿에 미리 정의된 이미지)
     var bodyImage: UIImage? = nil
     var originalBodyImage: UIImage? = nil  // 원본 이미지 (합성 전)
+    var hookOffsetY: CGFloat = 0.0
+
+    /// 템플릿 ID
+    var templateId: String {
+        template?.id ?? "NeonSign"
+    }
+
     var errorMessage: String?
 
     // MARK: - Drawing State (그리기 모드)

@@ -40,6 +40,12 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 키링 바디 이미지 (혹시나 특이한 템플릿이 있다면 안쓸수도 있어서 Optional)
     var bodyImage: UIImage? { get }
 
+    /// 키링 훅 오프셋 (기본값 0)
+    var hookOffsetY: CGFloat { get set }
+
+    /// 템플릿 ID
+    var templateId: String { get }
+
     /// 커스터마이징 모드 (템플릿마다 다름)
     var availableCustomizingModes: [CustomizingMode] { get }
 
@@ -119,12 +125,6 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
 // MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
 extension KeyringViewModelProtocol {
-    /// 기본값: hookOffsetY 사용 안함 (필요한 템플릿에서 override)
-    var calculatedHookOffsetY: CGFloat {
-        get { 0.0 }
-        set { }
-    }
-
     /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {
