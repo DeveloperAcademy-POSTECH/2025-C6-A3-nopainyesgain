@@ -2,7 +2,7 @@
 //  EffectSelectorView.swift
 //  Keychy
 //
-//  Effect 모드 하단 콘텐츠 뷰 (사운드 + 파티클 선택)
+//  KeyringCustomizingView에서 Effect 모드 하단 콘텐츠 뷰 (사운드 + 파티클 선택)
 //  - 모든 템플릿에서 공통으로 사용
 //
 

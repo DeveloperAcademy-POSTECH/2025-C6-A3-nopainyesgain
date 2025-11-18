@@ -306,6 +306,7 @@ extension KeyringCustomizingView {
             showPurchaseSheet: $showPurchaseSheet,
             cartItems: $cartItems
         )
+        .id(selectedMode)  // 모드 변경 시 뷰 재생성하여 애니메이션 트리거
         .transition(.opacity)
         .animation(.easeInOut(duration: 0.3), value: selectedMode)
     }
