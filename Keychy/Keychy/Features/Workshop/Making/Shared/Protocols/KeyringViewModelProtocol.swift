@@ -157,10 +157,7 @@ extension KeyringViewModelProtocol {
     ) -> AnyView {
         switch mode {
         case .effect:
-            return AnyView(
-                EffectSelectorView(viewModel: self, cartItems: cartItems)
-                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
-            )
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         case .drawing:
             // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
             return AnyView(EmptyView())

@@ -17,7 +17,7 @@ struct DrawingCanvasView: View {
         GeometryReader { geometry in
             ZStack {
                 // 배경
-                Color.gray100
+                Color.white100
 
                 // 네온사인 바디 이미지 (그리기 가능 영역)
                 if let bodyImage = viewModel.bodyImage {

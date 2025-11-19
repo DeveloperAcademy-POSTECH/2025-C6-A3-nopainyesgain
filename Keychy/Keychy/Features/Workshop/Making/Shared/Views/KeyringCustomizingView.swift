@@ -21,6 +21,9 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var isSceneReady = false
     @State private var loadingScale: CGFloat = 0.3
     @State private var showResetAlert = false
+    @State private var isInitialBottomViewAppear = true  // 첫 진입 여부 추적
+    @State private var bottomViewOpacity: Double = 0  // 하단 영역 opacity
+    @State private var bottomViewOffset: CGFloat = 30  // 하단 영역 offset
 
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -169,6 +172,9 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             purchaseSheet
         }
         .onChange(of: selectedMode) { oldMode, newMode in
+            // 첫 진입 이후 모드 전환 시 애니메이션 비활성화
+            isInitialBottomViewAppear = false
+
             // 모드 변경 시 템플릿별 처리
             viewModel.onModeChanged(from: oldMode, to: newMode)
         }
@@ -305,9 +311,31 @@ extension KeyringCustomizingView {
             showPurchaseSheet: $showPurchaseSheet,
             cartItems: $cartItems
         )
-        .id(selectedMode)  // 모드 변경 시 뷰 재생성하여 애니메이션 트리거
-        .transition(.opacity)
-        .animation(.easeInOut(duration: 0.3), value: selectedMode)
+        .opacity(bottomViewOpacity)
+        .offset(y: bottomViewOffset)
+        .onAppear {
+            if isInitialBottomViewAppear {
+                // 첫 진입 시에만 애니메이션
+                Task {
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 0.3초 딜레이
+                    withAnimation(.spring(response: 1.0, dampingFraction: 0.8)) {
+                        bottomViewOpacity = 1.0
+                        bottomViewOffset = 0
+                    }
+                }
+            } else {
+                // 모드 전환 시에는 즉시 표시
+                bottomViewOpacity = 1.0
+                bottomViewOffset = 0
+            }
+        }
+        .onChange(of: selectedMode) { _, _ in
+            if !isInitialBottomViewAppear {
+                // 모드 전환 시 상태 초기화 (애니메이션 없이)
+                bottomViewOpacity = 1.0
+                bottomViewOffset = 0
+            }
+        }
     }
 }
 
