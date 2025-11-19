@@ -122,6 +122,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 changeMainBundleAlert
                     .opacity(showChangeMainBundleAlert ? 1 : 0)
                     .padding(.horizontal, 51)
+                    .position(x: screenWidth/2, y: screenHeight/2)
                 
                 KeychyAlert(type: .checkmark, message: "대표 뭉치가 변경되었어요!", isPresented: $isMainBundleChange)
                     .zIndex(200)
