@@ -232,7 +232,7 @@ extension CollectionKeyringPackageView {
                         
                     // 상단 상태 바
                     packageStatusBar
-                        .padding(.top, isSmallScreen ? -70 : 70) // -70 너무 아닌거 같은데 암튼 됨...
+                        .padding(.top, isSmallScreen ? -70 : 90) // -70 너무 아닌거 같은데 암튼 됨...
                     
                     Spacer()
                         .frame(height: isSmallScreen ? 24 : 48)
