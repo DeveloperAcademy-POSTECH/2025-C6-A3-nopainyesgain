@@ -31,6 +31,7 @@ struct FramePreviewView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 214, height: 267)
+                                .clipped()  // frame 밖으로 나간 부분 잘라내기
                                 .padding(.bottom, 20)
                         } else {
                             // 사진 선택 플레이스홀더
