@@ -67,7 +67,6 @@ struct TemplatePreviewBody: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
-        .swipeBackGesture(enabled: true)
         .task {
             await fetchTemplate()
         }

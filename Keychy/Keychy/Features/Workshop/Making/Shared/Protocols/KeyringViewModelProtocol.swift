@@ -12,16 +12,19 @@ import Combine
 enum CustomizingMode: String, CaseIterable, Identifiable {
     case effect = "이펙트"
     case drawing = "그리기"
+    case frame = "프레임"
 
     var id: String { rawValue }
 
-    /// 버튼 이미지
-    var btnImage: String {
+    /// 버튼 이미지 (활성화/비활성화 상태에 따라 다른 이미지)
+    func btnImage(isSelected: Bool) -> String {
         switch self {
         case .effect:
-            return "interactionSelector"
+            return isSelected ? "effectMode_active" : "effectMode_inactive"
         case .drawing:
-            return "아직 없음"
+            return isSelected ? "drawing_active" : "drawing_inactive"
+        case .frame:
+            return isSelected ? "frameMode_active" : "frameMode_inactive"
         }
     }
 }
@@ -112,6 +115,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
         cartItems: Binding<[EffectItem]>
     ) -> AnyView
 
+    /// 모드에 따른 하단 뷰 높이 비율 제공 (기본값 0.35)
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat
+
     // MARK: - Reset Methods
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
@@ -128,6 +134,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
     /// 다음 화면으로 이동하기 전 호출 (템플릿별 처리 필요 시 구현)
     func beforeNavigateToNext()
+
+    // MARK: - Composition State
+    /// 합성 진행 중 여부 (프레임, 그리기 등)
+    var isComposing: Bool { get }
 }
 
 // MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
@@ -138,13 +148,16 @@ extension KeyringViewModelProtocol {
     /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
     func beforeNavigateToNext() {}
 
+    /// 기본 구현: 합성 중이 아님 (필요한 템플릿에서 override)
+    var isComposing: Bool { false }
+
     /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-        case .drawing:
-            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+        default:
+            // 기본적으로는 지원하지 않음 (각 템플릿에서 override)
             return AnyView(EmptyView())
         }
     }
@@ -158,9 +171,19 @@ extension KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-        case .drawing:
-            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+        default:
+            // 기본적으로는 지원하지 않음 (각 템플릿에서 override)
             return AnyView(EmptyView())
+        }
+    }
+
+    /// 기본 하단 뷰 높이 비율 (effect: 0.35, 나머지는 각 템플릿에서 override)
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
+        switch mode {
+        case .effect:
+            return 0.35
+        default:
+            return 0.35  // 기본값
         }
     }
 }

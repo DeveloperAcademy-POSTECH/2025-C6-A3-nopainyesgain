@@ -21,6 +21,10 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var isSceneReady = false
     @State private var loadingScale: CGFloat = 0.3
     @State private var showResetAlert = false
+    @State private var isInitialBottomViewAppear = true  // 첫 진입 여부 추적
+    @State private var bottomViewOpacity: Double = 0  // 하단 영역 opacity
+    @State private var bottomViewOffset: CGFloat = 30  // 하단 영역 offset
+    @State private var currentBottomViewHeightRatio: CGFloat = 0.35  // 현재 하단 뷰 높이 비율
 
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -43,15 +47,17 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                // 모드별 씬 뷰 (ViewModel에서 제공) - 전체 화면 고정
+                currentSceneView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.gray50.ignoresSafeArea())
+                    .offset(y: -60)
+                    .opacity(isSceneReady ? 1.0 : 0.0)
+
+                // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                 VStack(spacing: 0) {
                     Spacer()
 
-                    ZStack(alignment: .center) {
-                    // 모드별 씬 뷰 (ViewModel에서 제공)
-                    currentSceneView
-                        .opacity(isSceneReady ? 1.0 : 0.0)
-
-                    // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
                         ForEach(viewModel.availableCustomizingModes) { mode in
                             modeButton(for: mode)
@@ -60,20 +66,24 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     }
                     .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
                     .padding(18)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                    .padding(.bottom, geometry.size.height * currentBottomViewHeightRatio)
                 }
 
-                // MARK: - 하단 영역 (모드별로 다른 콘텐츠)
-                currentBottomView
-                    .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: geometry.size.height * 0.35,
-                        alignment: .topLeading)
+                // MARK: - 하단 영역 (모드별로 다른 콘텐츠) - bottom 고정
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    currentBottomView
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: geometry.size.height * currentBottomViewHeightRatio,
+                            alignment: .top)
+                }
             }
-            .background(.gray50)
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
-            .disabled(isLoadingResources || !isSceneReady)
+            .animation(.easeOut(duration: 0.3), value: isLoadingResources)
+            .animation(.easeOut(duration: 0.3), value: isSceneReady)
+            .disabled(isLoadingResources || !isSceneReady || viewModel.isComposing)
 
             // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
             if showPurchaseFailAlert {
@@ -84,6 +94,11 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
 
             // MARK: - 구매 중 로딩
             if showPurchaseProgress {
+                LoadingAlert(type: .short, message: nil)
+            }
+
+            // MARK: - 합성 중 로딩
+            if viewModel.isComposing {
                 LoadingAlert(type: .short, message: nil)
             }
 
@@ -131,7 +146,6 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseProgress)
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
                 .zIndex(0)
-            }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
@@ -150,17 +164,20 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             // 첫 번째 모드를 기본 선택
             if let firstMode = viewModel.availableCustomizingModes.first {
                 selectedMode = firstMode
+                currentBottomViewHeightRatio = viewModel.bottomViewHeightRatio(for: firstMode)
             }
 
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
 
-            // 사운드 + 파티클 병렬 프리로딩
+            // 사운드 + 파티클 병렬 프리로딩 + 최소 로딩 시간 보장
             async let soundsTask: () = preloadAllSoundEffects()
             async let particlesTask: () = preloadAllParticleEffects()
+            async let minimumLoadingDelay: () = { try? await Task.sleep(nanoseconds: 300_000_000) }() // 0.3초
 
             await soundsTask
             await particlesTask
+            await minimumLoadingDelay
 
             // 리소스 프리로딩 완료
             isLoadingResources = false
@@ -170,6 +187,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             purchaseSheet
         }
         .onChange(of: selectedMode) { oldMode, newMode in
+            // 첫 진입 이후 모드 전환 시 애니메이션 비활성화
+            isInitialBottomViewAppear = false
+
+            // 높이 비율 변경 (스프링 없이 부드러운 애니메이션)
+            withAnimation(.easeInOut(duration: 0.4)) {
+                currentBottomViewHeightRatio = viewModel.bottomViewHeightRatio(for: newMode)
+            }
+
             // 모드 변경 시 템플릿별 처리
             viewModel.onModeChanged(from: oldMode, to: newMode)
         }
@@ -306,8 +331,31 @@ extension KeyringCustomizingView {
             showPurchaseSheet: $showPurchaseSheet,
             cartItems: $cartItems
         )
-        .transition(.opacity)
-        .animation(.easeInOut(duration: 0.3), value: selectedMode)
+        .opacity(bottomViewOpacity)
+        .offset(y: bottomViewOffset)
+        .onAppear {
+            if isInitialBottomViewAppear {
+                // 첫 진입 시에만 애니메이션
+                Task {
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 0.3초 딜레이
+                    withAnimation(.spring(response: 1.0, dampingFraction: 0.8)) {
+                        bottomViewOpacity = 1.0
+                        bottomViewOffset = 0
+                    }
+                }
+            } else {
+                // 모드 전환 시에는 즉시 표시
+                bottomViewOpacity = 1.0
+                bottomViewOffset = 0
+            }
+        }
+        .onChange(of: selectedMode) { _, _ in
+            if !isInitialBottomViewAppear {
+                // 모드 전환 시 상태 초기화 (애니메이션 없이)
+                bottomViewOpacity = 1.0
+                bottomViewOffset = 0
+            }
+        }
     }
 }
 
@@ -325,8 +373,7 @@ extension KeyringCustomizingView {
                     .shadow(color: .black.opacity(0.25), radius: 3.83)
 
                 VStack(spacing: 0) {
-                    Image(mode.btnImage)
-                        .foregroundStyle(selectedMode == mode ? .white100 : .gray400)
+                    Image(mode.btnImage(isSelected: selectedMode == mode))
                     Text(mode.rawValue)
                         .typography(.suit9B)
                         .foregroundStyle(selectedMode == mode ? .white100 : .gray400)

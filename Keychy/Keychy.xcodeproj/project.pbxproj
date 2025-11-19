@@ -248,12 +248,20 @@
 		AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
 		C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* DataInitializer.swift */; };
+		C64EE7952ECD733300E8450F /* PolaroidVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64EE7942ECD733300E8450F /* PolaroidVM+Frame.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
 		C665DDEC2EAF064500CE4495 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C665DDEB2EAF064500CE4495 /* StoreKit.framework */; };
 		C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */; };
 		C67B753B2ECC9E6C00D6E3FA /* EffectSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */; };
 		C67B753E2ECCA32A00D6E3FA /* DrawingToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */; };
 		C67B753F2ECCA32A00D6E3FA /* DrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */; };
+		C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B754E2ECD373200D6E3FA /* NeonSignVM+Drawing.swift */; };
+		C67B75582ECD4C6F00D6E3FA /* PolaroidVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75502ECD4C6F00D6E3FA /* PolaroidVM.swift */; };
+		C67B75592ECD4C6F00D6E3FA /* PolaroidVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75512ECD4C6F00D6E3FA /* PolaroidVM+Effect.swift */; };
+		C67B755A2ECD4C6F00D6E3FA /* FrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75542ECD4C6F00D6E3FA /* FrameSelectorView.swift */; };
+		C67B755B2ECD4C6F00D6E3FA /* FramePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75532ECD4C6F00D6E3FA /* FramePreviewView.swift */; };
+		C67B755C2ECD4C6F00D6E3FA /* PolaroidPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75552ECD4C6F00D6E3FA /* PolaroidPreview.swift */; };
+		C67B755F2ECD526A00D6E3FA /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B755D2ECD526A00D6E3FA /* Frame.swift */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -565,12 +573,20 @@
 		AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameEditView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
 		C645AEA22EB1B8FC004BFE69 /* DataInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataInitializer.swift; sourceTree = "<group>"; };
+		C64EE7942ECD733300E8450F /* PolaroidVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PolaroidVM+Frame.swift"; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
 		C665DDEB2EAF064500CE4495 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C665DDEF2EAF08D000CE4495 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		C67B753A2ECC9E6C00D6E3FA /* EffectSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSelectorView.swift; sourceTree = "<group>"; };
 		C67B753C2ECCA32A00D6E3FA /* DrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvasView.swift; sourceTree = "<group>"; };
 		C67B753D2ECCA32A00D6E3FA /* DrawingToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingToolsView.swift; sourceTree = "<group>"; };
+		C67B754E2ECD373200D6E3FA /* NeonSignVM+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NeonSignVM+Drawing.swift"; sourceTree = "<group>"; };
+		C67B75502ECD4C6F00D6E3FA /* PolaroidVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidVM.swift; sourceTree = "<group>"; };
+		C67B75512ECD4C6F00D6E3FA /* PolaroidVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PolaroidVM+Effect.swift"; sourceTree = "<group>"; };
+		C67B75532ECD4C6F00D6E3FA /* FramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FramePreviewView.swift; sourceTree = "<group>"; };
+		C67B75542ECD4C6F00D6E3FA /* FrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSelectorView.swift; sourceTree = "<group>"; };
+		C67B75552ECD4C6F00D6E3FA /* PolaroidPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidPreview.swift; sourceTree = "<group>"; };
+		C67B755D2ECD526A00D6E3FA /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -1011,6 +1027,7 @@
 				4CEC61D92EAE08C00099ECEE /* KeyringBundle */,
 				4CEC61DD2EAE08C00099ECEE /* Interaction */,
 				4CEC61E32EAE08C00099ECEE /* Keyring */,
+				C67B75602ECD528900D6E3FA /* Template */,
 			);
 			path = CommonModels;
 			sourceTree = "<group>";
@@ -1399,6 +1416,7 @@
 		4CEC62662EAE08DF0099ECEE /* Templates */ = {
 			isa = PBXGroup;
 			children = (
+				C67B75572ECD4C6F00D6E3FA /* Polaroid */,
 				4CEC62652EAE08DF0099ECEE /* AcrylicPhoto */,
 				C6C4027F2EB26BFB006B58DF /* NeonSign */,
 			);
@@ -1543,6 +1561,43 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C67B75522ECD4C6F00D6E3FA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C64EE7942ECD733300E8450F /* PolaroidVM+Frame.swift */,
+				C67B75502ECD4C6F00D6E3FA /* PolaroidVM.swift */,
+				C67B75512ECD4C6F00D6E3FA /* PolaroidVM+Effect.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C67B75562ECD4C6F00D6E3FA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C67B75532ECD4C6F00D6E3FA /* FramePreviewView.swift */,
+				C67B75542ECD4C6F00D6E3FA /* FrameSelectorView.swift */,
+				C67B75552ECD4C6F00D6E3FA /* PolaroidPreview.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C67B75572ECD4C6F00D6E3FA /* Polaroid */ = {
+			isa = PBXGroup;
+			children = (
+				C67B75522ECD4C6F00D6E3FA /* ViewModels */,
+				C67B75562ECD4C6F00D6E3FA /* Views */,
+			);
+			path = Polaroid;
+			sourceTree = "<group>";
+		};
+		C67B75602ECD528900D6E3FA /* Template */ = {
+			isa = PBXGroup;
+			children = (
+				C67B755D2ECD526A00D6E3FA /* Frame.swift */,
+			);
+			path = Template;
+			sourceTree = "<group>";
+		};
 		C68931CD2EB7B94B00C5F083 /* FileManagers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1569,6 +1624,7 @@
 		C6B56F172EBF28170049F969 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				C67B754E2ECD373200D6E3FA /* NeonSignVM+Drawing.swift */,
 				C6B56F162EBF28170049F969 /* NeonSignVM.swift */,
 				C6B56F1B2EBF2A960049F969 /* NeonSignVM+Effect.swift */,
 			);
@@ -1791,6 +1847,11 @@
 				4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */,
 				386B17542ECCE8EC00CCCC23 /* CollectionViewModel+Distribution.swift in Sources */,
 				3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */,
+				C67B75582ECD4C6F00D6E3FA /* PolaroidVM.swift in Sources */,
+				C67B75592ECD4C6F00D6E3FA /* PolaroidVM+Effect.swift in Sources */,
+				C67B755A2ECD4C6F00D6E3FA /* FrameSelectorView.swift in Sources */,
+				C67B755B2ECD4C6F00D6E3FA /* FramePreviewView.swift in Sources */,
+				C67B755C2ECD4C6F00D6E3FA /* PolaroidPreview.swift in Sources */,
 				4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */,
 				4C77753E2EB1343600981C3E /* IntroViewModel.swift in Sources */,
 				385425C62EB3BD7C00A06C02 /* AcrylicPhotoGuiding.swift in Sources */,
@@ -1839,6 +1900,7 @@
 				4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */,
 				4C7775342EB0EF8800981C3E /* ItemDetailInfoSection.swift in Sources */,
 				4CC3D3992EC4C16B0009D376 /* ToolbarButtons.swift in Sources */,
+				C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
@@ -1888,6 +1950,7 @@
 				4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */,
 				4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */,
 				3822DDC42EBBE108003125BE /* CopyPopup.swift in Sources */,
+				C67B755F2ECD526A00D6E3FA /* Frame.swift in Sources */,
 				385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */,
 				4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */,
 				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,
@@ -1944,6 +2007,7 @@
 				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
 				38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */,
 				4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */,
+				C64EE7952ECD733300E8450F /* PolaroidVM+Frame.swift in Sources */,
 				4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */,
 				4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */,
 				AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */,

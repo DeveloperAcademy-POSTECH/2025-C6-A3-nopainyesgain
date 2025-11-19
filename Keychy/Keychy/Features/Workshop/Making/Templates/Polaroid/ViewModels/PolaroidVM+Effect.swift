@@ -1,15 +1,14 @@
 //
-//  AcrylicPhotoVM+Effect.swift
-//  KeytschPrototype
+//  PolaroidVM+Effect.swift
+//  Keychy
 //
-//  Created by rundo on 10/22/25.
 //  사운드, 파티클 관련 로직
 //
 
 import Combine
 import Foundation
 
-extension AcrylicPhotoVM {
+extension PolaroidVM {
 
     // MARK: - Sound & Particle Update
 
@@ -85,7 +84,7 @@ extension AcrylicPhotoVM {
         return EffectManager.shared.isInCache(particleId: particleId)
     }
 
-    // MARK: - Download (EffectManager 위임)
+    // MARK: - Download
 
     /// 사운드 다운로드
     func downloadSound(_ sound: Sound) async {
