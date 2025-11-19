@@ -79,73 +79,75 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                             maxHeight: geometry.size.height * currentBottomViewHeightRatio,
                             alignment: .top)
                 }
-            }
-            .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
-            .animation(.easeOut(duration: 0.3), value: isLoadingResources)
-            .animation(.easeOut(duration: 0.3), value: isSceneReady)
-            .disabled(isLoadingResources || !isSceneReady || viewModel.isComposing)
+                
+                // MARK: - 구매 중 로딩
+                if showPurchaseProgress {
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(10)
+                }
 
-            // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
-            if showPurchaseFailAlert {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                    .zIndex(1)
-            }
+                // MARK: - 합성 중 로딩
+                if viewModel.isComposing {
+                    LoadingAlert(type: .short, message: nil)
+                        .zIndex(10)
+                }
 
-            // MARK: - 구매 중 로딩
-            if showPurchaseProgress {
-                LoadingAlert(type: .short, message: nil)
-            }
+                // MARK: - Purchase Alerts
+                if showPurchaseSuccessAlert {
+                    PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
+                        .padding(.bottom, 60)
+                        .padding(.horizontal, 51)
+                        .zIndex(10)
+                }
 
-            // MARK: - 합성 중 로딩
-            if viewModel.isComposing {
-                LoadingAlert(type: .short, message: nil)
-            }
-
-            // MARK: - Purchase Alerts
-            if showPurchaseSuccessAlert {
-                PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
-                    .padding(.bottom, 60)
-                    .padding(.horizontal, 51)
-            }
-
-            if showPurchaseFailAlert {
-                PurchaseFailAlert(
-                    checkmarkScale: purchaseFailScale,
-                    onCancel: {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                            purchaseFailScale = 0.3
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            showPurchaseFailAlert = false
-                            // Alert 닫힌 후 시트 다시 열기
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                showPurchaseSheet = true
+                if showPurchaseFailAlert {
+                    PurchaseFailAlert(
+                        checkmarkScale: purchaseFailScale,
+                        onCancel: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseFailScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseFailAlert = false
+                                // Alert 닫힌 후 시트 다시 열기
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    showPurchaseSheet = true
+                                }
+                            }
+                        },
+                        onCharge: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                                purchaseFailScale = 0.3
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showPurchaseFailAlert = false
+                                // 충전 페이지로 이동
+                                router.push(.coinCharge)
                             }
                         }
-                    },
-                    onCharge: {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                            purchaseFailScale = 0.3
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            showPurchaseFailAlert = false
-                            // 충전 페이지로 이동
-                            router.push(.coinCharge)
-                        }
-                    }
-                )
-                .padding(.horizontal, 51)
-                .zIndex(2)
+                    )
+                    .padding(.horizontal, 51)
+                    .zIndex(10)
+                }
             }
+            .animation(.easeOut(duration: 0.3), value: isLoadingResources)
+            .animation(.easeOut(duration: 0.3), value: isSceneReady)
+
+//            // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
+//            if showPurchaseFailAlert {
+//                Color.black.opacity(0.4)
+//                    .ignoresSafeArea()
+//                    .zIndex(1)
+//            }
 
             // MARK: - 커스텀 네비게이션 바
             customNavigationBar
+                .disabled(isLoadingResources || !isSceneReady || viewModel.isComposing)
                 .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || isLoadingResources || !isSceneReady ? 15 : 0)
                 .opacity(showPurchaseProgress || showPurchaseSuccessAlert ? 0 : 1)
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseProgress)
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
-                .zIndex(0)
+                .zIndex(100)
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
