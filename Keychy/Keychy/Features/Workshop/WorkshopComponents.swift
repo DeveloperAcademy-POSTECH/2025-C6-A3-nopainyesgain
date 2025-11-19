@@ -150,7 +150,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 if let particleId = item.id {
                     if isParticleReady {
                         LottieView(name: particleId, loopMode: .loop, speed: 1.0)
-                            .frame(width: twoGridCellWidth, height: twoGridCellHeight)
+                            .frame(width: twoGridCellWidth, height: itemHeight)
                             .clipped()
                     } else {
                         LoadingAlert(type: .short, message: nil)
@@ -168,7 +168,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                             .resizable()
                             .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
                             .padding(.horizontal, item is Carabiner ? 5 : 0)
-                            .frame(width: twoGridCellWidth, height: itemHeight)
                             .clipped()
                     } else if state.isLoading {
                         Color.gray50
@@ -184,6 +183,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                             }
                     }
                 }
+                .frame(width: twoGridCellWidth, height: itemHeight)
             }
 
             // 가격 오버레이
@@ -196,7 +196,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 userManager: userManager
             )
         }
-        .frame(width: twoGridCellWidth, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
     }
@@ -343,55 +342,53 @@ struct PriceOverlay<Item: WorkshopItem>: View {
     let userManager: UserManager
 
     var body: some View {
-        VStack {
-            HStack(spacing: 0) {
-                if !isFree {
-                    HStack {
-                        Image(.paidIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 32)
-                    }
-                    .padding(.top, 7)
-                    .padding(.leading, 10)
+        ZStack {
+            // 유료 아이콘
+            VStack {
+                HStack {
+                    Image(.paidIcon)
+                    Spacer()
                 }
-
+                .padding(.top, 3)
+                .padding(.leading, 10)
                 Spacer()
-
-                if isOwned {
-                    VStack {
-                        Rectangle()
-                            .fill(.black60)
-                            .overlay(
-                                Text("보유")
-                                    .typography(.suit13M)
-                                    .foregroundStyle(.white100)
-                            )
-                            .cornerRadius(20)
-                            .frame(width: 43, height: 24)
-
-                        Spacer()
-                    }
-                    .padding(.top, 10)
-                    .padding(.trailing, 10)
-                }
             }
-            .frame(width:175, height: 43)
-
-            Spacer()
-
-            // 사운드일 때만 재생 버튼 표시
-            if item is Sound {
+            .opacity(isFree ? 0 : 1)
+            
+            // 보유 표시
+            VStack {
                 HStack {
                     Spacer()
-
+                    Text("보유")
+                        .typography(.suit13M)
+                        .foregroundStyle(.white100)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.black60)
+                        )
+                }
+                .padding(10)
+                Spacer()
+            }
+            .opacity(isOwned ? 1 : 0)
+        }
+        
+        // 사운드인 경우에만 재생 버튼 표시
+        if item is Sound {
+            VStack {
+                Spacer()
+                
+                HStack {
                     EffectButtonStyle(
                         item: item,
                         effectManager: effectManager,
                         userManager: userManager
                     )
+                    .padding(8)
+                    Spacer()
                 }
-                .padding(8)
             }
         }
     }
