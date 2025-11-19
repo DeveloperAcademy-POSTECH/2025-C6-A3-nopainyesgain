@@ -43,6 +43,8 @@ struct NextToolbarButton: View {
                 .padding(4)
                 .foregroundStyle(.black100)
         }
+        .frame(width: 62, height: 44)
+        .glassEffect(.regular.interactive(), in: .capsule)
     }
 }
 
@@ -55,6 +57,7 @@ struct CloseToolbarButton: View {
             Image("dismiss_gray600")
         }
         .frame(width: 44, height: 44)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }
 
@@ -78,6 +81,7 @@ struct PlusToolbarButton: View {
             Image(.plus)
         }
         .frame(width: 44, height: 44)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }
 
@@ -90,6 +94,7 @@ struct MenuToolbarButton: View {
             Image(.menuIcon)
         }
         .frame(width: 44, height: 44)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }
 

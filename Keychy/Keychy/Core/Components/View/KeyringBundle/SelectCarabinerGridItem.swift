@@ -30,38 +30,40 @@ struct SelectCarabinerGridItem: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
+                .padding(3.55)
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                 .background(RoundedRectangle(cornerRadius: 10).fill(.white100))
                 
                 // 유료 재화 표시
                 VStack {
                     HStack {
-                        if !carabiner.carabiner.isFree {
-                            HStack {
-                                Image(.paidIcon)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 32)
-                            }
-                        }
-                        
+                        // 유료 아이콘
+                        Image(.paidIcon)
+                            .padding(.top, 3)
+                            .opacity(carabiner.carabiner.isFree ? 0 : 1)
                         Spacer()
-                        // 보유 카라비너 표시
-                        if carabiner.isOwned {
-                            Text("보유")
-                                .typography(.suit13M)
-                                .foregroundStyle(.white100)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
                     }
-                    .padding(.top, 3)
-                    .padding(.horizontal, 7)
-                    
                     Spacer()
                 }
+                .padding(.top, 3)
+                .padding(.leading, 7)
+                
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("보유")
+                            .typography(.suit13M)
+                            .foregroundStyle(.white100)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .opacity(carabiner.isOwned ? 1 : 0)
+                    }
+                    Spacer()
+                }
+                .padding(.top, 5)
+                .padding(.trailing, 7)
                 if isSelected {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(.black100.opacity(0.15))

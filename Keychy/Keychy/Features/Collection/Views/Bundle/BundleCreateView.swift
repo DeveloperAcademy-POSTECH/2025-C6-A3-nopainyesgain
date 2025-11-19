@@ -16,8 +16,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
-    @State private var isSceneReady = false
-    
     /// 선택한 카테고리 : "Background" 또는 "Carabiner"
     @State private var selectedCategory: String = ""
     
@@ -70,47 +68,36 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     carabinerX: cb.carabiner.carabinerX,
                     carabinerY: cb.carabiner.carabinerY,
                     carabinerWidth: cb.carabiner.carabinerWidth,
-                    currentCarabinerType: cb.carabiner.type,
-                    onAllKeyringsReady: {
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            isSceneReady = true
-                        }
-                    }
+                    currentCarabinerType: cb.carabiner.type
                 )
-                .ignoresSafeArea()
-                .blur(radius: isSceneReady ? 0 : 10)
-                .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                 .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
-                
                 sheetContent()
-                
-                if !isSceneReady {
-                    Color.black20
-                        .ignoresSafeArea()
-                        .zIndex(10)
-                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                        .zIndex(11)
-                }
-            } else {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(10)
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                    .zIndex(11)
+                customNavigationBar
             }
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
                 .position(x: screenWidth / 2, y: screenHeight / 2)
             
-            customNavigationBar
+            ZStack {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(10)
+                // 구매 시트 - 화면 맨 밑에 표시
+                    VStack {
+                        Spacer()
+                        purchaseSheetView
+                    }
+                    .zIndex(100)
+                    .ignoresSafeArea()
+                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut(duration: 0.3), value: showPurchaseSheet)
+            }
+            .opacity(showPurchaseSheet ? 1 : 0)
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
-        .sheet(isPresented: $showPurchaseSheet) {
-            purchaseSheetView
-        }
         .task {
             await initializeData()
         }
@@ -118,7 +105,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshData()
-                isSceneReady = false
             }
             viewModel.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
@@ -200,8 +186,7 @@ extension BundleCreateView {
                             onBackgroundTap: { bg in
                                 selectedBackground = bg
                             }
-                        ),
-                        screenHeight: screenHeight
+                        )
                     )
                 }
             }
@@ -225,8 +210,7 @@ extension BundleCreateView {
                             onCarabinerTap: { carabiner in
                                 selectedCarabiner = carabiner
                             }
-                        ),
-                        screenHeight: screenHeight
+                        )
                     )
                 }
             }
@@ -383,17 +367,16 @@ extension BundleCreateView {
             .padding(EdgeInsets(top: 30, leading: 20, bottom: 10, trailing: 20))
             
             // 구매할 아이템 목록
-            ScrollView {
-                VStack(spacing: 20) {
-                    if let bg = selectedBackground, !bg.isOwned && bg.background.price > 0 {
-                        cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
-                    }
-                    if let cb = selectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-                        cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
-                    }
+            VStack(spacing: 20) {
+                if let bg = selectedBackground, !bg.isOwned && bg.background.price > 0 {
+                    cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
                 }
-                .padding(.horizontal, 20)
+                if let cb = selectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+                    cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
+                }
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 30)
             
             // 내 보유 재화와 총 가격
             HStack(spacing: 6) {
@@ -407,18 +390,18 @@ extension BundleCreateView {
             }
             purchaseButton
                 .padding(.horizontal, 33.2)
+                .padding(.bottom, 40)
                 .adaptiveBottomPadding()
         }
-        .background(.white100)
-        .presentationDetents([.fraction(0.43)])
+        .background(
+            UnevenRoundedRectangle(topLeadingRadius: 38, topTrailingRadius: 38)
+                .fill(.white100)
+        )
     }
     
     private func cartItemRow(name: String, type: String, price: Int) -> some View {
         HStack(spacing: 6) {
-            Image(.selected)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 22.5, height: 22.5)
+            Image(.selectedIcon)
             
             Text(name)
                 .typography(.suit16B)
@@ -435,7 +418,7 @@ extension BundleCreateView {
                 .typography(.nanum16EB)
                 .foregroundStyle(.main500)
         }
-        .padding(.vertical, 15)
+        .padding(.vertical, 20)
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 12)

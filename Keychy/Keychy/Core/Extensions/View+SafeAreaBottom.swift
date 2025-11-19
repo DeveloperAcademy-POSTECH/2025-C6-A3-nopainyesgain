@@ -60,6 +60,6 @@ extension View {
         }
 
         // 실제 safeArea top 값 + 추가 패딩
-        return window.safeAreaInsets.top + defaultPadding
+        return window.safeAreaInsets.bottom == 0 ? window.safeAreaInsets.top + defaultPadding : 0
     }
 }

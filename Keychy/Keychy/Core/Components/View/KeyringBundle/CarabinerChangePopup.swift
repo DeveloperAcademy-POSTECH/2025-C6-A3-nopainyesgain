@@ -14,23 +14,26 @@ struct CarabinerChangePopup: View {
     let onConfirm: () -> Void
     
     var body: some View {
-        VStack(spacing: 12) {
-            // 아이콘
-            Image("DeleteAlert")
-                .resizable()
-                .frame(width: 57, height: 54)
-                .padding(.top, 12)
-            
-            // 제목
-            Text(title)
-                .typography(.suit20B)
-                .foregroundColor(.black100)
-                .multilineTextAlignment(.center)
-            
-            // 메시지
-            Text(message)
-                .typography(.suit15R)
-                .multilineTextAlignment(.center)
+        VStack(spacing: 10) {
+            VStack(spacing: 12) {
+                // 아이콘
+                Image("DeleteAlert")
+                    .resizable()
+                    .frame(width: 57, height: 54)
+                    .padding(.top, 8)
+                
+                // 제목
+                Text(title)
+                    .typography(.suit20B)
+                    .foregroundColor(.black100)
+                    .multilineTextAlignment(.center)
+                
+                // 메시지
+                Text(message)
+                    .typography(.suit15R)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.bottom, 24)
             
             // 버튼들
             HStack(spacing: 16) {
