@@ -240,7 +240,7 @@ class NeonSignVM: KeyringViewModelProtocol {
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
         case .drawing:
             return AnyView(DrawingCanvasView(viewModel: self))
-        case .frame:
+        default:
             return AnyView(EmptyView())
         }
     }
@@ -256,7 +256,7 @@ class NeonSignVM: KeyringViewModelProtocol {
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         case .drawing:
             return AnyView(DrawingToolsView(viewModel: self))
-        case .frame:
+        default:
             return AnyView(EmptyView())
         }
     }

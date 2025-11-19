@@ -146,8 +146,8 @@ extension KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-        case .drawing, .frame:
-            // 기본적으로는 지원하지 않음 (NeonSign, Polaroid 등에서 override)
+        default:
+            // 기본적으로는 지원하지 않음 (각 템플릿에서 override)
             return AnyView(EmptyView())
         }
     }
@@ -161,8 +161,8 @@ extension KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-        case .drawing, .frame:
-            // 기본적으로는 지원하지 않음 (NeonSign, Polaroid 등에서 override)
+        default:
+            // 기본적으로는 지원하지 않음 (각 템플릿에서 override)
             return AnyView(EmptyView())
         }
     }

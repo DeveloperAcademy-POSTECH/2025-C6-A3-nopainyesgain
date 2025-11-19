@@ -203,7 +203,7 @@ class PolaroidVM: KeyringViewModelProtocol {
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
         case .frame:
             return AnyView(FramePreviewView(viewModel: self, onSceneReady: onSceneReady))
-        case .drawing:
+        default:
             return AnyView(EmptyView())
         }
     }
@@ -218,7 +218,7 @@ class PolaroidVM: KeyringViewModelProtocol {
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         case .frame:
             return AnyView(FrameSelectorView(viewModel: self))
-        case .drawing:
+        default:
             return AnyView(EmptyView())
         }
     }
