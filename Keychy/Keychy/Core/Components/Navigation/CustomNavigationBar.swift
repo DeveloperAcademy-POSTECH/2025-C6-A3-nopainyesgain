@@ -34,6 +34,7 @@ struct CustomNavigationBar<Leading: View, Center: View, Trailing: View>: View {
                 
                 center
                     .typography(.notosans17M)
+                    .foregroundStyle(.black100)
                     
 
                 Spacer()
