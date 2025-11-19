@@ -18,7 +18,9 @@ struct IntroAppGuidingView: View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(spacing: 0) {
-                    Spacer()
+                    pageIndicator
+                        .padding(.top, 19.48)
+                    
                     TabView(selection: $currentPage) {
                         ForEach(0..<totalPages, id: \.self) { index in
                             guidePage(index: index)
@@ -28,9 +30,7 @@ struct IntroAppGuidingView: View {
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .animation(.easeInOut, value: currentPage)
                     .frame(height: geometry.size.height * 0.75)
-
-                    pageIndicator
-                        .padding(.top, 16)
+                    .padding(.top, 43.68)
 
                     Spacer()
 

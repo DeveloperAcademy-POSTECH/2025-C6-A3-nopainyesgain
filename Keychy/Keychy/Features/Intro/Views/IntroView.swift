@@ -171,13 +171,13 @@ extension IntroView {
             .padding(.trailing, 15)
 
             Text(text)
-                .typography(getBottomPadding(0) == 0 ? .suit13M : .suit15M25)
+                .typography(getBottomPadding(34) == 0 ? .suit15M25 : .suit13M)
                 .foregroundStyle(.gray700)
                 .padding(.vertical, 4.5)
                 .padding(.trailing, 5)
 
             Text(initial ? "(필수)" : "(선택)")
-                .typography(getBottomPadding(0) == 0 ? .suit13M : .suit15M25)
+                .typography(getBottomPadding(34) == 0 ? .suit15M25 : .suit13M)
                 .foregroundStyle(initial ? .main500 : .gray700)
 
             if initial {
