@@ -63,42 +63,45 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            // MultiKeyringScene 또는 키링 편집 뷰
-            if let bundle = viewModel.selectedBundle,
-               let background = newSelectedBackground,
-               let carabiner = newSelectedCarabiner {
-                
-                keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
-                
-            } else {
-                if let bg = newSelectedBackground {
-                    LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                        } else if state.isLoading {
-                            Color.black20
-                                .ignoresSafeArea()
-                        }
-                    }
-                }
-                if let cb = newSelectedCarabiner {
-                    VStack {
-                        LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+            ZStack {
+                // MultiKeyringScene 또는 키링 편집 뷰
+                if let bundle = viewModel.selectedBundle,
+                   let background = newSelectedBackground,
+                   let carabiner = newSelectedCarabiner {
+                    
+                    keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
+                    
+                } else {
+                    if let bg = newSelectedBackground {
+                        LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
                                     .scaledToFit()
+                            } else if state.isLoading {
+                                Color.black20
+                                    .ignoresSafeArea()
                             }
                         }
-                        Spacer()
+                    }
+                    if let cb = newSelectedCarabiner {
+                        VStack {
+                            LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                                if let image = state.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+                            }
+                            Spacer()
+                        }
                     }
                 }
+                
+                // navigationBar
+                customNavigationBar
             }
-            
-            // navigationBar
-            customNavigationBar
+            .blur(radius: isSceneReady ? 0 : 15)
             
             if !isSceneReady {
                 Color.black20
@@ -110,13 +113,9 @@ struct BundleEditView<Route: BundleRoute>: View {
             
             // Dim 오버레이 (키링 시트가 열릴 때)
             if showSelectKeyringSheet {
-                Color.black.opacity(0.3)
+                Color.black20
                     .ignoresSafeArea()
                     .zIndex(1)
-            }
-            
-            // 키링 선택 시트
-            if showSelectKeyringSheet {
                 keyringSelectionSheet()
             }
             
@@ -757,8 +756,6 @@ extension BundleEditView {
             BackToolbarButton {
                 router.pop()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
         } trailing: {
             let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
@@ -777,7 +774,6 @@ extension BundleEditView {
                         }
                     }
                 }
-                .buttonStyle(.glass)
             }
         }
     }
