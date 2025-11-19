@@ -24,23 +24,24 @@ struct FramePreviewView: View {
                     Spacer()
                         .frame(height: 125)
                     
-                    ZStack {
+                    ZStack(alignment: .bottom) {
                         // 1. 선택된 사진 (맨 아래)
                         if let photoImage = viewModel.selectedPhotoImage {
                             Image(uiImage: photoImage)
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 280, height: 280)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .frame(width: 214, height: 267)
+                                .padding(.bottom, 20)
                         } else {
                             // 사진 선택 플레이스홀더
                             Button {
                                 showPhotoPicker = true
                             } label: {
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: 12)
+                                    Rectangle()
                                         .fill(Color.white100)
-                                        .frame(width: 280, height: 280)
+                                        .frame(width: 214, height: 267)
+                                        .padding(.bottom, 20)
                                     
                                     VStack(spacing: 12) {
                                         Image(systemName: "plus.circle.fill")
@@ -64,14 +65,14 @@ struct FramePreviewView: View {
                                     image
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(width: 300, height: 300)
+                                        .frame(height: 324)
                                 } else if state.isLoading {
                                     ProgressView()
-                                        .frame(width: 300, height: 300)
+                                        .frame(width: 300, height: 320)
                                 } else {
                                     Rectangle()
                                         .fill(Color.gray100)
-                                        .frame(width: 260, height: 300)
+                                        .frame(width: 300, height: 300)
                                 }
                             }
                             .allowsHitTesting(false)
@@ -90,7 +91,7 @@ struct FramePreviewView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.red)
+        .padding(.top, 170)
         .photosPicker(
             isPresented: $showPhotoPicker,
             selection: $selectedPhotoItem,
