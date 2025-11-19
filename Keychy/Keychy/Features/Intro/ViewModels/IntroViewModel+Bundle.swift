@@ -45,7 +45,7 @@ extension IntroViewModel {
                 userId: userId,
                 name: "웰컴뭉치",
                 selectedBackground: "KeychyBasic",
-                selectedCarabiner: "Welcome",
+                selectedCarabiner: "WelcomeKeychy",
                 keyrings: keyrings,
                 maxKeyrings: maxKeyrings,
                 isMain: true
