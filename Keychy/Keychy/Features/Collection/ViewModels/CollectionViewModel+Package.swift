@@ -412,44 +412,90 @@ extension CollectionViewModel {
         uid: String,
         keyring: Keyring,
         postOfficeId: String,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Bool, Bool) -> Void // (성공여부, 이미수락여부)
     ) {
         
         guard let documentId = keyringDocumentIdByLocalId[keyring.id] else {
             print("키링 문서 ID 없음")
-            completion(false)
+            completion(false, false)
             return
         }
 
         let db = Firestore.firestore()
-        let batch = db.batch()
-
-        // isPackaged 상태 해제
-        let keyringRef = db.collection("Keyring").document(documentId)
-        batch.updateData(["isPackaged": false], forDocument: keyringRef)
-
-        // PostOffice 문서 삭제
         let postOfficeRef = db.collection("PostOffice").document(postOfficeId)
-        batch.deleteDocument(postOfficeRef)
         
-        batch.commit { [weak self] error in
-            if let error = error {
-                print("포장 풀기 실패: \(error.localizedDescription)")
-                completion(false)
+        // Transaction으로 동시 접근 방지
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            let postOfficeDocument: DocumentSnapshot
+            do {
+                try postOfficeDocument = transaction.getDocument(postOfficeRef)
+            } catch let fetchError as NSError {
+                errorPointer?.pointee = fetchError
+                return nil
+            }
+
+            // PostOffice 문서가 존재하는지 확인
+            guard postOfficeDocument.exists else {
+                let error = NSError(
+                    domain: "AppErrorDomain",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "PostOffice 문서가 존재하지 않습니다"]
+                )
+                errorPointer?.pointee = error
+                return nil
+            }
+            
+            // 이미 receiverId가 설정되어 있는지 확인 (acceptKeyring과 동일한 로직)
+            if let existingReceiverId = postOfficeDocument.data()?["receiverId"] as? String,
+               !existingReceiverId.isEmpty {
+                let error = NSError(
+                    domain: "AppErrorDomain",
+                    code: -2,
+                    userInfo: [NSLocalizedDescriptionKey: "이미 수락된 선물입니다"]
+                )
+                errorPointer?.pointee = error
+                return nil
+            }
+            
+            // Transaction 내에서 PostOffice 문서 삭제
+            transaction.deleteDocument(postOfficeRef)
+            
+            // Transaction 내에서 Keyring 상태 업데이트
+            let keyringRef = db.collection("Keyring").document(documentId)
+            transaction.updateData(["isPackaged": false], forDocument: keyringRef)
+
+            return nil
+        }) { [weak self] (object, error) in
+            guard let self = self else {
+                completion(false, false)
                 return
             }
-
-            print("포장 풀기 완료: \(keyring.name)")
-
-            // 로컬 상태 갱신
-            if let index = self?.keyring.firstIndex(where: { $0.id == keyring.id }) {
-                self?.keyring[index].isPackaged = false
-                self?.keyring[index].isEditable = true
+            
+            if let error = error {
+                print("포장 풀기 실패 (Transaction): \(error.localizedDescription)")
+                
+                // 에러 코드 -2는 이미 수락됨
+                if (error as NSError).code == -2 {
+                    print("이미 수락된 선물 - 언팩 불가")
+                    completion(false, true) // 실패, 이미수락됨
+                    return
+                }
+                
+                completion(false, false)
+                return
             }
-
-            completion(true)
+            
+            // Transaction 성공
+            print("포장 풀기 완료 (Transaction): \(keyring.name)")
+            
+            // 로컬 상태 갱신
+            if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                self.keyring[index].isPackaged = false
+                self.keyring[index].isEditable = true
+            }
+            
+            completion(true, false) // 성공, 이미수락안됨
         }
-
 
     }
 
