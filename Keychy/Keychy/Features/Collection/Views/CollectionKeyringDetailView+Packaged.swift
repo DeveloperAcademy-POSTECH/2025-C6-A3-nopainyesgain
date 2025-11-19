@@ -48,12 +48,20 @@ struct PackagedKeyringView: View {
         .onAppear {
             captureSceneOnAppear()
         }
+        .onDisappear {
+            cleanupImages()
+        }
         .onChange(of: shareLink) { oldValue, newValue in
             // shareLink가 업데이트되면 QR 코드 생성
             if !newValue.isEmpty {
                 generateQRCodeImage()
             }
         }
+    }
+    
+    private func cleanupImages() {
+        capturedSceneImage = nil
+        qrCodeImage = nil
     }
     
     // MARK: - 씬을 PNG로 미리 캡처

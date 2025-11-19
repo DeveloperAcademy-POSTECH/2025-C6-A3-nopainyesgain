@@ -92,9 +92,9 @@ struct CollectionKeyringDetailView: View {
         .interactiveDismissDisabled(true)
         .sheet(isPresented: $isSheetPresented) {
             infoSheet
-                .presentationDetents([.height(76), .height(395)], selection: $sheetDetent)
+                .presentationDetents([.height(76), .fraction(0.48), .fraction(0.93)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
-                .presentationBackgroundInteraction(.enabled(upThrough: .height(395)))
+                .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.48)))
                 .interactiveDismissDisabled()
         }
         
@@ -133,12 +133,12 @@ struct CollectionKeyringDetailView: View {
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     private var sceneScale: CGFloat {
-        sheetDetent == .height(395) ? 0.8 : 1.3
+        sheetDetent == .height(76) ? 1.3 : 0.8
     }
     
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     private var sceneYOffset: CGFloat {
-        sheetDetent == .height(395) ? -80 : 70
+        sheetDetent == .height(76) ? 70 : -80
     }
 
 }
@@ -154,6 +154,6 @@ extension CollectionKeyringDetailView {
         .scaleEffect(sceneScale)
         .offset(y: sceneYOffset)
         .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
-        .allowsHitTesting(sheetDetent != .height(395))
+        .allowsHitTesting(sheetDetent == .height(76))
     }
 }

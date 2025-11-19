@@ -25,6 +25,8 @@ extension CollectionKeyringDetailView {
         if !isNavigatingDeeper {
             showTabBar()
         }
+        
+        cleanupDetailView()
     }
     
     // MARK: - 탭바 제어
@@ -46,6 +48,17 @@ extension CollectionKeyringDetailView {
                 tabBarController.tabBar.isHidden = false
             }
         }
+    }
+  
+    // MARK: - 정리
+    private func cleanupDetailView() {
+        // Alert 상태 초기화
+        showMenu = false
+        showDeleteAlert = false
+        showCopyAlert = false
+        showPackageAlert = false
+        showImageSaved = false
+        showUIForCapture = true
     }
     
     // MARK: - 데이터 불러오기
