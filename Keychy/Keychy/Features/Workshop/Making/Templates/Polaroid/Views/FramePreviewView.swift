@@ -164,13 +164,15 @@ struct FramePreviewView: View {
 
     /// 사진 편집 제스처 (확대/축소, 회전, 이동)
     private var photoGestures: some Gesture {
-        // 확대/축소 제스처
+        // 확대/축소 제스처 (최소 0.5배, 최대 3.0배)
         let magnificationGesture = MagnificationGesture()
             .onChanged { value in
                 currentScale = value
             }
             .onEnded { value in
-                viewModel.photoScale *= value
+                let newScale = viewModel.photoScale * value
+                // 범위 제한: 0.5 ~ 3.0
+                viewModel.photoScale = min(max(newScale, 0.5), 3.0)
                 currentScale = 1.0
             }
 
@@ -206,9 +208,10 @@ struct FramePreviewView: View {
             .simultaneously(with: dragGesture)
     }
 
-    /// 최종 적용될 scale (기존 scale + 현재 제스처 scale)
+    /// 최종 적용될 scale (기존 scale + 현재 제스처 scale, 범위 제한 0.5 ~ 3.0)
     private var finalScale: CGFloat {
-        viewModel.photoScale * currentScale
+        let calculatedScale = viewModel.photoScale * currentScale
+        return min(max(calculatedScale, 0.5), 3.0)
     }
 
     /// 최종 적용될 rotation (기존 rotation + 현재 제스처 rotation)

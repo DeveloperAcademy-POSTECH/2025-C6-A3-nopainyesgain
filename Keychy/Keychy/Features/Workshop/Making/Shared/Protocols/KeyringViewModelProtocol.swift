@@ -134,6 +134,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
     /// 다음 화면으로 이동하기 전 호출 (템플릿별 처리 필요 시 구현)
     func beforeNavigateToNext()
+
+    // MARK: - Composition State
+    /// 합성 진행 중 여부 (프레임, 그리기 등)
+    var isComposing: Bool { get }
 }
 
 // MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
@@ -143,6 +147,9 @@ extension KeyringViewModelProtocol {
 
     /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
     func beforeNavigateToNext() {}
+
+    /// 기본 구현: 합성 중이 아님 (필요한 템플릿에서 override)
+    var isComposing: Bool { false }
 
     /// 기본 씬 뷰 제공 (effect 모드 기본 지원, 나머지는 각 템플릿에서 override)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {

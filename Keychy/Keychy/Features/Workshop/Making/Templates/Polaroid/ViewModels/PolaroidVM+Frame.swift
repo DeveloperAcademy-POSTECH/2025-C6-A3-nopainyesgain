@@ -16,10 +16,20 @@ extension PolaroidVM {
     /// 선택한 사진과 프레임을 합성하여 bodyImage로 저장
     /// FramePreviewView에서 보이는 크기와 배치 그대로 저장
     func composePhotoWithFrame() async {
-        guard let photo = selectedPhotoImage,
-              let frame = selectedFrame,
+        guard let frame = selectedFrame,
               let frameURL = URL(string: frame.frameURL) else {
             return
+        }
+
+        // 합성 시작
+        await MainActor.run {
+            isComposingPhoto = true
+        }
+
+        defer {
+            Task { @MainActor in
+                isComposingPhoto = false
+            }
         }
 
         // 프레임 이미지 다운로드
@@ -32,6 +42,16 @@ extension PolaroidVM {
         let frameAspect = originalFrameImage.size.width / originalFrameImage.size.height
         let targetFrameWidth = targetFrameHeight * frameAspect
         let targetFrameSize = CGSize(width: targetFrameWidth, height: targetFrameHeight)
+
+        // 사진이 없으면 프레임만 저장
+        guard let photo = selectedPhotoImage else {
+            let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
+            let frameOnlyImage = renderer.image { context in
+                originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
+            }
+            bodyImage = frameOnlyImage
+            return
+        }
 
         // 사진 영역 (FramePreviewView와 동일한 크기)
         let photoWidth: CGFloat = 214

@@ -83,7 +83,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
             .animation(.easeOut(duration: 0.3), value: isLoadingResources)
             .animation(.easeOut(duration: 0.3), value: isSceneReady)
-            .disabled(isLoadingResources || !isSceneReady)
+            .disabled(isLoadingResources || !isSceneReady || viewModel.isComposing)
 
             // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
             if showPurchaseFailAlert {
@@ -94,6 +94,11 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
 
             // MARK: - 구매 중 로딩
             if showPurchaseProgress {
+                LoadingAlert(type: .short, message: nil)
+            }
+
+            // MARK: - 합성 중 로딩
+            if viewModel.isComposing {
                 LoadingAlert(type: .short, message: nil)
             }
 

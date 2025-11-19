@@ -102,6 +102,14 @@ class PolaroidVM: KeyringViewModelProtocol {
     var photoRotation: Angle = .zero
     var photoOffset: CGSize = .zero
 
+    // MARK: - Photo Composition State
+    var isComposingPhoto: Bool = false
+
+    /// 프로토콜 준수: 합성 진행 중 여부
+    var isComposing: Bool {
+        isComposingPhoto
+    }
+
     // MARK: - 정보 입력
     var nameText: String = ""
     var maxTextCount: Int = 30
@@ -295,6 +303,9 @@ class PolaroidVM: KeyringViewModelProtocol {
         photoScale = 1.0
         photoRotation = .zero
         photoOffset = .zero
+        bodyImage = nil
+        availableFrames.removeAll()
+        isComposingPhoto = false
     }
 
     func resetInfoData() {
