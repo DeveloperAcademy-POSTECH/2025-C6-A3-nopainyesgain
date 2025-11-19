@@ -30,11 +30,6 @@ struct AlarmView: View {
 
     var body: some View {
         ZStack {
-            // 알림이 있을 때만 리스트 표시
-            if !isNotiEmpty {
-                notificationListView
-            }
-
             // 알림이 없을 때만 빈 화면 표시
             if isNotiEmpty {
                 emptyImageView
@@ -44,6 +39,11 @@ struct AlarmView: View {
             VStack(spacing: 0) {
                 if isNotiOff && isNotiOffShown {
                     pushNotiOffView
+                }
+                
+                // 알림이 있을 때만 리스트 표시
+                if !isNotiEmpty {
+                    notificationListView
                 }
 
                 Spacer()
