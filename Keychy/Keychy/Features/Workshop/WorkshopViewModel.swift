@@ -305,11 +305,11 @@ class WorkshopViewModel {
         if let filter = selectedTemplateFilter {
             switch filter {
             case .image:
-                result = result.filter { $0.tags.contains("이미지형") }
+                result = result.filter { $0.tags.contains("이미지") }
             case .text:
-                result = result.filter { $0.tags.contains("텍스트형") }
+                result = result.filter { $0.tags.contains("텍스트") }
             case .drawing:
-                result = result.filter { $0.tags.contains("드로잉형") }
+                result = result.filter { $0.tags.contains("드로잉") }
             }
         }
 
