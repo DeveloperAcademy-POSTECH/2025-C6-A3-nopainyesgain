@@ -216,6 +216,23 @@ class PolaroidVM: KeyringViewModelProtocol {
         return 99
     }
 
+    // MARK: - Lifecycle Callbacks
+    /// 모드 변경 시 프레임 → 다른 모드로 전환되면 사진과 프레임 합성
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
+        if oldMode == .frame && newMode != .frame {
+            Task {
+                await composePhotoWithFrame()
+            }
+        }
+    }
+
+    /// 다음 화면으로 이동하기 전 사진과 프레임 합성
+    func beforeNavigateToNext() {
+        Task {
+            await composePhotoWithFrame()
+        }
+    }
+
     // MARK: - Customizing Modes
     var availableCustomizingModes: [CustomizingMode] {
         [.frame, .effect]
