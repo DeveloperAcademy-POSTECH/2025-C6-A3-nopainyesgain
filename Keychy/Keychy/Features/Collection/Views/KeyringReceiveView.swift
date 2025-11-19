@@ -79,24 +79,28 @@ struct KeyringReceiveView: View {
                           
                         } else if let keyring = keyring {
                             // 키링 로드 성공
-                            Spacer()
-                                .adaptiveTopPadding()
-                            
-                            messageSection(keyring: keyring)
-                                .padding(.top, isSmallScreen ? -80 : 90)
-                            
-                            Spacer()
-                                .frame(height: isSmallScreen ? 0 : 20)
-                            
-                            keyringImage(keyring: keyring)
-                                .frame(height: isSmallScreen ? 400 : 490)
-                                .scaleEffect(heightRatio)
-                                .padding(.bottom, isSmallScreen ? 36 : 78)
-                            
-                            receiveButton
-                            
-                            Spacer()
-                                .adaptiveBottomPadding()
+                            VStack(spacing: 0) {
+                                
+                                messageSection(keyring: keyring)
+                                    .padding(.top, isSmallScreen ? -40 : 90)
+                                
+                                Spacer()
+                                    .frame(height: isSmallScreen ? 0 : 20)
+                                
+                                keyringImage(keyring: keyring)
+                                    .frame(height: isSmallScreen ? 400 : 490)
+                                    .scaleEffect(heightRatio)
+                                    .padding(.bottom, isSmallScreen ? 36 : 58)
+                                
+                                Spacer()
+                                    .frame(minHeight: 0, maxHeight: 20)
+                                
+                                receiveButton
+
+                                Spacer()
+                                    .frame(height: 20)
+                                    .adaptiveBottomPadding()
+                            }
                         } else {
                             // 에러 상태
                             VStack(spacing: 20) {
@@ -311,7 +315,7 @@ struct KeyringReceiveView: View {
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
         
-        let newScene = KeyringCellScene(
+        let scene = KeyringCellScene(
             ringType: ringType,
             chainType: chainType,
             bodyImage: keyring.bodyImage,
@@ -327,10 +331,9 @@ struct KeyringReceiveView: View {
                 }
             }
         )
-        newScene.scaleMode = .aspectFill
-        self.scene = newScene
+        scene.scaleMode = .aspectFill
         
-        return newScene
+        return scene
     }
     
     private var backgroundImageName: String {
@@ -472,8 +475,6 @@ extension KeyringReceiveView {
             CloseToolbarButton {
                 dismiss()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             // Center (중앙) - 빈 공간
             Spacer()

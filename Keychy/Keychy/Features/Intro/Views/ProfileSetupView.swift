@@ -77,6 +77,7 @@ extension ProfileSetupView {
                     .typography(.notosans16R)
                     .foregroundStyle(.black100)
                     .textFieldStyle(.plain)
+                    .tint(.main500)
                     .onChange(of: nickname) { oldValue, newValue in
                         // 글자수 제한
                         if newValue.count > maxNicknameLength {

@@ -69,6 +69,7 @@ extension CollectionView {
                     .focused($isSearchFieldFocused)
                     .textFieldStyle(.automatic)
                     .typography(.notosans16R)
+                    .tint(.main500)
                     .submitLabel(.search)
                     .autocorrectionDisabled()
                     .onSubmit {

@@ -21,6 +21,7 @@ struct KeyringCollectView: View {
     @State private var isAccepted: Bool = false
     @State private var showAcceptCompleteAlert: Bool = false
     @State private var showInvenFullAlert: Bool = false
+    @State private var scene: KeyringCellScene?
     
     let postOfficeId: String
     
@@ -49,24 +50,28 @@ struct KeyringCollectView: View {
                           
                         } else if let keyring = keyring {
                             // 키링 로드 성공
-                            Spacer()
-                                .adaptiveTopPadding()
-                            
-                            messageSection(keyring: keyring)
-                                .padding(.top, isSmallScreen ? -80 : 90)
-                            
-                            Spacer()
-                                .frame(height: isSmallScreen ? 0 : 20)
-                            
-                            keyringImage(keyring: keyring)
-                                .frame(height: isSmallScreen ? 400 : 490)
-                                .scaleEffect(heightRatio)
-                                .padding(.bottom, isSmallScreen ? 36 : 78)
-                            
-                            receiveButton
-                            
-                            Spacer()
-                                .adaptiveBottomPadding()
+                            VStack(spacing: 0) {
+                                
+                                messageSection(keyring: keyring)
+                                    .padding(.top, isSmallScreen ? -40 : 90)
+                                
+                                Spacer()
+                                    .frame(height: isSmallScreen ? 0 : 20)
+                                
+                                keyringImage(keyring: keyring)
+                                    .frame(height: isSmallScreen ? 400 : 490)
+                                    .scaleEffect(heightRatio)
+                                    .padding(.bottom, isSmallScreen ? 36 : 58)
+                                
+                                Spacer()
+                                    .frame(minHeight: 0, maxHeight: 20)
+                                
+                                receiveButton
+
+                                Spacer()
+                                    .frame(height: 20)
+                                    .adaptiveBottomPadding()
+                            }
                         } else {
                             // 에러 상태
                             VStack(spacing: 20) {
@@ -144,6 +149,17 @@ struct KeyringCollectView: View {
         .onAppear {
             loadKeyringData()
         }
+        .onDisappear {
+            cleanupScene()
+        }
+    }
+    
+    private func cleanupScene() {
+        scene?.removeAllChildren()
+        scene?.removeAllActions()
+        scene?.physicsWorld.removeAllJoints()
+        scene?.view?.presentScene(nil)
+        scene = nil
     }
     
     //  블러 적용 여부
@@ -374,8 +390,6 @@ extension KeyringCollectView {
             CloseToolbarButton {
                 dismiss()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             // Center (중앙) - 빈 공간
             Spacer()

@@ -21,6 +21,7 @@ struct CollectionKeyringPackageView: View {
     @State var showUnpackAlert: Bool = false
     @State var showUnpackCompleteAlert: Bool = false
     @State var showLinkCopied: Bool = false
+    @State var showAlreadyAcceptedAlert: Bool = false
     
     // 이미지 저장 관련
     @State var showImageSaved: Bool = false
@@ -46,7 +47,7 @@ struct CollectionKeyringPackageView: View {
                 }
                 
                 // 포장 풀기 알럿
-                if showUnpackAlert || showUnpackCompleteAlert {
+                if showUnpackAlert || showUnpackCompleteAlert || showAlreadyAcceptedAlert {
                     Color.black20
                         .ignoresSafeArea()
                         .zIndex(99)
@@ -76,6 +77,19 @@ struct CollectionKeyringPackageView: View {
                             type: .unpack,
                             message: "선물 포장을 풀었어요",
                             isPresented: $showUnpackCompleteAlert
+                        )
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: geometry.size.height / 2
+                        )
+                        .zIndex(101)
+                    }
+                    
+                    if showAlreadyAcceptedAlert {
+                        KeychyAlert(
+                            type: .fail,
+                            message: "이미 누군가 받은 키링이에요",
+                            isPresented: $showAlreadyAcceptedAlert
                         )
                         .position(
                             x: geometry.size.width / 2,
@@ -153,6 +167,7 @@ struct CollectionKeyringPackageView: View {
     private var shouldApplyBlur: Bool {
         isLoading ||
         showUnpackCompleteAlert ||
+        showAlreadyAcceptedAlert ||
         showImageSaved ||
         showLinkCopied ||
         false
@@ -217,7 +232,7 @@ extension CollectionKeyringPackageView {
                         
                     // 상단 상태 바
                     packageStatusBar
-                        .padding(.top, isSmallScreen ? -70 : 70) // -70 너무 아닌거 같은데 암튼 됨...
+                        .padding(.top, isSmallScreen ? -70 : 90) // -70 너무 아닌거 같은데 암튼 됨...
                     
                     Spacer()
                         .frame(height: isSmallScreen ? 24 : 48)
@@ -351,8 +366,12 @@ extension CollectionKeyringPackageView {
                 uid: uid,
                 keyring: self.keyring,
                 postOfficeId: self.loadedPostOfficeId
-            ) { success in
-                if success {
+            ) { success, alreadyAccepted in
+                if alreadyAccepted {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showAlreadyAcceptedAlert = true
+                    }
+                } else if success {
                     print("포장 풀기 완료")
                     
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {

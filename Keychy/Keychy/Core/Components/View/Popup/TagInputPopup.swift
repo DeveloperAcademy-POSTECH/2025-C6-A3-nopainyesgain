@@ -47,6 +47,7 @@ struct TagInputPopup: View {
                         showDuplicateTagError = availableTags.contains(newValue)
                     }
                     .submitLabel(.done)
+                    .tint(.main500)
                 
                 if !tagName.isEmpty {
                     Button(action: {

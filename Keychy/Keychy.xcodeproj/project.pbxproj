@@ -71,6 +71,8 @@
 		38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2912EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift */; };
 		38C3C2942EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2932EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift */; };
 		38C3C2962EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */; };
+		38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */; };
+		38CE39B42ECD998B00168E4B /* ClearSketchVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		38F832CB2EC9067300D3A248 /* WidgetOnboardingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CA2EC9067300D3A248 /* WidgetOnboardingStepView.swift */; };
 		38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CC2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift */; };
@@ -398,6 +400,8 @@
 		38C3C2912EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Lifecycle.swift"; sourceTree = "<group>"; };
 		38C3C2932EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Helpers.swift"; sourceTree = "<group>"; };
 		38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Packaged.swift"; sourceTree = "<group>"; };
+		38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchPreview.swift; sourceTree = "<group>"; };
+		38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchVM.swift; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		38F832CA2EC9067300D3A248 /* WidgetOnboardingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetOnboardingStepView.swift; sourceTree = "<group>"; };
 		38F832CC2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WidgetOnboardingStepView+Helpers.swift"; sourceTree = "<group>"; };
@@ -773,6 +777,31 @@
 				38C147BA2EB13B2F00A8E511 /* CircleGlassButton.swift */,
 			);
 			path = Button;
+			sourceTree = "<group>";
+		};
+		38CE39AE2ECD990F00168E4B /* ClearSketch */ = {
+			isa = PBXGroup;
+			children = (
+				38CE39AF2ECD993F00168E4B /* ViewModels */,
+				38CE39B02ECD994900168E4B /* Views */,
+			);
+			path = ClearSketch;
+			sourceTree = "<group>";
+		};
+		38CE39AF2ECD993F00168E4B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		38CE39B02ECD994900168E4B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		4C3687F52EBFA86B00C64E75 /* pretendard */ = {
@@ -1419,6 +1448,7 @@
 		4CEC62662EAE08DF0099ECEE /* Templates */ = {
 			isa = PBXGroup;
 			children = (
+				38CE39AE2ECD990F00168E4B /* ClearSketch */,
 				C67B75572ECD4C6F00D6E3FA /* Polaroid */,
 				4CEC62652EAE08DF0099ECEE /* AcrylicPhoto */,
 				C6C4027F2EB26BFB006B58DF /* NeonSign */,
@@ -1906,6 +1936,7 @@
 				C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
+				38CE39B42ECD998B00168E4B /* ClearSketchVM.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
@@ -2020,6 +2051,7 @@
 				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
 				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
 				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
+				38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */,
 				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
 				AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */,
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,

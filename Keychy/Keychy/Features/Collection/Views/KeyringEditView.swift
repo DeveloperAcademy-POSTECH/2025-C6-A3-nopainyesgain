@@ -260,6 +260,7 @@ extension KeyringEditView {
                     .foregroundColor(.black100)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
+                    .tint(.main500)
                     .submitLabel(.done)
                     .focused($focusedField, equals: .name)
                     .disabled(!canEdit)
@@ -338,6 +339,7 @@ extension KeyringEditView {
                         .padding(.vertical, 10)
                         .scrollIndicators(.hidden)
                         .focused($focusedField, equals: .memo)
+                        .tint(.main500)
                 } else {
                     // 편집 불가 : 스크롤만 가능
                     ScrollView {

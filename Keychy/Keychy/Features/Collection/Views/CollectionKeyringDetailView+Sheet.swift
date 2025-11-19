@@ -34,11 +34,11 @@ extension CollectionKeyringDetailView {
                     
                 }
                 .frame(minHeight: geometry.size.height)
+                .padding(.horizontal, 20)
             }
             .scrollDisabled(true)
         }
         .toolbar(.hidden, for: .tabBar)
-        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(sheetDetent == .height(76) ? Color.clear : .white100)
         .shadow(

@@ -25,8 +25,7 @@ struct KeyringMenu: View {
         GeometryReader { geometry in
             ZStack {
                 // 메뉴
-                VStack(alignment: .leading, spacing: 25) {
-
+                VStack(alignment: .leading, spacing: 5) {
                     // 편집 버튼
                     Button(action: onEdit) {
                         HStack(spacing: 8) {
@@ -37,10 +36,14 @@ struct KeyringMenu: View {
                             Text("정보 수정")
                                 .typography(.suit16M)
                                 .foregroundColor(.gray600)
+                            
+                            Spacer()
                         }
+                        .padding(.vertical, 10)
                     }
                     .buttonStyle(.plain)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                     
                     if isMyKeyring {
                         // 복사 버튼
@@ -53,10 +56,14 @@ struct KeyringMenu: View {
                                 Text("복사")
                                     .typography(.suit16M)
                                     .foregroundColor(.gray600)
+                                
+                                Spacer()
                             }
+                            .padding(.vertical, 10)
                         }
                         .buttonStyle(.plain)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
                     
                     // 삭제 버튼
@@ -69,10 +76,14 @@ struct KeyringMenu: View {
                             Text("삭제")
                                 .typography(.suit16M)
                                 .foregroundColor(.pink)
+                            
+                            Spacer()
                         }
+                        .padding(.vertical, 10)
                     }
                     .buttonStyle(.plain)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)

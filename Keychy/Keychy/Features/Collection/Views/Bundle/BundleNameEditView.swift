@@ -97,6 +97,7 @@ extension BundleNameEditView {
                 .typography(bundleName.isEmpty ? .notosans16R : .suit16M)
                 .foregroundStyle(textColor)
                 .focused($isTextFieldFocused)
+                .tint(.main500)
                 .onChange(of: bundleName) { _, newValue in
                     let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
                     var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: NSString.CompareOptions.regularExpression)

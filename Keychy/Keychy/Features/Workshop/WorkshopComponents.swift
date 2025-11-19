@@ -55,10 +55,10 @@ struct SortOption: View {
                 
                 Spacer()
                 
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.pink)
-                }
+//                if isSelected {
+//                    Image(systemName: "checkmark")
+//                        .foregroundStyle(.pink)
+//                }
             }
             .padding()
         }

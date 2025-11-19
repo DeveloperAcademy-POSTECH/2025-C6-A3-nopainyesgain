@@ -78,6 +78,7 @@ extension KeyringInfoInputView {
                     }
                     showTagNameAlreadyExistsToast = availableTags.contains(newValue)
                 }
+                .tint(.main500)
             
             HStack {
                 Text(showTagNameAlreadyExistsToast ? "이미 사용 중인 태그 이름입니다." : "")
