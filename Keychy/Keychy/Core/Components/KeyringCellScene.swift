@@ -78,7 +78,10 @@ class KeyringCellScene: SKScene {
         addChild(newContainerNode)
         containerNode = newContainerNode
 
-        setupKeyring()
+        // containerNode 설정 완료 후 키링 설정
+        DispatchQueue.main.async { [weak self] in
+            self?.setupKeyring()
+        }
     }
     
     override func willMove(from view: SKView) {

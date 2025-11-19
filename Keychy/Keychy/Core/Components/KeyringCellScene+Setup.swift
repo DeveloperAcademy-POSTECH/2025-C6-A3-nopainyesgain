@@ -11,10 +11,39 @@ extension KeyringCellScene {
     
     // MARK: - 키링 전체 조립
     func setupKeyring() {
+        guard view != nil, parent != nil else {
+            print("Scene이 화면에서 제거됨 - 로딩 중단")
+            return
+        }
+        
         // 모든 이미지를 먼저 다운로드
         downloadAllImages { [weak self] result in
             guard let self = self else {
                 print("KeyringCellScene - self가 해제됨")
+                return
+            }
+            
+            // Scene이 여전히 유효한지 다시 확인
+            guard self.view != nil, self.parent != nil else {
+                print("Scene이 화면에서 제거됨 - 조립 중단")
+                return
+            }
+            
+            // containerNode가 nil이면 재시도하되, Scene 유효성 체크
+            guard self.containerNode != nil else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    // 재시도 전에도 Scene 유효성 확인
+                    guard let self = self, self.view != nil, self.parent != nil else {
+                        return
+                    }
+                    
+                    switch result {
+                    case .success(let images):
+                        self.assembleKeyring(with: images)
+                    case .failure:
+                        self.assembleFallbackKeyring()
+                    }
+                }
                 return
             }
             
@@ -28,7 +57,6 @@ extension KeyringCellScene {
                 print("이미지 다운로드 실패: \(error)")
                 
                 // 실패해도 가능한 것만 조립 (fallback)
-                // 필요없으면 빼도 됨... 얜 어떻게 처리할지...
                 self.assembleFallbackKeyring()
             }
         }
@@ -95,6 +123,11 @@ extension KeyringCellScene {
     
     // MARK: - 키링 조립 (이미지 다운로드 완료 후)
     private func assembleKeyring(with images: KeyringImages) {
+        guard let containerNode = containerNode else {
+            print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
+            return
+        }
+        
         let centerX: CGFloat = 0
         let topY = originalSize.height * 0.67 - (originalSize.height / 2)
 
@@ -165,6 +198,10 @@ extension KeyringCellScene {
     
     // MARK: - Fallback 키링 조립 (다운로드 실패 시)
     private func assembleFallbackKeyring() {
+        guard let containerNode = containerNode else {
+            print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
+            return
+        }
         // Fallback시 기본 키링 생성
         
         let centerX: CGFloat = 0
