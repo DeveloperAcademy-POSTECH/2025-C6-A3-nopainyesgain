@@ -175,8 +175,6 @@ extension BundleNameInputView {
             BackToolbarButton {
                 router.pop()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             EmptyView()
         } trailing: {
@@ -188,8 +186,6 @@ extension BundleNameInputView {
                 bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                 hasProfanity
             )
-            .frame(width: 62, height: 44)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
         }
     }
     
