@@ -70,6 +70,8 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                             // "없음" 버튼
                             Button {
                                 viewModel.updateSound(nil)
+                                // 장바구니에서 사운드 타입 제거 (없음으로 변경)
+                                cartItems.removeAll { $0.type == .sound }
                             } label: {
                                 Text("없음")
                                     .typography(viewModel.selectedSound == nil && !viewModel.hasCustomSound ? .suit15SB25 : .suit15M25)
@@ -85,6 +87,8 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                             if viewModel.hasCustomSound {
                                 Button {
                                     viewModel.applyCustomSound(viewModel.customSoundURL!)
+                                    // 장바구니에서 사운드 타입 제거 (무료 커스텀으로 교체)
+                                    cartItems.removeAll { $0.type == .sound }
                                 } label: {
                                     Text("음성 메모")
                                         .typography(viewModel.soundId == "custom_recording" ? .suit15SB25 : .suit15M25)
@@ -110,6 +114,17 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         if let soundId = newValue {
                             withAnimation {
                                 proxy.scrollTo(soundId, anchor: .center)
+                            }
+                        }
+                    }
+                    .onChange(of: viewModel.soundId) { _, newValue in
+                        if newValue == "custom_recording" {
+                            withAnimation {
+                                proxy.scrollTo("sound_custom", anchor: .center)
+                            }
+                        } else if newValue.isEmpty && !viewModel.hasCustomSound {
+                            withAnimation {
+                                proxy.scrollTo("sound_none", anchor: .center)
                             }
                         }
                     }
@@ -141,6 +156,8 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         // "없음" 버튼
                         Button {
                             viewModel.updateParticle(nil)
+                            // 장바구니에서 파티클 타입 제거 (없음으로 변경)
+                            cartItems.removeAll { $0.type == .particle }
                         } label: {
                             Text("없음")
                                 .typography(viewModel.selectedParticle == nil ? .suit15SB25 : .suit15M25)
