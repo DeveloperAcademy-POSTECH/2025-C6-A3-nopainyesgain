@@ -55,8 +55,8 @@ func initializeBackgrounds() async {
         ],
         [
             "id": "WhiteKeychy",
-            "backgroundName": "화이티키치",
-            "description": "키치의 시그니쳐 화이티키치 배경화면 입니다.",
+            "backgroundName": "화이트키치",
+            "description": "키치의 시그니쳐 화이트키치 배경화면 입니다.",
             "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FWhiteKeychy.png?alt=media&token=2f19c0e1-0be4-47d2-b84a-34a60d3f1a0f",
             "tags": ["키치"],
             "price": 0,
