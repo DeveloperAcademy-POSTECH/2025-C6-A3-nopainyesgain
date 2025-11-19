@@ -9,7 +9,10 @@ import SwiftUI
 
 struct FestivalView: View {
     var body: some View {
-        Text("FestivalView")
-            .navigationBarTitle("Festival")
+        Image(.festivalTrailer)
+            .resizable()
+            .scaledToFill()
+            .offset(y: getBottomPadding(34) == 34 ? 20 : 0)
+            .frame(width: screenWidth, height: screenHeight)
     }
 }
