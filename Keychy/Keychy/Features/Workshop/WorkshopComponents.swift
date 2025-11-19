@@ -349,7 +349,7 @@ struct PriceOverlay<Item: WorkshopItem>: View {
                     Image(.paidIcon)
                     Spacer()
                 }
-                .padding(.top, 3)
+                .padding(.top, 7)
                 .padding(.leading, 10)
                 Spacer()
             }
