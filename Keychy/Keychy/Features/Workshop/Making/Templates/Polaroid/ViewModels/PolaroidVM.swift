@@ -1,17 +1,16 @@
 //
-//  NeonSignVM.swift
+//  PolaroidVM.swift
 //  Keychy
 //
-//  Created by Rundo on 11/8/25.
-// 설명: 네온 사인 템플릿 뷰모델
-// 이미지 선택 없이 미리 정의된 bodyImage 사용 + 이펙트 선택
+//  폴라로이드 템플릿 뷰모델
+//  프레임 선택 + 이펙트 선택
 
 import SwiftUI
 import Combine
 import FirebaseFirestore
 
 @Observable
-class NeonSignVM: KeyringViewModelProtocol {
+class PolaroidVM: KeyringViewModelProtocol {
     // MARK: - Template Data (Firebase)
     var template: KeyringTemplate?
     var isLoadingTemplate = false
@@ -77,30 +76,24 @@ class NeonSignVM: KeyringViewModelProtocol {
     var particleId: String = "none"
 
     // MARK: - Combine Bridge
-    /// @Observable을 Combine에 사용하기 위한 브릿지
-    /// KeyringScene에 soundId, particleId만 전달
     let effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
     // MARK: - UserManager
     var userManager: UserManager
 
-    // MARK: - Body Image (템플릿에 미리 정의된 이미지)
+    // MARK: - Body Image
     var bodyImage: UIImage? = nil
-    var originalBodyImage: UIImage? = nil  // 원본 이미지 (합성 전)
     var hookOffsetY: CGFloat = 0.0
 
     /// 템플릿 ID
     var templateId: String {
-        template?.id ?? "NeonSign"
+        template?.id ?? "Polaroid"
     }
 
     var errorMessage: String?
 
-    // MARK: - Drawing State (그리기 모드)
-    var drawingPaths: [DrawnPath] = []
-    var currentDrawingColor: Color = .white
-    var currentLineWidth: CGFloat = 3.0
-    var imageFrame: CGRect = .zero  // 그리기 영역 (DrawingCanvasView에서 설정)
+    // MARK: - Frame State (프레임 모드)
+    var selectedFrameId: String? = nil
 
     // MARK: - 정보 입력
     var nameText: String = ""
@@ -115,14 +108,6 @@ class NeonSignVM: KeyringViewModelProtocol {
         self.userManager = userManager
     }
 
-    // MARK: - 생성일 Date formatter
-    func formattedDate(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 MM월 dd일"
-        return formatter.string(from: createdAt)
-    }
-
     // MARK: - Firebase Template 가져오기
     func fetchTemplate() async {
         isLoadingTemplate = true
@@ -132,22 +117,17 @@ class NeonSignVM: KeyringViewModelProtocol {
         do {
             let document = try await Firestore.firestore()
                 .collection("Template")
-                .document("NeonSign")
+                .document("Polaroid")
                 .getDocument()
 
             template = try document.data(as: KeyringTemplate.self)
-
-            // 네온사인 템플릿 전용 고정 이미지 (Assets)
-            let image = UIImage(named: "bangMark")
-            bodyImage = image
-            originalBodyImage = image  // 원본 저장
 
         } catch {
             errorMessage = "템플릿을 불러오는데 실패했습니다."
         }
     }
 
-    // MARK: - Firebase Effects 가져오기 (전체 - 소유/미소유 분리)
+    // MARK: - Firebase Effects 가져오기
     func fetchEffects() async {
         guard let user = userManager.currentUser else {
             errorMessage = "유저 정보를 불러올 수 없습니다."
@@ -155,7 +135,7 @@ class NeonSignVM: KeyringViewModelProtocol {
         }
 
         do {
-            // Sound 전체 가져오기 (isActive == true만)
+            // Sound 전체 가져오기
             let soundsSnapshot = try await Firestore.firestore()
                 .collection("Sound")
                 .whereField("isActive", isEqualTo: true)
@@ -165,7 +145,6 @@ class NeonSignVM: KeyringViewModelProtocol {
                 try $0.data(as: Sound.self)
             }
 
-            // 소유/미소유 분리 및 정렬
             let ownedSounds = allSounds.filter { sound in
                 guard let id = sound.id else { return false }
                 return user.soundEffects.contains(id)
@@ -177,7 +156,7 @@ class NeonSignVM: KeyringViewModelProtocol {
 
             availableSounds = ownedSounds + notOwnedSounds
 
-            // Particle 전체 가져오기 (isActive == true만)
+            // Particle 전체 가져오기
             let particlesSnapshot = try await Firestore.firestore()
                 .collection("Particle")
                 .whereField("isActive", isEqualTo: true)
@@ -187,7 +166,6 @@ class NeonSignVM: KeyringViewModelProtocol {
                 try $0.data(as: Particle.self)
             }
 
-            // 소유/미소유 분리 및 정렬
             let ownedParticles = allParticles.filter { particle in
                 guard let id = particle.id else { return false }
                 return user.particleEffects.contains(id)
@@ -213,39 +191,23 @@ class NeonSignVM: KeyringViewModelProtocol {
         return 99
     }
 
-    // MARK: - Lifecycle Callbacks
-    /// 모드 변경 시 그리기 → 다른 모드로 전환되면 그림 합성
-    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
-        if oldMode == .drawing && newMode != .drawing {
-            composeDrawingWithBodyImage()
-        }
-    }
-
-    /// 다음 화면으로 이동하기 전 그림 합성
-    func beforeNavigateToNext() {
-        composeDrawingWithBodyImage()
-    }
-
     // MARK: - Customizing Modes
-    /// 커스터마이징 모드 (네온 사인은 그리기 + 이펙트 지원)
     var availableCustomizingModes: [CustomizingMode] {
-        [.drawing, .effect]
+        [.frame, .effect]
     }
 
     // MARK: - View Providers
-    /// 씬 뷰 제공 (모드별)
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-        case .drawing:
-            return AnyView(DrawingCanvasView(viewModel: self))
         case .frame:
+            return AnyView(FramePreviewView(viewModel: self, onSceneReady: onSceneReady))
+        case .drawing:
             return AnyView(EmptyView())
         }
     }
 
-    /// 하단 콘텐츠 뷰 제공 (모드별)
     func bottomContentView(
         for mode: CustomizingMode,
         showPurchaseSheet: Binding<Bool>,
@@ -254,17 +216,15 @@ class NeonSignVM: KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-        case .drawing:
-            return AnyView(DrawingToolsView(viewModel: self))
         case .frame:
+            return AnyView(FrameSelectorView(viewModel: self))
+        case .drawing:
             return AnyView(EmptyView())
         }
     }
 
     // MARK: - Reset
-    /// 커스터마이징 데이터 초기화 (이펙트 + 그리기)
     func resetCustomizingData() {
-        // 이펙트 초기화
         selectedSound = nil
         selectedParticle = nil
         customSoundURL = nil
@@ -272,26 +232,15 @@ class NeonSignVM: KeyringViewModelProtocol {
         particleId = "none"
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
-
-        // 그리기 상태 초기화
-        drawingPaths.removeAll()
-        currentDrawingColor = .white
-        currentLineWidth = 3.0
-
-        // 원본 이미지로 복원
-        if let original = originalBodyImage {
-            bodyImage = original
-        }
+        selectedFrameId = nil
     }
 
-    /// 정보 입력 데이터 초기화
     func resetInfoData() {
         nameText = ""
         memoText = ""
         selectedTags = []
     }
 
-    /// 완전 초기화
     func resetAll() {
         resetCustomizingData()
         resetInfoData()

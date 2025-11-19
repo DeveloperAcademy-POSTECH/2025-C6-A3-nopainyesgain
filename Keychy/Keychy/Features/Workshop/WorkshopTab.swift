@@ -11,6 +11,7 @@ struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
+    @State private var polaroidVM: PolaroidVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -91,6 +92,28 @@ struct WorkshopTab: View {
                             navigationTitle: "키링이 완성되었어요!"
                         )
 
+                    // MARK: - Polaroid
+                    case .polaroidPreview:
+                        PolaroidPreview(router: router, viewModel: getPolaroidVM())
+                    case .polaroidCustomizing:
+                        KeyringCustomizingView(
+                            router: router,
+                            viewModel: getPolaroidVM(),
+                            nextRoute: .polaroidInfoInput
+                        )
+                    case .polaroidInfoInput:
+                        KeyringInfoInputView(
+                            router: router,
+                            viewModel: getPolaroidVM(),
+                            nextRoute: .polaroidComplete
+                        )
+                    case .polaroidComplete:
+                        KeyringCompleteView(
+                            router: router,
+                            viewModel: getPolaroidVM(),
+                            navigationTitle: "키링이 완성되었어요!"
+                        )
+
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
                     }
                 }
@@ -117,6 +140,15 @@ struct WorkshopTab: View {
         return viewModel
     }
 
+    private func getPolaroidVM() -> PolaroidVM {
+        guard let viewModel = polaroidVM else {
+            let newViewModel = PolaroidVM()
+            polaroidVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
         acrylicPhotoVM = nil
@@ -124,5 +156,9 @@ struct WorkshopTab: View {
 
     func resetNeonSignVM() {
         neonSignVM = nil
+    }
+
+    func resetPolaroidVM() {
+        polaroidVM = nil
     }
 }

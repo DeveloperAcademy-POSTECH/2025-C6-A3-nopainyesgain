@@ -12,6 +12,7 @@ import Combine
 enum CustomizingMode: String, CaseIterable, Identifiable {
     case effect = "이펙트"
     case drawing = "그리기"
+    case frame = "프레임"
 
     var id: String { rawValue }
 
@@ -22,6 +23,8 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
             return isSelected ? "effectMode_active" : "effectMode_inactive"
         case .drawing:
             return isSelected ? "drawing_active" : "drawing_inactive"
+        case .frame:
+            return isSelected ? "frame_active" : "frame_inactive"
         }
     }
 }
@@ -143,8 +146,8 @@ extension KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-        case .drawing:
-            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+        case .drawing, .frame:
+            // 기본적으로는 지원하지 않음 (NeonSign, Polaroid 등에서 override)
             return AnyView(EmptyView())
         }
     }
@@ -158,8 +161,8 @@ extension KeyringViewModelProtocol {
         switch mode {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-        case .drawing:
-            // 기본적으로는 지원하지 않음 (NeonSign 등에서 override)
+        case .drawing, .frame:
+            // 기본적으로는 지원하지 않음 (NeonSign, Polaroid 등에서 override)
             return AnyView(EmptyView())
         }
     }
