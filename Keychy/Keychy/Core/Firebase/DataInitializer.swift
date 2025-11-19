@@ -40,7 +40,7 @@ func initializeBackgrounds() async {
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "isActive": false
+            "isActive": true
         ],
         [
             "id": "GreenKeychy",
@@ -51,7 +51,7 @@ func initializeBackgrounds() async {
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "isActive": false
+            "isActive": true
         ],
         [
             "id": "WhiteKeychy",
@@ -62,7 +62,7 @@ func initializeBackgrounds() async {
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "isActive": false
+            "isActive": true
         ]
     ]
     
@@ -107,7 +107,7 @@ func initializeCarabiners() async {
             "carabinerWidth": 280.69,
             "keyringXPosition": [99.69, 203.32, 302.04],
             "keyringYPosition": [310.11, 235.64, 157.75],
-            "isActive": false
+            "isActive": true
         ],
         [
             "id": "WelcomeKeychy",
@@ -125,7 +125,43 @@ func initializeCarabiners() async {
             "carabinerWidth": 306.21,
             "keyringXPosition": [104, 201, 296],
             "keyringYPosition": [240.34, 271, 240.34],
-            "isActive": false
+            "isActive": true
+        ],
+        [
+            "id": "SquareKeychy",
+            "carabinerName": "스퀘어키치",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FSquareKeychy.png?alt=media&token=d08a960e-c0ae-442a-a0c5-253dc8e146d7"],
+            "carabinerType": "plain",  // "plain" 또는 "hamburger"
+            "description": "스퀘어 키치 카라비너입니다.",
+            "maxKeyringCount": 3,
+            "tags": ["키치"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 62.79,
+            "carabinerY": 116.66,
+            "carabinerWidth": 281.1,
+            "keyringXPosition": [103.04, 202.04, 300.5],
+            "keyringYPosition": [251.84, 251.84, 251.84],
+            "isActive": true
+        ],
+        [
+            "id": "PinkeyStar",
+            "carabinerName": "핑키스타",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FPinkeyStar.png?alt=media&token=fbba79f6-2142-4fd9-9f6c-2d3aa50335b5"],
+            "carabinerType": "plain",  // "plain" 또는 "hamburger"
+            "description": "스퀘어 키치 카라비너입니다.",
+            "maxKeyringCount": 3,
+            "tags": ["키치"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 43.61,
+            "carabinerY": 115.1,
+            "carabinerWidth": 336.14,
+            "keyringXPosition": [97.08, 190.31, 287.08],
+            "keyringYPosition": [225.84, 275, 310.84],
+            "isActive": true
         ]
     ]
     
