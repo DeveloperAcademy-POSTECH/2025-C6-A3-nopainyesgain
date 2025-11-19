@@ -239,7 +239,7 @@ class NeonSignVM: KeyringViewModelProtocol {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
         case .drawing:
-            return AnyView(DrawingCanvasView(viewModel: self))
+            return AnyView(DrawingCanvasView(viewModel: self, onSceneReady: onSceneReady))
         default:
             return AnyView(EmptyView())
         }

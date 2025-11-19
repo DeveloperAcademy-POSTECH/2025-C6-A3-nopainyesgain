@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DrawingCanvasView: View {
     @Bindable var viewModel: NeonSignVM
+    let onSceneReady: () -> Void
 
     @State private var currentPath = Path()
     @State private var imageFrame: CGRect = .zero
@@ -85,6 +86,10 @@ struct DrawingCanvasView: View {
                 )
             }
             .coordinateSpace(name: "canvasSpace")
+        }
+        .onAppear {
+            // 일반 SwiftUI View는 즉시 준비 완료
+            onSceneReady()
         }
     }
 }

@@ -81,6 +81,8 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 }
             }
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
+            .animation(.easeOut(duration: 0.3), value: isLoadingResources)
+            .animation(.easeOut(duration: 0.3), value: isSceneReady)
             .disabled(isLoadingResources || !isSceneReady)
 
             // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
@@ -163,12 +165,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             // Firebase에서 이펙트 데이터 가져오기
             await viewModel.fetchEffects()
 
-            // 사운드 + 파티클 병렬 프리로딩
+            // 사운드 + 파티클 병렬 프리로딩 + 최소 로딩 시간 보장
             async let soundsTask: () = preloadAllSoundEffects()
             async let particlesTask: () = preloadAllParticleEffects()
+            async let minimumLoadingDelay: () = { try? await Task.sleep(nanoseconds: 300_000_000) }() // 0.3초
 
             await soundsTask
             await particlesTask
+            await minimumLoadingDelay
 
             // 리소스 프리로딩 완료
             isLoadingResources = false
