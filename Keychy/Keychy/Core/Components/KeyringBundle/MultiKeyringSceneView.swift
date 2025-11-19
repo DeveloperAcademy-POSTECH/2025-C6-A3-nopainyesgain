@@ -189,11 +189,8 @@ extension MultiKeyringSceneView {
 
     /// 씬 정리 및 메모리 해제
     private func cleanupScene() {
-        // Scene의 모든 자식 노드 제거
-        scene?.removeAllChildren()
-
-        // Scene의 모든 액션 제거
-        scene?.removeAllActions()
+        // Scene의 cleanup 메서드 호출 (물리 조인트, 예약된 작업 등 정리)
+        scene?.cleanup()
 
         // Scene을 nil로 설정하여 메모리 해제
         scene = nil
