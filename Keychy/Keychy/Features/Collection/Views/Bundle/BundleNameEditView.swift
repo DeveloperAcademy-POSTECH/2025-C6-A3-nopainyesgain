@@ -36,10 +36,6 @@ struct BundleNameEditView<Route: BundleRoute>: View {
             .frame(maxHeight: .infinity)
             .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
             .contentShape(Rectangle())
-            .onTapGesture {
-                // 포커스 유지 - 탭해도 키보드 내려가지 않음
-                isTextFieldFocused = true
-            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
@@ -59,14 +55,6 @@ struct BundleNameEditView<Route: BundleRoute>: View {
                 morePadding = 5
             }
             viewModel.hideTabBar()
-        }
-        .onChange(of: isTextFieldFocused) { _, newValue in
-            // 포커스가 해제되려고 하면 다시 활성화
-            if !newValue {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    isTextFieldFocused = true
-                }
-            }
         }
         .transaction { transaction in
             transaction.animation = nil
