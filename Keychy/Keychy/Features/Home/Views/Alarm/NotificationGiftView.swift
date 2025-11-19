@@ -44,13 +44,21 @@ struct NotificationGiftView: View {
             } else {
                 contentView
             }
+            
+            CustomNavigationBar {
+                CloseToolbarButton {
+                    router.pop()
+                }
+            } center: {
+                Text("키링 선물 완료")
+            } trailing: {
+                Spacer()
+                    .frame(width: 44, height: 44)
+            }
         }
-        .navigationTitle("키링 선물 완료")
+        .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            backBtn
-        }
         .onAppear {
             fetchGiftData()
         }
@@ -84,15 +92,6 @@ struct NotificationGiftView: View {
 
             Spacer()
                 .frame(maxHeight: 80)
-        }
-    }
-
-    private var backBtn: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            CloseToolbarButton {
-                router.pop()
-            }
-            .frame(width: 32, height: 32)
         }
     }
 

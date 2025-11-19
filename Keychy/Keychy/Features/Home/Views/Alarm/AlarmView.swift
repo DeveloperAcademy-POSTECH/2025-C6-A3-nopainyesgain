@@ -30,11 +30,6 @@ struct AlarmView: View {
 
     var body: some View {
         ZStack {
-            // 알림이 있을 때만 리스트 표시
-            if !isNotiEmpty {
-                notificationListView
-            }
-
             // 알림이 없을 때만 빈 화면 표시
             if isNotiEmpty {
                 emptyImageView
@@ -45,13 +40,22 @@ struct AlarmView: View {
                 if isNotiOff && isNotiOffShown {
                     pushNotiOffView
                 }
+                
+                // 알림이 있을 때만 리스트 표시
+                if !isNotiEmpty {
+                    notificationListView
+                }
 
                 Spacer()
             }
+            .adaptiveTopPaddingAlt()
+            .padding(.top, 20)
+            
+            customNavigation
         }
-        .padding(.top, 10)
-        .navigationTitle("알림")
+        .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
             checkNotificationPermission()
@@ -211,5 +215,18 @@ extension AlarmView {
                     print("알림 읽음 처리 완료: \(notificationId)")
                 }
             }
+    }
+    
+    private var customNavigation: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            Text("알림")
+        } trailing: {
+            Spacer()
+                .frame(width: 44, height: 44)
+        }
     }
 }
