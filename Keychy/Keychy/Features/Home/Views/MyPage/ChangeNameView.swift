@@ -37,6 +37,7 @@ struct ChangeNameView: View {
                         TextField("닉네임을 적어주세요.", text: $nickname)
                             .typography(.notosans15M)
                             .textFieldStyle(.plain)
+                            .tint(.main500)
                             .onChange(of: nickname) { oldValue, newValue in
                                 
                                 // 글자수 제한
