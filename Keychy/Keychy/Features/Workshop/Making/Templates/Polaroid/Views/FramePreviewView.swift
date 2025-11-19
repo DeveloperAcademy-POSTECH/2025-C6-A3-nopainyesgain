@@ -12,10 +12,10 @@ import NukeUI
 struct FramePreviewView: View {
     @Bindable var viewModel: PolaroidVM
     let onSceneReady: () -> Void
-    
+
     @State private var showPhotoPicker = false
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
-    
+
     var body: some View {
         VStack {
             ZStack(alignment: .top) {
@@ -23,7 +23,7 @@ struct FramePreviewView: View {
                 VStack {
                     Spacer()
                         .frame(height: 125)
-                    
+
                     ZStack(alignment: .bottom) {
                         // 1. 선택된 사진 (맨 아래)
                         if let photoImage = viewModel.selectedPhotoImage {
@@ -34,7 +34,7 @@ struct FramePreviewView: View {
                                 .clipped()  // frame 밖으로 나간 부분 잘라내기
                                 .padding(.bottom, 20)
                         } else {
-                            // 사진 선택 플레이스홀더
+                            // 사진 선택 플레이스홀더 (CarabinerAddKeyringButton 스타일)
                             Button {
                                 showPhotoPicker = true
                             } label: {
@@ -43,22 +43,22 @@ struct FramePreviewView: View {
                                         .fill(Color.white100)
                                         .frame(width: 214, height: 267)
                                         .padding(.bottom, 20)
-                                    
-                                    VStack(spacing: 12) {
-                                        Image(systemName: "plus.circle.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundStyle(.gray300)
-                                        
-                                        Text("사진을 선택해주세요")
-                                            .typography(.suit14M)
-                                            .foregroundStyle(.gray400)
-                                    }
+
+                                    // + 버튼 아이콘
+                                    Image(.plus)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 20, height: 20)
+                                        .padding(12)
+                                        .background(
+                                            Circle()
+                                                .fill(.white100)
+                                                .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                        )
                                 }
                             }
                         }
-                        
+
                         // 2. 프레임 이미지 (중간)
                         if let frame = viewModel.selectedFrame {
                             LazyImage(url: URL(string: frame.frameURL)) { state in
@@ -81,14 +81,14 @@ struct FramePreviewView: View {
                     }
                     .offset(x: 3)
                 }
-                
+
                 // frameChain 이미지 (위에 겹침)
                 Image("frameChain")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 80)
             }
-            
+
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
