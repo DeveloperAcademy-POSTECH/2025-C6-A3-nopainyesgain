@@ -98,7 +98,6 @@ extension KeyringCompleteView {
         )
         .frame(maxWidth: .infinity)
         .allowsHitTesting(isInteractionEnabled)
-        //.frame(height: 500)
     }
 }
 
@@ -178,14 +177,4 @@ extension KeyringCompleteView {
                 .foregroundStyle(.black100)
         }
     }
-}
-
-
-// MARK: - 프리뷰
-#Preview("iPhone 16 Pro") {
-    KeyringCompleteView(
-        router: NavigationRouter<WorkshopRoute>(),
-        viewModel: AcrylicPhotoVM(),
-        navigationTitle: "키링 완성"
-    )
 }

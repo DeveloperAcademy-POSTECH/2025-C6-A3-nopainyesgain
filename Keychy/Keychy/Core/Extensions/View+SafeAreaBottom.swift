@@ -65,7 +65,7 @@ extension View {
         return window.safeAreaInsets.bottom == 0 ? window.safeAreaInsets.top + defaultPadding : 0
     }
     
-    /// 위 로직이 맞나? 헷갈려서 새로 만듬 -길
+    /// 기기의 safeAreaInsets.top을 계산하고 defaultPadding을 더해서 탑패딩을 한다.
     func getTopPaddingAlt(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
@@ -78,5 +78,3 @@ extension View {
         return window.safeAreaInsets.top + defaultPadding
     }
 }
-
-//adaptiveTopPaddingAlt

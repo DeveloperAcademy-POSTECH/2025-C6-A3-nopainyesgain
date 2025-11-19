@@ -81,14 +81,14 @@ extension KeyringCustomizingView {
     private func purchaseItemRow(item: EffectItem) -> some View {
         HStack(spacing: 0) {
             // 아이콘 (유료 표시)
-            Image("selected")
+            Image("mainEffectSelect")
                 .padding(.trailing, 6)
 
             // 아이템 이름
             Text(item.name)
                 .typography(.suit17B)
                 .foregroundStyle(.black100)
-                .padding(.trailing, 3)
+                .padding(.trailing, 6)
 
             // 타입 표시
             Text(item.type.rawValue)
