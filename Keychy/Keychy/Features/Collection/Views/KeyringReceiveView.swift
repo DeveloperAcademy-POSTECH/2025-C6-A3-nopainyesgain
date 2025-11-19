@@ -21,6 +21,7 @@ struct KeyringReceiveView: View {
     @State private var isAccepted: Bool = false
     @State private var showAcceptCompleteAlert: Bool = false
     @State private var showInvenFullAlert: Bool = false
+    @State private var scene: KeyringCellScene?
     
     // 이미 수령처리된 로직 관련
     @State private var showAlreadyAcceptedAlert: Bool = false
@@ -186,6 +187,17 @@ struct KeyringReceiveView: View {
         .onAppear {
             loadKeyringData()
         }
+        .onDisappear {
+            cleanupScene()
+        }
+    }
+    
+    private func cleanupScene() {
+        scene?.removeAllChildren()
+        scene?.removeAllActions()
+        scene?.physicsWorld.removeAllJoints()
+        scene?.view?.presentScene(nil)
+        scene = nil
     }
     
     //  블러 적용 여부
@@ -299,7 +311,7 @@ struct KeyringReceiveView: View {
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
         
-        let scene = KeyringCellScene(
+        let newScene = KeyringCellScene(
             ringType: ringType,
             chainType: chainType,
             bodyImage: keyring.bodyImage,
@@ -315,8 +327,10 @@ struct KeyringReceiveView: View {
                 }
             }
         )
-        scene.scaleMode = .aspectFill
-        return scene
+        newScene.scaleMode = .aspectFill
+        self.scene = newScene
+        
+        return newScene
     }
     
     private var backgroundImageName: String {

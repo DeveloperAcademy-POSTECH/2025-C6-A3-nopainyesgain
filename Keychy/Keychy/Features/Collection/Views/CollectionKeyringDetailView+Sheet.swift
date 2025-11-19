@@ -14,7 +14,7 @@ extension CollectionKeyringDetailView {
             ScrollView {
                 VStack(spacing: 0) {
                     topSection
-                        .padding(.top, sheetDetent == .height(395) ? 10 : 10)
+                        .padding(.top, sheetDetent == .fraction(0.48) ? 10 : 10)
                         .padding(.bottom, sheetDetent == .height(76) ? 14 : 0)
                         .animation(.easeInOut(duration: 0.35), value: sheetDetent)
                     
@@ -33,15 +33,14 @@ extension CollectionKeyringDetailView {
                     Spacer(minLength: 0)
                     
                 }
-                .padding(.horizontal, 16)
                 .frame(minHeight: geometry.size.height)
             }
             .scrollDisabled(true)
         }
         .toolbar(.hidden, for: .tabBar)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(sheetDetent == .height(395) ? .white100 : Color.clear)
+        .background(sheetDetent == .height(76) ? Color.clear : .white100)
         .shadow(
             color: Color.black.opacity(0.18),
             radius: 37.5,
@@ -142,7 +141,7 @@ extension CollectionKeyringDetailView {
     
     private var memoSection: some View {
         ZStack {
-            MemoView(memo: keyring.memo ?? "")
+            MemoView(memo: keyring.memo ?? "", sheetDetent: $sheetDetent)
         }
         .padding(.top, 15)
         
@@ -151,33 +150,51 @@ extension CollectionKeyringDetailView {
     private struct MemoView: View {
         let memo: String
         @State private var textHeight: CGFloat = 0
+        @State private var scrollOffset: CGFloat = 0
+        @Binding var sheetDetent: PresentationDetent
+        
+        private let minHeight: CGFloat = 60 // 최소 높이
+        private let lineHeight: CGFloat = 25
+        private let scrollThreshold: CGFloat = 100 // 100포인트 이상 스크롤해야 시트 확대
+        
+        // 기기별 최대 높이 설정
+        private var maxHeight: CGFloat {
+            let screenSize = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first?.screen.bounds.size ?? CGSize(width: 393, height: 852)
+            
+            // SE
+            if screenSize.height <= 667 {
+                return 300
+            }
+            // mini 계열
+            else if screenSize.height <= 812 {
+                return 380
+            }
+            // 표준/Pro 계열
+            else {
+                return 420
+            }
+        }
         
         private var needsScroll: Bool {
-            textHeight > 76 // 3줄 정도의 높이
+            textHeight > maxHeight
         }
         
         private var displayHeight: CGFloat {
-            if textHeight <= 36 { // 1줄
-                return 60
-            } else if textHeight <= 60 { // 2줄
-                return 80
-            } else if textHeight <= 76 { // 3줄
-                return 100
-            } else { // 4줄 이상
-                return 100
-            }
+            // 최소 60, 최대 420, 그 사이는 실제 텍스트 높이에 맞춤
+            return max(60, min(textHeight + 24, maxHeight))
         }
         
         var body: some View {
             Group {
                 if needsScroll {
-                    // 4줄 이상일 때 스크롤 가능
+                    // 스크롤 가능
                     ScrollView {
-                        Text(memo)
+                        Text(memo.byCharWrapping)
                             .typography(.notosans16R25)
                             .foregroundColor(.black100)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
                             .background(
                                 GeometryReader { geometry in
                                     Color.clear.onAppear {
@@ -187,18 +204,38 @@ extension CollectionKeyringDetailView {
                             )
                     }
                     .scrollIndicators(.hidden)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                let newOffset = value.translation.height
+                                
+                                // 아래로 스크롤 (음수) && 임계값 초과 && 시트가 최대 높이가 아닐 때
+                                if newOffset < -scrollThreshold && sheetDetent != .fraction(0.93) {
+                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                                        sheetDetent = .fraction(0.93)
+                                    }
+                                }
+                            }
+                            .onEnded { _ in
+                                scrollOffset = 0  // 제스처 종료 시 리셋
+                            }
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                     .frame(height: displayHeight)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(.gray100, lineWidth: 1)
                     )
                 } else {
-                    // 3줄 이하일 때 스크롤 없음
-                    Text(memo)
+                    // 스크롤 없음
+                    Text(memo.byCharWrapping)
                         .typography(.notosans16R25)
                         .foregroundColor(.black100)
-                        .padding()
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(minHeight: minHeight)
                         .fixedSize(horizontal: false, vertical: true) // 수직으로 확장
                         .background(
                             GeometryReader { geometry in

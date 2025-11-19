@@ -90,6 +90,7 @@ struct PackageCompleteView: View {
         }
         .onDisappear() {
             showTabBar()
+            cleanupScene()
         }
     }
     
@@ -112,6 +113,18 @@ struct PackageCompleteView: View {
                 tabBarController.tabBar.isHidden = false
             }
         }
+    }
+    
+    private func cleanupScene() {
+        scene?.removeAllChildren()
+        scene?.removeAllActions()
+        scene?.physicsWorld.removeAllJoints()
+        scene?.view?.presentScene(nil)
+        scene = nil
+        
+        // 캡처된 이미지도 정리
+        capturedSceneImage = nil
+        qrCodeImage = nil
     }
     
     // 블러 처리

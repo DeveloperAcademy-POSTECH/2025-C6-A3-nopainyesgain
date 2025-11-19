@@ -26,9 +26,9 @@ class KeyringDetailScene: SKScene {
     var currentChainType: ChainType
     
     // MARK: - 구성 요소들
-    var ringNode: SKSpriteNode?
+    weak var ringNode: SKSpriteNode?
     var chainNodes: [SKSpriteNode] = []
-    var bodyNode: SKNode?
+    weak var bodyNode: SKNode?
     
     // MARK: - 스와이프 제스처 관련
     var lastTouchLocation: CGPoint?
@@ -70,8 +70,7 @@ class KeyringDetailScene: SKScene {
     }
     
     deinit {
-        removeAllChildren()
-        removeAllActions()
+        cleanup()
     }
     
     // MARK: - Scene Lifecycle
@@ -82,8 +81,35 @@ class KeyringDetailScene: SKScene {
         setupKeyring()
     }
     
+    override func willMove(from view: SKView) {
+        super.willMove(from: view)
+        cleanup()
+    }
+    
+    // MARK: - 메모리 정리
+    private func cleanup() {
+        // 콜백 제거
+        onLoadingComplete = nil
+        onPlayParticleEffect = nil
+        
+        // 노드 참조 제거
+        ringNode = nil
+        chainNodes.removeAll()
+        bodyNode = nil
+        
+        // 캐시된 이미지 제거
+        cachedImages = nil
+        
+        // 모든 액션과 노드 제거
+        removeAllChildren()
+        removeAllActions()
+        
+        // Physics World 정리
+        physicsWorld.removeAllJoints()
+    }
+    
     func applySoundEffect(soundId: String) {
-        guard soundId != "none" else { return }
+        guard soundId != "none", isReady else { return }
 
         if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
             if let url = URL(string: soundId) {
@@ -96,7 +122,7 @@ class KeyringDetailScene: SKScene {
     }
     
     func applyParticleEffect(particleId: String) {
-        guard particleId != "none" else { return }
+        guard particleId != "none", isReady else { return }
         
         let currentTime = Date().timeIntervalSince1970
         guard currentTime - lastParticleTime >= 0.5 else { return }
@@ -106,7 +132,7 @@ class KeyringDetailScene: SKScene {
     }
     
     private func applySwipeForceToNearbyChains(at location: CGPoint, velocity: CGVector) {
-        guard let body = bodyNode else { return }
+        guard let body = bodyNode, isReady else { return }
         
         let forceMagnitude: CGFloat = 0.6
         
@@ -127,8 +153,7 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 터치 인터랙션
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard isTouchEnabled else { return }
-        guard isReady else { return }
+        guard isTouchEnabled, isReady, isPaused == false else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
@@ -140,8 +165,7 @@ class KeyringDetailScene: SKScene {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard isTouchEnabled else { return }
-        guard isReady else { return }
+        guard isTouchEnabled, isReady, isPaused == false else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
@@ -170,8 +194,7 @@ class KeyringDetailScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard isTouchEnabled else { return }
-        guard isReady else { return }
+        guard isTouchEnabled, isReady, isPaused == false else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         

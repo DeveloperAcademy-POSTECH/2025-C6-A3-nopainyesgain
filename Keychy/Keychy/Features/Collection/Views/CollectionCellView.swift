@@ -11,13 +11,24 @@ import SpriteKit
 struct CollectionCellView: View {
     let keyring: Keyring
     @State private var isLoading: Bool = true
+    @State private var scene: KeyringCellScene?
 
     var body: some View {
         ZStack {
-            // SpriteView 표시 (캐시 여부와 관계없이 항상 표시)
-            SpriteView(
-                scene: createMiniScene(keyring: keyring)
-            )
+            if let scene = scene {
+                SpriteView(scene: scene)
+                    .onAppear {
+                        scene.isPaused = false
+                    }
+                    .onDisappear {
+                        scene.isPaused = true
+                    }
+            } else {
+                Color.gray50
+                    .onAppear {
+                        createSceneIfNeeded()
+                    }
+            }
 
             if isLoading {
                 Color.gray50
@@ -35,6 +46,23 @@ struct CollectionCellView: View {
         .onAppear {
             checkAndCaptureKeyring()
         }
+        .onDisappear {
+            cleanupScene()
+        }
+    }
+    
+    private func createSceneIfNeeded() {
+        guard scene == nil else { return }
+        
+        scene = createMiniScene(keyring: keyring)
+    }
+    
+    private func cleanupScene() {
+        scene?.removeAllChildren()
+        scene?.removeAllActions()
+        scene?.physicsWorld.removeAllJoints()
+        scene?.view?.presentScene(nil)
+        scene = nil
     }
     
     // MARK: - 상태 오버레이
@@ -97,7 +125,7 @@ struct CollectionCellView: View {
         if keyring.isPackaged {
             if KeyringImageCache.shared.exists(for: keyringID) {
                 KeyringImageCache.shared.removeKeyring(id: keyringID)
-                print("🗑️ [CollectionCell] 포장된 키링 캐시 삭제: \(keyring.name) (\(keyringID))")
+                print("[CollectionCell] 포장된 키링 캐시 삭제: \(keyring.name) (\(keyringID))")
             }
             return
         }
