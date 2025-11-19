@@ -32,11 +32,33 @@ func initializeData() async {
 func initializeBackgrounds() async {
     let backgrounds: [[String: Any]] = [
         [
-            "id": "ExampleBackground",
-            "backgroundName": "예시 배경",
-            "description": "새로운 배경 설명을 입력하세요",
-            "backgroundImage": "https://firebasestorage.googleapis.com/...",
-            "tags": ["태그1", "태그2"],
+            "id": "PurpleKeychy",
+            "backgroundName": "퍼플키치",
+            "description": "키치의 시그니쳐 퍼플키치 배경화면 입니다.",
+            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FPurpleKeychy.png?alt=media&token=9cefda01-b109-40cc-b9fe-7e8b044be394",
+            "tags": ["키치"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ],
+        [
+            "id": "GreenKeychy",
+            "backgroundName": "그린키치",
+            "description": "키치의 시그니쳐 그린키치 배경화면 입니다.",
+            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FGreenKeychy.png?alt=media&token=5cdf9833-99f2-4a95-8e07-bb4ab1898b3f",
+            "tags": ["키치"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ],
+        [
+            "id": "WhiteKeychy",
+            "backgroundName": "화이티키치",
+            "description": "키치의 시그니쳐 화이티키치 배경화면 입니다.",
+            "backgroundImage": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Backgrounds%2FWhiteKeychy.png?alt=media&token=2f19c0e1-0be4-47d2-b84a-34a60d3f1a0f",
+            "tags": ["키치"],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
@@ -70,21 +92,39 @@ func initializeBackgrounds() async {
 func initializeCarabiners() async {
     let carabiners: [[String: Any]] = [
         [
-            "id": "ExampleCarabiner",
-            "carabinerName": "예시 카라비너",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/..."],
-            "carabinerType": "plain",  // "plain" 또는 "hamburger"
-            "description": "새로운 카라비너 설명을 입력하세요",
-            "maxKeyringCount": 5,
-            "tags": ["태그1", "태그2"],
+            "id": "StarStarStar",
+            "carabinerName": "스타스타스타",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FStarStarStar.png?alt=media&token=99a53b57-75aa-4050-b4a7-7ae7225c7a37"],
+            "carabinerType": "hamburger",  // "plain" 또는 "hamburger"
+            "description": "스타스타스타 카라비너입니다.",
+            "maxKeyringCount": 3,
+            "tags": ["별"],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "carabinerX": 0.0,
-            "carabinerY": 0.0,
-            "carabinerWidth": 100.0,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5],
+            "carabinerX": 60.66,
+            "carabinerY": 132,
+            "carabinerWidth": 280.69,
+            "keyringXPosition": [99.69, 203.32, 302.04],
+            "keyringYPosition": [310.11, 235.64, 157.75],
+            "isActive": false
+        ],
+        [
+            "id": "WelcomeKeychy",
+            "carabinerName": "웰컴 키치",
+            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FWelcomeKeychy.png?alt=media&token=eb0c2720-afa6-4ae5-9424-c1877ade406a"],
+            "carabinerType": "plain",  // "plain" 또는 "hamburger"
+            "description": "웰컴 키치 카라비너입니다.",
+            "maxKeyringCount": 3,
+            "tags": ["키치"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 52.23,
+            "carabinerY": 197.6,
+            "carabinerWidth": 306.21,
+            "keyringXPosition": [104, 201, 296],
+            "keyringYPosition": [240.34, 271, 240.34],
             "isActive": false
         ]
     ]
