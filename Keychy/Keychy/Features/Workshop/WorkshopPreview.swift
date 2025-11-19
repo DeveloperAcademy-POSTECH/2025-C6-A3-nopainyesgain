@@ -82,6 +82,8 @@ struct WorkshopPreview: View {
                 }
             } center: {
                 Spacer()
+            } trailing: {
+                Spacer()
             }
         }
         .ignoresSafeArea()

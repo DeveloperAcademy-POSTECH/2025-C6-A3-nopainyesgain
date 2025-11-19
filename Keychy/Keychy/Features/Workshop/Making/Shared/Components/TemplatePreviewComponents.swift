@@ -62,6 +62,8 @@ struct TemplatePreviewBody: View {
                 }
             } center: {
                 Spacer()
+            } trailing: {
+                Spacer()
             }
         }
         .ignoresSafeArea()
