@@ -183,8 +183,8 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             // 첫 진입 이후 모드 전환 시 애니메이션 비활성화
             isInitialBottomViewAppear = false
 
-            // 높이 비율 변경 (애니메이션과 함께)
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+            // 높이 비율 변경 (스프링 없이 부드러운 애니메이션)
+            withAnimation(.easeInOut(duration: 0.4)) {
                 currentBottomViewHeightRatio = viewModel.bottomViewHeightRatio(for: newMode)
             }
 
