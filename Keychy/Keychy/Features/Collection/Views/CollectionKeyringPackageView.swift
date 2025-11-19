@@ -179,7 +179,6 @@ extension CollectionKeyringPackageView {
         } center: {
             // Center (중앙) - 빈 공간
             Text(keyring.name)
-                .typography(.notosans17M)
                 .foregroundStyle(.gray600)
         } trailing: {
             // Trailing (오른쪽) - 다음/구매 버튼
