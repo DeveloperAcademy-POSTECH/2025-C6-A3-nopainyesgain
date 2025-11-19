@@ -47,15 +47,19 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                // 배경
+                Color.gray50
+                    .ignoresSafeArea()
+
+                // 모드별 씬 뷰 (ViewModel에서 제공) - 전체 화면 고정
+                currentSceneView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .opacity(isSceneReady ? 1.0 : 0.0)
+
+                // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                 VStack(spacing: 0) {
                     Spacer()
 
-                    ZStack(alignment: .center) {
-                    // 모드별 씬 뷰 (ViewModel에서 제공)
-                    currentSceneView
-                        .opacity(isSceneReady ? 1.0 : 0.0)
-
-                    // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                     HStack(alignment: .bottom, spacing: 8) {
                         ForEach(viewModel.availableCustomizingModes) { mode in
                             modeButton(for: mode)
@@ -64,17 +68,20 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     }
                     .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
                     .padding(18)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                    .padding(.bottom, geometry.size.height * currentBottomViewHeightRatio)
                 }
 
-                // MARK: - 하단 영역 (모드별로 다른 콘텐츠)
-                currentBottomView
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: geometry.size.height * currentBottomViewHeightRatio,
-                        alignment: .topLeading)
+                // MARK: - 하단 영역 (모드별로 다른 콘텐츠) - bottom 고정
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    currentBottomView
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: geometry.size.height * currentBottomViewHeightRatio,
+                            alignment: .top)
+                }
             }
-            .background(.gray50)
             .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert || showResetAlert || isLoadingResources || !isSceneReady ? 15 : 0)
             .disabled(isLoadingResources || !isSceneReady)
 
@@ -134,7 +141,6 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseProgress)
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
                 .zIndex(0)
-            }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
