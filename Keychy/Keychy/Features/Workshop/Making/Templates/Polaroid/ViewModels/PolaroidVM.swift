@@ -248,6 +248,17 @@ class PolaroidVM: KeyringViewModelProtocol {
         }
     }
 
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
+        switch mode {
+        case .frame:
+            return 0.22  // 프레임 모드는 더 낮은 높이
+        case .effect:
+            return 0.35  // 이펙트 모드는 기본 높이
+        default:
+            return 0.35
+        }
+    }
+
     // MARK: - Reset
     func resetCustomizingData() {
         selectedSound = nil

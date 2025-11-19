@@ -115,6 +115,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
         cartItems: Binding<[EffectItem]>
     ) -> AnyView
 
+    /// 모드에 따른 하단 뷰 높이 비율 제공 (기본값 0.35)
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat
+
     // MARK: - Reset Methods
     /// 커스터마이징 데이터 초기화 (이펙트, 커스텀 사운드)
     func resetCustomizingData()
@@ -164,6 +167,16 @@ extension KeyringViewModelProtocol {
         default:
             // 기본적으로는 지원하지 않음 (각 템플릿에서 override)
             return AnyView(EmptyView())
+        }
+    }
+
+    /// 기본 하단 뷰 높이 비율 (effect: 0.35, 나머지는 각 템플릿에서 override)
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
+        switch mode {
+        case .effect:
+            return 0.35
+        default:
+            return 0.35  // 기본값
         }
     }
 }

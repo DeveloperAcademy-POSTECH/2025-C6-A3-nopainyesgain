@@ -12,78 +12,73 @@ import NukeUI
 struct FramePreviewView: View {
     @Bindable var viewModel: PolaroidVM
     let onSceneReady: () -> Void
-
+    
     @State private var showPhotoPicker = false
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
-
+    
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // 배경
-                Color.gray100
-
-                // 프레임 미리보기
-                VStack(spacing: 0) {
-                    // frameChain 이미지 (상단)
-                    Image("frameChain")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .offset(y: 30)
-
-                    // 프레임 + 사진 영역
-                    ZStack {
-                        // 1. 선택된 사진 (맨 아래)
-                        if let photoImage = viewModel.selectedPhotoImage {
-                            Image(uiImage: photoImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 280, height: 280)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        } else {
-                            // 사진 선택 플레이스홀더
-                            Button {
-                                showPhotoPicker = true
-                            } label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.white100)
-                                        .frame(width: 280, height: 280)
-
-                                    VStack(spacing: 12) {
-                                        Image(systemName: "plus.circle.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundStyle(.gray300)
-
-                                        Text("사진을 선택해주세요")
-                                            .typography(.suit14M)
-                                            .foregroundStyle(.gray400)
-                                    }
-                                }
-                            }
-                        }
-
-                        // 2. 프레임 이미지 (중간)
-                        if let frame = viewModel.selectedFrame {
-                            LazyImage(url: URL(string: frame.frameURL)) { state in
-                                if let image = state.image {
-                                    image
+        ZStack {
+            // 프레임 미리보기
+            VStack(spacing: 0) {
+                // frameChain 이미지 (상단)
+                Image("frameChain")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80)
+                    .offset(y: 30)
+                
+                // 프레임 + 사진 영역
+                ZStack {
+                    // 1. 선택된 사진 (맨 아래)
+                    if let photoImage = viewModel.selectedPhotoImage {
+                        Image(uiImage: photoImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 280, height: 280)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    } else {
+                        // 사진 선택 플레이스홀더
+                        Button {
+                            showPhotoPicker = true
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.white100)
+                                    .frame(width: 280, height: 280)
+                                
+                                VStack(spacing: 12) {
+                                    Image(systemName: "plus.circle.fill")
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(width: 300, height: 300)
-                                } else if state.isLoading {
-                                    ProgressView()
-                                        .frame(width: 300, height: 300)
-                                } else {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.gray100)
-                                        .frame(width: 300, height: 300)
+                                        .frame(width: 40, height: 40)
+                                        .foregroundStyle(.gray300)
+                                    
+                                    Text("사진을 선택해주세요")
+                                        .typography(.suit14M)
+                                        .foregroundStyle(.gray400)
                                 }
                             }
-                            .allowsHitTesting(false)
                         }
+                    }
+                    
+                    // 2. 프레임 이미지 (중간)
+                    if let frame = viewModel.selectedFrame {
+                        LazyImage(url: URL(string: frame.frameURL)) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 300, height: 300)
+                            } else if state.isLoading {
+                                ProgressView()
+                                    .frame(width: 300, height: 300)
+                            } else {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.gray100)
+                                    .frame(width: 300, height: 300)
+                            }
+                        }
+                        .allowsHitTesting(false)
                     }
                 }
             }

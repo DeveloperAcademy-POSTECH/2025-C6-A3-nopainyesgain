@@ -12,12 +12,12 @@ struct FrameSelectorView: View {
     @Bindable var viewModel: PolaroidVM
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("프레임 선택")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
-                .padding(.top, 30)
+                .padding(.top, 20)
 
             // 프레임 목록
             ScrollView(.horizontal, showsIndicators: false) {
@@ -31,23 +31,23 @@ struct FrameSelectorView: View {
                                     image
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: 80, height: 80)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        .frame(width: 70, height: 70)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
                                 } else if state.isLoading {
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: 10)
                                         .fill(Color.gray100)
-                                        .frame(width: 80, height: 80)
+                                        .frame(width: 70, height: 70)
                                 } else {
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: 10)
                                         .fill(Color.gray.opacity(0.1))
-                                        .frame(width: 80, height: 80)
+                                        .frame(width: 70, height: 70)
                                 }
                             }
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 10)
                                     .strokeBorder(
                                         viewModel.selectedFrame?.id == frame.id ? Color.main500 : Color.clear,
-                                        lineWidth: 3
+                                        lineWidth: 2.5
                                     )
                             )
                         }
@@ -55,6 +55,7 @@ struct FrameSelectorView: View {
                 }
                 .padding(.horizontal, 20)
             }
+            .frame(height: 70)
 
             Spacer()
         }

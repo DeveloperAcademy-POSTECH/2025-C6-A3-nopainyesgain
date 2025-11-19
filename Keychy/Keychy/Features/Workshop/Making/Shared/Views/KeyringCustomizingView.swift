@@ -24,6 +24,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var isInitialBottomViewAppear = true  // 첫 진입 여부 추적
     @State private var bottomViewOpacity: Double = 0  // 하단 영역 opacity
     @State private var bottomViewOffset: CGFloat = 30  // 하단 영역 offset
+    @State private var currentBottomViewHeightRatio: CGFloat = 0.35  // 현재 하단 뷰 높이 비율
 
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -70,7 +71,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 currentBottomView
                     .frame(
                         maxWidth: .infinity,
-                        maxHeight: geometry.size.height * 0.35,
+                        maxHeight: geometry.size.height * currentBottomViewHeightRatio,
                         alignment: .topLeading)
             }
             .background(.gray50)
@@ -152,6 +153,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             // 첫 번째 모드를 기본 선택
             if let firstMode = viewModel.availableCustomizingModes.first {
                 selectedMode = firstMode
+                currentBottomViewHeightRatio = viewModel.bottomViewHeightRatio(for: firstMode)
             }
 
             // Firebase에서 이펙트 데이터 가져오기
@@ -174,6 +176,11 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .onChange(of: selectedMode) { oldMode, newMode in
             // 첫 진입 이후 모드 전환 시 애니메이션 비활성화
             isInitialBottomViewAppear = false
+
+            // 높이 비율 변경 (애니메이션과 함께)
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                currentBottomViewHeightRatio = viewModel.bottomViewHeightRatio(for: newMode)
+            }
 
             // 모드 변경 시 템플릿별 처리
             viewModel.onModeChanged(from: oldMode, to: newMode)
