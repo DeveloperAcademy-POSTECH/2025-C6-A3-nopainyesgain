@@ -47,13 +47,11 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // 배경
-                Color.gray50
-                    .ignoresSafeArea()
-
                 // 모드별 씬 뷰 (ViewModel에서 제공) - 전체 화면 고정
                 currentSceneView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.gray50.ignoresSafeArea())
+                    .offset(y: -60)
                     .opacity(isSceneReady ? 1.0 : 0.0)
 
                 // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
