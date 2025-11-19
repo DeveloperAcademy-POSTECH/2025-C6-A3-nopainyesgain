@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 import NukeUI
+import Nuke
 
 struct FramePreviewView: View {
     @Bindable var viewModel: PolaroidVM
@@ -23,116 +24,30 @@ struct FramePreviewView: View {
     @State private var currentOffset: CGSize = .zero
 
     var body: some View {
-        VStack {
-            ZStack(alignment: .top) {
-                // 프레임 + 사진 영역 (아래)
-                VStack {
-                    Spacer()
-                        .frame(height: 125)
+        GeometryReader { geometry in
+            VStack {
+                ZStack(alignment: .top) {
+                    // 프레임 + 사진 영역 (VM+Frame 로직과 동일)
+                    VStack {
+                        Spacer()
+                            .frame(height: 125)
 
-                    ZStack(alignment: .bottom) {
-                        // 1. 선택된 사진 (맨 아래)
-                        if let photoImage = viewModel.selectedPhotoImage {
-                            ZStack {
-                                Image(uiImage: photoImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 214, height: 267)
-                                    .scaleEffect(finalScale)
-                                    .rotationEffect(finalRotation)
-                                    .offset(finalOffset)
-                                    .clipped()  // frame 밖으로 나간 부분 잘라내기
-                                    .padding(.bottom, 20)
-                                    .contentShape(Rectangle())
-                                    .gesture(photoGestures)
-                                    .onTapGesture {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            showEditButton.toggle()
-                                        }
-                                    }
-
-                                // 편집 버튼 (사진 탭 시 표시)
-                                if showEditButton {
-                                    Button {
-                                        showPhotoPicker = true
-                                        showEditButton = false
-                                    } label: {
-                                        Image(.plus)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 20, height: 20)
-                                            .padding(12)
-                                            .background(
-                                                Circle()
-                                                    .fill(.white100)
-                                                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                                            )
-                                    }
-                                    .transition(.scale.combined(with: .opacity))
-                                }
-                            }
-                            .frame(width: 214, height: 267)
-                            .padding(.bottom, 20)
-                        } else {
-                            // 사진 선택 플레이스홀더 (CarabinerAddKeyringButton 스타일)
-                            Button {
-                                showPhotoPicker = true
-                            } label: {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(Color.white100)
-                                        .frame(width: 214, height: 267)
-                                        .padding(.bottom, 20)
-
-                                    // + 버튼 아이콘
-                                    Image(.plus)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 20, height: 20)
-                                        .padding(12)
-                                        .background(
-                                            Circle()
-                                                .fill(.white100)
-                                                .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                                        )
-                                }
-                            }
-                        }
-
-                        // 2. 프레임 이미지 (중간)
-                        if let frame = viewModel.selectedFrame {
-                            LazyImage(url: URL(string: frame.frameURL)) { state in
-                                if let image = state.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 324)
-                                } else if state.isLoading {
-                                    ProgressView()
-                                        .frame(width: 300, height: 320)
-                                } else {
-                                    Rectangle()
-                                        .fill(Color.gray100)
-                                        .frame(width: 300, height: 300)
-                                }
-                            }
-                            .allowsHitTesting(false)
-                        }
+                        // VM+Frame의 합성 로직과 동일한 배치
+                        compositionView
                     }
-                    .offset(x: 3)
+
+                    // frameChain 이미지 (위에 겹침)
+                    Image("frameChain")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80)
                 }
 
-                // frameChain 이미지 (위에 겹침)
-                Image("frameChain")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80)
+                Spacer()
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.top, 170)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 170)
         .photosPicker(
             isPresented: $showPhotoPicker,
             selection: $selectedPhotoItem,
@@ -225,5 +140,116 @@ struct FramePreviewView: View {
             width: viewModel.photoOffset.width + currentOffset.width,
             height: viewModel.photoOffset.height + currentOffset.height
         )
+    }
+
+    // MARK: - Composition View (VM+Frame 로직과 동일)
+
+    /// VM+Frame의 합성 로직과 정확히 동일한 배치
+    @ViewBuilder
+    private var compositionView: some View {
+        // VM+Frame과 동일한 상수 값
+        let targetFrameHeight: CGFloat = 324
+        let photoWidth: CGFloat = 214
+        let photoHeight: CGFloat = 267
+        let photoBottomPadding: CGFloat = 20
+        let photoOffsetX: CGFloat = 3
+
+        ZStack(alignment: .topLeading) {
+            if let frame = viewModel.selectedFrame {
+                // 프레임 크기 계산
+                LazyImage(url: URL(string: frame.frameURL)) { state in
+                    if let image = state.image {
+                        let frameAspect = (state.imageContainer?.image.size.width ?? 1) / (state.imageContainer?.image.size.height ?? 1)
+                        let targetFrameWidth = targetFrameHeight * frameAspect
+
+                        // 사진 위치 계산 (VM+Frame과 동일)
+                        let photoX = (targetFrameWidth - photoWidth) / 2 + photoOffsetX
+                        let photoY = targetFrameHeight - photoHeight - photoBottomPadding
+
+                        ZStack(alignment: .topLeading) {
+                            // 1. 사진 (맨 아래)
+                            if let photoImage = viewModel.selectedPhotoImage {
+                                ZStack {
+                                    Image(uiImage: photoImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: photoWidth, height: photoHeight)
+                                        .scaleEffect(finalScale)
+                                        .rotationEffect(finalRotation)
+                                        .offset(finalOffset)
+                                        .clipped()
+                                        .contentShape(Rectangle())
+                                        .gesture(photoGestures)
+                                        .onTapGesture {
+                                            withAnimation(.easeInOut(duration: 0.2)) {
+                                                showEditButton.toggle()
+                                            }
+                                        }
+
+                                    // 편집 버튼
+                                    if showEditButton {
+                                        Button {
+                                            showPhotoPicker = true
+                                            showEditButton = false
+                                        } label: {
+                                            Image(.plus)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 20, height: 20)
+                                                .padding(12)
+                                                .background(
+                                                    Circle()
+                                                        .fill(.white100)
+                                                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                                )
+                                        }
+                                        .transition(.scale.combined(with: .opacity))
+                                    }
+                                }
+                                .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
+                            } else {
+                                // 사진 선택 플레이스홀더
+                                Button {
+                                    showPhotoPicker = true
+                                } label: {
+                                    ZStack {
+                                        Rectangle()
+                                            .fill(Color.white100)
+                                            .frame(width: photoWidth, height: photoHeight)
+
+                                        Image(.plus)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20, height: 20)
+                                            .padding(12)
+                                            .background(
+                                                Circle()
+                                                    .fill(.white100)
+                                                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                            )
+                                    }
+                                }
+                                .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
+                            }
+
+                            // 2. 프레임 이미지 (위에 오버레이)
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: targetFrameHeight)
+                                .allowsHitTesting(false)
+                        }
+                        .frame(width: targetFrameWidth, height: targetFrameHeight)
+                    } else if state.isLoading {
+                        ProgressView()
+                            .frame(height: targetFrameHeight)
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray100)
+                            .frame(height: targetFrameHeight)
+                    }
+                }
+            }
+        }
     }
 }
