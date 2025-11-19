@@ -11,11 +11,6 @@ extension KeyringCellScene {
     
     // MARK: - 키링 전체 조립
     func setupKeyring() {
-        guard view != nil, parent != nil else {
-            print("Scene이 화면에서 제거됨 - 로딩 중단")
-            return
-        }
-        
         // 모든 이미지를 먼저 다운로드
         downloadAllImages { [weak self] result in
             guard let self = self else {
@@ -23,25 +18,16 @@ extension KeyringCellScene {
                 return
             }
             
-            // Scene이 여전히 유효한지 다시 확인
-            guard self.view != nil, self.parent != nil else {
-                print("Scene이 화면에서 제거됨 - 조립 중단")
-                return
-            }
-            
-            // containerNode가 nil이면 재시도하되, Scene 유효성 체크
+            // containerNode가 nil이면 재시도
             guard self.containerNode != nil else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                    // 재시도 전에도 Scene 유효성 확인
-                    guard let self = self, self.view != nil, self.parent != nil else {
-                        return
-                    }
-                    
+                print("이미지 다운로드 완료 후에도 containerNode가 nil입니다. 0.1초 후 재시도합니다.")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    // 이미지는 이미 다운로드되었으므로 조립만 재시도
                     switch result {
                     case .success(let images):
-                        self.assembleKeyring(with: images)
+                        self?.assembleKeyring(with: images)
                     case .failure:
-                        self.assembleFallbackKeyring()
+                        self?.assembleFallbackKeyring()
                     }
                 }
                 return
@@ -49,14 +35,9 @@ extension KeyringCellScene {
             
             switch result {
             case .success(let images):
-                
-                // 다운로드된 이미지로 키링 조립
                 self.assembleKeyring(with: images)
-                
             case .failure(let error):
                 print("이미지 다운로드 실패: \(error)")
-                
-                // 실패해도 가능한 것만 조립 (fallback)
                 self.assembleFallbackKeyring()
             }
         }

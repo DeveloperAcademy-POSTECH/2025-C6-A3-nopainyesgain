@@ -190,10 +190,6 @@ extension KeyringEditView {
                             VStack(spacing: 8) {
                                 LoadingAlert(type: .short, message: nil)
                                     .scaleEffect(0.5)
-                                
-                                Text("키링을 가져오는 중")
-                                    .typography(.suit12M)
-                                    .foregroundColor(.white)
                             }
                         }
                 }
