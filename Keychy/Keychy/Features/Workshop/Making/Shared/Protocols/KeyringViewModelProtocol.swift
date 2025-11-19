@@ -24,7 +24,7 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
         case .drawing:
             return isSelected ? "drawing_active" : "drawing_inactive"
         case .frame:
-            return isSelected ? "frame_active" : "frame_inactive"
+            return isSelected ? "frameMode_active" : "frameMode_inactive"
         }
     }
 }
