@@ -97,6 +97,11 @@ class PolaroidVM: KeyringViewModelProtocol {
     var selectedFrame: Frame? = nil
     var selectedPhotoImage: UIImage? = nil
 
+    // MARK: - Photo Transform State (사진 변환 상태)
+    var photoScale: CGFloat = 1.0
+    var photoRotation: Angle = .zero
+    var photoOffset: CGSize = .zero
+
     // MARK: - 정보 입력
     var nameText: String = ""
     var maxTextCount: Int = 30
@@ -287,6 +292,9 @@ class PolaroidVM: KeyringViewModelProtocol {
         downloadProgress.removeAll()
         selectedFrame = nil
         selectedPhotoImage = nil
+        photoScale = 1.0
+        photoRotation = .zero
+        photoOffset = .zero
     }
 
     func resetInfoData() {

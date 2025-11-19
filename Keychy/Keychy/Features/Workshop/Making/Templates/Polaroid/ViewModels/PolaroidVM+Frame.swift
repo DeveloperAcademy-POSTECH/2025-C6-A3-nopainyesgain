@@ -78,7 +78,26 @@ extension PolaroidVM {
                 )
             }
 
-            photo.draw(in: drawRect)
+            // 사진 변환 적용 (확대/축소, 회전, 이동)
+            let centerX = drawRect.midX
+            let centerY = drawRect.midY
+
+            // 변환의 중심점을 사진 중심으로 이동
+            context.cgContext.translateBy(x: centerX, y: centerY)
+
+            // 변환 적용 순서: offset -> rotation -> scale
+            context.cgContext.translateBy(x: photoOffset.width, y: photoOffset.height)
+            context.cgContext.rotate(by: CGFloat(photoRotation.radians))
+            context.cgContext.scaleBy(x: photoScale, y: photoScale)
+
+            // 이미지를 원점 중심으로 그리기
+            let centeredRect = CGRect(
+                x: -drawRect.width / 2,
+                y: -drawRect.height / 2,
+                width: drawRect.width,
+                height: drawRect.height
+            )
+            photo.draw(in: centeredRect)
             context.cgContext.restoreGState()
 
             // 2. 프레임 이미지 그리기 (위에 오버레이, 리사이즈된 크기로)
