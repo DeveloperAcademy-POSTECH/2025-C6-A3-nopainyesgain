@@ -133,23 +133,29 @@ struct CollectionKeyringDetailView: View {
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     private var sceneScale: CGFloat {
-        sheetDetent == .height(76) ? 1.3 : 0.8
+        sheetDetent == .height(76) ? 1.2 : 0.8
     }
     
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     private var sceneYOffset: CGFloat {
-        sheetDetent == .height(76) ? 70 : -80
+        sheetDetent == .height(76) ? 10 : -100
     }
-
 }
 
 // MARK: - 키링 씬
 extension CollectionKeyringDetailView {
     var keyringScene: some View {
-        KeyringDetailSceneView(
-            keyring: keyring,
-            isLoading: $isLoading
-        )
+        VStack(spacing: 0) {
+            Spacer()
+                .frame(height: 30)
+            
+            KeyringDetailSceneView(
+                keyring: keyring,
+                isLoading: $isLoading
+            )
+            
+            Spacer()
+        }
         .frame(maxWidth: .infinity)
         .scaleEffect(sceneScale)
         .offset(y: sceneYOffset)

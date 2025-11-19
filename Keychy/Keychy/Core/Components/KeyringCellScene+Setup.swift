@@ -20,7 +20,7 @@ extension KeyringCellScene {
             
             // containerNode가 nil이면 재시도
             guard self.containerNode != nil else {
-                print("이미지 다운로드 완료 후에도 containerNode가 nil입니다. 0.1초 후 재시도합니다.")
+                //print("이미지 다운로드 완료 후에도 containerNode가 nil입니다. 0.1초 후 재시도합니다.")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                     // 이미지는 이미 다운로드되었으므로 조립만 재시도
                     switch result {
@@ -105,7 +105,7 @@ extension KeyringCellScene {
     // MARK: - 키링 조립 (이미지 다운로드 완료 후)
     private func assembleKeyring(with images: KeyringImages) {
         guard let containerNode = containerNode else {
-            print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
+            //print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                 self?.assembleKeyring(with: images)
             }
@@ -183,7 +183,7 @@ extension KeyringCellScene {
     // MARK: - Fallback 키링 조립 (다운로드 실패 시)
     private func assembleFallbackKeyring() {
         guard let containerNode = containerNode else {
-            print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
+            //print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                 self?.assembleFallbackKeyring()
             }
