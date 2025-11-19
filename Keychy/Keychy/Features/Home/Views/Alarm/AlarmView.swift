@@ -48,10 +48,14 @@ struct AlarmView: View {
 
                 Spacer()
             }
+            .adaptiveTopPaddingAlt()
+            .padding(.top, 20)
+            
+            customNavigation
         }
-        .padding(.top, 10)
-        .navigationTitle("알림")
+        .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
             checkNotificationPermission()
@@ -211,5 +215,18 @@ extension AlarmView {
                     print("알림 읽음 처리 완료: \(notificationId)")
                 }
             }
+    }
+    
+    private var customNavigation: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            Text("알림")
+        } trailing: {
+            Spacer()
+                .frame(width: 44, height: 44)
+        }
     }
 }
