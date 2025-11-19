@@ -8,16 +8,44 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseAuth
+import FirebaseMessaging
+import UserNotifications
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        
+
         // TabBar 외형 설정
         configureTabBarAppearance()
-        
+
+        // 푸시 알림 설정
+        setupPushNotifications(application)
+
         return true
+    }
+
+    // MARK: - 푸시 알림 설정
+    private func setupPushNotifications(_ application: UIApplication) {
+        // UNUserNotificationCenter delegate 설정
+        UNUserNotificationCenter.current().delegate = self
+
+        // Messaging delegate 설정
+        Messaging.messaging().delegate = self
+
+        // 푸시 알림 등록 (APNs 토큰 받기)
+        application.registerForRemoteNotifications()
+    }
+
+    // MARK: - APNs 토큰 등록 성공
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // FCM에 APNs 토큰 전달
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+    // MARK: - APNs 토큰 등록 실패
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("[APNs] 디바이스 토큰 등록 실패: \(error.localizedDescription)")
     }
     
     private func configureTabBarAppearance() {
@@ -221,6 +249,48 @@ struct RootView: View {
                 introViewModel.needsProfileSetup = false
                 isCheckingAuth = false
             }
+        }
+    }
+}
+
+// MARK: - UNUserNotificationCenterDelegate (포그라운드 알림)
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    // 앱이 포그라운드에 있을 때 알림 표시
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        // 배너, 소리, 뱃지 모두 표시
+        completionHandler([.banner, .sound, .badge])
+    }
+
+    // 알림 탭했을 때
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+
+        // postOfficeId 추출해서 화면 이동
+        if let postOfficeId = userInfo["postOfficeId"] as? String {
+            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .collect)
+        }
+
+        completionHandler()
+    }
+}
+
+// MARK: - MessagingDelegate (FCM 토큰)
+extension AppDelegate: MessagingDelegate {
+    // FCM 토큰 받았을 때
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let fcmToken = fcmToken else { return }
+
+        // 현재 로그인한 사용자 ID 가져오기
+        if let userId = Auth.auth().currentUser?.uid {
+            NotificationManager.shared.updateFCMToken(fcmToken, userId: userId)
         }
     }
 }
