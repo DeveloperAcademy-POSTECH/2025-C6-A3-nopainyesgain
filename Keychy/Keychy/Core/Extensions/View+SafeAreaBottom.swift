@@ -37,6 +37,7 @@ extension View {
         return window.safeAreaInsets.bottom == 0 ? defaultPadding : 0
     }
     
+    // MARK: - 다음 머지에서 검색해서 안쓰면 삭제
     /// 상단 safeArea 값 반환
     func getTopPadding(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
@@ -50,8 +51,9 @@ extension View {
         return window.safeAreaInsets.top == 0 ? defaultPadding : 0
     }
     
-    /// 위 로직이 맞나? 헷갈려서 새로 만듬 -길
-    func getTopPaddingAlt(_ defaultPadding: CGFloat) -> CGFloat {
+
+    // 번들에서 사용하는 safeAreaTop 함수
+    func getTopPaddingBundle(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows
@@ -62,4 +64,19 @@ extension View {
         // 실제 safeArea top 값 + 추가 패딩
         return window.safeAreaInsets.bottom == 0 ? window.safeAreaInsets.top + defaultPadding : 0
     }
+    
+    /// 위 로직이 맞나? 헷갈려서 새로 만듬 -길
+    func getTopPaddingAlt(_ defaultPadding: CGFloat) -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return defaultPadding
+        }
+
+        // 실제 safeArea top 값 + 추가 패딩
+        return window.safeAreaInsets.top + defaultPadding
+    }
 }
+
+//adaptiveTopPaddingAlt

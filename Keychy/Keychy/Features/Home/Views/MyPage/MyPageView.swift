@@ -860,8 +860,6 @@ extension MyPageView {
         } center: {
             // Center (중앙)
             Text("마이페이지")
-                .typography(.notosans17B)
-                .foregroundStyle(.black100)
                 .opacity(showTitle ? 1 : 0)
         } trailing: {
             // Trailing (오른쪽) - 빈 공간

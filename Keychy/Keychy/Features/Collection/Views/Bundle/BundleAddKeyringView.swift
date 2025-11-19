@@ -131,7 +131,7 @@ extension BundleAddKeyringView {
             //se3상에서 버튼 위치가 아주 조금 안 맞아서 추가적인 패딩값을 줍니다
             let needsMorePadding: CGFloat = getBottomPadding(34) == 34 ? 5 : 0
             let xPos = carabiner.keyringXPosition[index] - needsMorePadding
-            let yPos = carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPaddingAlt(34) - needsMorePadding
+            let yPos = carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPaddingBundle(34) - needsMorePadding
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
                 action: {
