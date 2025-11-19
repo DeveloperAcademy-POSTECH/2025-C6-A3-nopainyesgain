@@ -20,13 +20,13 @@ struct PackagePopup: View {
                 .padding(.top, 8)
             
             // 제목
-            Text("키링을 선물할까요?")
+            Text("키링을 포장할까요?")
                 .typography(.suit20B)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
             
             // 메시지
-            Text("포장은 언제든 직접 풀 수 있어요.\n선물된 키링은 상대방의 보관함으로\n이동해요.")
+            Text("생성된 링크나 QR을 상대방에게 전달해\n키링을 줄 수 있어요.\n포장은 언제든 직접 풀 수 있어요.")
                 .typography(.suit15R)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 24)
