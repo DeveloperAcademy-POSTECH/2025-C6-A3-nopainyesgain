@@ -20,7 +20,7 @@ import FirebaseFirestore
 
 /// 앱 실행 시 한 번만 호출하세요
 /// - 원하는 함수를 수정하고, 아래 함수를 호출하세요.
-func initializeData() async {
+func initializeDatas() async {
     await initializeTemplates()
     await initializeBackgrounds()
     await initializeCarabiners()

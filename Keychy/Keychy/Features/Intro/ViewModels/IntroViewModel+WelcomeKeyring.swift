@@ -94,7 +94,7 @@ extension IntroViewModel {
         try await Firestore.firestore()
             .collection("User")
             .document(uid)
-            .updateData(["carabiners": FieldValue.arrayUnion(["Welcome"])])
+            .updateData(["carabiners": FieldValue.arrayUnion(["WelcomeKeychy"])])
     }
 
     // MARK: - 위젯용 캐싱 (KeyringCompleteView 로직 재사용)
