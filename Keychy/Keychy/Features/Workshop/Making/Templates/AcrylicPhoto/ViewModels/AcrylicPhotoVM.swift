@@ -119,7 +119,7 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
 
     // MARK: - 정보 입력
     var nameText: String = ""
-    var maxTextCount: Int = 30
+    var maxTextCount: Int = 10
     var memoText: String = ""
     var maxMemoCount: Int = 500
     var selectedTags: [String] = []
