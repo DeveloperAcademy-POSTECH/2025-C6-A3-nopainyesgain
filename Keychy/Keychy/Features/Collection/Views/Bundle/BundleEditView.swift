@@ -59,7 +59,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     ]
     
     //임시 초기값
-    private let sheetHeightRatio: CGFloat = 0.5
+    private let sheetHeightRatio: CGFloat = 0.43
     
     var body: some View {
         ZStack(alignment: .bottom) {
