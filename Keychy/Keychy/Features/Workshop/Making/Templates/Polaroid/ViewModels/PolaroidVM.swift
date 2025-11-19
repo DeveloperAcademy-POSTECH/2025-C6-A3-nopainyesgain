@@ -95,6 +95,7 @@ class PolaroidVM: KeyringViewModelProtocol {
     // MARK: - Frame State (프레임 모드)
     var availableFrames: [Frame] = []
     var selectedFrame: Frame? = nil
+    var selectedPhotoImage: UIImage? = nil
 
     // MARK: - 정보 입력
     var nameText: String = ""
@@ -257,6 +258,7 @@ class PolaroidVM: KeyringViewModelProtocol {
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
         selectedFrame = nil
+        selectedPhotoImage = nil
     }
 
     func resetInfoData() {
