@@ -46,7 +46,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
         .scrollDismissesKeyboard(.never)
         .overlay(alignment: .top) {
             customNavigationBar
-                .adaptiveTopPaddingAlt()
+                .padding(.top, getTopPaddingBundle(34))
                 .padding(.top, morePadding)
         }
         .onAppear {
@@ -56,7 +56,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
             }
             isTextFieldFocused = true
             if getBottomPadding(0) == 0 {
-                morePadding = 20
+                morePadding = 5
             }
             viewModel.hideTabBar()
         }
