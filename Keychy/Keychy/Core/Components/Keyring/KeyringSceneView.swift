@@ -40,15 +40,6 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
                 setupScene()
             }
         }
-        .task {
-            scene?.onPlayParticleEffect = { effectName in
-                DispatchQueue.main.async {
-                    currentEffect = effectName
-                    lottieID = UUID()
-                    showEffect = true
-                }
-            }
-        }
     }
 
     // MARK: - Scene Setup
@@ -63,6 +54,15 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         )
         newScene.scaleMode = .resizeFill
         newScene.bind(to: viewModel)
+
+        // 파티클 효과 콜백 설정 (씬 생성 시 즉시 설정)
+        newScene.onPlayParticleEffect = { effectName in
+            DispatchQueue.main.async { [self] in
+                self.currentEffect = effectName
+                self.lottieID = UUID()
+                self.showEffect = true
+            }
+        }
 
         // Setup 완료 콜백 설정 (Body까지 완전히 생성된 시점)
         newScene.onSetupComplete = { [weak newScene] in
