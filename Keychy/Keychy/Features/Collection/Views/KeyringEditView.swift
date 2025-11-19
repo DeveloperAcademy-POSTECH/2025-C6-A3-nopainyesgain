@@ -189,7 +189,7 @@ extension KeyringEditView {
                         .overlay {
                             VStack(spacing: 8) {
                                 LoadingAlert(type: .short, message: nil)
-                                    .scaleEffect(0.5)
+                                    .scaleEffect(0.4)
                             }
                         }
                 }

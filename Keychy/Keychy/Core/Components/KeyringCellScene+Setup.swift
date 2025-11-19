@@ -106,6 +106,9 @@ extension KeyringCellScene {
     private func assembleKeyring(with images: KeyringImages) {
         guard let containerNode = containerNode else {
             print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.assembleKeyring(with: images)
+            }
             return
         }
         
@@ -181,6 +184,9 @@ extension KeyringCellScene {
     private func assembleFallbackKeyring() {
         guard let containerNode = containerNode else {
             print("containerNode가 nil입니다. Scene이 아직 준비되지 않았습니다.")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.assembleFallbackKeyring()
+            }
             return
         }
         // Fallback시 기본 키링 생성
