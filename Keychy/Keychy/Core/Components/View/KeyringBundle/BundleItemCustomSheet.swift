@@ -12,7 +12,7 @@ struct BundleItemCustomSheet<Content: View>: View {
     let content: Content
     
     // 화면 높이 기준 비율
-    private let smallRatio: CGFloat = 0.1
+    private let smallRatio: CGFloat = 0.07
     private let mediumRatio: CGFloat = 0.43
     private let largeRatio: CGFloat = 0.8
     
