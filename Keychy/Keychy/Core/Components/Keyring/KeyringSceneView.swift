@@ -71,7 +71,7 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
 
                 // 환영 효과: Setup 완료 후 파티클 터뜨리기
                 if applyWelcomeImpulse {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         newScene?.applyWelcomeImpulse()
                     }
                 }

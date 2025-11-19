@@ -88,6 +88,7 @@ extension AcrylicPhotoEditedView {
     private var naivgationTitle: some ToolbarContent {
         ToolbarItem(placement: .principal) {
             NavigationTitle(title: "누끼를 제거합니다!")
+                .typography(.notosans17B)
         }
     }
     

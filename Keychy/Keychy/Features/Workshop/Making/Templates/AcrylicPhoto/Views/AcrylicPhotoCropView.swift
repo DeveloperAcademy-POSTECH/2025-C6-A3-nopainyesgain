@@ -53,15 +53,13 @@ struct AcrylicPhotoCropView: View {
             if isImageLoading {
                 LoadingAlert(type: .short, message: nil)
             }
+            
+            customNavigationBar
         }
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(true)
-        .toolbar {
-            backToolbarItem
-            naivgationTitle
-            nextToolbarItem
-        }
     }
 
     // MARK: - Setup Methods
@@ -81,23 +79,16 @@ struct AcrylicPhotoCropView: View {
 
 // MARK: - Toolbar
 extension AcrylicPhotoCropView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
+    var customNavigationBar: some View {
+        CustomNavigationBar {
             BackToolbarButton {
                 viewModel.resetImageData()
                 router.pop()
             }
-        }
-    }
-    
-    private var naivgationTitle: some ToolbarContent {
-        ToolbarItem(placement: .principal) {
-            NavigationTitle(title: "누끼 영역을 지정해주세요")
-        }
-    }
-
-    private var nextToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
+        } center: {
+            Text("누끼 영역을 지정해주세요")
+                .typography(.notosans17B)
+        } trailing: {
             NextToolbarButton {
                 guard let cropped = viewModel.cropImage(
                     image: viewModel.selectedImage!,
@@ -106,11 +97,11 @@ extension AcrylicPhotoCropView {
                 ) else {
                     return
                 }
-
                 viewModel.croppedImage = cropped
-                // 크롭만 하고 바로 다음 화면으로 이동 (배경 제거는 EditedView에서)
                 router.push(.acrylicPhotoEdited)
             }
+            .frame(width: 44, height: 44)
+            .offset(x: -4)
         }
     }
 }

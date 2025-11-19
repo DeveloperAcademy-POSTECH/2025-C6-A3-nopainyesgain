@@ -72,15 +72,3 @@ extension CustomNavigationBar where Leading == EmptyView, Trailing == EmptyView 
         self.trailing = EmptyView()
     }
 }
-
-// MARK: - 편의 생성자 (Leading + Center)
-extension CustomNavigationBar where Trailing == EmptyView {
-    init(
-        @ViewBuilder leading: () -> Leading,
-        @ViewBuilder center: () -> Center
-    ) {
-        self.leading = leading()
-        self.center = center()
-        self.trailing = EmptyView()
-    }
-}
