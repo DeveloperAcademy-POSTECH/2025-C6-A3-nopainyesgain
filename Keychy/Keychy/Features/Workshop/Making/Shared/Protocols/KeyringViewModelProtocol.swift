@@ -15,13 +15,13 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    /// 버튼 이미지
-    var btnImage: String {
+    /// 버튼 이미지 (활성화/비활성화 상태에 따라 다른 이미지)
+    func btnImage(isSelected: Bool) -> String {
         switch self {
         case .effect:
-            return "interactionSelector"
+            return isSelected ? "effectMode_active" : "effectMode_inactive"
         case .drawing:
-            return "아직 없음"
+            return isSelected ? "drawing_active" : "drawing_inactive"
         }
     }
 }

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "effectMode_inactive.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
