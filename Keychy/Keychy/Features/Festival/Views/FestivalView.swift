@@ -12,7 +12,7 @@ struct FestivalView: View {
         Image(.festivalTrailer)
             .resizable()
             .scaledToFill()
-            .offset(y: getBottomPadding(34) == 34 ? 20 : 0)
+            .offset(y: getBottomPadding(34) == 34 ? 50 : 0)
             .frame(width: screenWidth, height: screenHeight)
     }
 }
