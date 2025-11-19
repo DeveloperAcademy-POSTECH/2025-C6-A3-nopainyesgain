@@ -45,6 +45,9 @@ playground.xcworkspace
 Keychy/Keychy/Info.plist
 Keychy/Keychy/GoogleService-Info.plist
 
+## APNs Key (보안)
+*.p8
+
 # Swift Package Manager
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
 # Packages/
