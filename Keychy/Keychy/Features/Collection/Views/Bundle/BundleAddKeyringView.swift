@@ -54,6 +54,13 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(1)
+                    .onTapGesture {
+                        if showSelectKeyringSheet {
+                            withAnimation(.easeInOut) {
+                                showSelectKeyringSheet = false
+                            }
+                        }
+                    }
                 
                 // 키링 선택 시트
                 keyringSelectionSheet()
@@ -61,10 +68,6 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 
                 LoadingAlert(type: .longWithKeychy, message: "뭉치 만드는 중...")
                     .opacity(isCapturing ? 1 : 0)
-                
-//                LoadingAlert(type: .longWithKeychy, message: "만들기 불러오는 중...")
-//                    .zIndex(101)
-//                    .opacity(isSceneReady ? 0 : 1)
             }
         }
         .ignoresSafeArea()
@@ -150,23 +153,9 @@ extension BundleAddKeyringView {
     /// 키링 선택 시트
     private func keyringSelectionSheet() -> some View {
         VStack {
-            HStack {
-                Spacer()
-                Text("키링 선택")
-                    .typography(.suit16B)
-                    .foregroundStyle(.black100)
-                Spacer()
-                // 완료 버튼: 닫기만
-                Button {
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = false
-                    }
-                } label: {
-                    Text("완료")
-                        .typography(.suit16M)
-                        .foregroundStyle(.gray600)
-                }
-            }
+            Text("키링 선택")
+                .typography(.suit16B)
+                .foregroundStyle(.black100)
             
             if viewModel.keyring.isEmpty {
                 VStack {
@@ -226,6 +215,10 @@ extension BundleAddKeyringView {
                 }
                 selectedKeyrings[selectedPosition] = keyring
                 keyringOrder.append(selectedPosition)
+                // 키링 선택완료하면 시트 내림!
+                withAnimation(.easeInOut) {
+                    showSelectKeyringSheet = false
+                }
             }
             // 중복인 경우 아무것도 하지 않음 (선택되지 않음)
             updateKeyringDataList()
@@ -282,7 +275,7 @@ extension BundleAddKeyringView {
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
         .opacity(1.0) // 강제로 투명도 1.0 유지
     }
-
+    
     
     /// 키링 데이터 리스트 업데이트
     private func updateKeyringDataList() {
