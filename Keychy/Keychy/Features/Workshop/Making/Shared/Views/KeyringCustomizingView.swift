@@ -129,24 +129,25 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .padding(.horizontal, 51)
                     .zIndex(10)
                 }
+                // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
+                if showPurchaseFailAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .zIndex(5)
+                }
             }
             .animation(.easeOut(duration: 0.3), value: isLoadingResources)
             .animation(.easeOut(duration: 0.3), value: isSceneReady)
-
-//            // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
-//            if showPurchaseFailAlert {
-//                Color.black.opacity(0.4)
-//                    .ignoresSafeArea()
-//                    .zIndex(1)
-//            }
+            .animation(.easeOut(duration: 0.3), value: showPurchaseFailAlert)
 
             // MARK: - 커스텀 네비게이션 바
             customNavigationBar
                 .disabled(isLoadingResources || !isSceneReady || viewModel.isComposing)
-                .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || isLoadingResources || !isSceneReady ? 15 : 0)
+                .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || isLoadingResources || !isSceneReady || showPurchaseFailAlert ? 15 : 0)
                 .opacity(showPurchaseProgress || showPurchaseSuccessAlert ? 0 : 1)
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseProgress)
                 .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
+                .animation(.easeInOut(duration: 0.2), value: showPurchaseFailAlert)
                 .zIndex(100)
         }
         .ignoresSafeArea()
