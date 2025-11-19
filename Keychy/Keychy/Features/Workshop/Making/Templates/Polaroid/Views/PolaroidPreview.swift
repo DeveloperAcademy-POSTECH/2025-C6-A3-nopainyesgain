@@ -14,7 +14,10 @@ struct PolaroidPreview: View {
     var body: some View {
         TemplatePreviewBody(
             template: viewModel.template,
-            fetchTemplate: { await viewModel.fetchTemplate() },
+            fetchTemplate: {
+                await viewModel.fetchTemplate()
+                await viewModel.fetchFrames()
+            },
             onMake: {
                 router.push(.polaroidCustomizing)
             },

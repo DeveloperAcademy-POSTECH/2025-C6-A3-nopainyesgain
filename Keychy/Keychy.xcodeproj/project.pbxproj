@@ -260,6 +260,7 @@
 		C67B755A2ECD4C6F00D6E3FA /* FrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75542ECD4C6F00D6E3FA /* FrameSelectorView.swift */; };
 		C67B755B2ECD4C6F00D6E3FA /* FramePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75532ECD4C6F00D6E3FA /* FramePreviewView.swift */; };
 		C67B755C2ECD4C6F00D6E3FA /* PolaroidPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B75552ECD4C6F00D6E3FA /* PolaroidPreview.swift */; };
+		C67B755F2ECD526A00D6E3FA /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67B755D2ECD526A00D6E3FA /* Frame.swift */; };
 		C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F032EB8A4000059379A /* WorkshopDataManager.swift */; };
 		C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F072EB8E96D0059379A /* MyItemsView.swift */; };
 		C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */; };
@@ -583,6 +584,7 @@
 		C67B75532ECD4C6F00D6E3FA /* FramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FramePreviewView.swift; sourceTree = "<group>"; };
 		C67B75542ECD4C6F00D6E3FA /* FrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSelectorView.swift; sourceTree = "<group>"; };
 		C67B75552ECD4C6F00D6E3FA /* PolaroidPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidPreview.swift; sourceTree = "<group>"; };
+		C67B755D2ECD526A00D6E3FA /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
 		C6830F032EB8A4000059379A /* WorkshopDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopDataManager.swift; sourceTree = "<group>"; };
 		C6830F072EB8E96D0059379A /* MyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyItemsView.swift; sourceTree = "<group>"; };
 		C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
@@ -1023,6 +1025,7 @@
 				4CEC61D92EAE08C00099ECEE /* KeyringBundle */,
 				4CEC61DD2EAE08C00099ECEE /* Interaction */,
 				4CEC61E32EAE08C00099ECEE /* Keyring */,
+				C67B75602ECD528900D6E3FA /* Template */,
 			);
 			path = CommonModels;
 			sourceTree = "<group>";
@@ -1584,6 +1587,14 @@
 			path = Polaroid;
 			sourceTree = "<group>";
 		};
+		C67B75602ECD528900D6E3FA /* Template */ = {
+			isa = PBXGroup;
+			children = (
+				C67B755D2ECD526A00D6E3FA /* Frame.swift */,
+			);
+			path = Template;
+			sourceTree = "<group>";
+		};
 		C68931CD2EB7B94B00C5F083 /* FileManagers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1936,6 +1947,7 @@
 				4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */,
 				4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */,
 				3822DDC42EBBE108003125BE /* CopyPopup.swift in Sources */,
+				C67B755F2ECD526A00D6E3FA /* Frame.swift in Sources */,
 				385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */,
 				4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */,
 				4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */,

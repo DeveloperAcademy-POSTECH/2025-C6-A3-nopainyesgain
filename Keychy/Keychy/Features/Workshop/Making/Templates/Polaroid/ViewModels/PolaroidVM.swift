@@ -93,7 +93,8 @@ class PolaroidVM: KeyringViewModelProtocol {
     var errorMessage: String?
 
     // MARK: - Frame State (프레임 모드)
-    var selectedFrameId: String? = nil
+    var availableFrames: [Frame] = []
+    var selectedFrame: Frame? = nil
 
     // MARK: - 정보 입력
     var nameText: String = ""
@@ -182,6 +183,29 @@ class PolaroidVM: KeyringViewModelProtocol {
         }
     }
 
+    // MARK: - Firebase Frames 가져오기
+    func fetchFrames() async {
+        do {
+            let framesSnapshot = try await Firestore.firestore()
+                .collection("Template")
+                .document("Polaroid")
+                .collection("Frames")
+                .getDocuments()
+
+            availableFrames = try framesSnapshot.documents.compactMap {
+                try $0.data(as: Frame.self)
+            }
+
+            // 첫 번째 프레임을 기본 선택
+            if let firstFrame = availableFrames.first {
+                selectedFrame = firstFrame
+            }
+
+        } catch {
+            errorMessage = "프레임 목록을 불러오는데 실패했습니다."
+        }
+    }
+
     // MARK: - Sorting Helper
     private func getSortPriority(isFree: Bool, isDownloaded: Bool) -> Int {
         if isFree && isDownloaded { return 1 }
@@ -232,7 +256,7 @@ class PolaroidVM: KeyringViewModelProtocol {
         particleId = "none"
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
-        selectedFrameId = nil
+        selectedFrame = nil
     }
 
     func resetInfoData() {

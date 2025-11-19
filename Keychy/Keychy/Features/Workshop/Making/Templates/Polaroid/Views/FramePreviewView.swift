@@ -23,8 +23,8 @@ struct FramePreviewView: View {
                         .typography(.suit20B)
                         .foregroundStyle(.black100)
 
-                    if let frameId = viewModel.selectedFrameId {
-                        Text("선택된 프레임: \(frameId)")
+                    if let frame = viewModel.selectedFrame {
+                        Text("선택된 프레임: \(frame.name)")
                             .typography(.suit14M)
                             .foregroundStyle(.gray500)
                     } else {
