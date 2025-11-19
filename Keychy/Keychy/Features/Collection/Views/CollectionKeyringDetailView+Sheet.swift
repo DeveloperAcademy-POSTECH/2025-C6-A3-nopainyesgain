@@ -159,7 +159,22 @@ extension CollectionKeyringDetailView {
         
         // 기기별 최대 높이 설정
         private var maxHeight: CGFloat {
-            getBottomPadding(0) == 0 ? 320 : 420
+            let screenSize = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first?.screen.bounds.size ?? CGSize(width: 393, height: 852)
+            
+            // SE
+            if screenSize.height <= 667 {
+                return 300
+            }
+            // mini 계열
+            else if screenSize.height <= 812 {
+                return 380
+            }
+            // 표준/Pro 계열
+            else {
+                return 420
+            }
         }
         
         private var needsScroll: Bool {
