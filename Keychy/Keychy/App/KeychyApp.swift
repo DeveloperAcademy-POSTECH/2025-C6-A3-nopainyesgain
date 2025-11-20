@@ -211,12 +211,17 @@ struct RootView: View {
             UserManager.shared.loadUserInfo(uid: user.uid) { hasProfile in
                 let elapsed = Date().timeIntervalSince(startTime)
                 let remainingTime = max(0, minimumSplashTime - elapsed)
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
                     if hasProfile {
                         // 프로필 있음 → 메인 화면
                         introViewModel.isLoggedIn = true
                         introViewModel.needsProfileSetup = false
+
+                        // 백그라운드에서 구매한 이펙트 동기화
+                        Task.detached(priority: .background) {
+                            await EffectSyncManager.shared.syncPurchasedEffects(userId: user.uid)
+                        }
                     } else {
                         // 프로필 없음 → 약관 동의부터 시작 (신규 가입 플로우)
                         introViewModel.tempUserUID = user.uid
