@@ -60,6 +60,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     //임시 초기값
     private let sheetHeightRatio: CGFloat = 0.43
+    private let screenSize = CGSize(width: 402, height: 874)
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -206,10 +207,8 @@ struct BundleEditView<Route: BundleRoute>: View {
             
             // 키링 추가 버튼들
             ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
-                //se3상에서 버튼 위치가 아주 조금 안 맞아서 추가적인 패딩값을 줍니다
-                let needsMorePadding: CGFloat = getBottomPadding(34) == 34 ? 5 : 0
-                let xPos = carabiner.carabiner.keyringXPosition[index] - needsMorePadding
-                let yPos = carabiner.carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPaddingBundle(34) - needsMorePadding
+                let xPos = screenWidth / screenSize.width * carabiner.carabiner.keyringXPosition[index]
+                let yPos = screenHeight / screenSize.height * carabiner.carabiner.keyringYPosition[index] - getBottomPadding(23) - getTopPadding(34)
                 CarabinerAddKeyringButton(
                     isSelected: selectedPosition == index,
                     action: {
