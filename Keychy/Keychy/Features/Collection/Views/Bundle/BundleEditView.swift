@@ -59,7 +59,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     ]
     
     //임시 초기값
-    private let sheetHeightRatio: CGFloat = 0.5
+    private let sheetHeightRatio: CGFloat = 0.43
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -116,6 +116,11 @@ struct BundleEditView<Route: BundleRoute>: View {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(1)
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = false
+                        }
+                    }
                 keyringSelectionSheet()
             }
             
@@ -204,7 +209,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 //se3상에서 버튼 위치가 아주 조금 안 맞아서 추가적인 패딩값을 줍니다
                 let needsMorePadding: CGFloat = getBottomPadding(34) == 34 ? 5 : 0
                 let xPos = carabiner.carabiner.keyringXPosition[index] - needsMorePadding
-                let yPos = carabiner.carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPaddingAlt(34) - needsMorePadding
+                let yPos = carabiner.carabiner.keyringYPosition[index] - getBottomPadding(34) - getTopPaddingBundle(34) - needsMorePadding
                 CarabinerAddKeyringButton(
                     isSelected: selectedPosition == index,
                     action: {
@@ -226,23 +231,9 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 키링 선택 시트
     private func keyringSelectionSheet() -> some View {
         VStack {
-            HStack {
-                Spacer()
-                Text("키링 선택")
-                    .typography(.suit16B)
-                    .foregroundStyle(.black100)
-                Spacer()
-                // 완료 버튼: 닫기만
-                Button {
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = false
-                    }
-                } label: {
-                    Text("완료")
-                        .typography(.suit16M)
-                        .foregroundStyle(.gray600)
-                }
-            }
+            Text("키링 선택")
+                .typography(.notosans17M)
+                .foregroundStyle(.black100)
             if viewModel.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
@@ -272,7 +263,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
-        .background(.white100)
+        .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
@@ -301,6 +292,9 @@ struct BundleEditView<Route: BundleRoute>: View {
                 }
                 selectedKeyrings[selectedPosition] = keyring
                 keyringOrder.append(selectedPosition)
+                withAnimation(.easeInOut) {
+                    showSelectKeyringSheet = false
+                }
             }
             // 중복인 경우 아무것도 하지 않음 (선택되지 않음)
             updateKeyringDataList()

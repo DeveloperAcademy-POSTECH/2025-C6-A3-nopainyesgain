@@ -137,6 +137,9 @@ class PolaroidVM: KeyringViewModelProtocol {
 
             template = try document.data(as: KeyringTemplate.self)
 
+            // 템플릿의 hookOffsetY 값 적용
+            hookOffsetY = template?.hookOffsetY ?? 0.0
+
         } catch {
             errorMessage = "템플릿을 불러오는데 실패했습니다."
         }

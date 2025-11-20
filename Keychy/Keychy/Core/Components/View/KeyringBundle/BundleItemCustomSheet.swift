@@ -12,8 +12,8 @@ struct BundleItemCustomSheet<Content: View>: View {
     let content: Content
     
     // 화면 높이 기준 비율
-    private let smallRatio: CGFloat = 0.07
-    private let mediumRatio: CGFloat = 0.43
+    private let smallRatio: CGFloat = 0.1
+    private let mediumRatio: CGFloat = 0.32
     private let largeRatio: CGFloat = 0.8
     
     // 계산된 높이 값들
@@ -32,14 +32,17 @@ struct BundleItemCustomSheet<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             // 인디케이터
-            VStack(spacing: 0) {
-                Spacer()
+            VStack(spacing:0) {
                 RoundedRectangle(cornerRadius: 3)
                     .fill(.gray300)
-                    .frame(width: 40, height: 4)
-                Spacer()
+                    .frame(width: 36, height: 5)
+                    .padding(6)
+                Text("선택")
+                    .typography(.notosans17M)
+                    .foregroundStyle(.black100)
+                    .padding(EdgeInsets(top: 13, leading: 2, bottom: 0, trailing: 2))
             }
-            .frame(height: 30)
+            .frame(height: 60)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .highPriorityGesture(dragGesture)

@@ -106,11 +106,13 @@ class MultiKeyringCaptureScene: SKScene {
             setupBackgroundImage(url: backgroundURL)
         }
 
-        // 2. 카라비너 뒷면 이미지 (배경 바로 위)
-        if let carabinerBackURL = carabinerBackImageURL {
-            setupCarabinerBackImage(url: carabinerBackURL)
+        // 2. 카라비너 뒷면 이미지 (배경 바로 위), 백 이미지가 "none"이면 로드 안 함
+        if carabinerBackImageURL != "none" {
+            if let carabinerBackURL = carabinerBackImageURL {
+                setupCarabinerBackImage(url: carabinerBackURL)
+            }
         }
-
+        
         // 3. 키링들
         setupKeyrings()
 

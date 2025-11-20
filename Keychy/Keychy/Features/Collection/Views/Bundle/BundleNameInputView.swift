@@ -49,8 +49,7 @@ struct BundleNameInputView<Route: BundleRoute>: View {
             .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
             .contentShape(Rectangle())
             .onTapGesture {
-                // 포커스 유지 - 탭해도 키보드 내려가지 않음
-                isTextFieldFocused = true
+                isTextFieldFocused = false
             }
             
             if isUploading {
@@ -58,10 +57,8 @@ struct BundleNameInputView<Route: BundleRoute>: View {
                     .ignoresSafeArea()
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 생성하고 있어요")
             }
-        }
-        .overlay(alignment: .top) {
             customNavigationBar
-                .adaptiveTopPaddingAlt()
+                .padding(.top, getTopPaddingBundle(34))
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
@@ -82,10 +79,6 @@ struct BundleNameInputView<Route: BundleRoute>: View {
                     isTextFieldFocused = true
                 }
             }
-        }
-        .onDisappear {
-            // BundleNameInputView는 탭바로 돌아갈 일이 없으므로
-            // showTabBar()를 호출하지 않음
         }
         .transaction { transaction in
             transaction.animation = nil
@@ -176,8 +169,6 @@ extension BundleNameInputView {
             BackToolbarButton {
                 router.pop()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             EmptyView()
         } trailing: {
@@ -189,8 +180,6 @@ extension BundleNameInputView {
                 bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                 hasProfanity
             )
-            .frame(width: 62, height: 44)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 100))
         }
     }
     

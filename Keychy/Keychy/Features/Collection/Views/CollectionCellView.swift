@@ -81,11 +81,10 @@ struct CollectionCellView: View {
                                 .fill(Color.black60)
                                 .frame(height: 26)
                         )
-                        .padding(.top, 8)
-                        .padding(.horizontal, 8)
                     
                     Spacer()
                 }
+                .padding(5)
             }
     }
     

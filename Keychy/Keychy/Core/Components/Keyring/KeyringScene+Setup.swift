@@ -151,6 +151,9 @@ extension KeyringScene {
 
     // 키링 구성 요소들을 Joint로 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
+        // 정리 중이면 중단
+        guard !isCleaningUp else { return }
+
         // Physics 카테고리 정의
         let chainCategory: UInt32 = 0x1 << 0  // 1
         let bodyCategory: UInt32 = 0x1 << 1   // 2

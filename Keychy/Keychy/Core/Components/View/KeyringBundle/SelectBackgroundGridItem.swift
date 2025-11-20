@@ -24,6 +24,7 @@ struct SelectBackgroundGridItem: View {
                             .clipped()
                     } else if state.isLoading {
                         LoadingAlert(type: .short, message: nil)
+                            .scaleEffect(0.5)
                     }
                 }
                 .frame(width: threeGridCellWidth, height: threeGridCellHeight)
