@@ -207,8 +207,10 @@ struct BundleEditView<Route: BundleRoute>: View {
             
             // 키링 추가 버튼들
             ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
-                let xPos = screenWidth / screenSize.width * carabiner.carabiner.keyringXPosition[index]
-                let yPos = screenHeight / screenSize.height * carabiner.carabiner.keyringYPosition[index] - getBottomPadding(23) - getTopPadding(34)
+                let xPosPt = screenWidth / screenSize.width * carabiner.carabiner.keyringXPosition[index]
+                let xPos = round(xPosPt * screenScale) / screenScale
+                let yPosPt = screenHeight / screenSize.height * carabiner.carabiner.keyringYPosition[index]
+                let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(25) - getTopPadding(34)
                 CarabinerAddKeyringButton(
                     isSelected: selectedPosition == index,
                     action: {
