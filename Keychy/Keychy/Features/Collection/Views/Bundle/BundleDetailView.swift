@@ -22,6 +22,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var showChangeMainBundleAlert: Bool = false
     @State private var isMainBundleChange: Bool = false
     @State var isCapturing: Bool = false
+    @State var getlessPadding: CGFloat = 0
     @State private var isNavigatingDeeper: Bool = true
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
@@ -96,7 +97,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                 Spacer()
                             }
                         }
-                        .padding(.top, 60)
+                        .adaptiveTopPaddingAlt()
+                        .padding(.top, 40 - getBottomPadding(20) - getlessPadding)
                         .zIndex(50)
                         .allowsHitTesting(true)
                         .contentShape(Rectangle())
@@ -110,6 +112,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 customnavigationBar
             }
             .blur(radius: (isSceneReady && !isMainBundleChange && !isCapturing) ? 0 : 15)
+            .ignoresSafeArea()
             
             if !isSceneReady || showChangeMainBundleAlert || isMainBundleChange || isCapturing || showDeleteAlert || showDeleteCompleteToast || showAlreadyMainBundleToast {
                 Color.black20
@@ -180,6 +183,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
             showDeleteAlert = false
             showMenu = false
             viewModel.hideTabBar()
+            getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
         }
         .onDisappear {
             // 뷰가 사라질 때 씬 준비 상태 초기화

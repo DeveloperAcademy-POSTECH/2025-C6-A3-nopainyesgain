@@ -29,6 +29,7 @@ struct BundleMenu: View {
                         .typography(.suit16M)
                         .foregroundColor(.gray600)
                 }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -44,6 +45,7 @@ struct BundleMenu: View {
                         .typography(.suit16M)
                         .foregroundColor(.gray600)
                 }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -60,6 +62,7 @@ struct BundleMenu: View {
                             .typography(.suit16M)
                             .foregroundColor(.pink)
                     }
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .frame(maxWidth: .infinity, alignment: .leading)
