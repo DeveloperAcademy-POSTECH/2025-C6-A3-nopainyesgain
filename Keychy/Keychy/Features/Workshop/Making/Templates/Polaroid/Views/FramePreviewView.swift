@@ -109,8 +109,8 @@ struct FramePreviewView: View {
                 }
             }
 
-        // 이동 제스처
-        let dragGesture = DragGesture(minimumDistance: 0)
+        // 이동 제스처 (최소 거리 10 설정으로 탭과 구분)
+        let dragGesture = DragGesture(minimumDistance: 10)
             .onChanged { value in
                 Task { @MainActor in
                     currentOffset = CGSize(
