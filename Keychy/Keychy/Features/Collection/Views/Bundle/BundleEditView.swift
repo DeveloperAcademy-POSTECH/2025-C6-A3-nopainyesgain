@@ -116,6 +116,11 @@ struct BundleEditView<Route: BundleRoute>: View {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(1)
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = false
+                        }
+                    }
                 keyringSelectionSheet()
             }
             
