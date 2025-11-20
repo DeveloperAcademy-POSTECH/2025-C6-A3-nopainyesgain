@@ -573,7 +573,7 @@ class MultiKeyringScene: SKScene {
                     anchor: connectionPoint
                 )
                 joint.shouldEnableLimits = false
-                joint.frictionTorque = 5.0  // 첫 번째 체인을 거의 고정시키는 높은 마찰
+                joint.frictionTorque = 0.1
                 physicsWorld.add(joint)
             } else {
                 // Hamburger 타입은 기존 핀 조인트 유지
