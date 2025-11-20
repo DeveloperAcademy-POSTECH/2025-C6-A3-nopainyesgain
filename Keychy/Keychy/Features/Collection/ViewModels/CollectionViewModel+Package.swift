@@ -125,7 +125,7 @@ extension CollectionViewModel {
                 }
                 
                 let batch = db.batch()
-                var updatedCount = 0
+                var affectedBundleIds: [String] = []
                 
                 // 각 Bundle에서 해당 키링 ID 제거
                 for document in documents {
@@ -147,11 +147,11 @@ extension CollectionViewModel {
                     if needsUpdate {
                         let bundleRef = db.collection("KeyringBundle").document(document.documentID)
                         batch.updateData(["keyrings": keyrings], forDocument: bundleRef)
-                        updatedCount += 1
+                        affectedBundleIds.append(document.documentID)
                     }
                 }
                 
-                if updatedCount == 0 {
+                if affectedBundleIds.isEmpty {
                     print("키링이 포함된 Bundle 없음")
                     completion(true)
                     return
@@ -165,7 +165,14 @@ extension CollectionViewModel {
                         return
                     }
                     
-                    print("\(updatedCount)개 Bundle에서 키링 제거 완료")
+                    print("\(affectedBundleIds.count)개 Bundle에서 키링 제거 완료")
+                    
+                    // 변경된 Bundle들의 캡처 캐시 삭제
+                    for bundleId in affectedBundleIds {
+                        BundleImageCache.shared.delete(for: bundleId)
+                        print("Bundle 캡처 캐시 삭제: \(bundleId)")
+                    }
+                    
                     completion(true)
                 }
             }
