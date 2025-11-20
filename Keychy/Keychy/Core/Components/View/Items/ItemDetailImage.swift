@@ -110,6 +110,40 @@ extension UIImage {
     }
 }
 
+// MARK: - Simple Animated Image (재사용 가능)
+/// LazyImage를 GIF 지원 버전으로 대체할 수 있는 간단한 뷰
+struct SimpleAnimatedImage: View {
+    let url: String
+    @State private var isLoading = true
+    @State private var loadFailed = false
+
+    var body: some View {
+        ZStack {
+            if loadFailed {
+                Color.gray50
+                    .overlay {
+                        Image(systemName: "photo")
+                            .foregroundStyle(.gray300)
+                    }
+            } else {
+                NukeAnimatedImageView(url: URL(string: url), isLoading: $isLoading)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ImageLoadFailed"))) { _ in
+                        loadFailed = true
+                    }
+
+                if isLoading {
+                    Color.gray50
+                        .overlay {
+                            LoadingAlert(type: .short, message: nil)
+                                .scaleEffect(0.5)
+                        }
+                }
+            }
+        }
+    }
+}
+
 #Preview(traits: .sizeThatFitsLayout) {
     ItemDetailImage(itemURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24")
 }
