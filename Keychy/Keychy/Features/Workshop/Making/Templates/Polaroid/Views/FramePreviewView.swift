@@ -170,7 +170,10 @@ struct FramePreviewView: View {
             if let frame = viewModel.selectedFrame {
                 // 프레임 크기 계산
                 LazyImage(url: URL(string: frame.frameURL)) { state in
-                    if let image = state.image {
+                    if state.isLoading {
+                        LoadingAlert(type: .short, message: nil)
+                            .frame(height: targetFrameHeight)
+                    } else if let image = state.image {
                         let frameAspect = (state.imageContainer?.image.size.width ?? 1) / (state.imageContainer?.image.size.height ?? 1)
                         let targetFrameWidth = targetFrameHeight * frameAspect
 
@@ -256,9 +259,6 @@ struct FramePreviewView: View {
                                 .allowsHitTesting(false)
                         }
                         .frame(width: targetFrameWidth, height: targetFrameHeight)
-                    } else if state.isLoading {
-                        ProgressView()
-                            .frame(height: targetFrameHeight)
                     } else {
                         Rectangle()
                             .fill(Color.gray100)
