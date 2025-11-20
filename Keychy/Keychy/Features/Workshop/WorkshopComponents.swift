@@ -604,7 +604,7 @@ struct WorkshopFilterBar: View {
     private var categorySpecificFilters: some View {
         Group {
             switch viewModel.selectedCategory {
-            case "키링":
+            case "템플릿":
                 ForEach(TemplateFilterType.allCases, id: \.self) { filter in
                     FilterChip(
                         title: filter.rawValue,

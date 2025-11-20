@@ -16,8 +16,8 @@ struct KeyringBundleItem: View {
     @State private var cachedImage: Image?
     @State private var isCapturing: Bool = false
     
-    // 고정 캡처 크기 (iPhone 14 기준)
-    private let captureSize = CGSize(width: 390, height: 844)
+    // 고정 캡처 크기 (iPhone 16 기준)
+    private let captureSize = CGSize(width: 393, height: 852)
     
     // 실제로 걸린 키링 개수 (none과 빈 문자열 제외)
     private var actualKeyringCount: Int {
