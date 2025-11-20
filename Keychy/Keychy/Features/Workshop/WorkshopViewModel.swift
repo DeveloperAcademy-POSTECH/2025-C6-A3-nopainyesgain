@@ -82,7 +82,7 @@ extension Sound: WorkshopItem {
 @Observable
 class WorkshopViewModel {
     // MARK: - Published Properties
-    var selectedCategory: String = "키링"
+    var selectedCategory: String = "템플릿"
     var selectedTemplateFilter: TemplateFilterType? = nil
     var selectedCommonFilter: String? = nil
     var selectedEffectFilter: EffectFilterType? = .sound
@@ -184,9 +184,9 @@ class WorkshopViewModel {
         defer { isLoading = false }
 
         switch category {
-        case "키링":
+        case "템플릿":
             await dataManager.fetchTemplatesIfNeeded()
-            loadedCategories.insert("키링")
+            loadedCategories.insert("템플릿")
         case "배경":
             await dataManager.fetchBackgroundsIfNeeded()
             extractAvailableTags()
@@ -206,7 +206,7 @@ class WorkshopViewModel {
 
     /// 나머지 카테고리들을 백그라운드에서 프리페칭
     func prefetchRemainingData() async {
-        let allCategories = ["키링", "배경", "카라비너", "이펙트"]
+        let allCategories = ["템플릿", "배경", "카라비너", "이펙트"]
 
         for category in allCategories {
             // 이미 로드된 카테고리는 스킵
@@ -227,7 +227,7 @@ class WorkshopViewModel {
         await dataManager.fetchAllDataIfNeeded()
 
         // 모든 카테고리를 로드된 것으로 표시
-        loadedCategories = ["키링", "배경", "카라비너", "이펙트"]
+        loadedCategories = ["템플릿", "배경", "카라비너", "이펙트"]
 
         // 데이터를 가져온 후 사용 가능한 태그 추출
         extractAvailableTags()

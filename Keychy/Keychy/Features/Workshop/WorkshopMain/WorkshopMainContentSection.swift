@@ -44,7 +44,7 @@ extension WorkshopView {
                 
             //case "KEYCHY!": keychyContentView
                 
-            case "키링":
+            case "템플릿":
                 itemGridView(items: viewModel.filteredTemplates,
                            isOwnedCheck: viewModel.isTemplateOwned)
             case "배경":
@@ -107,11 +107,12 @@ extension WorkshopView {
     /// 빈 콘텐츠 뷰
     var emptyContentView: some View {
         VStack(spacing: 12) {
-            Image(systemName: "tray")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.purple).opacity(0.6)
+            Image("EmptyViewIcon")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 90)
 
-            Text("Comming Soon~")
+            Text("준비중이에요")
                 .typography(.suit14SB18)
                 .foregroundColor(.gray500)
         }
