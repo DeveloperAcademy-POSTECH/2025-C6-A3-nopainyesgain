@@ -17,7 +17,7 @@ struct WorkshopView: View {
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
 
-    let categories = ["키링", "카라비너", "이펙트", "배경"]
+    let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
     init(router: NavigationRouter<WorkshopRoute>, viewModel: WorkshopViewModel) {

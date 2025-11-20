@@ -14,7 +14,7 @@ struct MyItemsView: View {
     @State private var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
 
-    private let categories = ["키링", "카라비너", "이펙트", "배경"]
+    private let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 
     /// 초기화 시점에는 Environment 접근 불가하므로 shared 인스턴스로 임시 생성
     /// 실제 userManager는 .task에서 교체됨
@@ -118,7 +118,7 @@ struct MyItemsView: View {
     private var categoryContent: some View {
         Group {
             switch viewModel.selectedCategory {
-            case "키링":
+            case "템플릿":
                 WorkshopGridHelpers.itemGridView(
                     items: filteredOwnedTemplates,
                     isOwnedCheck: { _ in false },
