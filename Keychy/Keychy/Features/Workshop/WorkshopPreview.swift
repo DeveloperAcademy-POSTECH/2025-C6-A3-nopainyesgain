@@ -72,7 +72,7 @@ struct WorkshopPreview: View {
                 
                 actionButton
                     .adaptiveBottomPadding()
-                    .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+                    .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
             }
             .padding(.horizontal, 30)
             

@@ -53,7 +53,7 @@ struct TemplatePreviewBody: View {
                     // 액션 버튼
                     actionButton
                         .adaptiveBottomPadding()
-                        .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+                        .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
                 }
                 .padding(.horizontal, 34)
 
