@@ -82,6 +82,11 @@ extension IntroViewModel {
                         print("약관 동의 완료 → 메인 화면")
                         self.isLoggedIn = true
                         self.needsProfileSetup = false
+
+                        // 백그라운드에서 구매한 이펙트 동기화
+                        Task.detached(priority: .background) {
+                            await EffectSyncManager.shared.syncPurchasedEffects(userId: user.uid)
+                        }
                     } else {
                         // 약관 동의 안했음 → 약관 시트 표시
                         print("약관 동의 필요 → 약관 시트 표시")

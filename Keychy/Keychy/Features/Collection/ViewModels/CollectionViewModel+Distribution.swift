@@ -75,7 +75,15 @@ extension CollectionViewModel {
                         self.keyring.append(copiedKeyring)
                         self.keyringDocumentIdByLocalId[copiedKeyring.id] = newKeyringId
                     }
-                    
+
+                    // 7. 키링 이펙트 동기화 (백그라운드)
+                    Task.detached(priority: .background) {
+                        await EffectSyncManager.shared.syncKeyringEffects(
+                            soundId: originalKeyring.soundId,
+                            particleId: originalKeyring.particleId
+                        )
+                    }
+
                     print("키링 수령 완료 (배포): \(originalKeyring.name)")
                     completion(true, newKeyringId)
                     

@@ -400,7 +400,17 @@ extension CollectionViewModel {
                                 keyringName: keyringName,
                                 postOfficeId: postOfficeId
                             )
-                            
+
+                            // 키링 이펙트 동기화 (백그라운드)
+                            if let particleId = snapshot?.data()?["particleId"] as? String {
+                                Task.detached(priority: .background) {
+                                    await EffectSyncManager.shared.syncKeyringEffects(
+                                        soundId: newSoundId,
+                                        particleId: particleId
+                                    )
+                                }
+                            }
+
                             print("키링 수락 완료")
                             completion(true)
                         }

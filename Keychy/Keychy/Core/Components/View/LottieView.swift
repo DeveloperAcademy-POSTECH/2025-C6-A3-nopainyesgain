@@ -21,12 +21,15 @@ struct LottieView: UIViewRepresentable {
         // particleId로 캐시 → Bundle 순서로 파일 찾기
         if let animation = findParticleAnimation(particleId: name) {
             animationView.animation = animation
+            animationView.contentMode = .scaleAspectFit
+            animationView.loopMode = loopMode
+            animationView.animationSpeed = speed
+            animationView.play()
+        } else {
+            // 파티클을 찾을 수 없을 때
+            print("[LottieView] 파티클 찾을 수 없음: \(name)")
         }
 
-        animationView.contentMode = .scaleAspectFit
-        animationView.loopMode = loopMode
-        animationView.animationSpeed = speed
-        animationView.play()
         view.addSubview(animationView)
         animationView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
