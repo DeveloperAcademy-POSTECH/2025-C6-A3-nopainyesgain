@@ -77,7 +77,7 @@ extension CollectionView {
                               action: { router.push(.widgetSettingView) })
             .padding(.trailing, 10)
 
-            CircleGlassButton(imageName: "BundleIcon",
+            CircleGlassButton(imageName: "bundleIcon",
                               action: { router.push(.bundleInventoryView) })
             .padding(.trailing, 10)
             
