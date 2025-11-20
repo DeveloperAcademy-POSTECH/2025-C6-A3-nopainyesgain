@@ -46,6 +46,9 @@ class KeyringScene: SKScene {
     /// ---> 흔들기를 과도하게 했을때, 파티클이 중앙에서 안퍼지고 모여있는게 매우 부자연스러워보여서 추가함.
     var lastParticleTime: TimeInterval = 0
 
+    // MARK: - 씬 정리 상태
+    var isCleaningUp = false
+
     // MARK: - 배경색 설정
     var customBackgroundColor: UIColor = .gray50
 
@@ -78,9 +81,34 @@ class KeyringScene: SKScene {
     }
     
     deinit {
-        removeAllChildren()
-        removeAllActions()
+        cleanup()
+    }
+
+    /// 씬 정리 (메모리 해제 전 호출)
+    func cleanup() {
+        guard !isCleaningUp else { return }
+        isCleaningUp = true
+
+        // 콜백 무효화
+        onPlayParticleEffect = nil
+        onSetupComplete = nil
+
+        // Combine 구독 취소
         cancellables.removeAll()
+
+        // 모든 물리 조인트 제거
+        physicsWorld.removeAllJoints()
+
+        // 모든 액션 제거
+        removeAllActions()
+
+        // 모든 자식 노드 제거
+        removeAllChildren()
+
+        // 노드 참조 제거
+        ringNode = nil
+        chainNodes.removeAll()
+        bodyNode = nil
     }
     
     // MARK: - ViewModel 바인딩 (Generic)
