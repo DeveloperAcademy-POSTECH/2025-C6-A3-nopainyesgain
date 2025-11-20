@@ -36,13 +36,14 @@ struct TemplatePreviewBody: View {
 
     var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 70) {
+            VStack(alignment: .leading, spacing: 0) {
                 Spacer()
                 
                 // 프리뷰 이미지
                 templatePreview
                                 
-                
+                Spacer()
+
                 VStack(alignment: .leading, spacing: 0) {
                     // 템플릿 정보
                     infoSection
