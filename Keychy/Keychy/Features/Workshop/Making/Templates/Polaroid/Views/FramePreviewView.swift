@@ -213,9 +213,9 @@ struct FramePreviewView: View {
                                     showPhotoPicker = true
                                 } label: {
                                     ZStack {
-                                        Rectangle()
-                                            .fill(Color.white100)
+                                        SimpleAnimatedImage(url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5")
                                             .frame(width: photoWidth, height: photoHeight)
+                                            .padding(.bottom, 20)
 
                                         Image(.plus)
                                             .resizable()
