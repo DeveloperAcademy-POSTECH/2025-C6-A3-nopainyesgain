@@ -69,3 +69,13 @@ var screenSize: CGSize {
         .first?.screen.bounds.size ?? .zero
 }
 
+/// 화면 스케일 팩터
+/// se는 2x, 아이폰16은 3x입니다
+var screenScale: CGFloat {
+    if let scale = UIApplication.shared.connectedScenes
+        .compactMap({ $0 as? UIWindowScene })
+        .first?.screen.scale {
+        return scale
+    }
+    return 2.0
+}
