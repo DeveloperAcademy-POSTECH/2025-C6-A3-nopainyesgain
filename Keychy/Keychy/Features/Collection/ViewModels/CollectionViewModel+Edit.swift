@@ -110,7 +110,9 @@ extension CollectionViewModel {
                     "keyrings": FieldValue.arrayRemove([documentId])
                 ], forDocument: userRef)
                 
-                // 2-3. Bundle에서 키링을 "none"으로 변경
+                // 2-3. Bundle에서 키링을 "none"으로 변경 및 캐시 삭제할 번들 ID 수집
+                var affectedBundleIds: [String] = []
+                
                 if let documents = snapshot?.documents, !documents.isEmpty {
                     for document in documents {
                         guard var keyrings = document.data()["keyrings"] as? [String] else {
@@ -130,12 +132,15 @@ extension CollectionViewModel {
                         if needsUpdate {
                             let bundleRef = db.collection("KeyringBundle").document(document.documentID)
                             batch.updateData(["keyrings": keyrings], forDocument: bundleRef)
+                            
+                            // 변경된 번들 ID 저장 (나중에 캐시 삭제용)
+                            affectedBundleIds.append(document.documentID)
                         }
                     }
                 }
                 
                 // 3. Batch 커밋 - 모든 작업이 성공하거나 모두 실패
-                batch.commit { [weak self] error in
+                batch.commit { [weak self, affectedBundleIds] error in
                     guard let self = self else {
                         completion(false)
                         return
@@ -167,6 +172,11 @@ extension CollectionViewModel {
 
                             // 7. App Group 위젯용 캐시에서도 제거
                             KeyringImageCache.shared.removeKeyring(id: documentId)
+
+                            // 8. 변경된 Bundle들의 캡처 캐시 삭제
+                            for bundleId in affectedBundleIds {
+                                BundleImageCache.shared.delete(for: bundleId)
+                            }
 
                             completion(true)
                         }
