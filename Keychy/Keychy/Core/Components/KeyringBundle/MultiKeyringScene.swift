@@ -118,7 +118,9 @@ class MultiKeyringScene: SKScene {
         Task {
             async let carabinerBackTask: Void = {
                 if let carabinerBackURL = await carabinerBackImageURL {
-                    await setupCarabinerBackImageAsync(url: carabinerBackURL)
+                    if carabinerBackURL != "none" {
+                        await setupCarabinerBackImageAsync(url: carabinerBackURL)
+                    }
                 }
             }()
 

@@ -164,8 +164,11 @@ extension MultiKeyringCaptureScene {
         
         // 3. 카라비너 이미지 로드
         if carabinerType == .hamburger {
-            if let backURL = carabinerBackURL {
-                _ = try await StorageManager.shared.getImage(path: backURL)
+            // 카라비너 뒷 이미지 없으면 패스
+            if carabinerBackURL != "none" {
+                if let backURL = carabinerBackURL {
+                    _ = try await StorageManager.shared.getImage(path: backURL)
+                }
             }
             if let frontURL = carabinerFrontURL {
                 _ = try await StorageManager.shared.getImage(path: frontURL)
