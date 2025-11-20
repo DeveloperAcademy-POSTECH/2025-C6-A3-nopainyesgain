@@ -72,6 +72,14 @@ struct BundleNameInputView<Route: BundleRoute>: View {
             }
             viewModel.hideTabBar()
         }
+        .onChange(of: isTextFieldFocused) { _, newValue in
+            // 포커스가 해제되려고 하면 다시 활성화
+            if !newValue {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isTextFieldFocused = true
+                }
+            }
+        }
         .transaction { transaction in
             transaction.animation = nil
             transaction.disablesAnimations = true
