@@ -151,8 +151,10 @@ class AudioRecorderManager: NSObject {
 
     // MARK: - Playback Preview
     private var audioPlayer: AVAudioPlayer?
+    private var audioEngine: AVAudioEngine?
+    private var playerNode: AVAudioPlayerNode?
 
-    /// 녹음된 파일 재생
+    /// 녹음된 파일 재생 (볼륨 증폭)
     func playRecording() throws {
         guard let url = recordingURL else { return }
 
@@ -161,13 +163,44 @@ class AudioRecorderManager: NSObject {
         try audioSession.setCategory(.playback, mode: .default, options: [])
         try audioSession.setActive(true)
 
-        audioPlayer = try AVAudioPlayer(contentsOf: url)
-        audioPlayer?.volume = 1.0
-        audioPlayer?.play()
+        // 기존 재생 중지
+        stopPlayback()
+
+        // AVAudioEngine 설정
+        audioEngine = AVAudioEngine()
+        playerNode = AVAudioPlayerNode()
+
+        guard let engine = audioEngine, let player = playerNode else { return }
+
+        engine.attach(player)
+
+        // 오디오 파일 로드
+        let audioFile = try AVAudioFile(forReading: url)
+        let format = audioFile.processingFormat
+
+        // 볼륨 증폭 노드 생성 (2배 증폭)
+        let volumeNode = AVAudioMixerNode()
+        engine.attach(volumeNode)
+        volumeNode.volume = 2.0
+
+        // 노드 연결: playerNode -> volumeNode -> engine output
+        engine.connect(player, to: volumeNode, format: format)
+        engine.connect(volumeNode, to: engine.mainMixerNode, format: format)
+
+        // 엔진 시작
+        try engine.start()
+
+        // 오디오 재생
+        player.scheduleFile(audioFile, at: nil)
+        player.play()
     }
 
     /// 재생 중지
     func stopPlayback() {
+        playerNode?.stop()
+        audioEngine?.stop()
+        audioEngine = nil
+        playerNode = nil
         audioPlayer?.stop()
         audioPlayer = nil
     }
