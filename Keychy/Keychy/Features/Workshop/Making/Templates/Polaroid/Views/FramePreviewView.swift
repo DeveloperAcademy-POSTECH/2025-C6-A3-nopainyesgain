@@ -80,41 +80,53 @@ struct FramePreviewView: View {
     /// 사진 편집 제스처 (확대/축소, 회전, 이동)
     private var photoGestures: some Gesture {
         // 확대/축소 제스처 (최소 0.5배, 최대 3.0배)
-        let magnificationGesture = MagnificationGesture()
+        let magnificationGesture = MagnificationGesture(minimumScaleDelta: 0.0)
             .onChanged { value in
-                currentScale = value
+                Task { @MainActor in
+                    currentScale = value
+                }
             }
             .onEnded { value in
-                let newScale = viewModel.photoScale * value
-                // 범위 제한: 0.5 ~ 3.0
-                viewModel.photoScale = min(max(newScale, 0.5), 3.0)
-                currentScale = 1.0
+                Task { @MainActor in
+                    let newScale = viewModel.photoScale * value
+                    // 범위 제한: 0.5 ~ 3.0
+                    viewModel.photoScale = min(max(newScale, 0.5), 3.0)
+                    currentScale = 1.0
+                }
             }
 
         // 회전 제스처
-        let rotationGesture = RotationGesture()
+        let rotationGesture = RotationGesture(minimumAngleDelta: .zero)
             .onChanged { value in
-                currentRotation = value
+                Task { @MainActor in
+                    currentRotation = value
+                }
             }
             .onEnded { value in
-                viewModel.photoRotation += value
-                currentRotation = .zero
+                Task { @MainActor in
+                    viewModel.photoRotation += value
+                    currentRotation = .zero
+                }
             }
 
         // 이동 제스처
-        let dragGesture = DragGesture()
+        let dragGesture = DragGesture(minimumDistance: 0)
             .onChanged { value in
-                currentOffset = CGSize(
-                    width: value.translation.width,
-                    height: value.translation.height
-                )
+                Task { @MainActor in
+                    currentOffset = CGSize(
+                        width: value.translation.width,
+                        height: value.translation.height
+                    )
+                }
             }
             .onEnded { value in
-                viewModel.photoOffset = CGSize(
-                    width: viewModel.photoOffset.width + value.translation.width,
-                    height: viewModel.photoOffset.height + value.translation.height
-                )
-                currentOffset = .zero
+                Task { @MainActor in
+                    viewModel.photoOffset = CGSize(
+                        width: viewModel.photoOffset.width + value.translation.width,
+                        height: viewModel.photoOffset.height + value.translation.height
+                    )
+                    currentOffset = .zero
+                }
             }
 
         // 모든 제스처를 동시에 적용
