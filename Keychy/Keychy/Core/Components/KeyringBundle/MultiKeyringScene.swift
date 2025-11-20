@@ -46,6 +46,12 @@ class MultiKeyringScene: SKScene {
     // MARK: - 씬 준비 완료 콜백
     var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
 
+    // MARK: - 예약된 작업 관리
+    private var readyCallbackWorkItem: DispatchWorkItem?
+
+    // MARK: - 씬 정리 상태
+    private var isCleaningUp = false
+
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
     var currentRingType: RingType = .basic
@@ -104,8 +110,30 @@ class MultiKeyringScene: SKScene {
     }
 
     deinit {
-        removeAllChildren()
+        cleanup()
+    }
+
+    /// 씬 정리 (메모리 해제 전 호출)
+    func cleanup() {
+        guard !isCleaningUp else { return }
+        isCleaningUp = true
+
+        // 예약된 콜백 취소
+        readyCallbackWorkItem?.cancel()
+        readyCallbackWorkItem = nil
+
+        // 콜백 무효화
+        onAllKeyringsReady = nil
+        onPlayParticleEffect = nil
+
+        // 모든 물리 조인트 제거
+        physicsWorld.removeAllJoints()
+
+        // 모든 액션 제거
         removeAllActions()
+
+        // 모든 자식 노드 제거
+        removeAllChildren()
     }
 
     // MARK: - Scene Lifecycle
@@ -696,9 +724,12 @@ class MultiKeyringScene: SKScene {
 
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
     private func enablePhysics() {
+        // 정리 중이면 중단
+        guard !isCleaningUp else { return }
+
         // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        
+
         // 카라비너 타입별 Ring 물리 설정
         for (_, ring) in ringNodes {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -709,7 +740,7 @@ class MultiKeyringScene: SKScene {
                 ring.physicsBody?.isDynamic = false
             }
         }
-        
+
         // 카라비너 타입별 체인 물리 활성화
         for (_, chains) in chainNodesByKeyring {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
@@ -734,7 +765,7 @@ class MultiKeyringScene: SKScene {
                 }
             }
         }
-        
+
         // 모든 바디의 물리 활성화
         for (_, body) in bodyNodes {
             body.physicsBody?.isDynamic = true
@@ -743,14 +774,18 @@ class MultiKeyringScene: SKScene {
         }
 
         // 씬 렌더링 완료를 위해 약간의 지연 후 콜백 호출
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-            self?.onAllKeyringsReady?()
+        // DispatchWorkItem을 사용하여 취소 가능하게 만듦
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self, !self.isCleaningUp else { return }
+            self.onAllKeyringsReady?()
         }
+        readyCallbackWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: workItem)
     }
 
     // MARK: - Touch Handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
+        guard !isCleaningUp, let touch = touches.first else { return }
         let location = touch.location(in: self)
 
         lastTouchLocation = location
@@ -761,7 +796,7 @@ class MultiKeyringScene: SKScene {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
+        guard !isCleaningUp, let touch = touches.first else { return }
         let location = touch.location(in: self)
 
         if let lastLocation = lastTouchLocation {
@@ -791,7 +826,7 @@ class MultiKeyringScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
+        guard !isCleaningUp, let touch = touches.first else { return }
         let end = touch.location(in: self)
 
         // 거리 계산
@@ -850,6 +885,8 @@ class MultiKeyringScene: SKScene {
 
     /// 특정 위치 근처의 키링에 파티클 효과 적용
     private func applyParticleEffectNearLocation(at location: CGPoint) {
+        guard !isCleaningUp else { return }
+
         // 가장 가까운 키링 찾기
         var closestIndex: Int?
         var closestDistance: CGFloat = .infinity
@@ -876,6 +913,8 @@ class MultiKeyringScene: SKScene {
     // MARK: - Swipe Force Application
 
     private func applySwipeForceToAllKeyrings(at location: CGPoint, velocity: CGVector) {
+        guard !isCleaningUp else { return }
+
         for (index, chains) in chainNodesByKeyring {
             guard let body = bodyNodes[index] else { continue }
 

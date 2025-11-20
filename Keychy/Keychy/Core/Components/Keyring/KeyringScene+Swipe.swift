@@ -12,7 +12,7 @@ extension KeyringScene {
 
     // Chain과 Body에 스와이프 영향 적용 (바디 중앙 기준 좌우 스와이프)
     func applySwipeForceToNearbyChains(at location: CGPoint, velocity: CGVector) {
-        guard let body = bodyNode else { return }
+        guard !isCleaningUp, let body = bodyNode else { return }
 
         _ = body.position.x
 
@@ -40,7 +40,7 @@ extension KeyringScene {
 
     // 씬 로딩 완료 시 자동으로 힘을 가해서 파티클 효과 발생 (환영 효과)
     func applyWelcomeImpulse() {
-        guard bodyNode != nil else { return }
+        guard !isCleaningUp, bodyNode != nil else { return }
 
         // 파티클이 터질 정도의 속도 (speed > 1250)
         let welcomeVelocity = CGVector(dx: 2000, dy: 0)

@@ -9,7 +9,7 @@ import AVFoundation
 
 extension KeyringScene {
     func applySoundEffect(soundId: String) {
-        guard soundId != "none" else { return }
+        guard !isCleaningUp, soundId != "none" else { return }
 
         // Firebase Storage URL인 경우 (커스텀 사운드가 저장된 경우)
         if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
@@ -30,7 +30,7 @@ extension KeyringScene {
     }
 
     func applyParticleEffect(particleId: String) {
-        guard particleId != "none" else { return }
+        guard !isCleaningUp, particleId != "none" else { return }
         onPlayParticleEffect?(particleId)
     }
 }

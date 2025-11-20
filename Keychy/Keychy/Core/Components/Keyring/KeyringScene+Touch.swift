@@ -12,19 +12,19 @@ extension KeyringScene {
     
     // MARK: - Touch Handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
+        guard !isCleaningUp, let touch = touches.first else { return }
         let location = touch.location(in: self)
-        
+
         lastTouchLocation = location
         lastTouchTime = touch.timestamp
         swipeStartLocation = location
-        
+
         /// 탭 임팩트
         Haptic.impact(style: .medium)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
+        guard !isCleaningUp, let touch = touches.first else { return }
         let location = touch.location(in: self)
 
         // 바디 중앙을 기준으로 스와이프 감지
@@ -59,7 +59,7 @@ extension KeyringScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
+        guard !isCleaningUp, let touch = touches.first else { return }
         let end = touch.location(in: self)
 
         // 거리 및 속도 계산

@@ -38,23 +38,27 @@ struct TemplatePreviewBody: View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
-                
+
                 // 프리뷰 이미지
                 templatePreview
-                
+
                 Spacer()
-                
-                // 템플릿 정보
-                infoSection
-                    .padding(.bottom, 40)
-                    .frame(minHeight: 120, alignment: .top)
-                
-                // 액션 버튼
-                actionButton
-                    .adaptiveBottomPadding()
-                    .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    // 템플릿 정보
+                    infoSection
+                        .padding(.bottom, 40)
+                        .frame(minHeight: 120, alignment: .top)
+
+                    // 액션 버튼
+                    actionButton
+                        .adaptiveBottomPadding()
+                        .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+                }
+                .padding(.horizontal, 34)
+
             }
-            .padding(.horizontal, 30)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             CustomNavigationBar {
                 BackToolbarButton {
@@ -67,6 +71,7 @@ struct TemplatePreviewBody: View {
             }
         }
         .ignoresSafeArea()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .task {
@@ -163,19 +168,15 @@ extension TemplatePreviewBody {
     private var templatePreview: some View {
         VStack {
             Spacer()
-
+            
             if let template {
                 ItemDetailImage(itemURL: template.previewURL)
                     .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .cornerRadius(20)
+                    .frame(width: 386, height: 386)
             } else {
                 ProgressView()
             }
-
-            Spacer()
         }
-        .padding(.horizontal, 30)
         .frame(maxHeight: 500)
     }
 

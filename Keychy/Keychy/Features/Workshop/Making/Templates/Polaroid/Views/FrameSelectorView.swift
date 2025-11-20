@@ -13,11 +13,12 @@ struct FrameSelectorView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("프레임 선택")
+            Text("프레임")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
                 .padding(.top, 20)
+                .padding(.bottom, 8)
 
             // 프레임 목록
             ScrollView(.horizontal, showsIndicators: false) {
@@ -56,19 +57,23 @@ struct FrameSelectorView: View {
                 VStack(spacing: 6) {
                     LazyImage(url: URL(string: frame.thumbnailURL)) { state in
                         if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 70, height: 70)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        } else if state.isLoading {
+                            ZStack {
+                                
+                                Color.gray50
+
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding(.vertical, 8)
+
+                            }
+                            .frame(width: 105, height: 105)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                        } else  {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(Color.gray100)
-                                .frame(width: 70, height: 70)
-                        } else {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.gray.opacity(0.1))
-                                .frame(width: 70, height: 70)
+                                .frame(width: 105, height: 105)
                         }
                     }
                     .overlay(
@@ -86,24 +91,6 @@ struct FrameSelectorView: View {
                         .lineLimit(1)
                         .truncationMode(.tail)
                         .frame(width: 70)
-                }
-
-                // 체크 뱃지 (선택 시)
-                if isSelected {
-                    ZStack {
-                        Circle()
-                            .stroke(.white100)
-                            .fill(.main500)
-                            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 0)
-                            .frame(width: 20, height: 20)
-                        Image(.recCheck)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 12, height: 12)
-                            .foregroundStyle(.white100)
-                    }
-                    .padding(.bottom, 24)
-                    .padding(.trailing, 4)
                 }
             }
         }

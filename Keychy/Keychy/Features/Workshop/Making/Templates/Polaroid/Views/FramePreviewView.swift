@@ -14,9 +14,19 @@ struct FramePreviewView: View {
     @Bindable var viewModel: PolaroidVM
     let onSceneReady: () -> Void
 
+    @State private var showPhotoSelectSheet = false
     @State private var showPhotoPicker = false
+    @State private var showCamera = false
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
     @State private var showEditButton = false
+
+    // 시트에서 선택한 액션을 저장
+    @State private var pendingAction: PhotoAction? = nil
+
+    enum PhotoAction {
+        case camera
+        case photoLibrary
+    }
 
     // 제스처 임시 값 (제스처 중에만 사용)
     @State private var currentScale: CGFloat = 1.0
@@ -53,6 +63,43 @@ struct FramePreviewView: View {
             selection: $selectedPhotoItem,
             matching: .images
         )
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraView { image in
+                viewModel.selectedPhotoImage = image
+                // 새 사진 선택 시 변환 초기화
+                viewModel.photoScale = 1.0
+                viewModel.photoRotation = .zero
+                viewModel.photoOffset = .zero
+                currentScale = 1.0
+                currentRotation = .zero
+                currentOffset = .zero
+                showEditButton = false
+            }
+            .ignoresSafeArea()
+        }
+        .sheet(isPresented: $showPhotoSelectSheet, onDismiss: {
+            // 시트가 완전히 닫힌 후 액션 실행
+            if let action = pendingAction {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    switch action {
+                    case .camera:
+                        showCamera = true
+                    case .photoLibrary:
+                        showPhotoPicker = true
+                    }
+                    pendingAction = nil
+                }
+            }
+        }) {
+            PhotoSelectSheet(
+                onCameraSelected: {
+                    pendingAction = .camera
+                },
+                onPhotoLibrarySelected: {
+                    pendingAction = .photoLibrary
+                }
+            )
+        }
         .onChange(of: selectedPhotoItem) { oldValue, newValue in
             Task {
                 if let data = try? await newValue?.loadTransferable(type: Data.self),
@@ -80,41 +127,53 @@ struct FramePreviewView: View {
     /// 사진 편집 제스처 (확대/축소, 회전, 이동)
     private var photoGestures: some Gesture {
         // 확대/축소 제스처 (최소 0.5배, 최대 3.0배)
-        let magnificationGesture = MagnificationGesture()
+        let magnificationGesture = MagnificationGesture(minimumScaleDelta: 0.0)
             .onChanged { value in
-                currentScale = value
+                Task { @MainActor in
+                    currentScale = value
+                }
             }
             .onEnded { value in
-                let newScale = viewModel.photoScale * value
-                // 범위 제한: 0.5 ~ 3.0
-                viewModel.photoScale = min(max(newScale, 0.5), 3.0)
-                currentScale = 1.0
+                Task { @MainActor in
+                    let newScale = viewModel.photoScale * value
+                    // 범위 제한: 0.5 ~ 3.0
+                    viewModel.photoScale = min(max(newScale, 0.5), 3.0)
+                    currentScale = 1.0
+                }
             }
 
         // 회전 제스처
-        let rotationGesture = RotationGesture()
+        let rotationGesture = RotationGesture(minimumAngleDelta: .zero)
             .onChanged { value in
-                currentRotation = value
+                Task { @MainActor in
+                    currentRotation = value
+                }
             }
             .onEnded { value in
-                viewModel.photoRotation += value
-                currentRotation = .zero
+                Task { @MainActor in
+                    viewModel.photoRotation += value
+                    currentRotation = .zero
+                }
             }
 
-        // 이동 제스처
-        let dragGesture = DragGesture()
+        // 이동 제스처 (최소 거리 10 설정으로 탭과 구분)
+        let dragGesture = DragGesture(minimumDistance: 10)
             .onChanged { value in
-                currentOffset = CGSize(
-                    width: value.translation.width,
-                    height: value.translation.height
-                )
+                Task { @MainActor in
+                    currentOffset = CGSize(
+                        width: value.translation.width,
+                        height: value.translation.height
+                    )
+                }
             }
             .onEnded { value in
-                viewModel.photoOffset = CGSize(
-                    width: viewModel.photoOffset.width + value.translation.width,
-                    height: viewModel.photoOffset.height + value.translation.height
-                )
-                currentOffset = .zero
+                Task { @MainActor in
+                    viewModel.photoOffset = CGSize(
+                        width: viewModel.photoOffset.width + value.translation.width,
+                        height: viewModel.photoOffset.height + value.translation.height
+                    )
+                    currentOffset = .zero
+                }
             }
 
         // 모든 제스처를 동시에 적용
@@ -158,7 +217,10 @@ struct FramePreviewView: View {
             if let frame = viewModel.selectedFrame {
                 // 프레임 크기 계산
                 LazyImage(url: URL(string: frame.frameURL)) { state in
-                    if let image = state.image {
+                    if state.isLoading {
+                        LoadingAlert(type: .short, message: nil)
+                            .frame(height: targetFrameHeight)
+                    } else if let image = state.image {
                         let frameAspect = (state.imageContainer?.image.size.width ?? 1) / (state.imageContainer?.image.size.height ?? 1)
                         let targetFrameWidth = targetFrameHeight * frameAspect
 
@@ -189,7 +251,7 @@ struct FramePreviewView: View {
                                     // 편집 버튼
                                     if showEditButton {
                                         Button {
-                                            showPhotoPicker = true
+                                            showPhotoSelectSheet = true
                                             showEditButton = false
                                         } label: {
                                             Image(.plus)
@@ -202,6 +264,7 @@ struct FramePreviewView: View {
                                                         .fill(.white100)
                                                         .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                                                 )
+                                                .offset(y: -20)
                                         }
                                         .transition(.scale.combined(with: .opacity))
                                     }
@@ -210,26 +273,29 @@ struct FramePreviewView: View {
                             } else {
                                 // 사진 선택 플레이스홀더
                                 Button {
-                                    showPhotoPicker = true
+                                    showPhotoSelectSheet = true
                                 } label: {
                                     ZStack {
-                                        Rectangle()
-                                            .fill(Color.white100)
+                                        SimpleAnimatedImage(url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5")
                                             .frame(width: photoWidth, height: photoHeight)
+                                            .padding(.bottom, 20)
+
 
                                         Image(.plus)
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 20, height: 20)
-                                            .padding(12)
+                                            .frame(width: 22, height: 22 )
+                                            .padding(10)
                                             .background(
                                                 Circle()
                                                     .fill(.white100)
                                                     .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                                             )
+                                            .offset(y: -20)
                                     }
                                 }
                                 .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
+                                .offset(x: -3)
                             }
 
                             // 2. 프레임 이미지 (위에 오버레이)
@@ -250,6 +316,46 @@ struct FramePreviewView: View {
                     }
                 }
             }
+        }
+    }
+}
+
+// MARK: - Camera View
+struct CameraView: UIViewControllerRepresentable {
+    let onImageCaptured: (UIImage) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        picker.modalPresentationStyle = .fullScreen
+        picker.cameraViewTransform = .identity
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraView
+        
+        init(_ parent: CameraView) {
+            self.parent = parent
+        }
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.onImageCaptured(image)
+            }
+            parent.dismiss()
+        }
+        
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
         }
     }
 }

@@ -29,17 +29,34 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         .onAppear {
             setupScene()
         }
+        .onDisappear {
+            // 뷰가 사라질 때 씬 정리
+            cleanupScene()
+        }
         .onChange(of: viewModel.bodyImage) { _, newImage in
             // bodyImage 변경 시 씬 재생성
-            scene?.removeAllChildren()
-            scene?.removeAllActions()
-            scene = nil
+            cleanupScene()
 
             // 다음 프레임에서 새 씬 생성
             DispatchQueue.main.async {
                 setupScene()
             }
         }
+    }
+
+    // MARK: - Scene Cleanup
+
+    /// 씬 정리 및 메모리 해제
+    private func cleanupScene() {
+        // Scene의 cleanup 메서드 호출 (물리 조인트, 콜백 등 정리)
+        scene?.cleanup()
+
+        // Scene을 nil로 설정하여 메모리 해제
+        scene = nil
+
+        // 파티클 효과 정리
+        showEffect = false
+        currentEffect = ""
     }
 
     // MARK: - Scene Setup
