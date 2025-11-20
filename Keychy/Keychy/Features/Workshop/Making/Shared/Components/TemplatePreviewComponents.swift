@@ -73,6 +73,8 @@ struct TemplatePreviewBody: View {
         .ignoresSafeArea()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationBarBackButtonHidden(true)
+        .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
+        .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
         .toolbar(.hidden, for: .tabBar)
         .task {
             await fetchTemplate()

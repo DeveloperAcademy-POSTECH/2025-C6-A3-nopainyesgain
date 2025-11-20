@@ -114,12 +114,16 @@ struct ChangeNameView: View {
                     // 현재 닉네임으로 초기화
                     nickname = userManager.currentUser?.nickname ?? ""
                 }
+                
+                // 커스텀네비게이션
             }
             .padding(.horizontal, 20)
             .navigationTitle("닉네임 변경")
             .toolbar(.hidden, for: .tabBar)
             .dismissKeyboardOnTap()
             .ignoresSafeArea(.keyboard)
+            .blur(radius: (showSuccessAlert || isUpdating) ? 10 : 0)
+            .animation(.easeInOut(duration: 0.3), value: (showSuccessAlert || isUpdating))
 
             // 업데이트 중 로딩
             if isUpdating {

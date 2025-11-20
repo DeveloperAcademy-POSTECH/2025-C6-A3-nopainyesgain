@@ -90,6 +90,8 @@ struct WorkshopPreview: View {
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .swipeBackGesture(enabled: true)
+        .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
+        .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
         .overlay {
             ZStack(alignment: .center) {
                 // 구매 확인 팝업
