@@ -43,26 +43,36 @@ extension PolaroidVM {
         let targetFrameWidth = targetFrameHeight * frameAspect
         let targetFrameSize = CGSize(width: targetFrameWidth, height: targetFrameHeight)
 
-        // 사진이 없으면 프레임만 저장
-        guard let photo = selectedPhotoImage else {
-            let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
-            let frameOnlyImage = renderer.image { context in
-                originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
-            }
-            
-            // 최종 이미지를 높이 210으로 scaleToFit
-            let finalHeight: CGFloat = 210
-            let finalAspect = frameOnlyImage.size.width / frameOnlyImage.size.height
-            let finalWidth = finalHeight * finalAspect
-            let finalSize = CGSize(width: finalWidth, height: finalHeight)
+        // 사진이 없으면 placeholder 이미지 다운로드
+        let photo: UIImage
+        if let selectedPhoto = selectedPhotoImage {
+            photo = selectedPhoto
+        } else {
+            // placeholder 이미지 다운로드
+            let placeholderURLString = "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5"
+            guard let placeholderURL = URL(string: placeholderURLString),
+                  let placeholderImage = await downloadFrameImage(from: placeholderURL) else {
+                // placeholder도 다운로드 실패하면 프레임만 저장
+                let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
+                let frameOnlyImage = renderer.image { context in
+                    originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
+                }
 
-            let finalRenderer = UIGraphicsImageRenderer(size: finalSize)
-            let scaledImage = finalRenderer.image { context in
-                frameOnlyImage.draw(in: CGRect(origin: .zero, size: finalSize))
+                // 최종 이미지를 높이 210으로 scaleToFit
+                let finalHeight: CGFloat = 210
+                let finalAspect = frameOnlyImage.size.width / frameOnlyImage.size.height
+                let finalWidth = finalHeight * finalAspect
+                let finalSize = CGSize(width: finalWidth, height: finalHeight)
+
+                let finalRenderer = UIGraphicsImageRenderer(size: finalSize)
+                let scaledImage = finalRenderer.image { context in
+                    frameOnlyImage.draw(in: CGRect(origin: .zero, size: finalSize))
+                }
+
+                bodyImage = scaledImage
+                return
             }
-            
-            bodyImage = scaledImage
-            return
+            photo = placeholderImage
         }
 
         // 사진 영역 (FramePreviewView와 동일한 크기)
