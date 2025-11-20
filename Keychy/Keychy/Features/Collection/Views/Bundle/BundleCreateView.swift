@@ -144,8 +144,6 @@ extension BundleCreateView {
             BackToolbarButton {
                 router.pop()
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
         } trailing: {
             if hasUnpurchasedItems {
@@ -156,7 +154,6 @@ extension BundleCreateView {
                 NextToolbarButton {
                     router.push(.bundleAddKeyringView)
                 }
-                .buttonStyle(.glass)
             }
         }
         

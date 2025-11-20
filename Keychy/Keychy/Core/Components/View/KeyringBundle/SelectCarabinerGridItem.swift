@@ -24,6 +24,7 @@ struct SelectCarabinerGridItem: View {
                             .clipped()
                     } else if state.isLoading {
                         LoadingAlert(type: .short, message: nil)
+                            .scaleEffect(0.5)
                     } else {
                         Color.clear
                             .aspectRatio(1, contentMode: .fit)
