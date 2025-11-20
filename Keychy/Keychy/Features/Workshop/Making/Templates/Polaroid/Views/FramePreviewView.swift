@@ -202,6 +202,7 @@ struct FramePreviewView: View {
                                                         .fill(.white100)
                                                         .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                                                 )
+                                                .offset(y: -20)
                                         }
                                         .transition(.scale.combined(with: .opacity))
                                     }
@@ -227,6 +228,7 @@ struct FramePreviewView: View {
                                                     .fill(.white100)
                                                     .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                                             )
+                                            .offset(y: -20)
                                     }
                                 }
                                 .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)

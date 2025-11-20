@@ -38,10 +38,10 @@ struct TemplatePreviewBody: View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
-                
+
                 // 프리뷰 이미지
                 templatePreview
-                                
+
                 Spacer()
 
                 VStack(alignment: .leading, spacing: 0) {
@@ -49,7 +49,7 @@ struct TemplatePreviewBody: View {
                     infoSection
                         .padding(.bottom, 40)
                         .frame(minHeight: 120, alignment: .top)
-                    
+
                     // 액션 버튼
                     actionButton
                         .adaptiveBottomPadding()
@@ -58,6 +58,7 @@ struct TemplatePreviewBody: View {
                 .padding(.horizontal, 34)
 
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             CustomNavigationBar {
                 BackToolbarButton {
@@ -70,6 +71,7 @@ struct TemplatePreviewBody: View {
             }
         }
         .ignoresSafeArea()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .task {
