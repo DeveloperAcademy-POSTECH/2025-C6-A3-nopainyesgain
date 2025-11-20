@@ -32,6 +32,14 @@ enum WorkshopRoute: Hashable {
     case polaroidCustomizing
     case polaroidInfoInput
     case polaroidComplete
+    
+    // MARK: - 클리어 스케치 템플릿
+    case clearSketchPreview
+    case clearSketchDrawing
+    case clearSketchCrop
+    case clearSketchCustomizing
+    case clearSketchInfoInput
+    case clearSketchComplete
 
     // MARK: - 새로운 템플릿의 루트는 이렇게 추가해주면 됩니다. (예정)
     // case hkPreview
@@ -48,6 +56,8 @@ enum WorkshopRoute: Hashable {
             return .NeonSignPreView
         case "Polaroid":
             return .polaroidPreview
+        case "ClearSketch":
+            return .clearSketchPreview
 
             // 필요한 프리뷰 케이스들 추가
         default:
