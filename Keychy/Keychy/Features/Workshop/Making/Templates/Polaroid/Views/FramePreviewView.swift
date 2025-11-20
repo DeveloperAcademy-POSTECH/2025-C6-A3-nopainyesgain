@@ -218,11 +218,12 @@ struct FramePreviewView: View {
                                             .frame(width: photoWidth, height: photoHeight)
                                             .padding(.bottom, 20)
 
+
                                         Image(.plus)
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 20, height: 20)
-                                            .padding(12)
+                                            .frame(width: 22, height: 22 )
+                                            .padding(10)
                                             .background(
                                                 Circle()
                                                     .fill(.white100)
@@ -232,6 +233,7 @@ struct FramePreviewView: View {
                                     }
                                 }
                                 .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
+                                .offset(x: -3)
                             }
 
                             // 2. 프레임 이미지 (위에 오버레이)
