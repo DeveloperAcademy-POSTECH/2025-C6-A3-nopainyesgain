@@ -220,6 +220,12 @@ class EffectSyncManager {
 
     /// 사운드 다운로드 (캐시에 없을 때만)
     private func downloadSoundIfNeeded(soundId: String) async {
+        // soundId가 URL 형태인지 확인 (커스텀 사운드)
+        if soundId.hasPrefix("http://") || soundId.hasPrefix("https://") {
+            await downloadCustomSound(soundURLString: soundId)
+            return
+        }
+
         // 번들에 있으면 스킵 (무료 이펙트)
         if isInBundle(soundId: soundId) {
             print("[EffectSync] 사운드 번들에 있음 (스킵): \(soundId)")
@@ -240,13 +246,11 @@ class EffectSyncManager {
                 .getDocument()
 
             guard let soundData = soundSnapshot.data(),
-                  let soundURL = soundData["soundData"] as? String else {
+                  let soundURLString = soundData["soundData"] as? String,
+                  let downloadURL = URL(string: soundURLString) else {
                 print("[EffectSync] soundData URL 없음: \(soundId)")
                 return
             }
-
-            // Storage URL로 참조 생성
-            let storageRef = Storage.storage().reference(forURL: soundURL)
 
             let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             let soundsDir = cacheDirectory.appendingPathComponent("sounds")
@@ -258,12 +262,65 @@ class EffectSyncManager {
 
             let localURL = soundsDir.appendingPathComponent("\(soundId).mp3")
 
-            // 다운로드
-            _ = try await storageRef.write(toFile: localURL)
+            // URLSession으로 직접 다운로드
+            let (tempURL, _) = try await URLSession.shared.download(from: downloadURL)
+
+            // 임시 파일을 최종 위치로 이동
+            if FileManager.default.fileExists(atPath: localURL.path) {
+                try FileManager.default.removeItem(at: localURL)
+            }
+            try FileManager.default.moveItem(at: tempURL, to: localURL)
+
             print("[EffectSync] 사운드 다운로드 완료: \(soundId)")
 
         } catch {
             print("[EffectSync] 사운드 다운로드 실패 (\(soundId)): \(error.localizedDescription)")
+        }
+    }
+
+    /// 커스텀 사운드 다운로드 (soundId가 URL인 경우)
+    private func downloadCustomSound(soundURLString: String) async {
+        guard let downloadURL = URL(string: soundURLString) else {
+            print("[EffectSync] 커스텀 사운드 URL 파싱 실패: \(soundURLString)")
+            return
+        }
+
+        // URL path에서 마지막 컴포넌트만 추출 (예: 6FBEABEA-F603-40EA-B953-7D2F0AA9EB03.m4a)
+        let pathComponents = downloadURL.path.components(separatedBy: "/")
+        let fileName = pathComponents.last ?? "custom_sound.m4a"
+
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let soundsDir = cacheDirectory.appendingPathComponent("sounds")
+
+        // 디렉토리 생성
+        if !FileManager.default.fileExists(atPath: soundsDir.path) {
+            do {
+                try FileManager.default.createDirectory(at: soundsDir, withIntermediateDirectories: true)
+            } catch {
+                print("[EffectSync] 디렉토리 생성 실패: \(error.localizedDescription)")
+                return
+            }
+        }
+
+        let localURL = soundsDir.appendingPathComponent(fileName)
+
+        // 이미 다운로드되어 있으면 스킵
+        if FileManager.default.fileExists(atPath: localURL.path) {
+            print("[EffectSync] 커스텀 사운드 이미 캐시에 있음: \(fileName)")
+            return
+        }
+
+        do {
+            // URLSession으로 직접 다운로드
+            let (tempURL, _) = try await URLSession.shared.download(from: downloadURL)
+
+            // 임시 파일을 최종 위치로 이동
+            try FileManager.default.moveItem(at: tempURL, to: localURL)
+
+            print("[EffectSync] 커스텀 사운드 다운로드 완료: \(fileName)")
+
+        } catch {
+            print("[EffectSync] 커스텀 사운드 다운로드 실패 (\(fileName)): \(error.localizedDescription)")
         }
     }
 
@@ -289,13 +346,11 @@ class EffectSyncManager {
                 .getDocument()
 
             guard let particleData = particleSnapshot.data(),
-                  let particleURL = particleData["particleData"] as? String else {
+                  let particleURLString = particleData["particleData"] as? String,
+                  let downloadURL = URL(string: particleURLString) else {
                 print("[EffectSync] particleData URL 없음: \(particleId)")
                 return
             }
-
-            // Storage URL로 참조 생성
-            let storageRef = Storage.storage().reference(forURL: particleURL)
 
             let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             let particlesDir = cacheDirectory.appendingPathComponent("particles")
@@ -307,8 +362,15 @@ class EffectSyncManager {
 
             let localURL = particlesDir.appendingPathComponent("\(particleId).json")
 
-            // 다운로드
-            _ = try await storageRef.write(toFile: localURL)
+            // URLSession으로 직접 다운로드
+            let (tempURL, _) = try await URLSession.shared.download(from: downloadURL)
+
+            // 임시 파일을 최종 위치로 이동
+            if FileManager.default.fileExists(atPath: localURL.path) {
+                try FileManager.default.removeItem(at: localURL)
+            }
+            try FileManager.default.moveItem(at: tempURL, to: localURL)
+
             print("[EffectSync] 파티클 다운로드 완료: \(particleId)")
 
         } catch {
