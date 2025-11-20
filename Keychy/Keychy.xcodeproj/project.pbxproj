@@ -73,6 +73,9 @@
 		38C3C2962EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */; };
 		38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */; };
 		38CE39B42ECD998B00168E4B /* ClearSketchVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */; };
+		38CE39D22ECE5F9300168E4B /* ClearSketchVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */; };
+		38CE39D42ECE62D100168E4B /* ClearSketchDrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39D32ECE62D100168E4B /* ClearSketchDrawingView.swift */; };
+		38CE39E42ECE684300168E4B /* ClearSketchVM+Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		38F832CB2EC9067300D3A248 /* WidgetOnboardingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CA2EC9067300D3A248 /* WidgetOnboardingStepView.swift */; };
 		38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CC2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift */; };
@@ -403,6 +406,9 @@
 		38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Packaged.swift"; sourceTree = "<group>"; };
 		38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchPreview.swift; sourceTree = "<group>"; };
 		38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchVM.swift; sourceTree = "<group>"; };
+		38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+Effect.swift"; sourceTree = "<group>"; };
+		38CE39D32ECE62D100168E4B /* ClearSketchDrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchDrawingView.swift; sourceTree = "<group>"; };
+		38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+Drawing.swift"; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		38F832CA2EC9067300D3A248 /* WidgetOnboardingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetOnboardingStepView.swift; sourceTree = "<group>"; };
 		38F832CC2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WidgetOnboardingStepView+Helpers.swift"; sourceTree = "<group>"; };
@@ -794,6 +800,8 @@
 			isa = PBXGroup;
 			children = (
 				38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */,
+				38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */,
+				38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -802,6 +810,7 @@
 			isa = PBXGroup;
 			children = (
 				38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */,
+				38CE39D32ECE62D100168E4B /* ClearSketchDrawingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1939,6 +1948,7 @@
 				C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
+				38CE39E42ECE684300168E4B /* ClearSketchVM+Drawing.swift in Sources */,
 				38CE39B42ECD998B00168E4B /* ClearSketchVM.swift in Sources */,
 				4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */,
 				4CEC62282EAE08DA0099ECEE /* FestivalRoute.swift in Sources */,
@@ -2029,6 +2039,7 @@
 				AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */,
 				C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* ItemDetailImage.swift in Sources */,
+				38CE39D22ECE5F9300168E4B /* ClearSketchVM+Effect.swift in Sources */,
 				3828F54B2EC4D0C500F1B040 /* CollectionView+Actions.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
 				AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */,
@@ -2084,6 +2095,7 @@
 				385425CC2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift in Sources */,
 				4C6530722EBCFD10000F8154 /* BangmarkAlert.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
+				38CE39D42ECE62D100168E4B /* ClearSketchDrawingView.swift in Sources */,
 				C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,
 				C67B753B2ECC9E6C00D6E3FA /* EffectSelectorView.swift in Sources */,

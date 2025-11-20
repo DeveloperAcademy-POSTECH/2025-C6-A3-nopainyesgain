@@ -12,6 +12,7 @@ struct WorkshopTab: View {
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
     @State private var polaroidVM: PolaroidVM?
+    @State private var clearSketchVM: ClearSketchVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -113,6 +114,36 @@ struct WorkshopTab: View {
                             viewModel: getPolaroidVM(),
                             navigationTitle: "키링이 완성되었어요!"
                         )
+                        
+                    // MARK: - Clear Sketch
+                    case .clearSketchPreview:
+                        ClearSketchPreview(router: router, viewModel: getClearSketchVM())
+                    case .clearSketchDrawing:
+                        ClearSketchDrawingView(router: router, viewModel: getClearSketchVM())
+                    case .clearSketchCrop:
+                        KeyringCustomizingView(
+                            router: router,
+                            viewModel: getClearSketchVM(),
+                            nextRoute: .clearSketchCustomizing
+                        )
+                    case .clearSketchCustomizing:
+                        KeyringCustomizingView(
+                            router: router,
+                            viewModel: getClearSketchVM(),
+                            nextRoute: .clearSketchInfoInput
+                        )
+                    case .clearSketchInfoInput:
+                        KeyringInfoInputView(
+                            router: router,
+                            viewModel: getClearSketchVM(),
+                            nextRoute: .clearSketchComplete
+                        )
+                    case .clearSketchComplete:
+                        KeyringCompleteView(
+                            router: router,
+                            viewModel: getClearSketchVM(),
+                            navigationTitle: "키링이 완성되었어요!"
+                        )
 
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
                     }
@@ -148,6 +179,15 @@ struct WorkshopTab: View {
         }
         return viewModel
     }
+    
+    private func getClearSketchVM() -> ClearSketchVM {
+        guard let viewModel = clearSketchVM else {
+            let newViewModel = ClearSketchVM()
+            clearSketchVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
 
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
@@ -159,6 +199,10 @@ struct WorkshopTab: View {
     }
 
     func resetPolaroidVM() {
+        polaroidVM = nil
+    }
+    
+    func resetClearSketchVM() {
         polaroidVM = nil
     }
 }
