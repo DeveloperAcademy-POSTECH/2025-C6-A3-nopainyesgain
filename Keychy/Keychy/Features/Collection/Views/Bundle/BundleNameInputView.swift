@@ -83,10 +83,6 @@ struct BundleNameInputView<Route: BundleRoute>: View {
                 }
             }
         }
-        .onDisappear {
-            // BundleNameInputView는 탭바로 돌아갈 일이 없으므로
-            // showTabBar()를 호출하지 않음
-        }
         .transaction { transaction in
             transaction.animation = nil
             transaction.disablesAnimations = true
