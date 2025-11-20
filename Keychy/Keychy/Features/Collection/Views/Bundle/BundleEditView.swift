@@ -226,23 +226,9 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 키링 선택 시트
     private func keyringSelectionSheet() -> some View {
         VStack {
-            HStack {
-                Spacer()
-                Text("키링 선택")
-                    .typography(.suit16B)
-                    .foregroundStyle(.black100)
-                Spacer()
-                // 완료 버튼: 닫기만
-                Button {
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = false
-                    }
-                } label: {
-                    Text("완료")
-                        .typography(.suit16M)
-                        .foregroundStyle(.gray600)
-                }
-            }
+            Text("키링 선택")
+                .typography(.notosans17M)
+                .foregroundStyle(.black100)
             if viewModel.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
@@ -301,6 +287,9 @@ struct BundleEditView<Route: BundleRoute>: View {
                 }
                 selectedKeyrings[selectedPosition] = keyring
                 keyringOrder.append(selectedPosition)
+                withAnimation(.easeInOut) {
+                    showSelectKeyringSheet = false
+                }
             }
             // 중복인 경우 아무것도 하지 않음 (선택되지 않음)
             updateKeyringDataList()

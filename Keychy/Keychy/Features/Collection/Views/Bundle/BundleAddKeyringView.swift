@@ -32,7 +32,7 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
     
     //임시 초기값
     private let screenSize = CGSize(width: 390, height: 844)
-    private let sheetHeightRatio: CGFloat = 0.5
+    private let sheetHeightRatio: CGFloat = 0.43
     
     // MARK: - Body
     
