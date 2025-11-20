@@ -44,17 +44,21 @@ struct TemplatePreviewBody: View {
                 
                 Spacer()
                 
-                // 템플릿 정보
-                infoSection
-                    .padding(.bottom, 40)
-                    .frame(minHeight: 120, alignment: .top)
                 
-                // 액션 버튼
-                actionButton
-                    .adaptiveBottomPadding()
-                    .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+                VStack(alignment: .leading, spacing: 0) {
+                    // 템플릿 정보
+                    infoSection
+                        .padding(.bottom, 40)
+                        .frame(minHeight: 120, alignment: .top)
+                    
+                    // 액션 버튼
+                    actionButton
+                        .adaptiveBottomPadding()
+                        .padding(.bottom, getBottomPadding(0) != 0 ? 0 : 34)
+                }
+                .padding(.horizontal, 34)
+
             }
-            .padding(.horizontal, 30)
             
             CustomNavigationBar {
                 BackToolbarButton {
@@ -163,19 +167,15 @@ extension TemplatePreviewBody {
     private var templatePreview: some View {
         VStack {
             Spacer()
-
+            
             if let template {
                 ItemDetailImage(itemURL: template.previewURL)
                     .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .cornerRadius(20)
+                    .frame(width: 386, height: 386)
             } else {
                 ProgressView()
             }
-
-            Spacer()
         }
-        .padding(.horizontal, 30)
         .frame(maxHeight: 500)
     }
 
