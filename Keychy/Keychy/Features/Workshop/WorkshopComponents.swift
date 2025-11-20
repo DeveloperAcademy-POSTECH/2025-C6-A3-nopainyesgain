@@ -161,13 +161,14 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                     }
                 }
             } else {
-                // Sound, Background, Carabiner 등은 기존처럼 이미지로 처리
+                // Sound, Background, Carabiner, 키링 등은 기존처럼 이미지로 처리
                 LazyImage(url: URL(string: item.thumbnailURL)) { state in
                     if let image = state.image {
                         image
                             .resizable()
-                            .aspectRatio(contentMode: item is Carabiner ? .fit : .fill)
+                            .aspectRatio(contentMode: item is Carabiner || item is KeyringTemplate ? .fit : .fill)
                             .padding(.horizontal, item is Carabiner ? 5 : 0)
+                            .padding(.vertical, item is KeyringTemplate ? 10 : 0)
                             .clipped()
                     } else if state.isLoading {
                         Color.gray50
