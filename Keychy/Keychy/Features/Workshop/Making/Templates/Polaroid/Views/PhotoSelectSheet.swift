@@ -19,22 +19,26 @@ struct PhotoSelectSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
-            HStack {
+            ZStack(alignment: .topLeading) {
                 Button {
                     dismiss()
                 } label: {
                     Image("dismiss_gray600")
                 }
-                .padding(.top, 30)
                 .padding(.leading, 20)
-                Spacer()
-            }
-            .padding(.bottom, 30)
+                
+                // 제목
+                HStack {
+                    Spacer()
+                    Text("사진 넣기")
+                        .typography(.suit17B)
+                    Spacer()
 
-            // 제목
-            Text("사진 등록")
-                .typography(.suit17B)
-                .padding(.bottom, 40)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.top, 30)
+            .padding(.bottom, 60)
 
             // 카메라/사진선택 버튼
             HStack(spacing: 12) {
@@ -61,12 +65,13 @@ struct PhotoSelectSheet: View {
         }
         .presentationDetents([.height(contentHeight)])
         .presentationDragIndicator(.hidden)
+        .interactiveDismissDisabled()
     }
 }
 
 // MARK: - PreferenceKey
 struct PhotoSelectHeightPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 240
+    static var defaultValue: CGFloat = 180
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
