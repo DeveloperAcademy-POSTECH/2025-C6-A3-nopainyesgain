@@ -49,7 +49,19 @@ extension PolaroidVM {
             let frameOnlyImage = renderer.image { context in
                 originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
             }
-            bodyImage = frameOnlyImage
+            
+            // 최종 이미지를 높이 210으로 scaleToFit
+            let finalHeight: CGFloat = 210
+            let finalAspect = frameOnlyImage.size.width / frameOnlyImage.size.height
+            let finalWidth = finalHeight * finalAspect
+            let finalSize = CGSize(width: finalWidth, height: finalHeight)
+
+            let finalRenderer = UIGraphicsImageRenderer(size: finalSize)
+            let scaledImage = finalRenderer.image { context in
+                frameOnlyImage.draw(in: CGRect(origin: .zero, size: finalSize))
+            }
+            
+            bodyImage = scaledImage
             return
         }
 
@@ -124,7 +136,18 @@ extension PolaroidVM {
             originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
         }
 
-        bodyImage = composedImage
+        // 최종 이미지를 높이 210으로 scaleToFit
+        let finalHeight: CGFloat = 210
+        let finalAspect = composedImage.size.width / composedImage.size.height
+        let finalWidth = finalHeight * finalAspect
+        let finalSize = CGSize(width: finalWidth, height: finalHeight)
+
+        let finalRenderer = UIGraphicsImageRenderer(size: finalSize)
+        let scaledImage = finalRenderer.image { context in
+            composedImage.draw(in: CGRect(origin: .zero, size: finalSize))
+        }
+
+        bodyImage = scaledImage
     }
 
     // MARK: - Helper: Download Frame Image
