@@ -265,7 +265,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .transition(.move(edge: .bottom))
@@ -736,7 +736,7 @@ extension BundleEditView {
     }
 }
 
-//MARK: - 하단 버튼
+//MARK: - 배경, 카라비너 시트 여는 버튼
 extension BundleEditView {
     private var editBackgroundButton: some View {
         Button {
@@ -779,7 +779,7 @@ extension BundleEditView {
     }
 }
 
-// MARK: - 시트 뷰
+// MARK: - 배경, 카라비너 선택 시트
 extension BundleEditView {
     private func selectBackgroundSheet() -> some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
