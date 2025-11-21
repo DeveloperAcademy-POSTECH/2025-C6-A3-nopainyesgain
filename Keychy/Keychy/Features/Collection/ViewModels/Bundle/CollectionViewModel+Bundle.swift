@@ -688,4 +688,18 @@ extension CollectionViewModel {
             }
         }
     }
+    
+    // MARK: - 키링 선택 시트 정렬 함수
+    // TODO: 페스티벌 로직 구현 하면서, keyring 모델에 isPublished 넣고 published 키링 정렬 로직 추가하기!!
+    /// keyringStatus == .pacakged 또는 keyringStatus == .published인건 맨 뒤로 보내는 함수입니다.
+    /// 정렬 기준 : 활성/비활성 -> 장착 가능/불가 -> 생성순... 근데 좀 더 물어봐야겠슴
+    func keyringSorting() {
+        let packagedKeyrings = keyring.filter { $0.isPackaged }
+        var activateKeyrings = keyring.filter { !$0.isPackaged }
+        
+        // var publishedKeyrings = keyring.filter { !$0.isPublished }
+        // 생성순으로 정렬
+        activateKeyrings.sort { $0.createdAt > $1.createdAt }
+        keyring = activateKeyrings + packagedKeyrings
+    }
 }

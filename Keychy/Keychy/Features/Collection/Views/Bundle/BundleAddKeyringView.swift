@@ -359,7 +359,12 @@ extension BundleAddKeyringView {
         
         viewModel.fetchUserCollectionData(uid: uid) { success in
             if success {
-                viewModel.fetchUserKeyrings(uid: uid) { _ in }
+                viewModel.fetchUserKeyrings(uid: uid) { success in
+                    if success {
+                        // 키링 데이터 로드 완료 후 정렬 실행
+                        viewModel.keyringSorting()
+                    }
+                }
             }
         }
     }

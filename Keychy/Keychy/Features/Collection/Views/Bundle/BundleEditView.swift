@@ -485,7 +485,11 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 사용자 키링 데이터 로드
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
-            viewModel.fetchUserKeyrings(uid: uid) { _ in
+            viewModel.fetchUserKeyrings(uid: uid) { success in
+                if success {
+                    // 키링 데이터 로드 완료 후 정렬 실행
+                    viewModel.keyringSorting()
+                }
                 continuation.resume()
             }
         }
@@ -556,7 +560,11 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 키링 데이터도 새로고침
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
-            viewModel.fetchUserKeyrings(uid: uid) { _ in
+            viewModel.fetchUserKeyrings(uid: uid) { success in
+                if success {
+                    // 키링 데이터 로드 완료 후 정렬 실행
+                    viewModel.keyringSorting()
+                }
                 continuation.resume()
             }
         }
