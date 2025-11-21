@@ -773,14 +773,14 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.angularDamping = 0.5
         }
 
-        // 씬 렌더링 완료를 위해 약간의 지연 후 콜백 호출
+        // 씬 렌더링 및 안정화 완료를 위해 충분한 지연 후 콜백 호출
         // DispatchWorkItem을 사용하여 취소 가능하게 만듦
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self, !self.isCleaningUp else { return }
             self.onAllKeyringsReady?()
         }
         readyCallbackWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: workItem)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2, execute: workItem)
     }
 
     // MARK: - Touch Handling

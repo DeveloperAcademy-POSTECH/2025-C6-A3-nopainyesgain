@@ -83,10 +83,6 @@ struct MultiKeyringSceneView: View {
                 setupScene()
             }
         }
-        .onDisappear {
-            // 메모리 해제
-            cleanupScene()
-        }
         .onChange(of: keyringDataList) { _, _ in
             loadBackgroundImage()
             setupScene()

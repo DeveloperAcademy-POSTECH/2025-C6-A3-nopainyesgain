@@ -82,21 +82,17 @@ struct HomeView: View {
         .onAppear {
             // 알림 리스너 시작
             userManager.startNotificationListener()
-
-            // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
-            if !isSceneReady {
-                Task {
-                    await loadMainBundle()
-                }
-            }
-        }
-        .onDisappear {
-            // 뷰가 사라질 때 씬 준비 상태 초기화
-            isSceneReady = false
         }
         .task {
             // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
+        }
+        .onAppear {
+            // 탭 전환으로 돌아올 때 씬이 이미 준비되어 있다면 즉시 표시
+            if !keyringDataList.isEmpty && !isSceneReady {
+                // 씬 데이터가 있으면 바로 표시
+                isSceneReady = true
+            }
         }
         .onChange(of: keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
