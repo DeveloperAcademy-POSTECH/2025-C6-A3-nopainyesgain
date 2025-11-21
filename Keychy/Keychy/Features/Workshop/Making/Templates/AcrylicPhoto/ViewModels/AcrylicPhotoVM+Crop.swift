@@ -14,8 +14,8 @@ extension AcrylicPhotoVM {
     func resetToCenter() {
         let displayRect = getDisplayedImageRect()
 
-        // 크롭박스 초기 크기
-        let scale: CGFloat = 0.75
+        // 크롭박스 초기 크기 (이미지의 60%)
+        let scale: CGFloat = 0.6
         let newWidth = displayRect.width * scale
         let newHeight = displayRect.height * scale
         let newX = displayRect.midX - newWidth / 2
@@ -25,7 +25,7 @@ extension AcrylicPhotoVM {
         hasCropAreaBeenSet = true
     }
 
-    /// 실제 이미지가 표시되는 영역 계산
+    /// 실제 이미지가 표시되는 영역 계산 (GeometryReader 좌표계 기준)
     func getDisplayedImageRect() -> CGRect {
         guard let image = fixedImage else { return .zero }
 
@@ -38,13 +38,22 @@ extension AcrylicPhotoVM {
         var y: CGFloat = 0
 
         if imageRatio > containerRatio {
+            // 이미지가 가로로 더 넓음 → 가로에 맞춤
             width = imageViewSize.width
             height = width / imageRatio
-            y = (imageViewSize.height - height) / 2
+            // imageViewSize 내에서의 y 좌표
+            let yInImageView = (imageViewSize.height - height) / 2
+            // containerSize 좌표계로 변환
+            y = (containerSize.height - imageViewSize.height) / 2 + yInImageView
         } else {
+            // 이미지가 세로로 더 김 → 세로에 맞춤 (최대 75%까지만)
             height = imageViewSize.height
             width = height * imageRatio
-            x = (imageViewSize.width - width) / 2
+            // imageViewSize 내에서의 x 좌표
+            let xInImageView = (imageViewSize.width - width) / 2
+            // containerSize 좌표계로 변환 (y는 imageViewSize가 중앙에 위치)
+            x = xInImageView
+            y = (containerSize.height - imageViewSize.height) / 2
         }
 
         return CGRect(x: x, y: y, width: width, height: height)
