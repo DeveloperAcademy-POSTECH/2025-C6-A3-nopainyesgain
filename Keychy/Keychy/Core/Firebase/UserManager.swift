@@ -20,8 +20,12 @@ class UserManager {
 
     var isLoaded: Bool = false
 
+    /// 알림 목록
+    var notifications: [KeychyNotification] = []
+
     private let db = Firestore.firestore()
     private var userListener: ListenerRegistration?
+    private var notificationListener: ListenerRegistration?
 
     // Apple Sign In 재인증용
     var currentNonce: String?
@@ -31,6 +35,11 @@ class UserManager {
     var userUID: String { currentUser?.id ?? "" }
     var userNickname: String { currentUser?.nickname ?? "" }
     var userEmail: String { currentUser?.email ?? "" }
+
+    /// 읽지 않은 알림이 있는지 여부
+    var hasUnreadNotifications: Bool {
+        notifications.contains { !$0.isRead }
+    }
 
     private init() {
         loadFromCache()
@@ -178,8 +187,10 @@ class UserManager {
 
     func clearUserInfo() {
         stopUserListener()
+        stopNotificationListener()
         currentUser = nil
         isLoaded = false
+        notifications = []
 
         // UserDefaults 삭제
         UserDefaults.standard.removeObject(forKey: "userNickname")
@@ -458,5 +469,41 @@ class AppleAuthCoordinator: NSObject, ASAuthorizationControllerDelegate {
 
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         onFailure(error)
+    }
+}
+
+// MARK: - Notification Management
+extension UserManager {
+    /// 알림 실시간 리스너 시작
+    func startNotificationListener() {
+        guard let userId = currentUser?.id else { return }
+
+        notificationListener = db.collection("Notifications")
+            .whereField("receiverId", isEqualTo: userId)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 50)
+            .addSnapshotListener { [weak self] querySnapshot, error in
+                guard let self = self else { return }
+
+                if let error = error {
+                    print("[UserManager] 알림 조회 실패: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let documents = querySnapshot?.documents else {
+                    self.notifications = []
+                    return
+                }
+
+                self.notifications = documents.compactMap { document in
+                    KeychyNotification(documentId: document.documentID, data: document.data())
+                }
+            }
+    }
+
+    /// 알림 리스너 중지
+    func stopNotificationListener() {
+        notificationListener?.remove()
+        notificationListener = nil
     }
 }
