@@ -51,6 +51,7 @@ extension KeyringInfoInputView {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(sheetDetent != .height(76) ? .white100 : .clear)
+        .dismissKeyboardOnTap()
     }
 }
 

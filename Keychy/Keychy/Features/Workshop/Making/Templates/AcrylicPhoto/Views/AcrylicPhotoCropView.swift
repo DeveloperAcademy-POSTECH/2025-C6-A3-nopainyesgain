@@ -19,13 +19,24 @@ struct AcrylicPhotoCropView: View {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(
+                                maxWidth: .infinity,
+                                maxHeight: geo.size.height * 0.7  // 이미지 크기 제한
+                            )
                             .opacity(isImageLoading ? 0 : 1)
                             .onAppear {
                                 setupImageAndCropArea(containerSize: geo.size)
                             }
                             .onChange(of: geo.size) { _, newSize in
-                                viewModel.imageViewSize = newSize
+                                // GeometryReader 전체 크기 저장
+                                viewModel.containerSize = newSize
+
+                                // 실제 이미지가 표시될 수 있는 최대 크기 (70% 제한 적용)
+                                let maxImageSize = CGSize(
+                                    width: newSize.width,
+                                    height: newSize.height * 0.7
+                                )
+                                viewModel.imageViewSize = maxImageSize
                                 viewModel.resetToCenter()
                             }
                     }
@@ -47,7 +58,6 @@ struct AcrylicPhotoCropView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.bottom, 70)
 
             // 로딩 인디케이터
             if isImageLoading {
@@ -64,7 +74,15 @@ struct AcrylicPhotoCropView: View {
 
     // MARK: - Setup Methods
     private func setupImageAndCropArea(containerSize: CGSize) {
-        viewModel.imageViewSize = containerSize
+        // GeometryReader 전체 크기 저장
+        viewModel.containerSize = containerSize
+
+        // 실제 이미지가 표시될 수 있는 최대 크기 (70% 제한 적용)
+        let maxImageSize = CGSize(
+            width: containerSize.width,
+            height: containerSize.height * 0.7
+        )
+        viewModel.imageViewSize = maxImageSize
         viewModel.fixedImage = viewModel.selectedImage?.fixedOrientation()
 
         if !viewModel.hasCropAreaBeenSet {

@@ -99,7 +99,8 @@ class AcrylicPhotoVM: KeyringViewModelProtocol {
 
     // MARK: - 크롭 관련
     var cropArea: CGRect = .zero
-    var imageViewSize: CGSize = .zero
+    var imageViewSize: CGSize = .zero  // 실제 이미지가 표시될 수 있는 최대 크기 (75% 제한)
+    var containerSize: CGSize = .zero   // GeometryReader 전체 크기 (100%)
     var initialCropArea: CGRect?
     var draggedCorner: CropCorner?
     var hasCropAreaBeenSet: Bool = false
