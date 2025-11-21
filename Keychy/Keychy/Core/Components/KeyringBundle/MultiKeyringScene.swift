@@ -529,7 +529,7 @@ class MultiKeyringScene: SKScene {
 
         // hookOffsetY를 사용한 정확한 연결 지점 계산
         // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
-        //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
+        // 0.0 = 이미지 상단, 1.0 = 이미지 하단
         // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
         let hookOffsetYRatio = hookOffsetY ?? 0.0
         let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
@@ -570,6 +570,9 @@ class MultiKeyringScene: SKScene {
 
     /// 키링 구성 요소들을 Joint로 연결
     private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
+        // 씬이 정리 중이면 중단
+        guard !isCleaningUp else { return }
+        
         // Physics 카테고리 정의
         let chainCategory: UInt32 = 0x1 << 0  // 1
         let bodyCategory: UInt32 = 0x1 << 1   // 2
@@ -602,6 +605,8 @@ class MultiKeyringScene: SKScene {
                 )
                 joint.shouldEnableLimits = false
                 joint.frictionTorque = 0.1
+                
+                guard !isCleaningUp else { return }
                 physicsWorld.add(joint)
             } else {
                 // Hamburger 타입은 기존 핀 조인트 유지
@@ -615,6 +620,8 @@ class MultiKeyringScene: SKScene {
                 )
                 joint.shouldEnableLimits = false
                 joint.frictionTorque = 0.1
+                
+                guard !isCleaningUp else { return }
                 physicsWorld.add(joint)
 
                 let distance = hypot(
@@ -628,6 +635,8 @@ class MultiKeyringScene: SKScene {
                     anchorB: CGPoint.zero
                 )
                 limitJoint.maxLength = distance * 1.05
+                
+                guard !isCleaningUp else { return }
                 physicsWorld.add(limitJoint)
             }
 
@@ -644,52 +653,70 @@ class MultiKeyringScene: SKScene {
         // Chain 링크들 연결
         for i in 1..<chains.count {
             let current = chains[i]
-            if let previous = previousNode.physicsBody {
-                let joint = SKPhysicsJointPin.joint(
-                    withBodyA: previous,
-                    bodyB: current.physicsBody!,
-                    anchor: CGPoint(
-                        x: (previousNode.position.x + current.position.x) / 2,
-                        y: (previousNode.position.y + current.position.y) / 2
-                    )
-                )
-                joint.shouldEnableLimits = false
-                joint.frictionTorque = 0.1
-                physicsWorld.add(joint)
-
-                let distance = hypot(
-                    current.position.x - previousNode.position.x,
-                    current.position.y - previousNode.position.y
-                )
-                let limitJoint = SKPhysicsJointLimit.joint(
-                    withBodyA: previous,
-                    bodyB: current.physicsBody!,
-                    anchorA: CGPoint.zero,
-                    anchorB: CGPoint.zero
-                )
-                limitJoint.maxLength = distance * 1.05
-                physicsWorld.add(limitJoint)
-
-                current.physicsBody?.linearDamping = 0.05
-                current.physicsBody?.angularDamping = 0.05
-
-                // Physics 카테고리 설정 (체인끼리만 충돌)
-                current.physicsBody?.categoryBitMask = chainCategory
-                current.physicsBody?.collisionBitMask = chainCategory
+            
+            guard let previous = previousNode.physicsBody,
+                  let currentPhysics = current.physicsBody,
+                  !isCleaningUp else {
+                continue
             }
+            
+            let joint = SKPhysicsJointPin.joint(
+                withBodyA: previous,
+                bodyB: currentPhysics,
+                anchor: CGPoint(
+                    x: (previousNode.position.x + current.position.x) / 2,
+                    y: (previousNode.position.y + current.position.y) / 2
+                )
+            )
+            joint.shouldEnableLimits = false
+            joint.frictionTorque = 0.1
+            
+            guard !isCleaningUp else { return }
+            physicsWorld.add(joint)
+
+            let distance = hypot(
+                current.position.x - previousNode.position.x,
+                current.position.y - previousNode.position.y
+            )
+            let limitJoint = SKPhysicsJointLimit.joint(
+                withBodyA: previous,
+                bodyB: currentPhysics,
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
+            )
+            limitJoint.maxLength = distance * 1.05
+            
+            guard !isCleaningUp else { return }
+            physicsWorld.add(limitJoint)
+
+            current.physicsBody?.linearDamping = 0.05
+            current.physicsBody?.angularDamping = 0.05
+
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            current.physicsBody?.categoryBitMask = chainCategory
+            current.physicsBody?.collisionBitMask = chainCategory
+            
             previousNode = current
         }
 
         // 마지막 Chain과 Body 연결
-        if let lastChain = chains.last, let bodyPhysics = body.physicsBody {
+        if let lastChain = chains.last {
+            guard let lastChainPhysics = lastChain.physicsBody,
+                  let bodyPhysics = body.physicsBody,
+                  !isCleaningUp else {
+                return
+            }
+            
             let joint = SKPhysicsJointFixed.joint(
-                withBodyA: lastChain.physicsBody!,
+                withBodyA: lastChainPhysics,
                 bodyB: bodyPhysics,
                 anchor: CGPoint(
                     x: lastChain.position.x,
                     y: lastChain.position.y
                 )
             )
+            
+            guard !isCleaningUp else { return }
             physicsWorld.add(joint)
 
             let distance = hypot(
@@ -697,12 +724,14 @@ class MultiKeyringScene: SKScene {
                 body.position.y - lastChain.position.y
             )
             let limitJoint = SKPhysicsJointLimit.joint(
-                withBodyA: lastChain.physicsBody!,
+                withBodyA: lastChainPhysics,
                 bodyB: bodyPhysics,
                 anchorA: CGPoint.zero,
                 anchorB: CGPoint.zero
             )
             limitJoint.maxLength = distance * 1.05
+            
+            guard !isCleaningUp else { return }
             physicsWorld.add(limitJoint)
 
             bodyPhysics.linearDamping = 0.5
