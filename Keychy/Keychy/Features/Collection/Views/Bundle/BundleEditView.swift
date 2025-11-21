@@ -801,7 +801,6 @@ extension BundleEditView {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 30)
     }
     
     private func selectCarabinerSheet() -> some View {
@@ -822,11 +821,10 @@ extension BundleEditView {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 30)
     }
 }
 
-// MARK: - 구매 시트 뷰
+// MARK: - 구매 처리 관련
 extension BundleEditView {
     private var purchaseSheetView: some View {
         VStack(spacing: 12) {
