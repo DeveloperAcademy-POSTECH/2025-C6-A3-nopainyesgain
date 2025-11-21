@@ -231,10 +231,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     /// 키링 선택 시트
     private func keyringSelectionSheet() -> some View {
-        VStack {
+        VStack(spacing: 18) {
             Text("키링 선택")
-                .typography(.notosans17M)
+                .typography(.suit16B)
                 .foregroundStyle(.black100)
+            
             if viewModel.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
@@ -261,7 +262,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             }
             
         }
-        .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
+        .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
         .background(.ultraThinMaterial)
@@ -313,19 +314,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                         .truncationMode(.tail)
                 }
                 
-                // 체크 뱃지
-                ZStack {
-                    Circle()
-                        .stroke(.white100)
-                        .fill(isSelectedHere ? .main500 : .clear)
-                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 0)
-                        .frame(width: 26.14, height: 26.14)
-                    Image(.recCheck)
-                        .foregroundStyle(.white)
-                }
-                .padding(.bottom, 35.86)
-                .padding(.trailing, 8.86)
-                
                 // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
                 if isSelectedElsewhere {
                     VStack {
@@ -348,13 +336,12 @@ struct BundleEditView<Route: BundleRoute>: View {
                 }
             }
         }
-        .buttonStyle(PlainButtonStyle())
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
         .opacity(1.0) // 강제로 투명도 1.0 유지
     }
     
     /// 삭제 버튼
-    private func deleteButton() -> some View {
+    func deleteButton() -> some View {
         HStack(spacing: 0) {
             Spacer()
             Button {

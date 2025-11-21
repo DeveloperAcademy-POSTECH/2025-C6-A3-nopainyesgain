@@ -152,7 +152,7 @@ extension BundleAddKeyringView {
     
     /// 키링 선택 시트
     private func keyringSelectionSheet() -> some View {
-        VStack {
+        VStack(spacing: 18) {
             Text("키링 선택")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
@@ -183,7 +183,7 @@ extension BundleAddKeyringView {
             }
             
         }
-        .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
+        .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
         .background(.ultraThinMaterial)
@@ -235,20 +235,6 @@ extension BundleAddKeyringView {
                         .lineLimit(1)
                         .truncationMode(.tail)
                 }
-                
-                // 체크 뱃지
-                ZStack {
-                    Circle()
-                        .stroke(.white100)
-                        .fill(isSelectedHere ? .main500 : .clear)
-                        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
-                        .frame(width: 26.14, height: 26.14)
-                    Image(.keyringCheck)
-                        .foregroundStyle(.white)
-                        .opacity(isSelectedHere ? 1 : 0)
-                }
-                .padding(.bottom, 35.86)
-                .padding(.trailing, 8.86)
                 
                 // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
                 if isSelectedElsewhere {
