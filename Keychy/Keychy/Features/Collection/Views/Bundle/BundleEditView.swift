@@ -48,7 +48,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var selectedKeyrings: [Int: Keyring] = [:]
     @State private var keyringOrder: [Int] = []
     @State private var selectedPosition = 0
-    @State private var isDeleteButtonSelected = false
     @State private var sceneRefreshId = UUID()
     
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
@@ -340,37 +339,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         .opacity(1.0) // 강제로 투명도 1.0 유지
     }
     
-    /// 삭제 버튼
-    func deleteButton() -> some View {
-        HStack(spacing: 0) {
-            Spacer()
-            Button {
-                isDeleteButtonSelected = false
-            } label: {
-                Text("취소")
-                    .typography(.suit16M)
-                    .foregroundStyle(.black100)
-            }
-            Spacer()
-            Divider().frame(height: 20)
-            Spacer()
-            Button {
-                selectedKeyrings[selectedPosition] = nil
-                keyringOrder.removeAll { $0 == selectedPosition }
-                updateKeyringDataList()
-                isDeleteButtonSelected = false
-            } label: {
-                Text("삭제")
-                    .typography(.suit16M)
-                    .foregroundStyle(.primaryRed)
-            }
-            Spacer()
-        }
-        .frame(width: 129, height: 44)
-        .background(.ultraThinMaterial)
-        .clipShape(Capsule())
-    }
-    
     /// 배경/카라비너 시트 컨텐츠
     private func sheetContent() -> some View {
         Group {
@@ -437,7 +405,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                                 // 편집 중 로컬 상태만 변경 (Firestore에 쓰지 않음)
                                 
                                 // 1) UI 오버레이/선택 상태 초기화
-                                isDeleteButtonSelected = false
                                 selectedPosition = 0
                                 
                                 // 2) 키링 데이터와 선택 목록을 즉시 비우기
