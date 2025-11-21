@@ -80,6 +80,9 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
+            // 알림 리스너 시작
+            userManager.startNotificationListener()
+
             // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
             if !isSceneReady {
                 Task {
@@ -111,32 +114,17 @@ extension HomeView {
         HStack(spacing: 10) {
             Spacer()
 
-            // 뭉치 목록 버튼
-            Button {
-                router.push(.bundleInventoryView)
-            } label: {
-                Image(.bundleIcon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
-            }
-            .frame(width: 44, height: 44)
-            .glassEffect()
-
             // 알림 및 마이페이지 버튼 그룹
             GlassEffectContainer {
-                HStack(spacing: 0) {
+                HStack {
                     Button {
                         router.push(.alarmView)
                     } label: {
-                        Image(.alarmIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
+                        Image(userManager.hasUnreadNotifications ? "alarmSent" : "alarm")
                     }
                     .frame(width: 44, height: 44)
-                    .glassEffect()
                     .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                    .buttonStyle(.glass)
 
                     Button {
                         router.push(.myPageView)
@@ -148,13 +136,12 @@ extension HomeView {
 
                     }
                     .frame(width: 44, height: 44)
-                    .glassEffect()
                     .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                    .buttonStyle(.glass)
                 }
             }
         }
         .padding(.horizontal, 20)
-        .tint(.white.opacity(0))
     }
 }
 
