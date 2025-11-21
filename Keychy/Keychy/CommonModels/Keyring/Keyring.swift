@@ -29,6 +29,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
     var selectedChain: String
     var isEditable: Bool
     var isPackaged: Bool
+    var isPublished: Bool
     var originalId: String?
     var chainLength: Int
     var isNew: Bool
@@ -52,6 +53,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
             "selectedChain": selectedChain,
             "isEditable": isEditable,
             "isPackaged": isPackaged,
+            "isPublished": isPublished,
             "chainLength": chainLength,
             "isNew": isNew
         ]
@@ -113,6 +115,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.copyCount = data["copyCount"] as? Int ?? 0
         self.isEditable = data["isEditable"] as? Bool ?? true
         self.isPackaged = data["isPackaged"] as? Bool ?? false
+        self.isPublished = data["isPublished"] as? Bool ?? false
         self.chainLength = data["chainLength"] as? Int ?? 5
         self.isNew = data["isNew"] as? Bool ?? true
         self.hookOffsetY = data["hookOffsetY"] as? CGFloat
@@ -165,6 +168,7 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.selectedChain = selectedChain
         self.isEditable = isEditable
         self.isPackaged = false
+        self.isPublished = false
         self.originalId = originalId
         self.chainLength = chainLength
         self.isNew = isNew
