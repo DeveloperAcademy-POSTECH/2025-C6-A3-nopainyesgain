@@ -362,6 +362,9 @@ struct BundleEditView<Route: BundleRoute>: View {
                 // 해제
                 selectedKeyrings[selectedPosition] = nil
                 keyringOrder.removeAll { $0 == selectedPosition }
+                withAnimation(.easeInOut) {
+                    showSelectKeyringSheet = false
+                }
             } else if !isSelectedElsewhere {
                 // 중복이 아닐 때만 선택 가능
                 // 기존 있으면 순서 제거 후 교체
