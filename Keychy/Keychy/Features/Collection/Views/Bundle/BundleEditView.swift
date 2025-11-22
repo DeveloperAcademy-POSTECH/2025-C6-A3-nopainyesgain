@@ -62,7 +62,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     private let sheetHeightRatio: CGFloat = 0.43
     private let screenSize = CGSize(width: 402, height: 874)
     
-    /// 현재 선택된 키링을 맨 앞으로, 다른 위치에 장착된 키링을 맨 뒤로 정렬한 키링 리스트
+    /// 키링 선택 시트용 정렬된 키링 리스트
+    /// 1순위: 현재 위치에 선택된 키링
+    /// 2순위: 일반 키링들 (선택되지 않고, published/packaged 아님)
+    /// 3순위: 다른 위치에 장착된 키링들
+    /// 4순위: published 또는 packaged 상태의 키링들 (맨 뒤)
     private var sortedKeyringsForSelection: [Keyring] {
         let selectedKeyring = selectedKeyrings[selectedPosition]
         
@@ -73,17 +77,33 @@ struct BundleEditView<Route: BundleRoute>: View {
             let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
             let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
             
-            // 1순위: 현재 위치에 선택된 키링 (isSelectedHere) - 맨 앞
+            let isKeyring1Unavailable = keyring1.status == .published || keyring1.status == .packaged
+            let isKeyring2Unavailable = keyring2.status == .published || keyring2.status == .packaged
+            
+            // 1순위: 현재 위치에 선택된 키링 - 맨 앞
             if isKeyring1SelectedHere != isKeyring2SelectedHere {
                 return isKeyring1SelectedHere
             }
             
-            // 2순위: 다른 위치에 장착된 키링 (isSelectedElsewhere) - 맨 뒤
-            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
-                return isKeyring2SelectedElsewhere // 반대로 해서 elsewhere가 뒤로 가도록
+            // 2순위: 일반 키링 vs 나머지 (elsewhere or unavailable)
+            let isKeyring1Normal = !isKeyring1SelectedElsewhere && !isKeyring1Unavailable
+            let isKeyring2Normal = !isKeyring2SelectedElsewhere && !isKeyring2Unavailable
+            
+            if isKeyring1Normal != isKeyring2Normal {
+                return isKeyring1Normal
             }
             
-            // 3순위: 나머지는 원래 순서 유지 (viewModel.keyringSorting 결과 유지)
+            // 3순위: 다른 위치 장착 vs unavailable (다른 위치 장착이 먼저)
+            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
+                return isKeyring1SelectedElsewhere // elsewhere를 앞으로
+            }
+            
+            // 4순위: unavailable 키링들 (맨 뒤)
+            if isKeyring1Unavailable != isKeyring2Unavailable {
+                return isKeyring2Unavailable // unavailable을 맨 뒤로
+            }
+            
+            // 같은 그룹 내에서는 원래 순서 유지 (viewModel.keyringSorting 결과)
             guard let index1 = viewModel.keyring.firstIndex(of: keyring1),
                   let index2 = viewModel.keyring.firstIndex(of: keyring2) else {
                 return false
@@ -382,14 +402,23 @@ struct BundleEditView<Route: BundleRoute>: View {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 10) {
-                    CollectionCellView(keyring: keyring)
-                        .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        .cornerRadius(10)
-                        .overlay(
+                    ZStack {
+                        CollectionCellView(keyring: keyring)
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                            .cornerRadius(10)
+                        
+                        // 외곽선을 별도 레이어로 그리기
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                        
+                        // 다른 위치에 장착된 경우 오버레이
+                        if isSelectedElsewhere {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(isSelectedElsewhere ? .black20 : .clear)
-                                .stroke(isSelectedHere ? .main500 : .clear, lineWidth: 2)
-                        )
+                                .fill(Color.black50)
+                                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                        }
+                    }
                     
                     Text("\(keyring.name)")
                         .typography(isSelectedHere ? .notosans14SB : .notosans14M)
@@ -398,8 +427,8 @@ struct BundleEditView<Route: BundleRoute>: View {
                         .truncationMode(.tail)
                 }
                 
-                // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
-                if isSelectedElsewhere {
+                // 장착 중 아이콘
+                if isSelectedElsewhere || isSelectedHere {
                     VStack {
                         HStack {
                             Spacer()
