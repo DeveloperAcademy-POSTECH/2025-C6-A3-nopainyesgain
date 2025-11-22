@@ -129,8 +129,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 if newValue {
                     sheetHeight = screenHeight * 0.08
-                } else {
-                    sheetHeight = screenHeight * 0.43
                 }
             }
         }
@@ -354,6 +352,12 @@ struct BundleEditView<Route: BundleRoute>: View {
                     CollectionCellView(keyring: keyring)
                         .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(isSelectedElsewhere ? .black20 : .clear)
+//                                .stroke(isSelectedHere ? .main500 : .clear, width: 1.5)
+//                                .stroke(<#T##content: ShapeStyle##ShapeStyle#>)
+                        )
                     
                     Text("\(keyring.name)")
                         .typography(isSelectedHere ? .notosans14SB : .notosans14M)
