@@ -15,7 +15,7 @@ extension CollectionKeyringDetailView {
                 VStack(spacing: 0) {
                     topSection
                         .padding(.top, sheetDetent == .fraction(0.48) ? 10 : 10)
-                        .padding(.bottom, sheetDetent == .height(76) ? 14 : 0)
+                        .padding(.bottom, 0)
                         .animation(.easeInOut(duration: 0.35), value: sheetDetent)
                     
                     basicInfo
@@ -40,7 +40,7 @@ extension CollectionKeyringDetailView {
         }
         .toolbar(.hidden, for: .tabBar)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(sheetDetent == .height(76) ? Color.clear : .white100)
+        .background(.white100)
         .shadow(
             color: Color.black.opacity(0.18),
             radius: 37.5,
@@ -86,7 +86,7 @@ extension CollectionKeyringDetailView {
             
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    sheetDetent = .height(76)
+                    isSheetPresented = false
                     showPackageAlert = true
                 }
             }) {
@@ -94,6 +94,7 @@ extension CollectionKeyringDetailView {
                     .resizable()
                     .frame(width: 28, height: 28)
             }
+            .opacity(showUIForCapture ? 1 : 0)
         }
         .padding(.top, 14)
     }

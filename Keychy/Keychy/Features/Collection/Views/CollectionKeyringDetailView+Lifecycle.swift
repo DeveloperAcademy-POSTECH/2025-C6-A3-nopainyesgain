@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 extension CollectionKeyringDetailView {
     func handleViewAppear() {
-        isSheetPresented = true
+        isSheetPresented = false
         isNavigatingDeeper = false
         hideTabBar()
         fetchAuthorName()
