@@ -319,7 +319,8 @@ extension BundleAddKeyringView {
                     y: carabiner.keyringYPosition[index]
                 ),
                 bodyImageURL: keyring.bodyImage,
-                hookOffsetY: keyring.hookOffsetY
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength
             )
             keyringDataList.append(data)
         }
@@ -414,7 +415,8 @@ extension BundleAddKeyringView {
                 soundId: soundId,
                 customSoundURL: customSoundURL,
                 particleId: particleId,
-                hookOffsetY: keyring.hookOffsetY
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength
             )
             dataList.append(data)
         }

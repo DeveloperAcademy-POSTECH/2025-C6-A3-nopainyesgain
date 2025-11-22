@@ -20,6 +20,7 @@ class KeyringScene: SKScene {
     var bodyImageURL: String? // Firebase URL용
     var customSoundURL: URL? // 커스텀 녹음 파일 URL
     var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+    var chainLength: Int = 5 // 체인 링크 개수 (기본값 5)
     var cancellables = Set<AnyCancellable>()
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"
@@ -59,7 +60,8 @@ class KeyringScene: SKScene {
         bodyImage: UIImage? = nil,
         bodyImageURL: String? = nil,
         backgroundColor: UIColor = .gray50,
-        hookOffsetY: CGFloat? = nil
+        hookOffsetY: CGFloat? = nil,
+        chainLength: Int = 5
     ) {
 
         self.currentRingType = ringType
@@ -67,6 +69,7 @@ class KeyringScene: SKScene {
         self.bodyImageURL = bodyImageURL
         self.customBackgroundColor = backgroundColor
         self.hookOffsetY = hookOffsetY
+        self.chainLength = chainLength
 
         if let image = bodyImage {
             self.bodyImage = image.fixedOrientation()

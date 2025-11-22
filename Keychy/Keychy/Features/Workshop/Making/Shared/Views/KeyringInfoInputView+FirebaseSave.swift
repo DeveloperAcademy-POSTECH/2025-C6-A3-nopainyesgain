@@ -14,9 +14,12 @@ extension KeyringInfoInputView {
     func saveKeyringToFirebase() {
         guard let uid = userManager.currentUser?.id,
               let bodyImage = viewModel.bodyImage else {
+            print("[KeyringSave] 저장 실패 - uid: \(userManager.currentUser?.id ?? "nil"), bodyImage: \(viewModel.bodyImage != nil)")
             isSavingToFirebase = false
             return
         }
+
+        print("[KeyringSave] 저장 시작 - uid: \(uid), chainLength: \(viewModel.chainLength)")
 
         isSavingToFirebase = true
 
@@ -63,7 +66,7 @@ extension KeyringInfoInputView {
             selectedTemplate: templateId,
             selectedRing: "basic",
             selectedChain: "basic",
-            chainLength: 5,
+            chainLength: self.viewModel.chainLength,
             isNew: true,
             hookOffsetY: hookOffsetY
         ) { success, keyringId in
@@ -177,7 +180,8 @@ extension KeyringInfoInputView {
         let docRef = db.collection("Keyring").document()
 
         docRef.setData(keyringData) { error in
-            if error != nil {
+            if let error = error {
+                print("[KeyringSave] Firestore 저장 에러: \(error.localizedDescription)")
                 completion(false, nil)
                 return
             }
@@ -202,9 +206,11 @@ extension KeyringInfoInputView {
             .updateData([
                 "keyrings": FieldValue.arrayUnion([keyringId])
             ]) { error in
-                if error != nil {
+                if let error = error {
+                    print("[KeyringSave] User 키링 배열 업데이트 에러: \(error.localizedDescription)")
                     completion(false)
                 } else {
+                    print("[KeyringSave] 키링 저장 완료!")
                     completion(true)
                 }
             }

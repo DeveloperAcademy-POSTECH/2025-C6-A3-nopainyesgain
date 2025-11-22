@@ -90,6 +90,9 @@ class PolaroidVM: KeyringViewModelProtocol {
         template?.id ?? "Polaroid"
     }
 
+    /// 체인 길이 (Polaroid는 3)
+    var chainLength: Int { 3 }
+
     var errorMessage: String?
 
     // MARK: - Frame State (프레임 모드)

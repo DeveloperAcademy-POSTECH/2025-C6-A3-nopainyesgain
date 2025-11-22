@@ -18,6 +18,15 @@ class MultiKeyringCaptureScene: SKScene {
         let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계, 왼쪽 위 기준)
         let bodyImageURL: String
         let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+        let chainLength: Int  // 체인 길이 (기본값 5)
+
+        init(index: Int, position: CGPoint, bodyImageURL: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+            self.index = index
+            self.position = position
+            self.bodyImageURL = bodyImageURL
+            self.hookOffsetY = hookOffsetY
+            self.chainLength = chainLength
+        }
     }
 
     var keyringDataList: [KeyringData] = []
@@ -276,12 +285,16 @@ class MultiKeyringCaptureScene: SKScene {
                 ring.physicsBody = nil
                 self.addChild(ring)
 
+                // 수직 그림자 추가
+                self.addShadowToNode(ring, offsetX: 4, offsetY: -8)
+
                 // 2. Chain 생성
                 self.setupChain(
                     ring: ring,
                     centerX: spriteKitPosition.x,
                     bodyImageURL: data.bodyImageURL,
                     hookOffsetY: data.hookOffsetY,
+                    chainLength: data.chainLength,
                     baseZPosition: baseZPosition
                 )
             }
@@ -316,12 +329,16 @@ class MultiKeyringCaptureScene: SKScene {
             ring.physicsBody = nil
             self.addChild(ring)
 
+            // 수직 그림자 추가
+            self.addShadowToNode(ring, offsetX: 4, offsetY: -8)
+
             // 2. Chain 생성
             self.setupChain(
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
                 hookOffsetY: data.hookOffsetY,
+                chainLength: data.chainLength,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType
             )
@@ -334,6 +351,7 @@ class MultiKeyringCaptureScene: SKScene {
         centerX: CGFloat,
         bodyImageURL: String,
         hookOffsetY: CGFloat?,
+        chainLength: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
@@ -342,12 +360,13 @@ class MultiKeyringCaptureScene: SKScene {
         let chainStartY = ringBottomY - 2
         let chainSpacing: CGFloat = 20
 
-        // 카라비너 타입에 따라 체인 개수 설정
+        // chainLength를 기본으로 사용하되, 카라비너 타입에 따라 조정
         let chainCount: Int = {
             if let carabinerType = currentCarabinerType {
-                return carabinerType == .plain ? 4 : 5
+                // 카라비너가 있으면 plain은 chainLength - 1, 그 외는 chainLength 사용
+                return carabinerType == .plain ? max(chainLength - 1, 1) : chainLength
             }
-            return 5  // 기본값
+            return chainLength  // 전달받은 chainLength 사용
         }()
 
         // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
@@ -366,6 +385,9 @@ class MultiKeyringCaptureScene: SKScene {
             for chain in chains {
                 chain.physicsBody = nil
                 self.addChild(chain)
+
+                // 수직 그림자 추가
+                self.addShadowToNode(chain, offsetX: 4, offsetY: -8)
             }
 
             // 3. Body 생성
@@ -425,8 +447,56 @@ class MultiKeyringCaptureScene: SKScene {
             body.physicsBody = nil
 
             self.addChild(body)
+
+            // 수직 그림자 추가 (SKSpriteNode인 경우에만)
+            if let spriteBody = body as? SKSpriteNode {
+                self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+            }
+
             self.checkLoadingComplete()
         }
+    }
+
+    // MARK: - Shadow Helper
+
+    /// 노드에 수직 그림자 추가 (z축 위에서 내려오는 광원)
+    /// - Parameters:
+    ///   - node: 그림자를 추가할 노드
+    ///   - offsetX: X축 오프셋 (기본값 8)
+    ///   - offsetY: Y축 오프셋 (기본값 -8)
+    ///   - blurRadius: Gaussian Blur 강도 (기본값 5.0)
+    private func addShadowToNode(_ node: SKSpriteNode, offsetX: CGFloat = 8, offsetY: CGFloat = -8, blurRadius: CGFloat = 5.0) {
+        // 원본 노드를 복제해서 그림자로 사용
+        guard let shadowNode = node.copy() as? SKSpriteNode else { return }
+
+        // 그림자 설정 (살짝 더 진하게)
+        shadowNode.alpha = 0.25
+        shadowNode.color = .black
+        shadowNode.colorBlendFactor = 1.0
+
+        // z축에서 수직으로 떨어지는 그림자 (약간 아래로만 이동)
+        shadowNode.position = CGPoint(x: offsetX, y: offsetY)
+        shadowNode.zPosition = 0  // effectNode 내에서 기본 위치
+
+        // 물리 바디 제거 (충돌 방지)
+        shadowNode.physicsBody = nil
+
+        // Blur 효과를 위한 SKEffectNode
+        let effectNode = SKEffectNode()
+        effectNode.shouldRasterize = true
+        effectNode.shouldEnableEffects = true
+
+        // 원본 노드 바로 뒤에 위치 (레이어 순서 유지)
+        effectNode.zPosition = -0.5
+
+        // Gaussian Blur 필터
+        if let blurFilter = CIFilter(name: "CIGaussianBlur") {
+            blurFilter.setValue(blurRadius, forKey: kCIInputRadiusKey)
+            effectNode.filter = blurFilter
+        }
+
+        effectNode.addChild(shadowNode)
+        node.addChild(effectNode)
     }
 
     // MARK: - Loading Complete

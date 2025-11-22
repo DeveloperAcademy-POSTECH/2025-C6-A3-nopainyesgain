@@ -42,7 +42,7 @@ extension KeyringScene {
         
         KeyringChainComponent.createLinks(
             from: currentChainType,
-            count: 5,
+            count: chainLength,
             startPosition: CGPoint(x: centerX, y: chainStartY),
             spacing: chainSpacing
         ) { [weak self] chains in

@@ -23,6 +23,18 @@ class MultiKeyringScene: SKScene {
         let customSoundURL: URL?  // 커스텀 녹음 파일 URL
         let particleId: String  // 파티클 ID
         let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+        let chainLength: Int  // 체인 길이 (기본값 5)
+
+        init(index: Int, position: CGPoint, bodyImageURL: String, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+            self.index = index
+            self.position = position
+            self.bodyImageURL = bodyImageURL
+            self.soundId = soundId
+            self.customSoundURL = customSoundURL
+            self.particleId = particleId
+            self.hookOffsetY = hookOffsetY
+            self.chainLength = chainLength
+        }
     }
 
     var keyringDataList: [KeyringData] = []
@@ -384,6 +396,7 @@ class MultiKeyringScene: SKScene {
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
                 hookOffsetY: data.hookOffsetY,
+                chainLength: data.chainLength,
                 index: data.index,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
@@ -398,6 +411,7 @@ class MultiKeyringScene: SKScene {
         centerX: CGFloat,
         bodyImageURL: String,
         hookOffsetY: CGFloat?,
+        chainLength: Int,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
@@ -408,12 +422,13 @@ class MultiKeyringScene: SKScene {
         let chainStartY = ringBottomY + 2
         let chainSpacing: CGFloat = 20
 
-        // 카라비너 타입에 따라 체인 개수 설정
+        // chainLength를 기본으로 사용하되, 카라비너 타입에 따라 조정
         let chainCount: Int = {
             if let carabinerType = currentCarabinerType {
-                return carabinerType == .plain ? 4 : 5
+                // 카라비너가 있으면 plain은 chainLength - 1, 그 외는 chainLength 사용
+                return carabinerType == .plain ? max(chainLength - 1, 1) : chainLength
             }
-            return 5  // 기본값
+            return chainLength  // 전달받은 chainLength 사용
         }()
 
         // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)

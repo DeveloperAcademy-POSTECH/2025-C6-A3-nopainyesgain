@@ -393,7 +393,8 @@ extension CollectionViewModel {
                 soundId: keyringInfo.soundId,
                 customSoundURL: customSoundURL,
                 particleId: keyringInfo.particleId,
-                hookOffsetY: keyringInfo.hookOffsetY
+                hookOffsetY: keyringInfo.hookOffsetY,
+                chainLength: keyringInfo.chainLength
             )
             dataList.append(data)
         }
@@ -405,7 +406,7 @@ extension CollectionViewModel {
     func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
         do {
             let document = try await db.collection("Keyring").document(keyringId).getDocument()
-            
+
             guard let data = document.data(),
                   let bodyImage = data["bodyImage"] as? String,
                   let soundId = data["soundId"] as? String,
@@ -414,19 +415,21 @@ extension CollectionViewModel {
             }
 
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
+            let chainLength = data["chainLength"] as? Int ?? 5
 
             return KeyringInfo(
                 id: keyringId,
                 bodyImage: bodyImage,
                 soundId: soundId,
                 particleId: particleId,
-                hookOffsetY: hookOffsetY
+                hookOffsetY: hookOffsetY,
+                chainLength: chainLength
             )
         } catch {
             return nil
         }
     }
-    
+
     /// Firestore에서 가져온 키링 정보를 담는 구조체
     struct KeyringInfo {
         let id: String
@@ -434,5 +437,6 @@ extension CollectionViewModel {
         let soundId: String
         let particleId: String
         let hookOffsetY: CGFloat?
+        let chainLength: Int
     }
 }

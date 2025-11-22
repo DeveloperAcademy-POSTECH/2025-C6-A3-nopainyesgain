@@ -106,7 +106,8 @@ extension BundleDetailView {
                         y: cb.keyringYPosition[index]
                     ),
                     bodyImageURL: keyringInfo.bodyImage,
-                    hookOffsetY: keyringInfo.hookOffsetY
+                    hookOffsetY: keyringInfo.hookOffsetY,
+                    chainLength: keyringInfo.chainLength
                 )
             )
         }

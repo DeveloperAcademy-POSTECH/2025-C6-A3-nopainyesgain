@@ -46,6 +46,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 키링 훅 오프셋 (기본값 0)
     var hookOffsetY: CGFloat { get set }
 
+    /// 체인 길이 (기본값 5)
+    var chainLength: Int { get }
+
     /// 템플릿 ID
     var templateId: String { get }
 
@@ -142,6 +145,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 
 // MARK: - 디폴트로 커스터마이징뷰에서 필요한 뷰
 extension KeyringViewModelProtocol {
+    /// 기본 체인 길이 (5)
+    var chainLength: Int { 5 }
+
     /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
     func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {}
 
