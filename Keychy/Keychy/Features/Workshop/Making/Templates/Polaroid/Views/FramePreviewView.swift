@@ -274,6 +274,8 @@ struct FramePreviewView: View {
                                             )
                                             .offset(y: -20)
                                     }
+                                    .buttonStyle(.plain)
+                                    .transition(.scale.combined(with: .opacity))
                                 } else if showEditButton {
                                     // 연필 버튼 (사진 수정)
                                     Button {
@@ -292,6 +294,7 @@ struct FramePreviewView: View {
                                             )
                                             .offset(y: -20)
                                     }
+                                    .buttonStyle(.plain)
                                     .transition(.scale.combined(with: .opacity))
                                 }
                             }
