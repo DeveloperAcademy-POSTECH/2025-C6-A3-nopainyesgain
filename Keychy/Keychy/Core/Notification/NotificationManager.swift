@@ -35,6 +35,15 @@ class NotificationManager: NSObject {
         }
     }
 
+    /// 알림 권한 상태를 상세하게 확인 (notDetermined, denied, authorized 등 구분)
+    func getAuthorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                completion(settings.authorizationStatus)
+            }
+        }
+    }
+
     // MARK: - 알림 권한 요청
     /// 알림 권한 요청 (처음 요청 시에만 시스템 팝업 표시)
     func requestPermission(completion: @escaping (Bool) -> Void) {
