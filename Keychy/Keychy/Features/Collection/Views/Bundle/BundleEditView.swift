@@ -275,7 +275,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
-        .background(.ultraThinMaterial)
+        .glassEffect(.regular, in: .rect)
         .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

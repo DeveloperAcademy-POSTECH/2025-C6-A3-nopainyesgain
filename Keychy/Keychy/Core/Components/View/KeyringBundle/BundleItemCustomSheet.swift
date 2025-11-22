@@ -57,10 +57,10 @@ struct BundleItemCustomSheet<Content: View>: View {
         .frame(height: sheetHeight)
         .background(
             RoundedRectangle(cornerRadius: 30)
-                .fill(.ultraThinMaterial)
                 .stroke(.gray50, lineWidth: 1)
                 .shadow(color: .black100.opacity(0.15), radius: 9, x: 0, y: 0)
         )
+        .glassEffect(.regular, in: .rect)
         .clipShape(RoundedRectangle(cornerRadius: 30))
         .onAppear {
             if sheetHeight == 360 {
