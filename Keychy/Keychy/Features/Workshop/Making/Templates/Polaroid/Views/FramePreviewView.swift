@@ -228,9 +228,10 @@ struct FramePreviewView: View {
                         let photoY = targetFrameHeight - photoHeight - photoBottomPadding
 
                         ZStack(alignment: .topLeading) {
-                            // 1. 사진 (맨 아래)
-                            if let photoImage = viewModel.selectedPhotoImage {
-                                ZStack {
+                            // 1. 사진 또는 플레이스홀더 (맨 아래)
+                            ZStack {
+                                // 사진 또는 플레이스홀더 이미지
+                                if let photoImage = viewModel.selectedPhotoImage {
                                     Image(uiImage: photoImage)
                                         .resizable()
                                         .scaledToFill()
@@ -246,44 +247,22 @@ struct FramePreviewView: View {
                                                 showEditButton.toggle()
                                             }
                                         }
-
-                                    // 편집 버튼
-                                    if showEditButton {
-                                        Button {
-                                            showPhotoSelectSheet = true
-                                            showEditButton = false
-                                        } label: {
-                                            Image(.plus)
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20, height: 20)
-                                                .padding(12)
-                                                .background(
-                                                    Circle()
-                                                        .fill(.white100)
-                                                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                                                )
-                                                .offset(y: -20)
-                                        }
-                                        .transition(.scale.combined(with: .opacity))
-                                    }
+                                } else {
+                                    // 플레이스홀더 이미지
+                                    SimpleAnimatedImage(url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5")
+                                        .frame(width: photoWidth, height: photoHeight)
                                 }
-                                .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
-                            } else {
-                                // 사진 선택 플레이스홀더
-                                Button {
-                                    showPhotoSelectSheet = true
-                                } label: {
-                                    ZStack {
-                                        SimpleAnimatedImage(url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5")
-                                            .frame(width: photoWidth, height: photoHeight)
-                                            .padding(.bottom, 20)
 
-
+                                // 플러스 버튼 (사진 없으면 항상 표시, 있으면 탭 시 표시)
+                                if viewModel.selectedPhotoImage == nil || showEditButton {
+                                    Button {
+                                        showPhotoSelectSheet = true
+                                        showEditButton = false
+                                    } label: {
                                         Image(.plus)
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 22, height: 22 )
+                                            .frame(width: 22, height: 22)
                                             .padding(10)
                                             .background(
                                                 Circle()
@@ -292,10 +271,10 @@ struct FramePreviewView: View {
                                             )
                                             .offset(y: -20)
                                     }
+                                    .transition(.scale.combined(with: .opacity))
                                 }
-                                .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
-                                .offset(x: -3)
                             }
+                            .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
 
                             // 2. 프레임 이미지 (위에 오버레이)
                             image
