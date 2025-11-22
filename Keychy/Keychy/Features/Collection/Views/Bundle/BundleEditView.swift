@@ -49,6 +49,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var keyringOrder: [Int] = []
     @State private var selectedPosition = 0
     @State private var sceneRefreshId = UUID()
+    @State private var isNavigatingAway = false // 화면 전환 중인지 추적
     
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     private let gridColumns: [GridItem] = [
@@ -103,7 +104,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             }
             .blur(radius: isSceneReady ? 0 : 15)
             
-            if !isSceneReady {
+            if !isSceneReady && !isNavigatingAway {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(100)
@@ -139,9 +140,19 @@ struct BundleEditView<Route: BundleRoute>: View {
         .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
         .task {
+            // 화면 전환 중이면 초기화 건너뛰기
+            guard !isNavigatingAway else {
+                return
+            }
             await initializeData()
         }
         .onAppear {
+            
+            // 화면 전환 중이면 아무것도 하지 않음
+            if isNavigatingAway {
+                return
+            }
+            
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshEditData()
@@ -621,38 +632,43 @@ struct BundleEditView<Route: BundleRoute>: View {
             return
         }
         
-        // selectedKeyrings를 뭉치 형태로 변환
-        let keyrings = viewModel.convertSelectedKeyringsToBundleFormat(
+        // 변경사항 체크: 원본 번들과 현재 선택된 항목 비교
+        let isBackgroundChanged = bundle.selectedBackground != backgroundId
+        let isCarabinerChanged = bundle.selectedCarabiner != carabinerId
+        
+        // 키링 변경사항 체크
+        let currentKeyrings = viewModel.convertSelectedKeyringsToBundleFormat(
             selectedKeyrings: selectedKeyrings,
             maxKeyringCount: carabiner.carabiner.maxKeyringCount
-        )
+        ).map { $0.isEmpty ? "none" : $0 }
         
-        // 키링 데이터 검증
-        let validKeyrings = keyrings.map { keyringId in
-            return keyringId.isEmpty ? "none" : keyringId
+        let isKeyringsChanged = bundle.keyrings != currentKeyrings
+        
+        // 변경사항이 전혀 없으면 저장하지 않고 즉시 리턴
+        if !isBackgroundChanged && !isCarabinerChanged && !isKeyringsChanged {
+            return
         }
         
         do {
             let db = FirebaseFirestore.Firestore.firestore()
             let updateData: [String: Any] = [
-                "keyrings": validKeyrings,
+                "keyrings": currentKeyrings,
                 "selectedBackground": backgroundId,
                 "selectedCarabiner": carabinerId
             ]
-            
             try await db.collection("KeyringBundle").document(documentId).updateData(updateData)
             
             // 로컬 상태도 업데이트
             await MainActor.run {
                 if let index = viewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
-                    viewModel.bundles[index].keyrings = validKeyrings
+                    viewModel.bundles[index].keyrings = currentKeyrings
                     viewModel.bundles[index].selectedBackground = backgroundId
                     viewModel.bundles[index].selectedCarabiner = carabinerId
                 }
                 
                 // selectedBundle도 업데이트
                 if viewModel.selectedBundle?.documentId == documentId {
-                    viewModel.selectedBundle?.keyrings = validKeyrings
+                    viewModel.selectedBundle?.keyrings = currentKeyrings
                     viewModel.selectedBundle?.selectedBackground = backgroundId
                     viewModel.selectedBundle?.selectedCarabiner = carabinerId
                 }
@@ -661,7 +677,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 BundleImageCache.shared.delete(for: documentId)
             }
         } catch {
-            print("\(error.localizedDescription)")
+            print("❌ Firebase 업데이트 실패: \(error.localizedDescription)")
             if let firestoreError = error as NSError? {
                 print("Firebase 에러 코드: \(firestoreError.code)")
                 print("Firebase 에러 도메인: \(firestoreError.domain)")
@@ -711,6 +727,7 @@ extension BundleEditView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                isNavigatingAway = true
                 router.pop()
             }
         } center: {
@@ -725,7 +742,19 @@ extension BundleEditView {
             } else {
                 NextToolbarButton {
                     Task {
+                        await MainActor.run {
+                            // 화면 전환 시작을 표시하고 로딩 상태 해제
+                            withAnimation(.linear(duration: 0.1)) {
+                                isNavigatingAway = true
+                                isSceneReady = true
+                            }
+                        }
+                        
+                        // 상태 변경이 UI에 반영되도록 짧은 대기
+                        try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
+                        
                         await saveBundleChanges()
+                        
                         await MainActor.run {
                             router.pop()
                         }
