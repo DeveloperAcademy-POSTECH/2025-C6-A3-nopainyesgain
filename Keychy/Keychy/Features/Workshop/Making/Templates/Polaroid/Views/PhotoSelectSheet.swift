@@ -14,7 +14,7 @@ struct PhotoSelectSheet: View {
     let onCameraSelected: () -> Void
     let onPhotoLibrarySelected: () -> Void
 
-    @State private var contentHeight: CGFloat = 220
+    @State private var contentHeight: CGFloat = 240
 
     var body: some View {
         VStack(spacing: 0) {
@@ -38,7 +38,7 @@ struct PhotoSelectSheet: View {
                 .frame(maxWidth: .infinity)
             }
             .padding(.top, 30)
-            .padding(.bottom, 60)
+            .padding(.bottom, 35)
 
             // 카메라/사진선택 버튼
             VStack(spacing: 30) {
