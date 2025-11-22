@@ -235,5 +235,9 @@ class KeyringDetailScene: SKScene {
         
         // 파티클 효과 발생
         applyParticleEffect(particleId: currentParticleId)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.lastParticleTime = 0
+        }
     }
 }
