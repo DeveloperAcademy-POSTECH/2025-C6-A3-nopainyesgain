@@ -19,7 +19,7 @@ struct PhotoSelectSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
-            ZStack(alignment: .topLeading) {
+            ZStack(alignment: .leading) {
                 Button {
                     dismiss()
                 } label: {
@@ -30,8 +30,11 @@ struct PhotoSelectSheet: View {
                 // 제목
                 HStack {
                     Spacer()
+                    
                     Text("사진 넣기")
                         .typography(.suit17B)
+                        .frame(height: 24, alignment: .center)
+
                     Spacer()
 
                 }
