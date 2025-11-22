@@ -69,6 +69,7 @@ struct CoinChargeView<Route: Hashable>: View {
 
                     LackPopup(
                         title: "코인이 부족해요",
+                        message: "충전하러 갈까요?",
                         onCancel: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showPurchaseFailAlert = false
@@ -177,7 +178,7 @@ extension CoinChargeView {
                 selectedItem = item
                 showPurchaseSheet = true
             } label: {
-                HStack(spacing: 4) {
+                HStack(spacing: 2) {
                     Image(.buyKey)
                         .resizable()
                         .scaledToFit()
@@ -187,7 +188,7 @@ extension CoinChargeView {
                         .typography(.suit14SB18)
                         .foregroundStyle(.white)
                 }
-                .frame(width: 74, height: 30)
+                .frame(width: 80, height: 30)
                 .background(.black100)
                 .cornerRadius(4)
             }
@@ -354,8 +355,8 @@ extension CoinChargeView {
         
         var price: Int {
             switch self {
-            case .inventoryExpansion: return 5
-            case .copyVoucher10: return 20
+            case .inventoryExpansion: return 1000
+            case .copyVoucher10: return 1000
             }
         }
     }

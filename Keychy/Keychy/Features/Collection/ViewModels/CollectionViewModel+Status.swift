@@ -85,9 +85,9 @@ extension Keyring {
         }
         
         // 출품여부
-//        if isPublished {
-//            return .published
-//        }
+        if isPublished {
+            return .published
+        }
         
         return .normal
     }

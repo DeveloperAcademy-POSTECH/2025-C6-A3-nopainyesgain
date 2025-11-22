@@ -23,6 +23,10 @@ struct KeyringEditView: View {
     @State private var isLoading: Bool = true
     @State private var scene: KeyringCellScene?
     
+    // MARK: - Profanity Filtering
+    @State var validationMessage: String = ""
+    @State var hasProfanity: Bool = false
+    
     @FocusState private var focusedField: Field?
     
     let keyring: Keyring
@@ -34,7 +38,10 @@ struct KeyringEditView: View {
     }
     
     private var isCompleteEnabled: Bool {
-        !editedName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let nameNotEmpty = !editedName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let noProfanity = !hasProfanity && validationMessage.isEmpty
+        
+        return nameNotEmpty && noProfanity
     }
     
     private var canEdit: Bool {
@@ -264,7 +271,7 @@ extension KeyringEditView {
                     .submitLabel(.done)
                     .focused($focusedField, equals: .name)
                     .disabled(!canEdit)
-                    .onChange(of: editedName) { _, newValue in
+                    .onChange(of: editedName) { newValue in
                         let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
                         var sanitized = newValue.replacingOccurrences(
                             of: regexString,
@@ -278,6 +285,21 @@ extension KeyringEditView {
                         
                         if sanitized != editedName {
                             editedName = sanitized
+                        }
+
+                        // 욕설 체크
+                        if editedName.isEmpty {
+                            validationMessage = ""
+                            hasProfanity = false
+                        } else {
+                            let profanityCheck = TextFilter.shared.validateText(editedName)
+                            if !profanityCheck.isValid {
+                                validationMessage = profanityCheck.message ?? "부적절한 단어가 포함되어 있어요"
+                                hasProfanity = true
+                            } else {
+                                validationMessage = ""
+                                hasProfanity = false
+                            }
                         }
                     }
                 
@@ -308,6 +330,13 @@ extension KeyringEditView {
                 if canEdit {
                     focusedField = .name
                 }
+            }
+            
+            if !validationMessage.isEmpty {
+                Text(validationMessage)
+                    .typography(.suit14M)
+                    .foregroundColor(.error)
+                    .padding(.horizontal, 4)
             }
         }
     }

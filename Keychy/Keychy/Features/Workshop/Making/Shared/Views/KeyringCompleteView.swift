@@ -110,7 +110,6 @@ extension KeyringCompleteView {
                 viewModel.resetAll()
                 router.reset()
             }
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             // Center (중앙)
             Text("키링이 완성되었어요!")

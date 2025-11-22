@@ -26,6 +26,9 @@ struct TemplatePreviewBody: View {
     @State private var showPurchaseSuccessAlert = false
     @State private var showPurchaseFailAlert = false
     @State private var purchaseFailScale: CGFloat = 0.3
+    
+    // 보관함 용량 관련
+    @State private var showInvenFullAlert: Bool = false
 
     /// 템플릿 보유 여부 확인
     private var isOwned: Bool {
@@ -38,25 +41,25 @@ struct TemplatePreviewBody: View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
-
+                
                 // 프리뷰 이미지
                 templatePreview
-
+                
                 Spacer()
-
+                
                 VStack(alignment: .leading, spacing: 0) {
                     // 템플릿 정보
                     infoSection
                         .padding(.bottom, 40)
                         .frame(minHeight: 120, alignment: .top)
-
+                    
                     // 액션 버튼
                     actionButton
                         .adaptiveBottomPadding()
                         .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
                 }
                 .padding(.horizontal, 34)
-
+                
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
@@ -158,6 +161,10 @@ struct TemplatePreviewBody: View {
                     .padding(.horizontal, 40)
                     .padding(.bottom, 30)
                 }
+                
+                if showInvenFullAlert {
+                    InvenLackPopup(isPresented: $showInvenFullAlert)
+                }
             }
             .frame(maxHeight: .infinity)
         }
@@ -200,7 +207,7 @@ extension TemplatePreviewBody {
                 KeyringTemplateActionButton(
                     template: template,
                     isOwned: isOwned,
-                    onMake: onMake,
+                    onMake: checkInventoryAndMake,
                     onPurchase: onPurchase ?? {
                         showPurchaseSheet = true
                         withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
@@ -263,6 +270,27 @@ extension TemplatePreviewBody {
         case .failed(let message):
             // 기타 실패 시 에러 출력
             print("구매 실패: \(message)")
+        }
+    }
+    
+    /// 보관함 용량 체크 후 만들기 실행
+    private func checkInventoryAndMake() {
+        guard let userId = userManager.currentUser?.id else { return }
+        
+        // CollectionViewModel의 용량 체크 메서드 사용
+        let collectionVM = CollectionViewModel()
+        collectionVM.checkInventoryCapacity(userId: userId) { hasSpace in
+            DispatchQueue.main.async {
+                if hasSpace {
+                    // 보관함에 여유 있음 -> onMake 실행
+                    self.onMake()
+                } else {
+                    // 보관함 가득 참 -> 알럿 표시
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showInvenFullAlert = true
+                    }
+                }
+            }
         }
     }
 }
