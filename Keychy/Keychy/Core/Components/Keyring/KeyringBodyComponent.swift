@@ -154,7 +154,7 @@ struct KeyringBodyComponent {
 
     // MARK: - Multi용 (150x300 aspect fit)
     private static func createMultiImageBody(image: UIImage) -> SKNode {
-        let maxSize = CGSize(width: 150, height: 300)
+        let maxSize = CGSize(width: 160, height: 400)
         let originalSize = image.size
 
         // Aspect fit 계산: 원본 비율 유지하며 150x300 안에 들어가도록
