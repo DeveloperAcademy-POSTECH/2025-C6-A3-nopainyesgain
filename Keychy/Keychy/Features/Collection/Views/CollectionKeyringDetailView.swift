@@ -13,10 +13,10 @@ import Photos
 struct CollectionKeyringDetailView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @Bindable var viewModel: CollectionViewModel
-    @State var sheetDetent: PresentationDetent = .height(76)
+    @State var sheetDetent: PresentationDetent = .fraction(0.48)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
-    @State var isSheetPresented: Bool = true
+    @State var isSheetPresented: Bool = false
     @State var isNavigatingDeeper: Bool = false
     @State var authorName: String = ""
     @State var senderName: String = ""
@@ -48,18 +48,30 @@ struct CollectionKeyringDetailView: View {
         GeometryReader { geometry in
             let heightRatio = geometry.size.height / 852
             
-            ZStack {
-                Group {
-                    Image("WhiteBackground")
-                        .resizable()
-                        .scaledToFill()
-                        .ignoresSafeArea()
+            ZStack(alignment: .top) {
+                Image("WhiteBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .blur(radius: shouldApplyBlur ? 10 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                
+                VStack(spacing: 0) {
+                    Spacer()
                     
-                    keyringScene
-                        .scaleEffect(heightRatio)
+                    ZStack(alignment: .center) {
+                        keyringScene
+                            .frame(height: geometry.size.height * 0.8)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.4)
+                            .blur(radius: shouldApplyBlur ? 10 : 0)
+                            .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                        
+                        bottomSection
+                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.942)
+                            .opacity(showUIForCapture ? 1 : 0)
+                            .blur(radius: shouldApplyBlur ? 15 : 0)
+                    }
                 }
-                .blur(radius: shouldApplyBlur ? 10 : 0)
-                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
                 if showMenu {
                     menuOverlay
@@ -88,14 +100,15 @@ struct CollectionKeyringDetailView: View {
             
         }
         .ignoresSafeArea()
+        //.adaptiveBottomPadding()
         .navigationBarBackButtonHidden(true)
-        .interactiveDismissDisabled(true)
+        .interactiveDismissDisabled(false)
         .sheet(isPresented: $isSheetPresented) {
             infoSheet
-                .presentationDetents([.height(76), .fraction(0.48), .fraction(0.93)], selection: $sheetDetent)
+                .presentationDetents([.fraction(0.48), .fraction(0.93)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.48)))
-                .interactiveDismissDisabled()
+                .interactiveDismissDisabled(false)
         }
         
         .onAppear {
@@ -133,33 +146,96 @@ struct CollectionKeyringDetailView: View {
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     private var sceneScale: CGFloat {
-        sheetDetent == .height(76) ? 1.2 : 0.8
+        isSheetPresented == false ? 1.1 : 0.8
     }
     
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     private var sceneYOffset: CGFloat {
-        sheetDetent == .height(76) ? 10 : -100
+        isSheetPresented == false ? 30 : -50
     }
 }
 
 // MARK: - 키링 씬
 extension CollectionKeyringDetailView {
     var keyringScene: some View {
-        VStack(spacing: 0) {
-            Spacer()
-                .frame(height: 30)
-            
-            KeyringDetailSceneView(
-                keyring: keyring,
-                isLoading: $isLoading
-            )
-            
-            Spacer()
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(height: 30)
+                
+                KeyringDetailSceneView(
+                    keyring: keyring,
+                    isLoading: $isLoading
+                )
+                
+                Spacer()
+            }
+            .scaleEffect(sceneScale)
+            .offset(y: sceneYOffset)
+            .animation(.spring(response: 0.35, dampingFraction: 0.5), value: isSheetPresented)
+            .allowsHitTesting(isSheetPresented == false)
         }
-        .frame(maxWidth: .infinity)
-        .scaleEffect(sceneScale)
-        .offset(y: sceneYOffset)
-        .animation(.spring(response: 0.35, dampingFraction: 0.5), value: sheetDetent)
-        .allowsHitTesting(sheetDetent == .height(76))
+    }
+
+}
+
+// MARK: - 하단 영역
+extension CollectionKeyringDetailView {
+    // 하단 버튼 섹션 - 이미지 저장, 포장
+    private var bottomSection: some View {
+        HStack {
+            downloadImageButton
+            
+            Spacer()
+            
+            Button {
+                // 정보 시트 열기
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.5)) {
+                    isSheetPresented = true
+                    sheetDetent = .fraction(0.48)
+                }
+            } label: {
+                Text("정보 보기")
+                    .typography(.suit16M)
+                    .foregroundStyle(.white100)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 12)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.main500)
+            )
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 20))
+            
+            Spacer()
+            
+            packageButton
+        }
+        .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
+        .adaptiveBottomPadding()
+        .opacity(isSheetPresented ? 0 : 1)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
+    }
+    
+    private var downloadImageButton: some View {
+        Button(action: {
+            captureAndSaveImage()
+        }) {
+            Image("imageDownload")
+        }
+        .frame(width: 48, height: 48)
+        .glassEffect(.regular.interactive(), in: .circle)
+    }
+    
+    private var packageButton: some View {
+        Button(action: {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showPackageAlert = true
+            }
+        }) {
+            Image("presentIcon")
+        }
+        .frame(width: 48, height: 48)
+        .glassEffect(.regular.interactive(), in: .circle)
     }
 }

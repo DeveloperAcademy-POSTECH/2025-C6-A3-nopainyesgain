@@ -67,6 +67,10 @@ struct KeyringDetailSceneView: View {
                 withAnimation(.easeOut(duration: 0.3)) {
                     self.isLoading = false
                 }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    newScene?.applyWelcomeImpulse()
+                }
             }
         }
         
