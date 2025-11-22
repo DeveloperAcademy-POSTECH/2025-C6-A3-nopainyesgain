@@ -191,17 +191,19 @@ func initializeSounds() async {
 
 // MARK: - Template Initialization
 func initializeTemplates() async {
+    print("안녕하세용~^^")
+
     let templates: [[String: Any]] = [
         [
-            "id": "ExampleTemplate",
-            "templateName": "예시 템플릿",
-            "description": "새로운 템플릿 설명을 입력하세요",
-            "interactions": ["tap"],
+            "id": "PixelKeyring",
+            "templateName": "픽셀 키링",
+            "description": "16x16 픽셀 아트로 나만의 키링을 만들어보세요",
+            "interactions": ["tap", "swipe"],
             "thumbnailURL": "https://firebasestorage.googleapis.com/...",
             "previewURL": "https://firebasestorage.googleapis.com/...",
-            "guidingImageURL": "https://firebasestorage.googleapis.com/...",
-            "guidingText": "가이드 텍스트를 입력하세요",
-            "tags": ["태그1", "태그2"],
+            "guidingImageURL": "",
+            "guidingText": "픽셀을 찍어서 나만의 키링을 만들어보세요!",
+            "tags": ["픽셀", "그리기", "도트"],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,

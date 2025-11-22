@@ -84,7 +84,6 @@ extension CollectionKeyringDetailView {
         // 1. 시트 내리기 + UI opacity를 0으로 (서서히 사라짐)
         withAnimation(.easeOut(duration: 0.3)) {
             showUIForCapture = false
-            self.sheetDetent = .height(76)
             isSheetPresented = false
         }
 
@@ -95,7 +94,7 @@ extension CollectionKeyringDetailView {
                 // 실패 시 UI 복원
                 withAnimation(.easeIn(duration: 0.3)) {
                     self.showUIForCapture = true
-                    self.isSheetPresented = true
+                    self.isSheetPresented = false
                 }
                 return
             }
@@ -106,7 +105,7 @@ extension CollectionKeyringDetailView {
             // 5. UI 복원 (서서히 나타남)
             withAnimation(.easeIn(duration: 0.3)) {
                 self.showUIForCapture = true
-                self.isSheetPresented = true
+                self.isSheetPresented = false
             }
         }
     }

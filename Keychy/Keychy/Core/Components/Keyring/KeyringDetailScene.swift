@@ -137,7 +137,7 @@ class KeyringDetailScene: SKScene {
     private func applySwipeForceToNearbyChains(at location: CGPoint, velocity: CGVector) {
         guard let body = bodyNode, isReady else { return }
         
-        let forceMagnitude: CGFloat = 0.6
+        let forceMagnitude: CGFloat = 0.3
         
         for chainNode in chainNodes {
             let force = CGVector(
@@ -223,4 +223,21 @@ class KeyringDetailScene: SKScene {
         lastTouchLocation = nil
     }
 
+    func applyWelcomeImpulse() {
+        guard let body = bodyNode, isReady else { return }
+        
+        // 파티클이 터질 정도의 속도 (speed > 1250)
+        let welcomeVelocity = CGVector(dx: 2000, dy: 0)
+        
+        // 중앙 위치에서 스와이프 시뮬레이션
+        let centerLocation = CGPoint(x: size.width / 3, y: size.height / 2)
+        applySwipeForceToNearbyChains(at: centerLocation, velocity: welcomeVelocity)
+        
+        // 파티클 효과 발생
+        applyParticleEffect(particleId: currentParticleId)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.lastParticleTime = 0
+        }
+    }
 }
