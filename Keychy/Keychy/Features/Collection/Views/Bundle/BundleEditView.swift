@@ -62,6 +62,36 @@ struct BundleEditView<Route: BundleRoute>: View {
     private let sheetHeightRatio: CGFloat = 0.43
     private let screenSize = CGSize(width: 402, height: 874)
     
+    /// 현재 선택된 키링을 맨 앞으로, 다른 위치에 장착된 키링을 맨 뒤로 정렬한 키링 리스트
+    private var sortedKeyringsForSelection: [Keyring] {
+        let selectedKeyring = selectedKeyrings[selectedPosition]
+        
+        return viewModel.keyring.sorted { keyring1, keyring2 in
+            let isKeyring1SelectedHere = keyring1.id == selectedKeyring?.id
+            let isKeyring2SelectedHere = keyring2.id == selectedKeyring?.id
+            
+            let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
+            let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
+            
+            // 1순위: 현재 위치에 선택된 키링 (isSelectedHere) - 맨 앞
+            if isKeyring1SelectedHere != isKeyring2SelectedHere {
+                return isKeyring1SelectedHere
+            }
+            
+            // 2순위: 다른 위치에 장착된 키링 (isSelectedElsewhere) - 맨 뒤
+            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
+                return isKeyring2SelectedElsewhere // 반대로 해서 elsewhere가 뒤로 가도록
+            }
+            
+            // 3순위: 나머지는 원래 순서 유지 (viewModel.keyringSorting 결과 유지)
+            guard let index1 = viewModel.keyring.firstIndex(of: keyring1),
+                  let index2 = viewModel.keyring.firstIndex(of: keyring2) else {
+                return false
+            }
+            return index1 < index2
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             mainContentView
@@ -300,7 +330,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(viewModel.keyring, id: \.self) { keyring in
+                        ForEach(sortedKeyringsForSelection, id: \.self) { keyring in
                             keyringCell(keyring: keyring)
                         }
                     }
