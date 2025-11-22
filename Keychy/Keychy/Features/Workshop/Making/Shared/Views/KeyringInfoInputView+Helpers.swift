@@ -49,8 +49,6 @@ extension KeyringInfoInputView {
                     router.pop()
                 }
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             // Center (중앙)
             Spacer()
