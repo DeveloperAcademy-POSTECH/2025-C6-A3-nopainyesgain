@@ -41,6 +41,13 @@ enum WorkshopRoute: Hashable {
     case clearSketchInfoInput
     case clearSketchComplete
 
+    // MARK: - 픽셀 키링 템플릿
+    case pixelPreview
+    case pixelDraw
+    case pixelCustomizing
+    case pixelInfoInput
+    case pixelComplete
+
     // MARK: - 새로운 템플릿의 루트는 이렇게 추가해주면 됩니다. (예정)
     // case hkPreview
     // case hkCustomizing
@@ -58,6 +65,8 @@ enum WorkshopRoute: Hashable {
             return .polaroidPreview
         case "ClearSketch":
             return .clearSketchPreview
+        case "PixelKeyring":
+            return .pixelPreview
 
             // 필요한 프리뷰 케이스들 추가
         default:
