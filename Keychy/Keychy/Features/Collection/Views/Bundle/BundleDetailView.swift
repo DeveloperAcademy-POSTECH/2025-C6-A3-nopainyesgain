@@ -39,7 +39,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 ZStack(alignment: .top) {
                     if let bundle = viewModel.selectedBundle,
                        let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                       let background = viewModel.selectedBackground {
+                       let background = viewModel.selectedBackground,
+                       !keyringDataList.isEmpty {  // 키링 데이터가 있을 때만 씬 생성
                         
                         MultiKeyringSceneView(
                             keyringDataList: keyringDataList,

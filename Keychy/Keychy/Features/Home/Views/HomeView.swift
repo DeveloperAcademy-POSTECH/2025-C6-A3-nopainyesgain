@@ -37,7 +37,8 @@ struct HomeView: View {
             ZStack(alignment: .top) {
                 if let bundle = collectionViewModel.selectedBundle,
                    let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                   let background = collectionViewModel.selectedBackground {
+                   let background = collectionViewModel.selectedBackground,
+                   !keyringDataList.isEmpty {  // 키링 데이터가 있을 때만 씬 생성
 
                     MultiKeyringSceneView(
                         keyringDataList: keyringDataList,
