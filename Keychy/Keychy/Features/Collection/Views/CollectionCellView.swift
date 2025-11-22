@@ -68,7 +68,7 @@ struct CollectionCellView: View {
     // MARK: - 상태 오버레이
     private func statusOverlay(info: String) -> some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(.black20)
+            .fill(.black50)
             .overlay {
                 VStack {
                     Text(info)

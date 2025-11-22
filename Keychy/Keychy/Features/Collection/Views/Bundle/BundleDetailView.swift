@@ -24,6 +24,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State var isCapturing: Bool = false
     @State var getlessPadding: CGFloat = 0
     @State private var isNavigatingDeeper: Bool = true
+    @State private var menuPosition: CGRect = .zero
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -33,177 +34,151 @@ struct BundleDetailView<Route: BundleRoute>: View {
     
     // MARK: - Body
     var body: some View {
-        ZStack(alignment: .top) {
+        GeometryReader { geometry in
             ZStack(alignment: .top) {
-                if let bundle = viewModel.selectedBundle,
-                   let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                   let background = viewModel.selectedBackground {
-                    
-                    MultiKeyringSceneView(
-                        keyringDataList: keyringDataList,
-                        ringType: .basic,
-                        chainType: .basic,
-                        backgroundColor: .clear,
-                        backgroundImageURL: background.backgroundImage,
-                        carabinerBackImageURL: carabiner.backImageURL,
-                        carabinerFrontImageURL: carabiner.frontImageURL,
-                        carabinerX: carabiner.carabinerX,
-                        carabinerY: carabiner.carabinerY,
-                        carabinerWidth: carabiner.carabinerWidth,
-                        currentCarabinerType: carabiner.type,
-                        onAllKeyringsReady: {
-                            withAnimation(.easeOut(duration: 0.3)) {
-                                isSceneReady = true
+                ZStack(alignment: .top) {
+                    if let bundle = viewModel.selectedBundle,
+                       let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+                       let background = viewModel.selectedBackground,
+                       !keyringDataList.isEmpty {  // 키링 데이터가 있을 때만 씬 생성
+                        
+                        MultiKeyringSceneView(
+                            keyringDataList: keyringDataList,
+                            ringType: .basic,
+                            chainType: .basic,
+                            backgroundColor: .clear,
+                            backgroundImageURL: background.backgroundImage,
+                            carabinerBackImageURL: carabiner.backImageURL,
+                            carabinerFrontImageURL: carabiner.frontImageURL,
+                            carabinerX: carabiner.carabinerX,
+                            carabinerY: carabiner.carabinerY,
+                            carabinerWidth: carabiner.carabinerWidth,
+                            currentCarabinerType: carabiner.type,
+                            onAllKeyringsReady: {
+                                withAnimation(.easeOut(duration: 0.3)) {
+                                    isSceneReady = true
+                                }
                             }
-                        }
-                    )
-                    .animation(.easeInOut(duration: 0.3), value: isSceneReady)
-                    /// 씬 재생성 조건을 위한 ID 설정
-                    /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                    .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
-                    
-                    // 하단 섹션을 ZStack 안에서 직접 배치
-                    VStack {
-                        Spacer()
-                        bottomSection
-                    }
-                    
-                    if showMenu {
-                        HStack {
+                        )
+                        .animation(.easeInOut(duration: 0.3), value: isSceneReady)
+                        /// 씬 재생성 조건을 위한 ID 설정
+                        /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
+                        .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
+                        
+                        // 하단 섹션을 ZStack 안에서 직접 배치
+                        VStack {
                             Spacer()
-                            VStack {
-                                BundleMenu(
-                                    onNameEdit: {
-                                        showMenu = false
-                                        isNavigatingDeeper = true
-                                        router.push(.bundleNameEditView)
-                                    },
-                                    onEdit: {
-                                        showMenu = false
-                                        isNavigatingDeeper = true
-                                        router.push(.bundleEditView)
-                                    },
-                                    onDelete: {
-                                        showMenu = false
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                            showDeleteAlert = true
-                                        }
-                                    },
-                                    isMain: bundle.isMain
-                                )
-                                .padding(.trailing, 16)
-                                .padding(.top, 8)
-                                
-                                Spacer()
-                            }
-                        }
-                        .adaptiveTopPaddingAlt()
-                        .padding(.top, 40 - getBottomPadding(20) - getlessPadding)
-                        .zIndex(50)
-                        .allowsHitTesting(true)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showMenu = false
-                            }
+                            bottomSection
                         }
                     }
+                    customnavigationBar
                 }
-                customnavigationBar
+                .blur(radius: (isSceneReady && !isMainBundleChange && !isCapturing) ? 0 : 15)
+                .ignoresSafeArea()
+                
+                // 메뉴 오버레이 (최상위 ZStack으로 이동)
+                if showMenu {
+                    menuOverlay
+                }
+                
+                if !isSceneReady || showChangeMainBundleAlert || isMainBundleChange || isCapturing || showDeleteAlert || showDeleteCompleteToast || showAlreadyMainBundleToast {
+                    Color.black20
+                        .ignoresSafeArea()
+                    
+                    LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
+                        .zIndex(200)
+                        .opacity(isSceneReady ? 0 : 1)
+                    
+                    changeMainBundleAlert
+                        .opacity(showChangeMainBundleAlert ? 1 : 0)
+                        .padding(.horizontal, 51)
+                        .position(x: screenWidth/2, y: screenHeight/2)
+                    
+                    KeychyAlert(type: .checkmark, message: "대표 뭉치가 변경되었어요!", isPresented: $isMainBundleChange)
+                        .zIndex(200)
+                    
+                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $isCapturing)
+                        .zIndex(200)
+                    
+                    if let bundle = viewModel.selectedBundle {
+                        DeletePopup(
+                            title: "\(bundle.name)\n삭제하시겠어요?",
+                            message: "삭제한 뭉치는 복구할 수 없습니다.",
+                            onCancel: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showDeleteAlert = false
+                                }
+                            },
+                            onConfirm: {
+                                Task {
+                                    await deleteBundle()
+                                }
+                            }
+                        )
+                        .opacity(showDeleteAlert ? 1 : 0)
+                        .position(x: screenWidth/2, y: screenHeight/2)
+                        .zIndex(200)
+                    }
+                    
+                    DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
+                        .opacity(showDeleteCompleteToast ? 1 : 0)
+                        .zIndex(200)
+                        .position(x: screenWidth/2, y: screenHeight/2)
+                    
+                    alreadyMainBundleToast
+                        .zIndex(200)
+                        .opacity(showAlreadyMainBundleToast ? 1 : 0)
+                        .padding(.horizontal, 51)
+                        .position(x: screenWidth/2, y: screenHeight/2)
+                }
             }
-            .blur(radius: (isSceneReady && !isMainBundleChange && !isCapturing) ? 0 : 15)
             .ignoresSafeArea()
-            
-            if !isSceneReady || showChangeMainBundleAlert || isMainBundleChange || isCapturing || showDeleteAlert || showDeleteCompleteToast || showAlreadyMainBundleToast {
-                Color.black20
-                    .ignoresSafeArea()
-                
-                LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
-                    .zIndex(200)
-                    .opacity(isSceneReady ? 0 : 1)
-                
-                changeMainBundleAlert
-                    .opacity(showChangeMainBundleAlert ? 1 : 0)
-                    .padding(.horizontal, 51)
-                    .position(x: screenWidth/2, y: screenHeight/2)
-                
-                KeychyAlert(type: .checkmark, message: "대표 뭉치가 변경되었어요!", isPresented: $isMainBundleChange)
-                    .zIndex(200)
-                
-                KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $isCapturing)
-                    .zIndex(200)
-                
-                if let bundle = viewModel.selectedBundle {
-                    DeletePopup(
-                        title: "\(bundle.name)\n삭제하시겠어요?",
-                        message: "삭제한 뭉치는 복구할 수 없습니다.",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showDeleteAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            Task {
-                                await deleteBundle()
-                            }
-                        }
-                    )
-                    .opacity(showDeleteAlert ? 1 : 0)
-                    .position(x: screenWidth/2, y: screenHeight/2)
-                    .zIndex(200)
-                }
-                
-                DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
-                    .opacity(showDeleteCompleteToast ? 1 : 0)
-                    .zIndex(200)
-                    .position(x: screenWidth/2, y: screenHeight/2)
-                
-                alreadyMainBundleToast
-                    .zIndex(200)
-                    .opacity(showAlreadyMainBundleToast ? 1 : 0)
-                    .padding(.horizontal, 51)
-                    .position(x: screenWidth/2, y: screenHeight/2)
-            }
-        }
-        .ignoresSafeArea()
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        .onAppear {
-            // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
-            if !isSceneReady {
-                Task {
-                    await loadBundleData()
+            .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden, for: .tabBar)
+            .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
+                // (0, 0, 0, 0)이 아닐 때만 업데이트
+                if frame != .zero {
+                    menuPosition = frame
+                    print("menu Position: \(frame)")
                 }
             }
-            isNavigatingDeeper = false
-            showDeleteCompleteToast = false
-            showAlreadyMainBundleToast = false
-            showChangeMainBundleAlert = false
-            isMainBundleChange = false
-            showDeleteAlert = false
-            showMenu = false
-            viewModel.hideTabBar()
-            getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
-        }
-        .onDisappear {
-            // 뷰가 사라질 때 씬 준비 상태 초기화
-            isSceneReady = false
-            // Alert/Toast 상태 초기화
-            showDeleteCompleteToast = false
-            showAlreadyMainBundleToast = false
-            showChangeMainBundleAlert = false
-            isMainBundleChange = false
-            showDeleteAlert = false
-            showMenu = false
-        }
-        .task {
-            // 최초 뷰가 나타날 때 뭉치 데이터 로드
-            await loadBundleData()
-        }
-        .onChange(of: keyringDataList) { _, _ in
-            // 키링 데이터가 변경되면 씬 준비 상태 초기화
-            withAnimation(.easeIn(duration: 0.2)) {
+            .onAppear {
+                // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
+                if !isSceneReady {
+                    Task {
+                        await loadBundleData()
+                    }
+                }
+                isNavigatingDeeper = false
+                showDeleteCompleteToast = false
+                showAlreadyMainBundleToast = false
+                showChangeMainBundleAlert = false
+                isMainBundleChange = false
+                showDeleteAlert = false
+                showMenu = false
+                viewModel.hideTabBar()
+                getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
+            }
+            .onDisappear {
+                // 뷰가 사라질 때 씬 준비 상태 초기화
                 isSceneReady = false
+                // Alert/Toast 상태 초기화
+                showDeleteCompleteToast = false
+                showAlreadyMainBundleToast = false
+                showChangeMainBundleAlert = false
+                isMainBundleChange = false
+                showDeleteAlert = false
+                showMenu = false
+            }
+            .task {
+                // 최초 뷰가 나타날 때 뭉치 데이터 로드
+                await loadBundleData()
+            }
+            .onChange(of: keyringDataList) { _, _ in
+                // 키링 데이터가 변경되면 씬 준비 상태 초기화
+                withAnimation(.easeIn(duration: 0.2)) {
+                    isSceneReady = false
+                }
             }
         }
     }
@@ -301,6 +276,46 @@ extension BundleDetailView {
             }
         }
         
+    }
+}
+
+// MARK: - 메뉴 오버레이
+extension BundleDetailView {
+    var menuOverlay: some View {
+        ZStack {
+            Color.clear
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showMenu = false
+                    }
+                }
+            
+            if let bundle = viewModel.selectedBundle {
+                BundleMenu(
+                    position: menuPosition,
+                    onNameEdit: {
+                        showMenu = false
+                        isNavigatingDeeper = true
+                        router.push(.bundleNameEditView)
+                    },
+                    onEdit: {
+                        showMenu = false
+                        isNavigatingDeeper = true
+                        router.push(.bundleEditView)
+                    },
+                    onDelete: {
+                        showMenu = false
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showDeleteAlert = true
+                        }
+                    },
+                    isMain: bundle.isMain
+                )
+                .zIndex(50)
+            }
+        }
     }
 }
 
