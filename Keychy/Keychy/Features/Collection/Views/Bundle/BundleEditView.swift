@@ -363,7 +363,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectBackgroundSheet()
+                        content: SelectBackgroundSheet(
+                            viewModel: viewModel,
+                            selectedBG: newSelectedBackground,
+                            onBackgroundTap: { bg in
+                                newSelectedBackground = bg
+                            }
+                        )
                     )
                 }
             }
@@ -381,7 +387,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectCarabinerSheet()
+                        content: SelectCarabinerSheet(
+                            viewModel: viewModel,
+                            selectedCarabiner: newSelectedCarabiner,
+                            onCarabinerTap: { carabiner in
+                                newSelectedCarabiner = carabiner
+                            }
+                        )
                     )
                 }
             }
@@ -804,51 +816,6 @@ extension BundleEditView {
             )
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - 배경, 카라비너 선택 시트
-extension BundleEditView {
-    private func selectBackgroundSheet() -> some View {
-        LazyVGrid(columns: gridColumns, spacing: 10) {
-            ForEach(viewModel.backgroundViewData) { bg in
-                SelectBackgroundGridItem(
-                    background: bg,
-                    isSelected: newSelectedBackground == bg
-                )
-                .onTapGesture {
-                    newSelectedBackground = bg
-                    
-                    // 무료이고, 유저가 보유x인 경우만 바로 추가
-                    if !bg.isOwned && bg.background.isFree {
-                        Task {
-                            await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
-                        }
-                    }
-                }
-            }
-        }
-        .padding(.horizontal, 20)
-    }
-    
-    private func selectCarabinerSheet() -> some View {
-        LazyVGrid(columns: gridColumns, spacing: 10) {
-            ForEach(viewModel.carabinerViewData) { cb in
-                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb)
-                    .onTapGesture {
-                        selectCarabiner = cb
-                        showChangeCarabinerAlert = true
-                        
-                        // 무료 카라비너인 경우만 바로 추가
-                        if !cb.isOwned && cb.carabiner.isFree {
-                            Task {
-                                await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
-                            }
-                        }
-                    }
-            }
-        }
-        .padding(.horizontal, 20)
     }
 }
 
