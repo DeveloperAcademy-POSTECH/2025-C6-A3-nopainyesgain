@@ -21,6 +21,9 @@ struct CoinChargeView<Route: Hashable>: View {
     // 성공/실패 Alert
     @State var showPurchaseSuccessAlert = false
     @State var showPurchaseFailAlert = false
+
+    // 코인 구매 진행 중 상태
+    @State var isCoinPurchasing = false
     
     var body: some View {
         ZStack {
@@ -81,6 +84,11 @@ struct CoinChargeView<Route: Hashable>: View {
                 }
                 .ignoresSafeArea()
             }
+
+            // 코인 구매 로딩
+            if isCoinPurchasing {
+                LoadingAlert(type: .short, message: nil)
+            }
         }
     }
 }
@@ -105,17 +113,20 @@ extension CoinChargeView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-            
+
             if let storeProduct = StoreProduct(rawValue: product.id) {
                 Text("\(storeProduct.coinAmount)개")
                     .typography(.nanum18EB)
                     .foregroundStyle(.main500)
             }
-            
+
             Spacer()
-            
+
             Button {
+                guard !isCoinPurchasing else { return }
+                isCoinPurchasing = true
                 Task {
+                    defer { isCoinPurchasing = false }
                     do {
                         try await manager.purchase(product)
                     } catch {
@@ -130,6 +141,7 @@ extension CoinChargeView {
                     .background(.black100)
                     .cornerRadius(4)
             }
+            .disabled(isCoinPurchasing)
         }
     }
 }
