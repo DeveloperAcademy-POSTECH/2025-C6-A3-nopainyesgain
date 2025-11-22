@@ -136,19 +136,23 @@ struct BundleDetailView<Route: BundleRoute>: View {
             .navigationBarBackButtonHidden(true)
             .toolbar(.hidden, for: .tabBar)
             .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
-                // (0, 0, 0, 0)이 아닐 때만 업데이트
                 if frame != .zero {
                     menuPosition = frame
-                    print("menu Position: \(frame)")
                 }
             }
             .onAppear {
-                // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았다면 다시 로드
-                if !isSceneReady {
+                // 씬이 이미 준비되어 있고 데이터가 있으면 로딩 건너뛰기
+                if !keyringDataList.isEmpty {
+                    isSceneReady = true
+                }
+                
+                // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았고 데이터가 없다면 다시 로드
+                if !isSceneReady && keyringDataList.isEmpty {
                     Task {
                         await loadBundleData()
                     }
                 }
+                
                 isNavigatingDeeper = false
                 showDeleteCompleteToast = false
                 showAlreadyMainBundleToast = false
@@ -160,8 +164,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
             }
             .onDisappear {
-                // 뷰가 사라질 때 씬 준비 상태 초기화
-                isSceneReady = false
                 // Alert/Toast 상태 초기화
                 showDeleteCompleteToast = false
                 showAlreadyMainBundleToast = false
