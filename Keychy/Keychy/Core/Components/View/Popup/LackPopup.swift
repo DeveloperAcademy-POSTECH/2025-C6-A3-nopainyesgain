@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LackPopup: View {
     let title: String
+    let message: String
     let onCancel: () -> Void
     let onConfirm: () -> Void
     
@@ -27,7 +28,7 @@ struct LackPopup: View {
                 .multilineTextAlignment(.center)
             
             // 메시지
-            Text("충전하러 갈까요?")
+            Text(message)
                 .typography(.suit17SB)
                 .padding(.bottom, 24)
             
