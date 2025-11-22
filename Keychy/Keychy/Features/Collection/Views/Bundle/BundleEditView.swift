@@ -147,12 +147,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             await initializeData()
         }
         .onAppear {
-            
-            // 화면 전환 중이면 아무것도 하지 않음
-            if isNavigatingAway {
-                return
-            }
-            
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshEditData()
@@ -162,6 +156,9 @@ struct BundleEditView<Route: BundleRoute>: View {
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
             }
+        }
+        .onDisappear {
+            isNavigatingAway = false
         }
         .ignoresSafeArea()
         .onChange(of: showBackgroundSheet) { oldValue, newValue in
@@ -493,6 +490,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 초기 데이터 로딩
     private func initializeData() async {
         
+        // 데이터를 새로 로드하므로 씬도 새로 로드됨
+        await MainActor.run {
+            isSceneReady = false
+        }
+        
         // 사용자 키링 데이터 로드
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
@@ -743,16 +745,13 @@ extension BundleEditView {
                 NextToolbarButton {
                     Task {
                         await MainActor.run {
-                            // 화면 전환 시작을 표시하고 로딩 상태 해제
-                            withAnimation(.linear(duration: 0.1)) {
-                                isNavigatingAway = true
-                                isSceneReady = true
-                            }
+                            // 화면 전환 시작을 표시
+                            // isSceneReady는 건드리지 않음 (현재 상태 유지)
+                            isNavigatingAway = true
                         }
                         
                         // 상태 변경이 UI에 반영되도록 짧은 대기
                         try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
-                        
                         await saveBundleChanges()
                         
                         await MainActor.run {
