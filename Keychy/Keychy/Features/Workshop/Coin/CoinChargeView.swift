@@ -315,9 +315,6 @@ extension CoinChargeView {
                 
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)
-                
-                Text("(1개)")
-                    .typography(.suit17SB)
             }
             .foregroundStyle(.white100)
             .frame(maxWidth: .infinity)
