@@ -187,7 +187,7 @@ extension BundleAddKeyringView {
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
-        .background(.ultraThinMaterial)
+        .glassEffect(.regular, in: .rect)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
