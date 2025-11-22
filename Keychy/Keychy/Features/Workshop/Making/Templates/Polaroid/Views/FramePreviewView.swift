@@ -232,28 +232,44 @@ struct FramePreviewView: View {
                             ZStack {
                                 // 사진 또는 플레이스홀더 이미지
                                 if let photoImage = viewModel.selectedPhotoImage {
-                                    Image(uiImage: photoImage)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: photoWidth, height: photoHeight)
-                                        .scaleEffect(finalScale)
-                                        .rotationEffect(finalRotation)
-                                        .offset(finalOffset)
-                                        .clipped()
-                                        .contentShape(Rectangle())
-                                        .gesture(photoGestures)
-                                        .onTapGesture {
-                                            withAnimation(.easeInOut(duration: 0.2)) {
-                                                showEditButton.toggle()
-                                            }
+                                    ZStack {
+                                        Image(uiImage: photoImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: photoWidth, height: photoHeight)
+                                            .scaleEffect(finalScale)
+                                            .rotationEffect(finalRotation)
+                                            .offset(finalOffset)
+                                            .clipped()
+
+                                        // 수정 버튼 표시 시 딤 처리
+                                        if showEditButton {
+                                            Color.black20
                                         }
+                                    }
+                                    .frame(width: photoWidth, height: photoHeight)
+                                    .clipped()
+                                    .contentShape(Rectangle())
+                                    .gesture(photoGestures)
+                                    .onTapGesture {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            showEditButton.toggle()
+                                        }
+                                    }
                                 } else {
                                     // 플레이스홀더 이미지 (실제 사진과 동일한 scaledToFill 적용)
-                                    Image(.polaroidPH)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: photoWidth, height: photoHeight)
-                                        .clipped()
+                                    ZStack {
+                                        Image(.polaroidPH)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: photoWidth, height: photoHeight)
+                                            .clipped()
+
+                                        // 플러스 버튼 표시 시 딤 처리
+                                        Color.black20
+                                    }
+                                    .frame(width: photoWidth, height: photoHeight)
+                                    .clipped()
                                 }
 
                                 // 사진 없으면 플러스 버튼, 있으면 탭 시 연필 버튼
