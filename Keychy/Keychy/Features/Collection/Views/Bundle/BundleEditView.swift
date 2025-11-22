@@ -64,66 +64,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            ZStack {
-                // MultiKeyringScene 또는 키링 편집 뷰
-                if let bundle = viewModel.selectedBundle,
-                   let background = newSelectedBackground,
-                   let carabiner = newSelectedCarabiner {
-                    
-                    keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
-                    
-                } else {
-                    if let bg = newSelectedBackground {
-                        LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                            if let image = state.image {
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                            } else if state.isLoading {
-                                Color.black20
-                                    .ignoresSafeArea()
-                            }
-                        }
-                    }
-                    if let cb = newSelectedCarabiner {
-                        VStack {
-                            LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
-                                if let image = state.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                }
-                            }
-                            Spacer()
-                        }
-                    }
-                }
-                
-                // navigationBar
-                customNavigationBar
-            }
-            .blur(radius: isSceneReady ? 0 : 15)
+            mainContentView
             
-            if !isSceneReady && !isNavigatingAway {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(100)
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                    .zIndex(101)
-            }
+            loadingOverlay
             
-            // Dim 오버레이 (키링 시트가 열릴 때)
-            if showSelectKeyringSheet {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(1)
-                    .onTapGesture {
-                        withAnimation(.easeInOut) {
-                            showSelectKeyringSheet = false
-                        }
-                    }
-                keyringSelectionSheet()
-            }
+            keyringSheetOverlay
             
             // 배경/카라비너 시트들
             sheetContent()
@@ -133,7 +78,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                 .position(x: screenWidth / 2, y: screenHeight / 2)
             
         }
-        
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
         }
@@ -180,6 +124,103 @@ struct BundleEditView<Route: BundleRoute>: View {
             guard newCarabiner != nil else { return }
             // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
+        }
+        .onChange(of: showSelectKeyringSheet) { _, newValue in
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                if newValue {
+                    sheetHeight = screenHeight * 0.08
+                } else {
+                    sheetHeight = screenHeight * 0.43
+                }
+            }
+        }
+    }
+    
+    // MARK: - Main Content Views
+    
+    /// 메인 콘텐츠 영역 (배경, 씬, 네비게이션 바)
+    private var mainContentView: some View {
+        ZStack {
+            sceneContentView
+            
+            // navigationBar
+            customNavigationBar
+        }
+        .blur(radius: isSceneReady ? 0 : 15)
+    }
+    
+    /// 씬 콘텐츠 (MultiKeyringScene 또는 placeholder 이미지)
+    private var sceneContentView: some View {
+        Group {
+            if let bundle = viewModel.selectedBundle,
+               let background = newSelectedBackground,
+               let carabiner = newSelectedCarabiner {
+                
+                keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
+                
+            } else {
+                placeholderImageView
+            }
+        }
+    }
+    
+    /// Placeholder 이미지 뷰 (데이터 로드 전)
+    private var placeholderImageView: some View {
+        ZStack {
+            if let bg = newSelectedBackground {
+                LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } else if state.isLoading {
+                        Color.black20
+                            .ignoresSafeArea()
+                    }
+                }
+            }
+            if let cb = newSelectedCarabiner {
+                VStack {
+                    LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    }
+                    Spacer()
+                }
+            }
+        }
+    }
+    
+    /// 로딩 오버레이
+    private var loadingOverlay: some View {
+        Group {
+            if !isSceneReady && !isNavigatingAway {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+        }
+    }
+    
+    /// 키링 선택 시트 오버레이
+    private var keyringSheetOverlay: some View {
+        Group {
+            if showSelectKeyringSheet {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(1)
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = false
+                        }
+                    }
+                keyringSelectionSheet()
+            }
         }
     }
     
