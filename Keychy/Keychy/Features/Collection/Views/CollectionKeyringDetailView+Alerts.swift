@@ -64,7 +64,7 @@ extension CollectionKeyringDetailView {
             showDeleteAlert = false
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")
                 return
@@ -126,7 +126,8 @@ extension CollectionKeyringDetailView {
             
             if showCopyLackAlert {
                 LackPopup(
-                    title: "복사권이 부족합니다!",
+                    title: "복사권이 부족해요",
+                    message: "충전하러 갈까요?",
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showCopyLackAlert = false
@@ -159,7 +160,7 @@ extension CollectionKeyringDetailView {
             showCopyAlert = false
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")
                 return
@@ -201,7 +202,7 @@ extension CollectionKeyringDetailView {
                                 // 복사권 개수 새로고침
                                 self.refreshCopyVoucher()
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                         self.showCopyCompleteAlert = true
                                     }
@@ -256,7 +257,7 @@ extension CollectionKeyringDetailView {
             showPackageAlert = false
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")
                 return

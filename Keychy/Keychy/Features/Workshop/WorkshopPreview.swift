@@ -144,6 +144,7 @@ struct WorkshopPreview: View {
 
                         LackPopup(
                             title: "코인이 부족해요",
+                            message: "충전하러 갈까요?",
                             onCancel: {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     showPurchaseFailAlert = false
