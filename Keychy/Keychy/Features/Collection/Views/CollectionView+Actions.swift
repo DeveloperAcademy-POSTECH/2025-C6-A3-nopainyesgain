@@ -109,7 +109,7 @@ extension CollectionView {
         Task {
             let result = await collectionViewModel.purchaseInventoryExpansion(
                 userManager: userManager,
-                expansionCost: 20
+                expansionCost: 1000
             )
             
             await MainActor.run {
