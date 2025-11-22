@@ -42,11 +42,11 @@ struct CoinChargeView<Route: Hashable>: View {
                 .padding(.top, 25)
                 .padding(.bottom, 30)
             }
+            .adaptiveTopPaddingAlt()
             .scrollIndicators(.never)
-            .navigationTitle("충전하기")
+            .navigationBarBackButtonHidden()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
-            .navigationBarBackButtonHidden(showPurchaseSuccessAlert || showPurchaseFailAlert)
             .sheet(isPresented: $showPurchaseSheet) {
                 purchaseSheet
             }
@@ -85,7 +85,10 @@ struct CoinChargeView<Route: Hashable>: View {
                 }
                 .ignoresSafeArea()
             }
+            
+            customNavigationBar
         }
+        .ignoresSafeArea()
     }
 }
 
@@ -365,6 +368,28 @@ extension CoinChargeView {
             .typography(.suit15M25)
             .foregroundStyle(.gray500)
             .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    
+}
+
+// MARK: - 커스텀네비
+extension CoinChargeView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽)
+            BackToolbarButton {
+                router.pop()
+            }
+            .opacity(showPurchaseSuccessAlert || showPurchaseFailAlert ? 0 : 1)
+        } center: {
+            // Center (중앙)
+            Text("충전하기")
+        } trailing: {
+            // Trailing (오른쪽) - 빈 공간
+            Spacer()
+                .frame(width: 44, height: 44)
+        }
     }
 }
 
