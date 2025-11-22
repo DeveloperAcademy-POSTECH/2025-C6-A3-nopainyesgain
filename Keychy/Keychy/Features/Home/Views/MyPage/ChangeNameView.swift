@@ -31,7 +31,6 @@ struct ChangeNameView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("닉네임")
                         .typography(.suit16B)
-                        .padding(.top, 37)
                     
                     HStack {
                         TextField("닉네임을 적어주세요.", text: $nickname)
@@ -114,16 +113,16 @@ struct ChangeNameView: View {
                     // 현재 닉네임으로 초기화
                     nickname = userManager.currentUser?.nickname ?? ""
                 }
-                
-                // 커스텀네비게이션
+                .adaptiveBottomPadding()
             }
             .padding(.horizontal, 20)
-            .navigationTitle("닉네임 변경")
             .toolbar(.hidden, for: .tabBar)
+            .navigationBarBackButtonHidden()
             .dismissKeyboardOnTap()
             .ignoresSafeArea(.keyboard)
             .blur(radius: (showSuccessAlert || isUpdating) ? 10 : 0)
             .animation(.easeInOut(duration: 0.3), value: (showSuccessAlert || isUpdating))
+            .adaptiveTopPaddingAlt()
 
             // 업데이트 중 로딩
             if isUpdating {
@@ -138,6 +137,9 @@ struct ChangeNameView: View {
                     isPresented: $showSuccessAlert
                 )
             }
+            
+            customNavigationBar
+                .ignoresSafeArea()
         }
     }
     
@@ -292,4 +294,20 @@ struct ChangeNameView: View {
             }
     }
 
+    /// 커스텀 네비
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽)
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            // Center (중앙)
+            Text("닉네임 변경")
+        } trailing: {
+            // Trailing (오른쪽) - 빈 공간
+            Spacer()
+                .frame(width: 44, height: 44)
+        }
+    }
 }
