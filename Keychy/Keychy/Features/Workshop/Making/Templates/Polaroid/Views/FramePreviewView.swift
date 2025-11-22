@@ -50,7 +50,7 @@ struct FramePreviewView: View {
                     Image("frameChain")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 80)
+                        .frame(width: 90)
                 }
 
                 Spacer()
