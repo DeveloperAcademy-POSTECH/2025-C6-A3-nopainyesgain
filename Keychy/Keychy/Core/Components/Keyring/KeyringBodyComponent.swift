@@ -170,7 +170,7 @@ struct KeyringBodyComponent {
         // 텍스처 생성
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
-        let spriteNode = SKSpriteNode(texture: texture, size: displaySize) // displaySize -> originalSize로 사용
+        let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
         spriteNode.zPosition = -1  // Body는 체인 아래
 
         // 물리 바디 설정
