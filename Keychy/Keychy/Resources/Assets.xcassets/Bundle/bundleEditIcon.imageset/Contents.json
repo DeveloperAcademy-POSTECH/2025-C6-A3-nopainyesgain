@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "bundleEditIcon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
