@@ -83,7 +83,7 @@ struct CoinChargeView<Route: Hashable>: View {
                 LoadingAlert(type: .short, message: nil)
             }
         }
-        
+        .ignoresSafeArea()
     }
 }
 
