@@ -58,6 +58,5 @@ struct SelectionGridSheet<Item: Identifiable & Equatable, GridItemView: View>: V
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 30)
     }
 }

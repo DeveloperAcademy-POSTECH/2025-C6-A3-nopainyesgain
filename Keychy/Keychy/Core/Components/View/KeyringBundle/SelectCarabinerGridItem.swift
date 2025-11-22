@@ -33,7 +33,11 @@ struct SelectCarabinerGridItem: View {
                 }
                 .padding(3.55)
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
-                .background(RoundedRectangle(cornerRadius: 10).fill(.white100))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(isSelected ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                    
+                )
                 
                 // 유료 재화 표시
                 VStack {
@@ -65,10 +69,6 @@ struct SelectCarabinerGridItem: View {
                 }
                 .padding(.top, 5)
                 .padding(.trailing, 7)
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.black100.opacity(0.15))
-                }
             } //: ZSTACK
             .clipped()
             Text(carabiner.carabiner.carabinerName)

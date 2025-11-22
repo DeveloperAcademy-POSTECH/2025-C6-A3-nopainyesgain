@@ -644,6 +644,7 @@ extension CollectionViewModel {
             }
         }
         .frame(width: widthSize, height: heightSize)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
         .clipped()
     }
     

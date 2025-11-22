@@ -31,7 +31,7 @@ struct SelectBackgroundGridItem: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(isSelected ? .black.opacity(0.15) : .clear)
+                        .strokeBorder(isSelected ? .mainOpacity80 : .clear, lineWidth: 1.8)
                     
                 )
                 VStack {

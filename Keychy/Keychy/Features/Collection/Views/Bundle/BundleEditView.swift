@@ -62,68 +62,63 @@ struct BundleEditView<Route: BundleRoute>: View {
     private let sheetHeightRatio: CGFloat = 0.43
     private let screenSize = CGSize(width: 402, height: 874)
     
+    /// 키링 선택 시트용 정렬된 키링 리스트
+    /// 1순위: 현재 위치에 선택된 키링
+    /// 2순위: 일반 키링들 (선택되지 않고, published/packaged 아님)
+    /// 3순위: 다른 위치에 장착된 키링들
+    /// 4순위: published 또는 packaged 상태의 키링들 (맨 뒤)
+    private var sortedKeyringsForSelection: [Keyring] {
+        let selectedKeyring = selectedKeyrings[selectedPosition]
+        
+        return viewModel.keyring.sorted { keyring1, keyring2 in
+            let isKeyring1SelectedHere = keyring1.id == selectedKeyring?.id
+            let isKeyring2SelectedHere = keyring2.id == selectedKeyring?.id
+            
+            let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
+            let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
+            
+            let isKeyring1Unavailable = keyring1.status == .published || keyring1.status == .packaged
+            let isKeyring2Unavailable = keyring2.status == .published || keyring2.status == .packaged
+            
+            // 1순위: 현재 위치에 선택된 키링 - 맨 앞
+            if isKeyring1SelectedHere != isKeyring2SelectedHere {
+                return isKeyring1SelectedHere
+            }
+            
+            // 2순위: 일반 키링 vs 나머지 (elsewhere or unavailable)
+            let isKeyring1Normal = !isKeyring1SelectedElsewhere && !isKeyring1Unavailable
+            let isKeyring2Normal = !isKeyring2SelectedElsewhere && !isKeyring2Unavailable
+            
+            if isKeyring1Normal != isKeyring2Normal {
+                return isKeyring1Normal
+            }
+            
+            // 3순위: 다른 위치 장착 vs unavailable (다른 위치 장착이 먼저)
+            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
+                return isKeyring1SelectedElsewhere // elsewhere를 앞으로
+            }
+            
+            // 4순위: unavailable 키링들 (맨 뒤)
+            if isKeyring1Unavailable != isKeyring2Unavailable {
+                return isKeyring2Unavailable // unavailable을 맨 뒤로
+            }
+            
+            // 같은 그룹 내에서는 원래 순서 유지 (viewModel.keyringSorting 결과)
+            guard let index1 = viewModel.keyring.firstIndex(of: keyring1),
+                  let index2 = viewModel.keyring.firstIndex(of: keyring2) else {
+                return false
+            }
+            return index1 < index2
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
-            ZStack {
-                // MultiKeyringScene 또는 키링 편집 뷰
-                if let bundle = viewModel.selectedBundle,
-                   let background = newSelectedBackground,
-                   let carabiner = newSelectedCarabiner {
-                    
-                    keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
-                    
-                } else {
-                    if let bg = newSelectedBackground {
-                        LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                            if let image = state.image {
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                            } else if state.isLoading {
-                                Color.black20
-                                    .ignoresSafeArea()
-                            }
-                        }
-                    }
-                    if let cb = newSelectedCarabiner {
-                        VStack {
-                            LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
-                                if let image = state.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                }
-                            }
-                            Spacer()
-                        }
-                    }
-                }
-                
-                // navigationBar
-                customNavigationBar
-            }
-            .blur(radius: isSceneReady ? 0 : 15)
+            mainContentView
             
-            if !isSceneReady && !isNavigatingAway {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(100)
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                    .zIndex(101)
-            }
+            loadingOverlay
             
-            // Dim 오버레이 (키링 시트가 열릴 때)
-            if showSelectKeyringSheet {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(1)
-                    .onTapGesture {
-                        withAnimation(.easeInOut) {
-                            showSelectKeyringSheet = false
-                        }
-                    }
-                keyringSelectionSheet()
-            }
+            keyringSheetOverlay
             
             // 배경/카라비너 시트들
             sheetContent()
@@ -133,7 +128,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                 .position(x: screenWidth / 2, y: screenHeight / 2)
             
         }
-        
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
         }
@@ -147,12 +141,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             await initializeData()
         }
         .onAppear {
-            
-            // 화면 전환 중이면 아무것도 하지 않음
-            if isNavigatingAway {
-                return
-            }
-            
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
                 await refreshEditData()
@@ -162,6 +150,9 @@ struct BundleEditView<Route: BundleRoute>: View {
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
             }
+        }
+        .onDisappear {
+            isNavigatingAway = false
         }
         .ignoresSafeArea()
         .onChange(of: showBackgroundSheet) { oldValue, newValue in
@@ -183,6 +174,101 @@ struct BundleEditView<Route: BundleRoute>: View {
             guard newCarabiner != nil else { return }
             // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
+        }
+        .onChange(of: showSelectKeyringSheet) { _, newValue in
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                if newValue {
+                    sheetHeight = screenHeight * 0.08
+                }
+            }
+        }
+    }
+    
+    // MARK: - Main Content Views
+    
+    /// 메인 콘텐츠 영역 (배경, 씬, 네비게이션 바)
+    private var mainContentView: some View {
+        ZStack {
+            sceneContentView
+            
+            // navigationBar
+            customNavigationBar
+        }
+        .blur(radius: isSceneReady ? 0 : 15)
+    }
+    
+    /// 씬 콘텐츠 (MultiKeyringScene 또는 placeholder 이미지)
+    private var sceneContentView: some View {
+        Group {
+            if let bundle = viewModel.selectedBundle,
+               let background = newSelectedBackground,
+               let carabiner = newSelectedCarabiner {
+                
+                keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
+                
+            } else {
+                placeholderImageView
+            }
+        }
+    }
+    
+    /// Placeholder 이미지 뷰 (데이터 로드 전)
+    private var placeholderImageView: some View {
+        ZStack {
+            if let bg = newSelectedBackground {
+                LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } else if state.isLoading {
+                        Color.black20
+                            .ignoresSafeArea()
+                    }
+                }
+            }
+            if let cb = newSelectedCarabiner {
+                VStack {
+                    LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    }
+                    Spacer()
+                }
+            }
+        }
+    }
+    
+    /// 로딩 오버레이
+    private var loadingOverlay: some View {
+        Group {
+            if !isSceneReady && !isNavigatingAway {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+        }
+    }
+    
+    /// 키링 선택 시트 오버레이
+    private var keyringSheetOverlay: some View {
+        Group {
+            if showSelectKeyringSheet {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(1)
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = false
+                        }
+                    }
+                keyringSelectionSheet()
+            }
         }
     }
     
@@ -264,7 +350,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(viewModel.keyring, id: \.self) { keyring in
+                        ForEach(sortedKeyringsForSelection, id: \.self) { keyring in
                             keyringCell(keyring: keyring)
                         }
                     }
@@ -275,7 +361,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
-        .background(.ultraThinMaterial)
+        .glassEffect(.regular, in: .rect)
         .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
@@ -296,6 +382,9 @@ struct BundleEditView<Route: BundleRoute>: View {
                 // 해제
                 selectedKeyrings[selectedPosition] = nil
                 keyringOrder.removeAll { $0 == selectedPosition }
+                withAnimation(.easeInOut) {
+                    showSelectKeyringSheet = false
+                }
             } else if !isSelectedElsewhere {
                 // 중복이 아닐 때만 선택 가능
                 // 기존 있으면 순서 제거 후 교체
@@ -313,9 +402,23 @@ struct BundleEditView<Route: BundleRoute>: View {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 10) {
-                    CollectionCellView(keyring: keyring)
-                        .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        .cornerRadius(10)
+                    ZStack {
+                        CollectionCellView(keyring: keyring)
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                            .cornerRadius(10)
+                        
+                        // 외곽선을 별도 레이어로 그리기
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                        
+                        // 다른 위치에 장착된 경우 오버레이
+                        if isSelectedElsewhere {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.black50)
+                                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                        }
+                    }
                     
                     Text("\(keyring.name)")
                         .typography(isSelectedHere ? .notosans14SB : .notosans14M)
@@ -324,8 +427,8 @@ struct BundleEditView<Route: BundleRoute>: View {
                         .truncationMode(.tail)
                 }
                 
-                // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
-                if isSelectedElsewhere {
+                // 장착 중 아이콘
+                if isSelectedElsewhere || isSelectedHere {
                     VStack {
                         HStack {
                             Spacer()
@@ -366,7 +469,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectBackgroundSheet()
+                        content: SelectBackgroundSheet(
+                            viewModel: viewModel,
+                            selectedBG: newSelectedBackground,
+                            onBackgroundTap: { bg in
+                                newSelectedBackground = bg
+                            }
+                        )
                     )
                 }
             }
@@ -384,7 +493,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .padding(.bottom, 10)
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
-                        content: selectCarabinerSheet()
+                        content: SelectCarabinerSheet(
+                            viewModel: viewModel,
+                            selectedCarabiner: newSelectedCarabiner,
+                            onCarabinerTap: { carabiner in
+                                newSelectedCarabiner = carabiner
+                            }
+                        )
                     )
                 }
             }
@@ -492,6 +607,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     /// 초기 데이터 로딩
     private func initializeData() async {
+        
+        // 데이터를 새로 로드하므로 씬도 새로 로드됨
+        await MainActor.run {
+            isSceneReady = false
+        }
         
         // 사용자 키링 데이터 로드
         let uid = UserManager.shared.userUID
@@ -743,16 +863,13 @@ extension BundleEditView {
                 NextToolbarButton {
                     Task {
                         await MainActor.run {
-                            // 화면 전환 시작을 표시하고 로딩 상태 해제
-                            withAnimation(.linear(duration: 0.1)) {
-                                isNavigatingAway = true
-                                isSceneReady = true
-                            }
+                            // 화면 전환 시작을 표시
+                            // isSceneReady는 건드리지 않음 (현재 상태 유지)
+                            isNavigatingAway = true
                         }
                         
                         // 상태 변경이 UI에 반영되도록 짧은 대기
                         try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
-                        
                         await saveBundleChanges()
                         
                         await MainActor.run {
@@ -805,51 +922,6 @@ extension BundleEditView {
             )
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - 배경, 카라비너 선택 시트
-extension BundleEditView {
-    private func selectBackgroundSheet() -> some View {
-        LazyVGrid(columns: gridColumns, spacing: 10) {
-            ForEach(viewModel.backgroundViewData) { bg in
-                SelectBackgroundGridItem(
-                    background: bg,
-                    isSelected: newSelectedBackground == bg
-                )
-                .onTapGesture {
-                    newSelectedBackground = bg
-                    
-                    // 무료이고, 유저가 보유x인 경우만 바로 추가
-                    if !bg.isOwned && bg.background.isFree {
-                        Task {
-                            await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
-                        }
-                    }
-                }
-            }
-        }
-        .padding(.horizontal, 20)
-    }
-    
-    private func selectCarabinerSheet() -> some View {
-        LazyVGrid(columns: gridColumns, spacing: 10) {
-            ForEach(viewModel.carabinerViewData) { cb in
-                SelectCarabinerGridItem(isSelected: newSelectedCarabiner == cb, carabiner: cb)
-                    .onTapGesture {
-                        selectCarabiner = cb
-                        showChangeCarabinerAlert = true
-                        
-                        // 무료 카라비너인 경우만 바로 추가
-                        if !cb.isOwned && cb.carabiner.isFree {
-                            Task {
-                                await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
-                            }
-                        }
-                    }
-            }
-        }
-        .padding(.horizontal, 20)
     }
 }
 

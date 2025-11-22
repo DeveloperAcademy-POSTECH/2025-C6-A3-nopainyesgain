@@ -68,6 +68,7 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 
                 LoadingAlert(type: .longWithKeychy, message: "뭉치 만드는 중...")
                     .opacity(isCapturing ? 1 : 0)
+                    .zIndex(50)
             }
         }
         .ignoresSafeArea()
@@ -186,7 +187,7 @@ extension BundleAddKeyringView {
         .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
-        .background(.ultraThinMaterial)
+        .glassEffect(.regular, in: .rect)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
