@@ -304,11 +304,18 @@ extension CollectionKeyringPackageView {
             return
         }
         
+        guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+            print("UID를 찾을 수 없습니다")
+            return
+        }
+        
         let db = Firestore.firestore()
         
         // PostOffice 정보 로드
         db.collection("PostOffice")
             .whereField("keyringId", isEqualTo: keyringDocId)
+            .whereField("senderId", isEqualTo: uid)
+            .order(by: "createdAt", descending: true)
             .getDocuments { snapshot, error in
                 if let error = error {
                     print("PostOffice 조회 실패: \(error.localizedDescription)")
@@ -316,7 +323,9 @@ extension CollectionKeyringPackageView {
                 }
                 
                 guard let document = snapshot?.documents.first else {
-                    print("PostOffice 문서 없음")
+                    print("수락 대기 중인 PostOffice 없음 - 키링이 이미 수락되었을 수 있음")
+                    
+                    // TODO: 추후 이런 경우, isPackaged = false로 되돌리는 로직 필요할수도
                     return
                 }
                 
