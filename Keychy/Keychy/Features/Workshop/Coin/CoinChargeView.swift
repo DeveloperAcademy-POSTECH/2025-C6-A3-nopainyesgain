@@ -24,7 +24,12 @@ struct CoinChargeView<Route: Hashable>: View {
 
     // 코인 구매 진행 중 상태
     @State var isCoinPurchasing = false
-    
+
+    // Alert 표시 시 blur 적용 여부
+    private var shouldApplyBlur: Bool {
+        showPurchaseSuccessAlert || showPurchaseFailAlert
+    }
+
     var body: some View {
         ZStack {
             ScrollView {
@@ -39,8 +44,8 @@ struct CoinChargeView<Route: Hashable>: View {
                     // 기타 아이템 섹션
                     otherItemsSection
                 }
-                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
-                .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
+                .blur(radius: shouldApplyBlur ? 15 : 0)
+                .animation(.easeInOut(duration: 0.2), value: shouldApplyBlur)
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
@@ -78,6 +83,7 @@ struct CoinChargeView<Route: Hashable>: View {
                 LoadingAlert(type: .short, message: nil)
             }
         }
+        
     }
 }
 
