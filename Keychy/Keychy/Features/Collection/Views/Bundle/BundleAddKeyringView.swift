@@ -68,6 +68,7 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
                 
                 LoadingAlert(type: .longWithKeychy, message: "뭉치 만드는 중...")
                     .opacity(isCapturing ? 1 : 0)
+                    .zIndex(50)
             }
         }
         .ignoresSafeArea()
