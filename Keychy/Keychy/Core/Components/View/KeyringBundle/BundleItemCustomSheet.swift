@@ -38,7 +38,7 @@ struct BundleItemCustomSheet<Content: View>: View {
                     .frame(width: 36, height: 5)
                     .padding(6)
                 Text("선택")
-                    .typography(.notosans17M)
+                    .typography(.suit16B)
                     .foregroundStyle(.black100)
                     .padding(EdgeInsets(top: 13, leading: 0, bottom: 9, trailing: 0))
             }
