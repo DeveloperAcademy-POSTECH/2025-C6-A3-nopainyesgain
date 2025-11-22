@@ -64,25 +64,13 @@ struct CoinChargeView<Route: Hashable>: View {
                 )
             }
 
-            // 구매 실패 Alert
+            // 구매 실패 Alert - KeychyAlert 사용
             if showPurchaseFailAlert {
-                ZStack {
-                    Color.black20
-                        .zIndex(99)
-
-                    LackPopup(
-                        title: "코인이 부족해요",
-                        message: "코인을 먼저 충전해주세요",
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showPurchaseFailAlert = false
-                            }
-                        }
-                    )
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(100)
-                }
-                .ignoresSafeArea()
+                KeychyAlert(
+                    type: .fail,
+                    message: "코인이 부족해요",
+                    isPresented: $showPurchaseFailAlert
+                )
             }
 
             // 코인 구매 로딩
