@@ -69,11 +69,7 @@ struct CoinChargeView<Route: Hashable>: View {
 
                     LackPopup(
                         title: "코인이 부족해요",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showPurchaseFailAlert = false
-                            }
-                        },
+                        message: "코인을 먼저 충전해주세요",
                         onConfirm: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 showPurchaseFailAlert = false

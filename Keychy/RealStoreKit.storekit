@@ -40,14 +40,14 @@
       "internalID" : "6755326331",
       "localizations" : [
         {
-          "description" : "Add 3,500 coins for use in item purchases on Keychy.",
-          "displayName" : "3,500 coins",
-          "locale" : "en_US"
-        },
-        {
           "description" : "키치에서 아이템구입에 사용할 수 있는 코인 3,500개를 구입합니다.",
           "displayName" : "3,500 코인",
           "locale" : "ko"
+        },
+        {
+          "description" : "Add 3,500 coins for use in item purchases on Keychy.",
+          "displayName" : "3,500 coins",
+          "locale" : "en_US"
         }
       ],
       "productID" : "keychyCoin3500",
@@ -83,7 +83,7 @@
     "_developerTeamID" : "BUKGH5MWAT",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 785468211.23204505,
+    "_lastSynchronizedDate" : 785476588.462497,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",

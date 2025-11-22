@@ -988,7 +988,6 @@
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
-				C6C35EF32ED14864009642F4 /* RealStoreKit.storekit */,
 				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
 				C60E84112EC484CF005C5357 /* WidgetKeychy */,
@@ -1579,6 +1578,7 @@
 		C665DDEA2EAF064500CE4495 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C6C35EF32ED14864009642F4 /* RealStoreKit.storekit */,
 				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
 				C6B56F332EC061BB0049F969 /* WidgetKit.framework */,
 				C6B56F352EC061BB0049F969 /* SwiftUI.framework */,
