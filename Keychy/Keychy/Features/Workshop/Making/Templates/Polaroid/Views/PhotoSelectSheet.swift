@@ -14,7 +14,7 @@ struct PhotoSelectSheet: View {
     let onCameraSelected: () -> Void
     let onPhotoLibrarySelected: () -> Void
 
-    @State private var contentHeight: CGFloat = 240
+    @State private var contentHeight: CGFloat = 220
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,11 +41,12 @@ struct PhotoSelectSheet: View {
             .padding(.bottom, 60)
 
             // 카메라/사진선택 버튼
-            HStack(spacing: 12) {
+            VStack(spacing: 30) {
                 cameraBtn
                 photoPickBtn
             }
-            .padding(.horizontal, 35)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 60)
             .adaptiveBottomPadding()
         }
         .background(
@@ -84,11 +85,17 @@ extension PhotoSelectSheet {
             onCameraSelected()
             dismiss()
         } label: {
-            Image("camera")
-                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                Image("camera22")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width:22)
+                Text("카메라")
+                    .typography(.suit16M)
+                Spacer()
+            }
         }
-        .buttonStyle(.glass)
-        .clipShape(Circle())
+        .buttonStyle(.plain)
     }
 
     private var photoPickBtn: some View {
@@ -96,16 +103,16 @@ extension PhotoSelectSheet {
             onPhotoLibrarySelected()
             dismiss()
         } label: {
-            HStack(spacing: 2) {
-                Image("pic")
+            HStack(spacing: 8) {
+                Image("picBlack")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width:22)
                 Text("사진 선택")
-                    .typography(.suit17B)
-                    .padding(.vertical, 15)
+                    .typography(.suit16M)
+                Spacer()
             }
-            .foregroundStyle(.white100)
-            .frame(maxWidth: .infinity)
-            .background(.gray700)
-            .clipShape(Capsule())
+            .buttonStyle(.plain)
         }
     }
 }
