@@ -56,9 +56,6 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - 씬 정리 상태
     private var isCleaningUp = false
-    
-    // MARK: - 씬 ID (디버깅용)
-    private let sceneID = UUID().uuidString.prefix(8)
 
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
