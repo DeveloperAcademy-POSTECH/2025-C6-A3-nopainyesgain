@@ -95,6 +95,15 @@ struct MenuToolbarButton: View {
         }
         .frame(width: 44, height: 44)
         .glassEffect(.regular.interactive(), in: .circle)
+        .overlay(
+            GeometryReader { geometry in
+                Color.clear
+                    .preference(
+                        key: MenuButtonPreferenceKey.self,
+                        value: geometry.frame(in: .global)
+                    )
+            }
+        )
     }
 }
 
