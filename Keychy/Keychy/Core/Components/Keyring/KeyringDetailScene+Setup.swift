@@ -111,7 +111,7 @@ extension KeyringDetailScene {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY - 2
-        let chainSpacing: CGFloat = 20
+        let chainSpacing: CGFloat = 22
         
         var chains: [SKSpriteNode] = []
         for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {

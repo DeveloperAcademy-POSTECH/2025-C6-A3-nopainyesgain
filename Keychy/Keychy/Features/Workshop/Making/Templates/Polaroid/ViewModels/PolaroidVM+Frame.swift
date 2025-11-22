@@ -146,18 +146,18 @@ extension PolaroidVM {
             originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
         }
 
-        // 최종 이미지를 높이 210으로 scaleToFit
-        let finalHeight: CGFloat = 210
-        let finalAspect = composedImage.size.width / composedImage.size.height
-        let finalWidth = finalHeight * finalAspect
-        let finalSize = CGSize(width: finalWidth, height: finalHeight)
+//        // 최종 이미지를 높이 210으로 scaleToFit
+//        let finalHeight: CGFloat = 210
+//        let finalAspect = composedImage.size.width / composedImage.size.height
+//        let finalWidth = finalHeight * finalAspect
+//        let finalSize = CGSize(width: finalWidth, height: finalHeight)
+//
+//        let finalRenderer = UIGraphicsImageRenderer(size: finalSize)
+//        let scaledImage = finalRenderer.image { context in
+//            composedImage.draw(in: CGRect(origin: .zero, size: finalSize))
+//        }
 
-        let finalRenderer = UIGraphicsImageRenderer(size: finalSize)
-        let scaledImage = finalRenderer.image { context in
-            composedImage.draw(in: CGRect(origin: .zero, size: finalSize))
-        }
-
-        bodyImage = scaledImage
+        bodyImage = composedImage
     }
 
     // MARK: - Helper: Download Frame Image

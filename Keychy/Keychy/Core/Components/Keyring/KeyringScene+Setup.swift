@@ -37,7 +37,7 @@ extension KeyringScene {
         let ringBottomY = ring.position.y - ringHeight / 2
         // ringBottomY 그대로가 아니라 -2로 아주 얇은 간격을 줌으로써 보기에 자연스럽게 만드려고 함
         let chainStartY = ringBottomY - 2
-        let chainSpacing: CGFloat = 20
+        let chainSpacing: CGFloat = 22
         
         
         KeyringChainComponent.createLinks(
