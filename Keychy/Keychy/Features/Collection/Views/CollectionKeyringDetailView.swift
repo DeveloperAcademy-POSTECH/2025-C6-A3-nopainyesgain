@@ -49,17 +49,29 @@ struct CollectionKeyringDetailView: View {
             let heightRatio = geometry.size.height / 852
             
             ZStack(alignment: .top) {
-                Group {
-                    Image("WhiteBackground")
-                        .resizable()
-                        .scaledToFill()
-                        .ignoresSafeArea()
+                Image("WhiteBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .blur(radius: shouldApplyBlur ? 10 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                
+                VStack(spacing: 0) {
+                    Spacer()
                     
-                    keyringScene
-                        //.scaleEffect(heightRatio * 0.5)
+                    ZStack(alignment: .center) {
+                        keyringScene
+                            .frame(height: geometry.size.height * 0.8)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.4)
+                            .blur(radius: shouldApplyBlur ? 10 : 0)
+                            .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                        
+                        bottomSection
+                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.942)
+                            .opacity(showUIForCapture ? 1 : 0)
+                            .blur(radius: shouldApplyBlur ? 15 : 0)
+                    }
                 }
-                .blur(radius: shouldApplyBlur ? 10 : 0)
-                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
                 
                 if showMenu {
                     menuOverlay
@@ -71,14 +83,6 @@ struct CollectionKeyringDetailView: View {
                         
                     LoadingAlert(type: .short, message: nil)
                         .zIndex(200)
-                }
-                
-                VStack {
-                    Spacer()
-                    
-                    bottomSection
-                        .opacity(showUIForCapture ? 1 : 0)
-                        .blur(radius: shouldApplyBlur ? 15 : 0)
                 }
                 
                 alertOverlays
@@ -96,7 +100,7 @@ struct CollectionKeyringDetailView: View {
             
         }
         .ignoresSafeArea()
-        .adaptiveBottomPadding()
+        //.adaptiveBottomPadding()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
         .sheet(isPresented: $isSheetPresented) {
@@ -142,34 +146,37 @@ struct CollectionKeyringDetailView: View {
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     private var sceneScale: CGFloat {
-        isSheetPresented == false ? 1.2 : 0.8
+        isSheetPresented == false ? 1.1 : 0.8
     }
     
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     private var sceneYOffset: CGFloat {
-        isSheetPresented == false ? 10 : -100
+        isSheetPresented == false ? 30 : -50
     }
 }
 
 // MARK: - 키링 씬
 extension CollectionKeyringDetailView {
     var keyringScene: some View {
-        VStack(spacing: 0) {
-            Spacer()
-                .frame(height: 30)
-            
-            KeyringDetailSceneView(
-                keyring: keyring,
-                isLoading: $isLoading
-            )
-            
-            Spacer()
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(height: 30)
+                
+                KeyringDetailSceneView(
+                    keyring: keyring,
+                    isLoading: $isLoading
+                )
+                
+                Spacer()
+            }
+            .scaleEffect(sceneScale)
+            .offset(y: sceneYOffset)
+            .animation(.spring(response: 0.35, dampingFraction: 0.5), value: isSheetPresented)
+            .allowsHitTesting(isSheetPresented == false)
         }
-        //.scaleEffect(sceneScale)
-        .offset(y: sceneYOffset)
-        .animation(.spring(response: 0.35, dampingFraction: 0.5), value: isSheetPresented)
-        .allowsHitTesting(isSheetPresented == false)
     }
+
 }
 
 // MARK: - 하단 영역
@@ -205,9 +212,11 @@ extension CollectionKeyringDetailView {
             packageButton
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
+        .adaptiveBottomPadding()
         .opacity(isSheetPresented ? 0 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
     }
+    
     private var downloadImageButton: some View {
         Button(action: {
             captureAndSaveImage()

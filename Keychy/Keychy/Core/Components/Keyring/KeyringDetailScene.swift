@@ -137,7 +137,7 @@ class KeyringDetailScene: SKScene {
     private func applySwipeForceToNearbyChains(at location: CGPoint, velocity: CGVector) {
         guard let body = bodyNode, isReady else { return }
         
-        let forceMagnitude: CGFloat = 0.6
+        let forceMagnitude: CGFloat = 0.3
         
         for chainNode in chainNodes {
             let force = CGVector(
