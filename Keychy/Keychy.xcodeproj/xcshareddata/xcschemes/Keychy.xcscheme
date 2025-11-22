@@ -51,7 +51,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../Keychy/StoreKit.storekit">
+         identifier = "../../RealStoreKit2.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction

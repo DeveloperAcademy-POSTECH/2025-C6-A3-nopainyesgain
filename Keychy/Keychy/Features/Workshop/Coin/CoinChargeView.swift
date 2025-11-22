@@ -21,7 +21,15 @@ struct CoinChargeView<Route: Hashable>: View {
     // 성공/실패 Alert
     @State var showPurchaseSuccessAlert = false
     @State var showPurchaseFailAlert = false
-    
+
+    // 코인 구매 진행 중 상태
+    @State var isCoinPurchasing = false
+
+    // Alert 표시 시 blur 적용 여부
+    private var shouldApplyBlur: Bool {
+        showPurchaseSuccessAlert || showPurchaseFailAlert
+    }
+
     var body: some View {
         ZStack {
             ScrollView {
@@ -36,8 +44,8 @@ struct CoinChargeView<Route: Hashable>: View {
                     // 기타 아이템 섹션
                     otherItemsSection
                 }
-                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
-                .animation(.easeInOut(duration: 0.2), value: showPurchaseSuccessAlert)
+                .blur(radius: shouldApplyBlur ? 15 : 0)
+                .animation(.easeInOut(duration: 0.2), value: shouldApplyBlur)
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
@@ -61,30 +69,18 @@ struct CoinChargeView<Route: Hashable>: View {
                 )
             }
 
-            // 구매 실패 Alert
+            // 구매 실패 Alert - KeychyAlert 사용
             if showPurchaseFailAlert {
-                ZStack {
-                    Color.black20
-                        .zIndex(99)
+                KeychyAlert(
+                    type: .fail,
+                    message: "코인이 부족해요",
+                    isPresented: $showPurchaseFailAlert
+                )
+            }
 
-                    LackPopup(
-                        title: "코인이 부족해요",
-                        message: "충전하러 갈까요?",
-                        onCancel: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showPurchaseFailAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showPurchaseFailAlert = false
-                            }
-                        }
-                    )
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(100)
-                }
-                .ignoresSafeArea()
+            // 코인 구매 로딩
+            if isCoinPurchasing {
+                LoadingAlert(type: .short, message: nil)
             }
             
             customNavigationBar
@@ -113,17 +109,20 @@ extension CoinChargeView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-            
+
             if let storeProduct = StoreProduct(rawValue: product.id) {
                 Text("\(storeProduct.coinAmount)개")
                     .typography(.nanum18EB)
                     .foregroundStyle(.main500)
             }
-            
+
             Spacer()
-            
+
             Button {
+                guard !isCoinPurchasing else { return }
+                isCoinPurchasing = true
                 Task {
+                    defer { isCoinPurchasing = false }
                     do {
                         try await manager.purchase(product)
                     } catch {
@@ -138,6 +137,7 @@ extension CoinChargeView {
                     .background(.black100)
                     .cornerRadius(4)
             }
+            .disabled(isCoinPurchasing)
         }
     }
 }
@@ -311,9 +311,6 @@ extension CoinChargeView {
                 
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)
-                
-                Text("(1개)")
-                    .typography(.suit17SB)
             }
             .foregroundStyle(.white100)
             .frame(maxWidth: .infinity)

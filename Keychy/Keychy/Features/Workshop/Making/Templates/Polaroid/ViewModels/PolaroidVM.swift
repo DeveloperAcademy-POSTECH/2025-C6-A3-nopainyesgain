@@ -90,6 +90,9 @@ class PolaroidVM: KeyringViewModelProtocol {
         template?.id ?? "Polaroid"
     }
 
+    /// 체인 길이 (Polaroid는 3)
+    var chainLength: Int { 3 }
+
     var errorMessage: String?
 
     // MARK: - Frame State (프레임 모드)
@@ -286,7 +289,7 @@ class PolaroidVM: KeyringViewModelProtocol {
         case .frame:
             return 0.25  // 프레임 모드는 더 낮은 높이
         case .effect:
-            return 0.35  // 이펙트 모드는 기본 높이
+            return 0.25  // 이펙트 모드도 같은 높이
         default:
             return 0.35
         }

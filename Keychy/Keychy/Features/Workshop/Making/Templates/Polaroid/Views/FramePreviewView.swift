@@ -37,12 +37,11 @@ struct FramePreviewView: View {
         GeometryReader { geometry in
             VStack {
                 ZStack(alignment: .top) {
-                    // 프레임 + 사진 영역 (VM+Frame 로직과 동일)
+                    // 프레임 + 사진 영역
                     VStack {
                         Spacer()
-                            .frame(height: 125)
+                            .frame(height: 134)
 
-                        // VM+Frame의 합성 로직과 동일한 배치
                         compositionView
                     }
 
@@ -50,13 +49,13 @@ struct FramePreviewView: View {
                     Image("frameChain")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 80)
+                        .frame(width: 90)
                 }
 
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 170)
+            .padding(.top, 168)
         }
         .photosPicker(
             isPresented: $showPhotoPicker,
@@ -229,9 +228,10 @@ struct FramePreviewView: View {
                         let photoY = targetFrameHeight - photoHeight - photoBottomPadding
 
                         ZStack(alignment: .topLeading) {
-                            // 1. 사진 (맨 아래)
-                            if let photoImage = viewModel.selectedPhotoImage {
-                                ZStack {
+                            // 1. 사진 또는 플레이스홀더 (맨 아래)
+                            ZStack {
+                                // 사진 또는 플레이스홀더 이미지
+                                if let photoImage = viewModel.selectedPhotoImage {
                                     Image(uiImage: photoImage)
                                         .resizable()
                                         .scaledToFill()
@@ -247,45 +247,26 @@ struct FramePreviewView: View {
                                                 showEditButton.toggle()
                                             }
                                         }
-
-                                    // 편집 버튼
-                                    if showEditButton {
-                                        Button {
-                                            showPhotoSelectSheet = true
-                                            showEditButton = false
-                                        } label: {
-                                            Image(.plus)
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20, height: 20)
-                                                .padding(12)
-                                                .background(
-                                                    Circle()
-                                                        .fill(.white100)
-                                                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                                                )
-                                                .offset(y: -20)
-                                        }
-                                        .transition(.scale.combined(with: .opacity))
-                                    }
+                                } else {
+                                    // 플레이스홀더 이미지 (실제 사진과 동일한 scaledToFill 적용)
+                                    Image(.polaroidPH)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: photoWidth, height: photoHeight)
+                                        .clipped()
                                 }
-                                .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
-                            } else {
-                                // 사진 선택 플레이스홀더
-                                Button {
-                                    showPhotoSelectSheet = true
-                                } label: {
-                                    ZStack {
-                                        SimpleAnimatedImage(url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5")
-                                            .frame(width: photoWidth, height: photoHeight)
-                                            .padding(.bottom, 20)
 
-
+                                // 사진 없으면 플러스 버튼, 있으면 탭 시 연필 버튼
+                                if viewModel.selectedPhotoImage == nil {
+                                    // 플러스 버튼 (사진 추가)
+                                    Button {
+                                        showPhotoSelectSheet = true
+                                    } label: {
                                         Image(.plus)
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 22, height: 22 )
-                                            .padding(10)
+                                            .frame(width: 22, height: 22)
+                                            .padding(5)
                                             .background(
                                                 Circle()
                                                     .fill(.white100)
@@ -293,10 +274,28 @@ struct FramePreviewView: View {
                                             )
                                             .offset(y: -20)
                                     }
+                                } else if showEditButton {
+                                    // 연필 버튼 (사진 수정)
+                                    Button {
+                                        showPhotoSelectSheet = true
+                                        showEditButton = false
+                                    } label: {
+                                        Image(.editPencil)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 22, height: 22)
+                                            .padding(5)
+                                            .background(
+                                                Circle()
+                                                    .fill(.white100)
+                                                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                            )
+                                            .offset(y: -20)
+                                    }
+                                    .transition(.scale.combined(with: .opacity))
                                 }
-                                .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
-                                .offset(x: -3)
                             }
+                            .position(x: photoX + photoWidth / 2, y: photoY + photoHeight / 2)
 
                             // 2. 프레임 이미지 (위에 오버레이)
                             image

@@ -15,7 +15,7 @@ struct CurrentItemsCard: View {
             itemCard(
                 image: "myCoin",
                 title: "코인",
-                count: "\(userManager.currentUser?.coin ?? 0)"
+                count: "\((userManager.currentUser?.coin ?? 0).formatted())"
             )
             
             itemCard(

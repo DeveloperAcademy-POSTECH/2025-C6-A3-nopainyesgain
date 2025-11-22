@@ -9,20 +9,25 @@
       }
     ]
   },
-  "identifier" : "D15ACFEE",
+  "identifier" : "D21AA19C",
   "nonRenewingSubscriptions" : [
 
   ],
   "products" : [
     {
-      "displayPrice" : "1",
+      "displayPrice" : "0.99",
       "familyShareable" : false,
-      "internalID" : "B9D57F67",
+      "internalID" : "6755326244",
       "localizations" : [
         {
-          "description" : "",
-          "displayName" : "",
+          "description" : "Add 1,700 coins for use in item purchases on Keychy.",
+          "displayName" : "1,700 coins",
           "locale" : "en_US"
+        },
+        {
+          "description" : "키치에서 아이템구입에 사용할 수 있는 코인 1,700개를 구입합니다.",
+          "displayName" : "1,700 코인",
+          "locale" : "ko"
         }
       ],
       "productID" : "keychyCoin1700",
@@ -30,13 +35,18 @@
       "type" : "Consumable"
     },
     {
-      "displayPrice" : "3",
+      "displayPrice" : "1.99",
       "familyShareable" : false,
-      "internalID" : "B6E910CA",
+      "internalID" : "6755326331",
       "localizations" : [
         {
-          "description" : "",
-          "displayName" : "",
+          "description" : "키치에서 아이템구입에 사용할 수 있는 코인 3,500개를 구입합니다.",
+          "displayName" : "3,500 코인",
+          "locale" : "ko"
+        },
+        {
+          "description" : "Add 3,500 coins for use in item purchases on Keychy.",
+          "displayName" : "3,500 coins",
           "locale" : "en_US"
         }
       ],
@@ -45,13 +55,18 @@
       "type" : "Consumable"
     },
     {
-      "displayPrice" : "5",
+      "displayPrice" : "3.99",
       "familyShareable" : false,
-      "internalID" : "4E96E5E0",
+      "internalID" : "6755326378",
       "localizations" : [
         {
-          "description" : "",
-          "displayName" : "",
+          "description" : "키치에서 아이템구입에 사용할 수 있는 코인 7,500개를 구입합니다.",
+          "displayName" : "7,500 코인",
+          "locale" : "ko"
+        },
+        {
+          "description" : "Add 7,500 coins for use in item purchases on Keychy.",
+          "displayName" : "7,500 coins",
           "locale" : "en_US"
         }
       ],
@@ -61,11 +76,14 @@
     }
   ],
   "settings" : {
+    "_applicationInternalID" : "6754951347",
     "_askToBuyEnabled" : false,
     "_billingGracePeriodEnabled" : false,
     "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "BUKGH5MWAT",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 785478193.61014295,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",

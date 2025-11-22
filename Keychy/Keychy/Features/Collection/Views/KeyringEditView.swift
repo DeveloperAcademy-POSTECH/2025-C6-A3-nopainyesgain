@@ -220,7 +220,7 @@ extension KeyringEditView {
     private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
-        
+
         let scene = KeyringCellScene(
             ringType: ringType,
             chainType: chainType,
@@ -229,6 +229,7 @@ extension KeyringEditView {
             customBackgroundColor: .clear,
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
+            chainLength: keyring.chainLength,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {

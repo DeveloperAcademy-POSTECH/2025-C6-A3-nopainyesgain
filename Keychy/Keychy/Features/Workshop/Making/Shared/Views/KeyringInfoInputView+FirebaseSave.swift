@@ -14,9 +14,12 @@ extension KeyringInfoInputView {
     func saveKeyringToFirebase() {
         guard let uid = userManager.currentUser?.id,
               let bodyImage = viewModel.bodyImage else {
+            print("[KeyringSave] 저장 실패 - uid: \(userManager.currentUser?.id ?? "nil"), bodyImage: \(viewModel.bodyImage != nil)")
             isSavingToFirebase = false
             return
         }
+
+        print("[KeyringSave] 저장 시작 - uid: \(uid), chainLength: \(viewModel.chainLength)")
 
         isSavingToFirebase = true
 
@@ -63,14 +66,15 @@ extension KeyringInfoInputView {
             selectedTemplate: templateId,
             selectedRing: "basic",
             selectedChain: "basic",
-            chainLength: 5,
+            chainLength: self.viewModel.chainLength,
             isNew: true,
             hookOffsetY: hookOffsetY
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
-                // viewModel이 reset되기 전에 이름과 hookOffsetY를 미리 캡처
+                // viewModel이 reset되기 전에 이름과 hookOffsetY, chainLength를 미리 캡처
                 let keyringName = self.viewModel.nameText
+                let chainLength = self.viewModel.chainLength
 
                 // 최근 사용 템플릿에 추가
                 self.addTemplateToRecentlyUsed(uid: uid, templateId: templateId)
@@ -83,7 +87,8 @@ extension KeyringInfoInputView {
                         bodyImage: imageURL,
                         ringType: .basic,
                         chainType: .basic,
-                        hookOffsetY: hookOffsetY
+                        hookOffsetY: hookOffsetY,
+                        chainLength: chainLength
                     )
 
                     // 모든 작업 완료 후 CompleteView로 이동
@@ -177,7 +182,8 @@ extension KeyringInfoInputView {
         let docRef = db.collection("Keyring").document()
 
         docRef.setData(keyringData) { error in
-            if error != nil {
+            if let error = error {
+                print("[KeyringSave] Firestore 저장 에러: \(error.localizedDescription)")
                 completion(false, nil)
                 return
             }
@@ -202,9 +208,11 @@ extension KeyringInfoInputView {
             .updateData([
                 "keyrings": FieldValue.arrayUnion([keyringId])
             ]) { error in
-                if error != nil {
+                if let error = error {
+                    print("[KeyringSave] User 키링 배열 업데이트 에러: \(error.localizedDescription)")
                     completion(false)
                 } else {
+                    print("[KeyringSave] 키링 저장 완료!")
                     completion(true)
                 }
             }
@@ -226,7 +234,8 @@ extension KeyringInfoInputView {
         bodyImage: String,
         ringType: RingType,
         chainType: ChainType,
-        hookOffsetY: CGFloat?
+        hookOffsetY: CGFloat?,
+        chainLength: Int
     ) async {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
@@ -241,6 +250,7 @@ extension KeyringInfoInputView {
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: hookOffsetY,
+                chainLength: chainLength,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

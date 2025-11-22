@@ -99,6 +99,7 @@ struct CollectionCellView: View {
             targetSize: CGSize(width: 175, height: 233),
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
+            chainLength: keyring.chainLength,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {
@@ -160,6 +161,7 @@ struct CollectionCellView: View {
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

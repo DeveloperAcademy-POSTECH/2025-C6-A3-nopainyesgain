@@ -13,6 +13,7 @@ class KeyringDetailScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var hookOffsetY: CGFloat?
+    var chainLength: Int = 5  // 체인 링크 개수 (기본값 5)
     var onLoadingComplete: (() -> Void)?
     var cachedImages: KeyringImages?
     var isReady: Bool = false
@@ -54,12 +55,14 @@ class KeyringDetailScene: SKScene {
         chainType: ChainType,
         bodyImage: String? = nil,
         hookOffsetY: CGFloat? = nil,
+        chainLength: Int = 5,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
         self.hookOffsetY = hookOffsetY
+        self.chainLength = chainLength
         self.onLoadingComplete = onLoadingComplete
 
         super.init(size: .zero)

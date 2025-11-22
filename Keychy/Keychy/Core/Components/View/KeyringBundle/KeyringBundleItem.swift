@@ -151,7 +151,8 @@ extension KeyringBundleItem {
                     y: carabiner.keyringYPosition[originalIndex]
                 ),
                 bodyImageURL: keyringInfo.bodyImage,
-                hookOffsetY: keyringInfo.hookOffsetY
+                hookOffsetY: keyringInfo.hookOffsetY,
+                chainLength: keyringInfo.chainLength
             )
             keyringDataList.append(data)
         }
@@ -222,15 +223,16 @@ extension KeyringBundleItem {
         do {
             let db = FirebaseFirestore.Firestore.firestore()
             let document = try await db.collection("Keyring").document(keyringId).getDocument()
-            
+
             guard let data = document.data(),
                   let bodyImage = data["bodyImage"] as? String else {
                 return nil
             }
 
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
+            let chainLength = data["chainLength"] as? Int ?? 5
 
-            return KeyringInfo(id: keyringId, bodyImage: bodyImage, hookOffsetY: hookOffsetY)
+            return KeyringInfo(id: keyringId, bodyImage: bodyImage, hookOffsetY: hookOffsetY, chainLength: chainLength)
         } catch {
             print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
@@ -243,5 +245,6 @@ struct KeyringInfo {
     let id: String
     let bodyImage: String
     let hookOffsetY: CGFloat?
+    let chainLength: Int
 }
 

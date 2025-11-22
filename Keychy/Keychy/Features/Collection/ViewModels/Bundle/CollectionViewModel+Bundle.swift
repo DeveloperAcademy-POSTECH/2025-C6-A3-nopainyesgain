@@ -231,7 +231,8 @@ extension CollectionViewModel {
                 soundId: soundId,
                 customSoundURL: customSoundURL,
                 particleId: keyring.particleId,
-                hookOffsetY: keyring.hookOffsetY
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength
             )
             dataList.append(data)
         }
@@ -532,14 +533,15 @@ extension CollectionViewModel {
                 soundId: soundId,
                 customSoundURL: customSoundURL,
                 particleId: particleId,
-                hookOffsetY: keyring.hookOffsetY
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength
             )
             dataList.append(data)
         }
-        
+
         return dataList
     }
-    
+
     /// 뭉치에서 현재 키링들을 selectedKeyrings 형태로 변환
     func convertBundleToSelectedKeyrings(bundle: KeyringBundle) async -> ([Int: Keyring], [Int]) {
         var selectedKeyrings: [Int: Keyring] = [:]

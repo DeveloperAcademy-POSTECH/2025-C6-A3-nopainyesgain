@@ -45,7 +45,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
-                .padding(.top, 30)
+                .padding(.top, 20)
 
             HStack(spacing: 0) {
                 // 녹음 버튼

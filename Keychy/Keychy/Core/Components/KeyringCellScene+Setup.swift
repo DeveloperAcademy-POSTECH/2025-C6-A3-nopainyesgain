@@ -51,7 +51,7 @@ extension KeyringCellScene {
                 let ringImage = try await StorageManager.shared.getImage(path: currentRingType.imageURL)
                 
                 // Chain 이미지들 다운로드 (병렬)
-                let chainLinks = currentChainType.createChainLinks(length: 5) // 이후 수정 필요
+                let chainLinks = currentChainType.createChainLinks(length: self.chainLength)
                 let chainImages = try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
                     var images: [Int: UIImage] = [:]
                     
@@ -125,7 +125,7 @@ extension KeyringCellScene {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY - 2
-        let chainSpacing: CGFloat = 20
+        let chainSpacing: CGFloat = 22
         
         var chains: [SKSpriteNode] = []
         for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {
