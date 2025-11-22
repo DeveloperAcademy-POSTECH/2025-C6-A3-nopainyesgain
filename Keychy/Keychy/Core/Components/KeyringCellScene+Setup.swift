@@ -51,7 +51,7 @@ extension KeyringCellScene {
                 let ringImage = try await StorageManager.shared.getImage(path: currentRingType.imageURL)
                 
                 // Chain 이미지들 다운로드 (병렬)
-                let chainLinks = currentChainType.createChainLinks(length: 5) // 이후 수정 필요
+                let chainLinks = currentChainType.createChainLinks(length: self.chainLength)
                 let chainImages = try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
                     var images: [Int: UIImage] = [:]
                     

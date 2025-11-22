@@ -146,7 +146,8 @@ struct PackageCompleteView: View {
                 targetSize: CGSize(width: 195, height: 300),
                 customBackgroundColor: .clear,
                 zoomScale: 1.8,
-                hookOffsetY: keyring.hookOffsetY
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength
             )
             
             guard let pngData = await captureScene.captureToPNG(),

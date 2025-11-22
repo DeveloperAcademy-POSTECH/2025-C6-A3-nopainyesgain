@@ -110,6 +110,7 @@ extension IntroViewModel {
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
+                chainLength: 5,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

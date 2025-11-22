@@ -72,8 +72,9 @@ extension KeyringInfoInputView {
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
-                // viewModel이 reset되기 전에 이름과 hookOffsetY를 미리 캡처
+                // viewModel이 reset되기 전에 이름과 hookOffsetY, chainLength를 미리 캡처
                 let keyringName = self.viewModel.nameText
+                let chainLength = self.viewModel.chainLength
 
                 // 최근 사용 템플릿에 추가
                 self.addTemplateToRecentlyUsed(uid: uid, templateId: templateId)
@@ -86,7 +87,8 @@ extension KeyringInfoInputView {
                         bodyImage: imageURL,
                         ringType: .basic,
                         chainType: .basic,
-                        hookOffsetY: hookOffsetY
+                        hookOffsetY: hookOffsetY,
+                        chainLength: chainLength
                     )
 
                     // 모든 작업 완료 후 CompleteView로 이동
@@ -232,7 +234,8 @@ extension KeyringInfoInputView {
         bodyImage: String,
         ringType: RingType,
         chainType: ChainType,
-        hookOffsetY: CGFloat?
+        hookOffsetY: CGFloat?,
+        chainLength: Int
     ) async {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
@@ -247,6 +250,7 @@ extension KeyringInfoInputView {
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: hookOffsetY,
+                chainLength: chainLength,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
