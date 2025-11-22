@@ -311,7 +311,6 @@ class MultiKeyringScene: SKScene {
         }
 
         for (order, data) in keyringDataList.enumerated() {
-            print("[MultiKeyringScene-\(sceneID)] 키링 \(order) 생성 시작 - index: \(data.index)")
             setupSingleKeyring(data: data, order: order) { [weak self] success in
                 guard let self = self else { return }
                 
@@ -584,7 +583,6 @@ class MultiKeyringScene: SKScene {
         connectComponents(ring: ring, chains: chains, body: body)
 
         // 키링 완성 완료 - 성공
-        print("[MultiKeyringScene-\(sceneID)] 키링 완성 (Ring+Chain+Body+조인트) - index: \(index)")
         completion(true)
     }
 
@@ -834,7 +832,6 @@ class MultiKeyringScene: SKScene {
         // 물리 엔진이 안정화될 시간을 줌 (0.8초로 단축)
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self, !self.isCleaningUp else { return }
-            print("[MultiKeyringScene-\(self.sceneID)] 씬 준비 완료 콜백 호출")
             self.onAllKeyringsReady?()
         }
         readyCallbackWorkItem = workItem
