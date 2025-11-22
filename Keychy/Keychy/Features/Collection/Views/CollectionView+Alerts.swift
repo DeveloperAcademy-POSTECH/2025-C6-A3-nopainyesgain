@@ -168,7 +168,7 @@ extension CollectionView {
             if showInvenExpandAlert {
                 InvenExpandPopup(
                     myCoin: collectionViewModel.coin,
-                    price: 20,
+                    price: 1000,
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showInvenExpandAlert = false
