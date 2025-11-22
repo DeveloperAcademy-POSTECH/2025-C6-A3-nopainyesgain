@@ -37,12 +37,11 @@ struct FramePreviewView: View {
         GeometryReader { geometry in
             VStack {
                 ZStack(alignment: .top) {
-                    // 프레임 + 사진 영역 (VM+Frame 로직과 동일)
+                    // 프레임 + 사진 영역
                     VStack {
                         Spacer()
-                            .frame(height: 125)
+                            .frame(height: 134)
 
-                        // VM+Frame의 합성 로직과 동일한 배치
                         compositionView
                     }
 
@@ -56,7 +55,7 @@ struct FramePreviewView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 170)
+            .padding(.top, 168)
         }
         .photosPicker(
             isPresented: $showPhotoPicker,
