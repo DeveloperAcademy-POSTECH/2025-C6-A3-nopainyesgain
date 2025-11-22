@@ -48,7 +48,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var selectedKeyrings: [Int: Keyring] = [:]
     @State private var keyringOrder: [Int] = []
     @State private var selectedPosition = 0
-    @State private var isDeleteButtonSelected = false
     @State private var sceneRefreshId = UUID()
     
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
@@ -231,10 +230,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     /// 키링 선택 시트
     private func keyringSelectionSheet() -> some View {
-        VStack {
+        VStack(spacing: 18) {
             Text("키링 선택")
-                .typography(.notosans17M)
+                .typography(.suit16B)
                 .foregroundStyle(.black100)
+            
             if viewModel.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
@@ -261,11 +261,11 @@ struct BundleEditView<Route: BundleRoute>: View {
             }
             
         }
-        .padding(EdgeInsets(top: 30, leading: 20, bottom: 30, trailing: 20))
+        .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
         .frame(maxWidth: .infinity)
         .frame(height: screenHeight * sheetHeightRatio)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
         .shadow(radius: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .transition(.move(edge: .bottom))
@@ -313,19 +313,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                         .truncationMode(.tail)
                 }
                 
-                // 체크 뱃지
-                ZStack {
-                    Circle()
-                        .stroke(.white100)
-                        .fill(isSelectedHere ? .main500 : .clear)
-                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 0)
-                        .frame(width: 26.14, height: 26.14)
-                    Image(.recCheck)
-                        .foregroundStyle(.white)
-                }
-                .padding(.bottom, 35.86)
-                .padding(.trailing, 8.86)
-                
                 // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
                 if isSelectedElsewhere {
                     VStack {
@@ -348,40 +335,8 @@ struct BundleEditView<Route: BundleRoute>: View {
                 }
             }
         }
-        .buttonStyle(PlainButtonStyle())
         .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
         .opacity(1.0) // 강제로 투명도 1.0 유지
-    }
-    
-    /// 삭제 버튼
-    private func deleteButton() -> some View {
-        HStack(spacing: 0) {
-            Spacer()
-            Button {
-                isDeleteButtonSelected = false
-            } label: {
-                Text("취소")
-                    .typography(.suit16M)
-                    .foregroundStyle(.black100)
-            }
-            Spacer()
-            Divider().frame(height: 20)
-            Spacer()
-            Button {
-                selectedKeyrings[selectedPosition] = nil
-                keyringOrder.removeAll { $0 == selectedPosition }
-                updateKeyringDataList()
-                isDeleteButtonSelected = false
-            } label: {
-                Text("삭제")
-                    .typography(.suit16M)
-                    .foregroundStyle(.primaryRed)
-            }
-            Spacer()
-        }
-        .frame(width: 129, height: 44)
-        .background(.ultraThinMaterial)
-        .clipShape(Capsule())
     }
     
     /// 배경/카라비너 시트 컨텐츠
@@ -450,7 +405,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                                 // 편집 중 로컬 상태만 변경 (Firestore에 쓰지 않음)
                                 
                                 // 1) UI 오버레이/선택 상태 초기화
-                                isDeleteButtonSelected = false
                                 selectedPosition = 0
                                 
                                 // 2) 키링 데이터와 선택 목록을 즉시 비우기
@@ -531,7 +485,11 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 사용자 키링 데이터 로드
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
-            viewModel.fetchUserKeyrings(uid: uid) { _ in
+            viewModel.fetchUserKeyrings(uid: uid) { success in
+                if success {
+                    // 키링 데이터 로드 완료 후 정렬 실행
+                    viewModel.keyringSorting()
+                }
                 continuation.resume()
             }
         }
@@ -602,7 +560,11 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 키링 데이터도 새로고침
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
-            viewModel.fetchUserKeyrings(uid: uid) { _ in
+            viewModel.fetchUserKeyrings(uid: uid) { success in
+                if success {
+                    // 키링 데이터 로드 완료 후 정렬 실행
+                    viewModel.keyringSorting()
+                }
                 continuation.resume()
             }
         }
@@ -774,7 +736,7 @@ extension BundleEditView {
     }
 }
 
-//MARK: - 하단 버튼
+//MARK: - 배경, 카라비너 시트 여는 버튼
 extension BundleEditView {
     private var editBackgroundButton: some View {
         Button {
@@ -817,7 +779,7 @@ extension BundleEditView {
     }
 }
 
-// MARK: - 시트 뷰
+// MARK: - 배경, 카라비너 선택 시트
 extension BundleEditView {
     private func selectBackgroundSheet() -> some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
@@ -839,7 +801,6 @@ extension BundleEditView {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 30)
     }
     
     private func selectCarabinerSheet() -> some View {
@@ -860,11 +821,10 @@ extension BundleEditView {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 30)
     }
 }
 
-// MARK: - 구매 시트 뷰
+// MARK: - 구매 처리 관련
 extension BundleEditView {
     private var purchaseSheetView: some View {
         VStack(spacing: 12) {

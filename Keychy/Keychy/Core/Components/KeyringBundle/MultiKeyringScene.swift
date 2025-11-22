@@ -61,6 +61,11 @@ class MultiKeyringScene: SKScene {
     // MARK: - 예약된 작업 관리
     private var readyCallbackWorkItem: DispatchWorkItem?
 
+    // MARK: - 키링 로드 완료 추적
+    private var totalKeyringsToLoad = 0  // 로드해야 할 총 키링 수
+    private var loadedKeyringsCount = 0  // 실제로 로드 완료된 키링 수
+    private var isPhysicsEnabled = false  // 물리 엔진 활성화 여부
+
     // MARK: - 씬 정리 상태
     private var isCleaningUp = false
 
@@ -129,6 +134,7 @@ class MultiKeyringScene: SKScene {
     func cleanup() {
         guard !isCleaningUp else { return }
         isCleaningUp = true
+        
 
         // 예약된 콜백 취소
         readyCallbackWorkItem?.cancel()
@@ -137,6 +143,11 @@ class MultiKeyringScene: SKScene {
         // 콜백 무효화
         onAllKeyringsReady = nil
         onPlayParticleEffect = nil
+        
+        // 추적 변수 초기화
+        totalKeyringsToLoad = 0
+        loadedKeyringsCount = 0
+        isPhysicsEnabled = false
 
         // 모든 물리 조인트 제거
         physicsWorld.removeAllJoints()
@@ -300,29 +311,32 @@ class MultiKeyringScene: SKScene {
     /// 모든 키링 설정
     private func setupKeyrings() {
         // 모든 키링이 동기적으로 생성될 때까지 카운터 사용
-        let totalKeyrings = keyringDataList.count
+        totalKeyringsToLoad = keyringDataList.count
+        loadedKeyringsCount = 0
 
-        guard totalKeyrings > 0 else {
+        guard totalKeyringsToLoad > 0 else {
             enablePhysics()
             return
         }
 
-        var completedKeyrings = 0
-
         for (order, data) in keyringDataList.enumerated() {
-            setupSingleKeyring(data: data, order: order) { [weak self] in
-                completedKeyrings += 1
-
-                if completedKeyrings == totalKeyrings {
+            setupSingleKeyring(data: data, order: order) { [weak self] success in
+                guard let self = self else { return }
+                
+                // 성공 여부와 관계없이 완료된 키링 수 증가
+                self.loadedKeyringsCount += 1
+                
+                // 모든 키링 로드 완료 체크
+                if self.loadedKeyringsCount == self.totalKeyringsToLoad {
                     // 모든 키링 완성 후 물리 활성화
-                    self?.enablePhysics()
+                    self.enablePhysics()
                 }
             }
         }
     }
 
     /// 단일 키링 설정
-    private func setupSingleKeyring(data: KeyringData, order: Int, completion: @escaping () -> Void) {
+    private func setupSingleKeyring(data: KeyringData, order: Int, completion: @escaping (Bool) -> Void) {
         // 사운드 정보 저장
         soundIdsByKeyring[data.index] = data.soundId
         if let customURL = data.customSoundURL {
@@ -347,7 +361,7 @@ class MultiKeyringScene: SKScene {
         let baseZPosition = CGFloat(order * 10)
 
         guard let carabinerType = currentCarabinerType else {
-            completion()
+            completion(false)
             return
         }
 
@@ -356,7 +370,7 @@ class MultiKeyringScene: SKScene {
             ringType: currentRingType
         ) { [weak self] createdRing in
             guard let self = self, let ring = createdRing else {
-                completion()
+                completion(false)
                 return
             }
             // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
@@ -415,7 +429,7 @@ class MultiKeyringScene: SKScene {
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
-        completion: @escaping () -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
@@ -442,7 +456,9 @@ class MultiKeyringScene: SKScene {
             carabinerType: currentCarabinerType,
             baseZPosition: chainBaseZPosition
         ) { [weak self] chains in
-            guard let self = self else { return }
+            guard let self = self else {
+                return 
+            }
 
             // 각 체인에 고유한 물리 마스크 적용
             let categoryBitMask: UInt32 = UInt32(1 << index)
@@ -494,14 +510,13 @@ class MultiKeyringScene: SKScene {
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
-        completion: @escaping () -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
             guard let self = self, let body = body else {
-                completion()  // body 생성 실패 시에도 completion 호출
+                completion(false)  // body 생성 실패
                 return
             }
-
             self.positionAndConnectBody(
                 body: body,
                 ring: ring,
@@ -530,7 +545,7 @@ class MultiKeyringScene: SKScene {
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
-        completion: @escaping () -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         let bodyFrame = body.calculateAccumulatedFrame()
         let bodyHalfHeight = bodyFrame.height / 2
@@ -579,8 +594,8 @@ class MultiKeyringScene: SKScene {
         // 조인트 연결
         connectComponents(ring: ring, chains: chains, body: body)
 
-        // 키링 완성 완료
-        completion()
+        // 키링 완성 완료 - 성공
+        completion(true)
     }
 
     /// 키링 구성 요소들을 Joint로 연결
@@ -769,7 +784,15 @@ class MultiKeyringScene: SKScene {
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
     private func enablePhysics() {
         // 정리 중이면 중단
-        guard !isCleaningUp else { return }
+        guard !isCleaningUp else {
+            return 
+        }
+        
+        // 이미 물리가 활성화된 경우 중복 실행 방지
+        guard !isPhysicsEnabled else {
+            return 
+        }
+        isPhysicsEnabled = true
 
         // 중력 활성화 (모든 타입에서)
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
@@ -817,14 +840,15 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.angularDamping = 0.5
         }
 
-        // 씬 렌더링 및 안정화 완료를 위해 충분한 지연 후 콜백 호출
-        // DispatchWorkItem을 사용하여 취소 가능하게 만듦
+        // 실제 물리 안정화를 위한 지연
+        // 물리 엔진이 안정화될 시간을 줌 (0.8초로 단축)
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self, !self.isCleaningUp else { return }
             self.onAllKeyringsReady?()
         }
         readyCallbackWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2, execute: workItem)
+        // 물리 안정화를 위한 짧은 지연 (0.8초)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: workItem)
     }
 
     // MARK: - Touch Handling

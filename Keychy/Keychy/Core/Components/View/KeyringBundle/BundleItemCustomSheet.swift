@@ -30,7 +30,7 @@ struct BundleItemCustomSheet<Content: View>: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             // 인디케이터
             VStack(spacing:0) {
                 RoundedRectangle(cornerRadius: 3)
@@ -40,9 +40,8 @@ struct BundleItemCustomSheet<Content: View>: View {
                 Text("선택")
                     .typography(.notosans17M)
                     .foregroundStyle(.black100)
-                    .padding(EdgeInsets(top: 13, leading: 2, bottom: 0, trailing: 2))
+                    .padding(EdgeInsets(top: 13, leading: 0, bottom: 9, trailing: 0))
             }
-            .frame(height: 60)
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .highPriorityGesture(dragGesture)
@@ -51,6 +50,8 @@ struct BundleItemCustomSheet<Content: View>: View {
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .scrollContentBackground(.hidden)
+            .safeAreaPadding(.top, 0) // ScrollView 상단 패딩 제거
             .gesture(dragGesture)
         }
         .frame(height: sheetHeight)

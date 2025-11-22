@@ -161,6 +161,11 @@ extension MultiKeyringSceneView {
 
     /// 씬 초기화 및 설정
     private func setupScene() {
+        // 기존 씬이 있다면 명시적으로 정리
+        if scene != nil {
+            cleanupScene()
+        }
+        
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,
@@ -196,6 +201,7 @@ extension MultiKeyringSceneView {
 
         // 파티클 효과 정리
         particleEffects.removeAll()
+        
     }
 
     /// 파티클 효과 재생 처리

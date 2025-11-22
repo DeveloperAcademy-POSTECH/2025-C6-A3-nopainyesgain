@@ -46,7 +46,7 @@ struct NotificationGiftView: View {
             }
             
             CustomNavigationBar {
-                CloseToolbarButton {
+                BackToolbarButton {
                     router.pop()
                 }
             } center: {
@@ -59,6 +59,7 @@ struct NotificationGiftView: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .swipeBackGesture(enabled: true)
         .onAppear {
             fetchGiftData()
         }

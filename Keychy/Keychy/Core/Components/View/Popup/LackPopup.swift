@@ -9,8 +9,8 @@ import SwiftUI
 
 struct LackPopup: View {
     let title: String
-    var message: String = "충전하러 갈까요?"
-    var onCancel: (() -> Void)? = nil
+    let message: String
+    let onCancel: () -> Void
     let onConfirm: () -> Void
 
     var body: some View {

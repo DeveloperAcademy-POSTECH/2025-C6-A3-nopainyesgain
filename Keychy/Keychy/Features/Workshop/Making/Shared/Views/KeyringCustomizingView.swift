@@ -284,8 +284,6 @@ extension KeyringCustomizingView {
             BackToolbarButton {
                 showResetAlert = true
             }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             // Center (중앙) - 빈 공간
             Spacer()

@@ -79,11 +79,15 @@ struct MainTabView: View {
             .tint(.main500)  // 선택된 아이템 색상
             .tabBarMinimizeBehavior(.onScrollDown)
             .onAppear {
-                checkPendingDeepLink()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    checkPendingDeepLink()
+                }
             }
             .onChange(of: deepLinkManager.pendingPostOfficeId) { oldValue, newValue in
                 if newValue != nil {
-                    checkPendingDeepLink()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        checkPendingDeepLink()
+                    }
                 }
             }
             .fullScreenCover(isPresented: $showReceiveSheet) {

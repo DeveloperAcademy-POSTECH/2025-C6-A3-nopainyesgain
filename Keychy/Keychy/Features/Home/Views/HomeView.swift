@@ -37,7 +37,8 @@ struct HomeView: View {
             ZStack(alignment: .top) {
                 if let bundle = collectionViewModel.selectedBundle,
                    let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                   let background = collectionViewModel.selectedBackground {
+                   let background = collectionViewModel.selectedBackground,
+                   !keyringDataList.isEmpty {  // 키링 데이터가 있을 때만 씬 생성
 
                     MultiKeyringSceneView(
                         keyringDataList: keyringDataList,
@@ -86,13 +87,6 @@ struct HomeView: View {
         .task {
             // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
             await loadMainBundle()
-        }
-        .onAppear {
-            // 탭 전환으로 돌아올 때 씬이 이미 준비되어 있다면 즉시 표시
-            if !keyringDataList.isEmpty && !isSceneReady {
-                // 씬 데이터가 있으면 바로 표시
-                isSceneReady = true
-            }
         }
         .onChange(of: keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
