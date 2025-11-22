@@ -297,8 +297,8 @@
 		C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
 		C6B570812EC20AF60049F969 /* CachedBundlesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */; };
 		C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */; };
-		C6C35EF42ED14864009642F4 /* RealStoreKit.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF32ED14864009642F4 /* RealStoreKit.storekit */; };
-		C6C35EF52ED14864009642F4 /* RealStoreKit.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF32ED14864009642F4 /* RealStoreKit.storekit */; };
+		C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
+		C6C35EF82ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -626,7 +626,7 @@
 		C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleImageCache.swift; sourceTree = "<group>"; };
 		C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBundlesDebugView.swift; sourceTree = "<group>"; };
 		C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiKeyringCaptureScene+Capture.swift"; sourceTree = "<group>"; };
-		C6C35EF32ED14864009642F4 /* RealStoreKit.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RealStoreKit.storekit; sourceTree = "<group>"; };
+		C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RealStoreKit2.storekit; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1578,10 +1578,10 @@
 		C665DDEA2EAF064500CE4495 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C6C35EF32ED14864009642F4 /* RealStoreKit.storekit */,
 				C665DDEB2EAF064500CE4495 /* StoreKit.framework */,
 				C6B56F332EC061BB0049F969 /* WidgetKit.framework */,
 				C6B56F352EC061BB0049F969 /* SwiftUI.framework */,
+				C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1818,12 +1818,12 @@
 				4C6622462EAF7D63001760B5 /* LICENSE in Resources */,
 				4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */,
 				4CC3D3D92EC8C64F0009D376 /* longLoadingPresent.json in Resources */,
-				C6C35EF52ED14864009642F4 /* RealStoreKit.storekit in Resources */,
 				4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */,
 				4C6622422EAF77AB001760B5 /* NanumSquareRoundOTFEB.otf in Resources */,
 				4C6622432EAF77AB001760B5 /* NanumSquareRoundOTFL.otf in Resources */,
 				4CC3D3DB2EC8C6530009D376 /* longLoadingKeychy.json in Resources */,
 				38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */,
+				C6C35EF82ED17228009642F4 /* RealStoreKit2.storekit in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1832,7 +1832,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6C35EF42ED14864009642F4 /* RealStoreKit.storekit in Resources */,
+				C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

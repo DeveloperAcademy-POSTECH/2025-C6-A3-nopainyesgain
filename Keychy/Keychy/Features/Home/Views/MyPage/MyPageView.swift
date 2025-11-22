@@ -276,7 +276,7 @@ extension MyPageView {
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
             
-            Text("열쇠")
+            Text("코인")
                 .typography(.suit12M)
                 .foregroundStyle(.black100)
             

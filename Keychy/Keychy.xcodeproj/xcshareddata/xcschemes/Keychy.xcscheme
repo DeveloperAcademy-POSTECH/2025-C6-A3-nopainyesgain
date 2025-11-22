@@ -51,7 +51,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../../RealStoreKit.storekit">
+         identifier = "../../RealStoreKit2.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
