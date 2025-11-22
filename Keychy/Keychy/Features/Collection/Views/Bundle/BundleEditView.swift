@@ -355,8 +355,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(isSelectedElsewhere ? .black20 : .clear)
-//                                .stroke(isSelectedHere ? .main500 : .clear, width: 1.5)
-//                                .stroke(<#T##content: ShapeStyle##ShapeStyle#>)
+                                .stroke(isSelectedHere ? .main500 : .clear, lineWidth: 2)
                         )
                     
                     Text("\(keyring.name)")
