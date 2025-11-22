@@ -80,8 +80,8 @@ extension KeyringInfoInputView {
                     .foregroundStyle(viewModel.nameText.isEmpty ? .gray300 : .black100)
                     .focused($isFocused)
                     .onChange(of: viewModel.nameText) { _, newValue in
-                        let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
-                        var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: .regularExpression)
+                        // 글자수 제한만 적용 (특수문자 허용)
+                        var sanitized = newValue
 
                         if sanitized.count > viewModel.maxTextCount {
                             sanitized = String(sanitized.prefix(viewModel.maxTextCount))
