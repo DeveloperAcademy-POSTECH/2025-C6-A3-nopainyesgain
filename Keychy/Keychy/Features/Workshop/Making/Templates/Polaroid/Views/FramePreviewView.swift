@@ -248,22 +248,43 @@ struct FramePreviewView: View {
                                             }
                                         }
                                 } else {
-                                    // 플레이스홀더 이미지
-                                    SimpleAnimatedImage(url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5")
+                                    // 플레이스홀더 이미지 (실제 사진과 동일한 scaledToFill 적용)
+                                    Image(.polaroidPH)
+                                        .resizable()
+                                        .scaledToFill()
                                         .frame(width: photoWidth, height: photoHeight)
+                                        .clipped()
                                 }
 
-                                // 플러스 버튼 (사진 없으면 항상 표시, 있으면 탭 시 표시)
-                                if viewModel.selectedPhotoImage == nil || showEditButton {
+                                // 사진 없으면 플러스 버튼, 있으면 탭 시 연필 버튼
+                                if viewModel.selectedPhotoImage == nil {
+                                    // 플러스 버튼 (사진 추가)
                                     Button {
                                         showPhotoSelectSheet = true
-                                        showEditButton = false
                                     } label: {
                                         Image(.plus)
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 22, height: 22)
-                                            .padding(10)
+                                            .padding(5)
+                                            .background(
+                                                Circle()
+                                                    .fill(.white100)
+                                                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                                            )
+                                            .offset(y: -20)
+                                    }
+                                } else if showEditButton {
+                                    // 연필 버튼 (사진 수정)
+                                    Button {
+                                        showPhotoSelectSheet = true
+                                        showEditButton = false
+                                    } label: {
+                                        Image(.editPencil)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 22, height: 22)
+                                            .padding(5)
                                             .background(
                                                 Circle()
                                                     .fill(.white100)

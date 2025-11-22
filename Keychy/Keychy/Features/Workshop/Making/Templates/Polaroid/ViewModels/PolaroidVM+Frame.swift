@@ -43,16 +43,14 @@ extension PolaroidVM {
         let targetFrameWidth = targetFrameHeight * frameAspect
         let targetFrameSize = CGSize(width: targetFrameWidth, height: targetFrameHeight)
 
-        // 사진이 없으면 placeholder 이미지 다운로드
+        // 사진이 없으면 로컬 placeholder 이미지 사용
         let photo: UIImage
         if let selectedPhoto = selectedPhotoImage {
             photo = selectedPhoto
         } else {
-            // placeholder 이미지 다운로드
-            let placeholderURLString = "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FPolaroid%2FframPlaceHolder.png?alt=media&token=3d8ac227-7d96-4355-9e1d-21dfab19c5d5"
-            guard let placeholderURL = URL(string: placeholderURLString),
-                  let placeholderImage = await downloadFrameImage(from: placeholderURL) else {
-                // placeholder도 다운로드 실패하면 프레임만 저장 (원본 크기 유지)
+            // 로컬 에셋에서 placeholder 이미지 로드
+            guard let placeholderImage = UIImage(named: "polaroidPH") else {
+                // placeholder 로드 실패하면 프레임만 저장 (원본 크기 유지)
                 let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
                 let frameOnlyImage = renderer.image { context in
                     originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
