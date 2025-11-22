@@ -19,7 +19,7 @@ struct PhotoSelectSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             // 상단 닫기 버튼
-            ZStack(alignment: .topLeading) {
+            ZStack(alignment: .leading) {
                 Button {
                     dismiss()
                 } label: {
@@ -30,22 +30,26 @@ struct PhotoSelectSheet: View {
                 // 제목
                 HStack {
                     Spacer()
+                    
                     Text("사진 넣기")
                         .typography(.suit17B)
+                        .frame(height: 24, alignment: .center)
+
                     Spacer()
 
                 }
                 .frame(maxWidth: .infinity)
             }
             .padding(.top, 30)
-            .padding(.bottom, 60)
+            .padding(.bottom, 35)
 
             // 카메라/사진선택 버튼
-            HStack(spacing: 12) {
+            VStack(spacing: 30) {
                 cameraBtn
                 photoPickBtn
             }
-            .padding(.horizontal, 35)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 60)
             .adaptiveBottomPadding()
         }
         .background(
@@ -84,11 +88,17 @@ extension PhotoSelectSheet {
             onCameraSelected()
             dismiss()
         } label: {
-            Image("camera")
-                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                Image("camera22")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width:22)
+                Text("카메라")
+                    .typography(.suit16M)
+                Spacer()
+            }
         }
-        .buttonStyle(.glass)
-        .clipShape(Circle())
+        .buttonStyle(.plain)
     }
 
     private var photoPickBtn: some View {
@@ -96,16 +106,16 @@ extension PhotoSelectSheet {
             onPhotoLibrarySelected()
             dismiss()
         } label: {
-            HStack(spacing: 2) {
-                Image("pic")
+            HStack(spacing: 8) {
+                Image("picBlack")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width:22)
                 Text("사진 선택")
-                    .typography(.suit17B)
-                    .padding(.vertical, 15)
+                    .typography(.suit16M)
+                Spacer()
             }
-            .foregroundStyle(.white100)
-            .frame(maxWidth: .infinity)
-            .background(.gray700)
-            .clipShape(Capsule())
+            .buttonStyle(.plain)
         }
     }
 }
