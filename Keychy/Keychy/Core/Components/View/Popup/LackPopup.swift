@@ -35,20 +35,18 @@ struct LackPopup: View {
             // 버튼들
             HStack(spacing: 16) {
                 // 취소 버튼 (onCancel이 있을 때만 표시)
-                if let onCancel = onCancel {
-                    Button(action: onCancel) {
-                        Text("취소")
-                            .typography(.suit17SB)
-                            .foregroundColor(.black100)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 48)
-                            .background(
-                                RoundedRectangle(cornerRadius: 100)
-                                    .fill(.black10)
-                            )
-                    }
-                    .buttonStyle(.plain)
+                Button(action: onCancel) {
+                    Text("취소")
+                        .typography(.suit17SB)
+                        .foregroundColor(.black100)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: 100)
+                                .fill(.black10)
+                        )
                 }
+                .buttonStyle(.plain)
 
                 // 확인 버튼
                 Button(action: onConfirm) {
