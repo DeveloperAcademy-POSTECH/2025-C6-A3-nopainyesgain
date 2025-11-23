@@ -63,7 +63,7 @@ struct FestivalView: View {
                         distance: festivals[index].distance,
                         imageName: festivals[index].imageName,
                         isLocked: festivals[index].isLocked,
-                        enterAction: { router.push(.showcase25Board) }
+                        enterAction: { router.push(.showcase25BoardView) }
                     )
                 }
 
