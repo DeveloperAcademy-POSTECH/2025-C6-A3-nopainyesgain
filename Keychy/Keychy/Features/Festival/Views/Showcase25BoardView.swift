@@ -10,8 +10,12 @@ import NukeUI
 
 struct Showcase25BoardView: View {
 
-    @Bindable var router: NavigationRouter<FestivalRoute>
-    @State private var viewModel = Showcase25BoardViewModel()
+    @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
+    @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
+    @Bindable var viewModel: Showcase25BoardViewModel
+    
+    var onNavigateToWorkshop: ((WorkshopRoute) -> Void)? = nil
+    var isFromFestivalTab: Bool = false
 
     // 회수 확인 Alert
     @State private var showDeleteAlert = false
@@ -231,14 +235,29 @@ struct Showcase25BoardView: View {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                router.pop()
+                festivalRouter.pop()
             }
         } center: {
             Text("쇼케이스 2025")
                 .typography(.notosans17M)
         } trailing: {
-            Spacer()
-                .frame(width: 44, height: 44)
+            Button {
+                // Festival에서 Workshop으로 가는 경우 플래그 설정
+                viewModel.isFromFestivalTab = true
+                
+                // Workshop에서 완료 후 다시 돌아올 콜백 설정
+                viewModel.onKeyringCompleteFromFestival = { workshopRouter in
+                    // Workshop router를 reset하고 showcase25BoardView로 이동
+                    workshopRouter.reset()
+                    workshopRouter.push(.showcase25BoardView)
+                }
+                
+                onNavigateToWorkshop?(.acrylicPhotoPreview)
+            } label: {
+                Image(.appIcon)
+                    .resizable()
+                    .frame(width: 44, height: 44)
+            }
         }
     }
 
