@@ -307,6 +307,7 @@
 		C6C35F392ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F382ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift */; };
 		C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F372ED2A3C2009642F4 /* FestivalViewModel.swift */; };
 		C6C35F3C2ED2A7BD009642F4 /* Showcase25BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */; };
+		C6C35F3E2ED2AB71009642F4 /* ZoomableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F3D2ED2AB71009642F4 /* ZoomableScrollView.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -643,6 +644,7 @@
 		C6C35F372ED2A3C2009642F4 /* FestivalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalViewModel.swift; sourceTree = "<group>"; };
 		C6C35F382ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = upleadSampleFestivalKeyrings.swift; sourceTree = "<group>"; };
 		C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Showcase25BoardView.swift; sourceTree = "<group>"; };
+		C6C35F3D2ED2AB71009642F4 /* ZoomableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableScrollView.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1347,6 +1349,7 @@
 		4CEC62452EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C6C35F3D2ED2AB71009642F4 /* ZoomableScrollView.swift */,
 				4CEC62442EAE08DF0099ECEE /* FestivalView.swift */,
 				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
 			);
@@ -1977,6 +1980,7 @@
 				AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheet.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				38C3C2842EC0D081003C5DE1 /* LinkCopiedPopup.swift in Sources */,
+				C6C35F3E2ED2AB71009642F4 /* ZoomableScrollView.swift in Sources */,
 				4CC3D3C52EC701610009D376 /* IntroViewModel+Bundle.swift in Sources */,
 				38173D0F2EB9083900E36F7E /* DeletePopup.swift in Sources */,
 				AA390CE52ECC60A700D87EEC /* BundleRoute.swift in Sources */,
