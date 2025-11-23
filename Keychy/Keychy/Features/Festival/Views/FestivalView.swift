@@ -49,96 +49,39 @@ struct FestivalView: View {
     ]
     
     var body: some View {
-        ZStack(alignment: .top) {
-            // 카드 스와이프 뷰 (중앙 배치)
-            VStack {
-                Spacer()
-                
-                cardPagerView(
-                    pageCount: festivals.count,
-                    currentPage: $currentPage
-                ) { index in
-                    festivalCard(
-                        title: festivals[index].title,
-                        location: festivals[index].location,
-                        dateRange: festivals[index].dateRange,
-                        distance: festivals[index].distance,
-                        imageName: festivals[index].imageName,
-                        isLocked: festivals[index].isLocked,
-                        enterAction: { router.push(.showcase25Board) }
-                    )
-                }
-                
-                Spacer()
+        // 카드 스와이프 뷰 (중앙 배치)
+        VStack {
+            Text("페스티벌")
+                .typography(.nanum32EB)
+                .foregroundStyle(.black100)
+            Spacer()
+            
+            cardPagerView(
+                pageCount: festivals.count,
+                currentPage: $currentPage
+            ) { index in
+                festivalCard(
+                    title: festivals[index].title,
+                    location: festivals[index].location,
+                    dateRange: festivals[index].dateRange,
+                    distance: festivals[index].distance,
+                    imageName: festivals[index].imageName,
+                    isLocked: festivals[index].isLocked,
+                    enterAction: { router.push(.showcase25Board) }
+                )
             }
             
-            // 네비게이션 바
-            customNavigationBar
+            Spacer()
+            uploadButton
         }
+        
         .ignoresSafeArea()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden()
         .task {
             if !hasInitialized {
                 viewModel = FestivalViewModel(userManager: userManager)
                 hasInitialized = true
             }
         }
-    }
-    
-    // MARK: - Custom Navigation Bar
-    
-    private var customNavigationBar: some View {
-        ZStack(alignment: .topTrailing) {
-            CustomNavigationBar {
-                Spacer()
-                    .frame(width: 44, height: 44)
-                
-            } center: {
-                Text("페스티벌")
-                    .typography(.notosans17M)
-            } trailing: {
-                Spacer()
-                    .frame(width: 44, height: 44)
-            }
-            
-            HStack {
-                // 업로드 버튼 (왼쪽 상단)
-                uploadButton
-                    .padding(.trailing, 16)
-                    .padding(.top, getSafeAreaTop())
-                
-                Spacer()
-                
-                // 쇼케이스 입장 버튼
-                showcase25Btn
-                    .padding(.trailing, 16)
-                    .padding(.top, getSafeAreaTop())
-            }
-        }
-    }
-    
-    // 쇼케이스 입장 버튼
-    private var showcase25Btn: some View {
-        Button {
-            router.push(.showcase25Board)
-        } label: {
-            HStack(spacing: 0) {
-                Image(.deleteAlert)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 36)
-                
-                Text("입장하기")
-                    .typography(.nanum16EB)
-                    .foregroundColor(.black)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
-        }
-        .frame(height: 44)
-        .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .capsule)
     }
     
     // MARK: - Upload Button
@@ -157,16 +100,4 @@ struct FestivalView: View {
         .disabled(viewModel.isUploading)
         .opacity(viewModel.isUploading ? 0.5 : 1.0)
     }
-}
-
-// MARK: - Helper
-
-private func getSafeAreaTop() -> CGFloat {
-    guard let window = UIApplication.shared.connectedScenes
-        .compactMap({ $0 as? UIWindowScene })
-        .first?.windows
-        .first(where: { $0.isKeyWindow }) else {
-        return 0
-    }
-    return window.safeAreaInsets.top
 }
