@@ -132,7 +132,7 @@ struct Showcase25BoardView: View {
         let keyring = viewModel.keyring(at: index)
         let isMyKeyring = viewModel.isMyKeyring(at: index)
 
-        return ZStack(alignment: .topTrailing) {
+        return ZStack {
             // 셀 배경
             Rectangle()
                 .fill(Color.white100)
@@ -162,7 +162,9 @@ struct Showcase25BoardView: View {
                 .disabled(!viewModel.showButtons)
                 .animation(.easeInOut(duration: 0.2), value: viewModel.showButtons)
             }
-
+        }
+        .frame(width: cellWidth, height: cellHeight)
+        .overlay(alignment: .topTrailing) {
             // 내 키링 표시 (우측 상단)
             if isMyKeyring {
                 Circle()
@@ -171,7 +173,6 @@ struct Showcase25BoardView: View {
                     .padding(6)
             }
         }
-        .frame(width: cellWidth, height: cellHeight)
     }
 
     // MARK: - Keyring Image View
