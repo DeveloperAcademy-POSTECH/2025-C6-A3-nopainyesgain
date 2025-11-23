@@ -112,7 +112,7 @@ extension PixelDrawView {
                 }
             }
             .frame(width: gridSize, height: gridSize)
-            .background(Color.white)
+            .background(Color.gray50)
             .border(.gray100, width: 1)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             .gesture(
