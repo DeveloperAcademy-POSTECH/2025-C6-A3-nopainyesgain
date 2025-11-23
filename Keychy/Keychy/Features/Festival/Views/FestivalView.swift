@@ -74,8 +74,6 @@ struct FestivalView: View {
             Spacer()
             uploadButton
         }
-        
-        .ignoresSafeArea()
         .task {
             if !hasInitialized {
                 viewModel = FestivalViewModel(userManager: userManager)
