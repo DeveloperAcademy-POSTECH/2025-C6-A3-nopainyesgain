@@ -83,6 +83,15 @@ struct ClearSketchDrawingView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
+            Button("취소", role: .cancel) { }
+            Button("확인", role: .destructive) {
+                viewModel.resetAll()
+                router.reset()
+            }
+        } message: {
+            Text("지금까지 작업한 내용이 모두 초기화됩니다.")
+        }
     }
 }
 
@@ -91,8 +100,7 @@ extension ClearSketchDrawingView {
     var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                viewModel.resetImageData()
-                router.pop()
+                showResetAlert = true
             }
         } center: {
             Text("그림을 그려주세요")
@@ -100,7 +108,13 @@ extension ClearSketchDrawingView {
         } trailing: {
             NextToolbarButton {
                 viewModel.finalizeDrawing()
-                router.push(.clearSketchCrop)
+                
+                if let image = captureDrawingCanvas() {
+                    viewModel.captureCanvasImage(image)
+                    router.push(.clearSketchCrop)
+                } else {
+                    print("이미지 생성 실패")
+                }
             }
             .frame(width: 44, height: 44)
             .offset(x: -4)
@@ -133,17 +147,84 @@ extension ClearSketchDrawingView {
 // MARK: - Drawing Canvas
 extension ClearSketchDrawingView {
     var drawingCanvasView: some View {
-        ZStack {
-            // 캔버스 배경
-            Color.white
-                .border(Color.gray.opacity(0.3), width: 1)
-            
-            // 그리기 캔버스
-            ClearSketchDrawingCanvasView(viewModel: viewModel)
+        GeometryReader { geometry in
+            ZStack {
+                // 캔버스 배경
+                Color.white
+                    .border(Color.gray.opacity(0.3), width: 1)
+                
+                // 그리기 캔버스
+                ClearSketchDrawingCanvasView(viewModel: viewModel)
+            }
+            .onAppear {
+                viewModel.canvasSize = geometry.size
+            }
         }
     }
-}
+    
+    private func captureDrawingCanvas() -> UIImage? {
+        return createImageDirectly()
+    }
+    
+    @MainActor
+    private func createImageDirectly() -> UIImage? {
+        // 실제 캔버스의 GeometryReader 크기 사용
+        let actualCanvasSize = viewModel.canvasSize.width > 0 ? viewModel.canvasSize :
+            CGSize(width: screenWidth, height: screenWidth * 1.2)
+        
+        print("계산된 캔버스 크기: \(actualCanvasSize)")
+        print("그려진 패스 수: \(viewModel.drawingPaths.count)")
 
+        let renderer = UIGraphicsImageRenderer(size: actualCanvasSize)
+        
+        let image = renderer.image { context in
+            let cgContext = context.cgContext
+            
+            // 흰색 배경
+            cgContext.setFillColor(UIColor.white.cgColor)
+            cgContext.fill(CGRect(origin: .zero, size: actualCanvasSize))
+            
+            cgContext.setLineCap(.round)
+            cgContext.setLineJoin(.round)
+            
+            // 그려진 패스들 렌더링
+            for path in viewModel.drawingPaths {
+                if path.isEraser {
+                    cgContext.setBlendMode(.clear)
+                } else {
+                    cgContext.setBlendMode(.normal)
+                    cgContext.setStrokeColor(UIColor(path.color).cgColor)
+                }
+                
+                cgContext.setLineWidth(path.lineWidth)
+                let points = path.points
+                guard points.count > 0 else { continue }
+                
+                cgContext.beginPath()
+                
+                if points.count == 1 {
+                    cgContext.addArc(
+                        center: points[0],
+                        radius: path.lineWidth / 2,
+                        startAngle: 0,
+                        endAngle: .pi * 2,
+                        clockwise: true
+                    )
+                    cgContext.fillPath()
+                } else {
+                    cgContext.move(to: points[0])
+                    for i in 1..<points.count {
+                        cgContext.addLine(to: points[i])
+                    }
+                    cgContext.strokePath()
+                }
+            }
+        }
+        
+        print("생성된 이미지 크기: \(image.size)")
+        return image
+    }
+}
 // MARK: - Brush Size Slider
 extension ClearSketchDrawingView {
     var brushSizeSlider: some View {

@@ -82,8 +82,7 @@ class ClearSketchVM: KeyringViewModelProtocol {
     var userManager: UserManager
     
     // MARK: - Sketch Data
-    /// 16x16 픽셀 그리드 (각 셀의 색상)
-    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
+    var canvasSize: CGSize = CGSize(width: 0, height: 0)
 
     /// Undo/Redo 스택
     var undoStack: [[[Color]]] = []
@@ -287,6 +286,7 @@ class ClearSketchVM: KeyringViewModelProtocol {
     }
 
     func resetAll() {
+        resetImageData()
         resetCustomizingData()
         resetInfoData()
     }

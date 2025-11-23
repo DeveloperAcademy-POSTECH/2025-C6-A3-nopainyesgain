@@ -114,3 +114,10 @@ struct ClearSketchDrawingCanvasView: View {
         // 패스 완료 시 처리할 로직
     }
 }
+
+extension ClearSketchDrawingCanvasView {
+    func captureCanvas() -> UIImage? {
+        let renderer = ImageRenderer(content: self)
+        return renderer.uiImage
+    }
+}
