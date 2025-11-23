@@ -108,6 +108,12 @@ struct Showcase25BoardView: View {
         } message: {
             Text("정말 키링을 회수하시겠습니까?")
         }
+        .onAppear {
+            viewModel.startListening()
+        }
+        .onDisappear {
+            viewModel.stopListening()
+        }
     }
 
     // MARK: - Grid Content
