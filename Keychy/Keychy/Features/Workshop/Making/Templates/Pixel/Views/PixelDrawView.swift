@@ -33,35 +33,45 @@ struct PixelDrawView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.clear
+                Color.white100
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                // MARK: - 픽셀 그리드 (화면 중앙 배치)
+                VStack {
                     Spacer()
-                        .frame(height: 118)
-                    
-                    // MARK: - 픽셀 그리드
                     pixelGrid
                         .padding(.horizontal, 18)
+                        .padding(.bottom, 50)
+                    Spacer()
+                }
+
+                // MARK: - 버튼 + 색상 팔레트 (화면 하단에 고정)
+                VStack(spacing: 15) {
+                    
                     
                     Spacer()
-                        .frame(height: 72)
                     
                     // MARK: - Undo/Redo/그리기/지우기 버튼
                     HStack {
                         undoRedoButtons
-                            .padding(.horizontal, 16)
-                        
+
+                        Spacer()
+
                         drawEraserButtons
-                            .padding(.horizontal, 16)
                     }
-                    // MARK: - 색상 팔레트 (애니메이션) - 화면의 15% 높이
+                    .padding(.horizontal, 26)
+
+                    // MARK: - 색상 팔레트 (애니메이션)
                     colorPalette
                         .frame(
                             maxWidth: .infinity,
                             maxHeight: showPalette ? geometry.size.height * 0.15 : 0
                         )
                 }
+                .frame(maxWidth: .infinity, alignment: .bottom)
+                .ignoresSafeArea(edges: .bottom)
+                .adaptiveTopPaddingAlt()
+
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
@@ -77,9 +87,10 @@ struct PixelDrawView: View {
 extension PixelDrawView {
     private var pixelGrid: some View {
         GeometryReader { geometry in
-            let gridSize = min(geometry.size.width, geometry.size.height * 0.5)
+            // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
+            let gridSize = geometry.size.width - 36
             let cellSize = gridSize / 16
-            
+
             VStack(spacing: 0) {
                 ForEach(0..<16, id: \.self) { row in
                     HStack(spacing: 0) {
@@ -105,18 +116,18 @@ extension PixelDrawView {
                         let location = value.location
                         let gridOriginX = (geometry.size.width - gridSize) / 2
                         let gridOriginY = (geometry.size.height - gridSize) / 2
-                        
+
                         let relativeX = location.x - gridOriginX
                         let relativeY = location.y - gridOriginY
-                        
+
                         let col = Int(relativeX / cellSize)
                         let row = Int(relativeY / cellSize)
-                        
+
                         viewModel.paintPixel(row: row, col: col)
                     }
             )
         }
-        .frame(maxHeight: 366)
+        .aspectRatio(1, contentMode: .fit)
     }
 }
 
@@ -142,7 +153,7 @@ struct PixelCell: View {
 extension PixelDrawView {
     private var undoRedoButtons: some View {
         GlassEffectContainer {
-            HStack {
+            HStack(spacing: -15) {
                 Button {
                     viewModel.undo()
                     Haptic.impact(style: .light)
@@ -152,12 +163,12 @@ extension PixelDrawView {
                 .disabled(viewModel.undoStack.isEmpty)
                 .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 .buttonStyle(.glass)
-                
+
                 Button {
                     viewModel.redo()
                     Haptic.impact(style: .light)
                 } label: {
-                    Image(viewModel.undoStack.isEmpty ? "redoGray" : "redoBlack")
+                    Image(viewModel.redoStack.isEmpty ? "redoGray" : "redoBlack")
                 }
                 .disabled(viewModel.redoStack.isEmpty)
                 .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
@@ -171,25 +182,30 @@ extension PixelDrawView {
 extension PixelDrawView {
     private var drawEraserButtons: some View {
         HStack(spacing: 8) {
-            CircleGlassButton(imageName: viewModel.isDrawMode ? "drawWhite" : "drawBlack") {
+            Button(action: {
                 viewModel.isDrawMode = true
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     showPalette = true
                 }
                 Haptic.impact(style: .medium)
+            }) {
+                Image(viewModel.isDrawMode ? "drawWhite" : "drawBlack")
             }
             .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .main500 : .white)
+            .tint(viewModel.isDrawMode ? .main500 : .white100)
             
-            CircleGlassButton(imageName: viewModel.isDrawMode ? "eraserBlack" : "eraserWhite") {
+            
+            Button(action: {
                 viewModel.isDrawMode = false
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     showPalette = false
                 }
                 Haptic.impact(style: .medium)
+            }) {
+                Image(viewModel.isDrawMode ? "eraserBlack" : "eraserWhite")
             }
             .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .white : .main500)
+            .tint(viewModel.isDrawMode ? .white100 : .main500)
         }
     }
 }
@@ -226,7 +242,10 @@ extension PixelDrawView {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(.gray50)
+        .background(
+            Color.gray50
+                .ignoresSafeArea(edges: .bottom)
+        )
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
     }
 }
