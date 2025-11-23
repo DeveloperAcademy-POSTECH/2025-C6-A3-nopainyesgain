@@ -61,66 +61,11 @@ extension ClearSketchVM {
     }
     
     func finalizeDrawing() {
-        Task { @MainActor in
-            await composeDrawing()
-        }
-    }
-    
-    // MARK: - Drawing Composition
-    private func composeDrawing() async {
-        guard !drawingPaths.isEmpty else {
-            bodyImage = nil
-            return
-        }
-        
         isComposingDrawing = true
-        defer { isComposingDrawing = false }
-        
-        bodyImage = await createImageFromPaths()
     }
     
-    @MainActor
-    private func createImageFromPaths() async -> UIImage? {
-        let canvasSize = CGSize(width: 300, height: 400)
-        let renderer = UIGraphicsImageRenderer(size: canvasSize)
-        
-        return renderer.image { context in
-            let cgContext = context.cgContext
-            cgContext.clear(CGRect(origin: .zero, size: canvasSize))
-            cgContext.setLineCap(.round)
-            cgContext.setLineJoin(.round)
-            
-            for path in drawingPaths {
-                if path.isEraser {
-                    cgContext.setBlendMode(.clear)
-                } else {
-                    cgContext.setBlendMode(.normal)
-                    cgContext.setStrokeColor(UIColor(path.color).cgColor)
-                }
-                
-                cgContext.setLineWidth(path.lineWidth)
-                let points = path.points
-                guard points.count > 0 else { continue }
-                
-                cgContext.beginPath()
-                
-                if points.count == 1 {
-                    cgContext.addArc(
-                        center: points[0],
-                        radius: path.lineWidth / 2,
-                        startAngle: 0,
-                        endAngle: .pi * 2,
-                        clockwise: true
-                    )
-                    cgContext.fillPath()
-                } else {
-                    cgContext.move(to: points[0])
-                    for i in 1..<points.count {
-                        cgContext.addLine(to: points[i])
-                    }
-                    cgContext.strokePath()
-                }
-            }
-        }
+    func captureCanvasImage(_ image: UIImage) {
+        bodyImage = image
+        isComposingDrawing = false
     }
 }
