@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct Showcase25BoardView: View {
 
     @Bindable var router: NavigationRouter<FestivalRoute>
+    @State private var viewModel = Showcase25BoardViewModel()
 
     // 그리드 설정
     private let gridColumns = 10
@@ -82,26 +84,46 @@ struct Showcase25BoardView: View {
     // MARK: - Grid Cell
 
     private func gridCell(index: Int) -> some View {
-        ZStack(alignment: .top) {
+        let keyring = viewModel.keyring(at: index)
+
+        return ZStack {
             // 셀 배경
             Rectangle()
                 .fill(Color.white100)
                 .border(Color.gray50, width: 0.5)
 
-            // 중앙 상단 + 버튼
-            Button {
-                print("Grid cell \(index) tapped")
-            } label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white100)
-                    .frame(width: 32, height: 32)
-                    .background(
-                        Circle()
-                            .fill(Color.gray50)
-                    )
+            if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
+                // 키링 이미지가 있는 경우
+                LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } else if state.error != nil {
+                        // 로드 실패
+                        Image(systemName: "photo")
+                            .foregroundStyle(.gray300)
+                    } else {
+                        // 로딩 중
+                        ProgressView()
+                    }
+                }
+                .padding(8)
+            } else {
+                // 키링이 없는 경우 + 버튼
+                Button {
+                    print("Grid cell \(index) tapped")
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white100)
+                        .frame(width: 32, height: 32)
+                        .background(
+                            Circle()
+                                .fill(Color.gray50)
+                        )
+                }
             }
-            .padding(.top, 12)
         }
         .frame(width: cellWidth, height: cellHeight)
     }
