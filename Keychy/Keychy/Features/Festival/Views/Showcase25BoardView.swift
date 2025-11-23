@@ -22,7 +22,7 @@ struct Showcase25BoardView: View {
     // 최대 축소: 가로 6개 보임 -> 셀 너비 = 화면너비 / 6
     // 최대 확대: 가로 2개 보임 -> 셀 너비 = 화면너비 / 2
     // 확대 배율 = 6 / 2 = 3
-    private let minZoom: CGFloat = 1.0
+    private let minZoom: CGFloat = 0.7
     private let maxZoom: CGFloat = 3.0
     private let initialZoom: CGFloat = 1.5  // 중간 정도로 시작
 
