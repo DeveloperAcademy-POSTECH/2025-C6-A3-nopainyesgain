@@ -8,26 +8,70 @@
 import SwiftUI
 
 struct FestivalView: View {
-
+    
     @Bindable var router: NavigationRouter<FestivalRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: FestivalViewModel
     @State private var hasInitialized = false
-
+    
+    @State private var currentPage = 0
+    
     init(router: NavigationRouter<FestivalRoute>) {
         self.router = router
         _viewModel = State(initialValue: FestivalViewModel(userManager: UserManager.shared))
     }
-
+    // 목데이터
+    let festivals = [
+        (
+            title: "페스티벌 이름",
+            location: "경북 포항시 남구 지곡로 80 C5",
+            dateRange: "2025.11.01 ~ 2025.11.30",
+            distance: "내 위치로 부터 1.5km",
+            imageName: "homigotFestival",
+            isLocked: true
+        ),
+        (
+            title: "페스티벌 이름",
+            location: "경북 포항시 남구 지곡로 80 C5",
+            dateRange: "2025.11.28 ~ 2025.11.28",
+            distance: "내 위치로 부터 1.5km",
+            imageName: "showcaseFestival",
+            isLocked: false
+        ),
+        (
+            title: "페스티벌 이름",
+            location: "경북 포항시 남구 지곡로 80 C5",
+            dateRange: "2025.11.01 ~ 2025.11.30",
+            distance: "내 위치로 부터 1.5km",
+            imageName: "youngildaeFestival",
+            isLocked: true
+        ),
+    ]
+    
     var body: some View {
         ZStack(alignment: .top) {
-            // 배경 이미지
-            Image(.festivalTrailer)
-                .resizable()
-                .scaledToFill()
-                .offset(y: getBottomPadding(34) == 34 ? 50 : 0)
-                .frame(width: screenWidth, height: screenHeight)
-
+            // 카드 스와이프 뷰 (중앙 배치)
+            VStack {
+                Spacer()
+                
+                cardPagerView(
+                    pageCount: festivals.count,
+                    currentPage: $currentPage
+                ) { index in
+                    festivalCard(
+                        title: festivals[index].title,
+                        location: festivals[index].location,
+                        dateRange: festivals[index].dateRange,
+                        distance: festivals[index].distance,
+                        imageName: festivals[index].imageName,
+                        isLocked: festivals[index].isLocked,
+                        enterAction: { router.push(.showcase25Board) }
+                    )
+                }
+                
+                Spacer()
+            }
+            
             // 네비게이션 바
             customNavigationBar
         }
@@ -41,9 +85,9 @@ struct FestivalView: View {
             }
         }
     }
-
+    
     // MARK: - Custom Navigation Bar
-
+    
     private var customNavigationBar: some View {
         ZStack(alignment: .topTrailing) {
             CustomNavigationBar {
@@ -96,9 +140,9 @@ struct FestivalView: View {
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: .capsule)
     }
-
+    
     // MARK: - Upload Button
-
+    
     private var uploadButton: some View {
         Button {
             Task {
