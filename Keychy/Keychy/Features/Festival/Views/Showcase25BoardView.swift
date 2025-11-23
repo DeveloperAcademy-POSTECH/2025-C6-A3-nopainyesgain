@@ -130,8 +130,9 @@ struct Showcase25BoardView: View {
 
     private func gridCell(index: Int) -> some View {
         let keyring = viewModel.keyring(at: index)
+        let isMyKeyring = viewModel.isMyKeyring(at: index)
 
-        return ZStack {
+        return ZStack(alignment: .topTrailing) {
             // 셀 배경
             Rectangle()
                 .fill(Color.white100)
@@ -161,6 +162,14 @@ struct Showcase25BoardView: View {
                 .disabled(!viewModel.showButtons)
                 .animation(.easeInOut(duration: 0.2), value: viewModel.showButtons)
             }
+
+            // 내 키링 표시 (우측 상단)
+            if isMyKeyring {
+                Circle()
+                    .fill(Color.main500.opacity(0.8))
+                    .frame(width: 8, height: 8)
+                    .padding(6)
+            }
         }
         .frame(width: cellWidth, height: cellHeight)
     }
@@ -169,6 +178,8 @@ struct Showcase25BoardView: View {
 
     @ViewBuilder
     private func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
+        let isMyKeyring = viewModel.isMyKeyring(at: index)
+
         let imageView = LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
             if let image = state.image {
                 image
@@ -184,7 +195,7 @@ struct Showcase25BoardView: View {
         .padding(8)
 
         // 내 키링인 경우에만 컨텍스트 메뉴 표시
-        if viewModel.isMyKeyring(at: index) {
+        if isMyKeyring {
             imageView
                 .contextMenu {
                     Button {
