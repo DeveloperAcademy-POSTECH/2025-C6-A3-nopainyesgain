@@ -290,6 +290,11 @@ extension PixelDrawView {
                                 Circle()
                                     .fill(color)
                                     .frame(width: 37, height: 37)
+                                    .overlay(
+                                        Circle()
+                                            .strokeBorder(Color.white, lineWidth: viewModel.selectedColor == color ? 3 : 0)
+                                    )
+                                    .shadow(color: viewModel.selectedColor == color ? Color.black.opacity(0.5) : Color.clear, radius: 2)
                             }
                         }
                     }
