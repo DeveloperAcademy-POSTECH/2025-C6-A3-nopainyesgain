@@ -19,6 +19,7 @@ struct FramePreviewView: View {
     @State private var showCamera = false
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
     @State private var showEditButton = false
+    @State private var isFrameLoaded: Bool = false
 
     // 시트에서 선택한 액션을 저장
     @State private var pendingAction: PhotoAction? = nil
@@ -35,27 +36,36 @@ struct FramePreviewView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                ZStack(alignment: .top) {
-                    // 프레임 + 사진 영역
-                    VStack {
-                        Spacer()
-                            .frame(height: 134)
+            ZStack {
+                // 메인 콘텐츠
+                VStack {
+                    ZStack(alignment: .top) {
+                        // 프레임 + 사진 영역
+                        VStack {
+                            Spacer()
+                                .frame(height: 134)
 
-                        compositionView
+                            compositionView
+                        }
+
+                        // frameChain 이미지 (위에 겹침)
+                        Image("frameChain")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 90)
                     }
 
-                    // frameChain 이미지 (위에 겹침)
-                    Image("frameChain")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 90)
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.top, 168)
+                .opacity(isFrameLoaded ? 1 : 0)
 
-                Spacer()
+                // 로딩 중일 때
+                if !isFrameLoaded {
+                    LoadingAlert(type: .short, message: nil)
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.top, 168)
         }
         .photosPicker(
             isPresented: $showPhotoPicker,
@@ -324,6 +334,9 @@ struct FramePreviewView: View {
                                 .allowsHitTesting(false)
                         }
                         .frame(width: targetFrameWidth, height: targetFrameHeight)
+                        .onAppear {
+                            isFrameLoaded = true
+                        }
                     } else if state.isLoading {
                         ProgressView()
                             .frame(height: targetFrameHeight)
@@ -332,6 +345,9 @@ struct FramePreviewView: View {
                             .fill(Color.gray100)
                             .frame(height: targetFrameHeight)
                     }
+                }
+                .onDisappear {
+                    isFrameLoaded = false
                 }
             }
         }
