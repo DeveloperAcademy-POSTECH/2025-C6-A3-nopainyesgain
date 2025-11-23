@@ -54,8 +54,6 @@ struct FestivalView: View {
             Text("페스티벌")
                 .typography(.nanum32EB)
                 .foregroundStyle(.black100)
-            Spacer()
-            
             cardPagerView(
                 pageCount: festivals.count,
                 currentPage: $currentPage
@@ -71,7 +69,6 @@ struct FestivalView: View {
                 )
             }
             
-            Spacer()
             uploadButton
         }
         .task {
