@@ -139,40 +139,7 @@ struct Showcase25BoardView: View {
 
             if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
                 // 키링 이미지가 있는 경우
-                LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if state.error != nil {
-                        // 로드 실패
-                        Image(systemName: "photo")
-                            .foregroundStyle(.gray300)
-                    } else {
-                        // 로딩 중
-                        ProgressView()
-                    }
-                }
-                .padding(8)
-                .contextMenu {
-                    Button {
-                        // 수정: 시트 열기
-                        viewModel.selectedGridIndex = index
-                        withAnimation(.easeInOut) {
-                            viewModel.showKeyringSheet = true
-                        }
-                    } label: {
-                        Label("수정", systemImage: "pencil")
-                    }
-
-                    Button(role: .destructive) {
-                        // 회수: 확인 Alert 표시
-                        gridIndexToDelete = index
-                        showDeleteAlert = true
-                    } label: {
-                        Label("회수", systemImage: "arrow.uturn.backward")
-                    }
-                }
+                keyringImageView(keyring: keyring, index: index)
             } else {
                 // 키링이 없는 경우 + 버튼
                 Button {
@@ -196,6 +163,49 @@ struct Showcase25BoardView: View {
             }
         }
         .frame(width: cellWidth, height: cellHeight)
+    }
+
+    // MARK: - Keyring Image View
+
+    @ViewBuilder
+    private func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
+        let imageView = LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            } else if state.error != nil {
+                Image(systemName: "photo")
+                    .foregroundStyle(.gray300)
+            } else {
+                ProgressView()
+            }
+        }
+        .padding(8)
+
+        // 내 키링인 경우에만 컨텍스트 메뉴 표시
+        if viewModel.isMyKeyring(at: index) {
+            imageView
+                .contextMenu {
+                    Button {
+                        viewModel.selectedGridIndex = index
+                        withAnimation(.easeInOut) {
+                            viewModel.showKeyringSheet = true
+                        }
+                    } label: {
+                        Label("수정", systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive) {
+                        gridIndexToDelete = index
+                        showDeleteAlert = true
+                    } label: {
+                        Label("회수", systemImage: "arrow.uturn.backward")
+                    }
+                }
+        } else {
+            imageView
+        }
     }
 
     // MARK: - Custom Navigation Bar

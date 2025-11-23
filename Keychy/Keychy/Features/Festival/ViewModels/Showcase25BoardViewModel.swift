@@ -70,6 +70,12 @@ class Showcase25BoardViewModel {
         keyringsByGridIndex[gridIndex]
     }
 
+    /// 해당 쇼케이스 키링이 내 키링인지 확인
+    func isMyKeyring(at gridIndex: Int) -> Bool {
+        guard let showcaseKeyring = keyring(at: gridIndex) else { return false }
+        return showcaseKeyring.authorId == UserManager.shared.userUID
+    }
+
     // MARK: - 사용자 키링 로드
 
     /// 사용자 보유 키링 로드
@@ -109,10 +115,11 @@ class Showcase25BoardViewModel {
         isLoading = true
 
         let data: [String: Any] = [
+            "authorId": UserManager.shared.userUID,
             "bodyImageURL": userKeyring.bodyImage,
             "gridIndex": gridIndex,
             "isEditing": false,
-            "keyringID": userKeyring.id.uuidString,
+            "keyringId": userKeyring.id.uuidString,
             "memo": userKeyring.memo ?? "",
             "particleid": userKeyring.particleId,
             "soundId": userKeyring.soundId,
