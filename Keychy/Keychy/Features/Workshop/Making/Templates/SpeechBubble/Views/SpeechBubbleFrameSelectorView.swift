@@ -39,7 +39,6 @@ struct SpeechBubbleFrameSelectorView: View {
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
                 .padding(.top, 8)
-                .padding(.bottom, 8)
 
             ColorPalette(selectedColor: $viewModel.selectedTextColor)
                 .padding(.leading, 16)

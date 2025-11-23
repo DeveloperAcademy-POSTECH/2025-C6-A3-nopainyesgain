@@ -59,15 +59,3 @@ struct ColorPalette: View {
         }
     }
 }
-
-#Preview {
-    @Previewable @State var selectedColor: Color = .black
-
-    VStack {
-        ColorPalette(selectedColor: $selectedColor)
-            .background(Color.gray50)
-
-        Text("선택된 색상")
-            .foregroundStyle(selectedColor)
-    }
-}

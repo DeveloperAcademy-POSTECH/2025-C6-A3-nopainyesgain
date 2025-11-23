@@ -79,6 +79,7 @@ struct SpeechBubbleFramePreviewView: View {
 
                             // 2. 텍스트 입력 필드 (중앙에 오버레이)
                             textInputField
+                                .offset(y: frame.textOffsetY ?? 0)
                         }
                         .onAppear {
                             isFrameLoaded = true
@@ -126,19 +127,37 @@ struct SpeechBubbleFramePreviewView: View {
 
     /// 텍스트 제약 적용 (줄당 글자 수 + 최대 줄 수 + 자동 줄바꿈)
     private func applyTextConstraints(_ text: String) -> String {
-        // 모든 줄바꿈 제거하고 하나의 문자열로 합치기
-        let flatText = text.replacingOccurrences(of: "\n", with: "")
+        let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
         var result: [String] = []
-        var remaining = flatText
 
-        // maxCharsPerLine 단위로 쪼개기
-        while !remaining.isEmpty && result.count < viewModel.maxLines {
-            let chunk = String(remaining.prefix(viewModel.maxCharsPerLine))
-            result.append(chunk)
-            remaining = String(remaining.dropFirst(viewModel.maxCharsPerLine))
+        for line in lines {
+            let lineStr = String(line)
+
+            // 빈 줄은 그대로 추가 (수동 엔터 허용)
+            if lineStr.isEmpty {
+                result.append("")
+                if result.count >= viewModel.maxLines {
+                    break
+                }
+                continue
+            }
+
+            // 현재 줄이 maxCharsPerLine을 초과하면 자동으로 쪼개기
+            var remaining = lineStr
+            while !remaining.isEmpty && result.count < viewModel.maxLines {
+                let chunk = String(remaining.prefix(viewModel.maxCharsPerLine))
+                result.append(chunk)
+                remaining = String(remaining.dropFirst(viewModel.maxCharsPerLine))
+            }
+
+            // 최대 줄 수 도달 시 중단
+            if result.count >= viewModel.maxLines {
+                break
+            }
         }
 
-        return result.joined(separator: "\n")
+        // 최대 줄 수 제한
+        return result.prefix(viewModel.maxLines).joined(separator: "\n")
     }
 }
 

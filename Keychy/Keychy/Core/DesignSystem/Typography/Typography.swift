@@ -123,6 +123,7 @@ struct Typography {
     
     // MARK: - Gulim
     static let gulim20R = Typography(font: .custom(.gulimRegular, size: 20), lineSpacing: 0)
+    static let gulim16R = Typography(font: .custom(.gulimRegular, size: 16), lineSpacing: 0)
 }
 
 // MARK: - View Extension

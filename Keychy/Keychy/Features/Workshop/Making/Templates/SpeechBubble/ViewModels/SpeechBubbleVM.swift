@@ -79,7 +79,7 @@ class SpeechBubbleVM: KeyringViewModelProtocol {
     
     // MARK: - Template Info
     var templateId: String { template?.id ?? "SpeechBubble" }
-    var chainLength: Int { 5 }
+    var chainLength: Int { template?.chainLength ?? 3 }
     
     // MARK: - Customizing Modes
     var availableCustomizingModes: [CustomizingMode] { [.frame, .effect] }

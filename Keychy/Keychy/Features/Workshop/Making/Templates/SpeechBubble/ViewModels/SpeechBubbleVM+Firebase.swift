@@ -92,16 +92,16 @@ extension SpeechBubbleVM {
                 .document("SpeechBubble")
                 .collection("Frames")
                 .getDocuments()
-            
+
             availableFrames = try framesSnapshot.documents.compactMap {
                 try $0.data(as: Frame.self)
             }
-            
+
             // 첫 번째 프레임을 기본 선택
             if let firstFrame = availableFrames.first {
                 selectedFrame = firstFrame
             }
-            
+
         } catch {
             errorMessage = "프레임 목록을 불러오는데 실패했습니다."
         }
