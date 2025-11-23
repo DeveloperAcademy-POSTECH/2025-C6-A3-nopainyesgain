@@ -52,6 +52,7 @@ struct FestivalView: View {
         // 카드 스와이프 뷰 (중앙 배치)
         ZStack {
             Image(.festivalBG)
+                .resizable()
                 .aspectRatio(contentMode: .fit)
             VStack {
                 Text("페스티벌")
