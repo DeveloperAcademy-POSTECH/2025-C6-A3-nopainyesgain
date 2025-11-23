@@ -280,7 +280,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
         // postOfficeId 추출해서 화면 이동
         if let postOfficeId = userInfo["postOfficeId"] as? String {
-            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .collect)
+            DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .notification)
         }
 
         completionHandler()
