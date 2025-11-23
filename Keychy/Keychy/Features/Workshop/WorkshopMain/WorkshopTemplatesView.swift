@@ -46,9 +46,8 @@ struct WorkshopTemplatesView: View {
             VStack(spacing: 0) {
                 filterBar
             }
-            .background(Color(UIColor.systemBackground))
+            .background(Color.white100)
             .adaptiveTopPaddingAlt()
-            .padding(.top, 20)
 
             customNavigationBar
         }
@@ -110,7 +109,7 @@ struct WorkshopTemplatesView: View {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 12)
+        .padding(.top, 32)
         .padding(.bottom, 20)
     }
 
