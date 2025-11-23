@@ -94,12 +94,12 @@ extension PixelDrawView {
         GeometryReader { geometry in
             // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
             let gridSize = geometry.size.width - 36
-            let cellSize = gridSize / 16
+            let cellSize = gridSize / 15
 
             VStack(spacing: 0) {
-                ForEach(0..<16, id: \.self) { row in
+                ForEach(0..<15, id: \.self) { row in
                     HStack(spacing: 0) {
-                        ForEach(0..<16, id: \.self) { col in
+                        ForEach(0..<15, id: \.self) { col in
                             PixelCell(
                                 color: viewModel.pixelGrid[row][col],
                                 size: cellSize,
@@ -322,8 +322,10 @@ extension PixelDrawView {
             Text("그림을 그려주세요")
         } trailing: {
             NextToolbarButton {
-                viewModel.updateBodyImage()
-                router.push(.pixelCustomizing)
+                Task {
+                    await viewModel.updateBodyImage()
+                    router.push(.pixelCustomizing)
+                }
             }
             .frame(width: 44, height: 44)
             .offset(x: -4)
