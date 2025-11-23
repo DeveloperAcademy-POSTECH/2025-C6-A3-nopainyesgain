@@ -50,26 +50,29 @@ struct FestivalView: View {
     
     var body: some View {
         // 카드 스와이프 뷰 (중앙 배치)
-        VStack {
-            Text("페스티벌")
-                .typography(.nanum32EB)
-                .foregroundStyle(.black100)
-            cardPagerView(
-                pageCount: festivals.count,
-                currentPage: $currentPage
-            ) { index in
-                festivalCard(
-                    title: festivals[index].title,
-                    location: festivals[index].location,
-                    dateRange: festivals[index].dateRange,
-                    distance: festivals[index].distance,
-                    imageName: festivals[index].imageName,
-                    isLocked: festivals[index].isLocked,
-                    enterAction: { router.push(.showcase25Board) }
-                )
+        ZStack {
+            Image(.festivalBG)
+            VStack {
+                Text("페스티벌")
+                    .typography(.nanum32EB)
+                    .foregroundStyle(.black100)
+                cardPagerView(
+                    pageCount: festivals.count,
+                    currentPage: $currentPage
+                ) { index in
+                    festivalCard(
+                        title: festivals[index].title,
+                        location: festivals[index].location,
+                        dateRange: festivals[index].dateRange,
+                        distance: festivals[index].distance,
+                        imageName: festivals[index].imageName,
+                        isLocked: festivals[index].isLocked,
+                        enterAction: { router.push(.showcase25Board) }
+                    )
+                }
+                
+                uploadButton
             }
-            
-            uploadButton
         }
         .task {
             if !hasInitialized {
