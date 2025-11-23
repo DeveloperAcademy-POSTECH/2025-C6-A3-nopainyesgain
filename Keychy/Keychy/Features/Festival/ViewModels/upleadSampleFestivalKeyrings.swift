@@ -8,8 +8,8 @@
 import Foundation
 import FirebaseFirestore
 
-/// ShowcaseFestivalKeyring 컬렉션에 20개의 샘플 데이터 업로드
-/// 기존 데이터를 모두 삭제 후 새로 업로드
+/// ShowcaseFestivalKeyring 컬렉션에 144개의 빈 문서 생성 (gridIndex 0~143)
+/// 기존 데이터를 모두 삭제 후 새로 생성
 func uploadSampleFestivalKeyrings() async {
     let db = Firestore.firestore()
     let collection = db.collection("ShowcaseFestivalKeyring")
@@ -21,39 +21,30 @@ func uploadSampleFestivalKeyrings() async {
 
         for document in existingDocs.documents {
             try await document.reference.delete()
-            print("🗑️ Deleted document: \(document.documentID)")
         }
         print("✅ Deleted \(existingDocs.documents.count) existing documents")
 
-        // 2. 0~99 중에서 20개의 고유한 gridIndex 생성
-        var gridIndices = Array(0...99)
-        gridIndices.shuffle()
-        let selectedIndices = Array(gridIndices.prefix(20))
-
-        let sampleBodyImageURL = "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Keyrings%2FBodyImages%2F1SbgBiUT1ucH4LOIhp73KEgk6q32%2F02194AA5-B590-4E3A-BF4C-798EA0074130.png?alt=media&token=ef2414b9-d218-4870-a52b-3309b183def1"
-
-        // 3. 새 데이터 업로드
-        print("📤 Uploading new festival keyrings...")
-        for gridIndex in selectedIndices {
+        // 2. 144개의 빈 문서 생성 (gridIndex 0~143)
+        print("📤 Creating 144 empty festival keyring documents...")
+        for gridIndex in 0..<144 {
             let data: [String: Any] = [
-                "bodyImageURL": sampleBodyImageURL,
+                "authorId": "",
+                "bodyImageURL": "",
                 "gridIndex": gridIndex,
                 "isEditing": false,
-                "keyringId": "none",
-                "authorId": "1SbgBiUT1ucH4LOIhp73KEgk6q32",
-                "memo": "none",
-                "particleid": "none",
-                "soundId": "none",
+                "keyringId": "",
+                "memo": "",
+                "particleid": "",
+                "soundId": "",
                 "votes": 0
             ]
 
             try await collection.addDocument(data: data)
-            print("✅ Uploaded festival keyring with gridIndex: \(gridIndex)")
         }
 
-        print("🎉 Successfully uploaded 20 festival keyrings")
+        print("🎉 Successfully created 144 empty festival keyring documents")
 
     } catch {
-        print("❌ Failed to upload festival keyrings: \(error.localizedDescription)")
+        print("❌ Failed to create festival keyrings: \(error.localizedDescription)")
     }
 }
