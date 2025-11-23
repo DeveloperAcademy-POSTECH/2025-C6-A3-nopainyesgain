@@ -19,6 +19,7 @@
 		3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC52EBBE252003125BE /* LackPopup.swift */; };
 		3824B5E52ED352CC00A4BBCB /* ClearSketchCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3824B5E42ED352CC00A4BBCB /* ClearSketchCropView.swift */; };
 		3824B6032ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3824B6022ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift */; };
+		3824B6052ED3A18100A4BBCB /* ClearSketchVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3824B6042ED3A18100A4BBCB /* ClearSketchVM+Crop.swift */; };
 		382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382800D02EC05D4E005F1332 /* PostOffice.swift */; };
 		382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */; };
 		38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */; };
@@ -363,6 +364,7 @@
 		3822DDC52EBBE252003125BE /* LackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LackPopup.swift; sourceTree = "<group>"; };
 		3824B5E42ED352CC00A4BBCB /* ClearSketchCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchCropView.swift; sourceTree = "<group>"; };
 		3824B6022ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+ImageConversion.swift"; sourceTree = "<group>"; };
+		3824B6042ED3A18100A4BBCB /* ClearSketchVM+Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+Crop.swift"; sourceTree = "<group>"; };
 		382800CD2EBFBE03005F1332 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		382800D02EC05D4E005F1332 /* PostOffice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostOffice.swift; sourceTree = "<group>"; };
 		382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Package.swift"; sourceTree = "<group>"; };
@@ -812,6 +814,7 @@
 				38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */,
 				38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */,
 				38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */,
+				3824B6042ED3A18100A4BBCB /* ClearSketchVM+Crop.swift */,
 				3824B6022ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift */,
 			);
 			path = ViewModels;
@@ -2107,6 +2110,7 @@
 				4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
 				4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */,
+				3824B6052ED3A18100A4BBCB /* ClearSketchVM+Crop.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
 				389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
