@@ -33,6 +33,11 @@ struct ClearSketchCropView: View {
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
+                
+                if showCropAlert {
+                    CropAlertPopup(isPresented: $showCropAlert)
+                        .zIndex(101)
+                }
             }
         }
         .ignoresSafeArea()
@@ -273,10 +278,13 @@ extension ClearSketchCropView {
     private func performCrop() {
         guard let bodyImage = viewModel.bodyImage else { return }
         
-        // 크롭된 이미지 생성
-        guard !cropPaths.isEmpty, let cropPoints = cropPaths.first?.points else {
-            // 크롭 영역이 없으면 경고 표시
-            showCropAlert = true
+        // 크롭 영역이 없거나 점이 2개 미만이면 경고 표시
+        guard !cropPaths.isEmpty,
+              let cropPoints = cropPaths.first?.points,
+              cropPoints.count >= 2 else {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showCropAlert = true
+            }
             return
         }
         
@@ -286,7 +294,9 @@ extension ClearSketchCropView {
             cropPath: cropPoints,
             imageDisplaySize: imageDisplaySize
         ) else {
-            showCropAlert = true
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showCropAlert = true
+            }
             return
         }
         
@@ -314,4 +324,25 @@ extension ClearSketchCropView {
 struct CropPath: Identifiable {
     let id = UUID()
     var points: [CGPoint] = []
+}
+
+// MARK: - 크롭 알럿
+struct CropAlertPopup: View {
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        Text("크롭 영역을 지정해주세요.")
+            .typography(.suit17SB)
+            .foregroundColor(.black100)
+            .frame(width: 300, height: 73)
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+            .transition(.scale.combined(with: .opacity))
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isPresented = false
+                    }
+                }
+            }
+    }
 }
