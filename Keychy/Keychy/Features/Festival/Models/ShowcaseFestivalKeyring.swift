@@ -11,6 +11,7 @@ import FirebaseFirestore
 /// 쇼케이스 페스티벌 키링 모델
 struct ShowcaseFestivalKeyring: Identifiable, Hashable {
     var id: String  // Firestore document ID
+    var authorId: String
     var bodyImageURL: String
     var gridIndex: Int
     var isEditing: Bool
@@ -21,6 +22,7 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
     var votes: Int
 
     init(id: String = UUID().uuidString,
+         authorId: String = "",
          bodyImageURL: String = "",
          gridIndex: Int = 0,
          isEditing: Bool = false,
@@ -30,6 +32,7 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
          soundId: String = "none",
          votes: Int = 0) {
         self.id = id
+        self.authorId = authorId
         self.bodyImageURL = bodyImageURL
         self.gridIndex = gridIndex
         self.isEditing = isEditing
@@ -45,6 +48,7 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
         guard let data = document.data() else { return nil }
 
         self.id = document.documentID
+        self.authorId = data["authorId"] as? String ?? ""
         self.bodyImageURL = data["bodyImageURL"] as? String ?? ""
         self.gridIndex = data["gridIndex"] as? Int ?? 0
         self.isEditing = data["isEditing"] as? Bool ?? false
