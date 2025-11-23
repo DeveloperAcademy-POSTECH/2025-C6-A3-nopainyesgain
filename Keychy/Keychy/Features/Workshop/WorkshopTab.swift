@@ -39,7 +39,11 @@ struct WorkshopTab: View {
                     // MARK: - 내 창고뷰
                     case .myItems:
                         MyItemsView(router: router)
-                    
+
+                    // MARK: - 템플릿 목록뷰
+                    case .workshopTemplates:
+                        WorkshopTemplatesView(router: router)
+
                     // MARK: - 재화 구매뷰
                     case .coinCharge:
                         CoinChargeView(

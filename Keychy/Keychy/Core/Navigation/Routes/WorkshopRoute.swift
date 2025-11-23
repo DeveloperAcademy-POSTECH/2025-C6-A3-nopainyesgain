@@ -20,6 +20,7 @@ enum WorkshopRoute: Hashable {
     case acrylicPhotoComplete
     case coinCharge
     case myItems
+    case workshopTemplates
 
     // MARK: - 네온 사인 템플릿
     case NeonSignPreView

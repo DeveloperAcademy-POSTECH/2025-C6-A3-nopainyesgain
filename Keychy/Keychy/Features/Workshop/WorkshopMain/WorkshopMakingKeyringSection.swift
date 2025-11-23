@@ -32,7 +32,7 @@ extension WorkshopView {
             
             // 키링 만들기 버튼
             Button {
-                
+                router.push(.workshopTemplates)
             } label: {
                 ZStack {
                     // 바탕 레이어
