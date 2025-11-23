@@ -171,9 +171,6 @@ extension ClearSketchDrawingView {
         // 실제 캔버스의 GeometryReader 크기 사용
         let actualCanvasSize = viewModel.canvasSize.width > 0 ? viewModel.canvasSize :
             CGSize(width: screenWidth, height: screenWidth * 1.2)
-        
-        print("계산된 캔버스 크기: \(actualCanvasSize)")
-        print("그려진 패스 수: \(viewModel.drawingPaths.count)")
 
         let renderer = UIGraphicsImageRenderer(size: actualCanvasSize)
         
@@ -248,7 +245,6 @@ extension ClearSketchDrawingView {
             }
         }
         
-        print("생성된 이미지 크기: \(image.size)")
         return image
     }
 }

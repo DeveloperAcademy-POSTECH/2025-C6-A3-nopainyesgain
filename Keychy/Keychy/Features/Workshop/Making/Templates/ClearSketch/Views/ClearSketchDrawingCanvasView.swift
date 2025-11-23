@@ -79,9 +79,6 @@ struct ClearSketchDrawingCanvasView: View {
             var swiftUIPath = Path()
             swiftUIPath.move(to: points[0])
             swiftUIPath.addLine(to: points[1])
-//            for point in points.dropFirst() {
-//                swiftUIPath.addLine(to: point)
-//            }
             
             context.stroke(
                 swiftUIPath,
