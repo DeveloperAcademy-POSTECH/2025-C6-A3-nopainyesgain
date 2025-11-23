@@ -6,15 +6,28 @@
 //
 
 import SwiftUI
-import UIKit
 
-/// UIScrollView 기반의 확대/축소 가능한 스크롤뷰
-struct ZoomableScrollView<Content: View>: UIViewRepresentable {
+/// 순수 SwiftUI 기반의 확대/축소 가능한 스크롤뷰
+struct ZoomableScrollView<Content: View>: View {
     let content: Content
     let minZoom: CGFloat
     let maxZoom: CGFloat
     let initialZoom: CGFloat
     let onZoomChange: ((CGFloat) -> Void)?
+
+    // 줌 상태
+    @State private var currentZoom: CGFloat
+    @State private var lastZoom: CGFloat
+
+    // 오프셋 상태
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+
+    // 콘텐츠 사이즈
+    @State private var contentSize: CGSize = .zero
+
+    // 패딩
+    private let padding = EdgeInsets(top: 50, leading: 30, bottom: 30, trailing: 30)
 
     init(
         minZoom: CGFloat = 1.0,
@@ -28,85 +41,75 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         self.maxZoom = maxZoom
         self.initialZoom = initialZoom
         self.onZoomChange = onZoomChange
+        self._currentZoom = State(initialValue: initialZoom)
+        self._lastZoom = State(initialValue: initialZoom)
     }
 
-    func makeUIView(context: Context) -> UIScrollView {
-        let scrollView = UIScrollView()
-        scrollView.delegate = context.coordinator
-        scrollView.minimumZoomScale = minZoom
-        scrollView.maximumZoomScale = maxZoom
-        scrollView.bouncesZoom = true
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.backgroundColor = .clear
+    var body: some View {
+        GeometryReader { geometry in
+            let viewSize = geometry.size
 
-        // 가로세로 30씩 패딩
-        scrollView.contentInset = UIEdgeInsets(top: 50, left: 30, bottom: 30, right: 30)
-
-        // 핀치 줌 즉시 반응하도록 설정
-        scrollView.delaysContentTouches = false
-        scrollView.canCancelContentTouches = true
-
-        // SwiftUI 콘텐츠를 호스팅
-        let hostedView = context.coordinator.hostingController.view!
-        hostedView.translatesAutoresizingMaskIntoConstraints = true
-        hostedView.backgroundColor = .clear
-        hostedView.isMultipleTouchEnabled = true
-        hostedView.frame = CGRect(origin: .zero, size: context.coordinator.hostingController.sizeThatFits(in: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)))
-
-        scrollView.addSubview(hostedView)
-        scrollView.contentSize = hostedView.frame.size
-
-        // 핀치 제스처가 다른 제스처보다 우선하도록 설정
-        if let pinchGesture = scrollView.pinchGestureRecognizer {
-            pinchGesture.delaysTouchesBegan = false
-            pinchGesture.delaysTouchesEnded = false
+            content
+                .background(
+                    GeometryReader { contentGeometry in
+                        Color.clear.onAppear {
+                            contentSize = contentGeometry.size
+                        }
+                    }
+                )
+                .scaleEffect(currentZoom)
+                .offset(x: offset.width, y: offset.height)
+                .frame(width: viewSize.width, height: viewSize.height)
+                .contentShape(Rectangle())
+                .gesture(
+                    // 핀치 줌 제스처
+                    MagnifyGesture()
+                        .onChanged { value in
+                            let newZoom = lastZoom * value.magnification
+                            currentZoom = min(max(newZoom, minZoom), maxZoom)
+                            onZoomChange?(currentZoom)
+                        }
+                        .onEnded { _ in
+                            lastZoom = currentZoom
+                            // 줌 후 오프셋 보정
+                            constrainOffset(viewSize: viewSize)
+                        }
+                        .simultaneously(with:
+                            // 드래그 제스처
+                            DragGesture()
+                                .onChanged { value in
+                                    offset = CGSize(
+                                        width: lastOffset.width + value.translation.width,
+                                        height: lastOffset.height + value.translation.height
+                                    )
+                                }
+                                .onEnded { _ in
+                                    constrainOffset(viewSize: viewSize)
+                                    lastOffset = offset
+                                }
+                        )
+                )
         }
-
-        // 초기 줌 설정
-        DispatchQueue.main.async {
-            scrollView.setZoomScale(initialZoom, animated: false)
-            // 중앙으로 스크롤
-            let centerOffsetX = (scrollView.contentSize.width * initialZoom - scrollView.bounds.width) / 2
-            let centerOffsetY = (scrollView.contentSize.height * initialZoom - scrollView.bounds.height) / 2
-            scrollView.setContentOffset(CGPoint(x: max(0, centerOffsetX), y: max(0, centerOffsetY)), animated: false)
-        }
-
-        return scrollView
-    }
-
-    func updateUIView(_ uiView: UIScrollView, context: Context) {
-        context.coordinator.hostingController.rootView = content
-
-        let newSize = context.coordinator.hostingController.sizeThatFits(in: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-
-        // 사이즈가 변경됐을 때만 업데이트 (줌 변경 시 불필요한 업데이트 방지)
-        let currentSize = context.coordinator.hostingController.view.frame.size
-        if abs(newSize.width - currentSize.width) > 1 || abs(newSize.height - currentSize.height) > 1 {
-            context.coordinator.hostingController.view.frame.size = newSize
-            uiView.contentSize = newSize
+        .clipped()
+        .onAppear {
+            onZoomChange?(currentZoom)
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(hostingController: UIHostingController(rootView: content), onZoomChange: onZoomChange)
-    }
+    // MARK: - 오프셋 제한
 
-    class Coordinator: NSObject, UIScrollViewDelegate {
-        let hostingController: UIHostingController<Content>
-        var onZoomChange: ((CGFloat) -> Void)?
+    private func constrainOffset(viewSize: CGSize) {
+        let scaledWidth = contentSize.width * currentZoom
+        let scaledHeight = contentSize.height * currentZoom
 
-        init(hostingController: UIHostingController<Content>, onZoomChange: ((CGFloat) -> Void)?) {
-            self.hostingController = hostingController
-            self.onZoomChange = onZoomChange
-        }
+        // 스크롤 가능한 최대 범위 계산
+        let maxOffsetX = max(0, (scaledWidth - viewSize.width) / 2 + padding.leading)
+        let maxOffsetY = max(0, (scaledHeight - viewSize.height) / 2 + padding.top)
 
-        func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-            return hostingController.view
-        }
-
-        func scrollViewDidZoom(_ scrollView: UIScrollView) {
-            onZoomChange?(scrollView.zoomScale)
+        withAnimation(.easeOut(duration: 0.2)) {
+            offset.width = min(max(offset.width, -maxOffsetX), maxOffsetX)
+            offset.height = min(max(offset.height, -maxOffsetY), maxOffsetY)
+            lastOffset = offset
         }
     }
 }
