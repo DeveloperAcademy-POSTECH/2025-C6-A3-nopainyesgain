@@ -44,12 +44,12 @@ struct ClearSketchDrawingView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // MARK: - 드로잉 캔버스 (남은 공간 - 팔레트 높이)
+                    Spacer()
+                        .frame(height: getNavigationHeight())
+                    
+                    // MARK: - 드로잉 캔버스
                     ZStack {
                         drawingCanvasView
-                        
-                        // MARK: - Brush Size Slider (좌측 중앙)
-                        brushSizeSlider
                     }
                     
                     // MARK: - Undo/Redo/그리기/지우기 버튼
@@ -71,6 +71,9 @@ struct ClearSketchDrawingView: View {
                             maxHeight: showPalette ? geometry.size.height * 0.13 : 0
                         )
                 }
+                
+                // MARK: - 브러시 굵기 슬라이더
+                brushSizeSlider
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
@@ -101,6 +104,28 @@ extension ClearSketchDrawingView {
             }
             .frame(width: 44, height: 44)
             .offset(x: -4)
+        }
+    }
+    
+    // MARK: - 네비게이션 높이 계산 함수
+    private func getNavigationHeight() -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 84 // 기본값
+        }
+        
+        let safeAreaTop = window.safeAreaInsets.top
+        let navigationBarHeight: CGFloat = 44
+        let additionalPadding: CGFloat = 8
+        
+        // SafeArea가 있는 기기 (iPhone X 이후)
+        if safeAreaTop > 0 {
+            return safeAreaTop + navigationBarHeight + additionalPadding
+        } else {
+            // 직각형 기기 (SE 등)
+            return 20 + navigationBarHeight + additionalPadding // 상태바 + 네비게이션 + 여백
         }
     }
 }
@@ -358,33 +383,5 @@ extension ClearSketchDrawingView {
                 )
         }
         .frame(width: 37)
-        
-        // 영역 안 침범했던 시절
-//        GeometryReader { geometry in
-//            let paletteHeight = geometry.size.height
-//            let selectedHeight = paletteHeight * 0.94 // 선택된 크레용은 94% 높이
-//            let unselectedHeight = paletteHeight * 0.3 // 선택 안된 크레용은 60% 높이
-//
-//            VStack(spacing: 0) {
-//                if isSelected {
-//                    Image(colorData.imageName)
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: 37)
-//                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
-//
-//                } else {
-//                    Spacer()
-//
-//                    Image(colorData.imageName)
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: 37)
-//                        .offset(y: unselectedHeight)
-//                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
-//                }
-//
-//            }
-//        }
     }
 }
