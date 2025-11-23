@@ -13,6 +13,14 @@ struct Showcase25BoardView: View {
     @Bindable var router: NavigationRouter<FestivalRoute>
     @State private var viewModel = Showcase25BoardViewModel()
 
+    // 키링 선택 시트 그리드 컬럼
+    private let sheetGridColumns: [GridItem] = [
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
+    ]
+    private let sheetHeightRatio: CGFloat = 0.43
+
     // 그리드 설정
     private let gridColumns = 10
     private let gridRows = 10
@@ -44,24 +52,41 @@ struct Showcase25BoardView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
-            Color.white100
+        ZStack(alignment: .bottom) {
+            // 메인 컨텐츠
+            ZStack(alignment: .top) {
+                Color.white100
+                    .ignoresSafeArea()
+
+                // 확대/축소 가능한 그리드
+                ZoomableScrollView(
+                    minZoom: minZoom,
+                    maxZoom: maxZoom,
+                    initialZoom: initialZoom,
+                    onZoomChange: { zoom in
+                        viewModel.currentZoom = zoom
+                    }
+                ) {
+                    gridContent
+                }
                 .ignoresSafeArea()
 
-            // 확대/축소 가능한 그리드
-            ZoomableScrollView(
-                minZoom: minZoom,
-                maxZoom: maxZoom,
-                initialZoom: initialZoom,
-                onZoomChange: { zoom in
-                    viewModel.currentZoom = zoom
-                }
-            ) {
-                gridContent
+                customNavigationBar
             }
-            .ignoresSafeArea()
 
-            customNavigationBar
+            // Dim 오버레이 (키링 시트가 열릴 때)
+            if viewModel.showKeyringSheet {
+                Color.black20
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            viewModel.showKeyringSheet = false
+                        }
+                    }
+
+                // 키링 선택 시트
+                keyringSelectionSheet
+            }
         }
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
@@ -115,7 +140,10 @@ struct Showcase25BoardView: View {
             } else {
                 // 키링이 없는 경우 + 버튼
                 Button {
-                    print("Grid cell \(index) tapped")
+                    viewModel.selectedGridIndex = index
+                    withAnimation(.easeInOut) {
+                        viewModel.showKeyringSheet = true
+                    }
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .medium))
@@ -148,5 +176,78 @@ struct Showcase25BoardView: View {
             Spacer()
                 .frame(width: 44, height: 44)
         }
+    }
+
+    // MARK: - Keyring Selection Sheet
+
+    private var keyringSelectionSheet: some View {
+        VStack(spacing: 18) {
+            Text("키링 선택")
+                .typography(.suit16B)
+                .foregroundStyle(.black100)
+
+            if viewModel.userKeyrings.isEmpty {
+                // 키링이 없는 경우
+                VStack {
+                    Image(.emptyViewIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 77)
+                    Text("공방에서 키링을 만들 수 있어요")
+                        .typography(.suit15R)
+                        .foregroundStyle(.black100)
+                        .padding(.vertical, 15)
+                }
+                .padding(.bottom, 77)
+                .padding(.top, 62)
+                .frame(maxWidth: .infinity)
+            } else {
+                // 키링 목록
+                ScrollView {
+                    LazyVGrid(columns: sheetGridColumns, spacing: 10) {
+                        ForEach(viewModel.userKeyrings, id: \.self) { keyring in
+                            keyringCell(keyring: keyring)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
+        .frame(maxWidth: .infinity)
+        .frame(height: screenHeight * sheetHeightRatio)
+        .glassEffect(.regular, in: .rect)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(radius: 10)
+        .transition(.move(edge: .bottom))
+    }
+
+    // MARK: - Keyring Cell
+
+    private func keyringCell(keyring: Keyring) -> some View {
+        Button {
+            // 키링 선택 -> Firebase 업데이트
+            Task {
+                await viewModel.addOrUpdateShowcaseKeyring(
+                    at: viewModel.selectedGridIndex,
+                    with: keyring
+                )
+                withAnimation(.easeInOut) {
+                    viewModel.showKeyringSheet = false
+                }
+            }
+        } label: {
+            VStack(spacing: 10) {
+                CollectionCellView(keyring: keyring)
+                    .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                    .cornerRadius(10)
+
+                Text(keyring.name)
+                    .typography(.notosans14M)
+                    .foregroundStyle(.black100)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
+        }
+        .disabled(keyring.status == .packaged || keyring.status == .published)
     }
 }
