@@ -46,6 +46,7 @@ struct KeyringBodyComponent {
     // MARK: - Multi용 String URL로 노드 생성 (비동기, 150x300 aspect fit)
     static func createNodeForMulti(
         from bodyImageURL: String,
+        templateId: String? = nil,
         completion: @escaping (SKNode?) -> Void
     ) {
         Task {
@@ -53,7 +54,7 @@ struct KeyringBodyComponent {
                 let image = try await StorageManager.shared.getImage(path: bodyImageURL)
 
                 await MainActor.run {
-                    let node = createMultiImageBody(image: image)
+                    let node = createMultiImageBody(image: image, templateId: templateId)
                     completion(node)
                 }
             } catch {
@@ -153,11 +154,18 @@ struct KeyringBodyComponent {
     }
 
     // MARK: - Multi용 (150x300 aspect fit)
-    private static func createMultiImageBody(image: UIImage) -> SKNode {
-        let maxSize = CGSize(width: 160, height: 400)
+    private static func createMultiImageBody(image: UIImage, templateId: String? = nil) -> SKNode {
+        // 말풍선 템플릿만 더 큰 maxSize 사용
+        let maxSize: CGSize
+        if templateId == "SpeechBubble" {
+            maxSize = CGSize(width: 240, height: 600)
+        } else {
+            maxSize = CGSize(width: 160, height: 400)
+        }
+
         let originalSize = image.size
 
-        // Aspect fit 계산: 원본 비율 유지하며 150x300 안에 들어가도록
+        // Aspect fit 계산: 원본 비율 유지하며 maxSize 안에 들어가도록
         let widthRatio = maxSize.width / originalSize.width
         let heightRatio = maxSize.height / originalSize.height
         let scale = min(widthRatio, heightRatio)

@@ -19,8 +19,6 @@ extension KeyringInfoInputView {
             return
         }
 
-        print("[KeyringSave] 저장 시작 - uid: \(uid), chainLength: \(viewModel.chainLength)")
-
         isSavingToFirebase = true
 
         // 1. Firebase Storage에 이미지 업로드
@@ -85,6 +83,7 @@ extension KeyringInfoInputView {
                         keyringId: keyringId,
                         keyringName: keyringName,
                         bodyImage: imageURL,
+                        templateId: templateId,
                         ringType: .basic,
                         chainType: .basic,
                         hookOffsetY: hookOffsetY,
@@ -232,6 +231,7 @@ extension KeyringInfoInputView {
         keyringId: String,
         keyringName: String,
         bodyImage: String,
+        templateId: String?,
         ringType: RingType,
         chainType: ChainType,
         hookOffsetY: CGFloat?,
@@ -246,6 +246,7 @@ extension KeyringInfoInputView {
                 ringType: ringType,
                 chainType: chainType,
                 bodyImage: bodyImage,
+                templateId: templateId,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
