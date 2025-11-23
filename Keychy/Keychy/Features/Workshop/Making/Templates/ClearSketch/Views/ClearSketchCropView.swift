@@ -15,6 +15,7 @@ struct ClearSketchCropView: View {
     @State private var currentCropPoints: [CGPoint] = []
     @State private var imageDisplaySize: CGSize = .zero
     @State private var showCropAlert = false
+    @State private var showGuiding = true
     
     var body: some View {
         GeometryReader { geometry in
@@ -43,6 +44,12 @@ struct ClearSketchCropView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .sheet(isPresented: $showGuiding) {
+            ClearSketchGuiding(
+                guidingText: "키링으로 만들 영역을 지정해주세요",
+                guidingImageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FguidingImage.png?alt=media&token=example" // 임시
+            )
+        }
     }
 }
 
