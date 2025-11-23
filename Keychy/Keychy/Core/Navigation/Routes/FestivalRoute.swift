@@ -8,4 +8,5 @@
 /// 페스티벌 탭
 enum FestivalRoute: Hashable {
     // 나중에 추가
+    case festivalDetailView
 }
