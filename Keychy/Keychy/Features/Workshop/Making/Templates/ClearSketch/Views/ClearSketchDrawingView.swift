@@ -51,11 +51,7 @@ struct ClearSketchDrawingView: View {
                         drawingCanvasView
                         
                         // MARK: - Brush Size Slider (좌측 중앙)
-                        HStack {
-                            brushSizeSlider
-                                .padding(.leading, 20)
-                            Spacer()
-                        }
+                        brushSizeSlider
                     }
                     
                     // MARK: - Undo/Redo/그리기/지우기 버튼
@@ -133,6 +129,7 @@ extension ClearSketchDrawingView {
             HStack {
                 // 커스텀 슬라이더
                 customSlider
+                    .padding(.leading, 10)
                 
                 Spacer()
 
