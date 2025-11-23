@@ -292,6 +292,7 @@ class ClearSketchVM: KeyringViewModelProtocol {
     // MARK: - 그리기 데이터 초기화 (추가 메서드)
     func resetImageData() {
         drawingPaths.removeAll()
+        undoneDrawingPaths.removeAll()
         bodyImage = nil
         isDrawing = false
     }

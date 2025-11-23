@@ -90,7 +90,7 @@ extension ClearSketchDrawingView {
     var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                //viewModel.resetImageData()
+                viewModel.resetImageData()
                 router.pop()
             }
         } center: {
