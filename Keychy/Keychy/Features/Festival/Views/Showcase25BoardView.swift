@@ -267,6 +267,7 @@ struct Showcase25BoardView: View {
                         .typography(.suit15M)
                         .foregroundStyle(viewModel.selectedKeyringForUpload != nil ? .main500 : .gray300)
                 }
+                .buttonStyle(.plain)
                 .disabled(viewModel.selectedKeyringForUpload == nil)
             }
 
