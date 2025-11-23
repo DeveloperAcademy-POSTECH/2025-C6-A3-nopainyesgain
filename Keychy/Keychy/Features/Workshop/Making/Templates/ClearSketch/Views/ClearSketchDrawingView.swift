@@ -252,10 +252,10 @@ extension ClearSketchDrawingView {
 extension ClearSketchDrawingView {
     private var undoRedoButtons: some View {
         GlassEffectContainer {
-            HStack(spacing: 12) {
+            HStack(spacing: -15) {
                 Button {
                     viewModel.undo()
-                    //Haptic.impact(style: .light)
+                    Haptic.impact(style: .light)
                 } label: {
                     Image(viewModel.canUndo ? "undoBlack" : "undoGray")
                 }
@@ -289,12 +289,10 @@ extension ClearSketchDrawingView {
                 Haptic.impact(style: .medium)
             }) {
                 Image(viewModel.isDrawMode ? "drawWhite" : "drawBlack")
-                    .resizable()
-                    .frame(width: 26, height: 26)
             }
-            .frame(width: 44, height: 44)
             .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .accent : .white100)
+            .tint(viewModel.isDrawMode ? .main500 : .white100)
+            
             
             Button(action: {
                 viewModel.isDrawMode = false
@@ -304,53 +302,48 @@ extension ClearSketchDrawingView {
                 Haptic.impact(style: .medium)
             }) {
                 Image(viewModel.isDrawMode ? "eraserBlack" : "eraserWhite")
-                    .resizable()
-                    .frame(width: 26, height: 26)
             }
-            .frame(width: 44, height: 44)
             .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .white100 : .accent)
+            .tint(viewModel.isDrawMode ? .white100 : .main500)
         }
-        .background(Color.white100)
-        .ignoresSafeArea(edges: .bottom)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
     }
 }
 
 // MARK: - Color Palette
 extension ClearSketchDrawingView {
     private var colorPalette: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                if showPalette {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            // 프리셋 색상들
-                            ForEach(presetColorsWithImages, id: \.color) { colorData in
-                                Button {
-                                    viewModel.selectColor(colorData.color)
-                                    Haptic.impact(style: .light)
-                                } label: {
-                                    crayonView(colorData: colorData, screenWidth: geometry.size.width)
-                                }
+        VStack(spacing: 0) {
+            if showPalette {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        // 프리셋 색상들
+                        ForEach(presetColorsWithImages, id: \.color) { colorData in
+                            Button {
+                                viewModel.selectColor(colorData.color)
+                                Haptic.impact(style: .light)
+                            } label: {
+                                crayonView(colorData: colorData)
                             }
                         }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
                     }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    
-                    Spacer()
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
                 }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                
+                Spacer()
             }
         }
         .frame(maxWidth: .infinity)
-        .background(.gray50)
+        .background(
+            showPalette ? .gray50 : .white100
+        )
+        .ignoresSafeArea(edges: .bottom)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
     }
     
     @ViewBuilder
-    private func crayonView(colorData: (color: Color, imageName: String), screenWidth: CGFloat) -> some View {
+    private func crayonView(colorData: (color: Color, imageName: String)) -> some View {
         let isSelected = viewModel.currentColor == colorData.color
         
         GeometryReader { geometry in
@@ -358,17 +351,12 @@ extension ClearSketchDrawingView {
             let selectedHeight = paletteHeight * 0.94 // 선택된 크레용은 94% 높이
             let unselectedHeight = paletteHeight * 0.3 // 선택 안된 크레용은 60% 높이
             
-            // 8개 크레용이 화면에 보이도록 너비 계산 (패딩 고려)
-            let totalPadding: CGFloat = 32 + (7 * 8) // 좌우 패딩 + 간격
-            let availableWidth = screenWidth - totalPadding
-            let crayonWidth = availableWidth / 8
-            
             VStack(spacing: 0) {
                 if isSelected {
                     Image(colorData.imageName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: crayonWidth)
+                        .frame(width: 37)
                         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
                     
                 } else {
@@ -377,7 +365,7 @@ extension ClearSketchDrawingView {
                     Image(colorData.imageName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: crayonWidth)
+                        .frame(width: 37)
                         .offset(y: unselectedHeight)
                         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
                 }
