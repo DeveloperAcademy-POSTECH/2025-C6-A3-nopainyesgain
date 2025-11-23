@@ -151,7 +151,7 @@ extension ClearSketchDrawingView {
             ZStack {
                 // 캔버스 배경
                 Color.white
-                    .border(Color.gray.opacity(0.3), width: 1)
+                    //.border(Color.gray.opacity(0.3), width: 1) // 이후 캔버스 영역 체크용
                 
                 // 그리기 캔버스
                 ClearSketchDrawingCanvasView(viewModel: viewModel)

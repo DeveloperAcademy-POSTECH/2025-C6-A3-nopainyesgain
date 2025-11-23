@@ -48,7 +48,7 @@ struct ClearSketchDrawingCanvasView: View {
                 }
         )
         .background(Color.white)
-        .border(Color.gray.opacity(0.3), width: 1)
+        //.border(Color.gray.opacity(0.3), width: 1) // 이후 캔버스 영역 체크용
     }
     
     // MARK: - 둥근 선 끝으로 패스 그리기
