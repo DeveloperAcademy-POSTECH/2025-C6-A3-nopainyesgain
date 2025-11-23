@@ -21,6 +21,7 @@ class Showcase25BoardViewModel {
     // MARK: - 시트 관련
     var showKeyringSheet = false
     var selectedGridIndex: Int = 0
+    var selectedKeyringForUpload: Keyring?  // 시트에서 선택한 키링 (완료 전)
 
     // MARK: - 줌 관련
     var currentZoom: CGFloat = 1.5
