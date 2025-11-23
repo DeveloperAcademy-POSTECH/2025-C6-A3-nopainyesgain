@@ -122,11 +122,7 @@ struct WorkshopTab: View {
                     case .clearSketchDrawing:
                         ClearSketchDrawingView(router: router, viewModel: getClearSketchVM())
                     case .clearSketchCrop:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getClearSketchVM(),
-                            nextRoute: .clearSketchCustomizing
-                        )
+                        ClearSketchCropView(router: router, viewModel: getClearSketchVM())
                     case .clearSketchCustomizing:
                         KeyringCustomizingView(
                             router: router,

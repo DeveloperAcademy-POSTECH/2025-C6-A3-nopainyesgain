@@ -44,8 +44,6 @@ struct ClearSketchDrawingView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-
- 
                     // MARK: - 드로잉 캔버스 (남은 공간 - 팔레트 높이)
                     ZStack {
                         drawingCanvasView
@@ -94,7 +92,7 @@ extension ClearSketchDrawingView {
                 router.pop()
             }
         } center: {
-            Text("그림을 그려주세요") // 가위로 오려주세요
+            Text("그림을 그려주세요")
                 .typography(.notosans17M)
         } trailing: {
             NextToolbarButton {
