@@ -43,7 +43,7 @@ struct Showcase25BoardView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color.black100
+            Color.white100
                 .ignoresSafeArea()
 
             // 확대/축소 가능한 그리드
@@ -85,8 +85,8 @@ struct Showcase25BoardView: View {
         ZStack(alignment: .top) {
             // 셀 배경
             Rectangle()
-                .fill(Color.black80)
-                .border(Color.black60, width: 0.5)
+                .fill(Color.white100)
+                .border(Color.gray50, width: 0.5)
 
             // 중앙 상단 + 버튼
             Button {
@@ -98,7 +98,7 @@ struct Showcase25BoardView: View {
                     .frame(width: 32, height: 32)
                     .background(
                         Circle()
-                            .fill(Color.black60)
+                            .fill(Color.gray50)
                     )
             }
             .padding(.top, 12)
