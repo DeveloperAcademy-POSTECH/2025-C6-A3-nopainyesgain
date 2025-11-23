@@ -56,6 +56,10 @@ struct SpeechBubbleFramePreviewView: View {
             // 일반 SwiftUI View는 즉시 준비 완료
             onSceneReady()
         }
+        .onChange(of: viewModel.selectedFrame) { oldValue, newValue in
+            // 프레임 타입이 변경되면 기존 텍스트를 새 제약에 맞게 재조정
+            viewModel.inputText = applyTextConstraints(viewModel.inputText)
+        }
     }
 
     // MARK: - Composition View
@@ -120,21 +124,21 @@ struct SpeechBubbleFramePreviewView: View {
 
     // MARK: - Helper Methods
 
-    /// 텍스트 제약 적용 (줄당 글자 수 + 최대 줄 수)
+    /// 텍스트 제약 적용 (줄당 글자 수 + 최대 줄 수 + 자동 줄바꿈)
     private func applyTextConstraints(_ text: String) -> String {
-        let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
+        // 모든 줄바꿈 제거하고 하나의 문자열로 합치기
+        let flatText = text.replacingOccurrences(of: "\n", with: "")
+        var result: [String] = []
+        var remaining = flatText
 
-        // 최대 줄 수 초과 방지
-        if lines.count > viewModel.maxLines {
-            return lines.prefix(viewModel.maxLines).joined(separator: "\n")
+        // maxCharsPerLine 단위로 쪼개기
+        while !remaining.isEmpty && result.count < viewModel.maxLines {
+            let chunk = String(remaining.prefix(viewModel.maxCharsPerLine))
+            result.append(chunk)
+            remaining = String(remaining.dropFirst(viewModel.maxCharsPerLine))
         }
 
-        // 각 줄의 글자 수 제한
-        let constrainedLines = lines.map { line in
-            String(line.prefix(viewModel.maxCharsPerLine))
-        }
-
-        return constrainedLines.joined(separator: "\n")
+        return result.joined(separator: "\n")
     }
 }
 
