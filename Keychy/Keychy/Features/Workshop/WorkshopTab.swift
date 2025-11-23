@@ -173,8 +173,7 @@ struct WorkshopTab: View {
 
                     // MARK: - SpeechBubble
                     case .speechBubblePreview:
-                        // TODO: Issue #2에서 SpeechBubblePreview 뷰 생성 후 연결
-                        EmptyView()
+                        SpeechBubblePreview(router: router, viewModel: getSpeechBubbleVM())
                     case .speechBubbleCustomizing:
                         KeyringCustomizingView(
                             router: router,

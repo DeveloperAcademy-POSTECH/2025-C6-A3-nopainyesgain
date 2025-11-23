@@ -146,6 +146,7 @@
 		4C84265B2ED3572F0050B6FE /* SpeechBubbleVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C84265A2ED3572F0050B6FE /* SpeechBubbleVM+Frame.swift */; };
 		4C84265D2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C84265C2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
+		4C8426622ED372650050B6FE /* SpeechBubblePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
@@ -487,6 +488,7 @@
 		4C84265A2ED3572F0050B6FE /* SpeechBubbleVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Frame.swift"; sourceTree = "<group>"; };
 		4C84265C2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Customizing.swift"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
+		4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+FirebaseSave.swift"; sourceTree = "<group>"; };
@@ -1003,6 +1005,7 @@
 		4C8426532ED350CB0050B6FE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2063,6 +2066,7 @@
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
 				C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */,
 				C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */,
+				4C8426622ED372650050B6FE /* SpeechBubblePreview.swift in Sources */,
 				4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */,
 				4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */,
