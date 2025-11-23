@@ -82,7 +82,7 @@ extension BundleNameEditView {
                     "뭉치 이름을 입력해주세요.",
                     text: $bundleName
                 )
-                .typography(bundleName.isEmpty ? .notosans16R : .suit16M)
+                .typography(bundleName.isEmpty ? .notosans16R : .notosans16R25)
                 .foregroundStyle(textColor)
                 .focused($isTextFieldFocused)
                 .tint(.main500)

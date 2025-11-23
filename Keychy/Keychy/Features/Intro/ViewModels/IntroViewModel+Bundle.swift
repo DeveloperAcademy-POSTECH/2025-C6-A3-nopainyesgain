@@ -44,7 +44,7 @@ extension IntroViewModel {
             collectionVM.createBundle(
                 userId: userId,
                 name: "웰컴뭉치",
-                selectedBackground: "KeychyBasic",
+                selectedBackground: "PurpleKeychy",
                 selectedCarabiner: "WelcomeKeychy",
                 keyrings: keyrings,
                 maxKeyrings: maxKeyrings,

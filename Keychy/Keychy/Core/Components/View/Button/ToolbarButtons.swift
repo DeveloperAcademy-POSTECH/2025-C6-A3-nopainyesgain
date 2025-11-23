@@ -78,7 +78,7 @@ struct PlusToolbarButton: View {
     
     var body: some View {
         Button(action: action) {
-            Image(.plus)
+            Image(.bundleCreatePlusIcon)
         }
         .frame(width: 44, height: 44)
         .glassEffect(.regular.interactive(), in: .circle)

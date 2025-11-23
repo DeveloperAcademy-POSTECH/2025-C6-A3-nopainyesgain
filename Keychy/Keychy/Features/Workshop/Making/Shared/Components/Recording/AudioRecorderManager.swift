@@ -109,6 +109,9 @@ class AudioRecorderManager: NSObject {
             try? FileManager.default.removeItem(at: url)
             recordingURL = nil
         }
+
+        // 타이머 초기화 (3초로 리셋)
+        recordingTime = maxRecordingDuration
     }
 
     // MARK: - Timer (Swift Concurrency)
@@ -134,9 +137,6 @@ class AudioRecorderManager: NSObject {
                         let normalizedLevel = (clampedDb - minDb) / (maxDb - minDb)
 
                         self.audioLevel = normalizedLevel
-
-                        // 디버그: 오디오 레벨 출력
-                        print("🎤 Audio Level: \(String(format: "%.2f", self.audioLevel)) (dB: \(String(format: "%.1f", averagePower)))")
                     }
 
                     // 0초 도달 시 자동 중지
@@ -178,10 +178,10 @@ class AudioRecorderManager: NSObject {
         let audioFile = try AVAudioFile(forReading: url)
         let format = audioFile.processingFormat
 
-        // 볼륨 증폭 노드 생성 (2배 증폭)
+        // 볼륨 증폭 노드 생성 (6배 증폭)
         let volumeNode = AVAudioMixerNode()
         engine.attach(volumeNode)
-        volumeNode.volume = 2.0
+        volumeNode.volume = 6.0
 
         // 노드 연결: playerNode -> volumeNode -> engine output
         engine.connect(player, to: volumeNode, format: format)

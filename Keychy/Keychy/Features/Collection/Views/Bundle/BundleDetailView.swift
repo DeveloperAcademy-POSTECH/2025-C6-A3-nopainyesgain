@@ -32,6 +32,9 @@ struct BundleDetailView<Route: BundleRoute>: View {
     /// 씬 준비 완료 여부
     @State private var isSceneReady = false
     
+    /// 마지막으로 로드된 번들의 키링 배열 (변경 감지용)
+    @State private var lastLoadedKeyrings: [String] = []
+    
     // MARK: - Body
     var body: some View {
         GeometryReader { geometry in
@@ -132,52 +135,61 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         .position(x: screenWidth/2, y: screenHeight/2)
                 }
             }
-            .ignoresSafeArea()
-            .navigationBarBackButtonHidden(true)
-            .toolbar(.hidden, for: .tabBar)
-            .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
-                if frame != .zero {
-                    menuPosition = frame
-                }
+        }
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
+            if frame != .zero {
+                menuPosition = frame
             }
-            .onAppear {
-                // 씬이 이미 준비되어 있고 데이터가 있으면 로딩 건너뛰기
-                if !keyringDataList.isEmpty {
-                    isSceneReady = true
-                }
-                
-                // 다른 뷰에서 돌아왔을 때 씬이 준비되지 않았고 데이터가 없다면 다시 로드
-                if !isSceneReady && keyringDataList.isEmpty {
-                    Task {
-                        await loadBundleData()
-                    }
-                }
-                
-                isNavigatingDeeper = false
-                showDeleteCompleteToast = false
-                showAlreadyMainBundleToast = false
-                showChangeMainBundleAlert = false
-                isMainBundleChange = false
-                showDeleteAlert = false
-                showMenu = false
-                viewModel.hideTabBar()
-                getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
+        }
+        .onAppear {
+            isNavigatingDeeper = false
+            showDeleteCompleteToast = false
+            showAlreadyMainBundleToast = false
+            showChangeMainBundleAlert = false
+            isMainBundleChange = false
+            showDeleteAlert = false
+            showMenu = false
+            viewModel.hideTabBar()
+            getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
+        }
+        .onDisappear {
+            // Alert/Toast 상태 초기화
+            showDeleteCompleteToast = false
+            showAlreadyMainBundleToast = false
+            showChangeMainBundleAlert = false
+            isMainBundleChange = false
+            showDeleteAlert = false
+            showMenu = false
+        }
+        .task(id: viewModel.selectedBundle?.keyrings) {
+            guard let bundle = viewModel.selectedBundle else {
+                return
             }
-            .onDisappear {
-                // Alert/Toast 상태 초기화
-                showDeleteCompleteToast = false
-                showAlreadyMainBundleToast = false
-                showChangeMainBundleAlert = false
-                isMainBundleChange = false
-                showDeleteAlert = false
-                showMenu = false
-            }
-            .task {
-                // 최초 뷰가 나타날 때 뭉치 데이터 로드
+            
+            // 번들의 키링 배열이 변경되었는지 확인
+            let hasChanged = bundle.keyrings != lastLoadedKeyrings
+            
+            // 최초 로드이거나 데이터가 변경된 경우에만 로드
+            if (keyringDataList.isEmpty || hasChanged) {
                 await loadBundleData()
+                
+                // 로드 완료 후 마지막 상태 저장
+                await MainActor.run {
+                    lastLoadedKeyrings = bundle.keyrings
+                }
             }
-            .onChange(of: keyringDataList) { _, _ in
-                // 키링 데이터가 변경되면 씬 준비 상태 초기화
+        }
+        .onChange(of: keyringDataList) { oldValue, newValue in
+            
+            // 최초 로드 시에만 초기화 (빈 배열 → 데이터 있음)
+            if oldValue.isEmpty && !newValue.isEmpty {
+                withAnimation(.easeIn(duration: 0.2)) {
+                    isSceneReady = false
+                }
+            } else if !oldValue.isEmpty && !newValue.isEmpty {
                 withAnimation(.easeIn(duration: 0.2)) {
                     isSceneReady = false
                 }
@@ -323,7 +335,6 @@ extension BundleDetailView {
 
 // MARK: - View Components
 extension BundleDetailView {
-    
     /// 하단 정보 섹션 - 핀 버튼, 뭉치 이름/개수, 다운로드 버튼
     private var bottomSection: some View {
         VStack {

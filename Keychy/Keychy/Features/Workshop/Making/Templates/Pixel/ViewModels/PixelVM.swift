@@ -82,8 +82,8 @@ class PixelVM: KeyringViewModelProtocol {
     var userManager: UserManager
 
     // MARK: - Pixel Grid Data
-    /// 16x16 픽셀 그리드 (각 셀의 색상)
-    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
+    /// 15x15 픽셀 그리드 (각 셀의 색상)
+    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 15), count: 15)
 
     /// Undo/Redo 스택
     var undoStack: [[[Color]]] = []
@@ -98,6 +98,9 @@ class PixelVM: KeyringViewModelProtocol {
     /// 바디 이미지 (픽셀 그리드를 이미지로 변환한 결과)
     var bodyImage: UIImage? = nil
     var hookOffsetY: CGFloat = 0.0
+
+    /// 체인 길이 (Pixel은 1)
+    var chainLength: Int { 1 }
 
     /// 템플릿 ID
     var templateId: String {
@@ -121,7 +124,7 @@ class PixelVM: KeyringViewModelProtocol {
 
     /// 픽셀 색칠하기
     func paintPixel(row: Int, col: Int) {
-        guard row >= 0, row < 16, col >= 0, col < 16 else { return }
+        guard row >= 0, row < 15, col >= 0, col < 15 else { return }
 
         let newColor = isDrawMode ? selectedColor : .clear
 
@@ -173,13 +176,13 @@ class PixelVM: KeyringViewModelProtocol {
     /// 전체 초기화
     func clearGrid() {
         saveToUndoStack()
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
+        pixelGrid = Array(repeating: Array(repeating: .clear, count: 15), count: 15)
         redoStack.removeAll()
     }
 
     // MARK: - 픽셀 그리드 데이터 초기화
     func resetPixelData() {
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
+        pixelGrid = Array(repeating: Array(repeating: .clear, count: 15), count: 15)
         undoStack.removeAll()
         redoStack.removeAll()
         bodyImage = nil
