@@ -250,9 +250,16 @@ extension PixelDrawView {
                 Haptic.impact(style: .medium)
             }) {
                 Image(viewModel.isDrawMode ? "drawWhite" : "drawBlack")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
             }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .main500 : .white100)
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(viewModel.isDrawMode ? .accent : .white100)
+            )
+            .glassEffect(.regular.interactive(), in: .circle)
             
             
             Button(action: {
@@ -263,9 +270,16 @@ extension PixelDrawView {
                 Haptic.impact(style: .medium)
             }) {
                 Image(viewModel.isDrawMode ? "eraserBlack" : "eraserWhite")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
             }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .white100 : .main500)
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(viewModel.isDrawMode ? .white100 : .accent)
+            )
+            .glassEffect(.regular.interactive(), in: .circle)
         }
     }
 }
