@@ -44,6 +44,10 @@ struct ColorPalette: View {
                             .frame(width: 37, height: 37)
                             .overlay(
                                 Circle()
+                                    .strokeBorder(Color.black20, lineWidth: color == .white ? 1 : 0)
+                            )
+                            .overlay(
+                                Circle()
                                     .strokeBorder(Color.white, lineWidth: selectedColor == color ? 3 : 0)
                             )
                             .shadow(color: selectedColor == color ? Color.black.opacity(0.5) : Color.clear, radius: 2)
