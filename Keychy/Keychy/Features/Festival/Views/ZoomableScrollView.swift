@@ -14,12 +14,14 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     let minZoom: CGFloat
     let maxZoom: CGFloat
     let initialZoom: CGFloat
+    let contentPadding: UIEdgeInsets
     let onZoomChange: ((CGFloat) -> Void)?
 
     init(
         minZoom: CGFloat = 1.0,
         maxZoom: CGFloat = 3.0,
         initialZoom: CGFloat = 1.0,
+        contentPadding: UIEdgeInsets = UIEdgeInsets(top: 120, left: 50, bottom: 120, right: 50),
         onZoomChange: ((CGFloat) -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {
@@ -27,6 +29,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         self.minZoom = minZoom
         self.maxZoom = maxZoom
         self.initialZoom = initialZoom
+        self.contentPadding = contentPadding
         self.onZoomChange = onZoomChange
     }
 
@@ -39,6 +42,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.backgroundColor = .clear
+        scrollView.contentInsetAdjustmentBehavior = .never
 
         // SwiftUI 콘텐츠를 호스팅
         let hostingController = UIHostingController(rootView: content)
@@ -47,6 +51,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 
         scrollView.addSubview(hostingController.view)
         context.coordinator.hostingController = hostingController
+        context.coordinator.contentPadding = contentPadding
 
         // 콘텐츠 크기 설정
         DispatchQueue.main.async {
@@ -56,7 +61,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 
             // 초기 줌 설정
             scrollView.zoomScale = initialZoom
-            self.centerContent(scrollView: scrollView)
+            context.coordinator.updateContentInset(scrollView: scrollView)
             self.onZoomChange?(initialZoom)
         }
 
@@ -74,17 +79,12 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         Coordinator(self)
     }
 
-    private func centerContent(scrollView: UIScrollView) {
-        let offsetX = max((scrollView.bounds.width - scrollView.contentSize.width * scrollView.zoomScale) / 2, 0)
-        let offsetY = max((scrollView.bounds.height - scrollView.contentSize.height * scrollView.zoomScale) / 2, 0)
-        scrollView.contentInset = UIEdgeInsets(top: offsetY, left: offsetX, bottom: offsetY, right: offsetX)
-    }
-
     // MARK: - Coordinator
 
     class Coordinator: NSObject, UIScrollViewDelegate {
         var parent: ZoomableScrollView
         var hostingController: UIHostingController<Content>?
+        var contentPadding: UIEdgeInsets = .zero
         var isZooming = false
         var isDragging = false
 
@@ -97,11 +97,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         }
 
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
-            // 줌 중 콘텐츠 중앙 정렬
-            let offsetX = max((scrollView.bounds.width - scrollView.contentSize.width * scrollView.zoomScale) / 2, 0)
-            let offsetY = max((scrollView.bounds.height - scrollView.contentSize.height * scrollView.zoomScale) / 2, 0)
-            scrollView.contentInset = UIEdgeInsets(top: offsetY, left: offsetX, bottom: offsetY, right: offsetX)
-
+            updateContentInset(scrollView: scrollView)
             parent.onZoomChange?(scrollView.zoomScale)
         }
 
@@ -126,6 +122,11 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 
         func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
             isDragging = false
+        }
+
+        func updateContentInset(scrollView: UIScrollView) {
+            // 고정 패딩 적용
+            scrollView.contentInset = contentPadding
         }
     }
 }
