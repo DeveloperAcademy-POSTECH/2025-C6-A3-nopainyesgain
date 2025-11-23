@@ -121,25 +121,60 @@ extension ClearSketchCropView {
     }
     
     private func drawCropPath(context: inout GraphicsContext, path: CropPath) {
-        guard path.points.count > 1 else { return }
+        let points = path.points
+        guard points.count > 1 else { return }
         
         var swiftUIPath = Path()
-        swiftUIPath.move(to: path.points[0])
-        for point in path.points.dropFirst() {
-            swiftUIPath.addLine(to: point)
+        
+        if path.points.count == 2 {
+            swiftUIPath.move(to: path.points[0])
+            swiftUIPath.addLine(to: points[1])
+        } else {
+            // 여러 점일 때는 부드러운 베지어 곡선으로
+            swiftUIPath.move(to: points[0])
+            
+            for i in 1..<points.count {
+                let currentPoint = points[i]
+                let previousPoint = points[i - 1]
+                
+                if i == 1 {
+                    // 첫 번째 선분은 직선으로
+                    swiftUIPath.addLine(to: currentPoint)
+                } else {
+                    // 이전 점과 현재 점의 중간점을 계산
+                    let midPoint = CGPoint(
+                        x: (previousPoint.x + currentPoint.x) / 2,
+                        y: (previousPoint.y + currentPoint.y) / 2
+                    )
+                    
+                    // 이전 점을 제어점으로 사용하여 부드러운 곡선 생성
+                    swiftUIPath.addQuadCurve(
+                        to: midPoint,
+                        control: previousPoint
+                    )
+                }
+            }
+            
+            // 마지막 점까지 연결
+            if points.count > 1 {
+                swiftUIPath.addLine(to: points[points.count - 1])
+            }
         }
         
-        // 크롭 영역 외곽선
-        context.stroke(
-            swiftUIPath,
-            with: .color(.main500),
-            style: StrokeStyle(
-                lineWidth: 3,
-                lineCap: .round,
-                lineJoin: .round,
-                dash: [10, 10]
+        // 크롭 영역 외곽선 (점선)
+        if points.count > 1 {
+            context.stroke(
+                swiftUIPath,
+                with: .color(.main500),
+                style: StrokeStyle(
+                    lineWidth: 3,
+                    lineCap: .round,
+                    lineJoin: .round,
+                    dash: [10, 10]
+                )
             )
-        )
+        }
+        
         // 시작점 표시
         if let firstPoint = path.points.first {
             let startCircle = Path(ellipseIn: CGRect(
