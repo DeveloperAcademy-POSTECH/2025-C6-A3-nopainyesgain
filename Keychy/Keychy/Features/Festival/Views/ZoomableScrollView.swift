@@ -40,14 +40,25 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         // 가로세로 30씩 패딩
         scrollView.contentInset = UIEdgeInsets(top: 50, left: 30, bottom: 30, right: 30)
 
+        // 핀치 줌 즉시 반응하도록 설정
+        scrollView.delaysContentTouches = false
+        scrollView.canCancelContentTouches = true
+
         // SwiftUI 콘텐츠를 호스팅
         let hostedView = context.coordinator.hostingController.view!
         hostedView.translatesAutoresizingMaskIntoConstraints = true
         hostedView.backgroundColor = .clear
+        hostedView.isMultipleTouchEnabled = true
         hostedView.frame = CGRect(origin: .zero, size: context.coordinator.hostingController.sizeThatFits(in: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)))
 
         scrollView.addSubview(hostedView)
         scrollView.contentSize = hostedView.frame.size
+
+        // 핀치 제스처가 다른 제스처보다 우선하도록 설정
+        if let pinchGesture = scrollView.pinchGestureRecognizer {
+            pinchGesture.delaysTouchesBegan = false
+            pinchGesture.delaysTouchesEnded = false
+        }
 
         // 초기 줌 설정
         DispatchQueue.main.async {
