@@ -46,6 +46,10 @@ class SoundEffectComponent {
     // 커스텀 사운드 플레이어 (strong reference 유지)
     private var customAudioPlayer: AVAudioPlayer?
 
+    // AVAudioEngine for volume amplification (커스텀 녹음 파일용)
+    private var audioEngine: AVAudioEngine?
+    private var playerNode: AVAudioPlayerNode?
+
     // 스레드 안전성을 위한 직렬 큐
     private let audioQueue = DispatchQueue(label: "com.keychy.audioQueue", qos: .userInteractive)
 
@@ -112,7 +116,7 @@ class SoundEffectComponent {
         }
     }
 
-    /// URL 기반 사운드 재생 (커스텀 녹음 파일용)
+    /// URL 기반 사운드 재생 (커스텀 녹음 파일용 - 6배 증폭)
     func playSound(from url: URL) {
         audioQueue.async { [weak self] in
             guard let self = self else { return }
@@ -127,11 +131,8 @@ class SoundEffectComponent {
                 if url.scheme == "https" || url.scheme == "http" {
                     self.downloadAndPlay(url: url)
                 } else {
-                    // 로컬 파일인 경우 바로 재생
-                    let player = try AVAudioPlayer(contentsOf: url)
-                    player.prepareToPlay()
-                    self.customAudioPlayer = player
-                    player.play()
+                    // 로컬 파일인 경우 AVAudioEngine으로 6배 증폭 재생
+                    self.playWithAmplification(url: url, volumeMultiplier: 6.0)
                 }
             } catch {
                 print("Error playing custom sound: \(error.localizedDescription)")
@@ -139,7 +140,53 @@ class SoundEffectComponent {
         }
     }
 
-    /// 원격 사운드 다운로드 후 재생
+    /// AVAudioEngine으로 볼륨 증폭 재생
+    private func playWithAmplification(url: URL, volumeMultiplier: Float) {
+        do {
+            // 기존 재생 중지
+            stopAmplifiedPlayback()
+
+            // AVAudioEngine 설정
+            audioEngine = AVAudioEngine()
+            playerNode = AVAudioPlayerNode()
+
+            guard let engine = audioEngine, let player = playerNode else { return }
+
+            engine.attach(player)
+
+            // 오디오 파일 로드
+            let audioFile = try AVAudioFile(forReading: url)
+            let format = audioFile.processingFormat
+
+            // 볼륨 증폭 노드 생성
+            let volumeNode = AVAudioMixerNode()
+            engine.attach(volumeNode)
+            volumeNode.volume = volumeMultiplier
+
+            // 노드 연결: playerNode -> volumeNode -> engine output
+            engine.connect(player, to: volumeNode, format: format)
+            engine.connect(volumeNode, to: engine.mainMixerNode, format: format)
+
+            // 엔진 시작
+            try engine.start()
+
+            // 오디오 재생
+            player.scheduleFile(audioFile, at: nil)
+            player.play()
+        } catch {
+            print("Error playing amplified sound: \(error.localizedDescription)")
+        }
+    }
+
+    /// 증폭 재생 중지
+    private func stopAmplifiedPlayback() {
+        playerNode?.stop()
+        audioEngine?.stop()
+        audioEngine = nil
+        playerNode = nil
+    }
+
+    /// 원격 사운드 다운로드 후 6배 증폭 재생
     private func downloadAndPlay(url: URL) {
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self, let data = data, error == nil else {
@@ -154,11 +201,8 @@ class SoundEffectComponent {
             do {
                 try data.write(to: tempURL)
 
-                // 재생
-                let player = try AVAudioPlayer(contentsOf: tempURL)
-                player.prepareToPlay()
-                self.customAudioPlayer = player
-                player.play()
+                // AVAudioEngine으로 6배 증폭 재생
+                self.playWithAmplification(url: tempURL, volumeMultiplier: 6.0)
 
                 // 재생 완료 후 임시 파일 삭제
                 DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
