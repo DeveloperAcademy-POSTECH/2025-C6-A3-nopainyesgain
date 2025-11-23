@@ -57,7 +57,6 @@ class Showcase25BoardViewModel {
         do {
             let snapshot = try await db.collection(collectionName).getDocuments()
             showcaseKeyrings = snapshot.documents.compactMap { ShowcaseFestivalKeyring(document: $0) }
-            print("✅ Fetched \(showcaseKeyrings.count) showcase keyrings")
         } catch {
             self.error = error.localizedDescription
             print("❌ Failed to fetch showcase keyrings: \(error.localizedDescription)")
@@ -83,7 +82,6 @@ class Showcase25BoardViewModel {
             let userDoc = try await db.collection("User").document(uid).getDocument()
             guard let data = userDoc.data(),
                   let keyringIds = data["keyrings"] as? [String] else {
-                print("⚠️ No keyrings found for user")
                 return
             }
 
@@ -98,7 +96,6 @@ class Showcase25BoardViewModel {
             }
 
             userKeyrings = loadedKeyrings
-            print("✅ Fetched \(userKeyrings.count) user keyrings")
         } catch {
             print("❌ Failed to fetch user keyrings: \(error.localizedDescription)")
         }
@@ -127,11 +124,9 @@ class Showcase25BoardViewModel {
             if let existingKeyring = keyring(at: gridIndex) {
                 // 업데이트
                 try await db.collection(collectionName).document(existingKeyring.id).setData(data)
-                print("✅ Updated showcase keyring at gridIndex \(gridIndex)")
             } else {
                 // 새로 추가
                 try await db.collection(collectionName).addDocument(data: data)
-                print("✅ Added new showcase keyring at gridIndex \(gridIndex)")
             }
 
             // 데이터 새로고침
@@ -139,6 +134,28 @@ class Showcase25BoardViewModel {
         } catch {
             self.error = error.localizedDescription
             print("❌ Failed to update showcase keyring: \(error.localizedDescription)")
+        }
+
+        isLoading = false
+    }
+
+    // MARK: - 쇼케이스 키링 삭제
+
+    /// 쇼케이스 키링 회수 (삭제)
+    @MainActor
+    func deleteShowcaseKeyring(at gridIndex: Int) async {
+        guard let existingKeyring = keyring(at: gridIndex) else { return }
+
+        isLoading = true
+
+        do {
+            try await db.collection(collectionName).document(existingKeyring.id).delete()
+
+            // 데이터 새로고침
+            await fetchShowcaseKeyrings()
+        } catch {
+            self.error = error.localizedDescription
+            print("❌ Failed to delete showcase keyring: \(error.localizedDescription)")
         }
 
         isLoading = false

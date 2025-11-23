@@ -13,6 +13,10 @@ struct Showcase25BoardView: View {
     @Bindable var router: NavigationRouter<FestivalRoute>
     @State private var viewModel = Showcase25BoardViewModel()
 
+    // 회수 확인 Alert
+    @State private var showDeleteAlert = false
+    @State private var gridIndexToDelete: Int?
+
     // 키링 선택 시트 그리드 컬럼
     private let sheetGridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -89,6 +93,21 @@ struct Showcase25BoardView: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
+        .alert("키링 회수", isPresented: $showDeleteAlert) {
+            Button("취소", role: .cancel) {
+                gridIndexToDelete = nil
+            }
+            Button("확인", role: .destructive) {
+                if let index = gridIndexToDelete {
+                    Task {
+                        await viewModel.deleteShowcaseKeyring(at: index)
+                    }
+                }
+                gridIndexToDelete = nil
+            }
+        } message: {
+            Text("정말 키링을 회수하시겠습니까?")
+        }
     }
 
     // MARK: - Grid Content
@@ -135,6 +154,25 @@ struct Showcase25BoardView: View {
                     }
                 }
                 .padding(8)
+                .contextMenu {
+                    Button {
+                        // 수정: 시트 열기
+                        viewModel.selectedGridIndex = index
+                        withAnimation(.easeInOut) {
+                            viewModel.showKeyringSheet = true
+                        }
+                    } label: {
+                        Label("수정", systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive) {
+                        // 회수: 확인 Alert 표시
+                        gridIndexToDelete = index
+                        showDeleteAlert = true
+                    } label: {
+                        Label("회수", systemImage: "arrow.uturn.backward")
+                    }
+                }
             } else {
                 // 키링이 없는 경우 + 버튼
                 Button {
