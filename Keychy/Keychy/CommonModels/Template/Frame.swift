@@ -13,11 +13,15 @@ struct Frame: Identifiable, Codable, Hashable {
     var frameURL: String
     var name: String
     var thumbnailURL: String
+    var type: String?       // SpeechBubble 프레임 타입 (A, B, C)
+    var order: Int?         // 정렬 순서
 
     enum CodingKeys: String, CodingKey {
         case id
         case frameURL
         case name
         case thumbnailURL
+        case type
+        case order
     }
 }

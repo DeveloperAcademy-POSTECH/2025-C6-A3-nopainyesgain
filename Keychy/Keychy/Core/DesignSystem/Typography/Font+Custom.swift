@@ -22,7 +22,38 @@ import SwiftUI
 enum FontFamily: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
-    var fontName: String { rawValue }
+
+    /// 실제 시스템 폰트명 (PostScript Name)
+    var fontName: String {
+        switch self {
+        case .suitThin: return "SUIT-Thin"
+        case .suitExtraLight: return "SUIT-ExtraLight"
+        case .suitLight: return "SUIT-Light"
+        case .suitRegular: return "SUIT-Regular"
+        case .suitMedium: return "SUIT-Medium"
+        case .suitSemiBold: return "SUIT-SemiBold"
+        case .suitBold: return "SUIT-Bold"
+        case .suitExtraBold: return "SUIT-ExtraBold"
+        case .suitHeavy: return "SUIT-Heavy"
+        case .nanumBold: return "NanumSquareRoundOTFB"
+        case .nanumExtraBold: return "NanumSquareRoundOTFEB"
+        case .nanumLight: return "NanumSquareRoundOTFL"
+        case .nanumRegular: return "NanumSquareRoundOTFR"
+        case .pretendardMedium: return "Pretendard-Medium"
+        case .notoSansBLK: return "NotoSansKR-Black"
+        case .notoSansBold: return "NotoSansKR-Bold"
+        case .notoSansExtraBold: return "NotoSansKR-ExtraBold"
+        case .notoSansExtraLight: return "NotoSansKR-ExtraLight"
+        case .notoSansLight: return "NotoSansKR-Light"
+        case .notoSansMedium: return "NotoSansKR-Medium"
+        case .notoSansRegular: return "NotoSansKR-Regular"
+        case .notoSansSemiBold: return "NotoSansKR-SemiBold"
+        case .notoSansThin: return "NotoSansKR-Thin"
+        case .malangBold: return "HancomMalangMalang-Bold"
+        case .malangRegular: return "HancomMalangMalang-Regular"
+        case .gulimRegular: return "GulimChe"  // 실제 폰트명
+        }
+    }
     
     /// SUIT 폰트
     case suitThin = "SUIT-Thin"
@@ -91,7 +122,7 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .notoSansThin: return "NotoSansKR Thin"
         case .malangBold: return "HancomMalangMalang Bold"
         case .malangRegular: return "HancomMalangMalang Regular"
-        case .gulimRegular: return "Gulimche Regular"
+        case .gulimRegular: return "굴림체"
         }
     }
 }
