@@ -14,6 +14,14 @@ class Showcase25BoardViewModel {
     var isLoading = false
     var error: String?
 
+    // 줌 관련
+    var currentZoom: CGFloat = 1.5
+    private let buttonVisibleZoom: CGFloat = 2.0
+
+    var showButtons: Bool {
+        currentZoom >= buttonVisibleZoom
+    }
+
     /// gridIndex를 key로 하는 키링 딕셔너리 (빠른 조회용)
     var keyringsByGridIndex: [Int: ShowcaseFestivalKeyring] {
         Dictionary(uniqueKeysWithValues: keyrings.map { ($0.gridIndex, $0) })

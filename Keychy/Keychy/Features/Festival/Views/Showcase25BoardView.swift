@@ -52,7 +52,10 @@ struct Showcase25BoardView: View {
             ZoomableScrollView(
                 minZoom: minZoom,
                 maxZoom: maxZoom,
-                initialZoom: initialZoom
+                initialZoom: initialZoom,
+                onZoomChange: { zoom in
+                    viewModel.currentZoom = zoom
+                }
             ) {
                 gridContent
             }
@@ -123,6 +126,9 @@ struct Showcase25BoardView: View {
                                 .fill(Color.gray50)
                         )
                 }
+                .opacity(viewModel.showButtons ? 1 : 0)
+                .disabled(!viewModel.showButtons)
+                .animation(.easeInOut(duration: 0.2), value: viewModel.showButtons)
             }
         }
         .frame(width: cellWidth, height: cellHeight)

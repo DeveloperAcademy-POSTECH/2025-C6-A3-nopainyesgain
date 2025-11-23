@@ -14,17 +14,20 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     let minZoom: CGFloat
     let maxZoom: CGFloat
     let initialZoom: CGFloat
+    let onZoomChange: ((CGFloat) -> Void)?
 
     init(
         minZoom: CGFloat = 1.0,
         maxZoom: CGFloat = 3.0,
         initialZoom: CGFloat = 1.0,
+        onZoomChange: ((CGFloat) -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {
         self.content = content()
         self.minZoom = minZoom
         self.maxZoom = maxZoom
         self.initialZoom = initialZoom
+        self.onZoomChange = onZoomChange
     }
 
     func makeUIView(context: Context) -> UIScrollView {
@@ -76,23 +79,34 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         context.coordinator.hostingController.rootView = content
 
         let newSize = context.coordinator.hostingController.sizeThatFits(in: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
-        context.coordinator.hostingController.view.frame.size = newSize
-        uiView.contentSize = newSize
+
+        // 사이즈가 변경됐을 때만 업데이트 (줌 변경 시 불필요한 업데이트 방지)
+        let currentSize = context.coordinator.hostingController.view.frame.size
+        if abs(newSize.width - currentSize.width) > 1 || abs(newSize.height - currentSize.height) > 1 {
+            context.coordinator.hostingController.view.frame.size = newSize
+            uiView.contentSize = newSize
+        }
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(hostingController: UIHostingController(rootView: content))
+        Coordinator(hostingController: UIHostingController(rootView: content), onZoomChange: onZoomChange)
     }
 
     class Coordinator: NSObject, UIScrollViewDelegate {
         let hostingController: UIHostingController<Content>
+        var onZoomChange: ((CGFloat) -> Void)?
 
-        init(hostingController: UIHostingController<Content>) {
+        init(hostingController: UIHostingController<Content>, onZoomChange: ((CGFloat) -> Void)?) {
             self.hostingController = hostingController
+            self.onZoomChange = onZoomChange
         }
 
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
             return hostingController.view
+        }
+
+        func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            onZoomChange?(scrollView.zoomScale)
         }
     }
 }
