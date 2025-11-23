@@ -12,15 +12,8 @@ class FestivalViewModel {
 
     // MARK: - Properties
 
-    var userManager: UserManager
     var isLoading = false
     var isUploading = false
-
-    // MARK: - Init
-
-    init(userManager: UserManager) {
-        self.userManager = userManager
-    }
 
     // MARK: - Upload Sample Data
 
