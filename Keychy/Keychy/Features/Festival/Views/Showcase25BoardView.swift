@@ -26,8 +26,8 @@ struct Showcase25BoardView: View {
     private let sheetHeightRatio: CGFloat = 0.43
 
     // 그리드 설정
-    private let gridColumns = 20
-    private let gridRows = 20
+    private let gridColumns = 12
+    private let gridRows = 12
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
 
     // 줌 설정
@@ -137,6 +137,7 @@ struct Showcase25BoardView: View {
     private func gridCell(index: Int) -> some View {
         let keyring = viewModel.keyring(at: index)
         let isMyKeyring = viewModel.isMyKeyring(at: index)
+        let isBeingEditedByOthers = viewModel.isBeingEditedByOthers(at: index)
 
         return ZStack {
             // 셀 배경
@@ -147,10 +148,22 @@ struct Showcase25BoardView: View {
             if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
                 // 키링 이미지가 있는 경우
                 keyringImageView(keyring: keyring, index: index)
+            } else if isBeingEditedByOthers {
+                // 다른 사람이 수정 중인 경우
+                VStack(spacing: 4) {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("수정 중")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.gray300)
+                }
             } else {
                 // 키링이 없는 경우 + 버튼
                 Button {
                     viewModel.selectedGridIndex = index
+                    Task {
+                        await viewModel.updateIsEditing(at: index, isEditing: true)
+                    }
                     withAnimation(.easeInOut) {
                         viewModel.showKeyringSheet = true
                     }
@@ -315,9 +328,14 @@ struct Showcase25BoardView: View {
     // MARK: - Sheet Actions
 
     private func dismissSheet() {
+        let gridIndex = viewModel.selectedGridIndex
         viewModel.selectedKeyringForUpload = nil
         withAnimation(.easeInOut) {
             viewModel.showKeyringSheet = false
+        }
+        // isEditing 상태 해제
+        Task {
+            await viewModel.updateIsEditing(at: gridIndex, isEditing: false)
         }
     }
 

@@ -31,9 +31,9 @@ class Showcase25BoardViewModel {
         currentZoom >= buttonVisibleZoom
     }
 
-    /// gridIndex를 key로 하는 키링 딕셔너리 (빠른 조회용)
+    /// gridIndex를 key로 하는 키링 딕셔너리 (빠른 조회용, 중복 시 마지막 값 사용)
     var keyringsByGridIndex: [Int: ShowcaseFestivalKeyring] {
-        Dictionary(uniqueKeysWithValues: showcaseKeyrings.map { ($0.gridIndex, $0) })
+        Dictionary(showcaseKeyrings.map { ($0.gridIndex, $0) }, uniquingKeysWith: { _, new in new })
     }
 
     private let db = Firestore.firestore()
@@ -180,6 +180,29 @@ class Showcase25BoardViewModel {
         }
 
         isLoading = false
+    }
+
+    // MARK: - isEditing 상태 업데이트
+
+    /// 특정 그리드의 isEditing 상태 업데이트
+    @MainActor
+    func updateIsEditing(at gridIndex: Int, isEditing: Bool) async {
+        guard let existingKeyring = keyring(at: gridIndex) else { return }
+
+        do {
+            try await db.collection(collectionName).document(existingKeyring.id).updateData([
+                "isEditing": isEditing
+            ])
+        } catch {
+            print("❌ Failed to update isEditing: \(error.localizedDescription)")
+        }
+    }
+
+    /// 해당 셀이 다른 사람에 의해 수정 중인지 확인
+    func isBeingEditedByOthers(at gridIndex: Int) -> Bool {
+        guard let keyring = keyring(at: gridIndex) else { return false }
+        // isEditing이 true이고, 내가 수정 중인게 아닌 경우
+        return keyring.isEditing && keyring.authorId != UserManager.shared.userUID
     }
 
     // MARK: - 쇼케이스 키링 삭제

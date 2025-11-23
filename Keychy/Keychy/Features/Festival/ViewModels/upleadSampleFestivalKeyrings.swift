@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-/// ShowcaseFestivalKeyring 컬렉션에 400개의 빈 문서 생성 (gridIndex 0~399)
+/// ShowcaseFestivalKeyring 컬렉션에 144개의 빈 문서 생성 (gridIndex 0~143)
 /// 기존 데이터를 모두 삭제 후 새로 생성
 func uploadSampleFestivalKeyrings() async {
     let db = Firestore.firestore()
@@ -24,9 +24,9 @@ func uploadSampleFestivalKeyrings() async {
         }
         print("✅ Deleted \(existingDocs.documents.count) existing documents")
 
-        // 2. 400개의 빈 문서 생성 (gridIndex 0~399)
-        print("📤 Creating 400 empty festival keyring documents...")
-        for gridIndex in 0..<400 {
+        // 2. 144개의 빈 문서 생성 (gridIndex 0~143)
+        print("📤 Creating 144 empty festival keyring documents...")
+        for gridIndex in 0..<144 {
             let data: [String: Any] = [
                 "authorId": "",
                 "bodyImageURL": "",
@@ -42,7 +42,7 @@ func uploadSampleFestivalKeyrings() async {
             try await collection.addDocument(data: data)
         }
 
-        print("🎉 Successfully created 400 empty festival keyring documents")
+        print("🎉 Successfully created 144 empty festival keyring documents")
 
     } catch {
         print("❌ Failed to create festival keyrings: \(error.localizedDescription)")
