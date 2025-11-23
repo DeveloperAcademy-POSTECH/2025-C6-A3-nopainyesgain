@@ -280,7 +280,6 @@
 		C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */; };
 		C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */; };
 		C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */; };
-		C68931D82EB8527C00C5F083 /* WorkshopMyItemSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D32EB8527C00C5F083 /* WorkshopMyItemSection.swift */; };
 		C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */; };
 		C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */; };
 		C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F102EBD96110049F969 /* CoinChargeView+Purchase.swift */; };
@@ -613,7 +612,6 @@
 		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
 		C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
 		C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
-		C68931D32EB8527C00C5F083 /* WorkshopMyItemSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMyItemSection.swift; sourceTree = "<group>"; };
 		C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopStickyHeaderSection.swift; sourceTree = "<group>"; };
 		C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTopBannerSection.swift; sourceTree = "<group>"; };
 		C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProduct.swift; sourceTree = "<group>"; };
@@ -1678,7 +1676,6 @@
 			children = (
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
 				C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */,
-				C68931D32EB8527C00C5F083 /* WorkshopMyItemSection.swift */,
 				C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */,
 				C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */,
 				C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */,
@@ -1893,7 +1890,6 @@
 				C6830F0A2EB9AAE00059379A /* WorkshopGridHelpers.swift in Sources */,
 				4C65306C2EBC889B000F8154 /* ChangeNameView.swift in Sources */,
 				38A22A9F2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift in Sources */,
-				C68931D82EB8527C00C5F083 /* WorkshopMyItemSection.swift in Sources */,
 				3822DDC02EBB2353003125BE /* KeyringMenu.swift in Sources */,
 				4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */,
 				C6B56F1C2EBF2A960049F969 /* NeonSignVM+Effect.swift in Sources */,
