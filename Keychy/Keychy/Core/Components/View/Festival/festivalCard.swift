@@ -33,11 +33,13 @@ struct festivalCard: View {
                     .foregroundStyle(.black100)
                 Spacer()
             }
+            .padding(.horizontal, 8)
             HStack {
                 Text(location)
                     .typography(.suit14M)
                 Spacer()
             }
+            .padding(.horizontal, 8)
             
             
             Spacer().frame(height: 28)
