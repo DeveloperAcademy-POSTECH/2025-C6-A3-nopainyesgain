@@ -37,6 +37,9 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         scrollView.showsVerticalScrollIndicator = false
         scrollView.backgroundColor = .clear
 
+        // 가로세로 30씩 패딩
+        scrollView.contentInset = UIEdgeInsets(top: 50, left: 30, bottom: 30, right: 30)
+
         // SwiftUI 콘텐츠를 호스팅
         let hostedView = context.coordinator.hostingController.view!
         hostedView.translatesAutoresizingMaskIntoConstraints = true
