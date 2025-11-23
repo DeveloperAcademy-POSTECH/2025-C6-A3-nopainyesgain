@@ -59,6 +59,9 @@ enum FontFamily: String, CaseIterable, Identifiable {
     case malangBold = "HancomMalangMalang-Bold"
     case malangRegular = "HancomMalangMalang-Regular"
     
+    /// gulimche 폰트
+    case gulimRegular = "gulimche-Regular"
+    
 
     /// 화면 표시용
     var displayName: String {
@@ -88,6 +91,7 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .notoSansThin: return "NotoSansKR Thin"
         case .malangBold: return "HancomMalangMalang Bold"
         case .malangRegular: return "HancomMalangMalang Regular"
+        case .gulimRegular: return "Gulimche Regular"
         }
     }
 }
