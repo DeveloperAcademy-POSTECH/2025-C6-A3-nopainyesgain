@@ -47,6 +47,10 @@ enum WorkshopRoute: Hashable {
     case pixelCustomizing
     case pixelInfoInput
     case pixelComplete
+    
+    // MARK: - 임시 페스티벌 라우트
+    case showcase25BoardView
+    case festivalKeyringDetailView
 
     // MARK: - 새로운 템플릿의 루트는 이렇게 추가해주면 됩니다. (예정)
     // case hkPreview

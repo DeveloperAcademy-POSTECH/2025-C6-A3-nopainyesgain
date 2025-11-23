@@ -254,6 +254,7 @@
 		AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */; };
 		AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */; };
 		AABA4DBD2ED2D6CA00A7D062 /* festivalCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */; };
+		AABA4DDB2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DDA2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift */; };
 		AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */; };
 		AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
@@ -596,6 +597,7 @@
 		AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionGridSheet.swift; sourceTree = "<group>"; };
 		AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cardPagerView.swift; sourceTree = "<group>"; };
 		AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = festivalCard.swift; sourceTree = "<group>"; };
+		AABA4DDA2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringDetailView.swift; sourceTree = "<group>"; };
 		AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleMenu.swift; sourceTree = "<group>"; };
 		AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameEditView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
@@ -1361,6 +1363,7 @@
 				C6C35F3D2ED2AB71009642F4 /* ZoomableScrollView.swift */,
 				4CEC62442EAE08DF0099ECEE /* FestivalView.swift */,
 				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
+				AABA4DDA2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2022,6 +2025,7 @@
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
 				C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
+				AABA4DDB2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift in Sources */,
 				385425C82EB3C3F300A06C02 /* KeyringDetailSceneView.swift in Sources */,
 				38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */,
 				4CC3D3C82EC8A47E0009D376 /* OutlineText.swift in Sources */,
