@@ -14,6 +14,7 @@ struct WorkshopTab: View {
     @State private var polaroidVM: PolaroidVM?
     @State private var clearSketchVM: ClearSketchVM?
     @State private var pixelKeyringVM: PixelVM?
+    @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -170,6 +171,29 @@ struct WorkshopTab: View {
                             navigationTitle: "키링이 완성되었어요!"
                         )
 
+                    // MARK: - SpeechBubble
+                    case .speechBubblePreview:
+                        // TODO: Issue #2에서 SpeechBubblePreview 뷰 생성 후 연결
+                        EmptyView()
+                    case .speechBubbleCustomizing:
+                        KeyringCustomizingView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            nextRoute: .speechBubbleInfoInput
+                        )
+                    case .speechBubbleInfoInput:
+                        KeyringInfoInputView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            nextRoute: .speechBubbleComplete
+                        )
+                    case .speechBubbleComplete:
+                        KeyringCompleteView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            navigationTitle: "키링이 완성되었어요!"
+                        )
+
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
                     }
                 }
@@ -223,6 +247,15 @@ struct WorkshopTab: View {
         return viewModel
     }
 
+    private func getSpeechBubbleVM() -> SpeechBubbleVM {
+        guard let viewModel = speechBubbleVM else {
+            let newViewModel = SpeechBubbleVM()
+            speechBubbleVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
         acrylicPhotoVM = nil
@@ -242,5 +275,9 @@ struct WorkshopTab: View {
 
     func resetPixelKeyringVM() {
         pixelKeyringVM = nil
+    }
+
+    func resetSpeechBubbleVM() {
+        speechBubbleVM = nil
     }
 }
