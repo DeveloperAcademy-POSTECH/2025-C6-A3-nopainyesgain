@@ -13,9 +13,13 @@ struct PixelDrawView: View {
     
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
-    
+
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
+
+    /// Undo/Redo 연속 실행을 위한 Timer
+    @State private var undoTimer: Timer?
+    @State private var redoTimer: Timer?
     
     /// 프리셋 색상들
     private let presetColors: [Color] = [
@@ -67,6 +71,7 @@ struct PixelDrawView: View {
                             maxWidth: .infinity,
                             maxHeight: showPalette ? geometry.size.height * 0.15 : 0
                         )
+                        .padding(.bottom, showPalette ? 0 : 30)
                 }
                 .frame(maxWidth: .infinity, alignment: .bottom)
                 .ignoresSafeArea(edges: .bottom)
@@ -154,6 +159,7 @@ extension PixelDrawView {
     private var undoRedoButtons: some View {
         GlassEffectContainer {
             HStack(spacing: -15) {
+                // Undo 버튼
                 Button {
                     viewModel.undo()
                     Haptic.impact(style: .light)
@@ -163,7 +169,20 @@ extension PixelDrawView {
                 .disabled(viewModel.undoStack.isEmpty)
                 .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 .buttonStyle(.glass)
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onEnded { _ in
+                            startUndoTimer()
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in
+                            stopUndoTimer()
+                        }
+                )
 
+                // Redo 버튼
                 Button {
                     viewModel.redo()
                     Haptic.impact(style: .light)
@@ -173,8 +192,49 @@ extension PixelDrawView {
                 .disabled(viewModel.redoStack.isEmpty)
                 .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 .buttonStyle(.glass)
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onEnded { _ in
+                            startRedoTimer()
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in
+                            stopRedoTimer()
+                        }
+                )
             }
         }
+    }
+
+    // MARK: - Timer 관련 함수들
+    private func startUndoTimer() {
+        guard viewModel.undoStack.isEmpty == false else { return }
+        Haptic.impact(style: .medium)
+        undoTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { _ in
+            viewModel.undo()
+            Haptic.impact(style: .light)
+        }
+    }
+
+    private func stopUndoTimer() {
+        undoTimer?.invalidate()
+        undoTimer = nil
+    }
+
+    private func startRedoTimer() {
+        guard viewModel.redoStack.isEmpty == false else { return }
+        Haptic.impact(style: .medium)
+        redoTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { _ in
+            viewModel.redo()
+            Haptic.impact(style: .light)
+        }
+    }
+
+    private func stopRedoTimer() {
+        redoTimer?.invalidate()
+        redoTimer = nil
     }
 }
 
@@ -243,9 +303,9 @@ extension PixelDrawView {
         }
         .frame(maxWidth: .infinity)
         .background(
-            Color.gray50
-                .ignoresSafeArea(edges: .bottom)
+            showPalette ? Color.gray50 : Color.white100
         )
+        .ignoresSafeArea(edges: .bottom)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
     }
 }
