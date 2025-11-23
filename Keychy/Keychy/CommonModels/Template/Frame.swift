@@ -15,6 +15,7 @@ struct Frame: Identifiable, Codable, Hashable {
     var thumbnailURL: String
     var type: String?       // SpeechBubble 프레임 타입 (A, B, C)
     var order: Int?         // 정렬 순서
+    var textOffsetY: CGFloat?  // SpeechBubble 텍스트 Y 오프셋
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -23,5 +24,6 @@ struct Frame: Identifiable, Codable, Hashable {
         case thumbnailURL
         case type
         case order
+        case textOffsetY
     }
 }
