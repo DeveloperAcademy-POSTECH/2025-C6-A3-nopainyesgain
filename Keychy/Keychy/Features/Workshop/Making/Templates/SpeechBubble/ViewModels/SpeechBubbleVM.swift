@@ -32,9 +32,32 @@ class SpeechBubbleVM: KeyringViewModelProtocol {
     var selectedFrame: Frame? = nil
     
     // MARK: - Text Data
-    var inputText: String = "텍스트를 입력해주세요"
+    var inputText: String = ""
     var selectedTextColor: Color = .black
-    var maxTextLength: Int = 20
+
+    /// 현재 선택된 프레임 타입별 줄당 최대 글자 수
+    var maxCharsPerLine: Int {
+        guard let frameType = selectedFrame?.type else { return 10 }
+
+        switch frameType {
+        case "A": return 5   // A형: 5자×3줄
+        case "B": return 11  // B형: 11자×1줄
+        case "C": return 2   // C형: 2자×2줄
+        default: return 10
+        }
+    }
+
+    /// 현재 선택된 프레임 타입별 최대 줄 수
+    var maxLines: Int {
+        guard let frameType = selectedFrame?.type else { return 2 }
+
+        switch frameType {
+        case "A": return 3  // A형: 5자×3줄
+        case "B": return 1  // B형: 11자×1줄
+        case "C": return 2  // C형: 2자×2줄
+        default: return 2
+        }
+    }
     
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
@@ -76,7 +99,7 @@ class SpeechBubbleVM: KeyringViewModelProtocol {
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
         selectedFrame = nil
-        inputText = "텍스트를 입력해주세요"
+        inputText = ""
         selectedTextColor = .black
         bodyImage = nil
         availableFrames.removeAll()

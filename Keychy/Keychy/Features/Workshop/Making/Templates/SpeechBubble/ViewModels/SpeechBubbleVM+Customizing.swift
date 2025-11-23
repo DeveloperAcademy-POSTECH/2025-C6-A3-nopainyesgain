@@ -32,8 +32,7 @@ extension SpeechBubbleVM {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
         case .frame:
-            // TODO: 이슈 #2에서 FramePreviewView 구현
-            return AnyView(EmptyView())
+            return AnyView(SpeechBubbleFramePreviewView(viewModel: self, onSceneReady: onSceneReady))
         default:
             return AnyView(EmptyView())
         }
@@ -48,8 +47,7 @@ extension SpeechBubbleVM {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         case .frame:
-            // TODO: 이슈 #2에서 FrameSelectorView 구현
-            return AnyView(EmptyView())
+            return AnyView(SpeechBubbleFrameSelectorView(viewModel: self))
         default:
             return AnyView(EmptyView())
         }
@@ -58,7 +56,7 @@ extension SpeechBubbleVM {
     func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
         switch mode {
         case .frame:
-            return 0.35
+            return 0.38  // 프레임 + 컬러 섹션
         case .effect:
             return 0.3
         default:
