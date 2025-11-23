@@ -304,6 +304,9 @@
 		C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */; };
 		C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
 		C6C35EF82ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
+		C6C35F392ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F382ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift */; };
+		C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F372ED2A3C2009642F4 /* FestivalViewModel.swift */; };
+		C6C35F3C2ED2A7BD009642F4 /* Showcase25BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -637,6 +640,9 @@
 		C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBundlesDebugView.swift; sourceTree = "<group>"; };
 		C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiKeyringCaptureScene+Capture.swift"; sourceTree = "<group>"; };
 		C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RealStoreKit2.storekit; sourceTree = "<group>"; };
+		C6C35F372ED2A3C2009642F4 /* FestivalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalViewModel.swift; sourceTree = "<group>"; };
+		C6C35F382ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = upleadSampleFestivalKeyrings.swift; sourceTree = "<group>"; };
+		C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Showcase25BoardView.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1338,24 +1344,11 @@
 			path = Collection;
 			sourceTree = "<group>";
 		};
-		4CEC62422EAE08DF0099ECEE /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		4CEC62432EAE08DF0099ECEE /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		4CEC62452EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				4CEC62442EAE08DF0099ECEE /* FestivalView.swift */,
+				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1363,10 +1356,9 @@
 		4CEC62472EAE08DF0099ECEE /* Festival */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62422EAE08DF0099ECEE /* Models */,
-				4CEC62432EAE08DF0099ECEE /* ViewModels */,
-				4CEC62452EAE08DF0099ECEE /* Views */,
 				4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */,
+				C6C35F362ED2A3A7009642F4 /* ViewModels */,
+				4CEC62452EAE08DF0099ECEE /* Views */,
 			);
 			path = Festival;
 			sourceTree = "<group>";
@@ -1703,6 +1695,15 @@
 				C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */,
 			);
 			path = Cache;
+			sourceTree = "<group>";
+		};
+		C6C35F362ED2A3A7009642F4 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C6C35F372ED2A3C2009642F4 /* FestivalViewModel.swift */,
+				C6C35F382ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		C6C4027F2EB26BFB006B58DF /* NeonSign */ = {
@@ -2101,8 +2102,11 @@
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
 				4CA9C6F72ECBA45200CA546B /* KeychyNotification.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
+				C6C35F392ED2A3C2009642F4 /* upleadSampleFestivalKeyrings.swift in Sources */,
+				C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */,
 				AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
+				C6C35F3C2ED2A7BD009642F4 /* Showcase25BoardView.swift in Sources */,
 				4CEC622D2EAE08DA0099ECEE /* KeyringScene+Setup.swift in Sources */,
 				38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */,
 				4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */,

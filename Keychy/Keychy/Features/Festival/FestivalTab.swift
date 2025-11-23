@@ -12,9 +12,12 @@ struct FestivalTab: View {
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            FestivalView()
+            FestivalView(router: router)
                 .navigationDestination(for: FestivalRoute.self) { route in
-                    // 나중에 추가
+                    switch route {
+                    case .showcase25Board:
+                        Showcase25BoardView(router: router)
+                    }
                 }
         }
     }
