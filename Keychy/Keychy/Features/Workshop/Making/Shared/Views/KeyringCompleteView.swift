@@ -16,6 +16,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     
     var userManager: UserManager = UserManager.shared
     
+    // Festival에서 왔을 때 처리용 옵셔널 콜백
+    var onCloseFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
+    
     // 이미지 저장
     @State var showImageSaved = false
     @State var isCapturingImage = false
@@ -108,7 +111,14 @@ extension KeyringCompleteView {
             // Leading (왼쪽)
             CloseToolbarButton {
                 viewModel.resetAll()
-                router.reset()
+                
+                // Festival에서 온 경우 콜백 실행
+                if let onCloseFromFestival = onCloseFromFestival {
+                    onCloseFromFestival(router)
+                } else {
+                    // 일반적인 경우 router reset
+                    router.reset()
+                }
             }
         } center: {
             // Center (중앙)
