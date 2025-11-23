@@ -11,34 +11,81 @@ struct ClearSketchDrawingView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: ClearSketchVM
 
-    @State private var isImageLoading = true
+    /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
+    @State private var showPalette: Bool = true
+    
+    @State private var showResetAlert = false
+    
+    /// 커스텀 슬라이더
+    @State private var initialThumbPosition: CGFloat = 0
+    @State private var currentThumbOffset: CGFloat = 0
+    @State private var isDragging: Bool = false
+    
+    /// GlassEffect 애니메이션을 위한 네임스페이스
+    @Namespace private var unionNamespace
+    
+    /// 프리셋 색상들과 대응하는 이미지
+    private let presetColorsWithImages: [(color: Color, imageName: String)] = [
+        (.black, "blackCrayon"),
+        (.white, "whiteCrayon"),
+        (.red, "redCrayon"),
+        (.orange, "orangeCrayon"),
+        (.yellow, "yellowCrayon"),
+        (.green, "greenCrayon"),
+        (.mint, "mintCrayon"),
+        (.blue, "blueCrayon"),
+        (.purple, "purpleCrayon")
+    ]
     
     var body: some View {
-        ZStack {
-            Color.white
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // 그리기 캔버스
-                drawingCanvasView
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        GeometryReader { geometry in
+            ZStack {
+                Color.clear
+                    .ignoresSafeArea()
                 
-                // 하단 도구 바
-                drawingToolsBar
-                    .padding(.bottom)
-                    .adaptiveBottomPadding()
+                VStack(spacing: 0) {
+
+ 
+                    // MARK: - 드로잉 캔버스 (남은 공간 - 팔레트 높이)
+                    ZStack {
+                        drawingCanvasView
+                        
+                        // MARK: - Brush Size Slider (좌측 중앙)
+                        HStack {
+                            brushSizeSlider
+                                .padding(.leading, 20)
+                            Spacer()
+                        }
+                    }
+                    
+                    // MARK: - Undo/Redo/그리기/지우기 버튼
+                    HStack {
+                        undoRedoButtons
+                            .padding(.leading, 18)
+                        
+                        Spacer()
+                        
+                        drawEraserButtons
+                            .padding(.trailing, 18)
+                    }
+                    .padding(.bottom, showPalette ? 15 : 30)
+                    
+                    // MARK: - 색상 팔레트 (애니메이션) - 화면의 15% 높이
+                    colorPalette
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: showPalette ? geometry.size.height * 0.15 : 0
+                        )
+                }
+                
+                // MARK: - 커스텀 네비게이션
+                customNavigationBar
+
             }
-            
-            customNavigationBar
-                .adaptiveTopPadding()
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(true)
-        .onAppear {
-            viewModel.initializeDrawing()
-        }
     }
 }
 
@@ -52,7 +99,7 @@ extension ClearSketchDrawingView {
             }
         } center: {
             Text("그림을 그려주세요") // 가위로 오려주세요
-                .typography(.notosans17B)
+                .typography(.notosans17M)
         } trailing: {
             NextToolbarButton {
                 viewModel.finalizeDrawing()
@@ -73,141 +120,270 @@ extension ClearSketchDrawingView {
                 .border(Color.gray.opacity(0.3), width: 1)
             
             // 그리기 캔버스
-            SketchCanvasViewWrapper(viewModel: viewModel)
+            ClearSketchDrawingCanvasView(viewModel: viewModel)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
     }
 }
 
-// MARK: - Drawing Tools Bar
+// MARK: - Brush Size Slider
 extension ClearSketchDrawingView {
-    var drawingToolsBar: some View {
-        VStack(spacing: 12) {
-            // 상단 도구들 (실행취소, 다시실행, 지우개)
-            HStack(spacing: 15) {
-                undoRedoButtons
-                Spacer()
-                eraserButton
-            }
-            .padding(.horizontal, 20)
-            
-            // 브러시 크기와 색상
-            HStack(spacing: 15) {
-                brushSizeSlider
-                
-                Divider()
-                    .frame(height: 30)
-                
-                colorPalette
-            }
-            .padding(.horizontal, 20)
-        }
-        .padding(.vertical, 15)
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(15)
-        .padding(.horizontal, 20)
-    }
-    
-    var undoRedoButtons: some View {
-        HStack(spacing: 15) {
-            Button(action: {
-                viewModel.performUndo()
-            }) {
-                Image(systemName: "arrow.uturn.backward")
-                    .font(.system(size: 18))
-                    .foregroundColor(viewModel.canUndo ? .primary : .gray)
-                    .frame(width: 40, height: 40)
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(radius: 2)
-            }
-            .disabled(!viewModel.canUndo)
-            
-            Button(action: {
-                viewModel.performRedo()
-            }) {
-                Image(systemName: "arrow.uturn.forward")
-                    .font(.system(size: 18))
-                    .foregroundColor(viewModel.canRedo ? .primary : .gray)
-                    .frame(width: 40, height: 40)
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(radius: 2)
-            }
-            .disabled(!viewModel.canRedo)
-        }
-    }
-    
-    var eraserButton: some View {
-        Button(action: {
-            viewModel.toggleEraser()
-        }) {
-            Image(systemName: viewModel.isEraserMode ? "eraser.fill" : "eraser")
-                .font(.system(size: 18))
-                .foregroundColor(viewModel.isEraserMode ? .white : .primary)
-                .frame(width: 40, height: 40)
-                .background(viewModel.isEraserMode ? Color.blue : Color.white)
-                .cornerRadius(8)
-                .shadow(radius: 2)
-        }
-    }
-    
     var brushSizeSlider: some View {
-        HStack {
-            Image(systemName: "circle.fill")
-                .font(.system(size: 8))
-                .foregroundColor(.gray)
-            
-            Slider(value: $viewModel.currentLineWidth, in: 1...20, step: 1)
-                .frame(width: 80)
-                .disabled(viewModel.isEraserMode)
-                .opacity(viewModel.isEraserMode ? 0.5 : 1.0)
-            
-            Image(systemName: "circle.fill")
-                .font(.system(size: 16))
-                .foregroundColor(.gray)
+        ZStack {
+            // 화면 중앙에 브러시 크기 표시 (오버레이)
+            HStack {
+                // 커스텀 슬라이더
+                customSlider
+                
+                Spacer()
+
+            }
+            .overlay(
+                brushSizeIndicator
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(false)
+            )
+
         }
     }
     
-    var colorPalette: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(viewModel.availableColors, id: \.self) { color in
+    // MARK: - 화면 중앙 브러시 크기 표시
+    private var brushSizeIndicator: some View {
+        VStack {
+            Spacer()
+            
+            HStack {
+                Spacer()
+                
+                VStack(spacing: 8) {
+                    // 브러시 크기 원
                     Circle()
-                        .fill(color)
-                        .frame(width: 30, height: 30)
+                        .fill(viewModel.currentColor)
+                        .frame(
+                            width: min(viewModel.currentLineWidth * 2, 60),
+                            height: min(viewModel.currentLineWidth * 2, 60)
+                        )
                         .overlay(
                             Circle()
-                                .stroke(Color.white, lineWidth: viewModel.currentColor == color && !viewModel.isEraserMode ? 3 : 0)
+                                .stroke(Color.white, lineWidth: 2)
+                                .shadow(radius: 2)
                         )
-                        .shadow(radius: 1)
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.currentLineWidth)
+                }
+                
+                Spacer()
+            }
+            
+            Spacer()
+        }
+        .opacity(isDragging ? 1.0 : 0.0)
+        .animation(.easeInOut(duration: 0.3), value: isDragging)
+    }
+    
+    // MARK: - 커스텀 슬라이더
+    private var customSlider: some View {
+        VStack(spacing: 12) {
+            let trackHeight: CGFloat = 200
+            let controlSize: CGFloat = 26
+            
+            GeometryReader { geometry in
+                ZStack(alignment: .bottom) {
+                    // 슬라이더 트랙
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.black10)
+                        .frame(width: 8, height: trackHeight)
+                    
+                    // 슬라이더 썸 (드래그 가능한 동그라미)
+                    let normalizedValue = (viewModel.currentLineWidth - 1) / 19 // 1~20을 0~1로 정규화
+                    let thumbPosition = normalizedValue * (trackHeight - controlSize)
+                    
+                    Circle()
+                        .fill(.white)
+                        .frame(width: controlSize, height: controlSize)
+                        .glassEffect(.regular)
+                        .offset(y: -thumbPosition)
+                        .scaleEffect(isDragging ? 1.1 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: isDragging)
+                        .gesture(
+                            DragGesture(coordinateSpace: .local)
+                                .onChanged { value in
+                                    if !isDragging {
+                                        isDragging = true
+                                        initialThumbPosition = thumbPosition
+                                        currentThumbOffset = 0
+                                    }
+                                    
+                                    // 드래그 거리만큼 썸 위치 조정
+                                    let dragDistance = -value.translation.height
+                                    let newThumbPosition = initialThumbPosition + dragDistance
+                                    
+                                    // 트랙 범위 내로 제한
+                                    let clampedPosition = max(0, min(trackHeight - controlSize, newThumbPosition))
+                                    currentThumbOffset = clampedPosition - initialThumbPosition
+                                    
+                                    // 정규화된 위치 (0~1)
+                                    let normalizedPosition = clampedPosition / (trackHeight - controlSize)
+                                    
+                                    // 1~20 범위로 변환
+                                    let newLineWidth = 1 + (normalizedPosition * 19)
+                                    let roundedLineWidth = round(newLineWidth)
+                                    
+                                    // 햅틱 피드백 (값이 실제로 변경될 때만)
+                                    if Int(viewModel.currentLineWidth) != Int(roundedLineWidth) {
+                                        Haptic.impact(style: .light)
+                                    }
+                                    
+                                    viewModel.currentLineWidth = roundedLineWidth
+                                }
+                                .onEnded { _ in
+                                    isDragging = false
+                                }
+                        )
+                        .disabled(viewModel.isEraserMode)
                         .opacity(viewModel.isEraserMode ? 0.5 : 1.0)
-                        .onTapGesture {
-                            if !viewModel.isEraserMode {
-                                viewModel.selectColor(color)
-                            }
-                        }
                 }
             }
-            .padding(.horizontal, 5)
+            .frame(height: trackHeight + controlSize)
         }
-        .frame(maxWidth: 200)
     }
 }
 
-// MARK: - Canvas Wrapper
-struct SketchCanvasViewWrapper: UIViewControllerRepresentable {
-    @Bindable var viewModel: ClearSketchVM
-    
-    func makeUIViewController(context: Context) -> DrawingCanvasController {
-        let controller = DrawingCanvasController()
-        controller.viewModel = viewModel
-        viewModel.setCanvasController(controller)
-        return controller
+
+// MARK: - Undo/Redo Buttons
+extension ClearSketchDrawingView {
+    private var undoRedoButtons: some View {
+        GlassEffectContainer {
+            HStack(spacing: 12) {
+                Button {
+                    viewModel.undo()
+                    //Haptic.impact(style: .light)
+                } label: {
+                    Image(viewModel.canUndo ? "undoBlack" : "undoGray")
+                }
+                .disabled(!viewModel.canUndo)
+                .glassEffectUnion(id: "undoRedo", namespace: unionNamespace)
+                .buttonStyle(.glass)
+                
+                Button {
+                    viewModel.redo()
+                    Haptic.impact(style: .light)
+                } label: {
+                    Image(viewModel.canRedo ? "redoBlack" : "redoGray")
+                }
+                .disabled(!viewModel.canRedo)
+                .glassEffectUnion(id: "undoRedo", namespace: unionNamespace)
+                .buttonStyle(.glass)
+            }
+        }
+    }
+}
+
+// MARK: - Draw/Eraser Buttons
+extension ClearSketchDrawingView {
+    private var drawEraserButtons: some View {
+        HStack(spacing: 8) {
+            Button(action: {
+                viewModel.isDrawMode = true
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    showPalette = true
+                }
+                Haptic.impact(style: .medium)
+            }) {
+                Image(viewModel.isDrawMode ? "drawWhite" : "drawBlack")
+                    .resizable()
+                    .frame(width: 26, height: 26)
+            }
+            .frame(width: 44, height: 44)
+            .buttonStyle(.glassProminent)
+            .tint(viewModel.isDrawMode ? .accent : .white100)
+            
+            Button(action: {
+                viewModel.isDrawMode = false
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    showPalette = false
+                }
+                Haptic.impact(style: .medium)
+            }) {
+                Image(viewModel.isDrawMode ? "eraserBlack" : "eraserWhite")
+                    .resizable()
+                    .frame(width: 26, height: 26)
+            }
+            .frame(width: 44, height: 44)
+            .buttonStyle(.glassProminent)
+            .tint(viewModel.isDrawMode ? .white100 : .accent)
+        }
+        .background(Color.white100)
+        .ignoresSafeArea(edges: .bottom)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
+    }
+}
+
+// MARK: - Color Palette
+extension ClearSketchDrawingView {
+    private var colorPalette: some View {
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                if showPalette {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            // 프리셋 색상들
+                            ForEach(presetColorsWithImages, id: \.color) { colorData in
+                                Button {
+                                    viewModel.selectColor(colorData.color)
+                                    Haptic.impact(style: .light)
+                                } label: {
+                                    crayonView(colorData: colorData, screenWidth: geometry.size.width)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    
+                    Spacer()
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .background(.gray50)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
     }
     
-    func updateUIViewController(_ uiViewController: DrawingCanvasController, context: Context) {
-        // ViewModel 변경사항 반영
+    @ViewBuilder
+    private func crayonView(colorData: (color: Color, imageName: String), screenWidth: CGFloat) -> some View {
+        let isSelected = viewModel.currentColor == colorData.color
+        
+        GeometryReader { geometry in
+            let paletteHeight = geometry.size.height
+            let selectedHeight = paletteHeight * 0.94 // 선택된 크레용은 94% 높이
+            let unselectedHeight = paletteHeight * 0.3 // 선택 안된 크레용은 60% 높이
+            
+            // 8개 크레용이 화면에 보이도록 너비 계산 (패딩 고려)
+            let totalPadding: CGFloat = 32 + (7 * 8) // 좌우 패딩 + 간격
+            let availableWidth = screenWidth - totalPadding
+            let crayonWidth = availableWidth / 8
+            
+            VStack(spacing: 0) {
+                if isSelected {
+                    Image(colorData.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: crayonWidth)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+                    
+                } else {
+                    Spacer()
+                    
+                    Image(colorData.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: crayonWidth)
+                        .offset(y: unselectedHeight)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+                }
+
+            }
+        }
+        .frame(width: 37)
     }
 }

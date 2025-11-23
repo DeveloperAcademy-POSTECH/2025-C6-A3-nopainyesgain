@@ -81,7 +81,22 @@ class ClearSketchVM: KeyringViewModelProtocol {
     // MARK: - UserManager
     var userManager: UserManager
     
-    // MARK: - Body Image & Template
+    // MARK: - Sketch Data
+    /// 16x16 픽셀 그리드 (각 셀의 색상)
+    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
+
+    /// Undo/Redo 스택
+    var undoStack: [[[Color]]] = []
+    var redoStack: [[[Color]]] = []
+
+    /// 현재 그리기 모드 (draw or eraser)
+    var isDrawing: Bool = true
+    var isEraser: Bool = false
+
+    /// 현재 선택된 색상
+    var selectedColor: Color = .black
+
+    /// 바디 이미지 (픽셀 그리드를 이미지로 변환한 결과)
     var bodyImage: UIImage? = nil
     var hookOffsetY: CGFloat = 0.0
 
@@ -89,14 +104,14 @@ class ClearSketchVM: KeyringViewModelProtocol {
     var templateId: String {
         template?.id ?? "ClearSketch"
     }
-
+    
     var errorMessage: String?
 
     // MARK: - Drawing State (그리기 모드)
     var drawingPaths: [DrawingPath] = []
+    var undoneDrawingPaths: [DrawingPath] = []
     var currentColor: Color = .black
     var currentLineWidth: CGFloat = 3.0
-    var isDrawing: Bool = false
     
     // MARK: - Drawing Composition State
     var isComposingDrawing: Bool = false
@@ -280,11 +295,6 @@ class ClearSketchVM: KeyringViewModelProtocol {
         bodyImage = nil
         isDrawing = false
     }
-    
-    // MARK: - Drawing State 추가
-    var isEraser: Bool = false
-    var undoneDrawingPaths: [DrawingPath] = []
-    weak var canvasController: DrawingCanvasController?
     
     
 }
