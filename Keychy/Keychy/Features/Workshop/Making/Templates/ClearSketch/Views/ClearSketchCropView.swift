@@ -19,8 +19,9 @@ struct ClearSketchCropView: View {
             
             customNavigationBar
         }
-        
-        
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden(true)
+        .interactiveDismissDisabled(true)
         
     }
 }
@@ -39,9 +40,7 @@ extension ClearSketchCropView {
         } trailing: {
             NextToolbarButton {
 //                guard let cropped = viewModel.cropImage(
-//                    image: viewModel.selectedImage!,
-//                    cropArea: viewModel.cropArea,
-//                    containerSize: viewModel.imageViewSize
+//                    image: viewModel.selectedImage!
 //                ) else {
 //                    return
 //                }

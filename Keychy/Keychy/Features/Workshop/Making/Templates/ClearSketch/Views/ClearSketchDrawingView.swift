@@ -64,11 +64,11 @@ struct ClearSketchDrawingView: View {
                     }
                     .padding(.bottom, showPalette ? 15 : 30)
                     
-                    // MARK: - 색상 팔레트 (애니메이션) - 화면의 15% 높이
+                    // MARK: - 색상 팔레트 (애니메이션) - 화면의 13% 높이
                     colorPalette
                         .frame(
                             maxWidth: .infinity,
-                            maxHeight: showPalette ? geometry.size.height * 0.15 : 0
+                            maxHeight: showPalette ? geometry.size.height * 0.13 : 0
                         )
                 }
                 
@@ -310,7 +310,7 @@ extension ClearSketchDrawingView {
         VStack(spacing: 0) {
             if showPalette {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 10) {
                         // 프리셋 색상들
                         ForEach(presetColorsWithImages, id: \.color) { colorData in
                             Button {
@@ -330,8 +330,9 @@ extension ClearSketchDrawingView {
             }
         }
         .frame(maxWidth: .infinity)
+        .frame(height: screenHeight * 0.15)
         .background(
-            showPalette ? .gray50 : .white100
+            showPalette ? .gray50 : .clear
         )
         .ignoresSafeArea(edges: .bottom)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
@@ -341,32 +342,49 @@ extension ClearSketchDrawingView {
     private func crayonView(colorData: (color: Color, imageName: String)) -> some View {
         let isSelected = viewModel.currentColor == colorData.color
         
-        GeometryReader { geometry in
-            let paletteHeight = geometry.size.height
-            let selectedHeight = paletteHeight * 0.94 // 선택된 크레용은 94% 높이
-            let unselectedHeight = paletteHeight * 0.3 // 선택 안된 크레용은 60% 높이
-            
-            VStack(spacing: 0) {
-                if isSelected {
-                    Image(colorData.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 37)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
-                    
-                } else {
-                    Spacer()
-                    
-                    Image(colorData.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 37)
-                        .offset(y: unselectedHeight)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
-                }
-
-            }
+        ZStack(alignment: .top) {
+            Image(colorData.imageName)
+                .resizable()
+                .frame(width: 37, height: 120)
+                .aspectRatio(contentMode: .fit)
+                .offset(y: isSelected ? 16 : 50)
+                .animation(
+                    .interpolatingSpring(
+                        stiffness: 300,
+                        damping: 20,
+                        initialVelocity: isSelected ? 10 : -5
+                    ),
+                    value: isSelected
+                )
         }
         .frame(width: 37)
+        
+        // 영역 안 침범했던 시절
+//        GeometryReader { geometry in
+//            let paletteHeight = geometry.size.height
+//            let selectedHeight = paletteHeight * 0.94 // 선택된 크레용은 94% 높이
+//            let unselectedHeight = paletteHeight * 0.3 // 선택 안된 크레용은 60% 높이
+//
+//            VStack(spacing: 0) {
+//                if isSelected {
+//                    Image(colorData.imageName)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(width: 37)
+//                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+//
+//                } else {
+//                    Spacer()
+//
+//                    Image(colorData.imageName)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(width: 37)
+//                        .offset(y: unselectedHeight)
+//                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+//                }
+//
+//            }
+//        }
     }
 }
