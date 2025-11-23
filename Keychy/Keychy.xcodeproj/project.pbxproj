@@ -147,6 +147,7 @@
 		4C84265D2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C84265C2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426622ED372650050B6FE /* SpeechBubblePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */; };
+		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
@@ -489,6 +490,7 @@
 		4C84265C2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Customizing.swift"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
+		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CA9C6A92ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+FirebaseSave.swift"; sourceTree = "<group>"; };
@@ -1192,6 +1194,7 @@
 				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
 				AA9B2E902EB081750004D31C /* ItemDetailView.swift */,
 				4CEC61F72EAE08DA0099ECEE /* KeyringBundle */,
+				4C8426632ED375840050B6FE /* ColorPalette.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2190,6 +2193,7 @@
 				C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,
+				4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
 				C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */,
 				4C6530422EBA7D12000F8154 /* KeyringCustomizingView+PurchaseSheet.swift in Sources */,

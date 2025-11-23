@@ -21,19 +21,6 @@ struct PixelDrawView: View {
     @State private var undoTimer: Timer?
     @State private var redoTimer: Timer?
     
-    /// 프리셋 색상들
-    private let presetColors: [Color] = [
-        .black,
-        .white,
-        .red,
-        .orange,
-        .yellow,
-        .green,
-        .blue,
-        Color(red: 0, green: 0, blue: 0.5), // Navy
-        .purple
-    ]
-    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -275,34 +262,9 @@ extension PixelDrawView {
     private var colorPalette: some View {
         VStack(spacing: 0) {
             if showPalette {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 11) {
-                        // ColorPicker
-                        ColorPicker("", selection: $viewModel.selectedColor)
-                            .labelsHidden()
-                            .frame(width: 37, height: 37)
-                        // 프리셋 색상들
-                        ForEach(presetColors, id: \.self) { color in
-                            Button {
-                                viewModel.selectedColor = color
-                                Haptic.impact(style: .light)
-                            } label: {
-                                Circle()
-                                    .fill(color)
-                                    .frame(width: 37, height: 37)
-                                    .overlay(
-                                        Circle()
-                                            .strokeBorder(Color.white, lineWidth: viewModel.selectedColor == color ? 3 : 0)
-                                    )
-                                    .shadow(color: viewModel.selectedColor == color ? Color.black.opacity(0.5) : Color.clear, radius: 2)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 4)
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                
+                ColorPalette(selectedColor: $viewModel.selectedColor)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+
                 Spacer()
             }
         }
