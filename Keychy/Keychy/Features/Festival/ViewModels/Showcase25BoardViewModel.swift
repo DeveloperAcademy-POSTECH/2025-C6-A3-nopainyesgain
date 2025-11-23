@@ -25,7 +25,7 @@ class Showcase25BoardViewModel {
 
     // MARK: - 줌 관련
     var currentZoom: CGFloat = 1.5
-    private let buttonVisibleZoom: CGFloat = 2.0
+    private let buttonVisibleZoom: CGFloat = 1.5 // 이 값을 낮출수록 더 멀리서도 보임
 
     var showButtons: Bool {
         currentZoom >= buttonVisibleZoom
@@ -38,37 +38,80 @@ class Showcase25BoardViewModel {
 
     private let db = Firestore.firestore()
     private let collectionName = "ShowcaseFestivalKeyring"
+    private var listener: ListenerRegistration?
 
     init() {
         Task {
-            await fetchShowcaseKeyrings()
             await fetchUserKeyrings()
         }
     }
 
-    // MARK: - 쇼케이스 키링 로드
+    deinit {
+        stopListening()
+    }
 
-    /// Firebase에서 쇼케이스 키링 데이터 로드
-    @MainActor
-    func fetchShowcaseKeyrings() async {
-        isLoading = true
-        error = nil
+    // MARK: - Snapshot Listener
 
-        do {
-            let snapshot = try await db.collection(collectionName).getDocuments()
-            showcaseKeyrings = snapshot.documents.compactMap { ShowcaseFestivalKeyring(document: $0) }
-            print("✅ Fetched \(showcaseKeyrings.count) showcase keyrings")
-        } catch {
-            self.error = error.localizedDescription
-            print("❌ Failed to fetch showcase keyrings: \(error.localizedDescription)")
+    /// 실시간 리스너 시작
+    func startListening() {
+        guard listener == nil else { return }
+
+        listener = db.collection(collectionName).addSnapshotListener { [weak self] snapshot, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("❌ Snapshot listener error: \(error.localizedDescription)")
+                return
+            }
+
+            guard let snapshot = snapshot else { return }
+
+            // 변경사항 처리
+            snapshot.documentChanges.forEach { change in
+                DispatchQueue.main.async {
+                    switch change.type {
+                    case .added:
+                        // 새로운 키링 추가
+                        if let keyring = ShowcaseFestivalKeyring(document: change.document) {
+                            if !self.showcaseKeyrings.contains(where: { $0.id == keyring.id }) {
+                                self.showcaseKeyrings.append(keyring)
+                            }
+                        }
+                    case .modified:
+                        // bodyImageURL 변경 시 업데이트
+                        if let keyring = ShowcaseFestivalKeyring(document: change.document),
+                           let index = self.showcaseKeyrings.firstIndex(where: { $0.id == keyring.id }) {
+                            self.showcaseKeyrings[index] = keyring
+                        }
+                    case .removed:
+                        // 키링 삭제
+                        self.showcaseKeyrings.removeAll { $0.id == change.document.documentID }
+                    }
+                }
+            }
         }
 
-        isLoading = false
+        print("✅ Started listening to ShowcaseFestivalKeyring")
     }
+
+    /// 실시간 리스너 중지
+    func stopListening() {
+        listener?.remove()
+        listener = nil
+        print("🛑 Stopped listening to ShowcaseFestivalKeyring")
+    }
+
+    // MARK: - 쇼케이스 키링 로드
 
     /// 특정 gridIndex에 해당하는 키링 반환
     func keyring(at gridIndex: Int) -> ShowcaseFestivalKeyring? {
         keyringsByGridIndex[gridIndex]
+    }
+
+    /// 해당 쇼케이스 키링이 내 키링인지 확인
+    func isMyKeyring(at gridIndex: Int) -> Bool {
+        guard let showcaseKeyring = keyring(at: gridIndex) else { return false }
+        return showcaseKeyring.authorId == UserManager.shared.userUID
     }
 
     // MARK: - 사용자 키링 로드
@@ -83,7 +126,6 @@ class Showcase25BoardViewModel {
             let userDoc = try await db.collection("User").document(uid).getDocument()
             guard let data = userDoc.data(),
                   let keyringIds = data["keyrings"] as? [String] else {
-                print("⚠️ No keyrings found for user")
                 return
             }
 
@@ -98,7 +140,6 @@ class Showcase25BoardViewModel {
             }
 
             userKeyrings = loadedKeyrings
-            print("✅ Fetched \(userKeyrings.count) user keyrings")
         } catch {
             print("❌ Failed to fetch user keyrings: \(error.localizedDescription)")
         }
@@ -112,10 +153,11 @@ class Showcase25BoardViewModel {
         isLoading = true
 
         let data: [String: Any] = [
+            "authorId": UserManager.shared.userUID,
             "bodyImageURL": userKeyring.bodyImage,
             "gridIndex": gridIndex,
             "isEditing": false,
-            "keyringID": userKeyring.id.uuidString,
+            "keyringId": userKeyring.id.uuidString,
             "memo": userKeyring.memo ?? "",
             "particleid": userKeyring.particleId,
             "soundId": userKeyring.soundId,
@@ -127,18 +169,34 @@ class Showcase25BoardViewModel {
             if let existingKeyring = keyring(at: gridIndex) {
                 // 업데이트
                 try await db.collection(collectionName).document(existingKeyring.id).setData(data)
-                print("✅ Updated showcase keyring at gridIndex \(gridIndex)")
             } else {
                 // 새로 추가
                 try await db.collection(collectionName).addDocument(data: data)
-                print("✅ Added new showcase keyring at gridIndex \(gridIndex)")
             }
-
-            // 데이터 새로고침
-            await fetchShowcaseKeyrings()
+            // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
             print("❌ Failed to update showcase keyring: \(error.localizedDescription)")
+        }
+
+        isLoading = false
+    }
+
+    // MARK: - 쇼케이스 키링 삭제
+
+    /// 쇼케이스 키링 회수 (삭제)
+    @MainActor
+    func deleteShowcaseKeyring(at gridIndex: Int) async {
+        guard let existingKeyring = keyring(at: gridIndex) else { return }
+
+        isLoading = true
+
+        do {
+            try await db.collection(collectionName).document(existingKeyring.id).delete()
+            // 리스너가 자동으로 업데이트함
+        } catch {
+            self.error = error.localizedDescription
+            print("❌ Failed to delete showcase keyring: \(error.localizedDescription)")
         }
 
         isLoading = false

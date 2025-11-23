@@ -13,6 +13,10 @@ struct Showcase25BoardView: View {
     @Bindable var router: NavigationRouter<FestivalRoute>
     @State private var viewModel = Showcase25BoardViewModel()
 
+    // 회수 확인 Alert
+    @State private var showDeleteAlert = false
+    @State private var gridIndexToDelete: Int?
+
     // 키링 선택 시트 그리드 컬럼
     private let sheetGridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -89,6 +93,27 @@ struct Showcase25BoardView: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
+        .alert("키링 회수", isPresented: $showDeleteAlert) {
+            Button("취소", role: .cancel) {
+                gridIndexToDelete = nil
+            }
+            Button("확인", role: .destructive) {
+                if let index = gridIndexToDelete {
+                    Task {
+                        await viewModel.deleteShowcaseKeyring(at: index)
+                    }
+                }
+                gridIndexToDelete = nil
+            }
+        } message: {
+            Text("정말 키링을 회수하시겠습니까?")
+        }
+        .onAppear {
+            viewModel.startListening()
+        }
+        .onDisappear {
+            viewModel.stopListening()
+        }
     }
 
     // MARK: - Grid Content
@@ -111,6 +136,7 @@ struct Showcase25BoardView: View {
 
     private func gridCell(index: Int) -> some View {
         let keyring = viewModel.keyring(at: index)
+        let isMyKeyring = viewModel.isMyKeyring(at: index)
 
         return ZStack {
             // 셀 배경
@@ -120,21 +146,7 @@ struct Showcase25BoardView: View {
 
             if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
                 // 키링 이미지가 있는 경우
-                LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if state.error != nil {
-                        // 로드 실패
-                        Image(systemName: "photo")
-                            .foregroundStyle(.gray300)
-                    } else {
-                        // 로딩 중
-                        ProgressView()
-                    }
-                }
-                .padding(8)
+                keyringImageView(keyring: keyring, index: index)
             } else {
                 // 키링이 없는 경우 + 버튼
                 Button {
@@ -158,6 +170,60 @@ struct Showcase25BoardView: View {
             }
         }
         .frame(width: cellWidth, height: cellHeight)
+        .overlay(alignment: .topTrailing) {
+            // 내 키링 표시 (우측 상단)
+            if isMyKeyring {
+                Circle()
+                    .fill(Color.main500.opacity(0.8))
+                    .frame(width: 8, height: 8)
+                    .padding(6)
+            }
+        }
+    }
+
+    // MARK: - Keyring Image View
+
+    @ViewBuilder
+    private func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
+        let isMyKeyring = viewModel.isMyKeyring(at: index)
+
+        let imageView = LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+            } else if state.error != nil {
+                Image(systemName: "photo")
+                    .foregroundStyle(.gray300)
+            } else {
+                ProgressView()
+            }
+        }
+        .padding(8)
+
+        // 내 키링인 경우에만 컨텍스트 메뉴 표시
+        if isMyKeyring {
+            imageView
+                .contextMenu {
+                    Button {
+                        viewModel.selectedGridIndex = index
+                        withAnimation(.easeInOut) {
+                            viewModel.showKeyringSheet = true
+                        }
+                    } label: {
+                        Label("수정", systemImage: "pencil")
+                    }
+
+                    Button(role: .destructive) {
+                        gridIndexToDelete = index
+                        showDeleteAlert = true
+                    } label: {
+                        Label("회수", systemImage: "arrow.uturn.backward")
+                    }
+                }
+        } else {
+            imageView
+        }
     }
 
     // MARK: - Custom Navigation Bar
@@ -207,6 +273,7 @@ struct Showcase25BoardView: View {
                         .typography(.suit15M)
                         .foregroundStyle(viewModel.selectedKeyringForUpload != nil ? .main500 : .gray300)
                 }
+                .buttonStyle(.plain)
                 .disabled(viewModel.selectedKeyringForUpload == nil)
             }
 

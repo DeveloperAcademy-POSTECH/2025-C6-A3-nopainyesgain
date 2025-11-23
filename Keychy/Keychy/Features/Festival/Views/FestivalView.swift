@@ -8,18 +8,12 @@
 import SwiftUI
 
 struct FestivalView: View {
-    
+
     @Bindable var router: NavigationRouter<FestivalRoute>
-    @Environment(UserManager.self) private var userManager
-    @State private var viewModel: FestivalViewModel
-    @State private var hasInitialized = false
-    
+    @State private var viewModel = FestivalViewModel()
+
     @State private var currentPage = 0
-    
-    init(router: NavigationRouter<FestivalRoute>) {
-        self.router = router
-        _viewModel = State(initialValue: FestivalViewModel(userManager: UserManager.shared))
-    }
+
     // 목데이터
     let festivals = [
         (
@@ -47,7 +41,7 @@ struct FestivalView: View {
             isLocked: true
         ),
     ]
-    
+
     var body: some View {
         // 카드 스와이프 뷰 (중앙 배치)
         ZStack {
@@ -72,20 +66,14 @@ struct FestivalView: View {
                         enterAction: { router.push(.showcase25Board) }
                     )
                 }
-                
+
                 uploadButton
             }
         }
-        .task {
-            if !hasInitialized {
-                viewModel = FestivalViewModel(userManager: userManager)
-                hasInitialized = true
-            }
-        }
     }
-    
+
     // MARK: - Upload Button
-    
+
     private var uploadButton: some View {
         Button {
             Task {
