@@ -203,7 +203,7 @@ struct CollectionCellView: View {
                         imageData: pngData
                     )
                 } else {
-                    print("❌ [CollectionCell] 캡처 실패: \(keyringID)")
+                    print("[CollectionCell] 캡처 실패: \(keyringID)")
                 }
 
                 continuation.resume()
