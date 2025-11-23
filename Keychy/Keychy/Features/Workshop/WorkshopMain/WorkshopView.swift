@@ -55,7 +55,7 @@ struct WorkshopView: View {
             .allowsHitTesting(false)
         }
         .background(
-            Image("Back")
+            Image(.back)
                 .resizable()
                 .scaledToFill()
         )
