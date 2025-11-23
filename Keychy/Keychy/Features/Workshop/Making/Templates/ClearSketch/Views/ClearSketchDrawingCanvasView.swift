@@ -23,7 +23,7 @@ struct ClearSketchDrawingCanvasView: View {
                 let currentPath = DrawingPath(
                     points: currentPoints,
                     color: viewModel.isEraser ? .white : viewModel.currentColor,
-                    lineWidth: viewModel.isEraser ? 20 : viewModel.currentLineWidth,
+                    lineWidth: viewModel.isEraser ? 12 : viewModel.currentLineWidth,
                     isEraser: viewModel.isEraser
                 )
                 drawPath(context: &context, path: currentPath)
@@ -74,12 +74,54 @@ struct ClearSketchDrawingCanvasView: View {
             
             context.fill(circle, with: .color(path.color))
             
-        } else {
+        } else if points.count == 2 {
             // 여러 점일 때는 둥근 선 끝으로 그리기
             var swiftUIPath = Path()
             swiftUIPath.move(to: points[0])
-            for point in points.dropFirst() {
-                swiftUIPath.addLine(to: point)
+            swiftUIPath.addLine(to: points[1])
+//            for point in points.dropFirst() {
+//                swiftUIPath.addLine(to: point)
+//            }
+            
+            context.stroke(
+                swiftUIPath,
+                with: .color(path.color),
+                style: StrokeStyle(
+                    lineWidth: path.lineWidth,
+                    lineCap: .round,
+                    lineJoin: .round
+                )
+            )
+        } else {
+            // 여러 점일 때는 부드러운 베지어 곡선으로 그리기
+            var swiftUIPath = Path()
+            swiftUIPath.move(to: points[0])
+            
+            for i in 1..<points.count {
+                let currentPoint = points[i]
+                let previousPoint = points[i - 1]
+                
+                if i == 1 {
+                    // 첫 번째 선분은 직선으로
+                    swiftUIPath.addLine(to: currentPoint)
+                } else {
+                    // 이전 점과 현재 점의 중간점을 계산
+                    let midPoint = CGPoint(
+                        x: (previousPoint.x + currentPoint.x) / 2,
+                        y: (previousPoint.y + currentPoint.y) / 2
+                    )
+                    
+                    // 이전 점을 제어점으로 사용하여 부드러운 곡선 생성
+                    swiftUIPath.addQuadCurve(
+                        to: midPoint,
+                        control: previousPoint
+                    )
+                }
+            }
+            
+            // 마지막 점까지 연결
+            if points.count > 1 {
+                swiftUIPath.addLine(to: points[points.count - 1])
             }
             
             context.stroke(
@@ -98,7 +140,7 @@ struct ClearSketchDrawingCanvasView: View {
         let newPath = DrawingPath(
             points: [point],
             color: viewModel.isEraser ? .white : viewModel.currentColor,
-            lineWidth: viewModel.isEraser ? 20 : viewModel.currentLineWidth,
+            lineWidth: viewModel.isEraser ? 12 : viewModel.currentLineWidth,
             isEraser: viewModel.isEraser
         )
         viewModel.drawingPaths.append(newPath)

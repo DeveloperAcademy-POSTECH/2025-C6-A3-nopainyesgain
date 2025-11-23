@@ -200,9 +200,9 @@ extension ClearSketchDrawingView {
                 let points = path.points
                 guard points.count > 0 else { continue }
                 
-                cgContext.beginPath()
-                
                 if points.count == 1 {
+                    // 점 하나일 때는 원으로 그리기
+                    cgContext.beginPath()
                     cgContext.addArc(
                         center: points[0],
                         radius: path.lineWidth / 2,
@@ -211,11 +211,38 @@ extension ClearSketchDrawingView {
                         clockwise: true
                     )
                     cgContext.fillPath()
-                } else {
+                } else if points.count == 2 {
+                    // 점 두 개일 때는 직선으로 그리기
+                    cgContext.beginPath()
                     cgContext.move(to: points[0])
+                    cgContext.addLine(to: points[1])
+                    cgContext.strokePath()
+                } else {
+                    // 여러 점일 때는 부드러운 베지어 곡선으로 그리기
+                    cgContext.beginPath()
+                    cgContext.move(to: points[0])
+                    
                     for i in 1..<points.count {
-                        cgContext.addLine(to: points[i])
+                        let currentPoint = points[i]
+                        let previousPoint = points[i - 1]
+                        
+                        if i == 1 {
+                            // 첫 번째 선분은 직선으로
+                            cgContext.addLine(to: currentPoint)
+                        } else {
+                            // 이전 점과 현재 점의 중간점을 계산
+                            let midPoint = CGPoint(
+                                x: (previousPoint.x + currentPoint.x) / 2,
+                                y: (previousPoint.y + currentPoint.y) / 2
+                            )
+                            
+                            // 이전 점을 제어점으로 사용하여 부드러운 곡선 생성
+                            cgContext.addQuadCurve(to: midPoint, control: previousPoint)
+                        }
                     }
+                    
+                    // 마지막 점까지 연결
+                    cgContext.addLine(to: points[points.count - 1])
                     cgContext.strokePath()
                 }
             }
