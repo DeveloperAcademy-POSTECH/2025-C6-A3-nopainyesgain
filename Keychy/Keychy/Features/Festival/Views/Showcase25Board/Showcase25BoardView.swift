@@ -127,6 +127,10 @@ struct Showcase25BoardView: View {
         .onChange(of: viewModel.showKeyringSheet) { _, isShowing in
             if isShowing {
                 startHeartbeat()
+                // 시트가 열릴 때마다 유저 키링 목록 새로고침
+                Task {
+                    await viewModel.fetchUserKeyrings()
+                }
             } else {
                 stopHeartbeat()
             }
