@@ -137,14 +137,21 @@ extension Showcase25BoardView {
     }
 
     func confirmSelection() {
-        guard let keyring = viewModel.selectedKeyringForUpload else { return }
-        let gridIndex = viewModel.selectedGridIndex
+        guard viewModel.selectedKeyringForUpload != nil else { return }
 
-        // 시트 먼저 닫기
-        viewModel.selectedKeyringForUpload = nil
+        // 시트 닫고 출품 확인 팝업 표시
         withAnimation(.easeInOut) {
             viewModel.showKeyringSheet = false
         }
+        showSubmitPopup = true
+    }
+
+    func executeSubmit() {
+        guard let keyring = viewModel.selectedKeyringForUpload else { return }
+        let gridIndex = viewModel.selectedGridIndex
+
+        // 선택 초기화
+        viewModel.selectedKeyringForUpload = nil
 
         // 업로드는 백그라운드에서 진행
         Task {

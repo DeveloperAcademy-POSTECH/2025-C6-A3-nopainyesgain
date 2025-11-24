@@ -23,6 +23,9 @@ struct Showcase25BoardView: View {
     @State var showDeleteAlert = false
     @State var gridIndexToDelete: Int?
 
+    // 출품 확인 Popup
+    @State var showSubmitPopup = false
+
     // Heartbeat Timer
     @State private var heartbeatTimer: Timer?
 
@@ -95,7 +98,28 @@ struct Showcase25BoardView: View {
                 // 키링 선택 시트
                 keyringSelectionSheet
             }
+
+            // 출품 확인 팝업
+            if showSubmitPopup {
+                Color.black20
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showSubmitPopup = false
+                    }
+
+                SubmitKeyringPopup(
+                    onCancel: {
+                        showSubmitPopup = false
+                    },
+                    onConfirm: {
+                        showSubmitPopup = false
+                        executeSubmit()
+                    }
+                )
+                .transition(.scale.combined(with: .opacity))
+            }
         }
+        .animation(.easeInOut(duration: 0.2), value: showSubmitPopup)
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
