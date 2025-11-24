@@ -18,7 +18,7 @@ extension WorkshopView {
                 categories: categories,
                 selectedCategory: $viewModel.selectedCategory
             )
-            .padding(.top, 16)
+            .padding(.top, 12)
 
             // 필터바
             filterBar

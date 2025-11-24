@@ -295,7 +295,6 @@
 		C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */; };
 		C68931D62EB8527C00C5F083 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */; };
 		C68931D72EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */; };
-		C68931D82EB8527C00C5F083 /* WorkshopMyItemSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D32EB8527C00C5F083 /* WorkshopMyItemSection.swift */; };
 		C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */; };
 		C6B56F0B2EBC43AC0049F969 /* StoreProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */; };
 		C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F102EBD96110049F969 /* CoinChargeView+Purchase.swift */; };
@@ -319,6 +318,8 @@
 		C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */; };
 		C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
 		C6C35EF82ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
+		C6C360252ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C360242ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift */; };
+		C6C360272ED3D037009642F4 /* WorkshopTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -643,7 +644,6 @@
 		C68931CC2EB7B94B00C5F083 /* EffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectManager.swift; sourceTree = "<group>"; };
 		C68931CF2EB835E800C5F083 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
 		C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
-		C68931D32EB8527C00C5F083 /* WorkshopMyItemSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMyItemSection.swift; sourceTree = "<group>"; };
 		C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopStickyHeaderSection.swift; sourceTree = "<group>"; };
 		C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTopBannerSection.swift; sourceTree = "<group>"; };
 		C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProduct.swift; sourceTree = "<group>"; };
@@ -667,6 +667,8 @@
 		C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBundlesDebugView.swift; sourceTree = "<group>"; };
 		C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiKeyringCaptureScene+Capture.swift"; sourceTree = "<group>"; };
 		C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RealStoreKit2.storekit; sourceTree = "<group>"; };
+		C6C360242ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakingKeyringSection.swift; sourceTree = "<group>"; };
+		C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplatesView.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1754,8 +1756,9 @@
 			isa = PBXGroup;
 			children = (
 				4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */,
+				C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */,
 				C68931D22EB8527C00C5F083 /* WorkshopMainContentSection.swift */,
-				C68931D32EB8527C00C5F083 /* WorkshopMyItemSection.swift */,
+				C6C360242ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift */,
 				C6830F092EB9AAE00059379A /* WorkshopGridHelpers.swift */,
 				C68931D42EB8527C00C5F083 /* WorkshopStickyHeaderSection.swift */,
 				C68931D52EB8527C00C5F083 /* WorkshopTopBannerSection.swift */,
@@ -2186,6 +2189,7 @@
 				4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */,
 				3824B6052ED3A18100A4BBCB /* ClearSketchVM+Crop.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
+				C6C360272ED3D037009642F4 /* WorkshopTemplatesView.swift in Sources */,
 				389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
 				4CA9C6F72ECBA45200CA546B /* KeychyNotification.swift in Sources */,
@@ -2205,6 +2209,7 @@
 				4CEC62302EAE08DA0099ECEE /* KeyringScene+Effects.swift in Sources */,
 				385425CC2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift in Sources */,
 				4C6530722EBCFD10000F8154 /* BangmarkAlert.swift in Sources */,
+				C6C360252ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
 				3824B5E52ED352CC00A4BBCB /* ClearSketchCropView.swift in Sources */,
 				38CE39D42ECE62D100168E4B /* ClearSketchDrawingView.swift in Sources */,

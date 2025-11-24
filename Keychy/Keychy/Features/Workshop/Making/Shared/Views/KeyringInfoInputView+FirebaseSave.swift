@@ -74,9 +74,6 @@ extension KeyringInfoInputView {
                 let keyringName = self.viewModel.nameText
                 let chainLength = self.viewModel.chainLength
 
-                // 최근 사용 템플릿에 추가
-                self.addTemplateToRecentlyUsed(uid: uid, templateId: templateId)
-
                 Task {
                     // 위젯 캐싱 완료 대기
                     await self.captureAndCacheKeyring(
@@ -215,15 +212,6 @@ extension KeyringInfoInputView {
                     completion(true)
                 }
             }
-    }
-
-    // MARK: - User의 최근 사용 템플릿에 추가
-    private func addTemplateToRecentlyUsed(uid: String, templateId: String) {
-        db.collection("User")
-            .document(uid)
-            .updateData([
-                "currentUsedTemplates": FieldValue.arrayUnion([templateId])
-            ])
     }
 
     // MARK: - 위젯용 이미지 캡처 및 캐싱

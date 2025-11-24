@@ -50,7 +50,6 @@ extension CollectionView {
         HStack(spacing: 0) {
             Text("보관함")
                 .typography(.nanum32EB)
-                .padding(.leading, Spacing.sm)
 
             Spacer()
 

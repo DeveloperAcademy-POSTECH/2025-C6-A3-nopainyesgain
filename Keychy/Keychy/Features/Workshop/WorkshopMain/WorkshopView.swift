@@ -96,14 +96,15 @@ struct WorkshopView: View {
             VStack(spacing: 0) {
                 // 상단 배너 (코인 버튼 + 타이틀)
                 topBannerSection
-                    .frame(height: 150)
+                
+                Spacer()
+                    .frame(height: 50)
+                
+                makingKeyringSection
                 
                 Spacer()
                     .frame(height: 20)
-                
-                // 내 아이템 섹션
-                CurrentUsedSection
-                
+
                 // 메인 콘텐츠 (그리드)
                 mainContentSection
                     .background(
