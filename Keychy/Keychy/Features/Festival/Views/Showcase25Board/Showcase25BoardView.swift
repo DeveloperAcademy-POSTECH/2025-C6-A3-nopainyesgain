@@ -174,7 +174,8 @@ struct Showcase25BoardView: View {
             Text("SHOWCASE 2025")
                 .typography(.notosans17M)
         } trailing: {
-
+            Spacer()
+                .frame(width: 44)
         }
     }
 
