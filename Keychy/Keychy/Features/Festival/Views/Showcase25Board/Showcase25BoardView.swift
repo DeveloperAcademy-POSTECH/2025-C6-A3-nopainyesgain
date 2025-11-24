@@ -107,6 +107,9 @@ struct Showcase25BoardView: View {
         ))
         .onAppear {
             viewModel.startListening()
+            Task {
+                await viewModel.fetchUserKeyrings()
+            }
         }
         .onDisappear {
             viewModel.stopListening()
