@@ -15,6 +15,7 @@ struct AlarmView: View {
     @State private var isNotiEmpty: Bool = true
     @State private var isNotiOff: Bool = false
     @State private var isNotiOffShown: Bool = true
+    @State private var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
     // 알림 데이터
     @State private var notifications: [KeychyNotification] = []
@@ -100,8 +101,7 @@ extension AlarmView {
     /// 기기 푸쉬 알림이 off일 때 나오는 상단뷰
     private var pushNotiOffView: some View {
         Button {
-            // 배너 클릭 시 설정 앱으로 이동
-            notificationManager.openSettings()
+            handleNotificationBannerTap()
         } label: {
             HStack(alignment: .center) {
                 /// 알람 아이콘
@@ -140,8 +140,24 @@ extension AlarmView {
     
     /// 알림 권한 체크
     private func checkNotificationPermission() {
-        notificationManager.checkPermission { isAuthorized in
-            isNotiOff = !isAuthorized  // 권한 없으면 배너 표시
+        notificationManager.getAuthorizationStatus { status in
+            authorizationStatus = status
+            // authorized가 아니면 배너 표시 (notDetermined, denied 모두 포함)
+            isNotiOff = (status != .authorized)
+        }
+    }
+
+    /// 알림 배너 탭 처리
+    private func handleNotificationBannerTap() {
+        if authorizationStatus == .notDetermined {
+            // 아직 권한 요청 안한 경우 → 권한 요청 팝업 표시
+            notificationManager.requestPermission { granted in
+                // 권한 요청 후 다시 체크
+                checkNotificationPermission()
+            }
+        } else {
+            // 이미 거부된 경우 → 설정 앱으로 이동
+            notificationManager.openSettings()
         }
     }
 

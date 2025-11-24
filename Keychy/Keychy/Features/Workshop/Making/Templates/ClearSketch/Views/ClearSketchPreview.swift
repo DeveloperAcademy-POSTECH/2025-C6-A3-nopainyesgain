@@ -11,9 +11,6 @@ struct ClearSketchPreview: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: ClearSketchVM
     @Environment(UserManager.self) private var userManager
-    @State private var showGuide = false
-    @State private var hasAppearedBefore = false
-    @State private var capturedImage: UIImage?
     
     var body: some View {
         TemplatePreviewBody(

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "yellowCrayon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -19,7 +19,8 @@ struct FestivalView: View {
         (
             title: "페스티벌 이름",
             location: "경북 포항시 남구 지곡로 80 C5",
-            dateRange: "2025.11.01 ~ 2025.11.30",
+            startDate: "2025.11.01",
+            endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
             imageName: "homigotFestival",
             isLocked: true
@@ -27,15 +28,17 @@ struct FestivalView: View {
         (
             title: "페스티벌 이름",
             location: "경북 포항시 남구 지곡로 80 C5",
-            dateRange: "2025.11.28 ~ 2025.11.28",
+            startDate: "2025.11.01",
+            endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
-            imageName: "showcaseFestival",
-            isLocked: false
+            imageName: "showcase25",
+            isLocked: true
         ),
         (
             title: "페스티벌 이름",
             location: "경북 포항시 남구 지곡로 80 C5",
-            dateRange: "2025.11.01 ~ 2025.11.30",
+            startDate: "2025.11.01",
+            endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
             imageName: "youngildaeFestival",
             isLocked: true
@@ -44,31 +47,46 @@ struct FestivalView: View {
 
     var body: some View {
         // 카드 스와이프 뷰 (중앙 배치)
-        ZStack {
-            Image(.festivalBG)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-            VStack {
+        VStack(alignment: .leading, spacing: 50) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text("페스티벌")
                     .typography(.nanum32EB)
                     .foregroundStyle(.black100)
-                cardPagerView(
-                    pageCount: festivals.count,
-                    currentPage: $currentPage
-                ) { index in
-                    festivalCard(
-                        title: festivals[index].title,
-                        location: festivals[index].location,
-                        dateRange: festivals[index].dateRange,
-                        distance: festivals[index].distance,
-                        imageName: festivals[index].imageName,
-                        isLocked: festivals[index].isLocked,
-                        enterAction: { router.push(.showcase25Board) }
-                    )
+                HStack(spacing: 3) {
+                    Image(.mapPinIcon)
+                    Text("경북 포항시 남구 지곡로 80 C5")
+                        .typography(.suit15B)
+                        .foregroundStyle(.gray500)
+                        .onTapGesture(count: 5) {
+                            router.push(.showcase25BoardView)
+                        }
                 }
-
-                uploadButton
             }
+            .padding(18)
+            
+            cardPagerView(
+                pageCount: festivals.count,
+                currentPage: $currentPage
+            ) { index in
+                festivalCard(
+                    title: festivals[index].title,
+                    location: festivals[index].location,
+                    startDate: festivals[index].startDate,
+                    endDate: festivals[index].endDate,
+                    distance: festivals[index].distance,
+                    imageName: festivals[index].imageName,
+                    isLocked: festivals[index].isLocked,
+                    enterAction: { router.push(.showcase25BoardView) }
+                )
+            }
+
+            // uploadButton
+        }
+        .background {
+            Image(.festivalBG)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
         }
     }
 

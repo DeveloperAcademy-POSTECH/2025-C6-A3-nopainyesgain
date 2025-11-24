@@ -17,6 +17,9 @@
 		3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC12EBBC712003125BE /* KeyringEditView.swift */; };
 		3822DDC42EBBE108003125BE /* CopyPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC32EBBE108003125BE /* CopyPopup.swift */; };
 		3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3822DDC52EBBE252003125BE /* LackPopup.swift */; };
+		3824B5E52ED352CC00A4BBCB /* ClearSketchCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3824B5E42ED352CC00A4BBCB /* ClearSketchCropView.swift */; };
+		3824B6032ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3824B6022ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift */; };
+		3824B6052ED3A18100A4BBCB /* ClearSketchVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3824B6042ED3A18100A4BBCB /* ClearSketchVM+Crop.swift */; };
 		382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382800D02EC05D4E005F1332 /* PostOffice.swift */; };
 		382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */; };
 		38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */; };
@@ -43,6 +46,8 @@
 		389080172ED3F05D00D7A49F /* FestivalKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */; };
 		389080192ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */; };
 		3890801B2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */; };
+		389080072ED3B43900D7A49F /* ClearSketchGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080062ED3B43900D7A49F /* ClearSketchGuiding.swift */; };
+		389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */; };
 		38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */; };
 		38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */; };
 		38A22A9F2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */; };
@@ -257,6 +262,7 @@
 		AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */; };
 		AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */; };
 		AABA4DBD2ED2D6CA00A7D062 /* festivalCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */; };
+		AABA4DDB2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DDA2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift */; };
 		AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */; };
 		AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
@@ -369,6 +375,9 @@
 		3822DDC12EBBC712003125BE /* KeyringEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringEditView.swift; sourceTree = "<group>"; };
 		3822DDC32EBBE108003125BE /* CopyPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyPopup.swift; sourceTree = "<group>"; };
 		3822DDC52EBBE252003125BE /* LackPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LackPopup.swift; sourceTree = "<group>"; };
+		3824B5E42ED352CC00A4BBCB /* ClearSketchCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchCropView.swift; sourceTree = "<group>"; };
+		3824B6022ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+ImageConversion.swift"; sourceTree = "<group>"; };
+		3824B6042ED3A18100A4BBCB /* ClearSketchVM+Crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+Crop.swift"; sourceTree = "<group>"; };
 		382800CD2EBFBE03005F1332 /* Keychy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychy.entitlements; sourceTree = "<group>"; };
 		382800D02EC05D4E005F1332 /* PostOffice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostOffice.swift; sourceTree = "<group>"; };
 		382800D22EC0628D005F1332 /* CollectionViewModel+Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Package.swift"; sourceTree = "<group>"; };
@@ -394,6 +403,8 @@
 		389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringDetailView.swift; sourceTree = "<group>"; };
 		389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Sheet.swift"; sourceTree = "<group>"; };
 		3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Alerts.swift"; sourceTree = "<group>"; };
+		389080062ED3B43900D7A49F /* ClearSketchGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchGuiding.swift; sourceTree = "<group>"; };
+		389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchDrawingCanvasView.swift; sourceTree = "<group>"; };
 		38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringPackageView.swift; sourceTree = "<group>"; };
 		38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringPackageView+SaveImage.swift"; sourceTree = "<group>"; };
 		38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackageCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -602,6 +613,7 @@
 		AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionGridSheet.swift; sourceTree = "<group>"; };
 		AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cardPagerView.swift; sourceTree = "<group>"; };
 		AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = festivalCard.swift; sourceTree = "<group>"; };
+		AABA4DDA2ED2F75F00A7D062 /* FestivalKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringDetailView.swift; sourceTree = "<group>"; };
 		AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleMenu.swift; sourceTree = "<group>"; };
 		AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameEditView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
@@ -828,6 +840,8 @@
 				38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */,
 				38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */,
 				38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */,
+				3824B6042ED3A18100A4BBCB /* ClearSketchVM+Crop.swift */,
+				3824B6022ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -837,6 +851,9 @@
 			children = (
 				38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */,
 				38CE39D32ECE62D100168E4B /* ClearSketchDrawingView.swift */,
+				389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */,
+				3824B5E42ED352CC00A4BBCB /* ClearSketchCropView.swift */,
+				389080062ED3B43900D7A49F /* ClearSketchGuiding.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1923,6 +1940,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3824B6032ED37EC900A4BBCB /* ClearSketchVM+ImageConversion.swift in Sources */,
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
 				AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */,
 				AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */,
@@ -2081,6 +2099,7 @@
 				C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */,
 				4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */,
 				3828F5432EC4C80800F1B040 /* CollectionView+Alerts.swift in Sources */,
+				389080072ED3B43900D7A49F /* ClearSketchGuiding.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
 				38C3C2802EC0C94D003C5DE1 /* InvenLackPopup.swift in Sources */,
@@ -2142,7 +2161,9 @@
 				4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
 				4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */,
+				3824B6052ED3A18100A4BBCB /* ClearSketchVM+Crop.swift in Sources */,
 				4CEC622C2EAE08DA0099ECEE /* KeyringSceneView.swift in Sources */,
+				389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
 				4CA9C6F72ECBA45200CA546B /* KeychyNotification.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
@@ -2166,6 +2187,7 @@
 				4C6530722EBCFD10000F8154 /* BangmarkAlert.swift in Sources */,
 				389080192ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift in Sources */,
 				4CEC62312EAE08DA0099ECEE /* KeyringScene+Swipe.swift in Sources */,
+				3824B5E52ED352CC00A4BBCB /* ClearSketchCropView.swift in Sources */,
 				38CE39D42ECE62D100168E4B /* ClearSketchDrawingView.swift in Sources */,
 				C665DDF02EAF08D000CE4495 /* PurchaseManager.swift in Sources */,
 				4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */,

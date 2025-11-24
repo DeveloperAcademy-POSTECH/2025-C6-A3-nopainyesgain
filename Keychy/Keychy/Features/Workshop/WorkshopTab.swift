@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
+    @Bindable var festivalVM: Showcase25BoardViewModel
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
     @State private var polaroidVM: PolaroidVM?
@@ -69,7 +71,10 @@ struct WorkshopTab: View {
                         KeyringCompleteView(
                             router: router,
                             viewModel: getAcrylicPhotoVM(),
-                            navigationTitle: "키링이 완성되었어요!"
+                            navigationTitle: "키링이 완성되었어요!",
+                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
+                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
+                            } : nil
                         )
 
                     // MARK: - NeonSign
@@ -91,7 +96,10 @@ struct WorkshopTab: View {
                         KeyringCompleteView(
                             router: router,
                             viewModel: getNeonSignVM(),
-                            navigationTitle: "키링이 완성되었어요!"
+                            navigationTitle: "키링이 완성되었어요!",
+                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
+                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
+                            } : nil
                         )
 
                     // MARK: - Polaroid
@@ -113,7 +121,10 @@ struct WorkshopTab: View {
                         KeyringCompleteView(
                             router: router,
                             viewModel: getPolaroidVM(),
-                            navigationTitle: "키링이 완성되었어요!"
+                            navigationTitle: "키링이 완성되었어요!",
+                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
+                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
+                            } : nil
                         )
                         
                     // MARK: - Clear Sketch
@@ -122,11 +133,7 @@ struct WorkshopTab: View {
                     case .clearSketchDrawing:
                         ClearSketchDrawingView(router: router, viewModel: getClearSketchVM())
                     case .clearSketchCrop:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getClearSketchVM(),
-                            nextRoute: .clearSketchCustomizing
-                        )
+                        ClearSketchCropView(router: router, viewModel: getClearSketchVM())
                     case .clearSketchCustomizing:
                         KeyringCustomizingView(
                             router: router,
@@ -143,7 +150,10 @@ struct WorkshopTab: View {
                         KeyringCompleteView(
                             router: router,
                             viewModel: getClearSketchVM(),
-                            navigationTitle: "키링이 완성되었어요!"
+                            navigationTitle: "키링이 완성되었어요!",
+                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
+                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
+                            } : nil
                         )
 
                     // MARK: - PixelKeyring
@@ -167,10 +177,23 @@ struct WorkshopTab: View {
                         KeyringCompleteView(
                             router: router,
                             viewModel: getPixelKeyringVM(),
-                            navigationTitle: "키링이 완성되었어요!"
+                            navigationTitle: "키링이 완성되었어요!",
+                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
+                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
+                            } : nil
+                        )
+                        
+                    //MARK: - 쇼케이스용 페스티벌 임시 라우트 지정
+                    case .festivalKeyringDetailView:
+                        FestivalKeyringDetailView(
+                            festivalRouter: festivalRouter,
+                            workshopRouter: router,
+                            viewModel: festivalVM
                         )
 
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
+                    case .showcase25BoardView:
+                        Showcase25BoardView(festivalRouter: festivalRouter, workshopRouter: router, viewModel: festivalVM)
                     }
                 }
         }

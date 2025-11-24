@@ -11,7 +11,8 @@ import FirebaseFirestore
 import Photos
 
 struct FestivalKeyringDetailView: View {
-    @Bindable var router: NavigationRouter<FestivalRoute>
+    @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
+    @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     
     @State var sheetDetent: PresentationDetent = .fraction(0.48)

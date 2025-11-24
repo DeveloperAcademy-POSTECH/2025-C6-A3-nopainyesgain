@@ -17,6 +17,15 @@ class Showcase25BoardViewModel {
 
     // MARK: - 사용자 키링 (내 컬렉션)
     var userKeyrings: [Keyring] = []
+    var selectedKeyringIndex: Int = 0
+    
+    // MARK: - Festival에서 Workshop으로 갔을 때 사용
+    var isFromFestivalTab: Bool = false
+    var onKeyringCompleteFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
+    
+    // MARK: - 선택된 키링 디테일
+    var selectedShowcaseKeyring: ShowcaseFestivalKeyring?
+    var selectedKeyringForDetail: Keyring?
 
     // MARK: - 시트 관련
     var showKeyringSheet = false
@@ -111,6 +120,22 @@ class Showcase25BoardViewModel {
     /// 특정 gridIndex에 해당하는 키링 반환
     func keyring(at gridIndex: Int) -> ShowcaseFestivalKeyring? {
         keyringsByGridIndex[gridIndex]
+    }
+    
+    /// 특정 ShowcaseFestivalKeyring을 keyring으로 변환
+    @MainActor
+    func convertToKeyring(from showcaseKeyring: ShowcaseFestivalKeyring) async -> Keyring? {
+        do {
+            let keyringDoc = try await db.collection("Keyring").document(showcaseKeyring.keyringId).getDocument()
+            
+            guard let data = keyringDoc.data() else {
+                return nil
+            }
+            
+            return Keyring(documentId: keyringDoc.documentID, data: data)
+        } catch {
+            return nil
+        }
     }
 
     /// 해당 쇼케이스 키링이 내 키링인지 확인

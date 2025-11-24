@@ -11,18 +11,66 @@ import NukeUI
 struct festivalCard: View {
     let title: String
     let location: String
-    let dateRange: String
+    let startDate: String
+    let endDate: String
     let distance: String
     let imageName: String
     let isLocked: Bool
     let enterAction: () -> Void
-
+    
+    var remainingDays: Int {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        
+        guard let endDate = formatter.date(from: endDate) else { return 0 }
+        let today = Calendar.current.startOfDay(for: Date())
+        let end = Calendar.current.startOfDay(for: endDate)
+        
+        let components = Calendar.current.dateComponents([.day], from: today, to: end)
+        return components.day ?? 0
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // 이미지
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
+            ZStack {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth * 0.75 - 20)
+                    .clipped()
+                    .overlay(alignment: .top) {
+                        HStack {
+                            Text("\(startDate)~\(endDate)")
+                                .typography(.suit14SB)
+                                .foregroundStyle(.white100)
+                                .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.black50)
+                                )
+                            Spacer()
+                            Text("남은 기간 \(remainingDays)일")
+                                .typography(.suit13SB)
+                                .foregroundStyle(.main500)
+                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.main50)
+                                )
+                        }
+                        .padding(10)
+                    }
+//                LazyImage(url: URL(string: imageName)) { state in
+//                    if let image = state.image {
+//                        image
+//                            .resizable()
+//                            .scaledToFit()
+//                    } else {
+//                        LoadingAlert(type: .short, message: "")
+//                    }
+//                }
+            }
             
             Spacer().frame(height: 15)
             
@@ -52,7 +100,7 @@ struct festivalCard: View {
             Spacer().frame(height: 3)
             
             Button {
-                enterAction()
+                // 임시로 버튼 비활성화 해둡니다...^^
             } label: {
                 Text("입장하기")
                     .typography(isLocked ? .suit17M : .suit17B)
