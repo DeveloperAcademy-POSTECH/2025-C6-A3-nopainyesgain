@@ -14,13 +14,17 @@ struct Showcase25BoardView: View {
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
     @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
-    
+    @Environment(\.scenePhase) private var scenePhase
+
     var onNavigateToWorkshop: ((WorkshopRoute) -> Void)? = nil
     var isFromFestivalTab: Bool = false
 
     // 회수 확인 Alert
     @State private var showDeleteAlert = false
     @State private var gridIndexToDelete: Int?
+
+    // Heartbeat Timer
+    @State private var heartbeatTimer: Timer?
 
     // 키링 선택 시트 그리드 컬럼
     private let sheetGridColumns: [GridItem] = [
@@ -119,7 +123,43 @@ struct Showcase25BoardView: View {
         }
         .onDisappear {
             viewModel.stopListening()
+            stopHeartbeat()
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .background {
+                // 백그라운드 진입 시 수정 중이던 셀 해제
+                if viewModel.showKeyringSheet {
+                    let gridIndex = viewModel.selectedGridIndex
+                    Task {
+                        await viewModel.updateIsEditing(at: gridIndex, isEditing: false)
+                    }
+                    stopHeartbeat()
+                }
+            }
+        }
+        .onChange(of: viewModel.showKeyringSheet) { _, isShowing in
+            if isShowing {
+                startHeartbeat()
+            } else {
+                stopHeartbeat()
+            }
+        }
+    }
+
+    // MARK: - Heartbeat Timer
+
+    private func startHeartbeat() {
+        stopHeartbeat()
+        heartbeatTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            Task { @MainActor in
+                await viewModel.refreshEditingTimestamp(at: viewModel.selectedGridIndex)
+            }
+        }
+    }
+
+    private func stopHeartbeat() {
+        heartbeatTimer?.invalidate()
+        heartbeatTimer = nil
     }
 
     // MARK: - Grid Content
@@ -154,14 +194,16 @@ struct Showcase25BoardView: View {
             if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
                 // 키링 이미지가 있는 경우
                 keyringImageView(keyring: keyring, index: index)
-            } else if isBeingEditedByOthers {
+            } else if isBeingEditedByOthers, let editingKeyring = keyring {
                 // 다른 사람이 수정 중인 경우
+                let maskedName = viewModel.maskedNickname(editingKeyring.editingUserNickname)
                 VStack(spacing: 4) {
                     ProgressView()
                         .scaleEffect(0.8)
-                    Text("수정 중")
+                    Text("[\(maskedName)]님이\n수정중")
                         .font(.system(size: 10))
                         .foregroundStyle(.gray300)
+                        .multilineTextAlignment(.center)
                 }
             } else {
                 // 키링이 없는 경우 + 버튼

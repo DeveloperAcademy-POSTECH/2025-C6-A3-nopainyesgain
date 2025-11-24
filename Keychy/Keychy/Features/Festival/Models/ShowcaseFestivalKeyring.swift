@@ -16,6 +16,8 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
     var bodyImageURL: String
     var gridIndex: Int
     var isEditing: Bool
+    var editingUserNickname: String  // 수정 중인 사용자 닉네임
+    var editingStartedAt: Date?  // 수정 시작 시간 (자동 만료용)
     var keyringId: String
     var memo: String
     var particleId: String
@@ -29,6 +31,8 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
          bodyImageURL: String = "",
          gridIndex: Int = 0,
          isEditing: Bool = false,
+         editingUserNickname: String = "",
+         editingStartedAt: Date? = nil,
          keyringId: String = "none",
          memo: String = "none",
          particleId: String = "none",
@@ -41,6 +45,8 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
         self.bodyImageURL = bodyImageURL
         self.gridIndex = gridIndex
         self.isEditing = isEditing
+        self.editingUserNickname = editingUserNickname
+        self.editingStartedAt = editingStartedAt
         self.keyringId = keyringId
         self.memo = memo
         self.particleId = particleId
@@ -59,6 +65,12 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
         self.bodyImageURL = data["bodyImageURL"] as? String ?? ""
         self.gridIndex = data["gridIndex"] as? Int ?? 0
         self.isEditing = data["isEditing"] as? Bool ?? false
+        self.editingUserNickname = data["editingUserNickname"] as? String ?? ""
+        if let editingTimestamp = data["editingStartedAt"] as? Timestamp {
+            self.editingStartedAt = editingTimestamp.dateValue()
+        } else {
+            self.editingStartedAt = nil
+        }
         self.keyringId = data["keyringId"] as? String ?? "none"
         self.memo = data["memo"] as? String ?? "none"
         self.particleId = data["particleId"] as? String ?? "none"
