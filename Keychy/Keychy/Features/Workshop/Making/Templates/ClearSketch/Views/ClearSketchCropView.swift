@@ -20,7 +20,7 @@ struct ClearSketchCropView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.clear
+                Color.gray50
                     .ignoresSafeArea()
                 
                 ZStack {
@@ -45,10 +45,13 @@ struct ClearSketchCropView: View {
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .sheet(isPresented: $showGuiding) {
-            ClearSketchGuiding(
-                guidingText: "키링으로 만들 영역을 지정해주세요",
-                guidingImageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FguidingImage.png?alt=media&token=example" // 임시
-            )
+            if let template = viewModel.template {
+                ClearSketchGuiding(
+                    guidingText: template.guidingText,
+                    guidingImageURL: template.guidingImageURL
+                )
+            }
+
         }
     }
 }
