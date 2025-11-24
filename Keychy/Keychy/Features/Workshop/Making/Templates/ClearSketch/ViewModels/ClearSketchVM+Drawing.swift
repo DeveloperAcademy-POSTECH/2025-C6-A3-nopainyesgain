@@ -65,8 +65,20 @@ extension ClearSketchVM {
     }
     
     func captureCanvasImage(_ image: UIImage) {
+        originalBodyImage = image  // 크롭 전 원본 이미지 저장
         bodyImage = image
         isComposingDrawing = false
+    }
+    
+    // MARK: - 크롭 상태 초기화
+    func resetCropState() {
+        // 원본 이미지로 복원
+        if let original = originalBodyImage {
+            bodyImage = original
+        }
+        // 크롭 관련 데이터 초기화
+        croppedImage = UIImage()
+        removedBackgroundImage = UIImage()
     }
     
     // MARK: - 베지어 곡선 포함 이미지 생성

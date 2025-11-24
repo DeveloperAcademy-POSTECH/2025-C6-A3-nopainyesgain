@@ -282,7 +282,11 @@ extension KeyringCustomizingView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
-                showResetAlert = true
+                if viewModel.templateId == "ClearSketch" {
+                    router.pop()
+                } else {
+                    showResetAlert = true
+                }
             }
         } center: {
             // Center (중앙) - 빈 공간

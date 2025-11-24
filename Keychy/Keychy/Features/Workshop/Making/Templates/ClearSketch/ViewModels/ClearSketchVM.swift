@@ -98,6 +98,7 @@ class ClearSketchVM: KeyringViewModelProtocol {
     /// 바디 이미지 (픽셀 그리드를 이미지로 변환한 결과)
     var croppedImage: UIImage = UIImage()
     var removedBackgroundImage: UIImage = UIImage()
+    var originalBodyImage: UIImage? = nil
     var bodyImage: UIImage? = nil
     var hookOffsetY: CGFloat = 0.0
 

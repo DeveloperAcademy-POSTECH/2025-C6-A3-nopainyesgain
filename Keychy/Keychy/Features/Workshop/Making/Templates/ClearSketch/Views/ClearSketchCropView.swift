@@ -53,6 +53,12 @@ struct ClearSketchCropView: View {
             }
 
         }
+        .onAppear {
+            // 뒤로가기로 돌아왔을 때 크롭 상태 초기화
+            viewModel.resetCropState()
+            // 크롭 패스도 초기화
+            clearCropPaths()
+        }
     }
 }
 
