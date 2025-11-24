@@ -71,6 +71,7 @@ struct PackagedKeyringView: View {
                 ringType: ringType,
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
                 targetSize: CGSize(width: 195, height: 300),
                 customBackgroundColor: .clear,
                 zoomScale: 1.8,

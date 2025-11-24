@@ -88,7 +88,7 @@ class WorkshopViewModel {
     var selectedEffectFilter: EffectFilterType? = .sound
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
-    var mainContentOffset: CGFloat = 140
+    var mainContentOffset: CGFloat = 439
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
@@ -124,15 +124,6 @@ class WorkshopViewModel {
         }
     }
     
-    // 보유한 아이템 목록 (실시간 반영)
-    var currentUsedTemplates: [KeyringTemplate] {
-        guard let user = userManager.currentUser else { return [] }
-        return templates.filter { template in
-            guard let id = template.id else { return false }
-            return user.currentUsedTemplates.contains(id)
-        }
-    }
-
     var ownedBackgrounds: [Background] {
         guard let user = userManager.currentUser else { return [] }
         return backgrounds.filter { background in

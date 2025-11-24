@@ -51,8 +51,10 @@ struct WorkshopPreview: View {
                 Spacer()
                 
                 itemPreview
+                    .adaptiveTopPaddingAlt()
                 
                 Spacer()
+                    .frame(height: 10)
                 
                 HStack {
                     ItemDetailInfoSection(item: item)
@@ -178,8 +180,12 @@ extension WorkshopPreview {
                 if item is Background {
                     ItemDetailImage(itemURL: getPreviewURL())
                         .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(0) == 0 ? 380 : 501)
+                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 380)
                         .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.gray50, lineWidth: 2)
+                        )
                 } else {
                     // 카라비너, 사운드: 1:1 비율
                     ItemDetailImage(itemURL: getPreviewURL())
@@ -209,7 +215,6 @@ extension WorkshopPreview {
             Spacer()
         }
         .padding(.horizontal, 30)
-        .frame(maxHeight: 500)
     }
 
     /// 파티클 다운로드 및 소유권 처리

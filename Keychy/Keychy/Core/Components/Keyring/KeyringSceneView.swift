@@ -108,7 +108,6 @@ extension KeyringSceneView {
                 SpriteView(scene: scene, options: [.allowsTransparency])
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
-                    //.frame(maxWidth: .infinity, minHeight: 400)
                     .frame(maxWidth: .infinity)
             }
         }

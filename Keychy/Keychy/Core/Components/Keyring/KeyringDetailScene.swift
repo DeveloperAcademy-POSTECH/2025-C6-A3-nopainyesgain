@@ -12,6 +12,7 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - Properties
     var bodyImage: String?
+    var templateId: String?  // 템플릿 ID (옵션)
     var hookOffsetY: CGFloat?
     var chainLength: Int = 5  // 체인 링크 개수 (기본값 5)
     var onLoadingComplete: (() -> Void)?
@@ -54,6 +55,7 @@ class KeyringDetailScene: SKScene {
         ringType: RingType,
         chainType: ChainType,
         bodyImage: String? = nil,
+        templateId: String? = nil,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5,
         onLoadingComplete: (() -> Void)? = nil
@@ -61,6 +63,7 @@ class KeyringDetailScene: SKScene {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
+        self.templateId = templateId
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
         self.onLoadingComplete = onLoadingComplete

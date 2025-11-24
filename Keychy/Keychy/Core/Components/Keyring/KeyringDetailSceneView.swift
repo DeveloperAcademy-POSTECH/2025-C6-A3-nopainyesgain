@@ -47,11 +47,12 @@ struct KeyringDetailSceneView: View {
     private func initializeScene() {
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
-        
+
         let newScene = KeyringDetailScene(
             ringType: ringType,
             chainType: chainType,
             bodyImage: keyring.bodyImage,
+            templateId: keyring.selectedTemplate,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
             onLoadingComplete: nil

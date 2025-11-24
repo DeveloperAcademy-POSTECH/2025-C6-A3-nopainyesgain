@@ -12,15 +12,10 @@ import SwiftUI
 extension WorkshopView {
     /// 상단 배너 (코인 버튼 + 타이틀)
     var topBannerSection: some View {
-        VStack {
-            HStack {
-                Spacer()
-                myItemBtn
-            }
-
-            Spacer()
-
+        HStack {
             titleView
+            Spacer()
+            myItemBtn
         }
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
