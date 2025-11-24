@@ -158,7 +158,7 @@ struct KeyringBodyComponent {
         // 말풍선 템플릿만 더 큰 maxSize 사용
         let maxSize: CGSize
         if templateId == "SpeechBubble" {
-            maxSize = CGSize(width: 280, height: 450)
+            maxSize = CGSize(width: 240, height: 400)
         } else {
             maxSize = CGSize(width: 160, height: 400)
         }

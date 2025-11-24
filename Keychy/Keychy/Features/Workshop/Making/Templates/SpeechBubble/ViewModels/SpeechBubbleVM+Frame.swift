@@ -54,7 +54,7 @@ extension SpeechBubbleVM {
                 paragraphStyle.lineSpacing = 3
 
                 let attributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont(name: "GulimChe", size: 20) ?? UIFont.systemFont(ofSize: 20),
+                    .font: UIFont(name: "GulimChe", size: 30) ?? UIFont.systemFont(ofSize: 30),
                     .foregroundColor: UIColor(selectedTextColor),
                     .paragraphStyle: paragraphStyle
                 ]
