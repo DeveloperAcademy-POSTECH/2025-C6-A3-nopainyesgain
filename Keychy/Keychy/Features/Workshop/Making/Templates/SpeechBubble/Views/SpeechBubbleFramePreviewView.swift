@@ -27,7 +27,7 @@ struct SpeechBubbleFramePreviewView: View {
                         // 프레임 + 텍스트 영역
                         VStack {
                             Spacer()
-                                .frame(height: 126)  // 134 → 126 (8만큼 위로)
+                                .frame(height: 95)  // 126 → 95
 
                             compositionView
                         }
@@ -37,6 +37,7 @@ struct SpeechBubbleFramePreviewView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 90)
+                            .offset(y: -31)
                     }
 
                     Spacer()

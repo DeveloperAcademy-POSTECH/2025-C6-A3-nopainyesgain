@@ -34,14 +34,15 @@ struct SpeechBubbleFrameSelectorView: View {
             .frame(height: 94)
 
             // MARK: - 컬러 섹션
-            Text("컬러")
-                .typography(.suit16B)
-                .foregroundStyle(.black100)
-                .padding(.leading, 20)
-                .padding(.top, 8)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("컬러")
+                    .typography(.suit16B)
+                    .foregroundStyle(.black100)
+                    .padding(.leading, 20)
 
-            ColorPalette(selectedColor: $viewModel.selectedTextColor)
-                .padding(.leading, 16)
+                ColorPalette(selectedColor: $viewModel.selectedTextColor)
+                    .padding(.leading, 16)
+            }
 
             Spacer()
         }
