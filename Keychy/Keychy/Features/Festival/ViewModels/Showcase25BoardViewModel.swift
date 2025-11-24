@@ -327,7 +327,7 @@ class Showcase25BoardViewModel {
 
     // MARK: - 쇼케이스 키링 삭제
 
-    /// 쇼케이스 키링 회수 (삭제)
+    /// 쇼케이스 키링 회수 (필드 초기화)
     @MainActor
     func deleteShowcaseKeyring(at gridIndex: Int) async {
         guard let existingKeyring = keyring(at: gridIndex) else { return }
@@ -343,11 +343,25 @@ class Showcase25BoardViewModel {
                 ])
             }
 
-            try await db.collection(collectionName).document(existingKeyring.id).delete()
+            // 문서 삭제 대신 필드 초기화
+            let resetData: [String: Any] = [
+                "name": "",
+                "authorId": "",
+                "bodyImageURL": "",
+                "gridIndex": gridIndex,
+                "isEditing": false,
+                "editingUserNickname": "",
+                "keyringId": "none",
+                "memo": "",
+                "particleId": "none",
+                "soundId": "none",
+                "votes": 0
+            ]
+            try await db.collection(collectionName).document(existingKeyring.id).setData(resetData)
             // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
-            print("❌ Failed to delete showcase keyring: \(error.localizedDescription)")
+            print("❌ Failed to reset showcase keyring: \(error.localizedDescription)")
         }
 
         isLoading = false
