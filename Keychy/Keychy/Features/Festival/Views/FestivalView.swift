@@ -19,7 +19,8 @@ struct FestivalView: View {
         (
             title: "페스티벌 이름",
             location: "경북 포항시 남구 지곡로 80 C5",
-            dateRange: "2025.11.01 ~ 2025.11.30",
+            startDate: "2025.11.01",
+            endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
             imageName: "homigotFestival",
             isLocked: true
@@ -27,15 +28,17 @@ struct FestivalView: View {
         (
             title: "페스티벌 이름",
             location: "경북 포항시 남구 지곡로 80 C5",
-            dateRange: "2025.11.28 ~ 2025.11.28",
+            startDate: "2025.11.01",
+            endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
-            imageName: "showcaseFestival",
+            imageName: "showcase25",
             isLocked: true
         ),
         (
             title: "페스티벌 이름",
             location: "경북 포항시 남구 지곡로 80 C5",
-            dateRange: "2025.11.01 ~ 2025.11.30",
+            startDate: "2025.11.01",
+            endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
             imageName: "youngildaeFestival",
             isLocked: true
@@ -68,7 +71,8 @@ struct FestivalView: View {
                 festivalCard(
                     title: festivals[index].title,
                     location: festivals[index].location,
-                    dateRange: festivals[index].dateRange,
+                    startDate: festivals[index].startDate,
+                    endDate: festivals[index].endDate,
                     distance: festivals[index].distance,
                     imageName: festivals[index].imageName,
                     isLocked: festivals[index].isLocked,
