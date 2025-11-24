@@ -86,7 +86,7 @@ extension FestivalKeyringDetailView {
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isSheetPresented = false
-                    showPackageAlert = true
+                    //showPackageAlert = true
                 }
             }) {
                 Image("Copy")

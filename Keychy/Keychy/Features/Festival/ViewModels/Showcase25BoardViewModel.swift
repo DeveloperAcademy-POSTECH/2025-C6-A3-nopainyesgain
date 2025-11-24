@@ -188,7 +188,7 @@ class Showcase25BoardViewModel {
             "bodyImageURL": userKeyring.bodyImage,
             "gridIndex": gridIndex,
             "isEditing": false,
-            "keyringId": userKeyring.id.uuidString,
+            "keyringId": userKeyring.documentId,
             "memo": userKeyring.memo ?? "",
             "particleId": userKeyring.particleId,
             "soundId": userKeyring.soundId,

@@ -47,6 +47,7 @@
 		389080172ED3F05D00D7A49F /* FestivalKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */; };
 		389080192ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */; };
 		3890801B2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */; };
+		389080632ED47F2500D7A49F /* VotePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080622ED47F2500D7A49F /* VotePopup.swift */; };
 		389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */; };
 		38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */; };
 		38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */; };
@@ -414,6 +415,7 @@
 		389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringDetailView.swift; sourceTree = "<group>"; };
 		389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Sheet.swift"; sourceTree = "<group>"; };
 		3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Alerts.swift"; sourceTree = "<group>"; };
+		389080622ED47F2500D7A49F /* VotePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePopup.swift; sourceTree = "<group>"; };
 		389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchDrawingCanvasView.swift; sourceTree = "<group>"; };
 		38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringPackageView.swift; sourceTree = "<group>"; };
 		38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringPackageView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -769,6 +771,7 @@
 				38C3C2832EC0D081003C5DE1 /* LinkCopiedPopup.swift */,
 				38C3C2892EC1D879003C5DE1 /* UnpackPopup.swift */,
 				38F832CE2EC914C900D3A248 /* InvenExpandPopup.swift */,
+				389080622ED47F2500D7A49F /* VotePopup.swift */,
 			);
 			path = Popup;
 			sourceTree = "<group>";
@@ -2141,6 +2144,7 @@
 				4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */,
 				4CB82EC92EB1EDB700B7458B /* AcrylicPhotoVM+BGRemover.swift in Sources */,
+				389080632ED47F2500D7A49F /* VotePopup.swift in Sources */,
 				4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */,
 				3822DDC42EBBE108003125BE /* CopyPopup.swift in Sources */,
 				C67B755F2ECD526A00D6E3FA /* Frame.swift in Sources */,
