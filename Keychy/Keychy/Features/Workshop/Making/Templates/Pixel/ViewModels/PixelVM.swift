@@ -100,7 +100,7 @@ class PixelVM: KeyringViewModelProtocol {
     var hookOffsetY: CGFloat = 0.0
 
     /// 체인 길이 (Pixel은 1)
-    var chainLength: Int { 1 }
+    var chainLength: Int { 3 }
 
     /// 템플릿 ID
     var templateId: String {

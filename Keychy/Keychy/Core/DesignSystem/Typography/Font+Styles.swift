@@ -75,6 +75,9 @@ extension Font {
     static let notosans14SB = Font.custom(.notoSansSemiBold, size: 14)
     static let notosans14M = Font.custom(.notoSansMedium, size: 14)
     
+    // MARK: - Gulim
+    static let gulim20R = Font.custom(.gulimRegular, size: 20)
+    
     // MARK: - NotosansKR
     //static let notoSansKRBLK
 }

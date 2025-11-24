@@ -19,16 +19,18 @@ class MultiKeyringScene: SKScene {
         let index: Int
         let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계)
         let bodyImageURL: String
+        let templateId: String?  // 템플릿 ID (옵션)
         let soundId: String  // 사운드 ID
         let customSoundURL: URL?  // 커스텀 녹음 파일 URL
         let particleId: String  // 파티클 ID
         let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int  // 체인 길이 (기본값 5)
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
+            self.templateId = templateId
             self.soundId = soundId
             self.customSoundURL = customSoundURL
             self.particleId = particleId
@@ -409,6 +411,7 @@ class MultiKeyringScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
+                templateId: data.templateId,
                 hookOffsetY: data.hookOffsetY,
                 chainLength: data.chainLength,
                 index: data.index,
@@ -424,6 +427,7 @@ class MultiKeyringScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
+        templateId: String? = nil,
         hookOffsetY: CGFloat?,
         chainLength: Int,
         index: Int,
@@ -489,6 +493,7 @@ class MultiKeyringScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
+                templateId: templateId,
                 hookOffsetY: hookOffsetY,
                 index: index,
                 baseZPosition: baseZPosition,
@@ -506,13 +511,14 @@ class MultiKeyringScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
+        templateId: String? = nil,
         hookOffsetY: CGFloat?,
         index: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
         completion: @escaping (Bool) -> Void
     ) {
-        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
+        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL, templateId: templateId) { [weak self] body in
             guard let self = self, let body = body else {
                 completion(false)  // body 생성 실패
                 return
