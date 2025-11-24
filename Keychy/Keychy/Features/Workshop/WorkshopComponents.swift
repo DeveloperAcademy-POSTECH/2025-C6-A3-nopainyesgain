@@ -280,13 +280,14 @@ struct PriceOverlay<Item: WorkshopItem>: View {
                 Spacer()
                 
                 HStack {
+                    Spacer()
+
                     EffectButtonStyle(
                         item: item,
                         effectManager: effectManager,
                         userManager: userManager
                     )
                     .padding(8)
-                    Spacer()
                 }
             }
         }
@@ -324,6 +325,7 @@ struct EffectButtonStyle<Item: WorkshopItem>: View {
                     .frame(width: 38, height: 38)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
+                            .inset(by: 0.5)
                             .stroke(.white100, lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
@@ -337,6 +339,7 @@ struct EffectButtonStyle<Item: WorkshopItem>: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 14, height: 14)
+                        .offset(x: 1)
                 }
             }
         }
