@@ -414,4 +414,36 @@ class Showcase25BoardViewModel {
                 completion(nickname)
             }
     }
+    
+    /// 특정 키링에 투표
+    @MainActor
+    func voteKeyring(for keyring: Keyring) async {
+        guard let keyringDocId = keyring.documentId else {
+            return
+        }
+
+        do {
+            // ShowcaseFestivalKeyring 컬렉션에서 해당 keyringId를 가진 문서 찾기
+            let querySnapshot = try await db.collection(collectionName)
+                .whereField("keyringId", isEqualTo: keyringDocId)
+                .getDocuments()
+            
+            guard let document = querySnapshot.documents.first else {
+                return
+            }
+            
+            let showcaseDocId = document.documentID
+            let currentVotes = document.data()["votes"] as? Int ?? 0
+            
+            // votes 필드 +1
+            try await db.collection(collectionName)
+                .document(showcaseDocId)
+                .updateData([
+                    "votes": FieldValue.increment(Int64(1))
+                ])
+            
+        } catch {
+            print("투표 실패: \(error.localizedDescription)")
+        }
+    }
 }

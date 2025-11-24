@@ -175,9 +175,17 @@ extension FestivalKeyringDetailView {
     func handleVoteConfirm() {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             showVoteAlert = false
-            
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                self.showVoteCompleteAlert = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [self] in
+            Task {
+                await viewModel.voteKeyring(for: keyring)
+                
+                await MainActor.run {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showVoteCompleteAlert = true
+                    }
+                }
             }
         }
     }
