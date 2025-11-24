@@ -273,7 +273,7 @@ struct Showcase25BoardView: View {
                 festivalRouter.pop()
             }
         } center: {
-            Text("쇼케이스 2025")
+            Text("SHOWCASE 2025")
                 .typography(.notosans17M)
         } trailing: {
             
