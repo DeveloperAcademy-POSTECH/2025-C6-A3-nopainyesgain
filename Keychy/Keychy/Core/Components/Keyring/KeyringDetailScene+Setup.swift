@@ -267,7 +267,7 @@ extension KeyringDetailScene {
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
         // 크기 제한 (비율 유지)
         // 말풍선 템플릿만 더 큰 maxSize 사용
-        let maxSize: CGFloat = (templateId == "SpeechBubble") ? 400 : 200
+        let maxSize: CGFloat = (templateId == "SpeechBubble") ? 450 : 200
         let originalSize = image.size
         var displaySize = originalSize
 
