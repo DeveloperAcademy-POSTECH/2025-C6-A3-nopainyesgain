@@ -47,7 +47,9 @@ struct FestivalView: View {
         ZStack {
             Image(.festivalBG)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .scaledToFill()
+                .frame(width: screenWidth, height: screenHeight)
+                .clipped()
             VStack {
                 Text("페스티벌")
                     .typography(.nanum32EB)
