@@ -43,47 +43,49 @@ extension Showcase25BoardView {
     var keyringSelectionSheet: some View {
         VStack(spacing: 18) {
             // 상단 바: 만들기 / 타이틀 / 완료
-            HStack {
-                // 만들기 버튼
-                Button {
-                    // Festival에서 Workshop으로 가는 경우 플래그 설정
-                    dismissSheet()
-                    viewModel.isFromFestivalTab = true
+            
+            ZStack(alignment: .center) {
+                HStack {
+                    // 만들기 버튼
+                    Button {
+                        // Festival에서 Workshop으로 가는 경우 플래그 설정
+                        dismissSheet()
+                        viewModel.isFromFestivalTab = true
 
-                    // Workshop에서 완료 후 다시 돌아올 콜백 설정
-                    viewModel.onKeyringCompleteFromFestival = { workshopRouter in
-                        // Workshop router를 reset하고 showcase25BoardView로 이동
-                        workshopRouter.reset()
-                        workshopRouter.push(.showcase25BoardView)
+                        // Workshop에서 완료 후 다시 돌아올 콜백 설정
+                        viewModel.onKeyringCompleteFromFestival = { workshopRouter in
+                            // Workshop router를 reset하고 showcase25BoardView로 이동
+                            workshopRouter.reset()
+                            workshopRouter.push(.showcase25BoardView)
+                        }
+
+                        onNavigateToWorkshop?(.workshopTemplates)
+                    } label: {
+                        Text("+ 만들기")
+                            .typography(.suit16M)
+                            .foregroundStyle(.main500)
                     }
+                    .buttonStyle(.plain)
 
-                    onNavigateToWorkshop?(.workshopTemplates)
-                } label: {
-                    Text("+ 만들기")
-                        .typography(.suit15R)
-                        .foregroundStyle(.main500)
+                    Spacer()
+
+                    // 완료 버튼
+                    Button {
+                        confirmSelection()
+                    } label: {
+                        Text("완료")
+                            .typography(.suit15M)
+                            .foregroundStyle(viewModel.selectedKeyringForUpload != nil ? .main500 : .gray300)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(viewModel.selectedKeyringForUpload == nil)
                 }
-                .buttonStyle(.plain)
-
-                Spacer()
-
+                
                 Text("키링 선택")
                     .typography(.suit16B)
                     .foregroundStyle(.black100)
-
-                Spacer()
-
-                // 완료 버튼
-                Button {
-                    confirmSelection()
-                } label: {
-                    Text("완료")
-                        .typography(.suit15M)
-                        .foregroundStyle(viewModel.selectedKeyringForUpload != nil ? .main500 : .gray300)
-                }
-                .buttonStyle(.plain)
-                .disabled(viewModel.selectedKeyringForUpload == nil)
             }
+            
 
             if viewModel.userKeyrings.isEmpty {
                 // 키링이 없는 경우
