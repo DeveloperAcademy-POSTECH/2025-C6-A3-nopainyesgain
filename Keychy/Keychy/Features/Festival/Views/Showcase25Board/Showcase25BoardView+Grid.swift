@@ -120,14 +120,14 @@ extension Showcase25BoardView {
                             viewModel.showKeyringSheet = true
                         }
                     } label: {
-                        Label("수정", systemImage: "pencil")
+                        Label("교체", systemImage: "arrow.left.arrow.right")
                     }
 
-                    Button(role: .destructive) {
+                    Button {
                         gridIndexToDelete = index
                         showDeleteAlert = true
                     } label: {
-                        Label("회수", systemImage: "arrow.uturn.backward")
+                        Label("회수", systemImage: "arrow.counterclockwise")
                     }
                 }
         } else {
