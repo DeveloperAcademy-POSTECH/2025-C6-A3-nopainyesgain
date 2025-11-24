@@ -69,7 +69,7 @@ extension WorkshopView {
         }
         .background(Color.white30)
         .cornerRadius(10)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 15)
         .padding(.bottom, 20)
     }
 }
