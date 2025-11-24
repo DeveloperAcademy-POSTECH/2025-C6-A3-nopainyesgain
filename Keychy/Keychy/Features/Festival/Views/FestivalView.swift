@@ -44,7 +44,7 @@ struct FestivalView: View {
 
     var body: some View {
         // 카드 스와이프 뷰 (중앙 배치)
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 50) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("페스티벌")
                     .typography(.nanum32EB)
@@ -61,8 +61,6 @@ struct FestivalView: View {
             }
             .padding(18)
             
-            Spacer()
-            
             cardPagerView(
                 pageCount: festivals.count,
                 currentPage: $currentPage
@@ -78,7 +76,7 @@ struct FestivalView: View {
                 )
             }
 
-            uploadButton
+            // uploadButton
         }
         .background {
             Image(.festivalBG)
