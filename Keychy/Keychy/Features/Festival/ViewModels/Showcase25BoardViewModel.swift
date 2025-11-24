@@ -209,6 +209,13 @@ class Showcase25BoardViewModel {
                 // 새로 추가
                 try await db.collection(collectionName).addDocument(data: data)
             }
+
+            // 원본 Keyring의 isPublished를 true로 업데이트
+            if let documentId = userKeyring.documentId {
+                try await db.collection("Keyring").document(documentId).updateData([
+                    "isPublished": true
+                ])
+            }
             // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
@@ -328,6 +335,14 @@ class Showcase25BoardViewModel {
         isLoading = true
 
         do {
+            // 원본 Keyring의 isPublished를 false로 업데이트
+            let keyringId = existingKeyring.keyringId
+            if keyringId != "none" {
+                try await db.collection("Keyring").document(keyringId).updateData([
+                    "isPublished": false
+                ])
+            }
+
             try await db.collection(collectionName).document(existingKeyring.id).delete()
             // 리스너가 자동으로 업데이트함
         } catch {
