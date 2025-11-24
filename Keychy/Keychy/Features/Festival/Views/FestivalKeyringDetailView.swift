@@ -15,6 +15,8 @@ struct FestivalKeyringDetailView: View {
     @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     
+    @State var userManager = UserManager.shared
+    
     @State var sheetDetent: PresentationDetent = .fraction(0.48)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
@@ -26,8 +28,8 @@ struct FestivalKeyringDetailView: View {
     @State var showCopyLackAlert: Bool = false
     @State var showCopyingAlert: Bool = false
     @State var showInvenFullAlert: Bool = false
-    @State var showPackageAlert: Bool = false
-    @State var showPackingAlert: Bool = false
+    @State var showVoteAlert: Bool = false
+    @State var showVoteCompleteAlert: Bool = false
     @State var menuPosition: CGRect = .zero
 
     let keyring: Keyring
@@ -60,10 +62,6 @@ struct FestivalKeyringDetailView: View {
                     }
                 }
                 
-//                if showMenu {
-//                    menuOverlay
-//                }
-                
                 if isLoading {
                     Color.black20
                         .ignoresSafeArea()
@@ -72,11 +70,11 @@ struct FestivalKeyringDetailView: View {
                         .zIndex(200)
                 }
                 
-//                alertOverlays
-//                    .position(
-//                        x: geometry.size.width / 2,
-//                        y: geometry.size.height / 2
-//                    )
+                alertOverlays
+                    .position(
+                        x: geometry.size.width / 2,
+                        y: geometry.size.height / 2
+                    )
                 
                 customNavigationBar
                     .blur(radius: shouldApplyBlur ? 15 : 0)
@@ -86,7 +84,6 @@ struct FestivalKeyringDetailView: View {
             
         }
         .ignoresSafeArea()
-        //.adaptiveBottomPadding()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
         .sheet(isPresented: $isSheetPresented) {
@@ -113,20 +110,9 @@ struct FestivalKeyringDetailView: View {
         isLoading ||
         showCopyCompleteAlert ||
         showCopyingAlert ||
-        showPackingAlert ||
+        showVoteCompleteAlert ||
         false
     }
-    
-//    // 복사권 개수 리프레쉬
-//    func refreshCopyVoucher() {
-//        guard let uid = UserDefaults.standard.string(forKey: "userUID") else { return }
-//        
-//        viewModel.fetchUserCollectionData(uid: uid) { success in
-//            if success {
-//                print("복사권 새로고침: \(viewModel.copyVoucher)개")
-//            }
-//        }
-//    }
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     private var sceneScale: CGFloat {
@@ -203,7 +189,9 @@ extension FestivalKeyringDetailView {
     
     private var voteButton: some View {
         Button(action: {
-            //captureAndSaveImage()
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showVoteAlert = true
+            }
         }) {
             Image("imageDownload")
         }
@@ -214,7 +202,7 @@ extension FestivalKeyringDetailView {
     private var copyButton: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showPackageAlert = true
+                showCopyAlert = true
             }
         }) {
             Image("Copy")
@@ -234,11 +222,12 @@ extension FestivalKeyringDetailView {
             }
         } center: {
             // Center (중앙) - 빈 공간
-            Spacer()
+            Text(keyring.name)
+                .foregroundStyle(.gray600)
         } trailing: {
             // Trailing (오른쪽) - 다음/구매 버튼
             Spacer()
+                .frame(width: 44, height: 44)
         }
     }
 }
-

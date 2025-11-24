@@ -69,7 +69,10 @@ extension FestivalKeyringDetailView {
     private var topSection: some View {
         HStack {
             Button(action: {
-                //captureAndSaveImage()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isSheetPresented = false
+                    showVoteAlert = true
+                }
             }) {
                 Image("Save")
                     .resizable()
@@ -86,7 +89,7 @@ extension FestivalKeyringDetailView {
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isSheetPresented = false
-                    showPackageAlert = true
+                    showCopyAlert = true
                 }
             }) {
                 Image("Copy")
