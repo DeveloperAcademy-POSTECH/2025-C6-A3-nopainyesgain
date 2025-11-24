@@ -230,7 +230,7 @@ extension FestivalKeyringDetailView {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
                 isSheetPresented = false
-                router.pop()
+                festivalRouter.pop()
             }
         } center: {
             // Center (중앙) - 빈 공간

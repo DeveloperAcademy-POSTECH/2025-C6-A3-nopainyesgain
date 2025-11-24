@@ -11,6 +11,7 @@ struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
     @Bindable var festivalVM: Showcase25BoardViewModel
+    
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
     @State private var polaroidVM: PolaroidVM?
@@ -184,11 +185,12 @@ struct WorkshopTab: View {
                         )
                         
                     //MARK: - 쇼케이스용 페스티벌 임시 라우트 지정
-                    case .festivalKeyringDetailView:
+                    case .festivalKeyringDetailView(let keyring):
                         FestivalKeyringDetailView(
                             festivalRouter: festivalRouter,
                             workshopRouter: router,
-                            viewModel: festivalVM
+                            viewModel: festivalVM,
+                            keyring: keyring
                         )
 
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.

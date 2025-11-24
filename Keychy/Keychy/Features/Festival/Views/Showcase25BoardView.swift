@@ -225,7 +225,7 @@ struct Showcase25BoardView: View {
             imageView
                 .onTapGesture {
                     if let fullKeyring = convertToKeyring(showcaseKeyring: keyring) {
-                        router.push(.festivalKeyringDetailView(fullKeyring))
+                        festivalRouter.push(.festivalKeyringDetailView(fullKeyring))
                     }
 //                    debugShowcaseKeyring(keyring: keyring)
 //                    testFirestoreKeyringExists(keyringId: keyring.keyringId)
@@ -254,7 +254,7 @@ struct Showcase25BoardView: View {
             imageView
                 .onTapGesture {
                     if let fullKeyring = convertToKeyring(showcaseKeyring: keyring) {
-                        router.push(.festivalKeyringDetailView(fullKeyring))
+                        festivalRouter.push(.festivalKeyringDetailView(fullKeyring))
                     }
                     
 //                    debugShowcaseKeyring(keyring: keyring)
@@ -461,7 +461,7 @@ struct Showcase25BoardView: View {
                 if let keyring = Keyring(documentId: document.documentID, data: data) {
                     // 3. DetailView로 이동 (Main thread에서 실행)
                     await MainActor.run {
-                        router.push(.festivalKeyringDetailView(keyring))
+                        festivalRouter.push(.festivalKeyringDetailView(keyring))
                     }
                 } else {
                     print("Keyring 변환 실패")
