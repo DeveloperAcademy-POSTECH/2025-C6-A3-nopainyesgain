@@ -17,6 +17,7 @@ struct WorkshopTab: View {
     @State private var polaroidVM: PolaroidVM?
     @State private var clearSketchVM: ClearSketchVM?
     @State private var pixelKeyringVM: PixelVM?
+    @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -42,7 +43,11 @@ struct WorkshopTab: View {
                     // MARK: - 내 창고뷰
                     case .myItems:
                         MyItemsView(router: router)
-                    
+
+                    // MARK: - 템플릿 목록뷰
+                    case .workshopTemplates:
+                        WorkshopTemplatesView(router: router)
+
                     // MARK: - 재화 구매뷰
                     case .coinCharge:
                         CoinChargeView(
@@ -193,6 +198,28 @@ struct WorkshopTab: View {
                             keyring: keyring
                         )
 
+                    // MARK: - SpeechBubble
+                    case .speechBubblePreview:
+                        SpeechBubblePreview(router: router, viewModel: getSpeechBubbleVM())
+                    case .speechBubbleCustomizing:
+                        KeyringCustomizingView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            nextRoute: .speechBubbleInfoInput
+                        )
+                    case .speechBubbleInfoInput:
+                        KeyringInfoInputView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            nextRoute: .speechBubbleComplete
+                        )
+                    case .speechBubbleComplete:
+                        KeyringCompleteView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            navigationTitle: "키링이 완성되었어요!"
+                        )
+
                     // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
                     case .showcase25BoardView:
                         Showcase25BoardView(festivalRouter: festivalRouter, workshopRouter: router, viewModel: festivalVM)
@@ -248,6 +275,15 @@ struct WorkshopTab: View {
         return viewModel
     }
 
+    private func getSpeechBubbleVM() -> SpeechBubbleVM {
+        guard let viewModel = speechBubbleVM else {
+            let newViewModel = SpeechBubbleVM()
+            speechBubbleVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
         acrylicPhotoVM = nil
@@ -267,5 +303,9 @@ struct WorkshopTab: View {
 
     func resetPixelKeyringVM() {
         pixelKeyringVM = nil
+    }
+
+    func resetSpeechBubbleVM() {
+        speechBubbleVM = nil
     }
 }

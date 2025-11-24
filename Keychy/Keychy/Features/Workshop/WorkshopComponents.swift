@@ -180,8 +180,13 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 userManager: userManager
             )
         }
+        .frame(width: twoGridCellWidth, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray50, lineWidth: 2)
+        )
     }
 
     /// 아이템 타입에 따른 높이 계산
@@ -228,78 +233,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         await effectManager.downloadParticle(particle, userManager: userManager)
         
         isParticleReady = true
-    }
-}
-
-/// 보유한 아이템을 표시하는 작은 카드 뷰
-struct CurrentUsedCard<Item: WorkshopItem>: View {
-    let item: Item
-    var router: NavigationRouter<WorkshopRoute>? = nil
-    var viewModel: WorkshopViewModel? = nil
-
-    var body: some View {
-        Button {
-            handleTap()
-        } label: {
-            VStack(spacing: 8) {
-                ZStack {
-                    SimpleAnimatedImage(url: item.thumbnailURL)
-                        .aspectRatio(contentMode: .fill)
-                        .scaledToFit()
-
-                    if !item.isFree {
-                        VStack {
-                            HStack {
-                                Image(.paidIcon)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 24)
-
-                                Spacer()
-
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 3)
-                            .padding(.leading, 7)
-
-                            Spacer()
-                        }
-                    }
-
-                }
-                .frame(width:112, height:112)
-                .background(Color.white)
-                .cornerRadius(10)
-
-                // 아이템 이름
-                Text(item.name)
-                    .typography(.suit14SB18)
-                    .foregroundColor(.black100)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-
-    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
-    private func handleTap() {
-        guard let router = router else { return }
-
-        // 키링일 경우 바로 해당 키링 Preview로 이동
-        if let template = item as? KeyringTemplate,
-           let templateId = template.id,
-           let route = WorkshopRoute.from(string: templateId) {
-            router.push(route)
-        }
-        // 나머지 아이템들은 WorkshopPreview로 이동
-        else if let background = item as? Background {
-            router.push(.workshopPreview(item: AnyHashable(background)))
-        } else if let carabiner = item as? Carabiner {
-            router.push(.workshopPreview(item: AnyHashable(carabiner)))
-        } else if let particle = item as? Particle {
-            router.push(.workshopPreview(item: AnyHashable(particle)))
-        } else if let sound = item as? Sound {
-            router.push(.workshopPreview(item: AnyHashable(sound)))
-        }
     }
 }
 
@@ -352,13 +285,14 @@ struct PriceOverlay<Item: WorkshopItem>: View {
                 Spacer()
                 
                 HStack {
+                    Spacer()
+
                     EffectButtonStyle(
                         item: item,
                         effectManager: effectManager,
                         userManager: userManager
                     )
                     .padding(8)
-                    Spacer()
                 }
             }
         }
@@ -396,6 +330,7 @@ struct EffectButtonStyle<Item: WorkshopItem>: View {
                     .frame(width: 38, height: 38)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
+                            .inset(by: 0.5)
                             .stroke(.white100, lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
@@ -409,6 +344,7 @@ struct EffectButtonStyle<Item: WorkshopItem>: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 14, height: 14)
+                        .offset(x: 1)
                 }
             }
         }

@@ -19,8 +19,6 @@ extension KeyringInfoInputView {
             return
         }
 
-        print("[KeyringSave] 저장 시작 - uid: \(uid), chainLength: \(viewModel.chainLength)")
-
         isSavingToFirebase = true
 
         // 1. Firebase Storage에 이미지 업로드
@@ -76,15 +74,13 @@ extension KeyringInfoInputView {
                 let keyringName = self.viewModel.nameText
                 let chainLength = self.viewModel.chainLength
 
-                // 최근 사용 템플릿에 추가
-                self.addTemplateToRecentlyUsed(uid: uid, templateId: templateId)
-
                 Task {
                     // 위젯 캐싱 완료 대기
                     await self.captureAndCacheKeyring(
                         keyringId: keyringId,
                         keyringName: keyringName,
                         bodyImage: imageURL,
+                        templateId: templateId,
                         ringType: .basic,
                         chainType: .basic,
                         hookOffsetY: hookOffsetY,
@@ -218,20 +214,12 @@ extension KeyringInfoInputView {
             }
     }
 
-    // MARK: - User의 최근 사용 템플릿에 추가
-    private func addTemplateToRecentlyUsed(uid: String, templateId: String) {
-        db.collection("User")
-            .document(uid)
-            .updateData([
-                "currentUsedTemplates": FieldValue.arrayUnion([templateId])
-            ])
-    }
-
     // MARK: - 위젯용 이미지 캡처 및 캐싱
     private func captureAndCacheKeyring(
         keyringId: String,
         keyringName: String,
         bodyImage: String,
+        templateId: String?,
         ringType: RingType,
         chainType: ChainType,
         hookOffsetY: CGFloat?,
@@ -246,6 +234,7 @@ extension KeyringInfoInputView {
                 ringType: ringType,
                 chainType: chainType,
                 bodyImage: bodyImage,
+                templateId: templateId,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,

@@ -68,10 +68,10 @@ struct WorkshopView: View {
             if !hasInitialized {
                 viewModel = WorkshopViewModel(userManager: userManager)
                 hasInitialized = true
-                
+
                 // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
                 await viewModel.fetchDataForCategory(viewModel.selectedCategory)
-                
+
                 // 2. 백그라운드에서 나머지 카테고리 프리페칭
                 Task.detached(priority: .background) {
                     await viewModel.prefetchRemainingData()
@@ -96,14 +96,15 @@ struct WorkshopView: View {
             VStack(spacing: 0) {
                 // 상단 배너 (코인 버튼 + 타이틀)
                 topBannerSection
-                    .frame(height: 150)
+                
+                Spacer()
+                    .frame(height: 50)
+                
+                makingKeyringSection
                 
                 Spacer()
                     .frame(height: 20)
-                
-                // 내 아이템 섹션
-                CurrentUsedSection
-                
+
                 // 메인 콘텐츠 (그리드)
                 mainContentSection
                     .background(

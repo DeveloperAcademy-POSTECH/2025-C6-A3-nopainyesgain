@@ -22,6 +22,7 @@ import FirebaseFirestore
 /// - 원하는 함수를 수정하고, 아래 함수를 호출하세요.
 func initializeDatas() async {
     await initializeTemplates()
+    await initializeSpeechBubbleTemplate()
     await initializeBackgrounds()
     await initializeCarabiners()
     await initializeParticles()
@@ -210,25 +211,125 @@ func initializeTemplates() async {
             "isActive": false
         ]
     ]
-    
+
     let db = Firestore.firestore()
-    
+
     for template in templates {
         guard let id = template["id"] as? String else { continue }
-        
+
         var data = template
         data.removeValue(forKey: "id")
-        
+
         do {
             let doc = try await db.collection("Template").document(id).getDocument()
-            
+
             if !doc.exists {
                 data["createdAt"] = Timestamp(date: Date())
             }
-            
+
             try await db.collection("Template").document(id).setData(data, merge: true)
         } catch {
             print("Template \(id) 오류: \(error)")
+        }
+    }
+}
+
+// MARK: - SpeechBubble Template Initialization
+func initializeSpeechBubbleTemplate() async {
+    let db = Firestore.firestore()
+
+    // 메인 템플릿 문서
+    let templateData: [String: Any] = [
+        "templateName": "말풍선 키링",
+        "description": "말풍선 모양의 키링을 만들어보세요",
+        "interactions": ["tap", "swipe"],
+        "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FArcrlyricPreview.gif?alt=media&token=a1c62e35-e47a-4b0c-9252-6a9b5eda9233",
+        "previewURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FArcrylicWhite.gif?alt=media&token=133b13cf-8db9-4e83-af1c-44e5430ca2fb",
+        "guidingImageURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicGudingImage..png?alt=media&token=d79a355d-1b85-4d93-b126-cc09828d12da",
+        "guidingText": "말풍선에 텍스트를 입력해주세요.",
+        "tags": ["텍스트"],
+        "price": 0,
+        "downloadCount": 0,
+        "useCount": 0,
+        "hookOffsetY": 0.04,
+        "chainLength": 5,
+        "isActive": false
+    ]
+
+    do {
+        let doc = try await db.collection("Template").document("SpeechBubble").getDocument()
+
+        var data = templateData
+        if !doc.exists {
+            data["createdAt"] = Timestamp(date: Date())
+        }
+
+        try await db.collection("Template").document("SpeechBubble").setData(data, merge: true)
+        print("SpeechBubble 템플릿 생성 완료")
+
+    } catch {
+        print("SpeechBubble 템플릿 생성 오류: \(error)")
+        return
+    }
+
+    // Frames 서브컬렉션 (A타입 6개)
+    let framesA: [[String: Any]] = [
+        [
+            "id": "A1",
+            "name": "기본",
+            "type": "A",
+            "frameURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FSpeechBubble%2FFrameBody%2FA1.png?alt=media&token=88cac54f-2743-4b12-a131-ad8070d23010",
+            "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FSpeechBubble%2FFrameThumbnail%2FA1.png?alt=media&token=451d19db-baba-4e0f-bda8-6fc902b13af8",
+            "order": 1
+        ]
+    ]
+
+    // Frames 서브컬렉션 (B타입 5개)
+    let framesB: [[String: Any]] = [
+        [
+            "id": "B1",
+            "name": "긴 기본",
+            "type": "B",
+            
+            
+            "frameURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FSpeechBubble%2FFrameBody%2FB1.png?alt=media&token=5f063fb8-415c-47b5-84de-edb9a5223d64",
+            "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FSpeechBubble%2FFrameThumbnail%2FB1.png?alt=media&token=4bcf1d6e-6c9e-4eae-8484-06d8daf2c902",
+            "order": 7
+        ]
+    ]
+
+    // Frames 서브컬렉션 (C타입 4개)
+    let framesC: [[String: Any]] = [
+        [
+            "id": "C1",
+            "name": "별",
+            "type": "C",
+            
+            
+            "frameURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FSpeechBubble%2FFrameBody%2FC1.png?alt=media&token=9406ace2-bfb3-4922-a158-1e1cc46172ec",
+            "thumbnailURL": "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FSpeechBubble%2FFrameThumbnail%2FC1.png?alt=media&token=ed0e44ca-56c6-4b7d-8fe8-b8684a83b505",
+            "order": 12
+        ]
+    ]
+
+    let allFrames = framesA + framesB + framesC
+
+    for frame in allFrames {
+        guard let id = frame["id"] as? String else { continue }
+
+        var data = frame
+        data.removeValue(forKey: "id")
+
+        do {
+            try await db.collection("Template")
+                .document("SpeechBubble")
+                .collection("Frames")
+                .document(id)
+                .setData(data, merge: true)
+
+            print("Frame \(id) 생성 완료")
+        } catch {
+            print("Frame \(id) 생성 오류: \(error)")
         }
     }
 }

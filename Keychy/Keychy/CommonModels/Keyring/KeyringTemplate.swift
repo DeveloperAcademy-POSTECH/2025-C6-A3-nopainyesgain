@@ -60,6 +60,8 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     /// - 양수: 바디 중심에서 위로 이동 (구멍이 더 위에 있음)
     /// - 음수: 바디 중심에서 아래로 이동 (구멍이 더 아래에 있음)
     let hookOffsetY: CGFloat?
+    
+    let chainLength: Int?
 
     /// 무료 템플릿 여부
     var isFree: Bool {
@@ -85,7 +87,8 @@ extension KeyringTemplate {
             useCount: 0,
             createdAt: Date(),
             isActive: true,
-            hookOffsetY: nil
+            hookOffsetY: nil,
+            chainLength: 5
         )
         template.id = "AcrylicPhoto"
         return template

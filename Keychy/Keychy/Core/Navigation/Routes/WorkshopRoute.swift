@@ -20,6 +20,7 @@ enum WorkshopRoute: Hashable {
     case acrylicPhotoComplete
     case coinCharge
     case myItems
+    case workshopTemplates
 
     // MARK: - 네온 사인 템플릿
     case NeonSignPreView
@@ -52,6 +53,12 @@ enum WorkshopRoute: Hashable {
     case showcase25BoardView
     case festivalKeyringDetailView(Keyring)
 
+    // MARK: - 말풍선 키링 템플릿
+    case speechBubblePreview
+    case speechBubbleCustomizing
+    case speechBubbleInfoInput
+    case speechBubbleComplete
+
     // MARK: - 새로운 템플릿의 루트는 이렇게 추가해주면 됩니다. (예정)
     // case hkPreview
     // case hkCustomizing
@@ -71,6 +78,8 @@ enum WorkshopRoute: Hashable {
             return .clearSketchPreview
         case "PixelKeyring":
             return .pixelPreview
+        case "SpeechBubble":
+            return .speechBubblePreview
 
             // 필요한 프리뷰 케이스들 추가
         default:

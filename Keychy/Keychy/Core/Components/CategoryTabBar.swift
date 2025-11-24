@@ -66,6 +66,7 @@ private struct CategoryTabButton: View {
                 Rectangle()
                     .fill(isSelected ? Color.main500 : Color.clear)
                     .frame(height: 2)
+                    .padding(.horizontal, -4) // 좌우로 2pt씩 확장
             }
             .fixedSize(horizontal: true, vertical: false)
         }

@@ -183,7 +183,7 @@ extension TemplatePreviewBody {
                     .scaledToFit()
                     .frame(width: 386, height: 386)
             } else {
-                ProgressView()
+                LoadingAlert(type: .short, message: nil)
             }
         }
         .frame(maxHeight: 500)
@@ -216,7 +216,7 @@ extension TemplatePreviewBody {
                     }
                 )
             } else {
-                ProgressView()
+                LoadingAlert(type: .short, message: nil)
             }
         }
     }

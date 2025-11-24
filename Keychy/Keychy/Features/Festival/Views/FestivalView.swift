@@ -22,7 +22,7 @@ struct FestivalView: View {
             startDate: "2025.11.01",
             endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
-            imageName: "homigotFestival",
+            imageName: "homigot",
             isLocked: true
         ),
         (
@@ -40,7 +40,7 @@ struct FestivalView: View {
             startDate: "2025.11.01",
             endDate: "2025.11.30",
             distance: "내 위치로 부터 1.5km",
-            imageName: "youngildaeFestival",
+            imageName: "youngonedae",
             isLocked: true
         ),
     ]
