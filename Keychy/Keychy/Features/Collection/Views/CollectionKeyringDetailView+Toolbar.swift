@@ -18,7 +18,7 @@ extension CollectionKeyringDetailView {
             }
             .opacity(showUIForCapture ? 1 : 0)
         } center: {
-            // Center (중앙) - 빈 공간
+            // Center (중앙)
             Text(showUIForCapture ? keyring.name : "")
                 .foregroundStyle(.gray600)
         } trailing: {

@@ -80,7 +80,7 @@ struct Showcase25BoardView: View {
                 }
                 .ignoresSafeArea()
 
-                customNavigationBar
+                
             }
 
             // Dim 오버레이 (키링 시트가 열릴 때)
@@ -94,10 +94,12 @@ struct Showcase25BoardView: View {
                 // 키링 선택 시트
                 keyringSelectionSheet
             }
+            
+            customNavigationBar
         }
         .ignoresSafeArea()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden()
+        .navigationBarBackButtonHidden(true)
+        .interactiveDismissDisabled(false)
         .toolbar(.hidden, for: .tabBar)
         .alert("키링 회수", isPresented: $showDeleteAlert) {
             Button("취소", role: .cancel) {
@@ -262,21 +264,6 @@ struct Showcase25BoardView: View {
 //                                        
 //                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
                 }
-        }
-    }
-
-    // MARK: - Custom Navigation Bar
-
-    private var customNavigationBar: some View {
-        CustomNavigationBar {
-            BackToolbarButton {
-                festivalRouter.pop()
-            }
-        } center: {
-            Text("쇼케이스 2025")
-                .typography(.notosans17M)
-        } trailing: {
-            
         }
     }
 
@@ -540,6 +527,23 @@ struct Showcase25BoardView: View {
             } catch {
                 print("❌ 테스트 실패: \(error)")
             }
+        }
+    }
+}
+
+extension Showcase25BoardView {
+    var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
+                festivalRouter.pop()
+            }
+        } center: {
+            Text("쇼케이스 2025")
+                .typography(.notosans17M)
+        } trailing: {
+            Spacer()
+                .frame(width: 44, height: 44)
+
         }
     }
 }

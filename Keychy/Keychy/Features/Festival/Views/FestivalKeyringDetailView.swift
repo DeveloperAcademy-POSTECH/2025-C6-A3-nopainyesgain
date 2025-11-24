@@ -234,11 +234,12 @@ extension FestivalKeyringDetailView {
             }
         } center: {
             // Center (중앙) - 빈 공간
-            Spacer()
+            Text(keyring.name)
+                .foregroundStyle(.gray600)
         } trailing: {
             // Trailing (오른쪽) - 다음/구매 버튼
             Spacer()
+                .frame(width: 44, height: 44)
         }
     }
 }
-
