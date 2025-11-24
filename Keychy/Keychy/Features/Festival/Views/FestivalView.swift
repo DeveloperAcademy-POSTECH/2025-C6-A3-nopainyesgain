@@ -44,33 +44,44 @@ struct FestivalView: View {
 
     var body: some View {
         // 카드 스와이프 뷰 (중앙 배치)
-        ZStack {
-            Image(.festivalBG)
-                .resizable()
-                .scaledToFill()
-                .frame(width: screenWidth, height: screenHeight)
-                .clipped()
-            VStack {
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text("페스티벌")
                     .typography(.nanum32EB)
                     .foregroundStyle(.black100)
-                cardPagerView(
-                    pageCount: festivals.count,
-                    currentPage: $currentPage
-                ) { index in
-                    festivalCard(
-                        title: festivals[index].title,
-                        location: festivals[index].location,
-                        dateRange: festivals[index].dateRange,
-                        distance: festivals[index].distance,
-                        imageName: festivals[index].imageName,
-                        isLocked: festivals[index].isLocked,
-                        enterAction: { router.push(.showcase25BoardView) }
-                    )
+                HStack(spacing: 3) {
+                    Image(.mapPinIcon)
+                    Text("경북 포항시 남구 지곡로 80 C5")
+                        .typography(.suit15B)
+                        .foregroundStyle(.gray500)
                 }
-
-                uploadButton
             }
+            .padding(18)
+            
+            Spacer()
+            
+            cardPagerView(
+                pageCount: festivals.count,
+                currentPage: $currentPage
+            ) { index in
+                festivalCard(
+                    title: festivals[index].title,
+                    location: festivals[index].location,
+                    dateRange: festivals[index].dateRange,
+                    distance: festivals[index].distance,
+                    imageName: festivals[index].imageName,
+                    isLocked: festivals[index].isLocked,
+                    enterAction: { router.push(.showcase25BoardView) }
+                )
+            }
+
+            uploadButton
+        }
+        .background {
+            Image(.festivalBG)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
         }
     }
 
