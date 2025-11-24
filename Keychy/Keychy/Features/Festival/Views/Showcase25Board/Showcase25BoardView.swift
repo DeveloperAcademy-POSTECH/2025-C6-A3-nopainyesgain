@@ -265,16 +265,29 @@ struct Showcase25BoardView: View {
     private func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
         let isMyKeyring = viewModel.isMyKeyring(at: index)
 
-        let imageView = LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
-            if let image = state.image {
-                image
+        // 캐시된 이미지 확인 (keyringId = Firestore documentId)
+        let cachedImageData = KeyringImageCache.shared.load(for: keyring.keyringId)
+
+        let imageView = Group {
+            if let imageData = cachedImageData, let uiImage = UIImage(data: imageData) {
+                // 캐시된 이미지 사용
+                Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFit()
-            } else if state.error != nil {
-                Image(systemName: "photo")
-                    .foregroundStyle(.gray300)
             } else {
-                ProgressView()
+                // 캐시에 없으면 URL로 로드
+                LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } else if state.error != nil {
+                        Image(systemName: "photo")
+                            .foregroundStyle(.gray300)
+                    } else {
+                        ProgressView()
+                    }
+                }
             }
         }
         .padding(8)
