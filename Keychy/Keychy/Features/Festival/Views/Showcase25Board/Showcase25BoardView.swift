@@ -255,13 +255,18 @@ struct Showcase25BoardView: View {
                 .clipped()
                 .opacity(0.5)
 
-            // 그리드
+            // 그리드 (빨랫줄 효과 - 행별 포물선)
             VStack(spacing: 0) {
                 ForEach(0..<gridRows, id: \.self) { row in
                     HStack(spacing: 0) {
                         ForEach(0..<gridColumns, id: \.self) { col in
                             let index = row * gridColumns + col
                             gridCell(index: index)
+                                .offset(y: {
+                                    let center = Double(gridColumns) / 2.0
+                                    let distance = Double(col) - center
+                                    return pow(distance / center, 2) * -20
+                                }())
                         }
                     }
                 }
