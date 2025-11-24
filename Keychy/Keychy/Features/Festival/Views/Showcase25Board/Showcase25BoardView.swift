@@ -290,7 +290,7 @@ struct Showcase25BoardView: View {
                 }
             }
         }
-        .padding(8)
+        .padding(4)
 
         // 내 키링인 경우에만 컨텍스트 메뉴 표시
         if isMyKeyring {
