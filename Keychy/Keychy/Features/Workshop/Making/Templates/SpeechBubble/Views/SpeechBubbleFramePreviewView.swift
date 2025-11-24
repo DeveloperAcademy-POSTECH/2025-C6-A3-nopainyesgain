@@ -122,7 +122,6 @@ struct SpeechBubbleFramePreviewView: View {
                     // 글자 수 제한 적용
                     viewModel.inputText = applyTextConstraints(newValue)
                 }
-                .padding(.vertical, 3.5)
         }
         .padding()
     }
@@ -165,10 +164,3 @@ struct SpeechBubbleFramePreviewView: View {
     }
 }
 
-#Preview {
-    SpeechBubbleFramePreviewView(
-        viewModel: SpeechBubbleVM(),
-        onSceneReady: {}
-    )
-    .environment(UserManager.shared)
-}
