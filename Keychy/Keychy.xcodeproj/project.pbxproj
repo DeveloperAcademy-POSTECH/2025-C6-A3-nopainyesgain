@@ -336,6 +336,7 @@
 		C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */; };
 		C6C361E02ED4AB7D009642F4 /* SubmitKeyringPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361DF2ED4AB7D009642F4 /* SubmitKeyringPopup.swift */; };
 		C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */; };
+		C6C361E42ED4AF48009642F4 /* Showcase25BoardView+Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -701,6 +702,7 @@
 		C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Detail.swift"; sourceTree = "<group>"; };
 		C6C361DF2ED4AB7D009642F4 /* SubmitKeyringPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitKeyringPopup.swift; sourceTree = "<group>"; };
 		C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCompleteAlert.swift; sourceTree = "<group>"; };
+		C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Grid.swift"; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1841,6 +1843,7 @@
 			isa = PBXGroup;
 			children = (
 				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
+				C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */,
 				C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */,
 				C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */,
 				C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */,
@@ -2254,6 +2257,7 @@
 				3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Search.swift in Sources */,
 				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
+				C6C361E42ED4AF48009642F4 /* Showcase25BoardView+Grid.swift in Sources */,
 				4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
 				4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */,

@@ -39,8 +39,8 @@ struct Showcase25BoardView: View {
     let sheetHeightRatio: CGFloat = 0.43
 
     // 그리드 설정
-    private let gridColumns = 12
-    private let gridRows = 12
+    let gridColumns = 12
+    let gridRows = 12
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
 
     // 줌 설정
@@ -49,19 +49,19 @@ struct Showcase25BoardView: View {
     private let initialZoom: CGFloat = 0.7
 
     // 그리드 전체 크기 계산 (최소 줌 기준)
-    private var cellWidth: CGFloat {
+    var cellWidth: CGFloat {
         screenWidth / 6
     }
 
-    private var cellHeight: CGFloat {
+    var cellHeight: CGFloat {
         cellWidth / cellAspectRatio
     }
 
-    private var gridWidth: CGFloat {
+    var gridWidth: CGFloat {
         cellWidth * CGFloat(gridColumns)
     }
 
-    private var gridHeight: CGFloat {
+    var gridHeight: CGFloat {
         cellHeight * CGFloat(gridRows)
     }
 
@@ -224,10 +224,10 @@ struct Showcase25BoardView: View {
                 .frame(width: 44)
         }
     }
-
-    // MARK: - Grid Content
-
-    private var gridContent: some View {
+    
+    // MARK: - GridContent
+    
+    var gridContent: some View {
         VStack(spacing: 0) {
             ForEach(0..<gridRows, id: \.self) { row in
                 HStack(spacing: 0) {
@@ -241,134 +241,4 @@ struct Showcase25BoardView: View {
         .frame(width: gridWidth, height: gridHeight)
     }
 
-    // MARK: - Grid Cell
-
-    private func gridCell(index: Int) -> some View {
-        let keyring = viewModel.keyring(at: index)
-        let isMyKeyring = viewModel.isMyKeyring(at: index)
-        let isBeingEditedByOthers = viewModel.isBeingEditedByOthers(at: index)
-
-        return ZStack {
-            // 셀 배경
-            Rectangle()
-                .fill(Color.white100)
-                .border(Color.gray50, width: 0.5)
-
-            if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
-                // 키링 이미지가 있는 경우
-                keyringImageView(keyring: keyring, index: index)
-            } else if isBeingEditedByOthers, let editingKeyring = keyring {
-                // 다른 사람이 수정 중인 경우
-                let maskedName = viewModel.maskedNickname(editingKeyring.editingUserNickname)
-                VStack(spacing: 4) {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                    Text("[\(maskedName)]님이\n수정중")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.gray300)
-                        .multilineTextAlignment(.center)
-                }
-            } else {
-                // 키링이 없는 경우 + 버튼
-                Button {
-                    viewModel.selectedGridIndex = index
-                    Task {
-                        await viewModel.updateIsEditing(at: index, isEditing: true)
-                    }
-                    withAnimation(.easeInOut) {
-                        viewModel.showKeyringSheet = true
-                    }
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white100)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(Color.gray50)
-                        )
-                }
-                .opacity(viewModel.showButtons ? 1 : 0)
-                .disabled(!viewModel.showButtons)
-                .animation(.easeInOut(duration: 0.2), value: viewModel.showButtons)
-            }
-        }
-        .frame(width: cellWidth, height: cellHeight)
-        .overlay(alignment: .topTrailing) {
-            // 내 키링 표시 (우측 상단)
-            if isMyKeyring {
-                Circle()
-                    .fill(Color.main500.opacity(0.8))
-                    .frame(width: 8, height: 8)
-                    .padding(6)
-            }
-        }
-    }
-
-    // MARK: - Keyring Image View
-
-    @ViewBuilder
-    private func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
-        let isMyKeyring = viewModel.isMyKeyring(at: index)
-
-        // 캐시된 이미지 확인 (keyringId = Firestore documentId)
-        let cachedImageData = KeyringImageCache.shared.load(for: keyring.keyringId)
-
-        let imageView = Group {
-            if let imageData = cachedImageData, let uiImage = UIImage(data: imageData) {
-                // 캐시된 이미지 사용
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                // 캐시에 없으면 URL로 로드
-                LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if state.error != nil {
-                        Image(systemName: "photo")
-                            .foregroundStyle(.gray300)
-                    } else {
-                        ProgressView()
-                    }
-                }
-            }
-        }
-        .padding(4)
-
-        // 내 키링인 경우에만 컨텍스트 메뉴 표시
-        if isMyKeyring {
-            imageView
-                .onTapGesture {
-                    //testFirestoreKeyringExists(keyringId: keyring.keyringId)
-                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
-                }
-                .contextMenu {
-                    Button {
-                        viewModel.selectedGridIndex = index
-                        withAnimation(.easeInOut) {
-                            viewModel.showKeyringSheet = true
-                        }
-                    } label: {
-                        Label("수정", systemImage: "pencil")
-                    }
-
-                    Button(role: .destructive) {
-                        gridIndexToDelete = index
-                        showDeleteAlert = true
-                    } label: {
-                        Label("회수", systemImage: "arrow.uturn.backward")
-                    }
-                }
-        } else {
-            // 남의 키링인 경우 탭 제스처만
-            imageView
-                .onTapGesture {
-                    //testFirestoreKeyringExists(keyringId: keyring.keyringId)
-                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
-                }
-        }
-    }
 }
