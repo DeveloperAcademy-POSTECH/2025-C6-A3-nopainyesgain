@@ -97,6 +97,7 @@ struct Showcase25BoardView: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
+        .toolbar(.hidden, for: .tabBar)
         .alert("키링 회수", isPresented: $showDeleteAlert) {
             Button("취소", role: .cancel) {
                 gridIndexToDelete = nil
