@@ -69,6 +69,10 @@ extension WorkshopView {
         }
         .background(Color.white30)
         .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.white70, lineWidth: 1)
+        )
         .padding(.horizontal, 15)
         .padding(.bottom, 20)
     }
