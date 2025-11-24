@@ -64,6 +64,9 @@ struct WorkshopView: View {
             sortSheet
         }
         .task {
+            
+//            await initializeCarabiners()
+            
             // 최초 한 번만 초기화
             if !hasInitialized {
                 viewModel = WorkshopViewModel(userManager: userManager)

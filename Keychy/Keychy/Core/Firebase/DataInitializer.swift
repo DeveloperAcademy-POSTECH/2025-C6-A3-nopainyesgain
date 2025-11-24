@@ -90,102 +90,150 @@ func initializeBackgrounds() async {
 
 // MARK: - Carabiner Initialization
 func initializeCarabiners() async {
+    let db = Firestore.firestore()
+
+    let emptyPositions = [0, 0, 0]
+
     let carabiners: [[String: Any]] = [
+
         [
-            "id": "StarStarStar",
-            "carabinerName": "스타스타스타",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FStarStarStar.png?alt=media&token=99a53b57-75aa-4050-b4a7-7ae7225c7a37"],
-            "carabinerType": "hamburger",  // "plain" 또는 "hamburger"
-            "description": "스타스타스타 카라비너입니다.",
+            "id": "BonePink",
+            "carabinerName": "뼈다귀 핑크",
+            "description": "뼈다귀 핑크 카라비너입니다.",
+            "carabinerWidth": 269.0,
+            "carabinerX": 66.0,
+            "carabinerY": 131.5,
+
+            "carabinerImage": [],
+            "carabinerType": "plain",
             "maxKeyringCount": 3,
-            "tags": ["별"],
+            "tags": [],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "carabinerX": 60.66,
-            "carabinerY": 132,
-            "carabinerWidth": 280.69,
-            "keyringXPosition": [99.69, 203.32, 302.04],
-            "keyringYPosition": [310.11, 235.64, 157.75],
-            "isActive": true
+            "keyringXPosition": emptyPositions,
+            "keyringYPosition": emptyPositions,
+            "isActive": false
         ],
+
         [
-            "id": "WelcomeKeychy",
-            "carabinerName": "웰컴 키치",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FWelcomeKeychy.png?alt=media&token=eb0c2720-afa6-4ae5-9424-c1877ade406a"],
-            "carabinerType": "plain",  // "plain" 또는 "hamburger"
-            "description": "웰컴 키치 카라비너입니다.",
+            "id": "PawPink",
+            "carabinerName": "발바닥 핑크",
+            "description": "발바닥 핑크 카라비너입니다.",
+            "carabinerWidth": 334.6,
+            "carabinerX": 38.33,
+            "carabinerY": 151.61,
+
+            "carabinerImage": [],
+            "carabinerType": "plain",
             "maxKeyringCount": 3,
-            "tags": ["키치"],
+            "tags": [],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "carabinerX": 52.23,
-            "carabinerY": 197.6,
-            "carabinerWidth": 306.21,
-            "keyringXPosition": [104, 201, 296],
-            "keyringYPosition": [240.34, 271, 240.34],
-            "isActive": true
+            "keyringXPosition": emptyPositions,
+            "keyringYPosition": emptyPositions,
+            "isActive": false
         ],
+
         [
-            "id": "SquareKeychy",
-            "carabinerName": "스퀘어키치",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FSquareKeychy.png?alt=media&token=d08a960e-c0ae-442a-a0c5-253dc8e146d7"],
-            "carabinerType": "plain",  // "plain" 또는 "hamburger"
-            "description": "스퀘어 키치 카라비너입니다.",
+            "id": "BoneBlue",
+            "carabinerName": "뼈다귀 블루",
+            "description": "뼈다귀 블루 카라비너입니다.",
+            "carabinerWidth": 269.46,
+            "carabinerX": 66.0,
+            "carabinerY": 131.5,
+
+            "carabinerImage": [],
+            "carabinerType": "plain",
             "maxKeyringCount": 3,
-            "tags": ["키치"],
+            "tags": [],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "carabinerX": 62.79,
-            "carabinerY": 116.66,
-            "carabinerWidth": 281.1,
-            "keyringXPosition": [103.04, 202.04, 300.5],
-            "keyringYPosition": [251.84, 251.84, 251.84],
-            "isActive": true
+            "keyringXPosition": emptyPositions,
+            "keyringYPosition": emptyPositions,
+            "isActive": false
         ],
+
         [
-            "id": "PinkeyStar",
-            "carabinerName": "핑키스타",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Carabiners%2FPinkeyStar.png?alt=media&token=fbba79f6-2142-4fd9-9f6c-2d3aa50335b5"],
-            "carabinerType": "plain",  // "plain" 또는 "hamburger"
-            "description": "스퀘어 키치 카라비너입니다.",
+            "id": "PawBlue",
+            "carabinerName": "발바닥 블루",
+            "description": "발바닥 블루 카라비너입니다.",
+            "carabinerWidth": 334.6,
+            "carabinerX": 38.33,
+            "carabinerY": 151.61,
+
+            "carabinerImage": [],
+            "carabinerType": "plain",
             "maxKeyringCount": 3,
-            "tags": ["키치"],
+            "tags": [],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
-            "carabinerX": 43.61,
-            "carabinerY": 115.1,
-            "carabinerWidth": 336.14,
-            "keyringXPosition": [97.08, 190.31, 287.08],
-            "keyringYPosition": [225.84, 275, 310.84],
-            "isActive": true
+            "keyringXPosition": emptyPositions,
+            "keyringYPosition": emptyPositions,
+            "isActive": false
+        ],
+
+        [
+            "id": "CupidHeart",
+            "carabinerName": "큐피드 하트",
+            "description": "큐피드 하트 카라비너입니다.",
+            "carabinerWidth": 351.0,
+            "carabinerX": 19.0,
+            "carabinerY": 151.5,
+
+            "carabinerImage": [],
+            "carabinerType": "plain",
+            "maxKeyringCount": 3,
+            "tags": [],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "keyringXPosition": emptyPositions,
+            "keyringYPosition": emptyPositions,
+            "isActive": false
+        ],
+
+        // ☁️ 클라우드 추가
+        [
+            "id": "CloudKeychy",
+            "carabinerName": "클라우드 키치",
+            "description": "클라우드 키치 카라비너입니다.",
+            "carabinerWidth": 370.16,
+            "carabinerX": 16.15,
+            "carabinerY": 91.46,
+
+            "carabinerImage": [],
+            "carabinerType": "plain",
+            "maxKeyringCount": 3,
+            "tags": [],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "keyringXPosition": emptyPositions,
+            "keyringYPosition": emptyPositions,
+            "isActive": false
         ]
     ]
-    
-    let db = Firestore.firestore()
-    
+
     for carabiner in carabiners {
         guard let id = carabiner["id"] as? String else { continue }
-        
+
         var data = carabiner
         data.removeValue(forKey: "id")
-        
+
         do {
-            let doc = try await db.collection("Carabiner").document(id).getDocument()
-            
-            if !doc.exists {
-                data["createdAt"] = Timestamp(date: Date())
-            }
-            
             try await db.collection("Carabiner").document(id).setData(data, merge: true)
+            print("저장 완료: \(id)")
         } catch {
-            print("Carabiner \(id) 오류: \(error)")
+            print("오류 발생: \(error)")
         }
     }
 }
+
+
 
 // MARK: - Particle Initialization
 func initializeParticles() async {
