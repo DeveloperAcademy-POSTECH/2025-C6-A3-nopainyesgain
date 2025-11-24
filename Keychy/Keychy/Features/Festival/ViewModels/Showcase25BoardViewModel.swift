@@ -357,16 +357,21 @@ class Showcase25BoardViewModel {
 
         isLoading = true
 
-        do {
-            // 원본 Keyring의 isPublished를 false로 업데이트
-            let keyringId = existingKeyring.keyringId
-            if keyringId != "none" {
+        // 원본 Keyring의 isPublished를 false로 업데이트 (실패해도 계속 진행)
+        let keyringId = existingKeyring.keyringId
+        if keyringId != "none" {
+            do {
                 try await db.collection("Keyring").document(keyringId).updateData([
                     "isPublished": false
                 ])
+            } catch {
+                // 원본 키링이 삭제된 경우 무시하고 계속 진행
+                print("⚠️ 원본 키링 업데이트 실패 (삭제됨): \(error.localizedDescription)")
             }
+        }
 
-            // 문서 삭제 대신 필드 초기화
+        // 쇼케이스 필드 초기화
+        do {
             let resetData: [String: Any] = [
                 "name": "",
                 "authorId": "",
@@ -381,7 +386,6 @@ class Showcase25BoardViewModel {
                 "votes": 0
             ]
             try await db.collection(collectionName).document(existingKeyring.id).setData(resetData)
-            // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
             print("❌ Failed to reset showcase keyring: \(error.localizedDescription)")
