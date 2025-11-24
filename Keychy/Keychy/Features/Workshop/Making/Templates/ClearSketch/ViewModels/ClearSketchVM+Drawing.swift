@@ -86,12 +86,12 @@ extension ClearSketchVM {
             
             // 그려진 패스들 렌더링
             for path in drawingPaths {
-                if path.isEraser {
-                    cgContext.setBlendMode(.clear)
-                } else {
-                    cgContext.setBlendMode(.normal)
-                    cgContext.setStrokeColor(UIColor(path.color).cgColor)
-                }
+                cgContext.setBlendMode(.normal)
+                
+                // 지우개면 흰색, 아니면 해당 색상
+                let renderColor = path.isEraser ? UIColor.white : UIColor(path.color)
+                cgContext.setStrokeColor(renderColor.cgColor)
+                cgContext.setFillColor(renderColor.cgColor)
                 
                 cgContext.setLineWidth(path.lineWidth)
                 let points = path.points
@@ -100,7 +100,6 @@ extension ClearSketchVM {
                 if points.count == 1 {
                     // 점 하나일 때는 원으로 그리기 (fillColor 명시적으로 설정)
                     cgContext.beginPath()
-                    cgContext.setFillColor(UIColor(path.color).cgColor)
                     cgContext.addArc(
                         center: points[0],
                         radius: path.lineWidth / 2,

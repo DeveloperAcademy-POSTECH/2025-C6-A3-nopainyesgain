@@ -57,11 +57,7 @@ struct ClearSketchDrawingCanvasView: View {
         let points = path.points
         guard points.count > 0 else { return }
         
-        if path.isEraser {
-            context.blendMode = .clear
-        } else {
-            context.blendMode = .normal
-        }
+        context.blendMode = .normal
         
         if points.count == 1 {
             // 점 하나일 때는 원으로 그리기
@@ -72,7 +68,9 @@ struct ClearSketchDrawingCanvasView: View {
                 height: path.lineWidth
             ))
             
-            context.fill(circle, with: .color(path.color))
+            // 지우개면 흰색으로, 아니면 해당 색상으로
+            let fillColor = path.isEraser ? Color.white : path.color
+            context.fill(circle, with: .color(fillColor))
             
         } else if points.count == 2 {
             // 여러 점일 때는 둥근 선 끝으로 그리기
@@ -80,9 +78,11 @@ struct ClearSketchDrawingCanvasView: View {
             swiftUIPath.move(to: points[0])
             swiftUIPath.addLine(to: points[1])
             
+            // 지우개면 흰색으로, 아니면 해당 색상으로
+            let strokeColor = path.isEraser ? Color.white : path.color
             context.stroke(
                 swiftUIPath,
-                with: .color(path.color),
+                with: .color(strokeColor),
                 style: StrokeStyle(
                     lineWidth: path.lineWidth,
                     lineCap: .round,
@@ -121,9 +121,11 @@ struct ClearSketchDrawingCanvasView: View {
                 swiftUIPath.addLine(to: points[points.count - 1])
             }
             
+            // 지우개면 흰색으로, 아니면 해당 색상으로
+            let strokeColor = path.isEraser ? Color.white : path.color
             context.stroke(
                 swiftUIPath,
-                with: .color(path.color),
+                with: .color(strokeColor),
                 style: StrokeStyle(
                     lineWidth: path.lineWidth,
                     lineCap: .round,
