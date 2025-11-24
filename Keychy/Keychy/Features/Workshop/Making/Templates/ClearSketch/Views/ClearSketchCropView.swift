@@ -27,7 +27,7 @@ struct ClearSketchCropView: View {
                     if let bodyImage = viewModel.bodyImage {
                         cropCanvasView(image: bodyImage, geometry: geometry)
                     } else {
-                        ProgressView("이미지 생성 중...")
+                        LoadingAlert(type: .short, message: nil)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
