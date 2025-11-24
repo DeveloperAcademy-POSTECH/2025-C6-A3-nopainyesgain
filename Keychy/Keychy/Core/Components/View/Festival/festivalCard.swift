@@ -52,7 +52,7 @@ struct festivalCard: View {
             Spacer().frame(height: 3)
             
             Button {
-                enterAction()
+                // 임시로 버튼 비활성화 해둡니다...^^
             } label: {
                 Text("입장하기")
                     .typography(isLocked ? .suit17M : .suit17B)
