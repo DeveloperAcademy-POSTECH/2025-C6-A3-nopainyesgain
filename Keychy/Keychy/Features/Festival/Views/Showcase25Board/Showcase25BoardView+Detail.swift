@@ -48,51 +48,6 @@ extension Showcase25BoardView {
         }
     }
 
-    // MARK: - Convert ShowcaseFestivalKeyring to Keyring
-
-    func convertToKeyring(showcaseKeyring: ShowcaseFestivalKeyring) -> Keyring? {
-        // ShowcaseFestivalKeyring의 데이터를 사용하여 Keyring 객체 생성
-        return Keyring(
-            name: showcaseKeyring.name,
-            bodyImage: showcaseKeyring.bodyImageURL,
-            soundId: showcaseKeyring.soundId,
-            particleId: showcaseKeyring.particleId,
-            memo: showcaseKeyring.memo == "none" ? nil : showcaseKeyring.memo,
-            tags: [],
-            createdAt: showcaseKeyring.createdAt,
-            authorId: showcaseKeyring.authorId,
-            selectedTemplate: "Unknown",
-            selectedRing: "basicRing",
-            selectedChain: "basicChain1",
-            originalId: nil,
-            chainLength: 5,
-            isEditable: false,
-            isNew: false,
-            senderId: nil,
-            receivedAt: nil,
-            hookOffsetY: nil
-        )
-    }
-
-    // MARK: - Debug Functions
-
-    func debugShowcaseKeyring(keyring: ShowcaseFestivalKeyring) {
-        print("""
-
-        📋 ShowcaseFestivalKeyring 디버그 정보
-        =====================================
-        id (document ID): \(keyring.id)
-        keyringId: \(keyring.keyringId)
-        name: \(keyring.name)
-        authorId: \(keyring.authorId)
-        bodyImageURL: \(keyring.bodyImageURL)
-        soundId: \(keyring.soundId)
-        particleId: \(keyring.particleId)
-        =====================================
-
-        """)
-    }
-
     func testFirestoreKeyringExists(keyringId: String) {
         Task {
             do {
@@ -103,7 +58,7 @@ extension Showcase25BoardView {
 
                 print("""
 
-                🔍 Firestore 조회 테스트
+                Firestore 조회 테스트
                 =====================================
                 keyringId: \(keyringId)
                 document.exists: \(document.exists)
@@ -114,13 +69,13 @@ extension Showcase25BoardView {
                 """)
 
                 if let data = document.data() {
-                    print("📦 문서 필드:")
+                    print("문서 필드:")
                     for (key, value) in data {
                         print("  - \(key): \(value)")
                     }
                 }
             } catch {
-                print("❌ 테스트 실패: \(error)")
+                print("테스트 실패: \(error)")
             }
         }
     }
