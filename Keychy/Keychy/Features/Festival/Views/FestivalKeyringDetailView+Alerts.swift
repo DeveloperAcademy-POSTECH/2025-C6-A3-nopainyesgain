@@ -52,8 +52,8 @@ extension FestivalKeyringDetailView {
             
             if showCopyCompleteAlert {
                 KeychyAlert(
-                    type: .copy,
-                    message: "키링이 복사되었어요!",
+                    type: .unpack,
+                    message: "내 보관함에 추가되었어요!",
                     isPresented: $showCopyCompleteAlert
                 )
                 .zIndex(101)
