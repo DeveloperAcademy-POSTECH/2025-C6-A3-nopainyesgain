@@ -88,7 +88,7 @@ class WorkshopViewModel {
     var selectedEffectFilter: EffectFilterType? = .sound
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
-    var mainContentOffset: CGFloat = 140
+    var mainContentOffset: CGFloat = 439
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
