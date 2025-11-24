@@ -73,6 +73,13 @@ extension Showcase25BoardView {
                     .padding(6)
             }
         }
+        .overlay(alignment: .top) {
+            // 내 키링 표시 (우측 상단)
+            Circle()
+                .fill(Color.primaryRed)
+                .frame(width: 8, height: 8)
+                .padding(.top, 12)
+        }
     }
 
     // MARK: - Keyring Image View
