@@ -30,7 +30,7 @@ struct FestivalView: View {
             dateRange: "2025.11.28 ~ 2025.11.28",
             distance: "내 위치로 부터 1.5km",
             imageName: "showcaseFestival",
-            isLocked: false
+            isLocked: true
         ),
         (
             title: "페스티벌 이름",
@@ -44,7 +44,7 @@ struct FestivalView: View {
 
     var body: some View {
         // 카드 스와이프 뷰 (중앙 배치)
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 50) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("페스티벌")
                     .typography(.nanum32EB)
@@ -54,11 +54,12 @@ struct FestivalView: View {
                     Text("경북 포항시 남구 지곡로 80 C5")
                         .typography(.suit15B)
                         .foregroundStyle(.gray500)
+                        .onTapGesture(count: 5) {
+                            router.push(.showcase25BoardView)
+                        }
                 }
             }
             .padding(18)
-            
-            Spacer()
             
             cardPagerView(
                 pageCount: festivals.count,
@@ -75,7 +76,7 @@ struct FestivalView: View {
                 )
             }
 
-            uploadButton
+            // uploadButton
         }
         .background {
             Image(.festivalBG)
