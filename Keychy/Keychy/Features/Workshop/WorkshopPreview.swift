@@ -51,8 +51,10 @@ struct WorkshopPreview: View {
                 Spacer()
                 
                 itemPreview
+                    .adaptiveTopPaddingAlt()
                 
                 Spacer()
+                    .frame(height: 10)
                 
                 HStack {
                     ItemDetailInfoSection(item: item)
@@ -178,7 +180,7 @@ extension WorkshopPreview {
                 if item is Background {
                     ItemDetailImage(itemURL: getPreviewURL())
                         .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(0) == 0 ? 380 : 501)
+                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(0) == 0 ? 501 : 380)
                         .cornerRadius(20)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
@@ -213,7 +215,6 @@ extension WorkshopPreview {
             Spacer()
         }
         .padding(.horizontal, 30)
-        .frame(maxHeight: 500)
     }
 
     /// 파티클 다운로드 및 소유권 처리
