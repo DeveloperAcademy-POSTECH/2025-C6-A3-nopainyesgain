@@ -172,7 +172,8 @@ class Showcase25BoardViewModel {
                 }
             }
 
-            userKeyrings = loadedKeyrings
+            // 최신순으로 정렬 (createdAt 기준 내림차순)
+            userKeyrings = loadedKeyrings.sorted { $0.createdAt > $1.createdAt }
         } catch {
             print("❌ Failed to fetch user keyrings: \(error.localizedDescription)")
         }
