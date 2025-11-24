@@ -211,18 +211,23 @@ struct MainTabView: View {
     private func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
         print("키링 수신 처리 시작: \(postOfficeId)")
 
-        selectedTab = 2  // 보관함 탭 (순서 변경으로 2번으로 이동)
-
         switch type {
         case .receive:
+            selectedTab = 2  // 보관함 탭
             receivedPostOfficeId = postOfficeId
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showReceiveSheet = true
             }
         case .collect:
+            selectedTab = 2  // 보관함 탭
             collectedPostOfficeId = postOfficeId
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showCollectSheet = true
+            }
+        case .notification:
+            selectedTab = 0  // 홈 탭
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                homeRouter.push(.notificationGiftView(postOfficeId: postOfficeId))
             }
         }
     }
