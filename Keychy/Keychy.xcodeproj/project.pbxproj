@@ -1443,7 +1443,7 @@
 			children = (
 				C6C35F3D2ED2AB71009642F4 /* ZoomableScrollView.swift */,
 				4CEC62442EAE08DF0099ECEE /* FestivalView.swift */,
-				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
+				C6C361242ED43478009642F4 /* Showcase25Board */,
 				389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */,
 				389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */,
 				3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */,
@@ -1824,6 +1824,14 @@
 				C6C35F3F2ED2B6E6009642F4 /* ShowcaseFestivalKeyring.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		C6C361242ED43478009642F4 /* Showcase25Board */ = {
+			isa = PBXGroup;
+			children = (
+				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
+			);
+			path = Showcase25Board;
 			sourceTree = "<group>";
 		};
 		C6C4027F2EB26BFB006B58DF /* NeonSign */ = {
