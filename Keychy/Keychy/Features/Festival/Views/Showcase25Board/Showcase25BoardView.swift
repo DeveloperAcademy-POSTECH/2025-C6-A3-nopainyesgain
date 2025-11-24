@@ -111,15 +111,22 @@ struct Showcase25BoardView: View {
                 await viewModel.fetchUserKeyrings()
             }
         }
+        .task(id: viewModel.showcaseKeyrings.isEmpty) {
+            // 데이터 로드 후 만료된 isEditing 상태 검사
+            guard !viewModel.showcaseKeyrings.isEmpty else { return }
+            await viewModel.checkAllExpiredEditingStates()
+        }
         .onDisappear {
             viewModel.stopListening()
             stopHeartbeat()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .background {
-                // 백그라운드 진입 시 수정 중이던 셀 해제
+                // 백그라운드 진입 시 시트 닫기 및 수정 상태 해제
                 if viewModel.showKeyringSheet {
                     let gridIndex = viewModel.selectedGridIndex
+                    viewModel.selectedKeyringForUpload = nil
+                    viewModel.showKeyringSheet = false
                     Task {
                         await viewModel.updateIsEditing(at: gridIndex, isEditing: false)
                     }

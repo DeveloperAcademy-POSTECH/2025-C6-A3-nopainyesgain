@@ -328,6 +328,26 @@ class Showcase25BoardViewModel {
         }
     }
 
+    /// 모든 만료된 isEditing 상태 검사 및 초기화
+    @MainActor
+    func checkAllExpiredEditingStates() async {
+        for keyring in showcaseKeyrings where keyring.isEditing {
+            // 내 키링은 제외
+            guard keyring.authorId != UserManager.shared.userUID else { continue }
+
+            // 시간 만료 체크
+            if let startedAt = keyring.editingStartedAt {
+                let elapsedTime = Date().timeIntervalSince(startedAt)
+                if elapsedTime > editingTimeoutSeconds {
+                    await clearExpiredEditing(at: keyring.gridIndex)
+                }
+            } else {
+                // editingStartedAt이 없으면 만료로 간주
+                await clearExpiredEditing(at: keyring.gridIndex)
+            }
+        }
+    }
+
     // MARK: - 쇼케이스 키링 삭제
 
     /// 쇼케이스 키링 회수 (필드 초기화)
