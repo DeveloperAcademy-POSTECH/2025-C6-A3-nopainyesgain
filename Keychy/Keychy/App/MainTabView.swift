@@ -168,8 +168,12 @@ struct MainTabView: View {
         // Festival에서 Workshop으로 갈 때 플래그 설정
         festivalViewModel.isFromFestivalTab = true
         festivalViewModel.onKeyringCompleteFromFestival = { router in
-            // 키링 완료 후 Festival 탭으로 복귀
+            // 키링 완료 후 Workshop navigation stack 초기화
+            router.reset()
+            
+            // Festival 탭으로 복귀
             self.selectedTab = 3
+            
             // 플래그 초기화
             self.festivalViewModel.isFromFestivalTab = false
         }
