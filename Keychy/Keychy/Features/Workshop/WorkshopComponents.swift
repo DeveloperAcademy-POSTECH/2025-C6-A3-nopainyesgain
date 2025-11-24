@@ -180,8 +180,13 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                 userManager: userManager
             )
         }
+        .frame(width: twoGridCellWidth, height: itemHeight)
         .background(Color.gray50)
         .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray50, lineWidth: 2)
+        )
     }
 
     /// 아이템 타입에 따른 높이 계산
