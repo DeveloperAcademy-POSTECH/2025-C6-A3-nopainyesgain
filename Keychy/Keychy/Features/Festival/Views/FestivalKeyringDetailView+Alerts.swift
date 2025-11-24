@@ -31,7 +31,7 @@ extension FestivalKeyringDetailView {
             
             if showCopyAlert {
                 CopyPopup(
-                    myCopyPass: viewModel.copyVoucher,
+                    myCopyPass: userManager.currentUser?.copyVoucher ?? 0,
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showCopyAlert = false
@@ -94,64 +94,52 @@ extension FestivalKeyringDetailView {
             showCopyAlert = false
         }
         
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-//            guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
-//                print("UID를 찾을 수 없습니다")
-//                return
-//            }
-//            
-//            // 1. 복사권 개수 확인
-//            if self.viewModel.copyVoucher <= 0 {
-//                print("복사권 부족")
-//                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//                    self.showCopyLackAlert = true
-//                }
-//                return
-//            }
-//            
-//            // 2. 인벤토리 용량 확인
-//            self.viewModel.checkInventoryCapacity(userId: uid) { hasSpace in
-//                DispatchQueue.main.async {
-//                    if !hasSpace {
-//                        // 보관함 가득 찬 경우
-//                        print("보관함 가득 찬")
-//                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//                            self.showInvenFullAlert = true
-//                        }
-//                        return
-//                    }
-//                    
-//                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//                        self.showCopyingAlert = true
-//                    }
-//                    
-//                    // 3. 복사권 있고, 인벤토리 여유 있음 -> 복사 진행
-//                    self.viewModel.copyKeyring(uid: uid, keyring: self.keyring) { success, newKeyringId in
-//                        DispatchQueue.main.async {
-//                            self.showCopyingAlert = false
-//                            
-//                            if success {
-//                                print("키링 복사 성공")
-//                                
-//                                // 복사권 개수 새로고침
-//                                self.refreshCopyVoucher()
-//                                
-//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//                                        self.showCopyCompleteAlert = true
-//                                    }
-//                                }
-//                            } else {
-//                                print("키링 복사 실패")
-//                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-//                                    self.showCopyLackAlert = true
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                print("UID를 찾을 수 없습니다")
+                return
+            }
+            
+            guard let currentUser = userManager.currentUser else { return }
+            
+            // 1. 복사권 개수 확인
+            if currentUser.copyVoucher <= 0 {
+                print("복사권 부족")
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    self.showCopyLackAlert = true
+                }
+                return
+            }
+            
+            // 2. 인벤토리 용량 확인
+            let currentKeyringCount = currentUser.keyrings.count
+            let maxKeyringCount = currentUser.maxKeyringCount
+            
+            if currentKeyringCount >= maxKeyringCount {
+                // 보관함 가득 찬 경우
+                print("보관함 가득 찬")
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    self.showInvenFullAlert = true
+                }
+                return
+            }
+            
+            // 3. 복사권 있고, 인벤토리 여유 있음 -> 복사 진행 (페이크)
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                self.showCopyingAlert = true
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                self.showCopyingAlert = false
+                
+                // 복사 완료 알림 표시
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        self.showCopyCompleteAlert = true
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Package Alerts
@@ -191,7 +179,6 @@ extension FestivalKeyringDetailView {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 self.showVoteCompleteAlert = true
             }
-            //showVoteCompleteAlert = true
         }
     }
 }

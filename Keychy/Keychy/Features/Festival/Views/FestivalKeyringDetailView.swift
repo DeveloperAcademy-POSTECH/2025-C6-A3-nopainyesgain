@@ -15,6 +15,8 @@ struct FestivalKeyringDetailView: View {
     @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     
+    @State var userManager = UserManager.shared
+    
     @State var sheetDetent: PresentationDetent = .fraction(0.48)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
@@ -60,10 +62,6 @@ struct FestivalKeyringDetailView: View {
                     }
                 }
                 
-//                if showMenu {
-//                    menuOverlay
-//                }
-                
                 if isLoading {
                     Color.black20
                         .ignoresSafeArea()
@@ -86,7 +84,6 @@ struct FestivalKeyringDetailView: View {
             
         }
         .ignoresSafeArea()
-        //.adaptiveBottomPadding()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
         .sheet(isPresented: $isSheetPresented) {
@@ -116,17 +113,6 @@ struct FestivalKeyringDetailView: View {
         showVoteCompleteAlert ||
         false
     }
-    
-//    // 복사권 개수 리프레쉬
-//    func refreshCopyVoucher() {
-//        guard let uid = UserDefaults.standard.string(forKey: "userUID") else { return }
-//        
-//        viewModel.fetchUserCollectionData(uid: uid) { success in
-//            if success {
-//                print("복사권 새로고침: \(viewModel.copyVoucher)개")
-//            }
-//        }
-//    }
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     private var sceneScale: CGFloat {
