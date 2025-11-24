@@ -390,6 +390,7 @@ extension CollectionViewModel {
                     y: carabiner.keyringYPosition[index]
                 ),
                 bodyImageURL: keyringInfo.bodyImage,
+                templateId: keyringInfo.selectedTemplate,
                 soundId: keyringInfo.soundId,
                 customSoundURL: customSoundURL,
                 particleId: keyringInfo.particleId,
@@ -416,10 +417,12 @@ extension CollectionViewModel {
 
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
+            let selectedTemplate = data["selectedTemplate"] as? String
 
             return KeyringInfo(
                 id: keyringId,
                 bodyImage: bodyImage,
+                selectedTemplate: selectedTemplate,
                 soundId: soundId,
                 particleId: particleId,
                 hookOffsetY: hookOffsetY,
@@ -434,6 +437,7 @@ extension CollectionViewModel {
     struct KeyringInfo {
         let id: String
         let bodyImage: String
+        let selectedTemplate: String?
         let soundId: String
         let particleId: String
         let hookOffsetY: CGFloat?

@@ -21,19 +21,6 @@ struct PixelDrawView: View {
     @State private var undoTimer: Timer?
     @State private var redoTimer: Timer?
     
-    /// 프리셋 색상들
-    private let presetColors: [Color] = [
-        .black,
-        .white,
-        .red,
-        .orange,
-        .yellow,
-        .green,
-        .blue,
-        Color(red: 0, green: 0, blue: 0.5), // Navy
-        .purple
-    ]
-    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -112,7 +99,7 @@ extension PixelDrawView {
                 }
             }
             .frame(width: gridSize, height: gridSize)
-            .background(Color.white)
+            .background(Color.gray50)
             .border(.gray100, width: 1)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             .gesture(
@@ -250,9 +237,16 @@ extension PixelDrawView {
                 Haptic.impact(style: .medium)
             }) {
                 Image(viewModel.isDrawMode ? "drawWhite" : "drawBlack")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
             }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .main500 : .white100)
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(viewModel.isDrawMode ? .accent : .white100)
+            )
+            .glassEffect(.regular.interactive(), in: .circle)
             
             
             Button(action: {
@@ -263,9 +257,16 @@ extension PixelDrawView {
                 Haptic.impact(style: .medium)
             }) {
                 Image(viewModel.isDrawMode ? "eraserBlack" : "eraserWhite")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
             }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .white100 : .main500)
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(viewModel.isDrawMode ? .white100 : .accent)
+            )
+            .glassEffect(.regular.interactive(), in: .circle)
         }
     }
 }
@@ -275,29 +276,9 @@ extension PixelDrawView {
     private var colorPalette: some View {
         VStack(spacing: 0) {
             if showPalette {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 11) {
-                        // ColorPicker
-                        ColorPicker("", selection: $viewModel.selectedColor)
-                            .labelsHidden()
-                            .frame(width: 37, height: 37)
-                        // 프리셋 색상들
-                        ForEach(presetColors, id: \.self) { color in
-                            Button {
-                                viewModel.selectedColor = color
-                                Haptic.impact(style: .light)
-                            } label: {
-                                Circle()
-                                    .fill(color)
-                                    .frame(width: 37, height: 37)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 4)
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                
+                ColorPalette(selectedColor: $viewModel.selectedColor)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+
                 Spacer()
             }
         }

@@ -15,6 +15,9 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: VM
     let nextRoute: WorkshopRoute
+    
+    // 뒤로가기 시 팝만 하는 템플릿들 (초기화 경고 없음)
+    let popOnlyTemplates = ["ClearSketch", "PixelKeyring"]
 
     @State private var selectedMode: CustomizingMode = .effect  // onAppear에서 첫 번째 모드로 재설정됨
     @State private var isLoadingResources = true
@@ -151,6 +154,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 .zIndex(100)
         }
         .ignoresSafeArea()
+        .background(Color.gray50.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .swipeBackGesture(enabled: false)
         .interactiveDismissDisabled(true)
@@ -282,7 +286,11 @@ extension KeyringCustomizingView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
-                showResetAlert = true
+                if popOnlyTemplates.contains(viewModel.templateId) {
+                    router.pop()
+                } else {
+                    showResetAlert = true
+                }
             }
         } center: {
             // Center (중앙) - 빈 공간

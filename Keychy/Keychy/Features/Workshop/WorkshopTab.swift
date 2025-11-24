@@ -14,6 +14,7 @@ struct WorkshopTab: View {
     @State private var polaroidVM: PolaroidVM?
     @State private var clearSketchVM: ClearSketchVM?
     @State private var pixelKeyringVM: PixelVM?
+    @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -126,11 +127,7 @@ struct WorkshopTab: View {
                     case .clearSketchDrawing:
                         ClearSketchDrawingView(router: router, viewModel: getClearSketchVM())
                     case .clearSketchCrop:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getClearSketchVM(),
-                            nextRoute: .clearSketchCustomizing
-                        )
+                        ClearSketchCropView(router: router, viewModel: getClearSketchVM())
                     case .clearSketchCustomizing:
                         KeyringCustomizingView(
                             router: router,
@@ -171,6 +168,28 @@ struct WorkshopTab: View {
                         KeyringCompleteView(
                             router: router,
                             viewModel: getPixelKeyringVM(),
+                            navigationTitle: "키링이 완성되었어요!"
+                        )
+
+                    // MARK: - SpeechBubble
+                    case .speechBubblePreview:
+                        SpeechBubblePreview(router: router, viewModel: getSpeechBubbleVM())
+                    case .speechBubbleCustomizing:
+                        KeyringCustomizingView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            nextRoute: .speechBubbleInfoInput
+                        )
+                    case .speechBubbleInfoInput:
+                        KeyringInfoInputView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
+                            nextRoute: .speechBubbleComplete
+                        )
+                    case .speechBubbleComplete:
+                        KeyringCompleteView(
+                            router: router,
+                            viewModel: getSpeechBubbleVM(),
                             navigationTitle: "키링이 완성되었어요!"
                         )
 
@@ -227,6 +246,15 @@ struct WorkshopTab: View {
         return viewModel
     }
 
+    private func getSpeechBubbleVM() -> SpeechBubbleVM {
+        guard let viewModel = speechBubbleVM else {
+            let newViewModel = SpeechBubbleVM()
+            speechBubbleVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
         acrylicPhotoVM = nil
@@ -246,5 +274,9 @@ struct WorkshopTab: View {
 
     func resetPixelKeyringVM() {
         pixelKeyringVM = nil
+    }
+
+    func resetSpeechBubbleVM() {
+        speechBubbleVM = nil
     }
 }

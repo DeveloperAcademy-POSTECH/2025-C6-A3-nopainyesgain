@@ -68,10 +68,10 @@ struct WorkshopView: View {
             if !hasInitialized {
                 viewModel = WorkshopViewModel(userManager: userManager)
                 hasInitialized = true
-                
+
                 // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
                 await viewModel.fetchDataForCategory(viewModel.selectedCategory)
-                
+
                 // 2. 백그라운드에서 나머지 카테고리 프리페칭
                 Task.detached(priority: .background) {
                     await viewModel.prefetchRemainingData()

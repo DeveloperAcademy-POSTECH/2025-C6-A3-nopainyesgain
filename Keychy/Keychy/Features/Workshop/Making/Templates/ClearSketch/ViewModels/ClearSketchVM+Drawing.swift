@@ -12,13 +12,14 @@ import UIKit
 extension ClearSketchVM {
     
     // MARK: - Drawing State
-    var availableColors: [Color] {
-        [.black, .red, .blue, .green, .yellow, .orange, .purple, .pink, .brown]
-    }
-    
     var isEraserMode: Bool {
         get { isEraser }
         set { isEraser = newValue }
+    }
+    
+    var isDrawMode: Bool {
+        get { !isEraser }
+        set { isEraser = !newValue }
     }
     
     var canUndo: Bool {
@@ -38,96 +39,79 @@ extension ClearSketchVM {
         isEraser = false
     }
     
-    func setCanvasController(_ controller: DrawingCanvasController) {
-        canvasController = controller
-    }
-    
     func selectColor(_ color: Color) {
         currentColor = color
         isEraser = false
-        canvasController?.updateDrawingSettings()
     }
     
     func toggleEraser() {
         isEraser.toggle()
-        canvasController?.updateDrawingSettings()
     }
     
-    func performUndo() {
+    func undo() {
         guard !drawingPaths.isEmpty else { return }
         let lastPath = drawingPaths.removeLast()
         undoneDrawingPaths.append(lastPath)
-        canvasController?.redrawCanvas()
     }
     
-    func performRedo() {
+    func redo() {
         guard !undoneDrawingPaths.isEmpty else { return }
         let path = undoneDrawingPaths.removeLast()
         drawingPaths.append(path)
-        canvasController?.redrawCanvas()
-    }
-    
-    func addNewPath(startPoint: CGPoint) {
-        let newPath = DrawingPath(
-            points: [startPoint],
-            color: isEraser ? .white : currentColor,
-            lineWidth: isEraser ? 20 : currentLineWidth,
-            isEraser: isEraser
-        )
-        drawingPaths.append(newPath)
-        undoneDrawingPaths.removeAll()
-    }
-    
-    func addPointToCurrentPath(_ point: CGPoint) {
-        guard !drawingPaths.isEmpty else { return }
-        drawingPaths[drawingPaths.count - 1].points.append(point)
     }
     
     func finalizeDrawing() {
-        Task { @MainActor in
-            await composeDrawing()
-        }
-    }
-    
-    // MARK: - Drawing Composition
-    private func composeDrawing() async {
-        guard !drawingPaths.isEmpty else {
-            bodyImage = nil
-            return
-        }
-        
         isComposingDrawing = true
-        defer { isComposingDrawing = false }
-        
-        bodyImage = await createImageFromPaths()
     }
     
+    func captureCanvasImage(_ image: UIImage) {
+        originalBodyImage = image  // 크롭 전 원본 이미지 저장
+        bodyImage = image
+        isComposingDrawing = false
+    }
+    
+    // MARK: - 크롭 상태 초기화
+    func resetCropState() {
+        // 원본 이미지로 복원
+        if let original = originalBodyImage {
+            bodyImage = original
+        }
+        // 크롭 관련 데이터 초기화
+        croppedImage = UIImage()
+        removedBackgroundImage = UIImage()
+    }
+    
+    // MARK: - 베지어 곡선 포함 이미지 생성
     @MainActor
-    private func createImageFromPaths() async -> UIImage? {
-        let canvasSize = CGSize(width: 300, height: 400)
+    func createImageFromDrawingPaths(canvasSize: CGSize) -> UIImage? {
         let renderer = UIGraphicsImageRenderer(size: canvasSize)
         
-        return renderer.image { context in
+        let image = renderer.image { context in
             let cgContext = context.cgContext
-            cgContext.clear(CGRect(origin: .zero, size: canvasSize))
+            
+            // 흰색 배경
+            cgContext.setFillColor(UIColor.white.cgColor)
+            cgContext.fill(CGRect(origin: .zero, size: canvasSize))
+            
             cgContext.setLineCap(.round)
             cgContext.setLineJoin(.round)
             
+            // 그려진 패스들 렌더링
             for path in drawingPaths {
-                if path.isEraser {
-                    cgContext.setBlendMode(.clear)
-                } else {
-                    cgContext.setBlendMode(.normal)
-                    cgContext.setStrokeColor(UIColor(path.color).cgColor)
-                }
+                cgContext.setBlendMode(.normal)
+                
+                // 지우개면 흰색, 아니면 해당 색상
+                let renderColor = path.isEraser ? UIColor.white : UIColor(path.color)
+                cgContext.setStrokeColor(renderColor.cgColor)
+                cgContext.setFillColor(renderColor.cgColor)
                 
                 cgContext.setLineWidth(path.lineWidth)
                 let points = path.points
                 guard points.count > 0 else { continue }
                 
-                cgContext.beginPath()
-                
                 if points.count == 1 {
+                    // 점 하나일 때는 원으로 그리기 (fillColor 명시적으로 설정)
+                    cgContext.beginPath()
                     cgContext.addArc(
                         center: points[0],
                         radius: path.lineWidth / 2,
@@ -136,106 +120,43 @@ extension ClearSketchVM {
                         clockwise: true
                     )
                     cgContext.fillPath()
-                } else {
+                } else if points.count == 2 {
+                    // 점 두 개일 때는 직선으로 그리기
+                    cgContext.beginPath()
                     cgContext.move(to: points[0])
+                    cgContext.addLine(to: points[1])
+                    cgContext.strokePath()
+                } else {
+                    // 여러 점일 때는 부드러운 베지어 곡선으로 그리기
+                    cgContext.beginPath()
+                    cgContext.move(to: points[0])
+                    
                     for i in 1..<points.count {
-                        cgContext.addLine(to: points[i])
+                        let currentPoint = points[i]
+                        let previousPoint = points[i - 1]
+                        
+                        if i == 1 {
+                            // 첫 번째 선분은 직선으로
+                            cgContext.addLine(to: currentPoint)
+                        } else {
+                            // 이전 점과 현재 점의 중간점을 계산
+                            let midPoint = CGPoint(
+                                x: (previousPoint.x + currentPoint.x) / 2,
+                                y: (previousPoint.y + currentPoint.y) / 2
+                            )
+                            
+                            // 이전 점을 제어점으로 사용하여 부드러운 곡선 생성
+                            cgContext.addQuadCurve(to: midPoint, control: previousPoint)
+                        }
                     }
+                    
+                    // 마지막 점까지 연결
+                    cgContext.addLine(to: points[points.count - 1])
                     cgContext.strokePath()
                 }
             }
         }
-    }
-}
-
-// MARK: - UIViewController & UIView classes (이전과 동일)
-class DrawingCanvasController: UIViewController {
-    var viewModel: ClearSketchVM?
-    private var canvasView: CSDrawingCanvasView!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
-        canvasView = CSDrawingCanvasView()
-        canvasView.controller = self
-        canvasView.frame = view.bounds
-        canvasView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        canvasView.backgroundColor = .clear
-        
-        view.addSubview(canvasView)
-    }
-    
-    func updateDrawingSettings() {
-        canvasView.updateSettings()
-    }
-    
-    func redrawCanvas() {
-        canvasView.setNeedsDisplay()
-    }
-}
-
-class CSDrawingCanvasView: UIView {
-    weak var controller: DrawingCanvasController?
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first,
-              let viewModel = controller?.viewModel else { return }
-        
-        let point = touch.location(in: self)
-        viewModel.addNewPath(startPoint: point)
-        setNeedsDisplay()
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first,
-              let viewModel = controller?.viewModel else { return }
-        
-        let point = touch.location(in: self)
-        viewModel.addPointToCurrentPath(point)
-        setNeedsDisplay()
-    }
-    
-    override func draw(_ rect: CGRect) {
-        guard let context = UIGraphicsGetCurrentContext(),
-              let viewModel = controller?.viewModel else { return }
-        
-        context.setLineCap(.round)
-        context.setLineJoin(.round)
-        
-        for path in viewModel.drawingPaths {
-            if path.isEraser {
-                context.setBlendMode(.clear)
-            } else {
-                context.setBlendMode(.normal)
-                context.setStrokeColor(UIColor(path.color).cgColor)
-            }
-            
-            context.setLineWidth(path.lineWidth)
-            let points = path.points
-            guard points.count > 0 else { continue }
-            
-            context.beginPath()
-            
-            if points.count == 1 {
-                context.addArc(
-                    center: points[0],
-                    radius: path.lineWidth / 2,
-                    startAngle: 0,
-                    endAngle: .pi * 2,
-                    clockwise: true
-                )
-                context.fillPath()
-            } else {
-                context.move(to: points[0])
-                for i in 1..<points.count {
-                    context.addLine(to: points[i])
-                }
-                context.strokePath()
-            }
-        }
-    }
-    
-    func updateSettings() {
-        // 필요시 설정 업데이트
+        return image
     }
 }

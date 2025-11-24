@@ -143,7 +143,7 @@ extension CollectionView {
             showDeleteAlert = false
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             confirmDeleteCategory()
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 showDeleteCompleteAlert = true
