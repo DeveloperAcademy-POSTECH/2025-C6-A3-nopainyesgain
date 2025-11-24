@@ -13,9 +13,13 @@ struct PixelDrawView: View {
     
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
-    
+
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
+
+    /// Undo/Redo 연속 실행을 위한 Timer
+    @State private var undoTimer: Timer?
+    @State private var redoTimer: Timer?
     
     /// 프리셋 색상들
     private let presetColors: [Color] = [
@@ -33,35 +37,46 @@ struct PixelDrawView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.clear
+                Color.white100
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                // MARK: - 픽셀 그리드 (화면 중앙 배치)
+                VStack {
                     Spacer()
-                        .frame(height: 118)
-                    
-                    // MARK: - 픽셀 그리드
                     pixelGrid
                         .padding(.horizontal, 18)
+                        .padding(.bottom, 50)
+                    Spacer()
+                }
+
+                // MARK: - 버튼 + 색상 팔레트 (화면 하단에 고정)
+                VStack(spacing: 15) {
+                    
                     
                     Spacer()
-                        .frame(height: 72)
                     
                     // MARK: - Undo/Redo/그리기/지우기 버튼
                     HStack {
                         undoRedoButtons
-                            .padding(.horizontal, 16)
-                        
+
+                        Spacer()
+
                         drawEraserButtons
-                            .padding(.horizontal, 16)
                     }
-                    // MARK: - 색상 팔레트 (애니메이션) - 화면의 15% 높이
+                    .padding(.horizontal, 26)
+
+                    // MARK: - 색상 팔레트 (애니메이션)
                     colorPalette
                         .frame(
                             maxWidth: .infinity,
                             maxHeight: showPalette ? geometry.size.height * 0.15 : 0
                         )
+                        .padding(.bottom, showPalette ? 0 : 30)
                 }
+                .frame(maxWidth: .infinity, alignment: .bottom)
+                .ignoresSafeArea(edges: .bottom)
+                .adaptiveTopPaddingAlt()
+
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
@@ -77,13 +92,14 @@ struct PixelDrawView: View {
 extension PixelDrawView {
     private var pixelGrid: some View {
         GeometryReader { geometry in
-            let gridSize = min(geometry.size.width, geometry.size.height * 0.5)
-            let cellSize = gridSize / 16
-            
+            // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
+            let gridSize = geometry.size.width - 36
+            let cellSize = gridSize / 15
+
             VStack(spacing: 0) {
-                ForEach(0..<16, id: \.self) { row in
+                ForEach(0..<15, id: \.self) { row in
                     HStack(spacing: 0) {
-                        ForEach(0..<16, id: \.self) { col in
+                        ForEach(0..<15, id: \.self) { col in
                             PixelCell(
                                 color: viewModel.pixelGrid[row][col],
                                 size: cellSize,
@@ -105,18 +121,18 @@ extension PixelDrawView {
                         let location = value.location
                         let gridOriginX = (geometry.size.width - gridSize) / 2
                         let gridOriginY = (geometry.size.height - gridSize) / 2
-                        
+
                         let relativeX = location.x - gridOriginX
                         let relativeY = location.y - gridOriginY
-                        
+
                         let col = Int(relativeX / cellSize)
                         let row = Int(relativeY / cellSize)
-                        
+
                         viewModel.paintPixel(row: row, col: col)
                     }
             )
         }
-        .frame(maxHeight: 366)
+        .aspectRatio(1, contentMode: .fit)
     }
 }
 
@@ -142,7 +158,8 @@ struct PixelCell: View {
 extension PixelDrawView {
     private var undoRedoButtons: some View {
         GlassEffectContainer {
-            HStack {
+            HStack(spacing: -15) {
+                // Undo 버튼
                 Button {
                     viewModel.undo()
                     Haptic.impact(style: .light)
@@ -152,18 +169,72 @@ extension PixelDrawView {
                 .disabled(viewModel.undoStack.isEmpty)
                 .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 .buttonStyle(.glass)
-                
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onEnded { _ in
+                            startUndoTimer()
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in
+                            stopUndoTimer()
+                        }
+                )
+
+                // Redo 버튼
                 Button {
                     viewModel.redo()
                     Haptic.impact(style: .light)
                 } label: {
-                    Image(viewModel.undoStack.isEmpty ? "redoGray" : "redoBlack")
+                    Image(viewModel.redoStack.isEmpty ? "redoGray" : "redoBlack")
                 }
                 .disabled(viewModel.redoStack.isEmpty)
                 .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                 .buttonStyle(.glass)
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onEnded { _ in
+                            startRedoTimer()
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { _ in
+                            stopRedoTimer()
+                        }
+                )
             }
         }
+    }
+
+    // MARK: - Timer 관련 함수들
+    private func startUndoTimer() {
+        guard viewModel.undoStack.isEmpty == false else { return }
+        Haptic.impact(style: .medium)
+        undoTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { _ in
+            viewModel.undo()
+            Haptic.impact(style: .light)
+        }
+    }
+
+    private func stopUndoTimer() {
+        undoTimer?.invalidate()
+        undoTimer = nil
+    }
+
+    private func startRedoTimer() {
+        guard viewModel.redoStack.isEmpty == false else { return }
+        Haptic.impact(style: .medium)
+        redoTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { _ in
+            viewModel.redo()
+            Haptic.impact(style: .light)
+        }
+    }
+
+    private func stopRedoTimer() {
+        redoTimer?.invalidate()
+        redoTimer = nil
     }
 }
 
@@ -171,25 +242,44 @@ extension PixelDrawView {
 extension PixelDrawView {
     private var drawEraserButtons: some View {
         HStack(spacing: 8) {
-            CircleGlassButton(imageName: viewModel.isDrawMode ? "drawWhite" : "drawBlack") {
+            Button(action: {
                 viewModel.isDrawMode = true
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     showPalette = true
                 }
                 Haptic.impact(style: .medium)
+            }) {
+                Image(viewModel.isDrawMode ? "drawWhite" : "drawBlack")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
             }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .main500 : .white)
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(viewModel.isDrawMode ? .accent : .white100)
+            )
+            .glassEffect(.regular.interactive(), in: .circle)
             
-            CircleGlassButton(imageName: viewModel.isDrawMode ? "eraserBlack" : "eraserWhite") {
+            
+            Button(action: {
                 viewModel.isDrawMode = false
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     showPalette = false
                 }
                 Haptic.impact(style: .medium)
+            }) {
+                Image(viewModel.isDrawMode ? "eraserBlack" : "eraserWhite")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
             }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.isDrawMode ? .white : .main500)
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(viewModel.isDrawMode ? .white100 : .accent)
+            )
+            .glassEffect(.regular.interactive(), in: .circle)
         }
     }
 }
@@ -226,7 +316,10 @@ extension PixelDrawView {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(.gray50)
+        .background(
+            showPalette ? Color.gray50 : Color.white100
+        )
+        .ignoresSafeArea(edges: .bottom)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: showPalette)
     }
 }
@@ -243,8 +336,10 @@ extension PixelDrawView {
             Text("그림을 그려주세요")
         } trailing: {
             NextToolbarButton {
-                viewModel.updateBodyImage()
-                router.push(.pixelCustomizing)
+                Task {
+                    await viewModel.updateBodyImage()
+                    router.push(.pixelCustomizing)
+                }
             }
             .frame(width: 44, height: 44)
             .offset(x: -4)

@@ -9,8 +9,9 @@ import SwiftUI
 import Foundation
 
 enum DeepLinkType {
-    case receive  // 1:1 선물
-    case collect  // 배포용
+    case receive      // 1:1 선물
+    case collect      // 배포용
+    case notification // 푸시 알림
 }
 
 @Observable
