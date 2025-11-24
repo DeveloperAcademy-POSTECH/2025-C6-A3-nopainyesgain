@@ -283,9 +283,8 @@ struct Showcase25BoardView: View {
         if isMyKeyring {
             imageView
                 .onTapGesture {
-                    if let fullKeyring = convertToKeyring(showcaseKeyring: keyring) {
-                        festivalRouter.push(.festivalKeyringDetailView(fullKeyring))
-                    }
+                    //testFirestoreKeyringExists(keyringId: keyring.keyringId)
+                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
                 }
                 .contextMenu {
                     Button {
@@ -308,9 +307,8 @@ struct Showcase25BoardView: View {
             // 남의 키링인 경우 탭 제스처만
             imageView
                 .onTapGesture {
-                    if let fullKeyring = convertToKeyring(showcaseKeyring: keyring) {
-                        festivalRouter.push(.festivalKeyringDetailView(fullKeyring))
-                    }
+                    //testFirestoreKeyringExists(keyringId: keyring.keyringId)
+                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
                 }
         }
     }
