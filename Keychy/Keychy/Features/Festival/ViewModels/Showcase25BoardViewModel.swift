@@ -22,6 +22,11 @@ class Showcase25BoardViewModel {
     var showKeyringSheet = false
     var selectedGridIndex: Int = 0
     var selectedKeyringForUpload: Keyring?  // 시트에서 선택한 키링 (완료 전)
+    
+    // MARK: - 페스티벌에서 사용하는 유저 정보 관련
+    var maxKeyringCount: Int = 100 // 기본값
+    var coin: Int = 0
+    var copyVoucher: Int = 0
 
     // MARK: - 줌 관련
     var currentZoom: CGFloat = 1.5
@@ -153,13 +158,14 @@ class Showcase25BoardViewModel {
         isLoading = true
 
         let data: [String: Any] = [
-            "authorId": UserManager.shared.userUID,
+            "name": userKeyring.name,
+            "authorId": userKeyring.authorId,
             "bodyImageURL": userKeyring.bodyImage,
             "gridIndex": gridIndex,
             "isEditing": false,
             "keyringId": userKeyring.id.uuidString,
             "memo": userKeyring.memo ?? "",
-            "particleid": userKeyring.particleId,
+            "particleId": userKeyring.particleId,
             "soundId": userKeyring.soundId,
             "votes": 0
         ]
@@ -223,5 +229,26 @@ class Showcase25BoardViewModel {
         }
 
         isLoading = false
+    }
+    
+    // MARK: - 유저 닉네임 가져오기
+    func fetchUserName(userId: String, completion: @escaping (String) -> Void) {
+        db.collection("User")
+            .document(userId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("작성자 정보 로드 에러: \(error.localizedDescription)")
+                    completion("알 수 없음")
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let nickname = data["nickname"] as? String else {
+                    completion("알 수 없음")
+                    return
+                }
+                
+                completion(nickname)
+            }
     }
 }
