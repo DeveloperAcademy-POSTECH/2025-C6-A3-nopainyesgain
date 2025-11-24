@@ -180,6 +180,10 @@ extension WorkshopPreview {
                         .scaledToFill()
                         .frame(maxWidth: .infinity, maxHeight: getBottomPadding(0) == 0 ? 380 : 501)
                         .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.gray50, lineWidth: 2)
+                        )
                 } else {
                     // 카라비너, 사운드: 1:1 비율
                     ItemDetailImage(itemURL: getPreviewURL())
