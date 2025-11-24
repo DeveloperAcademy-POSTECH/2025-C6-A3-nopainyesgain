@@ -28,14 +28,16 @@ func uploadSampleFestivalKeyrings() async {
         print("📤 Creating 144 empty festival keyring documents...")
         for gridIndex in 0..<144 {
             let data: [String: Any] = [
+                "name": "",
                 "authorId": "",
                 "bodyImageURL": "",
                 "gridIndex": gridIndex,
                 "isEditing": false,
-                "keyringId": "",
+                "editingUserNickname": "",
+                "keyringId": "none",
                 "memo": "",
-                "particleid": "",
-                "soundId": "",
+                "particleId": "none",
+                "soundId": "none",
                 "votes": 0
             ]
 

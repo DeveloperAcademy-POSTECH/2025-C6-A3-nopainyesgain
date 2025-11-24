@@ -25,36 +25,6 @@ struct ShowcaseFestivalKeyring: Identifiable, Hashable {
     var createdAt: Date
     var votes: Int
 
-    init(id: String = UUID().uuidString,
-         name: String = "",
-         authorId: String = "",
-         bodyImageURL: String = "",
-         gridIndex: Int = 0,
-         isEditing: Bool = false,
-         editingUserNickname: String = "",
-         editingStartedAt: Date? = nil,
-         keyringId: String = "none",
-         memo: String = "none",
-         particleId: String = "none",
-         soundId: String = "none",
-         createdAt: Date = Date(),
-         votes: Int = 0) {
-        self.id = id
-        self.name = name
-        self.authorId = authorId
-        self.bodyImageURL = bodyImageURL
-        self.gridIndex = gridIndex
-        self.isEditing = isEditing
-        self.editingUserNickname = editingUserNickname
-        self.editingStartedAt = editingStartedAt
-        self.keyringId = keyringId
-        self.memo = memo
-        self.particleId = particleId
-        self.soundId = soundId
-        self.createdAt = createdAt
-        self.votes = votes
-    }
-
     /// Firestore 문서에서 초기화
     init?(document: DocumentSnapshot) {
         guard let data = document.data() else { return nil }

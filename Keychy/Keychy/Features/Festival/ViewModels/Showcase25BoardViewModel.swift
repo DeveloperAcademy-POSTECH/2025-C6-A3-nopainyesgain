@@ -184,6 +184,11 @@ class Showcase25BoardViewModel {
     /// 선택한 키링으로 쇼케이스 키링 추가/업데이트
     @MainActor
     func addOrUpdateShowcaseKeyring(at gridIndex: Int, with userKeyring: Keyring) async {
+        guard let keyringDocId = userKeyring.documentId else {
+            print("❌ documentId가 없습니다")
+            return
+        }
+
         isLoading = true
 
         let data: [String: Any] = [
@@ -193,7 +198,7 @@ class Showcase25BoardViewModel {
             "gridIndex": gridIndex,
             "isEditing": false,
             "editingUserNickname": "",
-            "keyringId": userKeyring.id.uuidString,
+            "keyringId": keyringDocId,
             "memo": userKeyring.memo ?? "",
             "particleId": userKeyring.particleId,
             "soundId": userKeyring.soundId,
@@ -211,11 +216,9 @@ class Showcase25BoardViewModel {
             }
 
             // 원본 Keyring의 isPublished를 true로 업데이트
-            if let documentId = userKeyring.documentId {
-                try await db.collection("Keyring").document(documentId).updateData([
-                    "isPublished": true
-                ])
-            }
+            try await db.collection("Keyring").document(keyringDocId).updateData([
+                "isPublished": true
+            ])
             // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
