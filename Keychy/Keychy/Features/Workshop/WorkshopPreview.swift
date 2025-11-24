@@ -180,7 +180,7 @@ extension WorkshopPreview {
                 if item is Background {
                     ItemDetailImage(itemURL: getPreviewURL())
                         .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 350)
+                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 380)
                         .cornerRadius(20)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
