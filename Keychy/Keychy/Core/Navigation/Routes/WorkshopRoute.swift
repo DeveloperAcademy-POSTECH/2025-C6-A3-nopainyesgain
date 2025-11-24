@@ -48,6 +48,10 @@ enum WorkshopRoute: Hashable {
     case pixelCustomizing
     case pixelInfoInput
     case pixelComplete
+    
+    // MARK: - 임시 페스티벌 라우트
+    case showcase25BoardView
+    case festivalKeyringDetailView(Keyring)
 
     // MARK: - 말풍선 키링 템플릿
     case speechBubblePreview

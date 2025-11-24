@@ -16,6 +16,7 @@ struct MainTabView: View {
     @State private var userManager = UserManager.shared
     @State private var deepLinkManager = DeepLinkManager.shared
     @State private var collectionViewModel = CollectionViewModel()
+    @State private var festivalViewModel = Showcase25BoardViewModel()
 
     @State private var showReceiveSheet = false
     @State private var showCollectSheet = false
@@ -28,102 +29,8 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack {
-            TabView(selection: $selectedTab) {
-                // 홈
-                HomeTab(
-                    router: homeRouter,
-                    userManager: userManager,
-                    onBackgroundLoaded: {
-                        // 배경이 로드되면 스플래시 페이드아웃
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            withAnimation(.easeOut(duration: 0.5)) {
-                                showSplash = false
-                            }
-                        }
-                    }
-                )
-                .tabItem {
-                    Image("home")
-                        .renderingMode(.template)
-                    Text("홈")
-                }
-                .tag(0)
-
-            // 공방
-            WorkshopTab(router: workshopRouter)
-                .tabItem {
-                    Image("workshop")
-                        .renderingMode(.template)
-                    Text("공방")
-                }
-                .tag(1)
-
-            // 보관함
-            CollectionTab(router: collectionRouter, shouldRefresh: $shouldRefreshCollection)
-                .tabItem {
-                    Image("collection")
-                        .renderingMode(.template)
-                    Text("보관함")
-                }
-                .tag(2)
-
-            // 페스티벌
-            FestivalTab(router: festivalRouter)
-                .tabItem {
-                    Image("festival")
-                        .renderingMode(.template)
-                    Text("페스티벌")
-                }
-                .tag(3)
-            }
-            .tint(.main500)  // 선택된 아이템 색상
-            .tabBarMinimizeBehavior(.onScrollDown)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    checkPendingDeepLink()
-                }
-            }
-            .onChange(of: deepLinkManager.pendingPostOfficeId) { oldValue, newValue in
-                if newValue != nil {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        checkPendingDeepLink()
-                    }
-                }
-            }
-            .fullScreenCover(isPresented: $showReceiveSheet) {
-                // 시트가 닫힐 때 새로고침 플래그 활성화
-                if receivedPostOfficeId != nil {
-                    shouldRefreshCollection = true
-                }
-                receivedPostOfficeId = nil
-            } content: {
-                if let postOfficeId = receivedPostOfficeId {
-                    KeyringReceiveView(
-                        viewModel: collectionViewModel,
-                        postOfficeId: postOfficeId
-                    )
-                    .onDisappear {
-                        receivedPostOfficeId = nil
-                    }
-                }
-            }
-            .fullScreenCover(isPresented: $showCollectSheet) {
-                if collectedPostOfficeId != nil {
-                    shouldRefreshCollection = true
-                }
-                collectedPostOfficeId = nil
-            } content: {
-                if let postOfficeId = collectedPostOfficeId {
-                    KeyringCollectView(
-                        viewModel: collectionViewModel,
-                        postOfficeId: postOfficeId
-                    )
-                    .onDisappear {
-                        collectedPostOfficeId = nil
-                    }
-                }
-            }
-
+            mainTabView
+            
             // 스플래시 화면
             if showSplash {
                 ZStack {
@@ -137,6 +44,160 @@ struct MainTabView: View {
                 .zIndex(999)
             }
         }
+        .fullScreenCover(isPresented: $showReceiveSheet, onDismiss: handleReceiveDismiss) {
+            receiveSheetContent
+        }
+        .fullScreenCover(isPresented: $showCollectSheet, onDismiss: handleCollectDismiss) {
+            collectSheetContent
+        }
+    }
+    
+    private var mainTabView: some View {
+        TabView(selection: $selectedTab) {
+            homeTab
+            workshopTab
+            collectionTab
+            festivalTab
+        }
+        .tint(.main500)
+        .tabBarMinimizeBehavior(.onScrollDown)
+        .onAppear(perform: handleAppear)
+        .onChange(of: deepLinkManager.pendingPostOfficeId, handleDeepLinkChange)
+    }
+    
+    private var homeTab: some View {
+        HomeTab(
+            router: homeRouter,
+            userManager: userManager,
+            onBackgroundLoaded: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        showSplash = false
+                    }
+                }
+            }
+        )
+        .tabItem {
+            Image("home")
+                .renderingMode(.template)
+            Text("홈")
+        }
+        .tag(0)
+    }
+    
+    private var workshopTab: some View {
+        WorkshopTab(
+            router: workshopRouter,
+            festivalRouter: festivalRouter,
+            festivalVM: festivalViewModel
+        )
+        .tabItem {
+            Image("workshop")
+                .renderingMode(.template)
+            Text("공방")
+        }
+        .tag(1)
+    }
+    
+    private var collectionTab: some View {
+        CollectionTab(router: collectionRouter, shouldRefresh: $shouldRefreshCollection)
+            .tabItem {
+                Image("collection")
+                    .renderingMode(.template)
+                Text("보관함")
+            }
+            .tag(2)
+    }
+    
+    private var festivalTab: some View {
+        FestivalTab(
+            router: festivalRouter,
+            workshopRouter: workshopRouter,
+            showcaseVM: festivalViewModel,
+            onSwitchToWorkshop: { route in
+                self.handleSwitchToWorkshop(route)
+            }
+        )
+        .tabItem {
+            Image("festival")
+                .renderingMode(.template)
+            Text("페스티벌")
+        }
+        .tag(3)
+    }
+    
+    @ViewBuilder
+    private var receiveSheetContent: some View {
+        if let postOfficeId = receivedPostOfficeId {
+            KeyringReceiveView(
+                viewModel: collectionViewModel,
+                postOfficeId: postOfficeId
+            )
+        } else {
+            EmptyView()
+        }
+    }
+    
+    @ViewBuilder
+    private var collectSheetContent: some View {
+        if let postOfficeId = collectedPostOfficeId {
+            KeyringCollectView(
+                viewModel: collectionViewModel,
+                postOfficeId: postOfficeId
+            )
+        } else {
+            EmptyView()
+        }
+    }
+    
+    private func handleAppear() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            checkPendingDeepLink()
+        }
+    }
+    
+    private func handleDeepLinkChange(oldValue: String?, newValue: String?) {
+        if newValue != nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                checkPendingDeepLink()
+            }
+        }
+    }
+    
+    private func handleSwitchToWorkshop(_ route: WorkshopRoute) {
+        // Festival에서 Workshop으로 갈 때 플래그 설정
+        festivalViewModel.isFromFestivalTab = true
+        festivalViewModel.onKeyringCompleteFromFestival = { router in
+            // 키링 완료 후 Workshop navigation stack 초기화
+            router.reset()
+            
+            // Festival 탭으로 복귀
+            self.selectedTab = 3
+            
+            // 플래그 초기화
+            self.festivalViewModel.isFromFestivalTab = false
+        }
+        
+        // 탭을 공방으로 전환
+        selectedTab = 1
+        // 약간의 딜레이 후 라우팅 (탭 전환 애니메이션 완료 대기)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.workshopRouter.push(route)
+        }
+    }
+    
+    private func handleReceiveDismiss() {
+        if receivedPostOfficeId != nil {
+            shouldRefreshCollection = true
+        }
+        receivedPostOfficeId = nil
+    }
+    
+    private func handleCollectDismiss() {
+        if collectedPostOfficeId != nil {
+            shouldRefreshCollection = true
+        }
+        collectedPostOfficeId = nil
     }
     
     private func checkPendingDeepLink() {

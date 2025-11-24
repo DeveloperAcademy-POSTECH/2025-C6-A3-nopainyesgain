@@ -7,5 +7,11 @@
 
 /// 페스티벌 탭
 enum FestivalRoute: Hashable {
-    // 나중에 추가
+    case festivalView
+    case showcase25BoardView
+    
+    case festivalKeyringDetailView(Keyring)
+    
+    case coinCharge
+
 }
