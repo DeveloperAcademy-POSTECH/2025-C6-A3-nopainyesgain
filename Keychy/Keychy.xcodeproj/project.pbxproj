@@ -265,6 +265,7 @@
 		AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */; };
 		AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
+		AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
@@ -629,6 +630,7 @@
 		AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerChangePopup.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerGridItem.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
+		AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
@@ -1776,6 +1778,7 @@
 			isa = PBXGroup;
 			children = (
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
+				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
 				38283A842EBF794500BE45A5 /* DeepLinkManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
 			);
@@ -2149,6 +2152,7 @@
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
 				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
+				AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
@@ -2465,6 +2469,7 @@
 				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "키링에 사용할 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "특정 장소에서만 활성화되는 기능을 제공하기 위해 현재 위치 정보가 필요해요";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "키링의 탭 사운드로 사용할 음성을 녹음하기 위해 마이크 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "키링 이미지를 사진첩에 저장하기 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "키링에 사용할 사진을 선택하기 위해 사진첩 접근 권한이 필요합니다.";
@@ -2513,6 +2518,7 @@
 				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "키링에 사용할 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "특정 장소에서만 활성화되는 기능을 제공하기 위해 현재 위치 정보가 필요해요";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "키링의 탭 사운드로 사용할 음성을 녹음하기 위해 마이크 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "키링 이미지를 사진첩에 저장하기 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "키링에 사용할 사진을 선택하기 위해 사진첩 접근 권한이 필요합니다.";
