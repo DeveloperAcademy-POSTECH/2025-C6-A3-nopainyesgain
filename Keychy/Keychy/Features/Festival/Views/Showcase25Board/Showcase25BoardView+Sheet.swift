@@ -177,7 +177,7 @@ extension Showcase25BoardView {
                     // 선택 표시
                     if isSelected {
                         RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(Color.main500, lineWidth: 3)
+                            .strokeBorder(Color.mainOpacity80, lineWidth: 2)
                             .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                     }
                 }
