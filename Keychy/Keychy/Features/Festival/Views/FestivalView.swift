@@ -80,7 +80,7 @@ struct FestivalView: View {
                 )
             }
 
-            // uploadButton
+             uploadButton
         }
         .background {
             Image(.festivalBG)

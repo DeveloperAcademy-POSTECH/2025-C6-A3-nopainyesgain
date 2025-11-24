@@ -54,6 +54,9 @@ class Showcase25BoardViewModel {
     private let collectionName = "ShowcaseFestivalKeyring"
     private var listener: ListenerRegistration?
 
+    /// isEditing 자동 만료 시간 (2분)
+    private let editingTimeoutSeconds: TimeInterval = 2 * 60
+
     init() {
         Task {
             await fetchUserKeyrings()
@@ -169,7 +172,8 @@ class Showcase25BoardViewModel {
                 }
             }
 
-            userKeyrings = loadedKeyrings
+            // 최신순으로 정렬 (createdAt 기준 내림차순)
+            userKeyrings = loadedKeyrings.sorted { $0.createdAt > $1.createdAt }
         } catch {
             print("❌ Failed to fetch user keyrings: \(error.localizedDescription)")
         }
@@ -180,6 +184,11 @@ class Showcase25BoardViewModel {
     /// 선택한 키링으로 쇼케이스 키링 추가/업데이트
     @MainActor
     func addOrUpdateShowcaseKeyring(at gridIndex: Int, with userKeyring: Keyring) async {
+        guard let keyringDocId = userKeyring.documentId else {
+            print("❌ documentId가 없습니다")
+            return
+        }
+
         isLoading = true
 
         let data: [String: Any] = [
@@ -188,7 +197,8 @@ class Showcase25BoardViewModel {
             "bodyImageURL": userKeyring.bodyImage,
             "gridIndex": gridIndex,
             "isEditing": false,
-            "keyringId": userKeyring.documentId,
+            "editingUserNickname": "",
+            "keyringId": keyringDocId,
             "memo": userKeyring.memo ?? "",
             "particleId": userKeyring.particleId,
             "soundId": userKeyring.soundId,
@@ -204,6 +214,11 @@ class Showcase25BoardViewModel {
                 // 새로 추가
                 try await db.collection(collectionName).addDocument(data: data)
             }
+
+            // 원본 Keyring의 isPublished를 true로 업데이트
+            try await db.collection("Keyring").document(keyringDocId).updateData([
+                "isPublished": true
+            ])
             // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
@@ -221,36 +236,159 @@ class Showcase25BoardViewModel {
         guard let existingKeyring = keyring(at: gridIndex) else { return }
 
         do {
-            try await db.collection(collectionName).document(existingKeyring.id).updateData([
-                "isEditing": isEditing
-            ])
+            var updateData: [String: Any] = ["isEditing": isEditing]
+
+            if isEditing {
+                // 수정 시작 시 현재 사용자 닉네임과 시작 시간 저장
+                let nickname = UserManager.shared.currentUser?.nickname ?? "알 수 없음"
+                updateData["editingUserNickname"] = nickname
+                updateData["editingStartedAt"] = Timestamp(date: Date())
+            } else {
+                // 수정 종료 시 닉네임과 시작 시간 초기화
+                updateData["editingUserNickname"] = ""
+                updateData["editingStartedAt"] = FieldValue.delete()
+            }
+
+            try await db.collection(collectionName).document(existingKeyring.id).updateData(updateData)
         } catch {
             print("❌ Failed to update isEditing: \(error.localizedDescription)")
         }
     }
 
-    /// 해당 셀이 다른 사람에 의해 수정 중인지 확인
+    /// Heartbeat: editingStartedAt 시간 갱신 (시트가 열려있는 동안 주기적으로 호출)
+    @MainActor
+    func refreshEditingTimestamp(at gridIndex: Int) async {
+        guard let existingKeyring = keyring(at: gridIndex),
+              existingKeyring.isEditing else { return }
+
+        do {
+            try await db.collection(collectionName).document(existingKeyring.id).updateData([
+                "editingStartedAt": Timestamp(date: Date())
+            ])
+        } catch {
+            print("❌ Failed to refresh editing timestamp: \(error.localizedDescription)")
+        }
+    }
+
+    /// 닉네임 마스킹 (첫글자, 마지막글자 제외 나머지 *)
+    func maskedNickname(_ nickname: String) -> String {
+        guard nickname.count > 2 else { return nickname }
+
+        let characters = Array(nickname)
+        let first = characters.first!
+        let last = characters.last!
+        let middleCount = characters.count - 2
+        let masked = String(repeating: "*", count: middleCount)
+
+        return "\(first)\(masked)\(last)"
+    }
+
+    /// 해당 셀이 다른 사람에 의해 수정 중인지 확인 (시간 만료 체크 포함)
     func isBeingEditedByOthers(at gridIndex: Int) -> Bool {
         guard let keyring = keyring(at: gridIndex) else { return false }
-        // isEditing이 true이고, 내가 수정 중인게 아닌 경우
-        return keyring.isEditing && keyring.authorId != UserManager.shared.userUID
+
+        // isEditing이 false면 수정 중이 아님
+        guard keyring.isEditing else { return false }
+
+        // 내가 수정 중인 경우는 제외
+        guard keyring.authorId != UserManager.shared.userUID else { return false }
+
+        // 시간 만료 체크: editingStartedAt이 없거나 5분 이상 경과하면 수정 중이 아닌 것으로 간주
+        if let startedAt = keyring.editingStartedAt {
+            let elapsedTime = Date().timeIntervalSince(startedAt)
+            if elapsedTime > editingTimeoutSeconds {
+                // 만료된 경우 - 자동으로 isEditing을 false로 업데이트
+                Task {
+                    await clearExpiredEditing(at: gridIndex)
+                }
+                return false
+            }
+        } else {
+            // editingStartedAt이 없으면 만료된 것으로 간주
+            return false
+        }
+
+        return true
+    }
+
+    /// 만료된 isEditing 상태 초기화
+    @MainActor
+    private func clearExpiredEditing(at gridIndex: Int) async {
+        guard let existingKeyring = keyring(at: gridIndex) else { return }
+
+        do {
+            try await db.collection(collectionName).document(existingKeyring.id).updateData([
+                "isEditing": false,
+                "editingUserNickname": "",
+                "editingStartedAt": FieldValue.delete()
+            ])
+            print("🕐 Cleared expired editing state at gridIndex: \(gridIndex)")
+        } catch {
+            print("❌ Failed to clear expired editing: \(error.localizedDescription)")
+        }
+    }
+
+    /// 모든 만료된 isEditing 상태 검사 및 초기화
+    @MainActor
+    func checkAllExpiredEditingStates() async {
+        for keyring in showcaseKeyrings where keyring.isEditing {
+            // 내 키링은 제외
+            guard keyring.authorId != UserManager.shared.userUID else { continue }
+
+            // 시간 만료 체크
+            if let startedAt = keyring.editingStartedAt {
+                let elapsedTime = Date().timeIntervalSince(startedAt)
+                if elapsedTime > editingTimeoutSeconds {
+                    await clearExpiredEditing(at: keyring.gridIndex)
+                }
+            } else {
+                // editingStartedAt이 없으면 만료로 간주
+                await clearExpiredEditing(at: keyring.gridIndex)
+            }
+        }
     }
 
     // MARK: - 쇼케이스 키링 삭제
 
-    /// 쇼케이스 키링 회수 (삭제)
+    /// 쇼케이스 키링 회수 (필드 초기화)
     @MainActor
     func deleteShowcaseKeyring(at gridIndex: Int) async {
         guard let existingKeyring = keyring(at: gridIndex) else { return }
 
         isLoading = true
 
+        // 원본 Keyring의 isPublished를 false로 업데이트 (실패해도 계속 진행)
+        let keyringId = existingKeyring.keyringId
+        if keyringId != "none" {
+            do {
+                try await db.collection("Keyring").document(keyringId).updateData([
+                    "isPublished": false
+                ])
+            } catch {
+                // 원본 키링이 삭제된 경우 무시하고 계속 진행
+                print("⚠️ 원본 키링 업데이트 실패 (삭제됨): \(error.localizedDescription)")
+            }
+        }
+
+        // 쇼케이스 필드 초기화
         do {
-            try await db.collection(collectionName).document(existingKeyring.id).delete()
-            // 리스너가 자동으로 업데이트함
+            let resetData: [String: Any] = [
+                "name": "",
+                "authorId": "",
+                "bodyImageURL": "",
+                "gridIndex": gridIndex,
+                "isEditing": false,
+                "editingUserNickname": "",
+                "keyringId": "none",
+                "memo": "",
+                "particleId": "none",
+                "soundId": "none",
+                "votes": 0
+            ]
+            try await db.collection(collectionName).document(existingKeyring.id).setData(resetData)
         } catch {
             self.error = error.localizedDescription
-            print("❌ Failed to delete showcase keyring: \(error.localizedDescription)")
+            print("❌ Failed to reset showcase keyring: \(error.localizedDescription)")
         }
 
         isLoading = false
