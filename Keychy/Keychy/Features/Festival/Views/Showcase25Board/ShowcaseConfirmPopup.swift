@@ -1,5 +1,5 @@
 //
-//  SubmitKeyringPopup.swift
+//  ShowcaseConfirmPopup.swift
 //  Keychy
 //
 //  Created by rundo on 11/25/25.
@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct SubmitKeyringPopup: View {
+struct ShowcaseConfirmPopup: View {
+    let title: String
+    let message: String
     let onCancel: () -> Void
     let onConfirm: () -> Void
 
@@ -20,13 +22,13 @@ struct SubmitKeyringPopup: View {
                 .padding(.top, 14)
 
             // 제목
-            Text("페스티벌에 키링을 출품할까요?")
+            Text(title)
                 .typography(.suit20B)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
 
             // 메시지
-            Text("출품한 키링은 모두에게 공개되고\n종료 전까지 보관함에서 비활성화돼요.")
+            Text(message)
                 .typography(.suit17SB)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)

@@ -7,33 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Delete Keyring Alert Modifier
-
-struct DeleteKeyringAlertModifier: ViewModifier {
-    @Binding var showDeleteAlert: Bool
-    @Binding var gridIndexToDelete: Int?
-    var viewModel: Showcase25BoardViewModel
-
-    func body(content: Content) -> some View {
-        content
-            .alert("키링 회수", isPresented: $showDeleteAlert) {
-                Button("취소", role: .cancel) {
-                    gridIndexToDelete = nil
-                }
-                Button("확인", role: .destructive) {
-                    if let index = gridIndexToDelete {
-                        Task {
-                            await viewModel.deleteShowcaseKeyring(at: index)
-                        }
-                    }
-                    gridIndexToDelete = nil
-                }
-            } message: {
-                Text("정말 키링을 회수하시겠습니까?")
-            }
-    }
-}
-
 // MARK: - Sheet 관련 Extension
 
 extension Showcase25BoardView {
@@ -182,6 +155,19 @@ extension Showcase25BoardView {
                 }
             }
         }
+    }
+
+    func handleDeleteConfirm() {
+        guard let index = gridIndexToDelete else { return }
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            showDeleteAlert = false
+        }
+
+        Task {
+            await viewModel.deleteShowcaseKeyring(at: index)
+        }
+        gridIndexToDelete = nil
     }
 
     // MARK: - Sheet Keyring Cell

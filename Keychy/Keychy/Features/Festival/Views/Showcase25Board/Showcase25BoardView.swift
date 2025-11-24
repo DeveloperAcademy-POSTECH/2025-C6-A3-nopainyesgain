@@ -109,24 +109,46 @@ struct Showcase25BoardView: View {
                 keyringSelectionSheet
             }
 
-            // 출품 확인 팝업
-            if showSubmitPopup || showSubmitCompleteAlert {
+            // 출품/회수 확인 팝업
+            if showSubmitPopup || showDeleteAlert || showSubmitCompleteAlert {
                 Color.black20
                     .ignoresSafeArea()
                     .onTapGesture {
                         if showSubmitPopup {
                             showSubmitPopup = false
+                        } else if showDeleteAlert {
+                            showDeleteAlert = false
+                            gridIndexToDelete = nil
                         }
                     }
                     .zIndex(99)
 
                 if showSubmitPopup {
-                    SubmitKeyringPopup(
+                    ShowcaseConfirmPopup(
+                        title: "페스티벌에 키링을 출품할까요?",
+                        message: "출품한 키링은 모두에게 공개되고\n종료 전까지 보관함에서 비활성화돼요.",
                         onCancel: {
                             showSubmitPopup = false
                         },
                         onConfirm: {
                             handleSubmitConfirm()
+                        }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+
+                if showDeleteAlert {
+                    ShowcaseConfirmPopup(
+                        title: "키링을 회수할까요?",
+                        message: "회수한 키링은 다시 보관함에서\n사용할 수 있어요.",
+                        onCancel: {
+                            showDeleteAlert = false
+                            gridIndexToDelete = nil
+                        },
+                        onConfirm: {
+                            handleDeleteConfirm()
                         }
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -141,16 +163,12 @@ struct Showcase25BoardView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showSubmitPopup)
+        .animation(.easeInOut(duration: 0.2), value: showDeleteAlert)
         .animation(.easeInOut(duration: 0.2), value: showSubmitCompleteAlert)
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
-        .modifier(DeleteKeyringAlertModifier(
-            showDeleteAlert: $showDeleteAlert,
-            gridIndexToDelete: $gridIndexToDelete,
-            viewModel: viewModel
-        ))
         .onAppear {
             viewModel.startListening()
             Task {
