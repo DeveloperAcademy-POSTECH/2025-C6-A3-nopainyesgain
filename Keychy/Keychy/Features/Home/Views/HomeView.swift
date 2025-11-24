@@ -168,8 +168,29 @@ extension HomeView {
         }
 
         // 4. 선택된 뭉치의 배경과 카라비너 설정
-        guard let bundle = collectionViewModel.selectedBundle else { return }
-        collectionViewModel.selectedBackground = collectionViewModel.resolveBackground(from: bundle.selectedBackground)
+        guard var bundle = collectionViewModel.selectedBundle else { return }
+
+        // 배경 resolve 시도
+        var resolvedBackground = collectionViewModel.resolveBackground(from: bundle.selectedBackground)
+
+        // 배경이 없으면 첫 번째 배경으로 업데이트
+        if resolvedBackground == nil, let firstBackground = collectionViewModel.backgrounds.first {
+            resolvedBackground = firstBackground
+
+            // Firebase에 번들의 배경 업데이트
+            if let documentId = bundle.documentId, let backgroundId = firstBackground.id {
+                await updateBundleBackground(documentId: documentId, backgroundId: backgroundId)
+
+                // 로컬 상태도 업데이트
+                bundle.selectedBackground = backgroundId
+                collectionViewModel.selectedBundle?.selectedBackground = backgroundId
+                if let index = collectionViewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
+                    collectionViewModel.bundles[index].selectedBackground = backgroundId
+                }
+            }
+        }
+
+        collectionViewModel.selectedBackground = resolvedBackground
         collectionViewModel.selectedCarabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
 
         // 5. 키링 데이터 생성
@@ -263,5 +284,18 @@ extension HomeView {
         let particleId: String
         let hookOffsetY: CGFloat?
         let chainLength: Int
+    }
+
+    /// 번들의 배경을 Firebase에 업데이트
+    private func updateBundleBackground(documentId: String, backgroundId: String) async {
+        do {
+            let db = FirebaseFirestore.Firestore.firestore()
+            try await db.collection("KeyringBundle").document(documentId).updateData([
+                "selectedBackground": backgroundId
+            ])
+            print("✅ 번들 배경 업데이트 완료: \(backgroundId)")
+        } catch {
+            print("❌ 번들 배경 업데이트 실패: \(error.localizedDescription)")
+        }
     }
 }
