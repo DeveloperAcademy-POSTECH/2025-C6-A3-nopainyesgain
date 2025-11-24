@@ -30,7 +30,7 @@ extension FestivalKeyringDetailView {
                 .zIndex(99)
             
             if showCopyAlert {
-                CopyPopup(
+                FestivalCopyPopup(
                     myCopyPass: userManager.currentUser?.copyVoucher ?? 0,
                     onCancel: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
