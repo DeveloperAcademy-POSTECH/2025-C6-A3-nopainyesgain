@@ -40,7 +40,7 @@ struct Showcase25BoardView: View {
     // 확대 배율 = 6 / 2 = 3
     private let minZoom: CGFloat = 0.7
     private let maxZoom: CGFloat = 3.0
-    private let initialZoom: CGFloat = 1.5  // 중간 정도로 시작
+    private let initialZoom: CGFloat = 0.7  // 최초로 시작
 
     // 그리드 전체 크기 계산 (최소 줌 기준)
     private var cellWidth: CGFloat {
