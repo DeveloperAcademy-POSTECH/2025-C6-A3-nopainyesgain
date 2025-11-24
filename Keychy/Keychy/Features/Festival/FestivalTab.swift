@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FestivalTab: View {
     @Bindable var router: NavigationRouter<FestivalRoute>
+    @State private var showCaseViewModel = Showcase25BoardViewModel()
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -17,6 +18,12 @@ struct FestivalTab: View {
                     switch route {
                     case .showcase25Board:
                         Showcase25BoardView(router: router)
+                        
+                    case .festivalKeyringDetailView(let keyring):
+                        FestivalKeyringDetailView(router: router, viewModel: showCaseViewModel, keyring: keyring)
+                        
+                    case .coinCharge:
+                        CoinChargeView(router: router)
                     }
                 }
         }
