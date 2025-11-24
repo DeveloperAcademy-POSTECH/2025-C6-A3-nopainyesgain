@@ -255,23 +255,7 @@ struct Showcase25BoardView: View {
             Text("쇼케이스 2025")
                 .typography(.notosans17M)
         } trailing: {
-            Button {
-                // Festival에서 Workshop으로 가는 경우 플래그 설정
-                viewModel.isFromFestivalTab = true
-                
-                // Workshop에서 완료 후 다시 돌아올 콜백 설정
-                viewModel.onKeyringCompleteFromFestival = { workshopRouter in
-                    // Workshop router를 reset하고 showcase25BoardView로 이동
-                    workshopRouter.reset()
-                    workshopRouter.push(.showcase25BoardView)
-                }
-                
-                onNavigateToWorkshop?(.acrylicPhotoPreview)
-            } label: {
-                Image(.appIcon)
-                    .resizable()
-                    .frame(width: 44, height: 44)
-            }
+            
         }
     }
 
@@ -279,16 +263,28 @@ struct Showcase25BoardView: View {
 
     private var keyringSelectionSheet: some View {
         VStack(spacing: 18) {
-            // 상단 바: 취소 / 타이틀 / 완료
+            // 상단 바: 만들기 / 타이틀 / 완료
             HStack {
-                // 취소 버튼
+                // 만들기 버튼
                 Button {
+                    // Festival에서 Workshop으로 가는 경우 플래그 설정
                     dismissSheet()
+                    viewModel.isFromFestivalTab = true
+                    
+                    // Workshop에서 완료 후 다시 돌아올 콜백 설정
+                    viewModel.onKeyringCompleteFromFestival = { workshopRouter in
+                        // Workshop router를 reset하고 showcase25BoardView로 이동
+                        workshopRouter.reset()
+                        workshopRouter.push(.showcase25BoardView)
+                    }
+                    
+                    onNavigateToWorkshop?(.workshopTemplates)
                 } label: {
-                    Text("취소")
+                    Text("+ 만들기")
                         .typography(.suit15R)
-                        .foregroundStyle(.gray500)
+                        .foregroundStyle(.main500)
                 }
+                .buttonStyle(.plain)
 
                 Spacer()
 
