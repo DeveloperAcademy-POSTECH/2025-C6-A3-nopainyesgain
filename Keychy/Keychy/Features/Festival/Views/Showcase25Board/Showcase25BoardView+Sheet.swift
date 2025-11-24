@@ -138,12 +138,28 @@ extension Showcase25BoardView {
 
     func confirmSelection() {
         guard viewModel.selectedKeyringForUpload != nil else { return }
+        let gridIndex = viewModel.selectedGridIndex
 
         // 시트 닫고 출품 확인 팝업 표시
         withAnimation(.easeInOut) {
             viewModel.showKeyringSheet = false
         }
         showSubmitPopup = true
+
+        // isEditing 상태 해제
+        Task {
+            await viewModel.updateIsEditing(at: gridIndex, isEditing: false)
+        }
+    }
+
+    func handleSubmitConfirm() {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            showSubmitPopup = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            executeSubmit()
+        }
     }
 
     func executeSubmit() {
@@ -153,12 +169,18 @@ extension Showcase25BoardView {
         // 선택 초기화
         viewModel.selectedKeyringForUpload = nil
 
-        // 업로드는 백그라운드에서 진행
+        // 업로드 후 완료 알림 표시
         Task {
             await viewModel.addOrUpdateShowcaseKeyring(
                 at: gridIndex,
                 with: keyring
             )
+
+            await MainActor.run {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showSubmitCompleteAlert = true
+                }
+            }
         }
     }
 

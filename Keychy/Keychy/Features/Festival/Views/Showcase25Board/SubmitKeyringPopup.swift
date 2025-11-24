@@ -27,7 +27,7 @@ struct SubmitKeyringPopup: View {
 
             // 메시지
             Text("출품한 키링은 모두에게 공개되고\n종료 전까지 보관함에서 비활성화돼요.")
-                .typography(.suit15R)
+                .typography(.suit17SB)
                 .foregroundColor(.black100)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 24)

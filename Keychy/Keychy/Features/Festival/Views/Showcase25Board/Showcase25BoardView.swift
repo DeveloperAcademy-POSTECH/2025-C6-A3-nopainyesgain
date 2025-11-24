@@ -25,6 +25,7 @@ struct Showcase25BoardView: View {
 
     // 출품 확인 Popup
     @State var showSubmitPopup = false
+    @State var showSubmitCompleteAlert = false
 
     // Heartbeat Timer
     @State private var heartbeatTimer: Timer?
@@ -64,6 +65,11 @@ struct Showcase25BoardView: View {
         cellHeight * CGFloat(gridRows)
     }
 
+    // MARK: - 블러 상태
+    private var shouldApplyBlur: Bool {
+        showSubmitCompleteAlert
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             // 메인 컨텐츠
@@ -83,8 +89,12 @@ struct Showcase25BoardView: View {
                     gridContent
                 }
                 .ignoresSafeArea()
+                .blur(radius: shouldApplyBlur ? 10 : 0)
+                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
 
                 customNavigationBar
+                    .blur(radius: shouldApplyBlur ? 15 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
             }
 
             // Dim 오버레이 (키링 시트가 열릴 때)
@@ -100,26 +110,38 @@ struct Showcase25BoardView: View {
             }
 
             // 출품 확인 팝업
-            if showSubmitPopup {
+            if showSubmitPopup || showSubmitCompleteAlert {
                 Color.black20
                     .ignoresSafeArea()
                     .onTapGesture {
-                        showSubmitPopup = false
+                        if showSubmitPopup {
+                            showSubmitPopup = false
+                        }
                     }
+                    .zIndex(99)
 
-                SubmitKeyringPopup(
-                    onCancel: {
-                        showSubmitPopup = false
-                    },
-                    onConfirm: {
-                        showSubmitPopup = false
-                        executeSubmit()
-                    }
-                )
-                .transition(.scale.combined(with: .opacity))
+                if showSubmitPopup {
+                    SubmitKeyringPopup(
+                        onCancel: {
+                            showSubmitPopup = false
+                        },
+                        onConfirm: {
+                            handleSubmitConfirm()
+                        }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+
+                if showSubmitCompleteAlert {
+                    SubmitCompleteAlert(isPresented: $showSubmitCompleteAlert)
+                        .zIndex(101)
+                }
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showSubmitPopup)
+        .animation(.easeInOut(duration: 0.2), value: showSubmitCompleteAlert)
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
