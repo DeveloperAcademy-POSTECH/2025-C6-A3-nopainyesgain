@@ -53,8 +53,8 @@ struct SpeechBubbleFrameSelectorView: View {
             )
             .fill(.white100)
             .shadow(color: .black.opacity(0.15), radius: 9)
-            .ignoresSafeArea(edges: .bottom)
         )
+        .background(Color.gray50.ignoresSafeArea(edges: .bottom))
     }
 
     // MARK: - Frame Cell

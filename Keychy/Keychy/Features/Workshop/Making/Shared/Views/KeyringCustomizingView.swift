@@ -151,6 +151,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 .zIndex(100)
         }
         .ignoresSafeArea()
+        .background(Color.gray50.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .swipeBackGesture(enabled: false)
         .interactiveDismissDisabled(true)
