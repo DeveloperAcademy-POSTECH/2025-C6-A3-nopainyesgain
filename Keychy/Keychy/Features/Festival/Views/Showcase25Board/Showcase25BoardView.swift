@@ -244,19 +244,30 @@ struct Showcase25BoardView: View {
     }
     
     // MARK: - GridContent
-    
+
     var gridContent: some View {
-        VStack(spacing: 0) {
-            ForEach(0..<gridRows, id: \.self) { row in
-                HStack(spacing: 0) {
-                    ForEach(0..<gridColumns, id: \.self) { col in
-                        let index = row * gridColumns + col
-                        gridCell(index: index)
+        ZStack {
+            // 배경 이미지 (그리드와 함께 움직임)
+            Image(.showcaseBackground)
+                .resizable()
+                .scaledToFill()
+                .frame(width: gridWidth + 200, height: gridHeight + 200)
+                .clipped()
+                .opacity(0.5)
+
+            // 그리드
+            VStack(spacing: 0) {
+                ForEach(0..<gridRows, id: \.self) { row in
+                    HStack(spacing: 0) {
+                        ForEach(0..<gridColumns, id: \.self) { col in
+                            let index = row * gridColumns + col
+                            gridCell(index: index)
+                        }
                     }
                 }
             }
         }
-        .frame(width: gridWidth, height: gridHeight)
+        .frame(width: gridWidth + 200, height: gridHeight + 200)
     }
 
 }

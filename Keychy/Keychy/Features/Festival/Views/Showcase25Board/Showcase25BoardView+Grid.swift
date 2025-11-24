@@ -19,9 +19,9 @@ extension Showcase25BoardView {
         let isBeingEditedByOthers = viewModel.isBeingEditedByOthers(at: index)
 
         return ZStack {
-            // 셀 배경
+            // 셀 배경 (투명 + 테두리만)
             Rectangle()
-                .fill(Color.white100)
+                .fill(Color.clear)
                 .border(Color.gray50, width: 0.5)
 
             if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
