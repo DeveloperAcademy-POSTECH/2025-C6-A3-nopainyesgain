@@ -26,8 +26,8 @@ struct FestivalKeyringDetailView: View {
     @State var showCopyLackAlert: Bool = false
     @State var showCopyingAlert: Bool = false
     @State var showInvenFullAlert: Bool = false
-    @State var showPackageAlert: Bool = false
-    @State var showPackingAlert: Bool = false
+    @State var showVoteAlert: Bool = false
+    @State var showVoteCompleteAlert: Bool = false
     @State var menuPosition: CGRect = .zero
 
     let keyring: Keyring
@@ -72,11 +72,11 @@ struct FestivalKeyringDetailView: View {
                         .zIndex(200)
                 }
                 
-//                alertOverlays
-//                    .position(
-//                        x: geometry.size.width / 2,
-//                        y: geometry.size.height / 2
-//                    )
+                alertOverlays
+                    .position(
+                        x: geometry.size.width / 2,
+                        y: geometry.size.height / 2
+                    )
                 
                 customNavigationBar
                     .blur(radius: shouldApplyBlur ? 15 : 0)
@@ -113,7 +113,7 @@ struct FestivalKeyringDetailView: View {
         isLoading ||
         showCopyCompleteAlert ||
         showCopyingAlert ||
-        showPackingAlert ||
+        showVoteCompleteAlert ||
         false
     }
     
@@ -203,7 +203,9 @@ extension FestivalKeyringDetailView {
     
     private var voteButton: some View {
         Button(action: {
-            //captureAndSaveImage()
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showVoteAlert = true
+            }
         }) {
             Image("imageDownload")
         }
@@ -214,7 +216,7 @@ extension FestivalKeyringDetailView {
     private var copyButton: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showPackageAlert = true
+                showCopyAlert = true
             }
         }) {
             Image("Copy")
@@ -234,11 +236,12 @@ extension FestivalKeyringDetailView {
             }
         } center: {
             // Center (중앙) - 빈 공간
-            Spacer()
+            Text(keyring.name)
+                .foregroundStyle(.gray600)
         } trailing: {
             // Trailing (오른쪽) - 다음/구매 버튼
             Spacer()
+                .frame(width: 44, height: 44)
         }
     }
 }
-
