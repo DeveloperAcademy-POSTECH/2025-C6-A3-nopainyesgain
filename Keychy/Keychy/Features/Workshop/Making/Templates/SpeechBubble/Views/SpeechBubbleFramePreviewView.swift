@@ -58,7 +58,9 @@ struct SpeechBubbleFramePreviewView: View {
         }
         .onChange(of: viewModel.selectedFrame) { oldValue, newValue in
             // 프레임 타입이 변경되면 기존 텍스트를 새 제약에 맞게 재조정
-            viewModel.inputText = applyTextConstraints(viewModel.inputText)
+            // 줄바꿈 제거 후 다시 적용 (타입 변경 시 모든 텍스트 유지)
+            let textWithoutNewlines = viewModel.inputText.replacingOccurrences(of: "\n", with: "")
+            viewModel.inputText = applyTextConstraints(textWithoutNewlines)
         }
     }
 
@@ -119,6 +121,7 @@ struct SpeechBubbleFramePreviewView: View {
                     // 글자 수 제한 적용
                     viewModel.inputText = applyTextConstraints(newValue)
                 }
+                .padding(.vertical, 3.5)
         }
         .padding()
     }
