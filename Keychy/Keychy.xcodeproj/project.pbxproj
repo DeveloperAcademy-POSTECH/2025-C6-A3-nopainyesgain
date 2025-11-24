@@ -331,6 +331,8 @@
 		C6C35F432ED2B70E009642F4 /* Showcase25BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C35F422ED2B70E009642F4 /* Showcase25BoardViewModel.swift */; };
 		C6C360252ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C360242ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift */; };
 		C6C360272ED3D037009642F4 /* WorkshopTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */; };
+		C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */; };
+		C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -691,6 +693,8 @@
 		C6C35F422ED2B70E009642F4 /* Showcase25BoardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Showcase25BoardViewModel.swift; sourceTree = "<group>"; };
 		C6C360242ED3C40F009642F4 /* WorkshopMakingKeyringSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakingKeyringSection.swift; sourceTree = "<group>"; };
 		C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplatesView.swift; sourceTree = "<group>"; };
+		C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Sheet.swift"; sourceTree = "<group>"; };
+		C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Detail.swift"; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1830,6 +1834,8 @@
 			isa = PBXGroup;
 			children = (
 				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
+				C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */,
+				C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */,
 			);
 			path = Showcase25Board;
 			sourceTree = "<group>";
@@ -2229,6 +2235,7 @@
 				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
 				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
 				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
+				C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */,
 				38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */,
 				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
 				AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */,
@@ -2283,6 +2290,7 @@
 				C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */,
 				C6C35F412ED2B6E6009642F4 /* ShowcaseFestivalKeyring.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
+				C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,
 				4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
