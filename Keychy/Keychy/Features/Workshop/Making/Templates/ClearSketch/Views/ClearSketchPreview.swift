@@ -23,6 +23,6 @@ struct ClearSketchPreview: View {
             },
             router: router
         )
-        .swipeBackGesture(enabled: false)
+        .swipeBackGesture(enabled: true)
     }
 }
