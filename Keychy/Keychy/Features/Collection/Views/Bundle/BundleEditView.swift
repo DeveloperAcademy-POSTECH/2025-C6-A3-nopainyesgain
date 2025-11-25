@@ -115,13 +115,16 @@ struct BundleEditView<Route: BundleRoute>: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             mainContentView
+                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
             loadingOverlay
             
             keyringSheetOverlay
+                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
             // 배경/카라비너 시트들
             sheetContent()
+                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
@@ -567,7 +570,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                             await MainActor.run {
                                 showPurchaseSuccessAlert = false
                                 purchasesSuccessScale = 0.3
-                                router.pop()
                             }
                         }
                     }
@@ -1013,8 +1015,7 @@ extension BundleEditView {
         } label: {
             HStack(spacing: 5) {
                 if isPurchasing {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
+                    LoadingAlert(type: .short, message: nil)
                         .scaleEffect(0.8)
                 } else {
                     Image(.purchaseSheet)
@@ -1090,9 +1091,7 @@ extension BundleEditView {
                 }
             }
             
-            // 뷰모델 데이터 새로고침
-            viewModel.fetchAllBackgrounds { _ in }
-            viewModel.fetchAllCarabiners { _ in }
+            await refreshEditData()
             
             // 1초 후 알럿 자동 닫기 및 저장 후 화면 이동
             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
@@ -1101,7 +1100,6 @@ extension BundleEditView {
             await MainActor.run {
                 showPurchaseSuccessAlert = false
                 purchasesSuccessScale = 0.3
-                router.pop()
             }
             
         } else {

@@ -517,8 +517,7 @@ extension BundleCreateView {
             }
             
             // 뷰모델 데이터 새로고침
-            viewModel.fetchAllBackgrounds { _ in }
-            viewModel.fetchAllCarabiners { _ in }
+            await refreshData()
             
             // 2.5초 후 알럿 자동 닫기 (Alert duration 2초 + 0.5초 여유)
             try? await Task.sleep(nanoseconds: 2_500_000_000)
@@ -526,8 +525,6 @@ extension BundleCreateView {
             await MainActor.run {
                 showPurchaseSuccessAlert = false
                 purchasesSuccessScale = 0.3
-
-                router.push(.bundleAddKeyringView)
             }
             
         } else {
