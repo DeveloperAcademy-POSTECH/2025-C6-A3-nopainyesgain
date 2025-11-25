@@ -137,11 +137,6 @@ struct TextToolbarButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .typography(.suit17M)
-                .foregroundStyle(.black100)
-        }
-        Button(action: action) {
-            Text(title)
                 .typography(.suit17B)
                 .padding(4)
                 .foregroundStyle(.black100)
