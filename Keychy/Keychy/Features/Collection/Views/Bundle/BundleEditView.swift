@@ -572,8 +572,8 @@ struct BundleEditView<Route: BundleRoute>: View {
                         }
                     }
                 
-                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    .scaleEffect(purchasesSuccessScale)
+                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSuccessAlert)
+                    .zIndex(101)
             }
             
             // 구매 실패 Alert

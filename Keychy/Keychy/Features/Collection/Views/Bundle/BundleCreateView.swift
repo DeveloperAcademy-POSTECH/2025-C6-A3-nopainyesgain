@@ -71,9 +71,15 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     currentCarabinerType: cb.carabiner.type
                 )
                 .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
+                .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+                
                 sheetContent()
+                    .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+                
                 customNavigationBar
+                    .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
             }
+            
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
@@ -94,6 +100,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     .animation(.easeInOut(duration: 0.3), value: showPurchaseSheet)
             }
             .opacity(showPurchaseSheet ? 1 : 0)
+            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
@@ -309,8 +316,8 @@ extension BundleCreateView {
                         router.push(.bundleAddKeyringView)
                     }
                 
-                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    .scaleEffect(purchasesSuccessScale)
+                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSuccessAlert)
+                    .zIndex(101)
             }
             
             // 구매 실패 Alert
