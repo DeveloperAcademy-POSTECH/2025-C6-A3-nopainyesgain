@@ -74,9 +74,10 @@ extension Showcase25BoardView {
             }
         }
         .overlay(alignment: .top) {
-            // 내 키링 표시 (우측 상단)
-            Circle()
-                .fill(Color.primaryRed)
+            // 키링 행거
+            Image(.festivalHanger)
+                .resizable()
+                .scaledToFit()
                 .frame(width: 8, height: 8)
                 .padding(.top, 12)
         }
