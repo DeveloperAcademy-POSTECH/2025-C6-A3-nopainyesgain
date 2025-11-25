@@ -157,13 +157,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         let clError = error as? CLError
         switch clError?.code {
         case .denied:
-            print("❌ 위치 오류: 권한이 거부되었습니다. 설정 > 개인정보보호 > 위치서비스에서 권한을 허용해주세요.")
+            print("위치 오류: 권한이 거부되었습니다. 설정 > 개인정보보호 > 위치서비스에서 권한을 허용해주세요.")
         case .locationUnknown:
-            print("⚠️ 위치 오류: 위치를 찾을 수 없습니다. 잠시 후 다시 시도됩니다.")
+            print("위치 오류: 위치를 찾을 수 없습니다. 잠시 후 다시 시도됩니다.")
         case .network:
-            print("⚠️ 위치 오류: 네트워크 문제로 위치를 가져올 수 없습니다.")
+            print("위치 오류: 네트워크 문제로 위치를 가져올 수 없습니다.")
         default:
-            print("❌ 위치 오류: \(error.localizedDescription)")
+            print("위치 오류: \(error.localizedDescription)")
         }
     }
 }
