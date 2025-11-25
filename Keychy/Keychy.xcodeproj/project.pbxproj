@@ -522,7 +522,7 @@
 		4C8426582ED356FD0050B6FE /* SpeechBubbleVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Effect.swift"; sourceTree = "<group>"; };
 		4C84265A2ED3572F0050B6FE /* SpeechBubbleVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Frame.swift"; sourceTree = "<group>"; };
 		4C84265C2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Customizing.swift"; sourceTree = "<group>"; };
-		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
+		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C8426652ED377650050B6FE /* SpeechBubbleFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFramePreviewView.swift; sourceTree = "<group>"; };
@@ -1842,11 +1842,11 @@
 		C6C361242ED43478009642F4 /* Showcase25Board */ = {
 			isa = PBXGroup;
 			children = (
-				C6C361E52ED4B289009642F4 /* ShowcaseConfirmPopup.swift */,
 				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
 				C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */,
 				C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */,
 				C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */,
+				C6C361E52ED4B289009642F4 /* ShowcaseConfirmPopup.swift */,
 				C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */,
 			);
 			path = Showcase25Board;

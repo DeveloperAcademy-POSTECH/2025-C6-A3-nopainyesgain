@@ -235,11 +235,17 @@ struct Showcase25BoardView: View {
                 festivalRouter.pop()
             }
         } center: {
-            Text("SHOWCASE 2025")
-                .typography(.notosans17M)
+            HStack {
+                Image(.showcase25Title)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .offset(x: 20)
+            }
+
         } trailing: {
-            Spacer()
-                .frame(width: 44)
+            Color.clear
+                .frame(width: 44) // leading과 같은 너비로 맞춤
         }
     }
     
