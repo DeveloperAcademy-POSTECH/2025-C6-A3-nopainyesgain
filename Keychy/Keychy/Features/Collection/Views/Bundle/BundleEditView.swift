@@ -862,7 +862,7 @@ extension BundleEditView {
                     showPurchaseSheet = true
                 }
             } else {
-                NextToolbarButton {
+                TextToolbarButton(title: "완료") {
                     Task {
                         await MainActor.run {
                             // 화면 전환 시작을 표시

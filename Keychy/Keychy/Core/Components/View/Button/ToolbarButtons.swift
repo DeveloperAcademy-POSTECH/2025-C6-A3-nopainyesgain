@@ -140,6 +140,13 @@ struct TextToolbarButton: View {
                 .typography(.suit17M)
                 .foregroundStyle(.black100)
         }
+        Button(action: action) {
+            Text(title)
+                .typography(.suit17B)
+                .padding(4)
+                .foregroundStyle(.black100)
+        }
+        .frame(width: 62, height: 44)
+        .glassEffect(.regular.interactive(), in: .capsule)
     }
 }
-
