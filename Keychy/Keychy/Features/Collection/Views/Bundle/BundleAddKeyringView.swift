@@ -404,6 +404,7 @@ extension BundleAddKeyringView {
                 index: index,
                 position: position,
                 bodyImageURL: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
                 soundId: soundId,
                 customSoundURL: customSoundURL,
                 particleId: particleId,

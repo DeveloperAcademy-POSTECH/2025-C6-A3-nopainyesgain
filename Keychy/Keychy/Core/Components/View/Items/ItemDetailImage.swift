@@ -25,12 +25,17 @@ struct ItemDetailImage: View {
             // 로딩 중앙 배치
             if isLoading {
                 LoadingAlert(type: .short, message: nil)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            isLoading = false
+                        }
+                    }
             }
         }
     }
 }
 
-// MARK: - Nuke Animated Image View (GIF 지원)
+// MARK: - Nuke Animated Image View
 struct NukeAnimatedImageView: UIViewRepresentable {
     let url: URL?
     @Binding var isLoading: Bool
@@ -49,22 +54,33 @@ struct NukeAnimatedImageView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIImageView, context: Context) {
-        guard let url = url else {
-            uiView.image = nil
-            isLoading = false
+        // URL이 변경되었는지 확인 (불필요한 재로드 방지)
+        if context.coordinator.currentURL == url {
             return
         }
 
-        isLoading = true
+        context.coordinator.currentURL = url
 
-        // Nuke로 이미지 로드 (GIF 애니메이션 지원)
+        guard let url = url else {
+            uiView.image = nil
+            DispatchQueue.main.async {
+                isLoading = false
+            }
+            return
+        }
+
+        DispatchQueue.main.async {
+            isLoading = true
+        }
+
+        // 원본 데이터로 로드 (커스텀 GIF 파싱에서 다운샘플링)
         ImagePipeline.shared.loadImage(with: url) { result in
             DispatchQueue.main.async {
                 isLoading = false
 
                 switch result {
                 case .success(let response):
-                    // GIF인 경우 애니메이션 이미지로 표시
+                    // GIF인 경우 애니메이션 처리 (다운샘플링 포함)
                     if let data = response.container.data,
                        let animatedImage = UIImage.animatedImage(with: data) {
                         uiView.image = animatedImage
@@ -77,29 +93,44 @@ struct NukeAnimatedImageView: UIViewRepresentable {
             }
         }
     }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    class Coordinator {
+        var currentURL: URL?
+    }
 }
 
 // MARK: - UIImage GIF Extension
 extension UIImage {
-    /// GIF 데이터에서 애니메이션 이미지 생성
-    static func animatedImage(with data: Data) -> UIImage? {
+    static func animatedImage(with data: Data, maxSize: CGSize = CGSize(width: 1200, height: 1200)) -> UIImage? {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
             return nil
         }
 
         let count = CGImageSourceGetCount(source)
+
         var images: [UIImage] = []
         var duration: TimeInterval = 0
 
         for i in 0..<count {
-            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+            // 다운샘플링 옵션 설정
+            let options: [CFString: Any] = [
+                kCGImageSourceThumbnailMaxPixelSize: max(maxSize.width, maxSize.height),
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceShouldCache: false
+            ]
+
+            if let cgImage = CGImageSourceCreateThumbnailAtIndex(source, i, options as CFDictionary) {
                 // 프레임 지속 시간 가져오기
                 if let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any],
                    let gifInfo = properties[kCGImagePropertyGIFDictionary as String] as? [String: Any],
                    let frameDuration = gifInfo[kCGImagePropertyGIFDelayTime as String] as? TimeInterval {
                     duration += frameDuration
                 } else {
-                    duration += 0.1 // 기본 프레임 지속 시간
+                    duration += 0.1
                 }
 
                 images.append(UIImage(cgImage: cgImage))
@@ -142,8 +173,4 @@ struct SimpleAnimatedImage: View {
             }
         }
     }
-}
-
-#Preview(traits: .sizeThatFitsLayout) {
-    ItemDetailImage(itemURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24")
 }
