@@ -39,8 +39,8 @@ struct Showcase25BoardView: View {
     let sheetHeightRatio: CGFloat = 0.43
 
     // 그리드 설정
-    let gridColumns = 12
-    let gridRows = 12
+    let gridColumns = 10
+    let gridRows = 14
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
 
     // 줌 설정
