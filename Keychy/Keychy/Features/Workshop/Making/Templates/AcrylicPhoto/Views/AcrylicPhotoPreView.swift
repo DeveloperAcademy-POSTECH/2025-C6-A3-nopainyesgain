@@ -29,7 +29,7 @@ struct AcrylicPhotoPreView: View {
             },
             router: router
         )
-        .swipeBackGesture(enabled: false)
+        .swipeBackGesture(enabled: true)
         .onChange(of: selectedItem) { _, selectedImage in
             if let selectedImage {
                 viewModel.loadImage(from: selectedImage)
