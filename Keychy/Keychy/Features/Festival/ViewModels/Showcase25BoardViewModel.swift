@@ -39,7 +39,7 @@ class Showcase25BoardViewModel {
 
     // MARK: - 줌 관련
     var currentZoom: CGFloat = 1.5
-    private let buttonVisibleZoom: CGFloat = 1.5 // 이 값을 낮출수록 더 멀리서도 보임
+    private let buttonVisibleZoom: CGFloat = 1.2 // 이 값을 낮출수록 더 멀리서도 보임
 
     var showButtons: Bool {
         currentZoom >= buttonVisibleZoom
