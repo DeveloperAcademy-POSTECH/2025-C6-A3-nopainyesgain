@@ -14,12 +14,13 @@ extension WorkshopView {
     var makingKeyringSection: some View {
         VStack(spacing: 0) {
             // 제목
-            Text("나만의 키링을 만드는 템플릿 공방")
+            Text("내 마음대로 고르는\n다양한 템플릿(๑' ᵕ '๑)⸝*")
                 .typography(.suit16B)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
                 .padding(.horizontal, 20)
                 .padding(.top, 13)
-                .padding(.bottom, 14)
+                .padding(.bottom, 10)
             
             // 키링 이미지들 (가로 배치)
             HStack(spacing: 0) {
@@ -37,26 +38,9 @@ extension WorkshopView {
                 ZStack {
                     // 바탕 레이어
                     RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.main100)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(Color.white30, lineWidth: 2)
-                        )
-                    
-                    // 안쪽 블러 레이어
-                    RoundedRectangle(cornerRadius: 10)
                         .fill(Color.main400)
-                        .padding(.horizontal, 7)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                        .blur(radius: 9.65)
-                        .mask(
-                            RoundedRectangle(cornerRadius: 15)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 56)
-                        )
+                        .frame(height: 48)
 
                     // 버튼 제목
                     Text("+ 키링 만들기")
@@ -65,15 +49,14 @@ extension WorkshopView {
                 }
             }
             .padding(.horizontal, 10)
-            .padding(.bottom, 10)
+            .padding(.bottom, 6)
         }
-        .background(Color.white30)
+        .background(Color.white50)
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.white70, lineWidth: 1)
         )
         .padding(.horizontal, 15)
-        .padding(.bottom, 20)
     }
 }

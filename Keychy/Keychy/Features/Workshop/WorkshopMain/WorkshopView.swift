@@ -98,12 +98,12 @@ struct WorkshopView: View {
                 topBannerSection
                 
                 Spacer()
-                    .frame(height: 50)
+                    .frame(height: 64)
                 
                 makingKeyringSection
                 
                 Spacer()
-                    .frame(height: 20)
+                    .frame(height: 14)
 
                 // 메인 콘텐츠 (그리드)
                 mainContentSection
