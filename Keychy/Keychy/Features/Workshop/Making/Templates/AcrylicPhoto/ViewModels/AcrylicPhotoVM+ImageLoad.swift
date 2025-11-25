@@ -35,9 +35,7 @@ extension AcrylicPhotoVM {
 
                     self.selectedImage = uiImage
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        self.resetToCenter()
-                    }
+                    // resetToCenter()는 Crop 화면의 onAppear에서 호출됨 (fixedImage 설정 후)
 
                 case .failure(let error):
                     self.errorMessage = "이미지 로드 실패: \(error.localizedDescription)"
