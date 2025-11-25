@@ -22,8 +22,8 @@ struct FestivalView: View {
         (
             title: "호미곶 상생의 손",
             location: "경상북도 포항시 남구 호미곶면 해맞이로 136",
-            startDate: "2025.11.01",
-            endDate: "2025.11.30",
+            startDate: "2025.12.01",
+            endDate: "2025.12.08",
             distance: "내 위치로 부터 1.5km",
             imageName: "homigot",
             targetLocation: TargetLocation(
@@ -36,8 +36,8 @@ struct FestivalView: View {
         (
             title: "SHOWCASE25",
             location: "경북 포항시 남구 지곡로 80 C5",
-            startDate: "2025.11.01",
-            endDate: "2025.11.30",
+            startDate: "2025.11.26",
+            endDate: "2025.11.27",
             distance: "내 위치로 부터 1.5km",
             imageName: "showcase25",
             targetLocation: TargetLocation(
@@ -50,8 +50,8 @@ struct FestivalView: View {
         (
             title: "영일대 전망대",
             location: "경상북도 포항시 북구 삼호로",
-            startDate: "2025.11.01",
-            endDate: "2025.11.30",
+            startDate: "2025.12.09",
+            endDate: "2025.12.16",
             distance: "내 위치로 부터 1.5km",
             imageName: "youngonedae",
             targetLocation: TargetLocation(
