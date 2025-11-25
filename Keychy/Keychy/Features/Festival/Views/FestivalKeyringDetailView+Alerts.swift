@@ -166,7 +166,7 @@ extension FestivalKeyringDetailView {
             }
             
             if showVoteCompleteAlert {
-                KeychyAlert(type: .checkmark, message: "투표가 완료되었습니다", isPresented: $showVoteCompleteAlert)
+                KeychyAlert(type: .vote, message: "", isPresented: $showVoteCompleteAlert)
                 .zIndex(101)
             }
         }
