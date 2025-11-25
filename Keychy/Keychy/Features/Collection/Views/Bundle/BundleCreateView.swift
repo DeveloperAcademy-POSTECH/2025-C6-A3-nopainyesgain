@@ -71,9 +71,15 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     currentCarabinerType: cb.carabiner.type
                 )
                 .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
+                .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+                
                 sheetContent()
+                    .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+                
                 customNavigationBar
+                    .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
             }
+            
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
@@ -94,6 +100,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     .animation(.easeInOut(duration: 0.3), value: showPurchaseSheet)
             }
             .opacity(showPurchaseSheet ? 1 : 0)
+            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
@@ -152,6 +159,12 @@ extension BundleCreateView {
                 }
             } else {
                 NextToolbarButton {
+                    if let bg = selectedBackground {
+                        viewModel.selectedBackground = bg.background
+                    }
+                    if let cb = selectedCarabiner {
+                        viewModel.selectedCarabiner = cb.carabiner
+                    }
                     router.push(.bundleAddKeyringView)
                 }
             }
@@ -309,8 +322,8 @@ extension BundleCreateView {
                         router.push(.bundleAddKeyringView)
                     }
                 
-                PurchaseSuccessAlert(checkmarkScale: purchasesSuccessScale)
-                    .scaleEffect(purchasesSuccessScale)
+                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSuccessAlert)
+                    .zIndex(101)
             }
             
             // 구매 실패 Alert
@@ -432,8 +445,7 @@ extension BundleCreateView {
         } label: {
             HStack(spacing: 5) {
                 if isPurchasing {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
+                    LoadingAlert(type: .short, message: nil)
                         .scaleEffect(0.8)
                 } else {
                     Image(.purchaseSheet)
@@ -499,7 +511,16 @@ extension BundleCreateView {
         
         if allSuccess {
             // 모든 구매 성공 - alert만 표시
+            await refreshData()
+            
             await MainActor.run {
+                if let bg = selectedBackground {
+                    viewModel.selectedBackground = bg.background
+                }
+                if let cb = selectedCarabiner {
+                    viewModel.selectedCarabiner = cb.carabiner
+                }
+                
                 isPurchasing = false
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
@@ -509,18 +530,12 @@ extension BundleCreateView {
                 }
             }
             
-            // 뷰모델 데이터 새로고침
-            viewModel.fetchAllBackgrounds { _ in }
-            viewModel.fetchAllCarabiners { _ in }
-            
             // 2.5초 후 알럿 자동 닫기 (Alert duration 2초 + 0.5초 여유)
             try? await Task.sleep(nanoseconds: 2_500_000_000)
             
             await MainActor.run {
                 showPurchaseSuccessAlert = false
                 purchasesSuccessScale = 0.3
-
-                router.push(.bundleAddKeyringView)
             }
             
         } else {

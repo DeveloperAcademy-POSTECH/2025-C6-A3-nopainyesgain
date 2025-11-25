@@ -66,7 +66,7 @@ extension ClearSketchGuiding {
     }
     
     private var guidingImage: some View {
-        Image("acrylicGudingImage")
+        Image("clearSketchGuidingImage")
             .resizable()
             .scaledToFit()
             .frame(minHeight: 272.87)

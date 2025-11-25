@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "copyIcon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

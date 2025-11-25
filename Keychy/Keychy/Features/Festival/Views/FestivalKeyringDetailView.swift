@@ -193,7 +193,7 @@ extension FestivalKeyringDetailView {
                 showVoteAlert = true
             }
         }) {
-            Image("imageDownload")
+            Image("voteIcon")
         }
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
@@ -205,7 +205,7 @@ extension FestivalKeyringDetailView {
                 showCopyAlert = true
             }
         }) {
-            Image("Copy")
+            Image("copyIcon")
         }
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
