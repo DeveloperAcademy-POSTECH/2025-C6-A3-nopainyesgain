@@ -66,6 +66,7 @@ struct MyItemsView: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
+        .swipeBackGesture(enabled: true)
         .task {
             // 최초 한 번만 초기화
             if !hasInitialized {
