@@ -96,8 +96,6 @@ struct FestivalView: View {
                     enterAction: { router.push(.showcase25BoardView) }
                 )
             }
-
-             uploadButton
         }
         .background {
             Image(.festivalBG)
