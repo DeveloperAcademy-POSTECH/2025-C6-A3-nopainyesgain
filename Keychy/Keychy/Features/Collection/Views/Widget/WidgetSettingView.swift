@@ -23,6 +23,7 @@ struct WidgetSettingView: View {
             }
         }
         .navigationTitle("위젯 설정")
+        .swipeBackGesture(enabled: true)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
         .toolbar(.hidden, for: .tabBar)
