@@ -44,7 +44,7 @@ struct Showcase25BoardView: View {
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
 
     // 줌 설정
-    private let minZoom: CGFloat = 0.7
+    private let minZoom: CGFloat = 0.3
     private let maxZoom: CGFloat = 3.0
     private let initialZoom: CGFloat = 0.7
 
@@ -279,18 +279,13 @@ struct Showcase25BoardView: View {
                 .clipped()
                 .opacity(0.5)
 
-            // 그리드 (빨랫줄 효과 - 행별 포물선)
+            // 그리드
             VStack(spacing: 0) {
                 ForEach(0..<gridRows, id: \.self) { row in
                     HStack(spacing: 0) {
                         ForEach(0..<gridColumns, id: \.self) { col in
                             let index = row * gridColumns + col
                             gridCell(index: index)
-                                .offset(y: {
-                                    let center = Double(gridColumns) / 2.0
-                                    let distance = Double(col) - center
-                                    return pow(distance / center, 2) * -20
-                                }())
                         }
                     }
                 }
