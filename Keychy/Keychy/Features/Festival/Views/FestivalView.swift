@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CoreLocation
 
 struct FestivalView: View {
 
@@ -27,8 +26,8 @@ struct FestivalView: View {
             imageName: "homigot",
             targetLocation: TargetLocation(
                 name: "C5",
-                latitude: 36.076790,
-                longitude: 129.569939,
+                latitude: 36.014342,
+                longitude: 129.325749,
                 radius: 100 // 100m 반경
             )
         ),
@@ -71,17 +70,10 @@ struct FestivalView: View {
                     .foregroundStyle(.black100)
                 HStack(spacing: 3) {
                     Image(.mapPinIcon)
-                    Text(currentLocationText)
+                    Text("경북 포항시 남구 지곡로 80 C5")
                         .typography(.suit15B)
                         .foregroundStyle(.gray500)
                 }
-                
-                // 디버그: 권한 상태 표시 (개발 중에만 사용)
-                #if DEBUG
-                Text("위치 권한: \(authorizationStatusText)")
-                    .font(.caption)
-                    .foregroundStyle(locationManager.authorizationStatus == .authorizedWhenInUse ? .green : .red)
-                #endif
             }
             .padding(18)
             
@@ -115,6 +107,10 @@ struct FestivalView: View {
             // 페스티벌 목표 위치들 설정
             locationManager.targetLocations = festivals.map { $0.targetLocation }
         }
+        .onDisappear {
+            // 뷰가 사라질 때 위치 추적 중지 (배터리 절약)
+            locationManager.stopTracking()
+        }
     }
 
     // MARK: - Upload Button
@@ -132,25 +128,5 @@ struct FestivalView: View {
         }
         .disabled(viewModel.isUploading)
         .opacity(viewModel.isUploading ? 0.5 : 1.0)
-    }
-    
-    // MARK: - Helpers
-    
-    private var currentLocationText: String {
-        guard let location = locationManager.currentLocation else {
-            return "위치 정보를 가져오는 중..."
-        }
-        return "현재 위치: \(String(format: "%.4f", location.coordinate.latitude)), \(String(format: "%.4f", location.coordinate.longitude))"
-    }
-    
-    private var authorizationStatusText: String {
-        switch locationManager.authorizationStatus {
-        case .notDetermined: return "미설정"
-        case .restricted: return "제한됨"
-        case .denied: return "거부됨"
-        case .authorizedAlways: return "항상 허용"
-        case .authorizedWhenInUse: return "사용 중 허용"
-        @unknown default: return "알 수 없음"
-        }
     }
 }
