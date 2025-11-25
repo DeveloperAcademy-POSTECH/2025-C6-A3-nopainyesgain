@@ -50,8 +50,11 @@ extension Showcase25BoardView {
                     }
                 } label: {
                     Image(.plus)
-                        .frame(width: 25, height: 25)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
                 }
+                .padding(3)
                 .glassEffect(.clear.interactive(), in: .circle)
                 .opacity(viewModel.showButtons ? 1 : 0)
                 .disabled(!viewModel.showButtons)
