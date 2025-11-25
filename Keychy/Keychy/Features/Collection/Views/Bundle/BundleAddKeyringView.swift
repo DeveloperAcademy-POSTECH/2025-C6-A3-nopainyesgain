@@ -96,8 +96,7 @@ extension BundleAddKeyringView {
                     await captureAndSaveScene()
                 }
             }
-            .disabled(isCapturing || selectedKeyrings.isEmpty)
-            .opacity(selectedKeyrings.isEmpty ? 0.5 : 1.0)
+            .disabled(isCapturing)
         }
     }
 }

@@ -879,8 +879,6 @@ extension BundleEditView {
                         }
                     }
                 }
-                .disabled(selectedKeyrings.isEmpty)
-                .opacity(selectedKeyrings.isEmpty ? 0.5 : 1.0)
             }
         }
     }
