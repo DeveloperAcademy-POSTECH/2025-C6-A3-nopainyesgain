@@ -56,24 +56,49 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             throw NSError(domain: "LocationManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "리버스 지오코딩 요청을 생성할 수 없습니다"])
         }
         
-        let mapItems = try await request.mapItems
-        
-        guard let firstItem = mapItems.first else {
-            throw NSError(domain: "LocationManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "주소를 찾을 수 없습니다"])
+        do {
+            let mapItems = try await request.mapItems
+            
+            guard let firstItem = mapItems.first else {
+                // 결과가 없으면 좌표로 표시
+                return formatCoordinateAddress(location.coordinate)
+            }
+            
+            return formatAddress(from: firstItem)
+            
+        } catch let error as NSError {
+            // MKError 처리
+            if error.domain == "MKErrorDomain" {
+                switch error.code {
+                case 3: // MKError.placemarkNotFound
+                    print("주소를 찾을 수 없는 위치입니다. 좌표로 표시합니다.")
+                    return formatCoordinateAddress(location.coordinate)
+                case 4: // MKError.loadingThrottled
+                    print("지오코딩 요청이 너무 많습니다.")
+                    return "주소 요청 제한 중..."
+                default:
+                    print("MapKit 오류 (\(error.code)): \(error.localizedDescription)")
+                    return formatCoordinateAddress(location.coordinate)
+                }
+            }
+            
+            throw error
         }
-        
-        return formatAddress(from: firstItem)
     }
     
     // MKMapItem을 한글 주소로 포맷팅
     private func formatAddress(from mapItem: MKMapItem) -> String {
-        // MKMapItem의 name이 주소 정보를 포함하고 있음
+        // MKMapItem의 name이 주소 정보를 포함
         if let name = mapItem.name, !name.isEmpty {
             return name
         }
         
-        // name이 없으면 좌표 정보 반환
-        let coordinate = mapItem.location.coordinate
+        // name이 없으면 좌표로 표시
+        return formatCoordinateAddress(mapItem.location.coordinate)
+    }
+    
+    // 좌표를 텍스트로 포맷팅
+    private func formatCoordinateAddress(_ coordinate: CLLocationCoordinate2D) -> String {
         return String(format: "위도: %.4f, 경도: %.4f", coordinate.latitude, coordinate.longitude)
     }
     
