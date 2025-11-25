@@ -78,21 +78,6 @@ struct FestivalView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                 }
-                
-                // 디버그: 권한 상태 및 좌표 표시 (개발 중에만 사용)
-                #if DEBUG
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("위치 권한: \(authorizationStatusText)")
-                        .font(.caption2)
-                        .foregroundStyle(locationManager.authorizationStatus == .authorizedWhenInUse ? .green : .red)
-                    
-                    if let location = locationManager.currentLocation {
-                        Text("좌표: \(String(format: "%.4f", location.coordinate.latitude)), \(String(format: "%.4f", location.coordinate.longitude))")
-                            .font(.caption2)
-                            .foregroundStyle(.blue)
-                    }
-                }
-                #endif
             }
             .padding(18)
             

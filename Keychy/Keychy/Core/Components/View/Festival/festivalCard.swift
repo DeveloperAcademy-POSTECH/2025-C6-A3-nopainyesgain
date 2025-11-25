@@ -47,43 +47,41 @@ struct festivalCard: View {
     var body: some View {
         VStack(spacing: 0) {
             // 이미지
-            ZStack {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: screenWidth * 0.75 - 20)
-                    .clipped()
-                    .overlay(alignment: .topLeading) {
-                        VStack(alignment: .leading) {
-                            Text("\(startDate)~\(endDate)")
-                                .typography(.suit14SB)
-                                .foregroundStyle(.white100)
-                                .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 34)
-                                        .fill(.black50)
-                                )
-                            Text("남은 기간 \(remainingDays)일")
-                                .typography(.suit13SB)
-                                .foregroundStyle(.main500)
-                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 34)
-                                        .fill(.main50)
-                                )
-                        }
-                        .padding(10)
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: screenWidth * 0.75 - 20)
+                .clipped()
+                .overlay(alignment: .topLeading) {
+                    VStack(alignment: .leading) {
+                        Text("\(startDate)~\(endDate)")
+                            .typography(.suit14SB)
+                            .foregroundStyle(.white100)
+                            .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                            .background(
+                                RoundedRectangle(cornerRadius: 34)
+                                    .fill(.black50)
+                            )
+                        Text("남은 기간 \(remainingDays)일")
+                            .typography(.suit13SB)
+                            .foregroundStyle(.main500)
+                            .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                            .background(
+                                RoundedRectangle(cornerRadius: 34)
+                                    .fill(.main50)
+                            )
                     }
-//                LazyImage(url: URL(string: imageName)) { state in
-//                    if let image = state.image {
-//                        image
-//                            .resizable()
-//                            .scaledToFit()
-//                    } else {
-//                        LoadingAlert(type: .short, message: "")
-//                    }
-//                }
-            }
+                    .padding(10)
+                }
+            //                LazyImage(url: URL(string: imageName)) { state in
+            //                    if let image = state.image {
+            //                        image
+            //                            .resizable()
+            //                            .scaledToFit()
+            //                    } else {
+            //                        LoadingAlert(type: .short, message: "")
+            //                    }
+            //                }
             
             Spacer().frame(height: 15)
             
