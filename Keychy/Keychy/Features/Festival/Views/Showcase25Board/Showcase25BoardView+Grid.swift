@@ -19,10 +19,6 @@ extension Showcase25BoardView {
         let isBeingEditedByOthers = viewModel.isBeingEditedByOthers(at: index)
 
         return ZStack {
-            // 셀 배경 (투명 + 테두리만)
-            Rectangle()
-                .fill(Color.clear)
-                .border(Color.gray50, width: 0.5)
 
             if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
                 // 키링 이미지가 있는 경우
@@ -49,15 +45,10 @@ extension Showcase25BoardView {
                         viewModel.showKeyringSheet = true
                     }
                 } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white100)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(Color.gray50)
-                        )
+                    Image(.plus)
+                        .frame(width: 30, height: 30)
                 }
+                .glassEffect(.clear.interactive(), in: .circle)
                 .opacity(viewModel.showButtons ? 1 : 0)
                 .disabled(!viewModel.showButtons)
                 .animation(.easeInOut(duration: 0.2), value: viewModel.showButtons)
@@ -68,9 +59,9 @@ extension Showcase25BoardView {
             // 내 키링 표시 (우측 상단)
             if isMyKeyring {
                 Circle()
-                    .fill(Color.main500.opacity(0.8))
-                    .frame(width: 8, height: 8)
-                    .padding(6)
+                    .fill(Color.main500)
+                    .frame(width: 6, height: 6)
+                    .padding(5)
             }
         }
         .overlay(alignment: .top) {
@@ -79,7 +70,7 @@ extension Showcase25BoardView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 8, height: 8)
-                .padding(.top, 12)
+                .padding(.top, 10)
         }
     }
 

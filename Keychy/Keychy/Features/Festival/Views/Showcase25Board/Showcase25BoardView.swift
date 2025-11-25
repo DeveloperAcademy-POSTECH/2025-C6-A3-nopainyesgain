@@ -44,9 +44,9 @@ struct Showcase25BoardView: View {
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
 
     // 줌 설정
-    private let minZoom: CGFloat = 0.3
+    private let minZoom: CGFloat = 0.6
     private let maxZoom: CGFloat = 3.0
-    private let initialZoom: CGFloat = 0.7
+    private let initialZoom: CGFloat = 0.6
 
     // 그리드 전체 크기 계산 (최소 줌 기준)
     var cellWidth: CGFloat {
@@ -272,12 +272,12 @@ struct Showcase25BoardView: View {
     var gridContent: some View {
         ZStack {
             // 배경 이미지 (그리드와 함께 움직임)
-            Image(.showcaseBackground)
-                .resizable()
-                .scaledToFill()
-                .frame(width: gridWidth + 200, height: gridHeight + 200)
-                .clipped()
-                .opacity(0.5)
+//            Image(.showcaseBackground)
+//                .resizable()
+//                .scaledToFill()
+//                .frame(width: gridWidth, height: gridHeight)
+//                .clipped()
+//                .opacity(0.5)
 
             // 그리드
             VStack(spacing: 0) {
@@ -291,7 +291,7 @@ struct Showcase25BoardView: View {
                 }
             }
         }
-        .frame(width: gridWidth + 200, height: gridHeight + 200)
+        .frame(width: gridWidth, height: gridHeight)
     }
 
 }
