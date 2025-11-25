@@ -7,12 +7,15 @@
 
 import CoreLocation
 import SwiftUI
+import MapKit
 
 @Observable
 class LocationManager: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
+    
     var currentLocation: CLLocation?
     var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    var currentAddress: String? // 현재 위치의 주소
     
     // 목표 위치와 활성화 반경(미터)
     var targetLocations: [TargetLocation] = []
@@ -47,6 +50,33 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         manager.requestLocation()
     }
     
+    // 좌표를 주소로 변환 (Reverse Geocoding) - MapKit 사용
+    func reverseGeocodeLocation(_ location: CLLocation) async throws -> String {
+        guard let request = MKReverseGeocodingRequest(location: location) else {
+            throw NSError(domain: "LocationManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "리버스 지오코딩 요청을 생성할 수 없습니다"])
+        }
+        
+        let mapItems = try await request.mapItems
+        
+        guard let firstItem = mapItems.first else {
+            throw NSError(domain: "LocationManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "주소를 찾을 수 없습니다"])
+        }
+        
+        return formatAddress(from: firstItem)
+    }
+    
+    // MKMapItem을 한글 주소로 포맷팅
+    private func formatAddress(from mapItem: MKMapItem) -> String {
+        // MKMapItem의 name이 주소 정보를 포함하고 있음
+        if let name = mapItem.name, !name.isEmpty {
+            return name
+        }
+        
+        // name이 없으면 좌표 정보 반환
+        let coordinate = mapItem.location.coordinate
+        return String(format: "위도: %.4f, 경도: %.4f", coordinate.latitude, coordinate.longitude)
+    }
+    
     // 특정 위치가 활성화 범위 안에 있는지 확인
     func isLocationActive(_ target: TargetLocation) -> Bool {
         guard let currentLocation = currentLocation else { return false }
@@ -61,19 +91,19 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         
         switch authorizationStatus {
         case .notDetermined:
-            print("📍 위치 권한: 아직 결정되지 않음")
+            print("위치 권한: 아직 결정되지 않음")
         case .restricted:
-            print("⚠️ 위치 권한: 제한됨 (자녀 보호 기능 등)")
+            print("위치 권한: 제한됨 (자녀 보호 기능 등)")
         case .denied:
-            print("❌ 위치 권한: 거부됨 - 설정에서 권한을 허용해주세요")
+            print("위치 권한: 거부됨 - 설정에서 권한을 허용해주세요")
         case .authorizedWhenInUse:
-            print("✅ 위치 권한: 앱 사용 중 허용됨")
+            print("위치 권한: 앱 사용 중 허용됨")
             startTracking()
         case .authorizedAlways:
-            print("✅ 위치 권한: 항상 허용됨")
+            print("위치 권한: 항상 허용됨")
             startTracking()
         @unknown default:
-            print("⚠️ 위치 권한: 알 수 없는 상태")
+            print("위치 권한: 알 수 없는 상태")
         }
     }
     
@@ -81,7 +111,19 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
                         didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last
         if let location = currentLocation {
-            print("📍 위치 업데이트: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            print("위치 업데이트: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            
+            // 주소 변환 (비동기)
+            Task {
+                do {
+                    let address = try await reverseGeocodeLocation(location)
+                    await MainActor.run {
+                        self.currentAddress = address
+                    }
+                } catch {
+                    print("주소 변환 실패: \(error.localizedDescription)")
+                }
+            }
         }
     }
     

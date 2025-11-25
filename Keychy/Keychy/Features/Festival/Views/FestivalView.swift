@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import _LocationEssentials
+import CoreLocation
 
 struct FestivalView: View {
 
@@ -15,7 +17,7 @@ struct FestivalView: View {
 
     @State private var currentPage = 0
 
-    // 목데이터
+    // ⭐️ 집에서 테스트 하실 땐 여기에 나와있는 longtitude, latitude를 수정하시면 됩니다!(경도, 위도)
     let festivals = [
         (
             title: "호미곶 상생의 손",
@@ -70,10 +72,27 @@ struct FestivalView: View {
                     .foregroundStyle(.black100)
                 HStack(spacing: 3) {
                     Image(.mapPinIcon)
-                    Text("경북 포항시 남구 지곡로 80 C5")
+                    Text(currentLocationAddress)
                         .typography(.suit15B)
                         .foregroundStyle(.gray500)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
+                
+                // 디버그: 권한 상태 및 좌표 표시 (개발 중에만 사용)
+                #if DEBUG
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("위치 권한: \(authorizationStatusText)")
+                        .font(.caption2)
+                        .foregroundStyle(locationManager.authorizationStatus == .authorizedWhenInUse ? .green : .red)
+                    
+                    if let location = locationManager.currentLocation {
+                        Text("좌표: \(String(format: "%.4f", location.coordinate.latitude)), \(String(format: "%.4f", location.coordinate.longitude))")
+                            .font(.caption2)
+                            .foregroundStyle(.blue)
+                    }
+                }
+                #endif
             }
             .padding(18)
             
@@ -128,5 +147,28 @@ struct FestivalView: View {
         }
         .disabled(viewModel.isUploading)
         .opacity(viewModel.isUploading ? 0.5 : 1.0)
+    }
+    
+    // MARK: - Helpers
+    
+    private var currentLocationAddress: String {
+        if let address = locationManager.currentAddress {
+            return address
+        } else if locationManager.currentLocation != nil {
+            return "주소를 가져오는 중..."
+        } else {
+            return "위치 정보를 가져오는 중..."
+        }
+    }
+    
+    private var authorizationStatusText: String {
+        switch locationManager.authorizationStatus {
+        case .notDetermined: return "미설정"
+        case .restricted: return "제한됨"
+        case .denied: return "거부됨 ⚠️"
+        case .authorizedAlways: return "항상 허용 ✅"
+        case .authorizedWhenInUse: return "사용 중 허용 ✅"
+        @unknown default: return "알 수 없음"
+        }
     }
 }
