@@ -20,8 +20,14 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.distanceFilter = 10 // 10m마다 업데이트
+        // 배터리 절약을 위해 정확도 낮춤 (100m 정도 오차)
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        // 50m 이상 이동했을 때만 업데이트
+        manager.distanceFilter = 50
+        // 백그라운드에서 위치 업데이트 일시 중지 (배터리 절약)
+        manager.pausesLocationUpdatesAutomatically = true
+        // 활동 유형 설정 (최적화에 도움)
+        manager.activityType = .other
     }
     
     func requestPermission() {
@@ -34,6 +40,11 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     func stopTracking() {
         manager.stopUpdatingLocation()
+    }
+    
+    // 한 번만 위치 가져오기 (배터리 절약 극대화)
+    func requestSingleLocation() {
+        manager.requestLocation()
     }
     
     // 특정 위치가 활성화 범위 안에 있는지 확인
