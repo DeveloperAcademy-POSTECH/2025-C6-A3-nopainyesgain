@@ -26,13 +26,17 @@ extension Showcase25BoardView {
             } else if isBeingEditedByOthers, let editingKeyring = keyring {
                 // 다른 사람이 수정 중인 경우
                 let maskedName = viewModel.maskedNickname(editingKeyring.editingUserNickname)
-                VStack(spacing: 4) {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                    Text("[\(maskedName)]님이\n수정중")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.gray300)
-                        .multilineTextAlignment(.center)
+                ZStack {
+                    LoadingAlert(type: .short, message: nil)
+                        .scaleEffect(0.5)
+                    VStack {
+                        Spacer()
+                        Text("\(maskedName)님\n수정중")
+                            .typography(.notosans10M)
+                            .foregroundStyle(.gray300)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.bottom, 10)
                 }
             } else {
                 // 키링이 없는 경우 + 버튼
@@ -46,7 +50,7 @@ extension Showcase25BoardView {
                     }
                 } label: {
                     Image(.plus)
-                        .frame(width: 30, height: 30)
+                        .frame(width: 25, height: 25)
                 }
                 .glassEffect(.clear.interactive(), in: .circle)
                 .opacity(viewModel.showButtons ? 1 : 0)
@@ -100,7 +104,8 @@ extension Showcase25BoardView {
                         Image(systemName: "photo")
                             .foregroundStyle(.gray300)
                     } else {
-                        ProgressView()
+                        LoadingAlert(type: .short, message: nil)
+                            .scaleEffect(0.5)
                     }
                 }
             }
