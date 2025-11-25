@@ -56,6 +56,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .background(Color.gray50.ignoresSafeArea())
                     .offset(y: -60)
                     .opacity(isSceneReady ? 1.0 : 0.0)
+                    .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)
 
                 // 모드 선택 버튼들 (템플릿마다 다른 선택지 제공, 뷰모델에 명시!)
                 VStack(spacing: 0) {
@@ -71,6 +72,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .padding(18)
                     .padding(.bottom, geometry.size.height * currentBottomViewHeightRatio)
                 }
+                .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)
 
                 // MARK: - 하단 영역 (모드별로 다른 콘텐츠) - bottom 고정
                 VStack(spacing: 0) {
@@ -82,25 +84,24 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                             maxHeight: geometry.size.height * currentBottomViewHeightRatio,
                             alignment: .top)
                 }
+                .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)
                 
                 // MARK: - 구매 중 로딩
                 if showPurchaseProgress {
                     LoadingAlert(type: .short, message: nil)
-                        .zIndex(10)
+                        .zIndex(101)
                 }
 
                 // MARK: - 합성 중 로딩
                 if viewModel.isComposing {
                     LoadingAlert(type: .short, message: nil)
-                        .zIndex(10)
+                        .zIndex(101)
                 }
 
                 // MARK: - Purchase Alerts
                 if showPurchaseSuccessAlert {
-                    PurchaseSuccessAlert(checkmarkScale: purchaseSuccessScale)
-                        .padding(.bottom, 60)
-                        .padding(.horizontal, 51)
-                        .zIndex(10)
+                    KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSuccessAlert)
+                        .zIndex(101)
                 }
 
                 if showPurchaseFailAlert {
@@ -130,13 +131,13 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                         }
                     )
                     .padding(.horizontal, 51)
-                    .zIndex(10)
+                    .zIndex(101)
                 }
                 // MARK: - 딤 처리 (코인 부족 Alert 표시 시)
                 if showPurchaseFailAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
-                        .zIndex(5)
+                        .zIndex(101)
                 }
             }
             .animation(.easeOut(duration: 0.3), value: isLoadingResources)

@@ -65,11 +65,30 @@ extension ClearSketchGuiding {
             .frame(maxWidth: .infinity)
     }
     
+//    private var guidingImage: some View {
+//        Image("acrylicGudingImage")
+//            .resizable()
+//            .scaledToFit()
+//            .frame(minHeight: 272.87)
+//            .padding(.horizontal, 30)
+//    }
+    
     private var guidingImage: some View {
-        Image("acrylicGudingImage")
-            .resizable()
-            .scaledToFit()
-            .frame(minHeight: 272.87)
-            .padding(.horizontal, 30)
+        ZStack {
+            LazyImage(url: URL(string: guidingImageURL)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                } else if state.isLoading {
+                    LoadingAlert(type: .short, message: nil)
+                        .scaleEffect(0.7)
+                } else {
+                    Color.gray.opacity(0.1)
+                }
+            }
+        }
+        .frame(minHeight: 272.87)
+        .padding(.horizontal, 30)
     }
 }
