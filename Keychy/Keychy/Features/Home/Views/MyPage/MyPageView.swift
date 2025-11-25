@@ -225,6 +225,7 @@ struct MyPageView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .swipeBackGesture(enabled: true)
     }
 }
 

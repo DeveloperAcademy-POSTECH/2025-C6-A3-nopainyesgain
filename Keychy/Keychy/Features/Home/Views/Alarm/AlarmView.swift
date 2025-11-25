@@ -58,6 +58,7 @@ struct AlarmView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .swipeBackGesture(enabled: true)
         .onAppear {
             checkNotificationPermission()
             fetchNotifications()
