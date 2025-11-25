@@ -23,6 +23,10 @@ struct Showcase25BoardView: View {
     @State var showDeleteAlert = false
     @State var gridIndexToDelete: Int?
 
+    // 출품 확인 Popup
+    @State var showSubmitPopup = false
+    @State var showSubmitCompleteAlert = false
+
     // Heartbeat Timer
     @State private var heartbeatTimer: Timer?
 
@@ -35,30 +39,35 @@ struct Showcase25BoardView: View {
     let sheetHeightRatio: CGFloat = 0.43
 
     // 그리드 설정
-    private let gridColumns = 12
-    private let gridRows = 12
+    let gridColumns = 10
+    let gridRows = 14
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
 
     // 줌 설정
-    private let minZoom: CGFloat = 0.7
+    private let minZoom: CGFloat = 0.6
     private let maxZoom: CGFloat = 3.0
-    private let initialZoom: CGFloat = 0.7
+    private let initialZoom: CGFloat = 0.6
 
     // 그리드 전체 크기 계산 (최소 줌 기준)
-    private var cellWidth: CGFloat {
+    var cellWidth: CGFloat {
         screenWidth / 6
     }
 
-    private var cellHeight: CGFloat {
+    var cellHeight: CGFloat {
         cellWidth / cellAspectRatio
     }
 
-    private var gridWidth: CGFloat {
+    var gridWidth: CGFloat {
         cellWidth * CGFloat(gridColumns)
     }
 
-    private var gridHeight: CGFloat {
+    var gridHeight: CGFloat {
         cellHeight * CGFloat(gridRows)
+    }
+
+    // MARK: - 블러 상태
+    private var shouldApplyBlur: Bool {
+        showSubmitCompleteAlert
     }
 
     var body: some View {
@@ -80,8 +89,30 @@ struct Showcase25BoardView: View {
                     gridContent
                 }
                 .ignoresSafeArea()
-
+                .blur(radius: shouldApplyBlur ? 10 : 0)
+                .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
+                
+                // 상단 그라데이션 블러 오버레이
+                VStack {
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.8),
+                            Color.white.opacity(0.6),
+                            Color.white.opacity(0.3),
+                            Color.clear
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 100)
+                    .ignoresSafeArea(edges: .top)
+                    Spacer()
+                }
+                .allowsHitTesting(false)
+                
                 customNavigationBar
+                    .blur(radius: shouldApplyBlur ? 15 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
             }
 
             // Dim 오버레이 (키링 시트가 열릴 때)
@@ -95,16 +126,67 @@ struct Showcase25BoardView: View {
                 // 키링 선택 시트
                 keyringSelectionSheet
             }
+
+            // 출품/회수 확인 팝업
+            if showSubmitPopup || showDeleteAlert || showSubmitCompleteAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        if showSubmitPopup {
+                            showSubmitPopup = false
+                        } else if showDeleteAlert {
+                            showDeleteAlert = false
+                            gridIndexToDelete = nil
+                        }
+                    }
+                    .zIndex(99)
+
+                if showSubmitPopup {
+                    ShowcaseConfirmPopup(
+                        title: "페스티벌에 키링을 출품할까요?",
+                        message: "출품한 키링은 모두에게 공개되고\n종료 전까지 보관함에서 비활성화돼요.",
+                        onCancel: {
+                            showSubmitPopup = false
+                        },
+                        onConfirm: {
+                            handleSubmitConfirm()
+                        }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+
+                if showDeleteAlert {
+                    ShowcaseConfirmPopup(
+                        title: "키링을 회수할까요?",
+                        message: "회수한 키링은 다시 보관함에서\n사용할 수 있어요.",
+                        onCancel: {
+                            showDeleteAlert = false
+                            gridIndexToDelete = nil
+                        },
+                        onConfirm: {
+                            handleDeleteConfirm()
+                        }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(100)
+                }
+
+                if showSubmitCompleteAlert {
+                    SubmitCompleteAlert(isPresented: $showSubmitCompleteAlert)
+                        .zIndex(101)
+                }
+            }
         }
+        .animation(.easeInOut(duration: 0.2), value: showSubmitPopup)
+        .animation(.easeInOut(duration: 0.2), value: showDeleteAlert)
+        .animation(.easeInOut(duration: 0.2), value: showSubmitCompleteAlert)
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
-        .modifier(DeleteKeyringAlertModifier(
-            showDeleteAlert: $showDeleteAlert,
-            gridIndexToDelete: $gridIndexToDelete,
-            viewModel: viewModel
-        ))
         .onAppear {
             viewModel.startListening()
             Task {
@@ -171,23 +253,40 @@ struct Showcase25BoardView: View {
                 festivalRouter.pop()
             }
         } center: {
-            Text("SHOWCASE 2025")
-                .typography(.notosans17M)
+            HStack {
+                Image(.showcase25Title)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .offset(x: 20)
+            }
+
         } trailing: {
-            Spacer()
-                .frame(width: 44)
+            Color.clear
+                .frame(width: 44) // leading과 같은 너비로 맞춤
         }
     }
+    
+    // MARK: - GridContent
 
-    // MARK: - Grid Content
+    var gridContent: some View {
+        ZStack {
+            // 배경 이미지 (그리드와 함께 움직임)
+//            Image(.showcaseBackground)
+//                .resizable()
+//                .scaledToFill()
+//                .frame(width: gridWidth, height: gridHeight)
+//                .clipped()
+//                .opacity(0.5)
 
-    private var gridContent: some View {
-        VStack(spacing: 0) {
-            ForEach(0..<gridRows, id: \.self) { row in
-                HStack(spacing: 0) {
-                    ForEach(0..<gridColumns, id: \.self) { col in
-                        let index = row * gridColumns + col
-                        gridCell(index: index)
+            // 그리드
+            VStack(spacing: 0) {
+                ForEach(0..<gridRows, id: \.self) { row in
+                    HStack(spacing: 0) {
+                        ForEach(0..<gridColumns, id: \.self) { col in
+                            let index = row * gridColumns + col
+                            gridCell(index: index)
+                        }
                     }
                 }
             }
@@ -195,121 +294,4 @@ struct Showcase25BoardView: View {
         .frame(width: gridWidth, height: gridHeight)
     }
 
-    // MARK: - Grid Cell
-
-    private func gridCell(index: Int) -> some View {
-        let keyring = viewModel.keyring(at: index)
-        let isMyKeyring = viewModel.isMyKeyring(at: index)
-        let isBeingEditedByOthers = viewModel.isBeingEditedByOthers(at: index)
-
-        return ZStack {
-            // 셀 배경
-            Rectangle()
-                .fill(Color.white100)
-                .border(Color.gray50, width: 0.5)
-
-            if let keyring = keyring, !keyring.bodyImageURL.isEmpty {
-                // 키링 이미지가 있는 경우
-                keyringImageView(keyring: keyring, index: index)
-            } else if isBeingEditedByOthers, let editingKeyring = keyring {
-                // 다른 사람이 수정 중인 경우
-                let maskedName = viewModel.maskedNickname(editingKeyring.editingUserNickname)
-                VStack(spacing: 4) {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                    Text("[\(maskedName)]님이\n수정중")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.gray300)
-                        .multilineTextAlignment(.center)
-                }
-            } else {
-                // 키링이 없는 경우 + 버튼
-                Button {
-                    viewModel.selectedGridIndex = index
-                    Task {
-                        await viewModel.updateIsEditing(at: index, isEditing: true)
-                    }
-                    withAnimation(.easeInOut) {
-                        viewModel.showKeyringSheet = true
-                    }
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white100)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(Color.gray50)
-                        )
-                }
-                .opacity(viewModel.showButtons ? 1 : 0)
-                .disabled(!viewModel.showButtons)
-                .animation(.easeInOut(duration: 0.2), value: viewModel.showButtons)
-            }
-        }
-        .frame(width: cellWidth, height: cellHeight)
-        .overlay(alignment: .topTrailing) {
-            // 내 키링 표시 (우측 상단)
-            if isMyKeyring {
-                Circle()
-                    .fill(Color.main500.opacity(0.8))
-                    .frame(width: 8, height: 8)
-                    .padding(6)
-            }
-        }
-    }
-
-    // MARK: - Keyring Image View
-
-    @ViewBuilder
-    private func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
-        let isMyKeyring = viewModel.isMyKeyring(at: index)
-
-        let imageView = LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
-            if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            } else if state.error != nil {
-                Image(systemName: "photo")
-                    .foregroundStyle(.gray300)
-            } else {
-                ProgressView()
-            }
-        }
-        .padding(8)
-
-        // 내 키링인 경우에만 컨텍스트 메뉴 표시
-        if isMyKeyring {
-            imageView
-                .onTapGesture {
-                    //testFirestoreKeyringExists(keyringId: keyring.keyringId)
-                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
-                }
-                .contextMenu {
-                    Button {
-                        viewModel.selectedGridIndex = index
-                        withAnimation(.easeInOut) {
-                            viewModel.showKeyringSheet = true
-                        }
-                    } label: {
-                        Label("수정", systemImage: "pencil")
-                    }
-
-                    Button(role: .destructive) {
-                        gridIndexToDelete = index
-                        showDeleteAlert = true
-                    } label: {
-                        Label("회수", systemImage: "arrow.uturn.backward")
-                    }
-                }
-        } else {
-            // 남의 키링인 경우 탭 제스처만
-            imageView
-                .onTapGesture {
-                    //testFirestoreKeyringExists(keyringId: keyring.keyringId)
-                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
-                }
-        }
-    }
 }

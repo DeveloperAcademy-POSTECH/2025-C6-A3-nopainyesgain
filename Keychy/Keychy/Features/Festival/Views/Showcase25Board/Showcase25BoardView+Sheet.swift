@@ -7,33 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Delete Keyring Alert Modifier
-
-struct DeleteKeyringAlertModifier: ViewModifier {
-    @Binding var showDeleteAlert: Bool
-    @Binding var gridIndexToDelete: Int?
-    var viewModel: Showcase25BoardViewModel
-
-    func body(content: Content) -> some View {
-        content
-            .alert("키링 회수", isPresented: $showDeleteAlert) {
-                Button("취소", role: .cancel) {
-                    gridIndexToDelete = nil
-                }
-                Button("확인", role: .destructive) {
-                    if let index = gridIndexToDelete {
-                        Task {
-                            await viewModel.deleteShowcaseKeyring(at: index)
-                        }
-                    }
-                    gridIndexToDelete = nil
-                }
-            } message: {
-                Text("정말 키링을 회수하시겠습니까?")
-            }
-    }
-}
-
 // MARK: - Sheet 관련 Extension
 
 extension Showcase25BoardView {
@@ -137,22 +110,64 @@ extension Showcase25BoardView {
     }
 
     func confirmSelection() {
-        guard let keyring = viewModel.selectedKeyringForUpload else { return }
+        guard viewModel.selectedKeyringForUpload != nil else { return }
         let gridIndex = viewModel.selectedGridIndex
 
-        // 시트 먼저 닫기
-        viewModel.selectedKeyringForUpload = nil
+        // 시트 닫고 출품 확인 팝업 표시
         withAnimation(.easeInOut) {
             viewModel.showKeyringSheet = false
         }
+        showSubmitPopup = true
 
-        // 업로드는 백그라운드에서 진행
+        // isEditing 상태 해제
+        Task {
+            await viewModel.updateIsEditing(at: gridIndex, isEditing: false)
+        }
+    }
+
+    func handleSubmitConfirm() {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            showSubmitPopup = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            executeSubmit()
+        }
+    }
+
+    func executeSubmit() {
+        guard let keyring = viewModel.selectedKeyringForUpload else { return }
+        let gridIndex = viewModel.selectedGridIndex
+
+        // 선택 초기화
+        viewModel.selectedKeyringForUpload = nil
+
+        // 업로드 후 완료 알림 표시
         Task {
             await viewModel.addOrUpdateShowcaseKeyring(
                 at: gridIndex,
                 with: keyring
             )
+
+            await MainActor.run {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showSubmitCompleteAlert = true
+                }
+            }
         }
+    }
+
+    func handleDeleteConfirm() {
+        guard let index = gridIndexToDelete else { return }
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            showDeleteAlert = false
+        }
+
+        Task {
+            await viewModel.deleteShowcaseKeyring(at: index)
+        }
+        gridIndexToDelete = nil
     }
 
     // MARK: - Sheet Keyring Cell

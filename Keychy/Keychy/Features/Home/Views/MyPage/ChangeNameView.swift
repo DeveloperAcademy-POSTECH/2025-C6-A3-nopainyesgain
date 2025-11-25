@@ -141,6 +141,7 @@ struct ChangeNameView: View {
             customNavigationBar
                 .ignoresSafeArea()
         }
+        .swipeBackGesture(enabled: true)
     }
     
     // 닉네임 유효성 검사

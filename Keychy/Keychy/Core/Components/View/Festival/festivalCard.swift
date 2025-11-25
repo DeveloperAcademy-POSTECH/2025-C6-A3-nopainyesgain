@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import CoreLocation
 
 struct festivalCard: View {
     let title: String
@@ -15,8 +16,10 @@ struct festivalCard: View {
     let endDate: String
     let distance: String
     let imageName: String
-    let isLocked: Bool
+    let targetLocation: TargetLocation // 위치 기반 체크용
     let enterAction: () -> Void
+    
+    @State private var locationManager = LocationManager()
     
     var remainingDays: Int {
         let formatter = DateFormatter()
@@ -30,47 +33,55 @@ struct festivalCard: View {
         return components.day ?? 0
     }
     
+    // 위치 기반으로 버튼 활성화 여부 결정
+    var isLocked: Bool {
+        !locationManager.isLocationActive(targetLocation)
+    }
+    
+    // 현재 거리 계산
+    var currentDistance: Double? {
+        guard let currentLocation = locationManager.currentLocation else { return nil }
+        return currentLocation.distance(from: targetLocation.coordinate)
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // 이미지
-            ZStack {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: screenWidth * 0.75 - 20)
-                    .clipped()
-                    .overlay(alignment: .top) {
-                        HStack {
-                            Text("\(startDate)~\(endDate)")
-                                .typography(.suit14SB)
-                                .foregroundStyle(.white100)
-                                .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 34)
-                                        .fill(.black50)
-                                )
-                            Spacer()
-                            Text("남은 기간 \(remainingDays)일")
-                                .typography(.suit13SB)
-                                .foregroundStyle(.main500)
-                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 34)
-                                        .fill(.main50)
-                                )
-                        }
-                        .padding(10)
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: screenWidth * 0.75 - 20)
+                .clipped()
+                .overlay(alignment: .topLeading) {
+                    VStack(alignment: .leading) {
+                        Text("\(startDate)~\(endDate)")
+                            .typography(.suit14SB)
+                            .foregroundStyle(.white100)
+                            .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                            .background(
+                                RoundedRectangle(cornerRadius: 34)
+                                    .fill(.black50)
+                            )
+                        Text("남은 기간 \(remainingDays)일")
+                            .typography(.suit13SB)
+                            .foregroundStyle(.main500)
+                            .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                            .background(
+                                RoundedRectangle(cornerRadius: 34)
+                                    .fill(.main50)
+                            )
                     }
-//                LazyImage(url: URL(string: imageName)) { state in
-//                    if let image = state.image {
-//                        image
-//                            .resizable()
-//                            .scaledToFit()
-//                    } else {
-//                        LoadingAlert(type: .short, message: "")
-//                    }
-//                }
-            }
+                    .padding(10)
+                }
+            //                LazyImage(url: URL(string: imageName)) { state in
+            //                    if let image = state.image {
+            //                        image
+            //                            .resizable()
+            //                            .scaledToFit()
+            //                    } else {
+            //                        LoadingAlert(type: .short, message: "")
+            //                    }
+            //                }
             
             Spacer().frame(height: 15)
             
@@ -92,15 +103,23 @@ struct festivalCard: View {
             
             Spacer().frame(height: 28)
             
-            Text("내 위치로부터 1.5km")
-                .typography(.suit14SB)
-                .foregroundStyle(.main500)
-                .opacity(isLocked ? 1 : 0)
+            // 거리 정보 표시 (동적으로 업데이트)
+            if let distance = currentDistance {
+                Text("내 위치로부터 \(formatDistance(distance))")
+                    .typography(.suit14SB)
+                    .foregroundStyle(isLocked ? .main500 : .green)
+            } else {
+                Text("위치 정보를 가져오는 중...")
+                    .typography(.suit14SB)
+                    .foregroundStyle(.gray300)
+            }
             
             Spacer().frame(height: 3)
             
             Button {
-                // 임시로 버튼 비활성화 해둡니다...^^
+                if !isLocked {
+                    enterAction()
+                }
             } label: {
                 Text("입장하기")
                     .typography(isLocked ? .suit17M : .suit17B)
@@ -113,6 +132,7 @@ struct festivalCard: View {
                     )
             }
             .disabled(isLocked)
+            .animation(.easeInOut, value: isLocked)
         }
         .padding(10)
         .background(
@@ -121,5 +141,19 @@ struct festivalCard: View {
                 .frame(width: screenWidth * 0.75)
                 .shadow(color: .black15, radius: 4)
         )
+        .onAppear {
+            // 위치 권한 요청 및 타겟 위치 설정
+            locationManager.requestPermission()
+            locationManager.targetLocations = [targetLocation]
+        }
+    }
+    
+    // 거리를 읽기 쉬운 형식으로 변환
+    private func formatDistance(_ distance: Double) -> String {
+        if distance < 1000 {
+            return "\(Int(distance))m"
+        } else {
+            return String(format: "%.1fkm", distance / 1000)
+        }
     }
 }

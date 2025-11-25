@@ -68,6 +68,7 @@ struct AlarmView: View {
             checkNotificationPermission()
             fetchNotifications()
         }
+        .swipeBackGesture(enabled: true)
     }
 }
 

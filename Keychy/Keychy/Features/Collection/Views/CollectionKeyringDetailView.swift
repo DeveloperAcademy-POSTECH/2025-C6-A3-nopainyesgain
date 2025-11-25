@@ -99,6 +99,7 @@ struct CollectionKeyringDetailView: View {
             }
             
         }
+        .swipeBackGesture(enabled: false)
         .ignoresSafeArea()
         //.adaptiveBottomPadding()
         .navigationBarBackButtonHidden(true)

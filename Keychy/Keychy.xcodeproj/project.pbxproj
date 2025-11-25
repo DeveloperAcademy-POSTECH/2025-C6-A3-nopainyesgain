@@ -266,6 +266,7 @@
 		AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */; };
 		AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
+		AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
@@ -335,6 +336,9 @@
 		C6C360272ED3D037009642F4 /* WorkshopTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */; };
 		C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */; };
 		C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */; };
+		C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */; };
+		C6C361E42ED4AF48009642F4 /* Showcase25BoardView+Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */; };
+		C6C361E62ED4B289009642F4 /* ShowcaseConfirmPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C361E52ED4B289009642F4 /* ShowcaseConfirmPopup.swift */; };
 		C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C402852EB26C66006B58DF /* NeonSignPreview.swift */; };
 		C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028C2EB2741D006B58DF /* Sound.swift */; };
 		C6C4028F2EB27458006B58DF /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C4028E2EB27458006B58DF /* Particle.swift */; };
@@ -521,7 +525,7 @@
 		4C8426582ED356FD0050B6FE /* SpeechBubbleVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Effect.swift"; sourceTree = "<group>"; };
 		4C84265A2ED3572F0050B6FE /* SpeechBubbleVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Frame.swift"; sourceTree = "<group>"; };
 		4C84265C2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechBubbleVM+Customizing.swift"; sourceTree = "<group>"; };
-		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
+		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426612ED372650050B6FE /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C8426652ED377650050B6FE /* SpeechBubbleFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFramePreviewView.swift; sourceTree = "<group>"; };
@@ -631,6 +635,7 @@
 		AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerChangePopup.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerGridItem.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
+		AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
@@ -699,6 +704,9 @@
 		C6C360262ED3D037009642F4 /* WorkshopTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplatesView.swift; sourceTree = "<group>"; };
 		C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Sheet.swift"; sourceTree = "<group>"; };
 		C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Detail.swift"; sourceTree = "<group>"; };
+		C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCompleteAlert.swift; sourceTree = "<group>"; };
+		C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Showcase25BoardView+Grid.swift"; sourceTree = "<group>"; };
+		C6C361E52ED4B289009642F4 /* ShowcaseConfirmPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowcaseConfirmPopup.swift; sourceTree = "<group>"; };
 		C6C402852EB26C66006B58DF /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		C6C4028C2EB2741D006B58DF /* Sound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		C6C4028E2EB27458006B58DF /* Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
@@ -1779,6 +1787,7 @@
 			isa = PBXGroup;
 			children = (
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
+				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
 				38283A842EBF794500BE45A5 /* DeepLinkManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
 			);
@@ -1840,8 +1849,11 @@
 			isa = PBXGroup;
 			children = (
 				C6C35F3B2ED2A7BD009642F4 /* Showcase25BoardView.swift */,
-				C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */,
+				C6C361E32ED4AF48009642F4 /* Showcase25BoardView+Grid.swift */,
 				C6C361412ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift */,
+				C6C361432ED44EF1009642F4 /* Showcase25BoardView+Detail.swift */,
+				C6C361E52ED4B289009642F4 /* ShowcaseConfirmPopup.swift */,
+				C6C361E12ED4AC49009642F4 /* SubmitCompleteAlert.swift */,
 			);
 			path = Showcase25Board;
 			sourceTree = "<group>";
@@ -2151,7 +2163,9 @@
 				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
 				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
+				C6C361E62ED4B289009642F4 /* ShowcaseConfirmPopup.swift in Sources */,
 				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
+				AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
@@ -2250,6 +2264,7 @@
 				3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Search.swift in Sources */,
 				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
 				4CEC62852EAE08DF0099ECEE /* CollectionViewModel.swift in Sources */,
+				C6C361E42ED4AF48009642F4 /* Showcase25BoardView+Grid.swift in Sources */,
 				4C65306E2EBCF157000F8154 /* TermsView.swift in Sources */,
 				AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */,
 				4CA9C6AA2ECA50C000CA546B /* KeyringInfoInputView+FirebaseSave.swift in Sources */,
@@ -2297,6 +2312,7 @@
 				C6C402862EB26C66006B58DF /* NeonSignPreview.swift in Sources */,
 				C6C35F412ED2B6E6009642F4 /* ShowcaseFestivalKeyring.swift in Sources */,
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
+				C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */,
 				C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,
 				4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */,
@@ -2469,6 +2485,7 @@
 				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "키링에 사용할 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "특정 장소에서만 활성화되는 기능을 제공하기 위해 현재 위치 정보가 필요해요";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "키링의 탭 사운드로 사용할 음성을 녹음하기 위해 마이크 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "키링 이미지를 사진첩에 저장하기 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "키링에 사용할 사진을 선택하기 위해 사진첩 접근 권한이 필요합니다.";
@@ -2517,6 +2534,7 @@
 				INFOPLIST_FILE = Keychy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_NSCameraUsageDescription = "키링에 사용할 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "특정 장소에서만 활성화되는 기능을 제공하기 위해 현재 위치 정보가 필요해요";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "키링의 탭 사운드로 사용할 음성을 녹음하기 위해 마이크 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "키링 이미지를 사진첩에 저장하기 위해 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "키링에 사용할 사진을 선택하기 위해 사진첩 접근 권한이 필요합니다.";
