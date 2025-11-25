@@ -21,7 +21,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         minZoom: CGFloat = 1.0,
         maxZoom: CGFloat = 3.0,
         initialZoom: CGFloat = 1.0,
-        contentPadding: UIEdgeInsets = UIEdgeInsets(top: 120, left: 50, bottom: 120, right: 50),
+        contentPadding: UIEdgeInsets = UIEdgeInsets(top: 120, left: 50, bottom: 60, right: 50),
         onZoomChange: ((CGFloat) -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {

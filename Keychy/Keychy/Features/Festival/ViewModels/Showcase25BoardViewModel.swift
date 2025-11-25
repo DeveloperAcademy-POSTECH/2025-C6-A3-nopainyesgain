@@ -39,7 +39,7 @@ class Showcase25BoardViewModel {
 
     // MARK: - 줌 관련
     var currentZoom: CGFloat = 1.5
-    private let buttonVisibleZoom: CGFloat = 1.5 // 이 값을 낮출수록 더 멀리서도 보임
+    private let buttonVisibleZoom: CGFloat = 1.2 // 이 값을 낮출수록 더 멀리서도 보임
 
     var showButtons: Bool {
         currentZoom >= buttonVisibleZoom
@@ -270,17 +270,16 @@ class Showcase25BoardViewModel {
         }
     }
 
-    /// 닉네임 마스킹 (첫글자, 마지막글자 제외 나머지 *)
+    /// 닉네임 마스킹 (첫글자만 보이고 나머지 *)
     func maskedNickname(_ nickname: String) -> String {
-        guard nickname.count > 2 else { return nickname }
+        guard nickname.count > 1 else { return nickname }
 
         let characters = Array(nickname)
         let first = characters.first!
-        let last = characters.last!
-        let middleCount = characters.count - 2
-        let masked = String(repeating: "*", count: middleCount)
+        let restCount = characters.count - 1
+        let masked = String(repeating: "*", count: restCount)
 
-        return "\(first)\(masked)\(last)"
+        return "\(first)\(masked)"
     }
 
     /// 해당 셀이 다른 사람에 의해 수정 중인지 확인 (시간 만료 체크 포함)
