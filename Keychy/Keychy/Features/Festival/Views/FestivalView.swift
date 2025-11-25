@@ -26,8 +26,8 @@ struct FestivalView: View {
             imageName: "homigot",
             targetLocation: TargetLocation(
                 name: "C5",
-                latitude: 36.014342,
-                longitude: 129.325749,
+                latitude: 36.076790,
+                longitude: 129.569939,
                 radius: 100 // 100m 반경
             )
         ),
@@ -40,8 +40,8 @@ struct FestivalView: View {
             imageName: "showcase25",
             targetLocation: TargetLocation(
                 name: "C5",
-                latitude: 36.007918,
-                longitude: 129.334490,
+                latitude: 36.014342,
+                longitude: 129.325749,
                 radius: 100
             )
         ),
