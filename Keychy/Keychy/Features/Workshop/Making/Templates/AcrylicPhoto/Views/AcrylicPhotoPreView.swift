@@ -80,8 +80,8 @@ struct AcrylicPhotoPreView: View {
                 viewModel.selectedImage = newImage
 
                 // Crop 화면으로 전환
+                // resetToCenter()는 Crop 화면의 onAppear에서 호출됨 (fixedImage 설정 후)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    viewModel.resetToCenter()
                     router.push(.acrylicPhotoCrop)
                 }
             }
