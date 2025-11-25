@@ -91,7 +91,25 @@ struct Showcase25BoardView: View {
                 .ignoresSafeArea()
                 .blur(radius: shouldApplyBlur ? 10 : 0)
                 .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
-
+                
+                // 상단 그라데이션 블러 오버레이
+                VStack {
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.8),
+                            Color.white.opacity(0.6),
+                            Color.white.opacity(0.3),
+                            Color.clear
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 100)
+                    .ignoresSafeArea(edges: .top)
+                    Spacer()
+                }
+                .allowsHitTesting(false)
+                
                 customNavigationBar
                     .blur(radius: shouldApplyBlur ? 15 : 0)
                     .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
