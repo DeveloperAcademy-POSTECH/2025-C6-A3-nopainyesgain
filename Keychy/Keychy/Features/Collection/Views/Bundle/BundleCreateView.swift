@@ -159,6 +159,12 @@ extension BundleCreateView {
                 }
             } else {
                 NextToolbarButton {
+                    if let bg = selectedBackground {
+                        viewModel.selectedBackground = bg.background
+                    }
+                    if let cb = selectedCarabiner {
+                        viewModel.selectedCarabiner = cb.carabiner
+                    }
                     router.push(.bundleAddKeyringView)
                 }
             }
@@ -439,8 +445,7 @@ extension BundleCreateView {
         } label: {
             HStack(spacing: 5) {
                 if isPurchasing {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
+                    LoadingAlert(type: .short, message: nil)
                         .scaleEffect(0.8)
                 } else {
                     Image(.purchaseSheet)
@@ -506,7 +511,16 @@ extension BundleCreateView {
         
         if allSuccess {
             // 모든 구매 성공 - alert만 표시
+            await refreshData()
+            
             await MainActor.run {
+                if let bg = selectedBackground {
+                    viewModel.selectedBackground = bg.background
+                }
+                if let cb = selectedCarabiner {
+                    viewModel.selectedCarabiner = cb.carabiner
+                }
+                
                 isPurchasing = false
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
@@ -515,9 +529,6 @@ extension BundleCreateView {
                     purchasesSuccessScale = 1.0
                 }
             }
-            
-            // 뷰모델 데이터 새로고침
-            await refreshData()
             
             // 2.5초 후 알럿 자동 닫기 (Alert duration 2초 + 0.5초 여유)
             try? await Task.sleep(nanoseconds: 2_500_000_000)
