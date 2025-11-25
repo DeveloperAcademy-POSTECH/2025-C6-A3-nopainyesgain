@@ -286,39 +286,132 @@ class UserManager {
                 return
             }
 
-            // 2. Keyring 컬렉션에서 각 키링 문서 삭제
-            let group = DispatchGroup()
             var deletionError: Error?
 
+            // 2. isPublished가 true인 키링의 ShowcaseFestivalKeyring 초기화 (먼저 실행)
+            let showcaseGroup = DispatchGroup()
+
+            print("🔍 회원탈퇴: 키링 개수 \(keyringIds.count)개 확인 중...")
+
             for keyringId in keyringIds {
-                group.enter()
-                self.db.collection("Keyring").document(keyringId).delete { error in
+                showcaseGroup.enter()
+                self.db.collection("Keyring").document(keyringId).getDocument { keyringSnapshot, error in
                     if let error = error {
+                        print("⚠️ 키링 문서 조회 실패: \(error.localizedDescription)")
+                        showcaseGroup.leave()
+                        return
+                    }
+
+                    guard let keyringData = keyringSnapshot?.data() else {
+                        print("⚠️ 키링 데이터 없음: \(keyringId)")
+                        showcaseGroup.leave()
+                        return
+                    }
+
+                    let isPublished = keyringData["isPublished"] as? Bool ?? false
+                    print("🔍 키링 \(keyringId) - isPublished: \(isPublished)")
+
+                    guard isPublished else {
+                        // isPublished가 false이거나 없으면 스킵
+                        showcaseGroup.leave()
+                        return
+                    }
+
+                    print("🎯 isPublished true인 키링 발견: \(keyringId)")
+
+                    // isPublished가 true인 경우 ShowcaseFestivalKeyring 초기화
+                    self.db.collection("ShowcaseFestivalKeyring")
+                        .whereField("keyringId", isEqualTo: keyringId)
+                        .getDocuments { querySnapshot, error in
+                            if let error = error {
+                                print("⚠️ ShowcaseFestivalKeyring 조회 실패: \(error.localizedDescription)")
+                                showcaseGroup.leave()
+                                return
+                            }
+
+                            guard let document = querySnapshot?.documents.first else {
+                                // 해당 키링이 쇼케이스에 없으면 스킵
+                                print("⚠️ ShowcaseFestivalKeyring에 해당 키링 없음: \(keyringId)")
+                                showcaseGroup.leave()
+                                return
+                            }
+
+                            let showcaseDocId = document.documentID
+                            let gridIndex = document.data()["gridIndex"] as? Int ?? 0
+
+                            print("📍 ShowcaseFestivalKeyring 찾음: \(showcaseDocId), gridIndex: \(gridIndex)")
+
+                            // 쇼케이스 필드 초기화
+                            let resetData: [String: Any] = [
+                                "name": "",
+                                "authorId": "",
+                                "bodyImageURL": "",
+                                "gridIndex": gridIndex,
+                                "isEditing": false,
+                                "editingUserNickname": "",
+                                "keyringId": "none",
+                                "memo": "",
+                                "particleId": "none",
+                                "soundId": "none",
+                                "votes": 0
+                            ]
+
+                            self.db.collection("ShowcaseFestivalKeyring")
+                                .document(showcaseDocId)
+                                .setData(resetData) { error in
+                                    if let error = error {
+                                        print("❌ ShowcaseFestivalKeyring 초기화 실패: \(error.localizedDescription)")
+                                        deletionError = error
+                                    } else {
+                                        print("✅ ShowcaseFestivalKeyring 초기화 완료: \(showcaseDocId)")
+                                    }
+                                    showcaseGroup.leave()
+                                }
+                        }
+                }
+            }
+
+            // 3. ShowcaseFestivalKeyring 초기화 완료 후 키링 삭제 및 Storage 삭제
+            showcaseGroup.notify(queue: .main) {
+                print("🎉 ShowcaseFestivalKeyring 초기화 단계 완료")
+
+                let deletionGroup = DispatchGroup()
+
+                // Keyring 컬렉션에서 각 키링 문서 삭제
+                for keyringId in keyringIds {
+                    deletionGroup.enter()
+                    self.db.collection("Keyring").document(keyringId).delete { error in
+                        if let error = error {
+                            print("❌ 키링 삭제 실패: \(keyringId) - \(error.localizedDescription)")
+                            deletionError = error
+                        } else {
+                            print("✅ 키링 삭제 완료: \(keyringId)")
+                        }
+                        deletionGroup.leave()
+                    }
+                }
+
+                // Storage에서 사용자 폴더 삭제
+                deletionGroup.enter()
+                Task {
+                    do {
+                        try await StorageManager.shared.deleteUserFolder(uid: uid)
+                        print("✅ Storage 삭제 완료: \(uid)")
+                    } catch {
+                        print("❌ Storage 삭제 실패: \(error.localizedDescription)")
                         deletionError = error
                     }
-                    group.leave()
+                    deletionGroup.leave()
                 }
-            }
 
-            // 3. Storage에서 사용자 폴더 삭제 (BodyImages, CustomSounds)
-            group.enter()
-            Task {
-                do {
-                    try await StorageManager.shared.deleteUserFolder(uid: uid)
-                    print("Storage 삭제 완료: \(uid)")
-                } catch {
-                    print("Storage 삭제 실패: \(error.localizedDescription)")
-                    deletionError = error
-                }
-                group.leave()
-            }
-
-            // 4. 모든 삭제 완료 후 User 문서 삭제
-            group.notify(queue: .main) {
-                if let error = deletionError {
-                    completion(.failure(error))
-                } else {
-                    self.deleteUserDocument(uid: uid, completion: completion)
+                // 4. 모든 삭제 완료 후 User 문서 삭제
+                deletionGroup.notify(queue: .main) {
+                    print("🎉 모든 데이터 삭제 완료")
+                    if let error = deletionError {
+                        completion(.failure(error))
+                    } else {
+                        self.deleteUserDocument(uid: uid, completion: completion)
+                    }
                 }
             }
         }

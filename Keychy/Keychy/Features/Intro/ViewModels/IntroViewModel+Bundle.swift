@@ -21,7 +21,7 @@ extension IntroViewModel {
         let db = Firestore.firestore()
 
         // Welcome 카라비너 정보 가져오기
-        db.collection("Carabiner").document("Welcome").getDocument { snapshot, error in
+        db.collection("Carabiner").document("WelcomeKeychy").getDocument { snapshot, error in
             if let error = error {
                 print("카라비너 로드 에러: \(error.localizedDescription)")
                 completion(false, nil)
