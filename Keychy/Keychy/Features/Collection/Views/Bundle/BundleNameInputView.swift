@@ -172,7 +172,7 @@ extension BundleNameInputView {
         } center: {
             EmptyView()
         } trailing: {
-            NextToolbarButton {
+            TextToolbarButton(title: "완료") {
                 handleNextButtonTap()
             }
             .disabled(
