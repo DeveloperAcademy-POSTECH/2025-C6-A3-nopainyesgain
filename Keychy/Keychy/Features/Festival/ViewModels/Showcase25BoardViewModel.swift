@@ -514,8 +514,15 @@ class Showcase25BoardViewModel {
                         "copyVoucher": FieldValue.increment(Int64(-1)),
                         "keyrings": FieldValue.arrayUnion([newKeyringId])
                     ])
+                
+                // 5. 원본 키링의 copyCount +1 증가
+                try await db.collection("Keyring")
+                    .document(originalDocumentId)
+                    .updateData([
+                        "copyCount": FieldValue.increment(Int64(1))
+                    ])
 
-                // 5. 로컬 상태 업데이트
+                // 6. 로컬 상태 업데이트
                 await MainActor.run {
                     self.userKeyrings.append(copiedKeyring)
                     self.copyVoucher = max(0, self.copyVoucher - 1)
