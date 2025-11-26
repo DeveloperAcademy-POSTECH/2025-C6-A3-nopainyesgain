@@ -133,7 +133,7 @@ struct Showcase25BoardView: View {
             // 위치 반경 밖에서 +버튼 누르면 뜨는 토스트 팝업
             if viewModel.showOutOfLocationRangeToast {
                 VStack {
-                    Text("현재 위치에서는 키링을 추가할 수 없어요")
+                    Text("페스티벌이 열린 위치에서 출품이 가능합니다.")
                         .typography(.suit17M)
                         .foregroundStyle(.white100)
                         .padding(5)
