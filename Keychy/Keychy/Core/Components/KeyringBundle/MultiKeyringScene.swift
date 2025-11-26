@@ -317,7 +317,17 @@ class MultiKeyringScene: SKScene {
         loadedKeyringsCount = 0
 
         guard totalKeyringsToLoad > 0 else {
+            // 키링이 없어도 물리 활성화 후 준비 완료 콜백 호출
             enablePhysics()
+            
+            // 짧은 지연 후 준비 완료 콜백 (UI 안정화)
+            let workItem = DispatchWorkItem { [weak self] in
+                guard let self = self, !self.isCleaningUp else { return }
+                self.onAllKeyringsReady?()
+            }
+            readyCallbackWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem)
+            
             return
         }
 

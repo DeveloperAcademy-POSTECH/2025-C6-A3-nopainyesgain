@@ -17,6 +17,7 @@ struct festivalCard: View {
     let distance: String
     let imageName: String
     let targetLocation: TargetLocation // 위치 기반 체크용
+    let isAvailable: Bool  // 입장 가능 여부 (목데이터 구분용)
     let enterAction: () -> Void
     
     @State private var locationManager = LocationManager()
@@ -33,9 +34,9 @@ struct festivalCard: View {
         return components.day ?? 0
     }
     
-    // 위치 기반으로 버튼 활성화 여부 결정
-    var isLocked: Bool {
-        !locationManager.isLocationActive(targetLocation)
+    // 위치 기반으로 키링 추가 가능 여부 결정 (버튼 활성화와는 별개)
+    var isInRange: Bool {
+        locationManager.isLocationActive(targetLocation)
     }
     
     // 현재 거리 계산
@@ -103,11 +104,11 @@ struct festivalCard: View {
             
             Spacer().frame(height: 28)
             
-            // 거리 정보 표시 (동적으로 업데이트)
+            // 거리 정보 표시 (동적으로 업데이트) - 참고용으로만 표시
             if let distance = currentDistance {
                 Text("내 위치로부터 \(formatDistance(distance))")
                     .typography(.suit14SB)
-                    .foregroundStyle(isLocked ? .main500 : .green)
+                    .foregroundStyle(isInRange ? .green : .gray300)
             } else {
                 Text("위치 정보를 가져오는 중...")
                     .typography(.suit14SB)
@@ -116,23 +117,24 @@ struct festivalCard: View {
             
             Spacer().frame(height: 3)
             
+            // 입장 버튼 - isAvailable에 따라 활성화/비활성화
             Button {
-                if !isLocked {
+                if isAvailable {
                     enterAction()
                 }
             } label: {
-                Text("입장하기")
-                    .typography(isLocked ? .suit17M : .suit17B)
-                    .foregroundStyle(isLocked ? .gray300 : .white100)
+                Text(isAvailable ? "입장하기" : "Coming Soon")
+                    .typography(isAvailable ? .suit17B : .suit17M)
+                    .foregroundStyle(isAvailable ? .white100 : .gray300)
                     .padding(.vertical, 13.5)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 34)
-                            .fill(isLocked ? .gray50 : .main500)
+                            .fill(isAvailable ? .main500 : .gray50)
                     )
             }
-            .disabled(isLocked)
-            .animation(.easeInOut, value: isLocked)
+            .disabled(!isAvailable)
+            .animation(.easeInOut, value: isAvailable)
         }
         .padding(10)
         .background(

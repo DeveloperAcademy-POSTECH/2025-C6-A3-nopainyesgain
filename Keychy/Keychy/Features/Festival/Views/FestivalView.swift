@@ -31,7 +31,8 @@ struct FestivalView: View {
                 latitude: 36.076790,
                 longitude: 129.569939,
                 radius: 100 // 100m 반경
-            )
+            ),
+            isAvailable: false  // 목데이터 - 입장 불가
         ),
         (
             title: "SHOWCASE25",
@@ -45,7 +46,8 @@ struct FestivalView: View {
                 latitude: 36.014342,
                 longitude: 129.325749,
                 radius: 100
-            )
+            ),
+            isAvailable: true  // 실제 페스티벌 - 입장 가능
         ),
         (
             title: "영일대 전망대",
@@ -59,7 +61,8 @@ struct FestivalView: View {
                 latitude: 36.061582,
                 longitude: 129.383020,
                 radius: 100
-            )
+            ),
+            isAvailable: false  // 목데이터 - 입장 불가
         ),
     ]
 
@@ -93,7 +96,12 @@ struct FestivalView: View {
                     distance: festivals[index].distance,
                     imageName: festivals[index].imageName,
                     targetLocation: festivals[index].targetLocation,
-                    enterAction: { router.push(.showcase25BoardView) }
+                    isAvailable: festivals[index].isAvailable,  // 입장 가능 여부 전달
+                    enterAction: { 
+                        // 전역적으로 targetLocation 저장
+                        FestivalLocationManager.shared.setTargetLocation(festivals[index].targetLocation)
+                        router.push(.showcase25BoardView)
+                    }
                 )
             }
         }
