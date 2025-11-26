@@ -104,9 +104,14 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     // 특정 위치가 활성화 범위 안에 있는지 확인
     func isLocationActive(_ target: TargetLocation) -> Bool {
+        // DEBUG: 위치 체크 무시 - 배포 전 반드시 제거할 것!
+        #if DEBUG
+        return true
+        #else
         guard let currentLocation = currentLocation else { return false }
         let distance = currentLocation.distance(from: target.coordinate)
         return distance <= target.radius
+        #endif
     }
     
     // MARK: - CLLocationManagerDelegate
