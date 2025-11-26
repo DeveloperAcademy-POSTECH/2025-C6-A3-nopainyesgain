@@ -47,7 +47,7 @@ struct Showcase25BoardView: View {
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
     
     // 줌 설정
-    private let minZoom: CGFloat = 0.4
+    private let minZoom: CGFloat = 0.6
     private let maxZoom: CGFloat = 3.0
     private let initialZoom: CGFloat = 0.6
     
