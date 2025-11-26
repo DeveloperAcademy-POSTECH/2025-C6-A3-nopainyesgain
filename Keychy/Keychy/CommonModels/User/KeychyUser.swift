@@ -89,7 +89,7 @@ struct KeychyUser: Identifiable {
         self.createdAt = Date()
         self.maxKeyringCount = 100
         self.coin = 0
-        self.copyVoucher = 0
+        self.copyVoucher = 5
         self.templates = []
         self.rings = []
         self.chains = []

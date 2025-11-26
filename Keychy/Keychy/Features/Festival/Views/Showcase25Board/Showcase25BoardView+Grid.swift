@@ -93,30 +93,18 @@ extension Showcase25BoardView {
     func keyringImageView(keyring: ShowcaseFestivalKeyring, index: Int) -> some View {
         let isMyKeyring = viewModel.isMyKeyring(at: index)
 
-        // 캐시된 이미지 확인 (keyringId = Firestore documentId)
-        let cachedImageData = KeyringImageCache.shared.load(for: keyring.keyringId)
-
-        let imageView = Group {
-            if let imageData = cachedImageData, let uiImage = UIImage(data: imageData) {
-                // 캐시된 이미지 사용
-                Image(uiImage: uiImage)
+        // 쇼케이스용 bodyImageURL 직접 사용 (업로드 시 캐시 이미지가 이미 반영됨)
+        let imageView = LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
+            if let image = state.image {
+                image
                     .resizable()
                     .scaledToFit()
+            } else if state.error != nil {
+                Image(systemName: "photo")
+                    .foregroundStyle(.gray300)
             } else {
-                // 캐시에 없으면 URL로 로드
-                LazyImage(url: URL(string: keyring.bodyImageURL)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if state.error != nil {
-                        Image(systemName: "photo")
-                            .foregroundStyle(.gray300)
-                    } else {
-                        LoadingAlert(type: .short, message: nil)
-                            .scaleEffect(0.5)
-                    }
-                }
+                LoadingAlert(type: .short, message: nil)
+                    .scaleEffect(0.5)
             }
         }
 
