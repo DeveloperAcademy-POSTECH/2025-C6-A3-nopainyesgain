@@ -21,13 +21,10 @@ extension Showcase25BoardView {
                 HStack {
                     // 만들기 버튼
                     Button {
-                        // Festival에서 Workshop으로 가는 경우 플래그 설정
                         dismissSheet()
                         viewModel.isFromFestivalTab = true
 
-                        // Workshop에서 완료 후 다시 돌아올 콜백 설정
                         viewModel.onKeyringCompleteFromFestival = { workshopRouter in
-                            // Workshop router를 reset하고 showcase25BoardView로 이동
                             workshopRouter.reset()
                             workshopRouter.push(.showcase25BoardView)
                         }
@@ -37,8 +34,19 @@ extension Showcase25BoardView {
                         Text("+ 만들기")
                             .typography(.suit16M)
                             .foregroundStyle(.main500)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
                     }
                     .buttonStyle(.plain)
+                    .background(
+                        Capsule()
+                            .fill(.main500.opacity(0.1))
+                    )
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(.main500.opacity(0.3), lineWidth: 1)
+                    )
+                    .glassEffect(.regular, in: .capsule)
 
                     Spacer()
 
@@ -48,9 +56,16 @@ extension Showcase25BoardView {
                     } label: {
                         Text("완료")
                             .typography(.suit15M)
-                            .foregroundStyle(viewModel.selectedKeyringForUpload != nil ? .main500 : .gray300)
+                            .foregroundStyle(viewModel.selectedKeyringForUpload != nil ? .white : .gray400)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
                     }
                     .buttonStyle(.plain)
+                    .background(
+                        Capsule()
+                            .fill(viewModel.selectedKeyringForUpload != nil ? .main500 : .gray50)
+                    )
+                    .glassEffect(.regular, in: .capsule)
                     .disabled(viewModel.selectedKeyringForUpload == nil)
                 }
                 
