@@ -181,3 +181,23 @@ struct TargetLocation: Identifiable {
         self.radius = radius
     }
 }
+
+// MARK: - 페스티벌 위치 관리 싱글톤
+/// 페스티벌 위치 정보를 전역적으로 관리하는 싱글톤
+@Observable
+class FestivalLocationManager {
+    static let shared = FestivalLocationManager()
+    
+    private init() {}
+    
+    // 현재 선택된 페스티벌의 위치
+    var currentTargetLocation: TargetLocation?
+    
+    func setTargetLocation(_ location: TargetLocation) {
+        currentTargetLocation = location
+    }
+    
+    func clearTargetLocation() {
+        currentTargetLocation = nil
+    }
+}
