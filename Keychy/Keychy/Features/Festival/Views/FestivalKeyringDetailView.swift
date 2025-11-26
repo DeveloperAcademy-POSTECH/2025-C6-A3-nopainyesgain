@@ -97,6 +97,14 @@ struct FestivalKeyringDetailView: View {
             viewModel.fetchUserName(userId: keyring.authorId) { name in
                 self.authorName = name
             }
+
+            // 이펙트 리소스 동기화 (백그라운드)
+            Task.detached(priority: .background) {
+                await EffectSyncManager.shared.syncKeyringEffects(
+                    soundId: keyring.soundId,
+                    particleId: keyring.particleId
+                )
+            }
         }
         .onDisappear {
             //handleViewDisappear()
