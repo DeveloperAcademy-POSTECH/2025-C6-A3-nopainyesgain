@@ -599,4 +599,73 @@ extension UserManager {
         notificationListener?.remove()
         notificationListener = nil
     }
+    
+    // MARK: - 사용자 데이터 새로고침
+    
+    /// Firestore에서 최신 사용자 데이터를 가져와 currentUser를 업데이트
+    /// - Parameter uid: 사용자 UID
+    @MainActor
+    func fetchUserData(uid: String) async {
+        do {
+            let snapshot = try await db.collection("User").document(uid).getDocument()
+            
+            guard snapshot.exists,
+                  let data = snapshot.data(),
+                  let user = KeychyUser(id: uid, data: data) else {
+                print("사용자 데이터를 찾을 수 없습니다: \(uid)")
+                return
+            }
+            
+            // 로컬 상태 업데이트
+            self.currentUser = user
+            self.saveToCache()
+            
+            print("UserManager 데이터 새로고침 완료")
+            print("   - copyVoucher: \(user.copyVoucher)")
+            print("   - coin: \(user.coin)")
+            print("   - keyrings count: \(user.keyrings.count)")
+            
+        } catch {
+            print("사용자 데이터 로드 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    /// 사용자 데이터 새로고침 (콜백 버전)
+    /// - Parameters:
+    ///   - uid: 사용자 UID
+    ///   - completion: 완료 콜백 (성공 여부)
+    func fetchUserData(uid: String, completion: @escaping (Bool) -> Void) {
+        db.collection("User").document(uid).getDocument { [weak self] snapshot, error in
+            guard let self = self else {
+                completion(false)
+                return
+            }
+            
+            if let error = error {
+                print("사용자 데이터 로드 실패: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let snapshot = snapshot,
+                  snapshot.exists,
+                  let data = snapshot.data(),
+                  let user = KeychyUser(id: uid, data: data) else {
+                print("사용자 데이터를 찾을 수 없습니다: \(uid)")
+                completion(false)
+                return
+            }
+            
+            // 로컬 상태 업데이트
+            self.currentUser = user
+            self.saveToCache()
+            
+            print("UserManager 데이터 새로고침 완료")
+            print("   - copyVoucher: \(user.copyVoucher)")
+            print("   - coin: \(user.coin)")
+            print("   - keyrings count: \(user.keyrings.count)")
+            
+            completion(true)
+        }
+    }
 }
