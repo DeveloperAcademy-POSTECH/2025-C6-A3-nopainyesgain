@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import UIKit
 
 @Observable
 class Showcase25BoardViewModel {
@@ -192,21 +193,24 @@ class Showcase25BoardViewModel {
 
         isLoading = true
 
-        let data: [String: Any] = [
-            "name": userKeyring.name,
-            "authorId": userKeyring.authorId,
-            "bodyImageURL": userKeyring.bodyImage,
-            "gridIndex": gridIndex,
-            "isEditing": false,
-            "editingUserNickname": "",
-            "keyringId": keyringDocId,
-            "memo": userKeyring.memo ?? "",
-            "particleId": userKeyring.particleId,
-            "soundId": userKeyring.soundId,
-            "votes": 0
-        ]
-
         do {
+            // 캐시된 이미지를 Firebase Storage에 업로드
+            let showcaseImageURL = try await uploadShowcaseImage(for: keyringDocId, fallbackURL: userKeyring.bodyImage)
+
+            let data: [String: Any] = [
+                "name": userKeyring.name,
+                "authorId": userKeyring.authorId,
+                "bodyImageURL": showcaseImageURL,
+                "gridIndex": gridIndex,
+                "isEditing": false,
+                "editingUserNickname": "",
+                "keyringId": keyringDocId,
+                "memo": userKeyring.memo ?? "",
+                "particleId": userKeyring.particleId,
+                "soundId": userKeyring.soundId,
+                "votes": 0
+            ]
+
             // 기존 문서 확인
             if let existingKeyring = keyring(at: gridIndex) {
                 // 업데이트
@@ -227,6 +231,25 @@ class Showcase25BoardViewModel {
         }
 
         isLoading = false
+    }
+
+    /// 쇼케이스용 이미지 업로드 (캐시 우선, 없으면 URL에서 다운로드)
+    private func uploadShowcaseImage(for keyringId: String, fallbackURL: String) async throws -> String {
+        let uid = UserManager.shared.userUID
+        let imageFileName = "\(UUID().uuidString).png"
+        let imagePath = "Showcase/BodyImages/\(uid)/\(imageFileName)"
+
+        // 1. 캐시에서 이미지 가져오기
+        if let cachedData = KeyringImageCache.shared.load(for: keyringId),
+           let cachedImage = UIImage(data: cachedData) {
+            print("✅ 캐시된 이미지 사용: \(keyringId)")
+            return try await StorageManager.shared.uploadImage(cachedImage, path: imagePath)
+        }
+
+        // 2. 캐시에 없으면 URL에서 다운로드
+        print("⚠️ 캐시에 이미지 없음, URL에서 다운로드: \(keyringId)")
+        let downloadedImage = try await StorageManager.shared.getImage(path: fallbackURL)
+        return try await StorageManager.shared.uploadImage(downloadedImage, path: imagePath)
     }
 
     // MARK: - isEditing 상태 업데이트
