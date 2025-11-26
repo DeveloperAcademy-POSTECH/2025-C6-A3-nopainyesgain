@@ -102,6 +102,7 @@ extension FestivalKeyringDetailView {
             
             guard let currentUser = userManager.currentUser else { return }
             
+            print("\(currentUser.copyVoucher)")
             // 1. 복사권 개수 확인
             if currentUser.copyVoucher <= 0 {
                 print("복사권 부족")
@@ -129,13 +130,32 @@ extension FestivalKeyringDetailView {
                 self.showCopyingAlert = true
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                self.showCopyingAlert = false
-                
-                // 복사 완료 알림 표시
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        self.showCopyCompleteAlert = true
+            // 3. 복사권 있고, 인벤토리 여유 있음 -> 복사 진행
+            // 페스티벌 뷰모델의 copyKeyring 메서드 사용
+            self.viewModel.copyKeyring(uid: uid, keyring: self.keyring) { success, newKeyringId in
+                DispatchQueue.main.async {
+                    self.showCopyingAlert = false
+                    
+                    if success {
+                        print("키링 복사 성공 - 새 키링 ID: \(newKeyringId ?? "nil")")
+                        
+                        // UserManager 데이터 새로고침
+                        Task {
+                            await self.userManager.fetchUserData(uid: uid)
+                            print("UserManager 새로고침 완료")
+                            print("현재 복사권: \(self.userManager.currentUser?.copyVoucher ?? 0)")
+                        }
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                self.showCopyCompleteAlert = true
+                            }
+                        }
+                    } else {
+                        print("키링 복사 실패")
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            self.showCopyLackAlert = true
+                        }
                     }
                 }
             }

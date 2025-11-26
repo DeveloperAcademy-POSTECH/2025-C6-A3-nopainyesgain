@@ -445,4 +445,106 @@ class Showcase25BoardViewModel {
             print("투표 실패: \(error.localizedDescription)")
         }
     }
+    
+    // MARK: - 키링 복사
+    func copyKeyring(
+        uid: String,
+        keyring: Keyring,
+        completion: @escaping (Bool, String?) -> Void
+    ) {
+        guard let originalDocumentId = keyring.documentId else {
+            print("키링 documentId가 없습니다")
+            completion(false, nil)
+            return
+        }
+
+        let baseOriginalId = keyring.originalId ?? originalDocumentId
+
+        Task {
+            do {
+                // 1. Storage 리소스 재업로드
+                let (newBodyImageURL, newSoundId) = try await reuploadKeyringResources(
+                    bodyImage: keyring.bodyImage,
+                    soundId: keyring.soundId,
+                    toUserId: uid
+                )
+
+                // 2. 새 키링 생성
+                let copiedKeyring = Keyring(
+                    name: keyring.name,
+                    bodyImage: newBodyImageURL,
+                    soundId: newSoundId,
+                    particleId: keyring.particleId,
+                    memo: keyring.memo,
+                    tags: [],
+                    createdAt: Date(),
+                    authorId: uid,
+                    selectedTemplate: keyring.selectedTemplate,
+                    selectedRing: keyring.selectedRing,
+                    selectedChain: keyring.selectedChain,
+                    originalId: baseOriginalId,
+                    chainLength: keyring.chainLength,
+                    isNew: true
+                )
+
+                // 3. Firestore에 저장
+                let docRef = db.collection("Keyring").document()
+                try await docRef.setData(copiedKeyring.toDictionary())
+
+                let newKeyringId = docRef.documentID
+
+                // 4. User 업데이트 (복사권 차감, keyrings 배열에 추가)
+                try await db.collection("User")
+                    .document(uid)
+                    .updateData([
+                        "copyVoucher": FieldValue.increment(Int64(-1)),
+                        "keyrings": FieldValue.arrayUnion([newKeyringId])
+                    ])
+
+                // 5. 로컬 상태 업데이트
+                await MainActor.run {
+                    self.userKeyrings.append(copiedKeyring)
+                    self.copyVoucher = max(0, self.copyVoucher - 1)
+                }
+
+                print("키링 복사 완료: \(keyring.name) -> ID: \(newKeyringId)")
+                completion(true, newKeyringId)
+
+            } catch {
+                print("키링 복사 실패: \(error.localizedDescription)")
+                completion(false, nil)
+            }
+        }
+    }
+
+    // MARK: - Storage 리소스 재업로드
+    
+    /// Storage에서 이미지와 사운드를 다운로드 받아 새 사용자 경로에 재업로드
+    private func reuploadKeyringResources(
+        bodyImage: String,
+        soundId: String,
+        toUserId uid: String
+    ) async throws -> (bodyImageURL: String, soundId: String) {
+        
+        // 1. bodyImage 재업로드
+        let originalImage = try await StorageManager.shared.getImage(path: bodyImage)
+        let imageFileName = "\(UUID().uuidString).png"
+        let imagePath = "Keyrings/BodyImages/\(uid)/\(imageFileName)"
+        let newBodyImageURL = try await StorageManager.shared.uploadImage(originalImage, path: imagePath)
+
+        // 2. soundId 재업로드 (커스텀인 경우만)
+        let newSoundId: String
+        if soundId.hasPrefix("https://") {
+            // 커스텀 사운드인 경우
+            let soundData = try await StorageManager.shared.getData(path: soundId)
+            let soundFileName = "\(UUID().uuidString).m4a"
+            let soundPath = "Keyrings/CustomSounds/\(uid)/\(soundFileName)"
+            newSoundId = try await StorageManager.shared.uploadAudio(soundData, path: soundPath)
+        } else {
+            // 기본 사운드인 경우 ID만 복사
+            newSoundId = soundId
+        }
+
+        return (newBodyImageURL, newSoundId)
+    }
 }
