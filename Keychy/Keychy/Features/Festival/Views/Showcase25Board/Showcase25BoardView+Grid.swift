@@ -130,7 +130,6 @@ extension Showcase25BoardView {
                             fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
                         }
                     }
-                    
                 }
                 .contextMenu {
                     Button {
@@ -153,7 +152,12 @@ extension Showcase25BoardView {
             // 남의 키링인 경우 탭 제스처만
             imageView
                 .onTapGesture {
-                    fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
+                    // 타겟 로케이션 근처일 때에만 디테일뷰로 이동 가능
+                    if let targetLocation = FestivalLocationManager.shared.currentTargetLocation {
+                        if locationManager.isLocationActive(targetLocation) {
+                            fetchAndNavigateToKeyringDetail(keyringId: keyring.keyringId)
+                        }
+                    }
                 }
         }
     }
