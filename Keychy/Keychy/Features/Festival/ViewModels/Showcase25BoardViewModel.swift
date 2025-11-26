@@ -31,6 +31,7 @@ class Showcase25BoardViewModel {
     var showKeyringSheet = false
     var selectedGridIndex: Int = 0
     var selectedKeyringForUpload: Keyring?  // 시트에서 선택한 키링 (완료 전)
+    var showOutOfLocationRangeToast = false
     
     // MARK: - 페스티벌에서 사용하는 유저 정보 관련
     var maxKeyringCount: Int = 100 // 기본값
@@ -391,6 +392,19 @@ class Showcase25BoardViewModel {
         }
 
         isLoading = false
+    }
+    
+    // MARK: - Toast 관리
+    
+    /// 위치 범위 밖 토스트 표시 (2초 후 자동으로 사라짐)
+    @MainActor
+    func showLocationToast() {
+        showOutOfLocationRangeToast = true
+        
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            showOutOfLocationRangeToast = false
+        }
     }
     
     // MARK: - 유저 닉네임 가져오기

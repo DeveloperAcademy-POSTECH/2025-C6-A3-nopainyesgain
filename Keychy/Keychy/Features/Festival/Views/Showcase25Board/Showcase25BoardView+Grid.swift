@@ -41,12 +41,18 @@ extension Showcase25BoardView {
             } else {
                 // 키링이 없는 경우 + 버튼
                 Button {
-                    viewModel.selectedGridIndex = index
-                    Task {
-                        await viewModel.updateIsEditing(at: index, isEditing: true)
-                    }
-                    withAnimation(.easeInOut) {
-                        viewModel.showKeyringSheet = true
+                    // 위치 체크: 범위 안에 있을 때만 시트 열기
+                    if let targetLocation = FestivalLocationManager.shared.currentTargetLocation,
+                       locationManager.isLocationActive(targetLocation) {
+                        viewModel.selectedGridIndex = index
+                        Task {
+                            await viewModel.updateIsEditing(at: index, isEditing: true)
+                        }
+                        withAnimation(.easeInOut) {
+                            viewModel.showKeyringSheet = true
+                        }
+                    } else {
+                        viewModel.showLocationToast()
                     }
                 } label: {
                     Image(.plus)
