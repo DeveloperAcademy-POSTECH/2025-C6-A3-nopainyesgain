@@ -15,7 +15,7 @@ struct FestivalView: View {
     @State private var viewModel = FestivalViewModel()
     @State private var locationManager = LocationManager()
 
-    @State private var currentPage = 0
+    @State private var currentPage = 1
 
     // ⭐️ 집에서 테스트 하실 땐 여기에 나와있는 longtitude, latitude를 수정하시면 됩니다!(경도, 위도)
     let festivals = [
