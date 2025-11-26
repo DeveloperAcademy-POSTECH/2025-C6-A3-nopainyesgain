@@ -19,7 +19,7 @@ struct ItemDetailImage: View {
     var body: some View {
         ZStack {
             // GIF 애니메이션을 지원하는 이미지 뷰
-            NukeAnimatedImageView(url: URL(string: itemURL), isLoading: $isLoading)
+            NukeAnimatedImageView(url: URL(string: itemURL), isLoading: $isLoading, maxSize: CGSize(width: 1200, height: 1200))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // 로딩 중앙 배치
@@ -39,6 +39,7 @@ struct ItemDetailImage: View {
 struct NukeAnimatedImageView: UIViewRepresentable {
     let url: URL?
     @Binding var isLoading: Bool
+    let maxSize: CGSize
 
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
@@ -82,7 +83,7 @@ struct NukeAnimatedImageView: UIViewRepresentable {
                 case .success(let response):
                     // GIF인 경우 애니메이션 처리 (다운샘플링 포함)
                     if let data = response.container.data,
-                       let animatedImage = UIImage.animatedImage(with: data) {
+                       let animatedImage = UIImage.animatedImage(with: data, maxSize: maxSize) {
                         uiView.image = animatedImage
                     } else {
                         uiView.image = response.image
@@ -145,8 +146,14 @@ extension UIImage {
 /// LazyImage를 GIF 지원 버전으로 대체할 수 있는 간단한 뷰
 struct SimpleAnimatedImage: View {
     let url: String
+    let maxSize: CGSize
     @State private var isLoading = true
     @State private var loadFailed = false
+
+    init(url: String, maxSize: CGSize = CGSize(width: 1200, height: 1200)) {
+        self.url = url
+        self.maxSize = maxSize
+    }
 
     var body: some View {
         ZStack {
@@ -157,7 +164,7 @@ struct SimpleAnimatedImage: View {
                             .foregroundStyle(.gray300)
                     }
             } else {
-                NukeAnimatedImageView(url: URL(string: url), isLoading: $isLoading)
+                NukeAnimatedImageView(url: URL(string: url), isLoading: $isLoading, maxSize: maxSize)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ImageLoadFailed"))) { _ in
                         loadFailed = true
