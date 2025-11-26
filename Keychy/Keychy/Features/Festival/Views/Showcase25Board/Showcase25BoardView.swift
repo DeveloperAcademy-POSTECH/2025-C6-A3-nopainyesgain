@@ -10,26 +10,29 @@ import NukeUI
 import FirebaseFirestore
 
 struct Showcase25BoardView: View {
-
+    
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
     @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     @Environment(\.scenePhase) private var scenePhase
-
+    
+    // 위치 기반 체크용
+    @State var locationManager = LocationManager()
+    
     var onNavigateToWorkshop: ((WorkshopRoute) -> Void)? = nil
     var isFromFestivalTab: Bool = false
-
+    
     // 회수 확인 Alert
     @State var showDeleteAlert = false
     @State var gridIndexToDelete: Int?
-
+    
     // 출품 확인 Popup
     @State var showSubmitPopup = false
     @State var showSubmitCompleteAlert = false
-
+    
     // Heartbeat Timer
     @State private var heartbeatTimer: Timer?
-
+    
     // 키링 선택 시트 그리드 컬럼
     let sheetGridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -37,46 +40,46 @@ struct Showcase25BoardView: View {
         GridItem(.flexible(), spacing: 10)
     ]
     let sheetHeightRatio: CGFloat = 0.43
-
+    
     // 그리드 설정
     let gridColumns = 10
     let gridRows = 14
     private let cellAspectRatio: CGFloat = 2.0 / 3.0  // 가로:세로 = 2:3
-
+    
     // 줌 설정
     private let minZoom: CGFloat = 0.6
     private let maxZoom: CGFloat = 3.0
     private let initialZoom: CGFloat = 0.6
-
+    
     // 그리드 전체 크기 계산 (최소 줌 기준)
     var cellWidth: CGFloat {
         screenWidth / 6
     }
-
+    
     var cellHeight: CGFloat {
         cellWidth / cellAspectRatio
     }
-
+    
     var gridWidth: CGFloat {
         cellWidth * CGFloat(gridColumns)
     }
-
+    
     var gridHeight: CGFloat {
         cellHeight * CGFloat(gridRows)
     }
-
+    
     // MARK: - 블러 상태
     private var shouldApplyBlur: Bool {
         showSubmitCompleteAlert
     }
-
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             // 메인 컨텐츠
             ZStack(alignment: .top) {
                 Color.white100
                     .ignoresSafeArea()
-
+                
                 // 확대/축소 가능한 그리드
                 ZoomableScrollView(
                     minZoom: minZoom,
@@ -114,7 +117,7 @@ struct Showcase25BoardView: View {
                     .blur(radius: shouldApplyBlur ? 15 : 0)
                     .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
             }
-
+            
             // Dim 오버레이 (키링 시트가 열릴 때)
             if viewModel.showKeyringSheet {
                 Color.black20
@@ -122,11 +125,27 @@ struct Showcase25BoardView: View {
                     .onTapGesture {
                         dismissSheet()
                     }
-
+                
                 // 키링 선택 시트
                 keyringSelectionSheet
             }
-
+            
+            // 위치 반경 밖에서 +버튼 누르면 뜨는 토스트 팝업
+            if viewModel.showOutOfLocationRangeToast {
+                VStack {
+                    Text("현재 위치에서는 키링을 추가할 수 없어요")
+                        .typography(.suit17M)
+                        .foregroundStyle(.white100)
+                        .padding(5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 34)
+                                .fill(.black50)
+                        )
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.showOutOfLocationRangeToast)
+                        .padding(.bottom, 20)
+                }
+            }
+            
             // 출품/회수 확인 팝업
             if showSubmitPopup || showDeleteAlert || showSubmitCompleteAlert {
                 Color.black20
@@ -140,7 +159,7 @@ struct Showcase25BoardView: View {
                         }
                     }
                     .zIndex(99)
-
+                
                 if showSubmitPopup {
                     ShowcaseConfirmPopup(
                         title: "페스티벌에 키링을 출품할까요?",
@@ -156,7 +175,7 @@ struct Showcase25BoardView: View {
                     .transition(.scale.combined(with: .opacity))
                     .zIndex(100)
                 }
-
+                
                 if showDeleteAlert {
                     ShowcaseConfirmPopup(
                         title: "키링을 회수할까요?",
@@ -173,7 +192,7 @@ struct Showcase25BoardView: View {
                     .transition(.scale.combined(with: .opacity))
                     .zIndex(100)
                 }
-
+                
                 if showSubmitCompleteAlert {
                     SubmitCompleteAlert(isPresented: $showSubmitCompleteAlert)
                         .zIndex(101)
@@ -188,6 +207,12 @@ struct Showcase25BoardView: View {
         .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
+            // 위치 추적 시작 - FestivalLocationManager에서 가져오기
+            if let targetLocation = FestivalLocationManager.shared.currentTargetLocation {
+                locationManager.requestPermission()
+                locationManager.targetLocations = [targetLocation]
+            }
+            
             viewModel.startListening()
             Task {
                 await viewModel.fetchUserKeyrings()
@@ -201,6 +226,8 @@ struct Showcase25BoardView: View {
         .onDisappear {
             viewModel.stopListening()
             stopHeartbeat()
+            // 위치 추적 중지
+            locationManager.stopTracking()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .background {
@@ -228,9 +255,9 @@ struct Showcase25BoardView: View {
             }
         }
     }
-
+    
     // MARK: - Heartbeat Timer
-
+    
     private func startHeartbeat() {
         stopHeartbeat()
         heartbeatTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
@@ -239,14 +266,14 @@ struct Showcase25BoardView: View {
             }
         }
     }
-
+    
     private func stopHeartbeat() {
         heartbeatTimer?.invalidate()
         heartbeatTimer = nil
     }
-
+    
     // MARK: - Custom Navigation Bar
-
+    
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
@@ -260,7 +287,7 @@ struct Showcase25BoardView: View {
                     .frame(width: 200)
                     .offset(x: 20)
             }
-
+            
         } trailing: {
             Color.clear
                 .frame(width: 44) // leading과 같은 너비로 맞춤
@@ -268,17 +295,17 @@ struct Showcase25BoardView: View {
     }
     
     // MARK: - GridContent
-
+    
     var gridContent: some View {
         ZStack {
             // 배경 이미지 (그리드와 함께 움직임)
-//            Image(.showcaseBackground)
-//                .resizable()
-//                .scaledToFill()
-//                .frame(width: gridWidth, height: gridHeight)
-//                .clipped()
-//                .opacity(0.5)
-
+            //            Image(.showcaseBackground)
+            //                .resizable()
+            //                .scaledToFill()
+            //                .frame(width: gridWidth, height: gridHeight)
+            //                .clipped()
+            //                .opacity(0.5)
+            
             // 그리드
             VStack(spacing: 0) {
                 ForEach(0..<gridRows, id: \.self) { row in
@@ -293,5 +320,5 @@ struct Showcase25BoardView: View {
         }
         .frame(width: gridWidth, height: gridHeight)
     }
-
+    
 }
