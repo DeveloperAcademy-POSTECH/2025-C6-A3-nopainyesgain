@@ -87,7 +87,7 @@ extension AcrylicPhotoEditedView {
     /// 네비 타이틀
     private var naivgationTitle: some ToolbarContent {
         ToolbarItem(placement: .principal) {
-            NavigationTitle(title: "누끼를 제거합니다!")
+            NavigationTitle(title: "배경을 제거합니다!")
                 .typography(.notosans17B)
         }
     }

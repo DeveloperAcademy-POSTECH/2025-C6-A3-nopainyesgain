@@ -13,6 +13,8 @@ struct PixelDrawView: View {
     
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
+    
+    @State private var showResetAlert = false
 
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
@@ -72,6 +74,15 @@ struct PixelDrawView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
+            Button("취소", role: .cancel) { }
+            Button("확인", role: .destructive) {
+                viewModel.resetAll()
+                router.reset()
+            }
+        } message: {
+            Text("지금까지 작업한 내용이 모두 초기화됩니다.")
+        }
     }
 }
 
@@ -296,8 +307,7 @@ extension PixelDrawView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                viewModel.resetPixelData()
-                router.pop()
+                showResetAlert = true
             }
         } center: {
             Text("그림을 그려주세요")

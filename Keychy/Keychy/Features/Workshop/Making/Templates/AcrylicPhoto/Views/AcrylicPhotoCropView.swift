@@ -104,7 +104,7 @@ extension AcrylicPhotoCropView {
                 router.pop()
             }
         } center: {
-            Text("누끼 영역을 지정해주세요")
+            Text("크롭 영역을 지정해주세요")
                 .typography(.notosans17B)
         } trailing: {
             NextToolbarButton {
