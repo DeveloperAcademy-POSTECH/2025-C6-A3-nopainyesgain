@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: - MakingKeyring Section
 
 extension WorkshopView {
-    
+
     var makingKeyringSection: some View {
         VStack(spacing: 0) {
             // 제목
@@ -21,13 +21,15 @@ extension WorkshopView {
                 .padding(.horizontal, 20)
                 .padding(.top, 13)
                 .padding(.bottom, 10)
-            
-            // 키링 이미지들 (가로 배치)
+
+            // 키링 이미지들 (가로 배치) - GIF 애니메이션
             HStack(spacing: 0) {
-                Image(.makingKeyring)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 120)
+                SimpleAnimatedImage(
+                    url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Workshop%2FmakingKeyringTemp.gif?alt=media&token=144b0aff-5335-4e8c-b447-f9357118e513",
+                    maxSize: CGSize(width: 600, height: 600)
+                )
+                .frame(height: 120)
+                .scaledToFit()
             }
             .padding(.bottom, 10)
             
