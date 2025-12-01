@@ -302,8 +302,8 @@ class WorkshopViewModel {
         return result
     }
     
-    /// 필터링된 템플릿 목록
     var filteredTemplates: [KeyringTemplate] {
+        _ = refreshTrigger
         var result = templates
 
         if let filter = selectedTemplateFilter {
@@ -321,11 +321,13 @@ class WorkshopViewModel {
     }
 
     var filteredBackgrounds: [Background] {
+        _ = refreshTrigger
         let filtered = filterItems(backgrounds, commonFilter: selectedCommonFilter)
         return sortItems(filtered)
     }
 
     var filteredCarabiners: [Carabiner] {
+        _ = refreshTrigger
         let filtered = filterItems(carabiners, commonFilter: selectedCommonFilter)
         return sortItems(filtered)
     }
