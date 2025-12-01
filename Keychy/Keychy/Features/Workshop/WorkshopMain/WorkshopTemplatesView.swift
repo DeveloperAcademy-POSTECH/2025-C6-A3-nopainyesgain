@@ -192,7 +192,7 @@ struct WorkshopTemplatesView: View {
         case "최신순":
             sortedItems.sort { $0.createdAt > $1.createdAt }
         case "인기순":
-            sortedItems.sort { $0.downloadCount > $1.downloadCount }
+            sortedItems.sort { $0.useCount > $1.useCount }
         default:
             break
         }
