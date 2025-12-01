@@ -90,6 +90,7 @@ class WorkshopViewModel {
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
     var mainContentOffset: CGFloat = 439
+    private var refreshTrigger: Bool = false
 
     // 동적으로 추출된 태그 목록
     var availableBackgroundTags: [String] = []
@@ -256,8 +257,8 @@ class WorkshopViewModel {
     }
 
     func applySorting() {
-        // DataManager의 데이터를 정렬 (참조이므로 실제로 업데이트됨)
-        // Note: 정렬은 필터링된 데이터에서 처리됨
+        // 뷰를 강제로 업데이트하기 위해 상태 변경
+        refreshTrigger.toggle()
     }
     
     // MARK: - Filtering Methods (통합)
@@ -276,7 +277,7 @@ class WorkshopViewModel {
     /// 이펙트 필터링 (사운드 + 파티클 통합)
     var filteredEffects: [any WorkshopItem] {
         var result: [any WorkshopItem] = []
-        
+
         switch selectedEffectFilter {
         case .sound:
             result = sounds
@@ -286,7 +287,18 @@ class WorkshopViewModel {
             // 필터가 없으면 사운드와 파티클 모두 표시
             result = (sounds as [any WorkshopItem]) + (particles as [any WorkshopItem])
         }
-        
+
+        // 정렬 적용 (any WorkshopItem이므로 직접 정렬)
+        _ = refreshTrigger // refreshTrigger 의존성 추가
+        switch sortOrder {
+        case "최신순":
+            result.sort { $0.createdAt > $1.createdAt }
+        case "인기순":
+            result.sort { $0.useCount > $1.useCount }
+        default:
+            break
+        }
+
         return result
     }
     
