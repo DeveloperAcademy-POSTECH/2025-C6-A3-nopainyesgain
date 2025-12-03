@@ -122,7 +122,7 @@ struct WorkshopView: View {
             }
             .padding(.top, 60)
             .background(alignment: .top) {
-                Image("WorkshopBack")
+                Image(.workshopBG)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }

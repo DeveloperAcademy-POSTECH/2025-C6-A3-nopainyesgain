@@ -1670,8 +1670,8 @@
 		4CEC62912EAE08F70099ECEE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				4CA9C6D52ECB7AEA00CA546B /* BadWords.json */,
 				4CEC62872EAE08F70099ECEE /* Assets.xcassets */,
+				4CA9C6D52ECB7AEA00CA546B /* BadWords.json */,
 				4CEC628A2EAE08F70099ECEE /* Lotties */,
 				4CEC62902EAE08F70099ECEE /* Fonts */,
 			);
