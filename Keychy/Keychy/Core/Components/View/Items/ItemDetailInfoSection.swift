@@ -80,7 +80,7 @@ extension ItemDetailInfoSection {
     }
 
     private var itemPaidTag: some View {
-        Image("PaidTestIcon")
+        Image(.paidTestIcon)
     }
 
     private var itemName: some View {

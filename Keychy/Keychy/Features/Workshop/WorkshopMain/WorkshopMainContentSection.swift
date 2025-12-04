@@ -107,7 +107,7 @@ extension WorkshopView {
     /// 빈 콘텐츠 뷰
     var emptyContentView: some View {
         VStack(spacing: 12) {
-            Image("EmptyViewIcon")
+            Image(.emptyViewIcon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 90)

@@ -58,19 +58,19 @@ extension IntroAppGuidingView {
             // 이미지
             switch index {
             case 0:
-                Image("homeGuiding")
+                Image(.homeGuiding)
                     .resizable()
                     .scaledToFit()
             case 1:
-                Image("workshopGuiding")
+                Image(.workshopGuiding)
                     .resizable()
                     .scaledToFit()
             case 2:
-                Image("collectionGuiding")
+                Image(.collectionGuiding)
                     .resizable()
                     .scaledToFit()
             default:
-                Image("collectionGuiding")
+                Image(.collectionGuiding)
                     .resizable()
                     .scaledToFit()
             }

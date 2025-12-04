@@ -17,7 +17,7 @@ struct CopyPopup: View {
         VStack {
             VStack(spacing: 20) {
                 // 제목
-                Image("copyVoucher")
+                Image(.copyVoucher)
                     .resizable()
                     .frame(width: 75, height: 45)
                     .padding(.top, 8)
@@ -89,7 +89,7 @@ struct FestivalCopyPopup: View {
         VStack {
             VStack(spacing: 20) {
                 // 제목
-                Image("copyVoucher")
+                Image(.copyVoucher)
                     .resizable()
                     .frame(width: 75, height: 45)
                     .padding(.top, 8)
@@ -156,7 +156,7 @@ struct CopyCompletePopup: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Image("keyringCopy")
+            Image(.keyringCopy)
                 .resizable()
                 .frame(width: 127, height: 102)
                 .padding(.vertical, 8)

@@ -147,7 +147,7 @@ struct NotificationGiftView: View {
     private func keyringImage(keyring: Keyring) -> some View {
         ZStack(alignment: .bottom) {
             ZStack {
-                Image("PackageBG")
+                Image(.packageBG)
                     .resizable()
                     .frame(width: 280, height: 347)
                     .offset(y: -24)
@@ -162,11 +162,11 @@ struct NotificationGiftView: View {
             }
             
             VStack(spacing: 0) {
-                Image("PackageFG_T")
+                Image(.packageFGT)
                     .resizable()
                     .frame(width: 304, height: 113)
                 
-                Image("PackageFG_B")
+                Image(.packageFGB)
                     .resizable()
                     .frame(width: 304, height: 389)
                     .blendMode(.darken)

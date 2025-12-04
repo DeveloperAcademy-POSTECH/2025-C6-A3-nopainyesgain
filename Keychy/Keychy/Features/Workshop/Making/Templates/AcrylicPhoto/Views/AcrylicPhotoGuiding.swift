@@ -24,7 +24,7 @@ struct AcrylicPhotoGuiding: View {
                 Button {
                     dismiss()
                 } label: {
-                    Image("dismiss_gray600")
+                    Image(.dismissGray600)
                 }
                 .padding(.top, 30)
                 .padding(.leading, 20)
@@ -86,7 +86,7 @@ extension AcrylicPhotoGuiding {
                 showCamera = true
             }
         } label: {
-            Image("camera")
+            Image(.camera)
                 .foregroundStyle(.secondary)
                 //.frame(width: 36, height: 36)
         }
@@ -102,7 +102,7 @@ extension AcrylicPhotoGuiding {
             }
         } label: {
             HStack(spacing: 2) {
-                Image("pic")
+                Image(.pic)
                 Text("사진 선택")
                     .typography(.suit17B)
                     .padding(.vertical, 15)
@@ -123,7 +123,7 @@ extension AcrylicPhotoGuiding {
     }
     
     private var guidingImage: some View {
-        Image("acrylicGudingImage")
+        Image(.acrylicGuding)
             .resizable()
             .scaledToFit()
             .frame(minHeight: 272.87)

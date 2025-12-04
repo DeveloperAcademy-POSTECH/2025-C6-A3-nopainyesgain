@@ -23,7 +23,7 @@ struct PhotoSelectSheet: View {
                 Button {
                     dismiss()
                 } label: {
-                    Image("dismiss_gray600")
+                    Image(.dismissGray600)
                 }
                 .padding(.leading, 20)
                 
@@ -89,7 +89,7 @@ extension PhotoSelectSheet {
             dismiss()
         } label: {
             HStack(spacing: 8) {
-                Image("camera22")
+                Image(.camera22)
                     .resizable()
                     .scaledToFit()
                     .frame(width:22)
@@ -107,7 +107,7 @@ extension PhotoSelectSheet {
             dismiss()
         } label: {
             HStack(spacing: 8) {
-                Image("picBlack")
+                Image(.picBlack)
                     .resizable()
                     .scaledToFit()
                     .frame(width:22)

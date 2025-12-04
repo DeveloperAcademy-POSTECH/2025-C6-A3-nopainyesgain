@@ -16,7 +16,7 @@ struct PurchaseFailAlert: View {
     var body: some View {
         VStack(spacing: 10) {
             VStack(spacing: 10) {
-                Image("bangMark")
+                Image(.bangMark)
                     .padding(.vertical, 4)
 
                 Text("코인이 부족해요")

@@ -129,7 +129,7 @@ extension CollectionView {
         VStack {
             Spacer().frame(height: 180)
             
-            Image("EmptyViewIcon")
+            Image(.emptyViewIcon)
                 .resizable()
                 .frame(width: 124, height: 111)
             
@@ -148,7 +148,7 @@ extension CollectionView {
             Spacer()
                 .frame(height: 180)
             
-            Image("EmptyViewIcon")
+            Image(.emptyViewIcon)
                 .resizable()
                 .frame(width: 124, height: 111)
             
@@ -179,7 +179,7 @@ extension CollectionView {
                     showInvenExpandAlert = true
                 }
             }) {
-                Image("InvenPlus")
+                Image(.invenPlus)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 21, height: 21)
@@ -197,7 +197,7 @@ extension CollectionView {
                     .typography(.suit14SB18)
                     .foregroundColor(.gray500)
                 
-                Image("ChevronDown_gray500")
+                Image(.chevronDownGray500)
                     .resizable()
                     .frame(width: 20, height: 20)
             }

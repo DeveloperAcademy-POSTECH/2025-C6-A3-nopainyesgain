@@ -22,7 +22,7 @@ struct ClearSketchGuiding: View {
                 Button {
                     dismiss()
                 } label: {
-                    Image("dismiss_gray600")
+                    Image(.dismissGray600)
                 }
                 .padding(.top, 30)
                 .padding(.leading, 20)
@@ -66,7 +66,7 @@ extension ClearSketchGuiding {
     }
     
     private var guidingImage: some View {
-        Image("clearSketchGuidingImage")
+        Image(.clearSketchGuiding)
             .resizable()
             .scaledToFit()
             .frame(minHeight: 272.87)

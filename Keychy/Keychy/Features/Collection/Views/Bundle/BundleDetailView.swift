@@ -404,7 +404,7 @@ extension BundleDetailView {
     private var changeMainBundleAlert: some View {
         VStack(spacing: 24) {
             VStack(spacing: 10) {
-                Image("bangMark")
+                Image(.bangMark)
                     .padding(.vertical, 4)
                 
                 Text("대표 뭉치를 변경할까요?")

@@ -68,7 +68,7 @@ extension WidgetSettingView {
             Button {
                 router.pop()
             } label: {
-                Image("backIcon")
+                Image(.backIcon)
                     .resizable()
                     .frame(width: 32, height: 32)
             }

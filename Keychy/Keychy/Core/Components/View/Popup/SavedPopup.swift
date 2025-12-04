@@ -13,7 +13,7 @@ struct SavedPopup: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Image("imageSave")
+            Image(.imageSave)
                 .resizable()
                 .frame(width: 161, height: 102)
                 .padding(.top, 20)

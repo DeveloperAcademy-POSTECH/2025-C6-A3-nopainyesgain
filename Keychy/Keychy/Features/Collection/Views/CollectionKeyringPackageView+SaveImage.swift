@@ -26,7 +26,7 @@ extension PackagedKeyringView {
         
         // 배경 포함한 전체 뷰 구성
         let captureView = ZStack {
-            Image("GreenBackground")
+            Image(.greenBackground)
                 .resizable()
                 .scaledToFill()
                 .frame(width: screenSize.width, height: screenSize.height)
@@ -102,7 +102,7 @@ extension PackagedKeyringView {
     private var captureablePackageImageStack: some View {
         ZStack(alignment: .bottom) {
             ZStack {
-                Image("PackageBG")
+                Image(.packageBG)
                     .resizable()
                     .frame(width: 220, height: 270)
                 
@@ -118,11 +118,11 @@ extension PackagedKeyringView {
             
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    Image("PackageFG_T")
+                    Image(.packageFGT)
                         .resizable()
                         .frame(width: 240, height: 91)
                     
-                    Image("PackageFG_B")
+                    Image(.packageFGB)
                         .resizable()
                         .frame(width: 240, height: 301)
                         .blendMode(.darken)

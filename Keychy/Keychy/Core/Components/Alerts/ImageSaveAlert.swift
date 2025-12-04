@@ -13,7 +13,7 @@ struct ImageSaveAlert: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Image("imageSaved")
+            Image(.imageSaved)
         }
         .transition(.scale.combined(with: .opacity))
         .scaleEffect(checkmarkScale)

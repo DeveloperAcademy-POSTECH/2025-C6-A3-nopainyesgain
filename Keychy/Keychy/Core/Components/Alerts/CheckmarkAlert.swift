@@ -14,7 +14,7 @@ struct CheckmarkAlert: View {
     
     var body: some View {
         VStack(spacing: 23) {
-            Image("checkmarker")
+            Image(.checkmarker)
             
             Text(text)
                 .typography(.suit17SB)

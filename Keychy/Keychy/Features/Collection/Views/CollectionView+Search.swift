@@ -61,7 +61,7 @@ extension CollectionView {
     var searchBarView: some View {
         HStack(spacing: 12) {
             HStack {
-                Image("SearchIcon")
+                Image(.searchIcon)
                     .resizable()
                     .frame(width: 28, height: 28)
                 
@@ -95,7 +95,7 @@ extension CollectionView {
                     showSearchBar = false
                 }
             }) {
-                Image("dismiss")
+                Image(.dismiss)
                     .foregroundColor(.primary)
             }
             .frame(width: 48, height: 48)

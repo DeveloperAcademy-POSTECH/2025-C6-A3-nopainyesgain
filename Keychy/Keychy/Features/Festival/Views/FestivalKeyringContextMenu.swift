@@ -38,7 +38,7 @@ struct FestivalKeyringContextMenu: View {
                     // 이름 변경 버튼
                     Button(action: onRename) {
                         HStack(spacing: 8) {
-                            Image("recDeleteFill")
+                            Image(.recDeleteFill)
                                 .resizable()
                                 .frame(width: 25, height: 25)
                             
@@ -52,7 +52,7 @@ struct FestivalKeyringContextMenu: View {
                     // 삭제 버튼
                     Button(action: onDelete) {
                         HStack(spacing: 8) {
-                            Image("Pencil")
+                            Image(.pencil)
                                 .resizable()
                                 .frame(width: 25, height: 25)
                             

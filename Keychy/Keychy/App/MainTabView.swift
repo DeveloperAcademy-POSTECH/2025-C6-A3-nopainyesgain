@@ -78,7 +78,7 @@ struct MainTabView: View {
             }
         )
         .tabItem {
-            Image("home")
+            Image(.home)
                 .renderingMode(.template)
             Text("홈")
         }
@@ -92,7 +92,7 @@ struct MainTabView: View {
             festivalVM: festivalViewModel
         )
         .tabItem {
-            Image("workshop")
+            Image(.workshop)
                 .renderingMode(.template)
             Text("공방")
         }
@@ -102,7 +102,7 @@ struct MainTabView: View {
     private var collectionTab: some View {
         CollectionTab(router: collectionRouter, shouldRefresh: $shouldRefreshCollection)
             .tabItem {
-                Image("collection")
+                Image(.collection)
                     .renderingMode(.template)
                 Text("보관함")
             }
@@ -119,7 +119,7 @@ struct MainTabView: View {
             }
         )
         .tabItem {
-            Image("festival")
+            Image(.festival)
                 .renderingMode(.template)
             Text("페스티벌")
         }

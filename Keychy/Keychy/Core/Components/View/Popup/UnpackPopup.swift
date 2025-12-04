@@ -14,7 +14,7 @@ struct UnpackPopup: View {
     var body: some View {
         VStack(spacing: 10) {
             // 아이콘
-            Image("Unpack")
+            Image(.unpack)
                 .resizable()
                 .frame(width: 57, height: 54)
                 .padding(.top, 14)
@@ -76,7 +76,7 @@ struct UnpackCompletePopup: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Image("Unpacked")
+            Image(.unpacked)
                 .resizable()
                 .frame(width: 210, height: 110)
                 .padding(.vertical, 7)

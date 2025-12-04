@@ -49,7 +49,7 @@ struct CollectionKeyringDetailView: View {
             let heightRatio = geometry.size.height / 852
             
             ZStack(alignment: .top) {
-                Image("WhiteBackground")
+                Image(.whiteBackground)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
@@ -222,7 +222,7 @@ extension CollectionKeyringDetailView {
         Button(action: {
             captureAndSaveImage()
         }) {
-            Image("imageDownload")
+            Image(.imageDownload)
         }
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
@@ -234,7 +234,7 @@ extension CollectionKeyringDetailView {
                 showPackageAlert = true
             }
         }) {
-            Image("presentIcon")
+            Image(.presentIcon)
         }
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)

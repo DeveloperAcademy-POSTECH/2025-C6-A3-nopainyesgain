@@ -24,7 +24,7 @@ struct InvenExpandPopup: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
                 
-                Image("expandIcon")
+                Image(.expandIcon)
                     .resizable()
                     .frame(width: 111, height: 70)
                     .padding(.vertical, 8)
@@ -63,7 +63,7 @@ struct InvenExpandPopup: View {
                 
                 Button(action: onConfirm) {
                     HStack(spacing: 4) {
-                        Image("buyKey")
+                        Image(.buyKey)
                             .resizable()
                             .frame(width: 34, height: 34)
                             .padding(.bottom, 4)

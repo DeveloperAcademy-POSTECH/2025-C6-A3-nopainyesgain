@@ -93,7 +93,7 @@ extension AlarmView {
     /// 알림이 없을 때 나오는 뷰
     private var emptyImageView: some View {
         VStack(alignment: .center, spacing: 0) {
-            Image("EmptyViewIcon")
+            Image(.emptyViewIcon)
             Text("알림함이 비었어요.")
                 .typography(.suit15R)
                 .padding(15)
@@ -107,7 +107,7 @@ extension AlarmView {
         } label: {
             HStack(alignment: .center) {
                 /// 알람 아이콘
-                Image("AlarmIconFill")
+                Image(.alarmIconFill)
                     .padding(.vertical, 3.5)
                     .padding(.trailing, 12)
 
@@ -124,7 +124,7 @@ extension AlarmView {
                                 isNotiOffShown = false
                             }
                         } label: {
-                            Image("dismiss_gray300")
+                            Image(.dismissGray300)
                         }
                     }
                     Text("눌러서 알림 활성화 하기")

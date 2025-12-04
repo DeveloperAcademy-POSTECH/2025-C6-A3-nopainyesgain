@@ -202,7 +202,7 @@ extension CollectionKeyringPackageView {
                     showUnpackAlert = true
                 }
             }) {
-                Image("UnpackIcon")
+                Image(.unpackIcon)
                     .resizable()
                     .frame(width: 34, height: 34)
             }
@@ -220,7 +220,7 @@ extension CollectionKeyringPackageView {
             
             ZStack {
                 // 배경 이미지 (초록 패턴)
-                Image("GreenBackground")
+                Image(.greenBackground)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()

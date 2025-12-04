@@ -16,7 +16,7 @@ struct BackToolbarButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image("backIcon")
+            Image(.backIcon)
         }
         .frame(width: 44, height: 44)
         .glassEffect(.regular.interactive(), in: .circle)
@@ -54,7 +54,7 @@ struct CloseToolbarButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image("dismiss_gray600")
+            Image(.dismissGray600)
         }
         .frame(width: 44, height: 44)
         .glassEffect(.regular.interactive(), in: .circle)

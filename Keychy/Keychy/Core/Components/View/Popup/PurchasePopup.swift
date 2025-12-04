@@ -41,7 +41,7 @@ struct PurchasePopup: View {
             // 버튼
             Button(action: onConfirm) {
                 HStack(spacing: 4) {
-                    Image("buyKey")
+                    Image(.buyKey)
                         .resizable()
                         .frame(width: 34, height: 34)
                         .padding(.bottom, 4)
@@ -79,7 +79,7 @@ struct PurchaseSuccessPopup: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Image("checkmarker")
+            Image(.checkmarker)
                 .resizable()
                 .frame(width: 188, height: 102)
                 .padding(.vertical, 8)

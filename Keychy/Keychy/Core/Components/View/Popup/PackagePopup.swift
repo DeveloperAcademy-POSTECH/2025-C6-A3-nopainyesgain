@@ -14,7 +14,7 @@ struct PackagePopup: View {
     var body: some View {
         VStack(spacing: 10) {
             // 아이콘
-            Image("PresentImg")
+            Image(.presentImg)
                 .resizable()
                 .frame(width: 61, height: 72)
                 .padding(.top, 8)
@@ -76,7 +76,7 @@ struct PackingPopup: View {
     var body: some View {
 
         VStack(spacing: 19) {
-            Image("WalkingPresent")
+            Image(.walkingPresent)
                 .resizable()
                 .frame(width: 128, height: 191)
             

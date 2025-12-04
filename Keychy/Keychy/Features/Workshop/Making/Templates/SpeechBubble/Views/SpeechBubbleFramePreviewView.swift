@@ -33,7 +33,7 @@ struct SpeechBubbleFramePreviewView: View {
                         }
 
                         // frameChain 이미지 (위에 겹침)
-                        Image("frameChain")
+                        Image(.frameChain)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 90)

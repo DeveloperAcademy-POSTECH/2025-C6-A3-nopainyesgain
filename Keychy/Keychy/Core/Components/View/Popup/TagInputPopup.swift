@@ -53,7 +53,7 @@ struct TagInputPopup: View {
                     Button(action: {
                         tagName = ""
                     }) {
-                        Image("EmptyIcon")
+                        Image(.emptyIcon)
                             .resizable()
                             .frame(width: 16, height: 16)
                     }

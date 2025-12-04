@@ -28,7 +28,7 @@ extension CollectionKeyringDetailView {
                     showMenu.toggle()
                 }
             }) {
-                Image("MenuIcon")
+                Image(.menuIcon)
                     .resizable()
                     .frame(width: 34, height: 34)
                     .contentShape(Rectangle())

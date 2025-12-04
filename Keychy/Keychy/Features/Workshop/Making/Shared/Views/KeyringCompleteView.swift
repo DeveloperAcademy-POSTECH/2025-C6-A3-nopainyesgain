@@ -29,7 +29,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image("completeBG2")
+                Image(.completeBG2)
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width, height: geometry.size.height)
@@ -172,7 +172,7 @@ extension KeyringCompleteView {
             Button(action: {
                 captureAndSaveImage()
             }) {
-                Image("imageDownload")
+                Image(.imageDownload)
             }
             .frame(
                 width: getBottomPadding(0) == 0 ? 55 : 65,

@@ -12,7 +12,7 @@ struct LinkCopiedPopup: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Image("AlertFace")
+            Image(.alertFace)
                 .resizable()
                 .frame(width: 210, height: 110)
                 .padding(.top, 20)

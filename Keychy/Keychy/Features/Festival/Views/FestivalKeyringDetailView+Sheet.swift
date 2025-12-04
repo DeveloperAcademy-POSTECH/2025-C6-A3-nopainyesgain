@@ -74,7 +74,7 @@ extension FestivalKeyringDetailView {
                     showVoteAlert = true
                 }
             }) {
-                Image("voteIcon")
+                Image(.voteIcon)
                     .resizable()
                     .frame(width: 28, height: 28)
             }
@@ -92,7 +92,7 @@ extension FestivalKeyringDetailView {
                     showCopyAlert = true
                 }
             }) {
-                Image("copyIcon")
+                Image(.copyIcon)
                     .resizable()
                     .frame(width: 28, height: 28)
             }

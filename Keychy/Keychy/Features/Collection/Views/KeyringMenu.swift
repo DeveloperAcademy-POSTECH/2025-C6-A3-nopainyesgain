@@ -29,7 +29,7 @@ struct KeyringMenu: View {
                     // 편집 버튼
                     Button(action: onEdit) {
                         HStack(spacing: 8) {
-                            Image("Pencil")
+                            Image(.pencil)
                                 .resizable()
                                 .frame(width: 25, height: 25)
                             
@@ -49,7 +49,7 @@ struct KeyringMenu: View {
                         // 복사 버튼
                         Button(action: onCopy) {
                             HStack(spacing: 8) {
-                                Image("Copy")
+                                Image(.copy)
                                     .resizable()
                                     .frame(width: 25, height: 25)
                                 
@@ -69,7 +69,7 @@ struct KeyringMenu: View {
                     // 삭제 버튼
                     Button(action: onDelete) {
                         HStack(spacing: 8) {
-                            Image("Trash")
+                            Image(.trash)
                                 .resizable()
                                 .frame(width: 25, height: 25)
                             

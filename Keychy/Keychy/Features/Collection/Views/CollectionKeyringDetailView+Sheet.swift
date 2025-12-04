@@ -71,7 +71,7 @@ extension CollectionKeyringDetailView {
             Button(action: {
                 captureAndSaveImage()
             }) {
-                Image("Save")
+                Image(.save)
                     .resizable()
                     .frame(width: 28, height: 28)
             }
@@ -90,7 +90,7 @@ extension CollectionKeyringDetailView {
                     showPackageAlert = true
                 }
             }) {
-                Image("Present")
+                Image(.present)
                     .resizable()
                     .frame(width: 28, height: 28)
             }
@@ -101,7 +101,7 @@ extension CollectionKeyringDetailView {
     
     private var receiveInfo: some View {
         HStack(spacing: 3) {
-            Image("smallPresent")
+            Image(.smallPresent)
                 .resizable()
                 .frame(width: 15, height: 14)
                 .padding(.vertical, 2)
