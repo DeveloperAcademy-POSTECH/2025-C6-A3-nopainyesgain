@@ -82,14 +82,51 @@ extension CollectionViewModel {
                 var updatedBundle = newBundle
                 updatedBundle.documentId = bundleId
                 self.bundles.append(updatedBundle)
-                
+
+                self.incrementUseCount(
+                    carabinerId: selectedCarabiner,
+                    backgroundId: selectedBackground
+                )
+
                 print("뭉치 생성 완료: \(bundleId)")
-                // 배열 업데이트 후 completion 호출
                 completion(true, bundleId)
             }
         }
     }
-    
+
+    private func incrementUseCount(
+        carabinerId: String?,
+        backgroundId: String?
+    ) {
+        if let carabinerId = carabinerId, !carabinerId.isEmpty {
+            db.collection("Carabiner")
+                .document(carabinerId)
+                .updateData([
+                    "useCount": FieldValue.increment(Int64(1))
+                ]) { error in
+                    if let error = error {
+                        print("[useCount] Carabiner 증가 실패: \(error)")
+                    } else {
+                        print("[useCount] Carabiner 증가 성공: \(carabinerId)")
+                    }
+                }
+        }
+
+        if let backgroundId = backgroundId, !backgroundId.isEmpty {
+            db.collection("Background")
+                .document(backgroundId)
+                .updateData([
+                    "useCount": FieldValue.increment(Int64(1))
+                ]) { error in
+                    if let error = error {
+                        print("[useCount] Background 증가 실패: \(error)")
+                    } else {
+                        print("[useCount] Background 증가 성공: \(backgroundId)")
+                    }
+                }
+        }
+    }
+
     //MARK: - Firebase에서 사용자의 모든 뭉치 로드
     func fetchAllBundles(uid: String, completion: @escaping (Bool) -> Void) {
         isLoading = true

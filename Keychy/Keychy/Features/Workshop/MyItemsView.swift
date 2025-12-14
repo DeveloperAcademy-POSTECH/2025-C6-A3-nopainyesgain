@@ -259,7 +259,7 @@ struct MyItemsView: View {
             case "최신순":
                 return item1.createdAt > item2.createdAt
             case "인기순":
-                return item1.downloadCount > item2.downloadCount
+                return item1.useCount > item2.useCount
             default:
                 return false
             }
@@ -273,7 +273,7 @@ struct MyItemsView: View {
         case "최신순":
             sortedItems.sort { $0.createdAt > $1.createdAt }
         case "인기순":
-            sortedItems.sort { $0.downloadCount > $1.downloadCount }
+            sortedItems.sort { $0.useCount > $1.useCount }
         default:
             break
         }
