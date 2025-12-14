@@ -46,7 +46,7 @@ extension ProfileSetupView {
     private var nicknameInput: some View {
         ZStack {
             // 배경 키링 이미지
-            Image("nameInputKeyring")
+            Image(.nameInputKeyring)
                 .resizable()
                 .scaledToFit()
             

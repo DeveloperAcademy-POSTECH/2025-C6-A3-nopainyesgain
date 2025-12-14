@@ -273,7 +273,7 @@ extension MyPageView {
     /// 내 코인
     private var myCoin: some View {
         VStack(spacing: 5) {
-            Image("myCoin")
+            Image(.myCoin)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
             
@@ -290,7 +290,7 @@ extension MyPageView {
     /// 내 보유 키링
     private var myKeyringCount: some View {
         VStack(spacing: 5) {
-            Image("myKeyringCount")
+            Image(.myKeyringCount)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 35)
             
@@ -307,7 +307,7 @@ extension MyPageView {
     /// 내 보유 복사권
     private var myCopyPass: some View {
         VStack(spacing: 5) {
-            Image("myCopyPass")
+            Image(.myCopyPass)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 33)
             

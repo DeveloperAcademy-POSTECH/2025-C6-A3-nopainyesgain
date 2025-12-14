@@ -23,7 +23,7 @@ extension KeyringInfoInputView {
                         showAddTagAlert = true
                     }
                 } label: {
-                    Image("Plus")
+                    Image(.plus)
                         .resizable()
                         .frame(width: 25, height: 25)
                         .padding(4)

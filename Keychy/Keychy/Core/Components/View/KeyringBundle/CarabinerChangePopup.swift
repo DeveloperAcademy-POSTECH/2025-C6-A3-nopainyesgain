@@ -17,7 +17,7 @@ struct CarabinerChangePopup: View {
         VStack(spacing: 10) {
             VStack(spacing: 12) {
                 // 아이콘
-                Image("DeleteAlert")
+                Image(.deleteAlert)
                     .resizable()
                     .frame(width: 57, height: 54)
                     .padding(.top, 8)

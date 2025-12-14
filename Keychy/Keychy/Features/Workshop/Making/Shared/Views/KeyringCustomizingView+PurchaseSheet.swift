@@ -81,7 +81,7 @@ extension KeyringCustomizingView {
     private func purchaseItemRow(item: EffectItem) -> some View {
         HStack(spacing: 0) {
             // 아이콘 (유료 표시)
-            Image("mainEffectSelect")
+            Image(.mainEffectSelect)
                 .padding(.trailing, 6)
 
             // 아이템 이름
@@ -116,7 +116,7 @@ extension KeyringCustomizingView {
             }
         } label: {
             HStack(spacing: 5) {
-                Image("purchaseSheet")
+                Image(.purchaseSheet)
 
                 Text("\(totalCartPrice)")
                     .typography(.nanum18EB12)

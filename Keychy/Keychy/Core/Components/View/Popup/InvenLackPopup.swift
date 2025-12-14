@@ -13,7 +13,7 @@ struct InvenLackPopup: View {
     var body: some View {
         VStack(spacing: 10) {
             // 아이콘
-            Image("bangMark")
+            Image(.bangMark)
                 .resizable()
                 .frame(width: 57, height: 54)
                 .padding(.vertical, 4)

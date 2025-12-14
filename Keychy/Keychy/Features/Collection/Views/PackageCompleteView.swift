@@ -288,7 +288,7 @@ struct PackageCompleteView: View {
             let isSmallScreen = geometry.size.height < 700
             
             ZStack {
-                Image("GreenBackground")
+                Image(.greenBackground)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
@@ -361,7 +361,7 @@ struct PackageCompleteView: View {
     
     private var packageBackground: some View {
         ZStack {
-            Image("PackageBG")
+            Image(.packageBG)
                 .resizable()
                 .frame(width: 220, height: 270)
             
@@ -384,11 +384,11 @@ struct PackageCompleteView: View {
     var packageForeground: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
-                Image("PackageFG_T")
+                Image(.packageFGT)
                     .resizable()
                     .frame(width: 240, height: 91)
                 
-                Image("PackageFG_B")
+                Image(.packageFGB)
                     .resizable()
                     .frame(width: 240, height: 301)
                     .blendMode(.darken)
@@ -423,7 +423,7 @@ struct PackageCompleteView: View {
             copyLink()
         }) {
             HStack {
-                Image("LinkSimple")
+                Image(.linkSimple)
                     .resizable()
                     .frame(width: 18, height: 18)
                 
@@ -451,7 +451,7 @@ struct PackageCompleteView: View {
     
     var qrCodeImageStack: some View {
         ZStack(alignment: .bottom) {
-            Image("QRKeyring")
+            Image(.qrKeyring)
                 .resizable()
                 .frame(width: 240, height: 390)
             
@@ -481,7 +481,7 @@ struct PackageCompleteView: View {
         Button(action: {
             saveImage()
         }) {
-            Image("Save")
+            Image(.save)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 32, height: 32)
@@ -552,7 +552,7 @@ extension PackageCompleteView {
             Button {
                 router.reset()
             } label: {
-                Image("dismiss")
+                Image(.dismiss)
                     .foregroundColor(.primary)
             }
         }
@@ -566,7 +566,7 @@ extension PackageCompleteView {
             Button {
                 router.reset()
             } label: {
-                Image("dismiss")
+                Image(.dismiss)
                     .foregroundColor(.primary)
             }
             .frame(width: 44, height: 44)

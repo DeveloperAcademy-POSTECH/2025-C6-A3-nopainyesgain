@@ -52,7 +52,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                 Button {
                     showRecordingSheet = true
                 } label: {
-                    Image("record")
+                    Image(.record)
                         .frame(width: 32, height: 32)
                 }
                 .padding(.leading, 20)
@@ -270,12 +270,12 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         if isOwned {
                             // 유료 + 보유
                             if isSelected {
-                                Image("whiteEffectSelect")
+                                Image(.whiteEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("grayEffectSelect")
+                                Image(.grayEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -283,12 +283,12 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         } else {
                             // 유료 + 미보유
                             if isSelected {
-                                Image("whiteEffectSelect")
+                                Image(.whiteEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("gradientEffectSelect")
+                                Image(.gradientEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -301,7 +301,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
 
                     // 다운로드 안됨: download 아이콘
                     if !isInCache && !isInBundle {
-                        Image("download")
+                        Image(.download)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 18, height: 18)
@@ -444,12 +444,12 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         if isOwned {
                             // 유료 + 보유
                             if isSelected {
-                                Image("whiteEffectSelect")
+                                Image(.whiteEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("grayEffectSelect")
+                                Image(.grayEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -457,12 +457,12 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         } else {
                             // 유료 + 미보유
                             if isSelected {
-                                Image("whiteEffectSelect")
+                                Image(.whiteEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
                             } else {
-                                Image("gradientEffectSelect")
+                                Image(.gradientEffectSelect)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 18, height: 18)
@@ -475,7 +475,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
 
                     // 다운로드 안됨: download 아이콘
                     if !isInCache && !isInBundle {
-                        Image("download")
+                        Image(.download)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 18, height: 18)

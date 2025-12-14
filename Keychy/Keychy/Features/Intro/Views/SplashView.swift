@@ -12,8 +12,8 @@ struct SplashView: View {
     var body: some View {
         ZStack() {
             VStack(spacing: 20) {
-                Image("introIcon")
-                Image("introTypo")
+                Image(.introIcon)
+                Image(.introTypo)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

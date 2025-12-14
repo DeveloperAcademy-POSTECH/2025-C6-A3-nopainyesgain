@@ -77,7 +77,7 @@ struct WorkshopSortSheet: View {
                 Button {
                     showSheet = false
                 } label: {
-                    Image("dismiss_gray600")
+                    Image(.dismissGray600)
                         .resizable()
                         .frame(width: 24, height: 24)
                 }

@@ -189,7 +189,7 @@ extension PackagedKeyringView {
     
     private var packageBackground: some View {
         ZStack {
-            Image("PackageBG")
+            Image(.packageBG)
                 .resizable()
                 .frame(width: 220, height: 270)
             
@@ -211,11 +211,11 @@ extension PackagedKeyringView {
     private var packageForeground: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
-                Image("PackageFG_T")
+                Image(.packageFGT)
                     .resizable()
                     .frame(width: 240, height: 91)
                 
-                Image("PackageFG_B")
+                Image(.packageFGB)
                     .resizable()
                     .frame(width: 240, height: 301)
                     .blendMode(.darken)
@@ -251,7 +251,7 @@ extension PackagedKeyringView {
             onLinkCopied?()
         }) {
             HStack {
-                Image("LinkSimple")
+                Image(.linkSimple)
                     .resizable()
                     .frame(width: 18, height: 18)
                 
@@ -278,7 +278,7 @@ extension PackagedKeyringView {
     
     var qrCodeImageStack: some View {
         ZStack(alignment: .bottom) {
-            Image("QRKeyring")
+            Image(.qrKeyring)
                 .resizable()
                 .frame(width: 240, height: 390)
             
@@ -310,7 +310,7 @@ extension PackagedKeyringView {
         Button(action: {
             saveImage()
         }) {
-            Image("Save")
+            Image(.save)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 32, height: 32)

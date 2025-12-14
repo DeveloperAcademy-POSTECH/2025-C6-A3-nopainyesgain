@@ -284,7 +284,7 @@ extension CoinChargeView {
             Spacer()
             
             HStack(spacing: 4) {
-                Image("myCoin")
+                Image(.myCoin)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 20, height: 20)
@@ -307,7 +307,7 @@ extension CoinChargeView {
             }
         } label: {
             HStack(spacing: 5) {
-                Image("purchaseSheet")
+                Image(.purchaseSheet)
                 
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)

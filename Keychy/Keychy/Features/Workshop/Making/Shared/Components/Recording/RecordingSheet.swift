@@ -77,9 +77,9 @@ extension RecordingSheet {
         } label: {
             HStack(spacing: 4) {
                 if recorder.hasRecording() && !recorder.isRecording {
-                    Image("recDeleteFill")
+                    Image(.recDeleteFill)
                 } else {
-                    Image("recDelete")
+                    Image(.recDelete)
                 }
                 
                 Text("삭제")
@@ -103,9 +103,9 @@ extension RecordingSheet {
         } label: {
             HStack(spacing: 4) {
                 if recorder.hasRecording() && !recorder.isRecording {
-                    Image("replayFill")
+                    Image(.replayFill)
                 } else {
-                    Image("replay")
+                    Image(.replay)
                 }
                 Text("재생")
                     .typography(.suit14M)
@@ -124,7 +124,7 @@ extension RecordingSheet {
                 dismiss()
             }
         } label: {
-            Image("dismiss")
+            Image(.dismiss)
                 .foregroundStyle(.primary)
         }
     }

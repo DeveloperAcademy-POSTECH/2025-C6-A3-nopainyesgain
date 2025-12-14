@@ -35,7 +35,7 @@ struct KeyringBundleItem: View {
                 if bundle.isMain {
                     HStack {
                         Spacer()
-                        Image(.starFillMain500)
+                        Image(.starFillMain)
                             .padding(6.53)
                             .background(
                                 Circle()

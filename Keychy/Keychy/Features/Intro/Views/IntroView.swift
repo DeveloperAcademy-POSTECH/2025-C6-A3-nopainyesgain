@@ -62,8 +62,8 @@ extension IntroView {
     /// 로고
     private var logoSection: some View {
         VStack(spacing: 20) {
-            Image("introIcon")
-            Image("introTypo")
+            Image(.introIcon)
+            Image(.introTypo)
         }
     }
     
@@ -184,7 +184,7 @@ extension IntroView {
                 Button {
                     showTermsDetail = true
                 } label: {
-                    Image("greaterthan")
+                    Image(.greaterthan)
                         .padding(.leading, 5)
                 }
             }

@@ -134,7 +134,7 @@ extension KeyringEditView {
             Button {
                 router.pop()
             } label: {
-                Image("backIcon")
+                Image(.backIcon)
                     .resizable()
                     .frame(width: 32, height: 32)
             }
@@ -157,7 +157,7 @@ extension KeyringEditView {
                         }
                     }
                 }) {
-                    Image("recCheck")
+                    Image(.recCheck)
                         .resizable()
                         .renderingMode(.template)
                         .foregroundStyle(.white100)
@@ -169,7 +169,7 @@ extension KeyringEditView {
                 Button(action: {
                     // disabled
                 }) {
-                    Image("recCheck")
+                    Image(.recCheck)
                         .resizable()
                         .renderingMode(.template)
                         .foregroundStyle(.gray300)
@@ -315,7 +315,7 @@ extension KeyringEditView {
                     Button(action: {
                         editedName = ""
                     }) {
-                        Image("EmptyIcon")
+                        Image(.emptyIcon)
                             .resizable()
                             .frame(width: 16, height: 16)
                     }
@@ -424,7 +424,7 @@ extension KeyringEditView {
                         showAddTagAlert = true
                     }
                 } label: {
-                    Image("Plus")
+                    Image(.plus)
                         .resizable()
                         .frame(width: 25, height: 25)
                         .padding(4)

@@ -40,92 +40,89 @@ struct KeyringReceiveView: View {
             let isSmallScreen = geometry.size.height < 700
             
             ZStack {
-                Group {
-                    Image(backgroundImageName)
-                        .resizable()
-                        .scaledToFill()
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 0) {
-                        if isLoading {
-                            // 로딩 상태
-                            LoadingAlert(type: .short, message: nil)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                          
-                        } else if isAlreadyReceived {
-                            // 이미 수락된 선물
-                            VStack(spacing: 20) {
-                                VStack(spacing: 0) {
-                                    Image("EmptyViewIcon")
-                                        .resizable()
-                                        .frame(width: 124, height: 111)
-                                    
-                                    Text("이미 수락된 선물이에요")
-                                        .typography(.suit15R)
-                                        .foregroundColor(.black100)
-                                        .padding(.vertical, 15)
-                                    
-                                    Button {
-                                        dismiss()
-                                    } label: {
-                                        Text("닫기")
-                                            .typography(.suit15R)
-                                            .foregroundColor(.main500)
-                                            .padding(.vertical, 15)
-                                    }
-                                }
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                          
-                        } else if let keyring = keyring {
-                            // 키링 로드 성공
-                            VStack(spacing: 0) {
-                                
-                                messageSection(keyring: keyring)
-                                    .padding(.top, isSmallScreen ? -40 : 90)
-                                
-                                Spacer()
-                                    .frame(height: isSmallScreen ? 0 : 20)
-                                
-                                keyringImage(keyring: keyring)
-                                    .frame(height: isSmallScreen ? 400 : 490)
-                                    .scaleEffect(heightRatio)
-                                    .padding(.bottom, isSmallScreen ? 36 : 58)
-                                
-                                Spacer()
-                                    .frame(minHeight: 0, maxHeight: 20)
-                                
-                                receiveButton
+                backgroundImage
+                    .blur(radius: shouldApplyBlur ? 10 : 0)
+                    .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
 
-                                Spacer()
-                                    .frame(height: 20)
-                                    .adaptiveBottomPadding()
-                            }
-                        } else {
-                            // 에러 상태
-                            VStack(spacing: 20) {
-                                VStack(spacing: 0) {
-                                    Image("EmptyViewIcon")
-                                        .resizable()
-                                        .frame(width: 124, height: 111)
-                                    
-                                    Text("키링을 불러올 수 없습니다.")
+                VStack(spacing: 0) {
+                    if isLoading {
+                        // 로딩 상태
+                        LoadingAlert(type: .short, message: nil)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    } else if isAlreadyReceived {
+                        // 이미 수락된 선물
+                        VStack(spacing: 20) {
+                            VStack(spacing: 0) {
+                                Image(.emptyViewIcon)
+                                    .resizable()
+                                    .frame(width: 124, height: 111)
+
+                                Text("이미 수락된 선물이에요")
+                                    .typography(.suit15R)
+                                    .foregroundColor(.black100)
+                                    .padding(.vertical, 15)
+
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Text("닫기")
                                         .typography(.suit15R)
-                                        .foregroundColor(.black100)
+                                        .foregroundColor(.main500)
                                         .padding(.vertical, 15)
-                                    
-                                    Button {
-                                        dismiss()
-                                    } label: {
-                                        Text("닫기")
-                                            .typography(.suit15R)
-                                            .foregroundColor(.main500)
-                                            .padding(.vertical, 15)
-                                    }
                                 }
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    } else if let keyring = keyring {
+                        // 키링 로드 성공
+                        VStack(spacing: 0) {
+
+                            messageSection(keyring: keyring)
+                                .padding(.top, isSmallScreen ? -40 : 90)
+
+                            Spacer()
+                                .frame(height: isSmallScreen ? 0 : 20)
+
+                            keyringImage(keyring: keyring)
+                                .frame(height: isSmallScreen ? 400 : 490)
+                                .scaleEffect(heightRatio)
+                                .padding(.bottom, isSmallScreen ? 36 : 58)
+
+                            Spacer()
+                                .frame(minHeight: 0, maxHeight: 20)
+
+                            receiveButton
+
+                            Spacer()
+                                .frame(height: 20)
+                                .adaptiveBottomPadding()
+                        }
+                    } else {
+                        // 에러 상태
+                        VStack(spacing: 20) {
+                            VStack(spacing: 0) {
+                                Image(.emptyViewIcon)
+                                    .resizable()
+                                    .frame(width: 124, height: 111)
+
+                                Text("키링을 불러올 수 없습니다.")
+                                    .typography(.suit15R)
+                                    .foregroundColor(.black100)
+                                    .padding(.vertical, 15)
+
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Text("닫기")
+                                        .typography(.suit15R)
+                                        .foregroundColor(.main500)
+                                        .padding(.vertical, 15)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
                 .blur(radius: shouldApplyBlur ? 10 : 0)
@@ -266,7 +263,7 @@ struct KeyringReceiveView: View {
     private func keyringImage(keyring: Keyring) -> some View {
         ZStack(alignment: .bottom) {
             ZStack {
-                Image("PackageBG")
+                Image(.packageBG)
                     .resizable()
                     .frame(width: 280, height: 347)
                     .offset(y: -24)
@@ -281,11 +278,11 @@ struct KeyringReceiveView: View {
             }
             
             VStack(spacing: 0) {
-                Image("PackageFG_T")
+                Image(.packageFGT)
                     .resizable()
                     .frame(width: 304, height: 113)
                 
-                Image("PackageFG_B")
+                Image(.packageFGB)
                     .resizable()
                     .frame(width: 304, height: 389)
                     .blendMode(.darken)
@@ -343,6 +340,14 @@ struct KeyringReceiveView: View {
             return "WhiteBackground"
         }
         return "GreenBackground"
+    }
+
+    @ViewBuilder
+    private var backgroundImage: some View {
+        Image(backgroundImageName)
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
     }
 }
 

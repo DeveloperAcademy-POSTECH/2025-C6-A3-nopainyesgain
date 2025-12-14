@@ -12,7 +12,7 @@ struct PurchaseSuccessAlert: View {
     
     var body: some View {
         VStack(spacing: 5) {
-            Image("checkmarker2")
+            Image(.checkmarker2)
             
             Text("구매가 완료되었어요!")
                 .typography(.suit17SB)

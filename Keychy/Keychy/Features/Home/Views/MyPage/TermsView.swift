@@ -39,7 +39,7 @@ struct TermsView: View {
     }
 
     private var appIcon: some View {
-        Image("appIcon")
+        Image(.appIcon)
             .resizable()
             .scaledToFit()
             .frame(width: 100, alignment: .center)

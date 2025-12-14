@@ -18,7 +18,7 @@ struct BangmarkAlert: View {
     var body: some View {
         VStack(spacing: 23) {
             VStack(spacing: 0) {
-                Image("bangMark")
+                Image(.bangMark)
                     .padding(.vertical, 4)
                 
                 Text(text)

@@ -18,7 +18,7 @@ struct NotificationItemView: View {
         Button(action: onTap) {
             HStack(spacing: 12) {
                 // 선물 아이콘
-                Image("giftAccepted")
+                Image(.giftAccepted)
 
                 // 알림 내용
                 VStack(alignment: .leading, spacing: 0) {

@@ -188,7 +188,7 @@ struct MyItemsView: View {
             Spacer()
                 .frame(height: 280)
             
-            Image("EmptyViewIcon")
+            Image(.emptyViewIcon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 124)

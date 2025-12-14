@@ -39,7 +39,7 @@ struct FestivalKeyringDetailView: View {
             let heightRatio = screenHeight / 852
             
             ZStack(alignment: .top) {
-                Image("WhiteBackground")
+                Image(.whiteBackground)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
@@ -201,7 +201,7 @@ extension FestivalKeyringDetailView {
                 showVoteAlert = true
             }
         }) {
-            Image("voteIcon")
+            Image(.voteIcon)
         }
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
@@ -213,7 +213,7 @@ extension FestivalKeyringDetailView {
                 showCopyAlert = true
             }
         }) {
-            Image("copyIcon")
+            Image(.copyIcon)
         }
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)

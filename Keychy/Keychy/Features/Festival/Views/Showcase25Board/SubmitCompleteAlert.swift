@@ -15,7 +15,7 @@ struct SubmitCompleteAlert: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Image("checkmarkAlert")
+            Image(.checkmarkAlert)
 
             Text("키링을 출품했어요!")
                 .typography(.suit17B)
