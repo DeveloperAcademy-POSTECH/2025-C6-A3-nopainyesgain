@@ -90,6 +90,7 @@ struct CollectionKeyringDetailView: View {
                         x: geometry.size.width / 2,
                         y: geometry.size.height / 2
                     )
+                    .zIndex(200)
                 
                 customNavigationBar
                     .blur(radius: shouldApplyBlur ? 15 : 0)
