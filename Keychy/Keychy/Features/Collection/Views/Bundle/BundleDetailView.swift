@@ -200,7 +200,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 dismissTask?.cancel()
                 
                 dismissTask = Task {
-                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    try? await Task.sleep(for: .seconds(1))
                     if !Task.isCancelled {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showAlreadyMainBundleToast = false
