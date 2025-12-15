@@ -1032,13 +1032,13 @@
 		4C77753D2EB1343600981C3E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */,
 				4C7775392EB1343600981C3E /* IntroViewModel.swift */,
 				4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */,
-				4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */,
 				4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */,
+				4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */,
 				4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */,
 				4CC3D3C42EC701610009D376 /* IntroViewModel+Bundle.swift */,
-				4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
