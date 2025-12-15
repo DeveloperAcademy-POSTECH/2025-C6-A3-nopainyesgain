@@ -12,25 +12,25 @@ import FirebaseFirestore
 
 struct HomeView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
-
+    
     @Bindable var userManager: UserManager
-
+    
     @State var collectionViewModel: CollectionViewModel
-
+    
     /// 배경 로드 완료 콜백
     var onBackgroundLoaded: (() -> Void)? = nil
-
+    
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
-
+    
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
-
+    
     /// 씬 준비 완료 여부
     @State private var isSceneReady = false
-
+    
     // MARK: - Body
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             // 블러 영역
@@ -39,7 +39,7 @@ struct HomeView: View {
                    let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
                    let background = collectionViewModel.selectedBackground,
                    !keyringDataList.isEmpty {  // 키링 데이터가 있을 때만 씬 생성
-
+                    
                     MultiKeyringSceneView(
                         keyringDataList: keyringDataList,
                         ringType: .basic,
@@ -67,12 +67,12 @@ struct HomeView: View {
                     // 데이터 로딩 중
                     Color.clear.ignoresSafeArea()
                 }
-
+                
                 // 상단 네비게이션 버튼들
                 navigationButtons
             }
             .blur(radius: isSceneReady ? 0 : 15)
-
+            
             // 로딩 알림 (씬 준비 전까지 표시)
             if !isSceneReady {
                 // 로딩 알림
@@ -103,7 +103,7 @@ extension HomeView {
     private var navigationButtons: some View {
         HStack(spacing: 10) {
             Spacer()
-
+            
             // 알림 및 마이페이지 버튼 그룹
             GlassEffectContainer {
                 HStack {
@@ -115,7 +115,7 @@ extension HomeView {
                     .frame(width: 44, height: 44)
                     .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
                     .buttonStyle(.glass)
-
+                    
                     Button {
                         router.push(.myPageView)
                     } label: {
@@ -123,7 +123,7 @@ extension HomeView {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 30, height: 30)
-
+                        
                     }
                     .frame(width: 44, height: 44)
                     .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
@@ -155,7 +155,7 @@ extension HomeView {
                 continuation.resume()
             }
         }
-
+        
         // 3. 메인 뭉치 설정 (isMain == true인 뭉치, 없으면 첫 번째 뭉치)
         if let mainBundle = collectionViewModel.sortedBundles.first(where: { $0.isMain }) {
             collectionViewModel.selectedBundle = mainBundle
@@ -166,21 +166,21 @@ extension HomeView {
             onBackgroundLoaded?()
             return
         }
-
+        
         // 4. 선택된 뭉치의 배경과 카라비너 설정
         guard var bundle = collectionViewModel.selectedBundle else { return }
-
+        
         // 배경 resolve 시도
         var resolvedBackground = collectionViewModel.resolveBackground(from: bundle.selectedBackground)
-
+        
         // 배경이 없으면 첫 번째 배경으로 업데이트
         if resolvedBackground == nil, let firstBackground = collectionViewModel.backgrounds.first {
             resolvedBackground = firstBackground
-
+            
             // Firebase에 번들의 배경 업데이트
             if let documentId = bundle.documentId, let backgroundId = firstBackground.id {
                 await updateBundleBackground(documentId: documentId, backgroundId: backgroundId)
-
+                
                 // 로컬 상태도 업데이트
                 bundle.selectedBackground = backgroundId
                 collectionViewModel.selectedBundle?.selectedBackground = backgroundId
@@ -189,15 +189,15 @@ extension HomeView {
                 }
             }
         }
-
+        
         collectionViewModel.selectedBackground = resolvedBackground
         collectionViewModel.selectedCarabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-
+        
         // 5. 키링 데이터 생성
         guard let carabiner = collectionViewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
     }
-
+    
     /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
     /// - Parameters:
     ///   - bundle: 현재 뭉치
@@ -205,16 +205,16 @@ extension HomeView {
     /// - Returns: 3D 씬에서 사용할 KeyringData 배열
     private func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-
+        
         for (index, keyringId) in bundle.keyrings.enumerated() {
             // 유효하지 않은 키링 ID 필터링
             guard index < carabiner.maxKeyringCount,
                   keyringId != "none",
                   !keyringId.isEmpty else { continue }
-
+            
             // Firebase에서 키링 정보 가져오기
             guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
-
+            
             // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
             let customSoundURL: URL? = {
                 if keyringInfo.soundId.hasPrefix("https://") || keyringInfo.soundId.hasPrefix("http://") {
@@ -222,7 +222,7 @@ extension HomeView {
                 }
                 return nil
             }()
-
+            
             // KeyringData 생성
             let data = MultiKeyringScene.KeyringData(
                 index: index,
@@ -240,27 +240,27 @@ extension HomeView {
             )
             dataList.append(data)
         }
-
+        
         return dataList
     }
-
+    
     /// Firestore에서 키링 정보를 가져옴
     private func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
         do {
             let db = FirebaseFirestore.Firestore.firestore()
             let document = try await db.collection("Keyring").document(keyringId).getDocument()
-
+            
             guard let data = document.data(),
                   let bodyImage = data["bodyImage"] as? String,
                   let soundId = data["soundId"] as? String,
                   let particleId = data["particleId"] as? String else {
                 return nil
             }
-
+            
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
             let selectedTemplate = data["selectedTemplate"] as? String
-
+            
             return KeyringInfo(
                 id: keyringId,
                 bodyImage: bodyImage,
@@ -274,7 +274,7 @@ extension HomeView {
             return nil
         }
     }
-
+    
     /// Firestore에서 가져온 키링 정보를 담는 구조체
     private struct KeyringInfo {
         let id: String
@@ -285,7 +285,7 @@ extension HomeView {
         let hookOffsetY: CGFloat?
         let chainLength: Int
     }
-
+    
     /// 번들의 배경을 Firebase에 업데이트
     private func updateBundleBackground(documentId: String, backgroundId: String) async {
         do {

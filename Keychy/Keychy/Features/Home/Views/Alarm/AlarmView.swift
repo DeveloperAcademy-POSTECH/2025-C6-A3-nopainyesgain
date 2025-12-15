@@ -231,8 +231,23 @@ extension AlarmView {
                     print("알림 읽음 처리 실패: \(error.localizedDescription)")
                 } else {
                     print("알림 읽음 처리 완료: \(notificationId)")
+                    Task {
+                        await self.updateBadgeCount()
+                    }
                 }
             }
+    }
+    
+    @MainActor
+    private func updateBadgeCount() {
+        // 1. 먼저 뱃지를 0으로 초기화 (기존의 잘못된 숫자 제거)
+        UNUserNotificationCenter.current().setBadgeCount(0)
+
+        // 2. 읽지 않은 알림 개수를 다시 세서 설정
+        let unreadCount = notifications.filter { !$0.isRead }.count
+        UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+
+        print("뱃지 업데이트: \(unreadCount)")
     }
     
     private var customNavigation: some View {
