@@ -13,10 +13,6 @@ struct BundleInventoryView<Route: BundleRoute>: View {
     
     @State var isNavigatingDeeper: Bool = false
     
-#if DEBUG
-    @State private var showCachedBundlesDebug = false
-#endif
-    
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
@@ -40,11 +36,6 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-#if DEBUG
-        .sheet(isPresented: $showCachedBundlesDebug) {
-            CachedBundlesDebugView()
-        }
-#endif
         .scrollIndicators(.hidden)
         .onAppear {
             // 현재 로그인된 유저의 뭉치 로드
@@ -75,26 +66,6 @@ extension BundleInventoryView {
             }
         }
     }
-    //TODO: 이거 런도한테 물어보구 지우기~~~
-#if DEBUG
-    private var debugToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                showCachedBundlesDebug = true
-                BundleImageCache.shared.printAllCachedFiles()
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                        .frame(width: 40, height: 40)
-                    Image(systemName: "photo.stack")
-                        .font(.system(size: 18))
-                        .foregroundColor(.blue)
-                }
-            }
-        }
-    }
-#endif
 }
 
 // MARK: - 그리드 뷰
@@ -125,7 +96,7 @@ extension BundleInventoryView {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, geometry.safeAreaInsets.top + 60 + 20 + morePadding) // safe area + 네비 바 높이 + 여백
+                .padding(.top, geometry.safeAreaInsets.top + 80 + morePadding) // safe area + 네비 바 높이 + 여백
             }
         }
         

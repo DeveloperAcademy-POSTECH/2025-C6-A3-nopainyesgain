@@ -224,6 +224,22 @@ class Showcase25BoardViewModel {
             try await db.collection("Keyring").document(keyringDocId).updateData([
                 "isPublished": true
             ])
+            
+            self.removeKeyringFromBundles(
+                uid: userKeyring.authorId,
+                keyringId: keyringDocId
+            ) { bundleSuccess in
+                if bundleSuccess {
+                    print("Bundle에서 키링 제거 완료")
+                } else {
+                    print("Bundle에서 키링 제거 실패")
+                }
+                // 로컬 상태도 업데이트
+                if let index = self.userKeyrings.firstIndex(where: { $0.documentId == keyringDocId }) {
+                    self.userKeyrings[index].isPublished = true
+                    self.userKeyrings[index].isEditable = false
+                }
+            }
             // 리스너가 자동으로 업데이트함
         } catch {
             self.error = error.localizedDescription
@@ -590,5 +606,82 @@ class Showcase25BoardViewModel {
         }
 
         return (newBodyImageURL, newSoundId)
+    }
+    
+    //MARK: - 출품완료 키링 뭉치에서 키링 삭제 로직
+    
+    /// 출품한 키링을 뭉치에서 삭제하고 썸네일을 업데이트 하는 메서드
+    /// -  uid: 현재 사용자의 userId
+    /// - keyringId: 현재 출품한 키링의 Id ( 뭉치에서 삭제해야 할 키링의 Id)
+    /// - completion: 함수 완료 콜백
+    private func removeKeyringFromBundles(
+        uid: String,
+        keyringId: String,
+        completion: @escaping (Bool) -> Void
+    ) {
+        let db = Firestore.firestore()
+        
+        // 해당 사용자의 모든 Bundle 조회
+        db.collection("KeyringBundle")
+            .whereField("userId", isEqualTo: uid)
+            .getDocuments { snapshot, error in
+                if error != nil {
+                    completion(false)
+                    return
+                }
+                
+                guard let documents = snapshot?.documents, !documents.isEmpty else {
+                    print("Bundle 없음")
+                    completion(true)
+                    return
+                }
+                
+                let batch = db.batch()
+                var affectedBundleIds: [String] = []
+                
+                // 각 Bundle에서 해당 키링 ID 제거
+                for document in documents {
+                    guard var keyrings = document.data()["keyrings"] as? [String] else {
+                        continue
+                    }
+                    
+                    var needsUpdate = false
+                    
+                    // 배열을 순회하면서 keyringId를 "none"으로 변경
+                    for (index, keyring) in keyrings.enumerated() {
+                        if keyring == keyringId {
+                            keyrings[index] = "none"
+                            needsUpdate = true
+                        }
+                    }
+                    
+                    if needsUpdate {
+                        let bundleRef = db.collection("KeyringBundle").document(document.documentID)
+                        batch.updateData(["keyrings": keyrings], forDocument: bundleRef)
+                        affectedBundleIds.append(document.documentID)
+                    }
+                }
+                
+                if affectedBundleIds.isEmpty {
+                    completion(true)
+                    return
+                }
+                
+                // Batch 커밋
+                batch.commit { error in
+                    if let error = error {
+                        print("Bundle 업데이트 실패: \(error.localizedDescription)")
+                        completion(false)
+                        return
+                    }
+                    
+                    // 변경된 Bundle들의 캡처 캐시 삭제
+                    for bundleId in affectedBundleIds {
+                        BundleImageCache.shared.delete(for: bundleId)
+                    }
+                    
+                    completion(true)
+                }
+            }
     }
 }

@@ -25,6 +25,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State var getlessPadding: CGFloat = 0
     @State private var isNavigatingDeeper: Bool = true
     @State private var menuPosition: CGRect = .zero
+    @State private var dismissTask: Task<Void, Never>?
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -191,6 +192,20 @@ struct BundleDetailView<Route: BundleRoute>: View {
             } else if !oldValue.isEmpty && !newValue.isEmpty {
                 withAnimation(.easeIn(duration: 0.2)) {
                     isSceneReady = false
+                }
+            }
+        }
+        .onChange(of: showAlreadyMainBundleToast) { oldValue, newValue in
+            if newValue {
+                dismissTask?.cancel()
+                
+                dismissTask = Task {
+                    try? await Task.sleep(for: .seconds(1))
+                    if !Task.isCancelled {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showAlreadyMainBundleToast = false
+                        }
+                    }
                 }
             }
         }
@@ -458,12 +473,5 @@ extension BundleDetailView {
             .frame(height: 73)
             .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
             .transition(.scale.combined(with: .opacity))
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showAlreadyMainBundleToast = false
-                    }
-                }
-            }
     }
 }
