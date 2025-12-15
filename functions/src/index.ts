@@ -28,6 +28,15 @@ export const sendGiftAcceptedPush = functions.firestore
 
     console.log("[Push] FCM 토큰 찾음:", fcmToken);
 
+    const unreadNotificationSnapshot = await admin.firestore()
+      .collection("Notifications")
+      .where("receiverId", "==", notification.receiverId)
+      .where("isRead", "==", false)
+      .get();
+
+    const unreadCount = unreadNotificationSnapshot.size;
+    console.log("[Push] 읽지 않은 알림 개수:", unreadCount);
+
     try {
       // FCM 메시지 전송
       await admin.messaging().send({
@@ -44,7 +53,7 @@ export const sendGiftAcceptedPush = functions.firestore
           payload: {
             aps: {
               sound: "default",
-              badge: 1,
+              badge: unreadCount,
             },
           },
         },
