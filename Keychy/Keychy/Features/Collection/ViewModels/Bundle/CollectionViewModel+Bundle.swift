@@ -237,7 +237,7 @@ extension CollectionViewModel {
         // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
         for index in 0..<carabiner.maxKeyringCount {
             // 번들에 저장된 문서 id (없으면 "none")
-            let docId = bundle.keyrings[index] ?? "none"
+            let docId = bundle.keyrings[index]
 
             if docId == "none" || docId.isEmpty {
                 continue
@@ -300,7 +300,7 @@ extension CollectionViewModel {
                 db.collection("KeyringBundle").document(mainDocId).updateData([
                     "isMain": false
                 ]) { error in
-                    if let error = error {
+                    if error != nil {
                         hasError = true
                     }
                     dispatchGroup.leave()
@@ -355,7 +355,7 @@ extension CollectionViewModel {
         db.collection("KeyringBundle").document(documentId).updateData([
             "name": trimmedName
         ]) { [weak self] error in
-            if let error = error {
+            if error != nil {
                 completion(false)
                 return
             }
