@@ -41,7 +41,6 @@ struct KeyringMenu: View {
                         }
                         .padding(.vertical, 10)
                     }
-                    .buttonStyle(.plain)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
                     
@@ -60,10 +59,9 @@ struct KeyringMenu: View {
                                 Spacer()
                             }
                             .padding(.vertical, 10)
+                            .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
                     }
                     
                     // 삭제 버튼
@@ -80,10 +78,9 @@ struct KeyringMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)

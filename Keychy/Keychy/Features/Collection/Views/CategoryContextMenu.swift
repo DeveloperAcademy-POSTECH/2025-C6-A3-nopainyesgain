@@ -45,9 +45,12 @@ struct CategoryContextMenu: View {
                             Text("태그 이름 변경")
                                 .typography(.suit16M)
                                 .foregroundColor(.gray600)
+                            
+                            
                         }
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     
                     // 삭제 버튼
                     Button(action: onDelete) {
@@ -59,9 +62,12 @@ struct CategoryContextMenu: View {
                             Text("삭제")
                                 .typography(.suit16M)
                                 .foregroundColor(.pink)
+                            
+                            Spacer()
                         }
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
