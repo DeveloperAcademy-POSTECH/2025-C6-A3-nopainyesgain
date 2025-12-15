@@ -276,9 +276,23 @@ extension BundleAddKeyringView {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 10) {
-                    CollectionCellView(keyring: keyring)
-                        .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        .cornerRadius(10)
+                    ZStack {
+                        CollectionCellView(keyring: keyring)
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                            .cornerRadius(10)
+                        
+                        // 외곽선
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                        
+                        // 다른 위치에 장착된 경우 오버레이
+                        if isSelectedElsewhere {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.black50)
+                                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                        }
+                    }
                     
                     Text("\(keyring.name)")
                         .typography(isSelectedHere ? .notosans14SB : .notosans14M)
@@ -287,8 +301,8 @@ extension BundleAddKeyringView {
                         .truncationMode(.tail)
                 }
                 
-                // 중복 표시 아이콘 (다른 위치에 이미 선택됨)
-                if isSelectedElsewhere {
+                // 장착 중 아이콘
+                if isSelectedElsewhere || isSelectedHere {
                     VStack {
                         HStack {
                             Spacer()
