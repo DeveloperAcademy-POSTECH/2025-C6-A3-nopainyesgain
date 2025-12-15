@@ -11,19 +11,11 @@ import FirebaseFirestore
 struct AlarmView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
 
+    @State private var viewModel = AlarmViewModel()
     @State private var notificationManager = NotificationManager.shared
-    @State private var isNotiEmpty: Bool = true
     @State private var isNotiOff: Bool = false
     @State private var isNotiOffShown: Bool = true
     @State private var authorizationStatus: UNAuthorizationStatus = .notDetermined
-
-    // 알림 데이터
-    @State private var notifications: [KeychyNotification] = []
-    @State private var isLoadingNotifications: Bool = false
-
-    // Firebase
-    private let db = Firestore.firestore()
-    private var userManager = UserManager.shared
 
     init(router: NavigationRouter<HomeRoute>) {
         self.router = router
@@ -32,7 +24,7 @@ struct AlarmView: View {
     var body: some View {
         ZStack {
             // 알림이 없을 때만 빈 화면 표시
-            if isNotiEmpty {
+            if viewModel.isNotiEmpty {
                 emptyImageView
             }
 
@@ -41,9 +33,9 @@ struct AlarmView: View {
                 if isNotiOff && isNotiOffShown {
                     pushNotiOffView
                 }
-                
+
                 // 알림이 있을 때만 리스트 표시
-                if !isNotiEmpty {
+                if !viewModel.isNotiEmpty {
                     notificationListView
                 }
 
@@ -51,7 +43,7 @@ struct AlarmView: View {
             }
             .adaptiveTopPaddingAlt()
             .padding(.top, 20)
-            
+
             customNavigation
         }
         .ignoresSafeArea()
@@ -61,12 +53,12 @@ struct AlarmView: View {
         .swipeBackGesture(enabled: true)
         .onAppear {
             checkNotificationPermission()
-            fetchNotifications()
+            viewModel.fetchNotifications()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             // 설정 앱에서 돌아왔을 때 재체크
             checkNotificationPermission()
-            fetchNotifications()
+            viewModel.fetchNotifications()
         }
         .swipeBackGesture(enabled: true)
     }
@@ -75,19 +67,29 @@ struct AlarmView: View {
 extension AlarmView {
     /// 알림 리스트 뷰
     private var notificationListView: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(notifications) { notification in
-                    NotificationItemView(
-                        notification: notification,
-                        onTap: {
-                            handleNotificationTap(notification)
-                        }
-                    )
+        List {
+            ForEach(viewModel.notifications) { notification in
+                NotificationItemView(
+                    notification: notification,
+                    onTap: {
+                        handleNotificationTap(notification)
+                    }
+                )
+                .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        viewModel.deleteNotification(notification)
+                    } label: {
+                        Label("삭제", systemImage: "trash")
+                    }
                 }
             }
-            .padding(.top, isNotiOff && isNotiOffShown ? 8 : 0)
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .padding(.top, isNotiOff && isNotiOffShown ? 8 : 0)
     }
 
     /// 알림이 없을 때 나오는 뷰
@@ -140,6 +142,20 @@ extension AlarmView {
         .buttonStyle(.plain)
     }
     
+    /// 커스텀 네비
+    private var customNavigation: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+            Text("알림")
+        } trailing: {
+            Spacer()
+                .frame(width: 44, height: 44)
+        }
+    }
+    
     /// 알림 권한 체크
     private func checkNotificationPermission() {
         notificationManager.getAuthorizationStatus { status in
@@ -163,103 +179,12 @@ extension AlarmView {
         }
     }
 
-    /// Firestore에서 알림 가져오기
-    private func fetchNotifications() {
-        guard let userId = userManager.currentUser?.id else {
-            print("사용자 ID를 찾을 수 없습니다")
-            return
-        }
-
-        isLoadingNotifications = true
-
-        db.collection("Notifications")
-            .whereField("receiverId", isEqualTo: userId)
-            .order(by: "createdAt", descending: true)
-            .limit(to: 50) // 최근 50개만 가져오기
-            .addSnapshotListener { querySnapshot, error in
-                isLoadingNotifications = false
-
-                if let error = error {
-                    print("알림 조회 실패: \(error.localizedDescription)")
-                    return
-                }
-
-                guard let documents = querySnapshot?.documents else {
-                    print("알림 문서가 없습니다")
-                    notifications = []
-                    isNotiEmpty = true
-                    return
-                }
-
-                // Firestore 문서 → KeychyNotification 모델 변환
-                notifications = documents.compactMap { document in
-                    KeychyNotification(documentId: document.documentID, data: document.data())
-                }
-
-                // 빈 상태 업데이트
-                isNotiEmpty = notifications.isEmpty
-
-                print("알림 \(notifications.count)개 로드됨")
-            }
-    }
-
     /// 알림 탭 처리
     private func handleNotificationTap(_ notification: KeychyNotification) {
         // 1. 읽음 처리
-        markNotificationAsRead(notification)
+        viewModel.markNotificationAsRead(notification)
 
         // 2. 선물 완료 화면으로 이동
         router.push(.notificationGiftView(postOfficeId: notification.postOfficeId))
-    }
-
-    /// 알림을 읽음 처리
-    private func markNotificationAsRead(_ notification: KeychyNotification) {
-        guard let notificationId = notification.documentId else {
-            print("알림 문서 ID가 없습니다")
-            return
-        }
-
-        // 이미 읽음 상태면 스킵
-        if notification.isRead {
-            return
-        }
-
-        db.collection("Notifications")
-            .document(notificationId)
-            .updateData(["isRead": true]) { error in
-                if let error = error {
-                    print("알림 읽음 처리 실패: \(error.localizedDescription)")
-                } else {
-                    print("알림 읽음 처리 완료: \(notificationId)")
-                    Task {
-                        await self.updateBadgeCount()
-                    }
-                }
-            }
-    }
-    
-    @MainActor
-    private func updateBadgeCount() {
-        // 1. 먼저 뱃지를 0으로 초기화 (기존의 잘못된 숫자 제거)
-        UNUserNotificationCenter.current().setBadgeCount(0)
-
-        // 2. 읽지 않은 알림 개수를 다시 세서 설정
-        let unreadCount = notifications.filter { !$0.isRead }.count
-        UNUserNotificationCenter.current().setBadgeCount(unreadCount)
-
-        print("뱃지 업데이트: \(unreadCount)")
-    }
-    
-    private var customNavigation: some View {
-        CustomNavigationBar {
-            BackToolbarButton {
-                router.pop()
-            }
-        } center: {
-            Text("알림")
-        } trailing: {
-            Spacer()
-                .frame(width: 44, height: 44)
-        }
     }
 }
