@@ -537,7 +537,8 @@ class Showcase25BoardViewModel {
                     selectedChain: keyring.selectedChain,
                     originalId: baseOriginalId,
                     chainLength: keyring.chainLength,
-                    isNew: true
+                    isNew: true,
+                    hookOffsetY: keyring.hookOffsetY
                 )
 
                 // 3. Firestore에 저장

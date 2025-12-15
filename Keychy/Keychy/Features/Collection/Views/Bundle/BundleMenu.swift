@@ -39,9 +39,10 @@ struct BundleMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                     
                     // 편집 버튼
                     Button(action: onEdit) {
@@ -55,9 +56,10 @@ struct BundleMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                     
                     // 삭제 버튼
                     if !isMain {
@@ -72,12 +74,13 @@ struct BundleMenu: View {
                                 Spacer()
                             }
                             .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+                            .contentShape(Rectangle())
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))

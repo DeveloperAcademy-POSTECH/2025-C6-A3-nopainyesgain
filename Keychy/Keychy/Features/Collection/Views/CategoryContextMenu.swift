@@ -27,12 +27,14 @@ struct CategoryContextMenu: View {
             ZStack {
                 
                 // 메뉴
-                VStack(alignment: .leading, spacing: 25) {
+                VStack(alignment: .leading, spacing: 5) {
                     // 태그 이름
                     Text(categoryName)
                         .typography(.notosans13M)
                         .foregroundColor(.gray500)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                     
                     
                     // 이름 변경 버튼
@@ -45,9 +47,14 @@ struct CategoryContextMenu: View {
                             Text("태그 이름 변경")
                                 .typography(.suit16M)
                                 .foregroundColor(.gray600)
+                            
+                            
                         }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     
                     // 삭제 버튼
                     Button(action: onDelete) {
@@ -59,11 +66,16 @@ struct CategoryContextMenu: View {
                             Text("삭제")
                                 .typography(.suit16M)
                                 .foregroundColor(.pink)
+                            
+                            Spacer()
                         }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))

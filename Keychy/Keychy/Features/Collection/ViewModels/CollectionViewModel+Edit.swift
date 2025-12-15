@@ -223,7 +223,8 @@ extension CollectionViewModel {
                     selectedChain: keyring.selectedChain,
                     originalId: baseOriginalId,
                     chainLength: keyring.chainLength,
-                    isNew: true
+                    isNew: true,
+                    hookOffsetY: keyring.hookOffsetY
                 )
 
                 // Firestore에 저장

@@ -105,7 +105,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     
                     if let bundle = viewModel.selectedBundle {
                         DeletePopup(
-                            title: "\(bundle.name)\n삭제하시겠어요?",
+                            title: "[\(bundle.name)]\n삭제하시겠어요?",
                             message: "삭제한 뭉치는 복구할 수 없습니다.",
                             onCancel: {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
