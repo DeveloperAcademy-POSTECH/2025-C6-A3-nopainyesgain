@@ -39,9 +39,9 @@ struct BundleMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                     
                     // 편집 버튼
                     Button(action: onEdit) {
@@ -55,9 +55,9 @@ struct BundleMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                     
                     // 삭제 버튼
                     if !isMain {
@@ -72,9 +72,9 @@ struct BundleMenu: View {
                                 Spacer()
                             }
                             .padding(.vertical, 10)
+                            .contentShape(Rectangle())
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
                     }
                 }
                 .padding(.horizontal, 20)
