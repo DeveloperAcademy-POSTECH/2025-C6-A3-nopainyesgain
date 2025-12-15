@@ -133,8 +133,6 @@
 		4C66220B2EAE5FC3001760B5 /* SUIT-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622012EAE5FC3001760B5 /* SUIT-Regular.otf */; };
 		4C66220C2EAE5FC3001760B5 /* SUIT-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622022EAE5FC3001760B5 /* SUIT-SemiBold.otf */; };
 		4C66220D2EAE5FC3001760B5 /* SUIT-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */; };
-		4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */; };
-		4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622112EAE6825001760B5 /* HomeViewModel.swift */; };
 		4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */; };
 		4C6622322EAF6AF7001760B5 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6622312EAF6AF7001760B5 /* Typography.swift */; };
 		4C6622412EAF77AB001760B5 /* NanumSquareRoundOTFB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */; };
@@ -199,6 +197,8 @@
 		4CC8D01A2EF0395F00317467 /* WidgetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0122EF0395F00317467 /* WidgetConfiguration.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4CC8D01B2EF0395F00317467 /* WidgetKeychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */; };
 		4CC8D01C2EF0395F00317467 /* WidgetKeychyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */; };
+		4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */; };
+		4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -508,8 +508,6 @@
 		4C6622022EAE5FC3001760B5 /* SUIT-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-SemiBold.otf"; sourceTree = "<group>"; };
 		4C6622032EAE5FC3001760B5 /* SUIT-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SUIT-Thin.otf"; sourceTree = "<group>"; };
 		4C66220E2EAE6109001760B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeViewModel+Bundle.swift"; sourceTree = "<group>"; };
-		4C6622112EAE6825001760B5 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		4C6622142EAE70BF001760B5 /* Gradient+Keychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Gradient+Keychy.swift"; sourceTree = "<group>"; };
 		4C6622312EAF6AF7001760B5 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		4C66223C2EAF77AB001760B5 /* NanumSquareRoundOTFB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundOTFB.otf; sourceTree = "<group>"; };
@@ -575,6 +573,8 @@
 		4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychy.swift; sourceTree = "<group>"; };
 		4CC8D0142EF0395F00317467 /* WidgetKeychy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WidgetKeychy-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychyBundle.swift; sourceTree = "<group>"; };
+		4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeNameViewModel.swift; sourceTree = "<group>"; };
+		4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1481,18 +1481,11 @@
 			path = Festival;
 			sourceTree = "<group>";
 		};
-		4CEC62482EAE08DF0099ECEE /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		4CEC624A2EAE08DF0099ECEE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				4C6622112EAE6825001760B5 /* HomeViewModel.swift */,
-				4C66220F2EAE67CE001760B5 /* HomeViewModel+Bundle.swift */,
+				4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */,
+				4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */,
 				4CC8D00A2EEFC36900317467 /* AlarmViewModel.swift */,
 			);
 			path = ViewModels;
@@ -1512,7 +1505,6 @@
 		4CEC624E2EAE08DF0099ECEE /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62482EAE08DF0099ECEE /* Models */,
 				4CEC624A2EAE08DF0099ECEE /* ViewModels */,
 				4CEC624C2EAE08DF0099ECEE /* Views */,
 			);
@@ -2163,7 +2155,6 @@
 				C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
 				4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */,
-				4C6622122EAE6825001760B5 /* HomeViewModel.swift in Sources */,
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
 				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
 				C6C361E62ED4B289009642F4 /* ShowcaseConfirmPopup.swift in Sources */,
@@ -2277,6 +2268,8 @@
 				389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
 				4CA9C6F72ECBA45200CA546B /* KeychyNotification.swift in Sources */,
+				4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */,
+				4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
 				C6C35F392ED2A3C2009642F4 /* uploadSampleFestivalKeyrings.swift in Sources */,
 				C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */,
@@ -2287,7 +2280,6 @@
 				38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */,
 				4CB82ECB2EB1FD8500B7458B /* PreviewGuiding.swift in Sources */,
 				4CEC622E2EAE08DA0099ECEE /* KeyringCellScene+Setup.swift in Sources */,
-				4C6622102EAE67CE001760B5 /* HomeViewModel+Bundle.swift in Sources */,
 				C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */,
 				C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */,
 				4CEC622F2EAE08DA0099ECEE /* NavigationRouter.swift in Sources */,
