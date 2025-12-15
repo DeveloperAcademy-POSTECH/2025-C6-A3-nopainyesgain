@@ -194,6 +194,11 @@
 		4CC3D3DB2EC8C6530009D376 /* longLoadingKeychy.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CC3D3DA2EC8C6530009D376 /* longLoadingKeychy.json */; };
 		4CC8D00B2EEFC36900317467 /* AlarmViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D00A2EEFC36900317467 /* AlarmViewModel.swift */; };
 		4CC8D00D2EF030E300317467 /* CollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D00C2EF030E300317467 /* CollectionViewModel.swift */; };
+		4CC8D0172EF0395F00317467 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CC8D00F2EF0395F00317467 /* Assets.xcassets */; };
+		4CC8D0192EF0395F00317467 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D00E2EF0395F00317467 /* AppIntent.swift */; };
+		4CC8D01A2EF0395F00317467 /* WidgetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0122EF0395F00317467 /* WidgetConfiguration.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		4CC8D01B2EF0395F00317467 /* WidgetKeychy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */; };
+		4CC8D01C2EF0395F00317467 /* WidgetKeychyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -562,6 +567,14 @@
 		4CC3D3DA2EC8C6530009D376 /* longLoadingKeychy.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = longLoadingKeychy.json; sourceTree = "<group>"; };
 		4CC8D00A2EEFC36900317467 /* AlarmViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmViewModel.swift; sourceTree = "<group>"; };
 		4CC8D00C2EF030E300317467 /* CollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewModel.swift; sourceTree = "<group>"; };
+		4CC8D00E2EF0395F00317467 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		4CC8D00F2EF0395F00317467 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4CC8D0102EF0395F00317467 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CC8D0112EF0395F00317467 /* WidgetConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetConfiguration.h; sourceTree = "<group>"; };
+		4CC8D0122EF0395F00317467 /* WidgetConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetConfiguration.mm; sourceTree = "<group>"; };
+		4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychy.swift; sourceTree = "<group>"; };
+		4CC8D0142EF0395F00317467 /* WidgetKeychy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WidgetKeychy-Bridging-Header.h"; sourceTree = "<group>"; };
+		4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychyBundle.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -715,30 +728,6 @@
 		C6C402A22EB40ACA006B58DF /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 		C6EE7AD62EB445F6002B5669 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C60E84182EC484CF005C5357 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			additionalCompilerFlagsByRelativePath = {
-				WidgetConfiguration.mm = "-fno-objc-arc";
-			};
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = C6B56F312EC061BB0049F969 /* WidgetKeychyExtension */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C60E84112EC484CF005C5357 /* WidgetKeychy */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				C60E84182EC484CF005C5357 /* Exceptions for "WidgetKeychy" folder in "WidgetKeychyExtension" target */,
-			);
-			path = WidgetKeychy;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4CEC61AE2EAE071B0099ECEE /* Frameworks */ = {
@@ -1138,12 +1127,27 @@
 			path = Alert;
 			sourceTree = "<group>";
 		};
+		4CC8D0162EF0395F00317467 /* WidgetKeychy */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8D00F2EF0395F00317467 /* Assets.xcassets */,
+				4CC8D0102EF0395F00317467 /* Info.plist */,
+				4CC8D0142EF0395F00317467 /* WidgetKeychy-Bridging-Header.h */,
+				4CC8D0112EF0395F00317467 /* WidgetConfiguration.h */,
+				4CC8D0122EF0395F00317467 /* WidgetConfiguration.mm */,
+				4CC8D00E2EF0395F00317467 /* AppIntent.swift */,
+				4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */,
+				4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */,
+			);
+			path = WidgetKeychy;
+			sourceTree = "<group>";
+		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
 				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
-				C60E84112EC484CF005C5357 /* WidgetKeychy */,
+				4CC8D0162EF0395F00317467 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
 				4CEC61B22EAE071B0099ECEE /* Products */,
 			);
@@ -1924,9 +1928,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				C60E84112EC484CF005C5357 /* WidgetKeychy */,
-			);
 			name = WidgetKeychyExtension;
 			packageProductDependencies = (
 			);
@@ -2025,6 +2026,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CC8D0172EF0395F00317467 /* Assets.xcassets in Resources */,
 				C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2333,6 +2335,10 @@
 			files = (
 				C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */,
 				C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */,
+				4CC8D0192EF0395F00317467 /* AppIntent.swift in Sources */,
+				4CC8D01A2EF0395F00317467 /* WidgetConfiguration.mm in Sources */,
+				4CC8D01B2EF0395F00317467 /* WidgetKeychy.swift in Sources */,
+				4CC8D01C2EF0395F00317467 /* WidgetKeychyBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
