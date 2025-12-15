@@ -40,9 +40,10 @@ struct KeyringMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
                     
                     if isMyKeyring {
                         // 복사 버튼
@@ -59,6 +60,7 @@ struct KeyringMenu: View {
                                 Spacer()
                             }
                             .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
                             .contentShape(Rectangle())
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -78,11 +80,12 @@ struct KeyringMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                         .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))

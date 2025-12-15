@@ -39,6 +39,7 @@ struct BundleMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                         .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -55,6 +56,7 @@ struct BundleMenu: View {
                             Spacer()
                         }
                         .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                         .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -72,12 +74,13 @@ struct BundleMenu: View {
                                 Spacer()
                             }
                             .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
                             .contentShape(Rectangle())
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))

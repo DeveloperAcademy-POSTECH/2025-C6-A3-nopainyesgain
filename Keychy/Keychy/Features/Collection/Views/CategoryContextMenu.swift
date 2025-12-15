@@ -27,12 +27,14 @@ struct CategoryContextMenu: View {
             ZStack {
                 
                 // 메뉴
-                VStack(alignment: .leading, spacing: 25) {
+                VStack(alignment: .leading, spacing: 5) {
                     // 태그 이름
                     Text(categoryName)
                         .typography(.notosans13M)
                         .foregroundColor(.gray500)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                     
                     
                     // 이름 변경 버튼
@@ -48,6 +50,8 @@ struct CategoryContextMenu: View {
                             
                             
                         }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                         .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -65,11 +69,13 @@ struct CategoryContextMenu: View {
                             
                             Spacer()
                         }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
                         .contentShape(Rectangle())
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 20)
                 .frame(width: menuWidth, height: menuHeight)
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
