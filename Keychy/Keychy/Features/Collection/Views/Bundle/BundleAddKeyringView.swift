@@ -30,6 +30,56 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         GridItem(.flexible(), spacing: 10)
     ]
     
+    /// 키링 선택 시트용 정렬 키링 리스트
+    /// 1순위 : 현재 위치에 선택된 키링
+    /// 2순위 : 일반 키링들 (선택되지 않았고, activate임)
+    /// 3순위 : 다른 위치에 선택된 키링
+    /// 4순위 : inactive된 키링들 (published / packaged)
+    private var sortedKeyrings: [Keyring] {
+        let selectedKeyring = selectedKeyrings[selectedPosition]
+        
+        return viewModel.keyring.sorted { keyring1, keyring2 in
+            let isKeyring1SelectedHere = keyring1.id == selectedKeyring?.id
+            let isKeyring2SelectedHere = keyring2.id == selectedKeyring?.id
+            
+            let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
+            let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
+            
+            let isKeyring1Unavailable = keyring1.status == .published || keyring1.status == .packaged
+            let isKeyring2Unavailable = keyring2.status == .published || keyring2.status == .packaged
+            
+            // 1순위: 현재 위치에 선택된 키링 - 맨 앞
+            if isKeyring1SelectedHere != isKeyring2SelectedHere {
+                return isKeyring1SelectedHere
+            }
+            
+            // 2순위: 일반 키링 vs 나머지 (elsewhere or unavailable)
+            let isKeyring1Normal = !isKeyring1SelectedElsewhere && !isKeyring1Unavailable
+            let isKeyring2Normal = !isKeyring2SelectedElsewhere && !isKeyring2Unavailable
+            
+            if isKeyring1Normal != isKeyring2Normal {
+                return isKeyring1Normal
+            }
+            
+            // 3순위: 다른 위치 장착 vs unavailable (다른 위치 장착이 먼저)
+            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
+                return isKeyring1SelectedElsewhere // elsewhere를 앞으로
+            }
+            
+            // 4순위: unavailable 키링들 (맨 뒤)
+            if isKeyring1Unavailable != isKeyring2Unavailable {
+                return isKeyring2Unavailable // unavailable을 맨 뒤로
+            }
+            
+            // 같은 그룹 내에서는 원래 순서 유지 (viewModel.keyringSorting 결과)
+            guard let index1 = viewModel.keyring.firstIndex(of: keyring1),
+                  let index2 = viewModel.keyring.firstIndex(of: keyring2) else {
+                return false
+            }
+            return index1 < index2
+        }
+    }
+    
     //임시 초기값
     private let screenSize = CGSize(width: 402, height: 874)
     private let sheetHeightRatio: CGFloat = 0.43
@@ -176,7 +226,7 @@ extension BundleAddKeyringView {
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(viewModel.keyring, id: \.self) { keyring in
+                        ForEach(sortedKeyrings, id: \.self) { keyring in
                             keyringCell(keyring: keyring)
                         }
                     }
@@ -363,8 +413,7 @@ extension BundleAddKeyringView {
             if success {
                 viewModel.fetchUserKeyrings(uid: uid) { success in
                     if success {
-                        // 키링 데이터 로드 완료 후 정렬 실행
-                        viewModel.keyringSorting()
+                        print("데이터 가져오기 성공")
                     }
                 }
             }

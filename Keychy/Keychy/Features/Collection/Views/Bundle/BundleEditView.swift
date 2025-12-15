@@ -382,6 +382,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         return Button {
             // 토글
             if isSelectedHere {
+
                 // 해제
                 selectedKeyrings[selectedPosition] = nil
                 keyringOrder.removeAll { $0 == selectedPosition }
@@ -620,10 +621,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
             viewModel.fetchUserKeyrings(uid: uid) { success in
-                if success {
-                    // 키링 데이터 로드 완료 후 정렬 실행
-                    viewModel.keyringSorting()
-                }
                 continuation.resume()
             }
         }
@@ -695,10 +692,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
             viewModel.fetchUserKeyrings(uid: uid) { success in
-                if success {
-                    // 키링 데이터 로드 완료 후 정렬 실행
-                    viewModel.keyringSorting()
-                }
                 continuation.resume()
             }
         }

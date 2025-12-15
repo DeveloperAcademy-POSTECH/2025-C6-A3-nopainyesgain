@@ -237,7 +237,7 @@ extension CollectionViewModel {
         // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
         for index in 0..<carabiner.maxKeyringCount {
             // 번들에 저장된 문서 id (없으면 "none")
-            let docId = bundle.keyrings[index] ?? "none"
+            let docId = bundle.keyrings[index]
 
             if docId == "none" || docId.isEmpty {
                 continue
@@ -300,7 +300,7 @@ extension CollectionViewModel {
                 db.collection("KeyringBundle").document(mainDocId).updateData([
                     "isMain": false
                 ]) { error in
-                    if let error = error {
+                    if error != nil {
                         hasError = true
                     }
                     dispatchGroup.leave()
@@ -355,7 +355,7 @@ extension CollectionViewModel {
         db.collection("KeyringBundle").document(documentId).updateData([
             "name": trimmedName
         ]) { [weak self] error in
-            if let error = error {
+            if error != nil {
                 completion(false)
                 return
             }
@@ -728,18 +728,5 @@ extension CollectionViewModel {
                 tabBarController.tabBar.isHidden = false
             }
         }
-    }
-    
-    // MARK: - 키링 선택 시트 정렬 함수
-    /// keyringStatus == .pacakged 또는 keyringStatus == .published인건 맨 뒤로 보내는 함수입니다.
-    /// 정렬 기준 : 활성/비활성 -> 장착 가능/불가 -> 생성순... 근데 좀 더 물어봐야겠슴
-    func keyringSorting() {
-        var activateKeyrings = keyring.filter { !$0.isPackaged && !$0.isPublished }
-        
-        let packagedKeyrings = keyring.filter { $0.isPackaged }
-        let publishedKeyrings = keyring.filter { $0.isPublished }
-        // 생성순으로 정렬
-        activateKeyrings.sort { $0.createdAt > $1.createdAt }
-        keyring = activateKeyrings + packagedKeyrings + publishedKeyrings
     }
 }
