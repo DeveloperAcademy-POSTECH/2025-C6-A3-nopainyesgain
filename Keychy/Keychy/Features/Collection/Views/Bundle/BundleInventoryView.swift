@@ -96,7 +96,7 @@ extension BundleInventoryView {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, geometry.safeAreaInsets.top + 60 + 20 + morePadding) // safe area + 네비 바 높이 + 여백
+                .padding(.top, geometry.safeAreaInsets.top + 80 + morePadding) // safe area + 네비 바 높이 + 여백
             }
         }
         
