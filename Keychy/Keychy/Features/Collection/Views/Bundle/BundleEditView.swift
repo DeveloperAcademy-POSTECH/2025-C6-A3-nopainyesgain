@@ -500,7 +500,8 @@ struct BundleEditView<Route: BundleRoute>: View {
                             viewModel: viewModel,
                             selectedCarabiner: newSelectedCarabiner,
                             onCarabinerTap: { carabiner in
-                                newSelectedCarabiner = carabiner
+                                selectCarabiner = carabiner
+                                showChangeCarabinerAlert = true
                             }
                         )
                     )
