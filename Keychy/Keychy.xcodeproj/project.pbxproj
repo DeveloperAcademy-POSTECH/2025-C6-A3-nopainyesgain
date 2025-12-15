@@ -322,7 +322,6 @@
 		C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
 		C6B5707B2EC2036C0049F969 /* MultiKeyringCaptureScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */; };
 		C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
-		C6B570812EC20AF60049F969 /* CachedBundlesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */; };
 		C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */; };
 		C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
 		C6C35EF82ED17228009642F4 /* RealStoreKit2.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */; };
@@ -691,7 +690,6 @@
 		C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableKeyring.swift; sourceTree = "<group>"; };
 		C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringCaptureScene.swift; sourceTree = "<group>"; };
 		C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleImageCache.swift; sourceTree = "<group>"; };
-		C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedBundlesDebugView.swift; sourceTree = "<group>"; };
 		C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiKeyringCaptureScene+Capture.swift"; sourceTree = "<group>"; };
 		C6C35EF62ED17228009642F4 /* RealStoreKit2.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = RealStoreKit2.storekit; sourceTree = "<group>"; };
 		C6C35F372ED2A3C2009642F4 /* FestivalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalViewModel.swift; sourceTree = "<group>"; };
@@ -1682,7 +1680,6 @@
 			isa = PBXGroup;
 			children = (
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
-				C6B570802EC20AF60049F969 /* CachedBundlesDebugView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */,
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
@@ -2129,7 +2126,6 @@
 				4CEC62292EAE08DA0099ECEE /* KeyringCellScene.swift in Sources */,
 				3828F5492EC4CCE400F1B040 /* CollectionView+Search.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
-				C6B570812EC20AF60049F969 /* CachedBundlesDebugView.swift in Sources */,
 				AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */,
 				AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheet.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
