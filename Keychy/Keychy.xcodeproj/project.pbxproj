@@ -50,7 +50,7 @@
 		389080632ED47F2500D7A49F /* VotePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080622ED47F2500D7A49F /* VotePopup.swift */; };
 		389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */; };
 		38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */; };
-		38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */; };
+		38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */; };
 		38A22A9F2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */; };
 		38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */; };
 		38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A5943B2EAE4EE20003D712 /* FirebaseAnalytics */; };
@@ -79,7 +79,7 @@
 		38C3C2902EC1F69D003C5DE1 /* CollectionKeyringDetailView+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C28F2EC1F69D003C5DE1 /* CollectionKeyringDetailView+Toolbar.swift */; };
 		38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2912EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift */; };
 		38C3C2942EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2932EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift */; };
-		38C3C2962EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */; };
+		38C3C2962EC20B1E003C5DE1 /* PackagedKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C3C2952EC20B1E003C5DE1 /* PackagedKeyringView.swift */; };
 		38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */; };
 		38CE39B42ECD998B00168E4B /* ClearSketchVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */; };
 		38CE39D22ECE5F9300168E4B /* ClearSketchVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */; };
@@ -87,6 +87,7 @@
 		38CE39E42ECE684300168E4B /* ClearSketchVM+Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */; };
 		38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */; };
 		38DD90622ED594C00042EB45 /* FestivalKeyringContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38DD90612ED594C00042EB45 /* FestivalKeyringContextMenu.swift */; };
+		38DD909C2EF1679D0042EB45 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38DD909B2EF1679D0042EB45 /* Color+Extension.swift */; };
 		38F832CB2EC9067300D3A248 /* WidgetOnboardingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CA2EC9067300D3A248 /* WidgetOnboardingStepView.swift */; };
 		38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CC2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift */; };
 		38F832CF2EC914C900D3A248 /* InvenExpandPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38F832CE2EC914C900D3A248 /* InvenExpandPopup.swift */; };
@@ -430,7 +431,7 @@
 		389080622ED47F2500D7A49F /* VotePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePopup.swift; sourceTree = "<group>"; };
 		389497162ED32405008340FA /* ClearSketchDrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchDrawingCanvasView.swift; sourceTree = "<group>"; };
 		38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringPackageView.swift; sourceTree = "<group>"; };
-		38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringPackageView+SaveImage.swift"; sourceTree = "<group>"; };
+		38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackagedKeyringView+SaveImage.swift"; sourceTree = "<group>"; };
 		38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackageCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
 		38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		38A596722EAFA8D20003D712 /* KeychyUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyUser.swift; sourceTree = "<group>"; };
@@ -454,7 +455,7 @@
 		38C3C28F2EC1F69D003C5DE1 /* CollectionKeyringDetailView+Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Toolbar.swift"; sourceTree = "<group>"; };
 		38C3C2912EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Lifecycle.swift"; sourceTree = "<group>"; };
 		38C3C2932EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Helpers.swift"; sourceTree = "<group>"; };
-		38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+Packaged.swift"; sourceTree = "<group>"; };
+		38C3C2952EC20B1E003C5DE1 /* PackagedKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackagedKeyringView.swift; sourceTree = "<group>"; };
 		38CE39B12ECD995D00168E4B /* ClearSketchPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchPreview.swift; sourceTree = "<group>"; };
 		38CE39B32ECD998B00168E4B /* ClearSketchVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchVM.swift; sourceTree = "<group>"; };
 		38CE39D12ECE5F9300168E4B /* ClearSketchVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+Effect.swift"; sourceTree = "<group>"; };
@@ -462,6 +463,7 @@
 		38CE39E32ECE684300168E4B /* ClearSketchVM+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClearSketchVM+Drawing.swift"; sourceTree = "<group>"; };
 		38D17A502EBBF88C00F52A88 /* CollectionViewModel+Edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Edit.swift"; sourceTree = "<group>"; };
 		38DD90612ED594C00042EB45 /* FestivalKeyringContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringContextMenu.swift; sourceTree = "<group>"; };
+		38DD909B2EF1679D0042EB45 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		38F832CA2EC9067300D3A248 /* WidgetOnboardingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetOnboardingStepView.swift; sourceTree = "<group>"; };
 		38F832CC2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WidgetOnboardingStepView+Helpers.swift"; sourceTree = "<group>"; };
 		38F832CE2EC914C900D3A248 /* InvenExpandPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvenExpandPopup.swift; sourceTree = "<group>"; };
@@ -1375,6 +1377,7 @@
 				4CEC62172EAE08DA0099ECEE /* View+Extension.swift */,
 				AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */,
 				386B17632ECD142600CCCC23 /* String+Extension.swift */,
+				38DD909B2EF1679D0042EB45 /* Color+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1439,8 +1442,8 @@
 				38C3C2932EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift */,
 				4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */,
 				38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */,
-				38C3C2952EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift */,
-				38A22A9C2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift */,
+				38C3C2952EC20B1E003C5DE1 /* PackagedKeyringView.swift */,
+				38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */,
 				3822DDC12EBBC712003125BE /* KeyringEditView.swift */,
 				3822DDBF2EBB2353003125BE /* KeyringMenu.swift */,
 				38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */,
@@ -2052,6 +2055,7 @@
 				38A22A9F2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift in Sources */,
 				4C8426572ED356DA0050B6FE /* SpeechBubbleVM+Firebase.swift in Sources */,
 				3822DDC02EBB2353003125BE /* KeyringMenu.swift in Sources */,
+				38DD909C2EF1679D0042EB45 /* Color+Extension.swift in Sources */,
 				4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */,
 				C6B56F1C2EBF2A960049F969 /* NeonSignVM+Effect.swift in Sources */,
 				4C84265D2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift in Sources */,
@@ -2244,11 +2248,11 @@
 				38C3C2822EC0CB6E003C5DE1 /* SavedPopup.swift in Sources */,
 				38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
-				38C3C2962EC20B1E003C5DE1 /* CollectionKeyringDetailView+Packaged.swift in Sources */,
+				38C3C2962EC20B1E003C5DE1 /* PackagedKeyringView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
 				38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */,
 				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
-				38A22A9D2EC27AC400B4C7C5 /* CollectionKeyringPackageView+SaveImage.swift in Sources */,
+				38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */,
 				4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */,
 				C64EE7952ECD733300E8450F /* PolaroidVM+Frame.swift in Sources */,
 				4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */,

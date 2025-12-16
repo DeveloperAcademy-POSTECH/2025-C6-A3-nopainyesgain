@@ -145,7 +145,7 @@ struct PackageCompleteView: View {
                 bodyImage: keyring.bodyImage,
                 targetSize: CGSize(width: 195, height: 300),
                 customBackgroundColor: .clear,
-                zoomScale: 1.8,
+                zoomScale: 1.6,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength
             )
@@ -371,7 +371,13 @@ struct PackageCompleteView: View {
                     .resizable()
                     .frame(width: 195, height: 300)
                     .rotationEffect(.degrees(10))
-                    .offset(y: -2)
+                    .offset(y: -5)
+                    .shadow(
+                        color: Color(hex: "#56522E").opacity(0.35),
+                        radius: 5,
+                        x: 4,
+                        y: 14
+                    )
             } else {
                 // PNG 로딩 중
                 LoadingAlert(type: .short, message: nil)
@@ -392,6 +398,7 @@ struct PackageCompleteView: View {
                     .resizable()
                     .frame(width: 240, height: 301)
                     .blendMode(.darken)
+                    .opacity(0.55)
                     .offset(y: -2)
             }
             .frame(width: 240, height: 390)
