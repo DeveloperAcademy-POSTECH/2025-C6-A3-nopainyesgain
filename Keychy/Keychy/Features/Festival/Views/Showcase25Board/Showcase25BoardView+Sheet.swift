@@ -75,7 +75,10 @@ extension Showcase25BoardView {
             }
             
 
-            if viewModel.userKeyrings.isEmpty {
+            // 내가 만든 키링만 필터링
+            let myKeyrings = viewModel.userKeyrings.filter { $0.authorId == UserManager.shared.userUID }
+
+            if myKeyrings.isEmpty {
                 // 키링이 없는 경우
                 VStack {
                     Image(.emptyViewIcon)
@@ -94,7 +97,7 @@ extension Showcase25BoardView {
                 // 키링 목록
                 ScrollView {
                     LazyVGrid(columns: sheetGridColumns, spacing: 10) {
-                        ForEach(viewModel.userKeyrings, id: \.self) { keyring in
+                        ForEach(myKeyrings, id: \.self) { keyring in
                             sheetKeyringCell(keyring: keyring)
                         }
                     }

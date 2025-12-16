@@ -63,7 +63,7 @@ struct festivalCard: View {
                                 RoundedRectangle(cornerRadius: 34)
                                     .fill(.black50)
                             )
-                        Text("남은 기간 \(remainingDays)일")
+                        Text(remainingDays == 0 ? "D-day" : "D-\(remainingDays)일")
                             .typography(.suit13SB)
                             .foregroundStyle(.main500)
                             .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
