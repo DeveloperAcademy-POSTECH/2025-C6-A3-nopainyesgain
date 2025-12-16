@@ -1,5 +1,5 @@
 //
-//  CollectionKeyringDetailView+Packaged.swift
+//  PackagedKeyringView.swift
 //  Keychy
 //
 //  Created by Jini on 11/10/25.
