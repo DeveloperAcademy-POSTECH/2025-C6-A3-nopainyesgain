@@ -200,6 +200,7 @@
 		4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */; };
 		4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */; };
 		4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */; };
+		4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0242EF11CD200317467 /* HomeViewModel.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -577,6 +578,7 @@
 		4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeNameViewModel.swift; sourceTree = "<group>"; };
 		4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
 		4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationGiftViewModel.swift; sourceTree = "<group>"; };
+		4CC8D0242EF11CD200317467 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1144,6 +1146,15 @@
 			path = WidgetKeychy;
 			sourceTree = "<group>";
 		};
+		4CC8D0232EF1135100317467 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */,
+				4CEC624B2EAE08DF0099ECEE /* HomeView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
@@ -1486,6 +1497,7 @@
 		4CEC624A2EAE08DF0099ECEE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				4CC8D0242EF11CD200317467 /* HomeViewModel.swift */,
 				4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */,
 				4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */,
 				4CC8D00A2EEFC36900317467 /* AlarmViewModel.swift */,
@@ -1497,8 +1509,7 @@
 		4CEC624C2EAE08DF0099ECEE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */,
-				4CEC624B2EAE08DF0099ECEE /* HomeView.swift */,
+				4CC8D0232EF1135100317467 /* Main */,
 				4C6530572EBC8544000F8154 /* MyPage */,
 				4CA9C6FA2ECBA60200CA546B /* Alarm */,
 			);
@@ -1636,10 +1647,10 @@
 			isa = PBXGroup;
 			children = (
 				38A596702EAFA8880003D712 /* Intro */,
-				4CEC62412EAE08DF0099ECEE /* Collection */,
-				4CEC62472EAE08DF0099ECEE /* Festival */,
 				4CEC624E2EAE08DF0099ECEE /* Home */,
 				4CEC62682EAE08DF0099ECEE /* Workshop */,
+				4CEC62412EAE08DF0099ECEE /* Collection */,
+				4CEC62472EAE08DF0099ECEE /* Festival */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -2106,6 +2117,7 @@
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
 				AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */,
+				4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */,
 				C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */,
 				4CEC62232EAE08DA0099ECEE /* KeyringRingComponent.swift in Sources */,
 				4CBBEF242EB78A5D00252590 /* KeyringInfoInputView+Sheet.swift in Sources */,
