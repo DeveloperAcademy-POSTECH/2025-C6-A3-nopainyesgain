@@ -47,6 +47,8 @@ struct BundleNameEditView<Route: BundleRoute>: View {
                 viewModel.loadBundleImageFromCache(bundle: bundle)
             }
             isTextFieldFocused = true
+            
+            // SE기기는 기기 상단이 막혀있고, 16기기는 상단이 뚫려있는(다이나믹 아일랜드) 기기 형태라서 다이나믹 아일랜드가 있는 기기를 위한 추가적인 여백을 계산해 넣습니다.
             if getBottomPadding(34) == 0 {
                 morePadding = 40
             }
