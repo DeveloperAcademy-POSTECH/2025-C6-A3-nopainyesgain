@@ -76,16 +76,22 @@ struct CollectionCellView: View {
         
         // 1. 캐시 확인
         if let imageData = KeyringImageCache.shared.load(for: keyringID),
+           !imageData.isEmpty,
            let image = UIImage(data: imageData) {
             self.cachedImage = image
             self.isLoading = false
             return
         }
         
-        // 2. 캐시 없으면 Scene 생성
+        // 2. 유효하지 않은, 손상된 캐시 삭제
+        if KeyringImageCache.shared.exists(for: keyringID) {
+            KeyringImageCache.shared.delete(for: keyringID)
+        }
+        
+        // 3. 캐시 없으면 Scene 생성
         createSceneIfNeeded()
         
-        // 3. 백그라운드 캡처
+        // 4. 백그라운드 캡처
         Task.detached(priority: .userInitiated) {
             await captureAndCache(keyringID: keyringID)
         }
