@@ -20,21 +20,6 @@ struct FestivalView: View {
     // 집에서 테스트 하실 땐 여기에 나와있는 longtitude, latitude를 수정하시면 됩니다(경도, 위도)
     let festivals = [
         (
-            title: "호미곶 상생의 손",
-            location: "경상북도 포항시 남구 호미곶면 해맞이로 136",
-            startDate: "2025.12.01",
-            endDate: "2025.12.08",
-            distance: "내 위치로 부터 1.5km",
-            imageName: "homigot",
-            targetLocation: TargetLocation(
-                name: "C5",
-                latitude: 36.076790,
-                longitude: 129.569939,
-                radius: 100 // 100m 반경
-            ),
-            isAvailable: false  // 목데이터 - 입장 불가
-        ),
-        (
             title: "SHOWCASE25",
             location: "경북 포항시 남구 지곡로 80 C5",
             startDate: "2025.11.26",
@@ -47,24 +32,8 @@ struct FestivalView: View {
                 longitude: 129.325749,
                 radius: 100
             ),
-            isAvailable: true
-            
-        ),
-        (
-            title: "영일대 전망대",
-            location: "경상북도 포항시 북구 삼호로",
-            startDate: "2025.12.09",
-            endDate: "2025.12.16",
-            distance: "내 위치로 부터 1.5km",
-            imageName: "youngonedae",
-            targetLocation: TargetLocation(
-                name: "C5",
-                latitude: 36.061582,
-                longitude: 129.383020,
-                radius: 100
-            ),
-            isAvailable: false  // 목데이터 - 입장 불가
-        ),
+            isAvailable: false
+        )
     ]
 
     var body: some View {
