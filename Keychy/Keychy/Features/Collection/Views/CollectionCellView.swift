@@ -176,7 +176,10 @@ struct CollectionCellView: View {
     // MARK: - 백그라운드 캡처 + 캐싱 (위젯용)
 
     /// 백그라운드에서 Scene 캡처 후 캐시 저장 (UI 업데이트 없음)
-    private func captureAndCache(keyringID: String) async {
+    private func captureAndCache(keyringID: String, retryCount: Int = 0) async {
+        // 실패 시 재시도 횟수
+        let maxRetries = 3
+        
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
 
@@ -210,43 +213,64 @@ struct CollectionCellView: View {
             Task {
                 var waitTime = 0.0
                 let checkInterval = 0.1 // 100ms마다 체크
-                let maxWaitTime = 3.0   // 최대 3초
+                let maxWaitTime = 5.0   // 최대 5초
 
                 while !loadingCompleted && waitTime < maxWaitTime {
                     try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
                     waitTime += checkInterval
                 }
 
+                // 타임아웃 체크 - 로딩 완료되지 않았으면 캡처하지 않음
                 if !loadingCompleted {
                     print("[CollectionCell] 타임아웃 - 로딩 미완료: \(keyringID)")
-                } else {
-                    // 로딩 완료 후 추가 렌더링 대기 (200ms)
-                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    
+                    // 재시도
+                    if retryCount < maxRetries {
+                        print("[CollectionCell] 재시도 중... (\(retryCount + 1)/\(maxRetries))")
+                        Task.detached(priority: .userInitiated) {
+                            try? await Task.sleep(for: .seconds(0.5))
+                            await self.captureAndCache(keyringID: keyringID, retryCount: retryCount + 1)
+                        }
+                    } else {
+                        print("[CollectionCell] 최종 실패 - 타임아웃: \(keyring.name)")
+                    }
+                    
+                    continuation.resume()
+                    return
                 }
+                
+                // 로딩 완료 후 추가 렌더링 대기 (200ms)
+                try? await Task.sleep(for: .seconds(0.2))
 
                 // PNG 캡처
-                if let pngData = await scene.captureToPNG() {
+                if let pngData = await scene.captureToPNG(),
+                   !pngData.isEmpty,
+                   UIImage(data: pngData) != nil {
+                    
                     // FileManager 캐시에 저장 (위젯에서 접근 가능)
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
 
-//                    // App Group에 위젯용 이미지 및 메타데이터 동기화
-//                    KeyringImageCache.shared.syncKeyring(
-//                        id: keyringID,
-//                        name: keyring.name,
-//                        imageData: pngData
-//                    )
                     if !keyring.isPackaged && !keyring.isPublished {
                         KeyringImageCache.shared.syncKeyring(
                             id: keyringID,
                             name: keyring.name,
                             imageData: pngData
                         )
-                        print("[CollectionCell] 💾 위젯 메타데이터 동기화: \(keyringID)")
+                        print("[CollectionCell] 캡처 성공 + 위젯 동기화: \(keyringID)")
                     } else {
-                        print("[CollectionCell] 💾 캐시 저장 (위젯 제외): \(keyringID)")
+                        print("[CollectionCell] 캡처 성공 (위젯 제외): \(keyringID)")
                     }
                 } else {
-                    print("[CollectionCell] 캡처 실패: \(keyringID)")
+                    print("[CollectionCell] 캡처 실패 - 유효하지 않은 데이터: \(keyringID)")
+                    
+                    // 재시도
+                    if retryCount < maxRetries {
+                        print("[CollectionCell] 재시도 중... (\(retryCount + 1)/\(maxRetries))")
+                        Task.detached(priority: .userInitiated) {
+                            try? await Task.sleep(for: .seconds(0.5))
+                            await self.captureAndCache(keyringID: keyringID, retryCount: retryCount + 1)
+                        }
+                    }
                 }
 
                 continuation.resume()

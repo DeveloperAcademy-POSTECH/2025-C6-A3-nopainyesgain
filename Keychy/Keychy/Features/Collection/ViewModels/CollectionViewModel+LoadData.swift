@@ -469,7 +469,7 @@ extension CollectionViewModel {
             Task {
                 var waitTime = 0.0
                 while !loadingCompleted && waitTime < 5.0 {
-                    try? await Task.sleep(for: .seconds(1))
+                    try? await Task.sleep(for: .seconds(0.1))
                     waitTime += 0.1
                 }
 
@@ -479,7 +479,7 @@ extension CollectionViewModel {
                     return
                 }
 
-                try? await Task.sleep(for: .seconds(2))
+                try? await Task.sleep(for: .seconds(0.2))
 
                 if let pngData = await scene.captureToPNG(),
                    !pngData.isEmpty,
