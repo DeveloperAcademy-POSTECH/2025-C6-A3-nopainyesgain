@@ -12,16 +12,38 @@ struct AlarmView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
 
     @State private var viewModel = AlarmViewModel()
-    @State private var notificationManager = NotificationManager.shared
-    @State private var isNotiOff: Bool = false
-    @State private var isNotiOffShown: Bool = true
-    @State private var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
     init(router: NavigationRouter<HomeRoute>) {
         self.router = router
     }
 
     var body: some View {
+        ZStack {
+            contentArea
+            customNavigation
+        }
+        .ignoresSafeArea()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .swipeBackGesture(enabled: true)
+        .onAppear {
+            viewModel.checkNotificationPermission()
+            viewModel.fetchNotifications()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            // 설정 앱에서 돌아왔을 때 재체크
+            viewModel.checkNotificationPermission()
+            viewModel.fetchNotifications()
+        }
+        .swipeBackGesture(enabled: true)
+    }
+}
+
+// MARK: - UI Components
+extension AlarmView {
+    /// 메인 콘텐츠 영역
+    private var contentArea: some View {
         ZStack {
             // 알림이 없을 때만 빈 화면 표시
             if viewModel.isNotiEmpty {
@@ -30,7 +52,7 @@ struct AlarmView: View {
 
             // 푸시 알림 off 배너 (최상단)
             VStack(spacing: 0) {
-                if isNotiOff && isNotiOffShown {
+                if viewModel.isNotiOff && viewModel.isNotiOffShown {
                     pushNotiOffView
                 }
 
@@ -43,28 +65,9 @@ struct AlarmView: View {
             }
             .adaptiveTopPaddingAlt()
             .padding(.top, 20)
-
-            customNavigation
         }
-        .ignoresSafeArea()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        .swipeBackGesture(enabled: true)
-        .onAppear {
-            checkNotificationPermission()
-            viewModel.fetchNotifications()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            // 설정 앱에서 돌아왔을 때 재체크
-            checkNotificationPermission()
-            viewModel.fetchNotifications()
-        }
-        .swipeBackGesture(enabled: true)
     }
-}
 
-extension AlarmView {
     /// 알림 리스트 뷰
     private var notificationListView: some View {
         List {
@@ -89,7 +92,7 @@ extension AlarmView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .padding(.top, isNotiOff && isNotiOffShown ? 8 : 0)
+        .padding(.top, viewModel.isNotiOff && viewModel.isNotiOffShown ? 8 : 0)
     }
 
     /// 알림이 없을 때 나오는 뷰
@@ -105,7 +108,7 @@ extension AlarmView {
     /// 기기 푸쉬 알림이 off일 때 나오는 상단뷰
     private var pushNotiOffView: some View {
         Button {
-            handleNotificationBannerTap()
+            viewModel.handleNotificationBannerTap()
         } label: {
             HStack(alignment: .center) {
                 /// 알람 아이콘
@@ -123,7 +126,7 @@ extension AlarmView {
                         /// 알림 off 뷰 닫기 버튼
                         Button {
                             withAnimation {
-                                isNotiOffShown = false
+                                viewModel.isNotiOffShown = false
                             }
                         } label: {
                             Image(.dismissGray300)
@@ -155,30 +158,10 @@ extension AlarmView {
                 .frame(width: 44, height: 44)
         }
     }
-    
-    /// 알림 권한 체크
-    private func checkNotificationPermission() {
-        notificationManager.getAuthorizationStatus { status in
-            authorizationStatus = status
-            // authorized가 아니면 배너 표시 (notDetermined, denied 모두 포함)
-            isNotiOff = (status != .authorized)
-        }
-    }
+}
 
-    /// 알림 배너 탭 처리
-    private func handleNotificationBannerTap() {
-        if authorizationStatus == .notDetermined {
-            // 아직 권한 요청 안한 경우 → 권한 요청 팝업 표시
-            notificationManager.requestPermission { granted in
-                // 권한 요청 후 다시 체크
-                checkNotificationPermission()
-            }
-        } else {
-            // 이미 거부된 경우 → 설정 앱으로 이동
-            notificationManager.openSettings()
-        }
-    }
-
+// MARK: - Actions
+extension AlarmView {
     /// 알림 탭 처리
     private func handleNotificationTap(_ notification: KeychyNotification) {
         // 1. 읽음 처리

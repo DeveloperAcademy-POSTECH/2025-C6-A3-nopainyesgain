@@ -199,6 +199,7 @@
 		4CC8D01C2EF0395F00317467 /* WidgetKeychyBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */; };
 		4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */; };
 		4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */; };
+		4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -575,6 +576,7 @@
 		4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeychyBundle.swift; sourceTree = "<group>"; };
 		4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeNameViewModel.swift; sourceTree = "<group>"; };
 		4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
+		4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationGiftViewModel.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1082,9 +1084,9 @@
 		4CA9C6FA2ECBA60200CA546B /* Alarm */ = {
 			isa = PBXGroup;
 			children = (
+				C6C402A22EB40ACA006B58DF /* AlarmView.swift */,
 				4CA9C6FB2ECBC20100CA546B /* NotificationGiftView.swift */,
 				4CA9C6F82ECBA5EF00CA546B /* NotificationItemView.swift */,
-				C6C402A22EB40ACA006B58DF /* AlarmView.swift */,
 			);
 			path = Alarm;
 			sourceTree = "<group>";
@@ -1487,6 +1489,7 @@
 				4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */,
 				4CC8D01D2EF0447100317467 /* ChangeNameViewModel.swift */,
 				4CC8D00A2EEFC36900317467 /* AlarmViewModel.swift */,
+				4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2232,6 +2235,7 @@
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */,
 				4CC8D00B2EEFC36900317467 /* AlarmViewModel.swift in Sources */,
+				4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */,
 				38C3C2822EC0CB6E003C5DE1 /* SavedPopup.swift in Sources */,
 				38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
