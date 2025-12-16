@@ -13,7 +13,6 @@ import FirebaseFirestore
 struct Keyring: Identifiable, Equatable, Hashable {
     let id = UUID()
     var documentId: String?  // Firestore documentId (위젯 캐시용)
-
     var name: String
     var bodyImage: String
     var soundId: String

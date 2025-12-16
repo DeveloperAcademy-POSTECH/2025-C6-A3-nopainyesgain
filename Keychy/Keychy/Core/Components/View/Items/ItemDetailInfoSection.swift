@@ -79,10 +79,6 @@ extension ItemDetailInfoSection {
         }
     }
 
-    private var itemPaidTag: some View {
-        Image(.paidTestIcon)
-    }
-
     private var itemName: some View {
         Text(item.name)
             .typography(.suit24B)

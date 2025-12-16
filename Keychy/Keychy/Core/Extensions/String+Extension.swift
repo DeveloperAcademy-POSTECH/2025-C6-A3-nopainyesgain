@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// 줄바꿈 시 단어 단위로 자르기 위함
+/// 줄바꿈 시 단어 단위로 자르기 위함
 /// 사용법 : Text(memo.byCharWrapping)
 extension String {
     var byCharWrapping: Self {

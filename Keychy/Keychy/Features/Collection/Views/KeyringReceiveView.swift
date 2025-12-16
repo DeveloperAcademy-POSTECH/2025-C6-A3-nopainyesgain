@@ -274,7 +274,13 @@ struct KeyringReceiveView: View {
                 )
                 .frame(width: 195, height: 300)
                 .rotationEffect(.degrees(10))
-                .offset(y: -15)
+                .offset(y: -22)
+                .shadow(
+                    color: Color(hex: "#56522E").opacity(0.35),
+                    radius: 6,
+                    x: 7,
+                    y: 16
+                )
             }
             
             VStack(spacing: 0) {
@@ -286,6 +292,7 @@ struct KeyringReceiveView: View {
                     .resizable()
                     .frame(width: 304, height: 389)
                     .blendMode(.darken)
+                    .opacity(0.55)
                     .offset(y: -12)
             }
             .frame(width: 304, height: 490)
@@ -318,7 +325,7 @@ struct KeyringReceiveView: View {
             bodyImage: keyring.bodyImage,
             targetSize: CGSize(width: 304, height: 490),
             customBackgroundColor: .clear,
-            zoomScale: 2.1,
+            zoomScale: 1.9,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
             onLoadingComplete: {
@@ -361,7 +368,7 @@ extension KeyringReceiveView {
                     .foregroundColor(.main500)
                 
                 Text("님이 키링을 선물했어요!")
-                    .typography(.suit20B)
+                    .typography(.notosans19M)
                     .foregroundColor(.black100)
             }
             

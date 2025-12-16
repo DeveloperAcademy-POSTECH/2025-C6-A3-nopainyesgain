@@ -63,26 +63,28 @@ struct festivalCard: View {
                                 RoundedRectangle(cornerRadius: 34)
                                     .fill(.black50)
                             )
-                        Text(remainingDays == 0 ? "D-day" : "D-\(remainingDays)일")
-                            .typography(.suit13SB)
-                            .foregroundStyle(.main500)
-                            .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
-                            .background(
-                                RoundedRectangle(cornerRadius: 34)
-                                    .fill(.main50)
-                            )
+                        if remainingDays >= 0 {
+                            Text(remainingDays == 0 ? "D-day" : "D-\(remainingDays)일")
+                                .typography(.suit13SB)
+                                .foregroundStyle(.main500)
+                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.main50)
+                                )
+                        } else {
+                            Text("종료된 페스티벌")
+                                .typography(.suit13SB)
+                                .foregroundStyle(.white100)
+                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.gray500)
+                                )
+                        }
                     }
                     .padding(10)
                 }
-            //                LazyImage(url: URL(string: imageName)) { state in
-            //                    if let image = state.image {
-            //                        image
-            //                            .resizable()
-            //                            .scaledToFit()
-            //                    } else {
-            //                        LoadingAlert(type: .short, message: "")
-            //                    }
-            //                }
             
             Spacer().frame(height: 15)
             
