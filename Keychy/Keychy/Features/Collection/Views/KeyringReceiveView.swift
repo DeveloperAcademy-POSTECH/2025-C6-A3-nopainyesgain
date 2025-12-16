@@ -361,7 +361,7 @@ extension KeyringReceiveView {
                     .foregroundColor(.main500)
                 
                 Text("님이 키링을 선물했어요!")
-                    .typography(.suit20B)
+                    .typography(.notosans19M)
                     .foregroundColor(.black100)
             }
             
