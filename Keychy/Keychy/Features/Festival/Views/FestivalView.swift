@@ -17,7 +17,7 @@ struct FestivalView: View {
 
     @State private var currentPage = 1
 
-    // ⭐️ 집에서 테스트 하실 땐 여기에 나와있는 longtitude, latitude를 수정하시면 됩니다!(경도, 위도)
+    // 집에서 테스트 하실 땐 여기에 나와있는 longtitude, latitude를 수정하시면 됩니다(경도, 위도)
     let festivals = [
         (
             title: "호미곶 상생의 손",
@@ -47,7 +47,8 @@ struct FestivalView: View {
                 longitude: 129.325749,
                 radius: 100
             ),
-            isAvailable: true  // 실제 페스티벌 - 입장 가능
+            isAvailable: true
+            
         ),
         (
             title: "영일대 전망대",
@@ -122,26 +123,9 @@ struct FestivalView: View {
             locationManager.stopTracking()
         }
     }
-
-    // MARK: - Upload Button
-
-    private var uploadButton: some View {
-        Button {
-            Task {
-                await viewModel.uploadSampleData()
-            }
-        } label: {
-            Image(systemName: "square.and.arrow.up")
-                .font(.system(size: 20, weight: .medium))
-                .foregroundColor(.black)
-                .frame(width: 44, height: 44)
-        }
-        .disabled(viewModel.isUploading)
-        .opacity(viewModel.isUploading ? 0.5 : 1.0)
-    }
     
     // MARK: - Helpers
-    
+    // 임시로 설정해두었습니다
     private var currentLocationAddress: String {
         if let address = locationManager.currentAddress {
             return address
@@ -156,7 +140,7 @@ struct FestivalView: View {
         switch locationManager.authorizationStatus {
         case .notDetermined: return "미설정"
         case .restricted: return "제한됨"
-        case .denied: return "거부됨 ⚠️"
+        case .denied: return "위치 권한이 거부되었어요. 설정에서 권한을 허용해 주세요."
         case .authorizedAlways: return "항상 허용 ✅"
         case .authorizedWhenInUse: return "사용 중 허용 ✅"
         @unknown default: return "알 수 없음"
