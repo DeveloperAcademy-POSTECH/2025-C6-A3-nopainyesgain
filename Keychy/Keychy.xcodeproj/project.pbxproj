@@ -1142,6 +1142,7 @@
 				4CC8D00E2EF0395F00317467 /* AppIntent.swift */,
 				4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */,
 				4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */,
+				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 			);
 			path = WidgetKeychy;
 			sourceTree = "<group>";
@@ -1158,7 +1159,6 @@
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
-				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
 				4CC8D0162EF0395F00317467 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
@@ -1179,9 +1179,9 @@
 			isa = PBXGroup;
 			children = (
 				C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */,
+				382800CD2EBFBE03005F1332 /* Keychy.entitlements */,
 				38A4BED72EBA516000E0B603 /* GoogleService-Info.plist */,
 				4C66220E2EAE6109001760B5 /* Info.plist */,
-				382800CD2EBFBE03005F1332 /* Keychy.entitlements */,
 				4CEC61F02EAE08C40099ECEE /* App */,
 				4CEC61E42EAE08C00099ECEE /* CommonModels */,
 				4CEC62192EAE08DA0099ECEE /* Core */,
@@ -2586,7 +2586,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = WidgetKeychy/WidgetKeychyExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2628,7 +2628,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = WidgetKeychyExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = WidgetKeychy/WidgetKeychyExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
