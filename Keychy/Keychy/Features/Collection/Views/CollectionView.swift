@@ -88,6 +88,11 @@ struct CollectionView: View {
         .onAppear {
             fetchUserData()
             setupKeyboardNotifications()
+            
+            // 백그라운드에서 캐시 없는 키링들 사전 캡처
+            Task(priority: .utility) {
+                await precacheAllKeyrings()
+            }
         }
         .onDisappear {
             removeKeyboardNotifications()

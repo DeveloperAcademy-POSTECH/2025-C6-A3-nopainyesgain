@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseFirestore
 import FirebaseStorage
+import SpriteKit
 
 extension CollectionViewModel {
     
@@ -430,6 +431,73 @@ extension CollectionViewModel {
             )
         } catch {
             return nil
+        }
+    }
+    
+    func prefetchKeyringImage(keyring: Keyring) async {
+        guard let keyringID = keyring.documentId,
+              !KeyringImageCache.shared.exists(for: keyringID) else {
+            return
+        }
+        
+        let ringType = RingType.fromID(keyring.selectedRing)
+        let chainType = ChainType.fromID(keyring.selectedChain)
+
+        await withCheckedContinuation { continuation in
+            var loadingCompleted = false
+
+            let scene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
+                targetSize: CGSize(width: 175, height: 233),
+                customBackgroundColor: .clear,
+                zoomScale: 2.0,
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength,
+                onLoadingComplete: {
+                    loadingCompleted = true
+                }
+            )
+            scene.scaleMode = .aspectFill
+
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+
+            Task {
+                var waitTime = 0.0
+                while !loadingCompleted && waitTime < 5.0 {
+                    try? await Task.sleep(for: .seconds(1))
+                    waitTime += 0.1
+                }
+
+                guard loadingCompleted else {
+                    print("[Prefetch] 타임아웃: \(keyring.name)")
+                    continuation.resume()
+                    return
+                }
+
+                try? await Task.sleep(for: .seconds(2))
+
+                if let pngData = await scene.captureToPNG(),
+                   !pngData.isEmpty,
+                   UIImage(data: pngData) != nil {
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+                    
+                    if !keyring.isPackaged && !keyring.isPublished {
+                        KeyringImageCache.shared.syncKeyring(
+                            id: keyringID,
+                            name: keyring.name,
+                            imageData: pngData
+                        )
+                    }
+                    print("[Prefetch] 캡처 성공: \(keyring.name)")
+                }
+
+                continuation.resume()
+            }
         }
     }
 
