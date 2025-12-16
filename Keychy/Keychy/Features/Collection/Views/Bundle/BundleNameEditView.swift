@@ -32,33 +32,25 @@ struct BundleNameEditView<Route: BundleRoute>: View {
                 
                 Spacer()
             }
-            .padding(.top, 100)
-            .frame(maxHeight: .infinity)
-            .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
-            .contentShape(Rectangle())
+            .padding(.top, 60 + morePadding)
+            
+            customNavigationBar
         }
+        .padding(.bottom, -keyboardHeight)
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .scrollDismissesKeyboard(.never)
-        .overlay(alignment: .top) {
-            customNavigationBar
-                .padding(.top, getTopPaddingBundle(34))
-                .padding(.top, morePadding)
-        }
         .onAppear {
             if let bundle = viewModel.selectedBundle {
                 bundleName = bundle.name
                 viewModel.loadBundleImageFromCache(bundle: bundle)
             }
             isTextFieldFocused = true
-            if getBottomPadding(0) == 0 {
-                morePadding = 5
+            if getBottomPadding(34) == 0 {
+                morePadding = 40
             }
             viewModel.hideTabBar()
-        }
-        .transaction { transaction in
-            transaction.animation = nil
-            transaction.disablesAnimations = true
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -70,7 +62,6 @@ struct BundleNameEditView<Route: BundleRoute>: View {
             keyboardHeight = 0
             UIView.setAnimationsEnabled(false)
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }
 
