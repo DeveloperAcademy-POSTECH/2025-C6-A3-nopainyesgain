@@ -63,26 +63,38 @@ struct festivalCard: View {
                                 RoundedRectangle(cornerRadius: 34)
                                     .fill(.black50)
                             )
-                        Text("남은 기간 \(remainingDays)일")
-                            .typography(.suit13SB)
-                            .foregroundStyle(.main500)
-                            .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
-                            .background(
-                                RoundedRectangle(cornerRadius: 34)
-                                    .fill(.main50)
-                            )
+                        // 임시로 넣어둔 디자인 - 수정 필
+                        if remainingDays > 0 {
+                            Text("남은 기간 \(remainingDays)일")
+                                .typography(.suit13SB)
+                                .foregroundStyle(.main500)
+                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.main50)
+                                )
+                        } else if remainingDays == 0 {
+                            Text("오늘 마감")
+                                .typography(.suit13SB)
+                                .foregroundStyle(.main500)
+                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.main50)
+                                )
+                        } else {
+                            Text("종료")
+                                .typography(.suit13SB)
+                                .foregroundStyle(.white100)
+                                .padding(EdgeInsets(top: 2.5, leading: 8, bottom: 2.5, trailing: 8))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 34)
+                                        .fill(.gray500)
+                                )
+                        }
                     }
                     .padding(10)
                 }
-            //                LazyImage(url: URL(string: imageName)) { state in
-            //                    if let image = state.image {
-            //                        image
-            //                            .resizable()
-            //                            .scaledToFit()
-            //                    } else {
-            //                        LoadingAlert(type: .short, message: "")
-            //                    }
-            //                }
             
             Spacer().frame(height: 15)
             
