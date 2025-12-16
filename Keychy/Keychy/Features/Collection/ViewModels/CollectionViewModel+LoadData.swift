@@ -493,7 +493,6 @@ extension CollectionViewModel {
                             imageData: pngData
                         )
                     }
-                    print("[Prefetch] 캡처 성공: \(keyring.name)")
                 }
 
                 continuation.resume()

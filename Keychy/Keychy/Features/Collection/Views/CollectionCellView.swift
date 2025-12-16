@@ -169,13 +169,11 @@ struct CollectionCellView: View {
                     name: keyring.name,
                     imageData: imageData
                 )
-                print("[CollectionCell] 위젯 메타데이터 추가: \(keyring.name)")
             }
         } else if !shouldBeInWidget && isInMetadata {
             // 위젯에 없어야 하는데 있음 → 제거
             keyrings.removeAll { $0.id == keyringID }
             KeyringImageCache.shared.saveAvailableKeyrings(keyrings)
-            print("[CollectionCell] 위젯 메타데이터 제거: \(keyring.name)")
         }
     }
 
@@ -262,7 +260,6 @@ struct CollectionCellView: View {
                             name: keyring.name,
                             imageData: pngData
                         )
-                        print("[CollectionCell] 캡처 성공 + 위젯 동기화: \(keyringID)")
                     } else {
                         print("[CollectionCell] 캡처 성공 (위젯 제외): \(keyringID)")
                     }

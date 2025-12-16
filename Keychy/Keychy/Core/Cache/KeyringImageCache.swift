@@ -241,7 +241,6 @@ class KeyringImageCache {
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
             let keyrings = try decoder.decode([AvailableKeyring].self, from: data)
-            print("✅ [KeyringCache] \(keyrings.count)개 키링 메타데이터 로드 완료")
             return keyrings
         } catch {
             print("❌ [KeyringCache] 메타데이터 로드 실패: \(error.localizedDescription)")
