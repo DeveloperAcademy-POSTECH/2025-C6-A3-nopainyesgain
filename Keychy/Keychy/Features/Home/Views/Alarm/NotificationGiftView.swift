@@ -11,28 +11,19 @@ import SpriteKit
 
 struct NotificationGiftView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
-    @State var viewModel: CollectionViewModel
+    @State var collectionViewModel: CollectionViewModel
     let postOfficeId: String
 
-    @State private var keyringId: String = ""
-    @State private var keyringName: String = ""
-    @State private var recipientNickname: String = ""
-    @State private var authorName: String = ""
-    @State private var completedDate: Date = Date()
-    @State private var isLoading: Bool = true
-    @State private var loadError: String?
-    @State private var keyring: Keyring?
-
-    private let db = Firestore.firestore()
+    @State private var viewModel = NotificationGiftViewModel()
 
     var body: some View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
 
-            if isLoading {
+            if viewModel.isLoading {
                 LoadingAlert(type: .short, message: nil)
-            } else if let error = loadError {
+            } else if let error = viewModel.loadError {
                 VStack {
                     Text("선물 정보를 불러올 수 없습니다")
                         .typography(.suit16B)
@@ -61,7 +52,7 @@ struct NotificationGiftView: View {
         .navigationBarBackButtonHidden(true)
         .swipeBackGesture(enabled: true)
         .onAppear {
-            fetchGiftData()
+            viewModel.fetchGiftData(postOfficeId: postOfficeId, viewModel: collectionViewModel)
         }
     }
 
@@ -69,22 +60,22 @@ struct NotificationGiftView: View {
         VStack(spacing: 15) {
             Spacer()
 
-            if let keyring = keyring {
+            if let keyring = viewModel.keyring {
                 keyringImage(keyring: keyring)
                     .scaleEffect(calculateScale())
             }
 
             // 전달 정보
             VStack(spacing: 4) {
-                Text(formattedDate)
+                Text(viewModel.formattedDate)
                     .typography(.suit16M)
                     .foregroundStyle(.gray400)
 
                 HStack(spacing: 0) {
-                    Text("\(recipientNickname)")
+                    Text("\(viewModel.recipientNickname)")
                         .typography(.notosans15SB)
                         .foregroundStyle(.gray400)
-                    
+
                     Text("님에게 전달됨")
                         .typography(.suit16M)
                         .foregroundStyle(.gray400)
@@ -96,53 +87,6 @@ struct NotificationGiftView: View {
         }
     }
 
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy.MM.dd"
-        return formatter.string(from: completedDate)
-    }
-
-    private func fetchGiftData() {
-        isLoading = true
-
-        // 1. PostOffice 조회
-        db.collection("PostOffice").document(postOfficeId).getDocument { snapshot, error in
-            guard let data = snapshot?.data(),
-                  let keyringId = data["keyringId"] as? String,
-                  let receiverId = data["receiverId"] as? String,
-                  let endedTimestamp = data["endedAt"] as? Timestamp else {
-                self.loadError = "선물 정보를 찾을 수 없습니다"
-                self.isLoading = false
-                return
-            }
-
-            self.completedDate = endedTimestamp.dateValue()
-            self.keyringId = keyringId
-
-            viewModel.fetchKeyringById(keyringId: keyringId) { fetchedKeyring in
-                guard let keyring = fetchedKeyring else {
-                    self.loadError = "키링 정보를 찾을 수 없습니다"
-                    self.isLoading = false
-                    return
-                }
-
-                self.keyring = keyring
-                self.keyringName = keyring.name
-
-                // 제작자 이름 로드
-                viewModel.fetchUserName(userId: keyring.authorId) { name in
-                    self.authorName = name
-                }
-
-                // 수신자 닉네임 로드
-                viewModel.fetchUserName(userId: receiverId) { nickname in
-                    self.recipientNickname = nickname
-                    self.isLoading = false
-                }
-            }
-        }
-    }
-    
     // MARK: - 수신된 키링 이미지
     private func keyringImage(keyring: Keyring) -> some View {
         ZStack(alignment: .bottom) {
@@ -178,8 +122,8 @@ struct NotificationGiftView: View {
                     Text(keyring.name)
                         .typography(.notosans20B)
                         .foregroundColor(.white100)
-                    
-                    Text("@\(authorName)")
+
+                    Text("@\(viewModel.authorName)")
                         .typography(.notosans12SB)
                         .foregroundColor(.white100)
                 }
@@ -208,7 +152,7 @@ struct NotificationGiftView: View {
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {
-                        self.isLoading = false
+                        viewModel.isLoading = false
                     }
                 }
             }
