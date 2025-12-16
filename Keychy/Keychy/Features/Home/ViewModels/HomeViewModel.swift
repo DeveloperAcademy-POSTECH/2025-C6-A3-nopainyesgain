@@ -1,148 +1,47 @@
 //
-//  HomeView.swift
-//  KeytschPrototype
+//  HomeViewModel.swift
+//  Keychy
 //
-//  Created by 길지훈 on 10/16/25.
+//  Created by 길지훈 12/16/24.
 //
-// 홈 화면 - 메인 뭉치의 키링들을 3D 씬으로 표시
 
 import SwiftUI
-import NukeUI
 import FirebaseFirestore
 
-struct HomeView: View {
-    @Bindable var router: NavigationRouter<HomeRoute>
-    
-    @Bindable var userManager: UserManager
-    
-    @State var collectionViewModel: CollectionViewModel
-    
-    /// 배경 로드 완료 콜백
-    var onBackgroundLoaded: (() -> Void)? = nil
-    
-    /// GlassEffect 애니메이션을 위한 네임스페이스
-    @Namespace private var unionNamespace
-    
+@Observable
+class HomeViewModel {
+    // MARK: - Properties
+
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
-    @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
-    
+    var keyringDataList: [MultiKeyringScene.KeyringData] = []
+
     /// 씬 준비 완료 여부
-    @State private var isSceneReady = false
-    
-    // MARK: - Body
-    
-    var body: some View {
-        ZStack(alignment: .top) {
-            // 블러 영역
-            ZStack(alignment: .top) {
-                if let bundle = collectionViewModel.selectedBundle,
-                   let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                   let background = collectionViewModel.selectedBackground,
-                   !keyringDataList.isEmpty {  // 키링 데이터가 있을 때만 씬 생성
-                    
-                    MultiKeyringSceneView(
-                        keyringDataList: keyringDataList,
-                        ringType: .basic,
-                        chainType: .basic,
-                        backgroundColor: .clear,
-                        backgroundImageURL: background.backgroundImage,
-                        carabinerBackImageURL: carabiner.backImageURL,
-                        carabinerFrontImageURL: carabiner.frontImageURL,
-                        carabinerX: carabiner.carabinerX,
-                        carabinerY: carabiner.carabinerY,
-                        carabinerWidth: carabiner.carabinerWidth,
-                        currentCarabinerType: carabiner.type,
-                        onBackgroundLoaded: onBackgroundLoaded,
-                        onAllKeyringsReady: {
-                            withAnimation(.easeOut(duration: 0.3)) {
-                                isSceneReady = true
-                            }
-                        }
-                    )
-                    .ignoresSafeArea()
-                    /// 씬 재생성 조건을 위한 ID 설정
-                    /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                    .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
-                } else {
-                    // 데이터 로딩 중
-                    Color.clear.ignoresSafeArea()
-                }
-                
-                // 상단 네비게이션 버튼들
-                navigationButtons
-            }
-            .blur(radius: isSceneReady ? 0 : 15)
-            
-            // 로딩 알림 (씬 준비 전까지 표시)
-            if !isSceneReady {
-                // 로딩 알림
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            // 알림 리스너 시작
-            userManager.startNotificationListener()
-        }
-        .task {
-            // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
-            await loadMainBundle()
-        }
-        .onChange(of: keyringDataList) { _, _ in
-            // 키링 데이터가 변경되면 씬 준비 상태 초기화
-            withAnimation(.easeIn(duration: 0.2)) {
-                isSceneReady = false
-            }
-        }
-    }
-}
+    var isSceneReady = false
 
-// MARK: - View Components
-extension HomeView {
-    /// 상단 네비게이션 버튼들
-    private var navigationButtons: some View {
-        HStack(spacing: 10) {
-            Spacer()
-            
-            // 알림 및 마이페이지 버튼 그룹
-            GlassEffectContainer {
-                HStack {
-                    Button {
-                        router.push(.alarmView)
-                    } label: {
-                        Image(userManager.hasUnreadNotifications ? "alarmSent" : "alarm")
-                    }
-                    .frame(width: 44, height: 44)
-                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                    .buttonStyle(.glass)
-                    
-                    Button {
-                        router.push(.myPageView)
-                    } label: {
-                        Image(.myPageIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                        
-                    }
-                    .frame(width: 44, height: 44)
-                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                    .buttonStyle(.glass)
-                }
-            }
-        }
-        .padding(.horizontal, 20)
-    }
-}
+    // MARK: - Private Properties
 
-// MARK: - Data Loading
-extension HomeView {
+    private let db = Firestore.firestore()
+
+    // MARK: - Data Loading
+
     /// 메인 뭉치 데이터를 로드하고 뷰 상태를 초기화
     /// 1. 사용자의 모든 뭉치 목록을 가져옴
     /// 2. 메인으로 설정된 뭉치를 찾아 선택
     /// 3. 선택된 뭉치의 키링들을 Firestore에서 가져와 KeyringData 리스트 생성
+    
+    /// Firestore에서 가져온 키링 정보를 담는 구조체
+    struct KeyringInfo {
+        let id: String
+        let bodyImage: String
+        let selectedTemplate: String?
+        let soundId: String
+        let particleId: String
+        let hookOffsetY: CGFloat?
+        let chainLength: Int
+    }
+    
     @MainActor
-    private func loadMainBundle() async {
+    func loadMainBundle(collectionViewModel: CollectionViewModel, onBackgroundLoaded: (() -> Void)?) async {
         let uid = UserManager.shared.userUID
         guard !uid.isEmpty else { return }
 
@@ -155,7 +54,7 @@ extension HomeView {
                 continuation.resume()
             }
         }
-        
+
         // 3. 메인 뭉치 설정 (isMain == true인 뭉치, 없으면 첫 번째 뭉치)
         if let mainBundle = collectionViewModel.sortedBundles.first(where: { $0.isMain }) {
             collectionViewModel.selectedBundle = mainBundle
@@ -166,21 +65,21 @@ extension HomeView {
             onBackgroundLoaded?()
             return
         }
-        
+
         // 4. 선택된 뭉치의 배경과 카라비너 설정
         guard var bundle = collectionViewModel.selectedBundle else { return }
-        
+
         // 배경 resolve 시도
         var resolvedBackground = collectionViewModel.resolveBackground(from: bundle.selectedBackground)
-        
+
         // 배경이 없으면 첫 번째 배경으로 업데이트
         if resolvedBackground == nil, let firstBackground = collectionViewModel.backgrounds.first {
             resolvedBackground = firstBackground
-            
+
             // Firebase에 번들의 배경 업데이트
             if let documentId = bundle.documentId, let backgroundId = firstBackground.id {
                 await updateBundleBackground(documentId: documentId, backgroundId: backgroundId)
-                
+
                 // 로컬 상태도 업데이트
                 bundle.selectedBackground = backgroundId
                 collectionViewModel.selectedBundle?.selectedBackground = backgroundId
@@ -189,15 +88,15 @@ extension HomeView {
                 }
             }
         }
-        
+
         collectionViewModel.selectedBackground = resolvedBackground
         collectionViewModel.selectedCarabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-        
+
         // 5. 키링 데이터 생성
         guard let carabiner = collectionViewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
     }
-    
+
     /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
     /// - Parameters:
     ///   - bundle: 현재 뭉치
@@ -205,16 +104,16 @@ extension HomeView {
     /// - Returns: 3D 씬에서 사용할 KeyringData 배열
     private func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-        
+
         for (index, keyringId) in bundle.keyrings.enumerated() {
             // 유효하지 않은 키링 ID 필터링
             guard index < carabiner.maxKeyringCount,
                   keyringId != "none",
                   !keyringId.isEmpty else { continue }
-            
+
             // Firebase에서 키링 정보 가져오기
             guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
-            
+
             // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
             let customSoundURL: URL? = {
                 if keyringInfo.soundId.hasPrefix("https://") || keyringInfo.soundId.hasPrefix("http://") {
@@ -222,7 +121,7 @@ extension HomeView {
                 }
                 return nil
             }()
-            
+
             // KeyringData 생성
             let data = MultiKeyringScene.KeyringData(
                 index: index,
@@ -240,27 +139,26 @@ extension HomeView {
             )
             dataList.append(data)
         }
-        
+
         return dataList
     }
-    
+
     /// Firestore에서 키링 정보를 가져옴
     private func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
         do {
-            let db = FirebaseFirestore.Firestore.firestore()
             let document = try await db.collection("Keyring").document(keyringId).getDocument()
-            
+
             guard let data = document.data(),
                   let bodyImage = data["bodyImage"] as? String,
                   let soundId = data["soundId"] as? String,
                   let particleId = data["particleId"] as? String else {
                 return nil
             }
-            
+
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
             let selectedTemplate = data["selectedTemplate"] as? String
-            
+
             return KeyringInfo(
                 id: keyringId,
                 bodyImage: bodyImage,
@@ -274,28 +172,30 @@ extension HomeView {
             return nil
         }
     }
-    
-    /// Firestore에서 가져온 키링 정보를 담는 구조체
-    private struct KeyringInfo {
-        let id: String
-        let bodyImage: String
-        let selectedTemplate: String?
-        let soundId: String
-        let particleId: String
-        let hookOffsetY: CGFloat?
-        let chainLength: Int
-    }
-    
+
     /// 번들의 배경을 Firebase에 업데이트
     private func updateBundleBackground(documentId: String, backgroundId: String) async {
         do {
-            let db = FirebaseFirestore.Firestore.firestore()
             try await db.collection("KeyringBundle").document(documentId).updateData([
                 "selectedBackground": backgroundId
             ])
-            print("✅ 번들 배경 업데이트 완료: \(backgroundId)")
+            print("번들 배경 업데이트 완료: \(backgroundId)")
         } catch {
-            print("❌ 번들 배경 업데이트 실패: \(error.localizedDescription)")
+            print("번들 배경 업데이트 실패: \(error.localizedDescription)")
+        }
+    }
+
+    /// 키링 데이터 변경 감지 시 씬 준비 상태 초기화
+    func handleKeyringDataChange() {
+        withAnimation(.easeIn(duration: 0.2)) {
+            isSceneReady = false
+        }
+    }
+
+    /// 모든 키링 준비 완료 처리
+    func handleAllKeyringsReady() {
+        withAnimation(.easeOut(duration: 0.3)) {
+            isSceneReady = true
         }
     }
 }
