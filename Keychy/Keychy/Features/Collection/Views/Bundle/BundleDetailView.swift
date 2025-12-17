@@ -248,9 +248,9 @@ extension BundleDetailView {
                 showDeleteAlert = false
             }
             
-            // 2. 다음 프레임까지 대기하여 실제로 사라진 뒤 진행
+            // 2. alert가 확실히 사라지면서 중첩되지 않도록 보장하는 아주 짧은 대기 시간을 줌
             await Task.yield()
-            try? await Task.sleep(nanoseconds: 250_000_000) // 0.25초 (컴포넌트 애니메이션 시간과 맞춰 조정)
+            try? await Task.sleep(for: .seconds(0.25))
             
             let db = Firestore.firestore()
             
