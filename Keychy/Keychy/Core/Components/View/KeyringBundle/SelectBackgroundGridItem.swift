@@ -27,7 +27,7 @@ struct SelectBackgroundGridItem: View {
                             .scaleEffect(0.5)
                     }
                 }
-                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
+                .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
