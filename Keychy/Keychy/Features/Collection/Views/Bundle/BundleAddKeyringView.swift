@@ -129,13 +129,14 @@ extension BundleAddKeyringView {
     }
     
     /// 키링 추가 버튼들
+    /// - xPosPt : 현재 휴대폰 기기사이즈와 +버튼 위치를 맞췄던 기기의 포인트 차이를 계산합니다. se3는 2pt를 사용하고 있지만 16프로(기준 기기)는 3pt를 사용하고 있어 +버튼 위치에 차이가 있습니다.
     private func keyringButtons(carabiner: Carabiner) -> some View {
         // 키링 추가 버튼들
         ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
             let xPosPt = screenWidth / screenSize.width * carabiner.keyringXPosition[index]
             let xPos = round(xPosPt * screenScale) / screenScale
             let yPosPt = screenHeight / screenSize.height * carabiner.keyringYPosition[index]
-            let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(25) - getTopPadding(34)
+            let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(40) - getTopPadding(34)
             CarabinerAddKeyringButton(
                 isSelected: selectedPosition == index,
                 action: {
@@ -147,7 +148,7 @@ extension BundleAddKeyringView {
             )
             .position(x: xPos, y: yPos)
             .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-            .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+            .zIndex(selectedPosition == index ? 100 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
         }
     }
     
