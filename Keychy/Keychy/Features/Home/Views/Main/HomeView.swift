@@ -81,6 +81,9 @@ struct HomeView: View {
         .task {
             // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
             await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
+
+            // Workshop 배너 미리 로드 (prefetch)
+            await WorkshopDataManager.shared.fetchWorkshopBanner()
         }
         .onChange(of: viewModel.keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
