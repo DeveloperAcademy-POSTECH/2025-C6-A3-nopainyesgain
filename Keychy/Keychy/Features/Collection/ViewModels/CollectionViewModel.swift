@@ -13,56 +13,61 @@ import SpriteKit
 @Observable
 class CollectionViewModel {
     
+    // MARK: - 데이터
+    var keyring: [Keyring] = []
+    var tags: [String] = [] // 태그
+    var bundles: [KeyringBundle] = []
+    
     // MARK: - 공통 상태
     var isLoading = false
-    var tags: [String] = [] // 태그
     var selectedSort: String = "최신순" // 기본값
-    var maxKeyringCount: Int = 100 // 기본값
+    var maxKeyringCount: Int = 50 // 기본값
     var coin: Int = 0
     var copyVoucher: Int = 0
-    
-    // MARK: - 키링
-    var keyring: [Keyring] = []
     var selectedKeyrings: [Keyring] = []
     
     // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
     var keyringDocumentIdByLocalId: [UUID: String] = [:]
     
-    // MARK: - 초기화
-    init() {}
-    
-    // MARK: - 키링 뭉치 관련
+    // MARK: - 뭉치 관련
     var maxBundleNameCount: Int = 9
     var selectedKeyringsForBundle: [Int: Keyring] = [:] // 번들 생성용 선택된 키링들
     var bundlePreviewScene: MultiKeyringScene?
     var bundleCapturedImage: Data? // 캡처된 번들 이미지 (PNG 데이터)
-    
-    // Firestore에서 로드되는 실제 뭉치 목록 (초기 빈 배열)
-    var bundles: [KeyringBundle] = []
-    var sortedBundles: [KeyringBundle] {
-        bundles.sorted { a, b in
-            // 메인 뭉치는 항상 첫 번째
-            if a.isMain != b.isMain {
-                return a.isMain
-            }
-            return a.createdAt > b.createdAt
-        }
-    }
     var selectedBundle: KeyringBundle?
-    
-    // MARK: - Shared Data Manager
+
+    // MARK: - Shared Data
     let dataManager = WorkshopDataManager.shared
 
-    // MARK: - 배경 및 카라비너 데이터 (WorkshopDataManager에서 가져옴)
+    // 배경 및 카라비너 데이터 (WorkshopDataManager에서 가져옴)
     var backgrounds: [Background] { dataManager.backgrounds }
     var selectedBackground: Background?
 
     var carabiners: [Carabiner] { dataManager.carabiners }
     var selectedCarabiner: Carabiner?
 
-    // MARK: - 화면 표시용 데이터 (Bundle 관련)
+    // 뭉치 관련 화면 표시용 데이터
     var _backgroundViewData: [BackgroundViewData] = []
     var _carabinerViewData: [CarabinerViewData] = []
+    
+    // MARK: - Computed Properties
+//    // 카테고리 목록 (전체 포함)
+//    var categories: [String] {
+//        ["전체"] + tags
+//    }
+    
+    // 정렬된 뭉치 (메인 뭉치 우선 정렬)
+    var sortedBundles: [KeyringBundle] {
+        bundles.sorted { a, b in
+            if a.isMain != b.isMain {
+                return a.isMain
+            }
+            return a.createdAt > b.createdAt
+        }
+    }
+
+    // MARK: - 초기화
+    init() {}
 
     // MARK: - Data Loading
     /// 배경 및 카라비너 데이터 로드 (캐싱된 데이터 활용)

@@ -13,6 +13,7 @@ struct CollectionView: View {
     @State var collectionViewModel: CollectionViewModel
     @Binding var shouldRefresh: Bool
     @State var userManager = UserManager.shared
+    
     @State var selectedCategory = "전체"
     @State var showSortSheet: Bool = false
     @State var showRenameAlert: Bool = false

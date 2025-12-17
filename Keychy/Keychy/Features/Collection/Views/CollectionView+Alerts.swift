@@ -183,21 +183,6 @@ extension CollectionView {
                 .transition(.scale.combined(with: .opacity))
                 .zIndex(100)
             }
-//            if showInvenExpandAlert {
-//                PurchasePopup(
-//                    title: "보관함 확장",
-//                    myCoin: collectionViewModel.coin,
-//                    price: 20,
-//                    scale: invenExpandAlertScale,
-//                    onConfirm: {
-//                        handleInvenExpandConfirm()
-//                    }
-//                )
-//                .padding(.horizontal, 40)
-//                .padding(.bottom, 30)
-//                .transition(.scale.combined(with: .opacity))
-//                .zIndex(100)
-//            }
             
             if showPurchaseSuccessAlert {
                 KeychyAlert(
