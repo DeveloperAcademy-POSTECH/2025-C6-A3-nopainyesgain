@@ -74,12 +74,23 @@ struct CollectionView: View {
                     VStack {
                         Spacer()
                         searchBarView
+                            .background(
+                                Color.clear
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        if isSearchFieldFocused {
+                                            isSearchFieldFocused = false
+                                            showSearchBar = false
+                                        }
+                                    }
+                            )
                             .padding(.bottom, keyboardHeight > 0 ?
                                      keyboardHeight - geometry.safeAreaInsets.bottom : 4)
                     }
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .animation(.easeOut(duration: 0.25), value: keyboardHeight)
+                .zIndex(200)
             }
             
             alertOverlays
