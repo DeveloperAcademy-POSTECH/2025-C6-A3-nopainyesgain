@@ -58,22 +58,24 @@ extension WorkshopView {
     private var workshopBannerImage: some View {
         HStack(spacing: 0) {
             ZStack {
-                // 썸네일 (로딩 중)
-                if viewModel.isWorkshopBannerLoading {
+                // 로딩 중 or URL 없음 → 기본 썸네일
+                if viewModel.isWorkshopBannerLoading || viewModel.workshopBannerURL == nil {
                     Image(.workshopBannerThumbnail)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 120)
                 }
-                
-                // GIF
-                NukeAnimatedImageView(
-                    url: URL(string: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Workshop%2FworkshopBanner200.gif?alt=media&token=9ce6c06a-88d3-4fd5-b6df-6a96224c8c35"),
-                    isLoading: $viewModel.isWorkshopBannerLoading,
-                    maxSize: CGSize(width: 1800, height: 1800)
-                )
-                .scaledToFit()
-                .frame(height: 120)
+
+                // URL 있을 때만 GIF 렌더링
+                if let url = viewModel.workshopBannerURL {
+                    NukeAnimatedImageView(
+                        url: url,
+                        isLoading: $viewModel.isWorkshopBannerLoading,
+                        maxSize: CGSize(width: 1800, height: 1800)
+                    )
+                    .scaledToFit()
+                    .frame(height: 120)
+                }
             }
         }
         .padding(.bottom, 10)

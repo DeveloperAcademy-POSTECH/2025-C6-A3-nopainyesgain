@@ -28,6 +28,7 @@ class WorkshopDataManager {
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var workshopBannerURL: URL?
 
     private init() {}
 
@@ -86,6 +87,26 @@ class WorkshopDataManager {
         sounds = await fetchItems(collection: "Sound")
         updateLastFetched(for: "Sound")
     }
+    
+    /// 워크샵 배너 가져오기
+    func fetchWorkshopBanner() async {
+        guard
+            let snapshot = try? await Firestore.firestore()
+                .collection("WorkshopBanner")
+                .document("default")
+                .getDocument(),
+            let data = snapshot.data(),
+            let urlString = data["imageURL"] as? String,
+            let url = URL(string: urlString)
+        else {
+            return
+        }
+
+        await MainActor.run {
+            workshopBannerURL = url
+        }
+    }
+
 
     /// 캐시를 강제로 무효화하고 다시 가져오기
     func forceRefresh() async {

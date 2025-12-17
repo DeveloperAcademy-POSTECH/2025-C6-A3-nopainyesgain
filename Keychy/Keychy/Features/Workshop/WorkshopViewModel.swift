@@ -99,6 +99,7 @@ class WorkshopViewModel {
     var isLoading: Bool = false
     var errorMessage: String? = nil
     var isWorkshopBannerLoading: Bool = true
+    var workshopBannerURL: URL?
 
     /// 보유 아이템 로딩 완료 여부 (templates가 로드되면 자동 계산 가능)
     var hasLoadedOwnedItems: Bool {
@@ -166,7 +167,6 @@ class WorkshopViewModel {
     }
     
     // MARK: - Firebase Methods (통합)
-
     /// 특정 카테고리의 데이터만 가져오기
     func fetchDataForCategory(_ category: String) async {
         // 이미 로드된 카테고리는 스킵
@@ -239,6 +239,16 @@ class WorkshopViewModel {
         // 카라비너 태그 추출 (빈 문자열 제외)
         let carabinerTagSet = Set(carabiners.flatMap { $0.tags }.filter { !$0.isEmpty })
         availableCarabinerTags = Array(carabinerTagSet).sorted()
+    }
+    
+    /// 공방 배너 가져오기
+    func fetchWorkshopBanner() async {
+        isWorkshopBannerLoading = true
+
+        await dataManager.fetchWorkshopBanner()
+        workshopBannerURL = dataManager.workshopBannerURL
+
+        isWorkshopBannerLoading = false
     }
     
     // MARK: - Sorting Methods (통합)
