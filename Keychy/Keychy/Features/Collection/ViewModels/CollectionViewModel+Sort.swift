@@ -7,9 +7,8 @@
 
 import SwiftUI
 
-// MARK: - 정렬 / 분류 처리
 extension CollectionViewModel {
-    
+    // MARK: - 정렬 방식
     // 정렬 기준 변경 및 즉시 적용
     func updateSortOrder(_ newSort: String) {
         selectedSort = newSort

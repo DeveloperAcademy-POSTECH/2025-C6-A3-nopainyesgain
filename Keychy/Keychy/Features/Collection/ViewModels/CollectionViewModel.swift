@@ -51,11 +51,6 @@ class CollectionViewModel {
     var _carabinerViewData: [CarabinerViewData] = []
     
     // MARK: - Computed Properties
-//    // 카테고리 목록 (전체 포함)
-//    var categories: [String] {
-//        ["전체"] + tags
-//    }
-    
     // 정렬된 뭉치 (메인 뭉치 우선 정렬)
     var sortedBundles: [KeyringBundle] {
         bundles.sorted { a, b in
