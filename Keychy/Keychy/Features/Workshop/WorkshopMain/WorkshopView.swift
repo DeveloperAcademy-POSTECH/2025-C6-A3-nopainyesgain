@@ -144,22 +144,3 @@ extension WorkshopView {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    let userManager = UserManager.shared
-    
-    // 프리뷰용 더미 유저 생성
-    userManager.currentUser = KeychyUser(
-        id: "2FcoxDhMhGR4dZtaQSdqZWqQzEp2",
-        nickname: "런도",
-        email: "bbpwj8qhnc@privaterelay.appleid.com"
-    )
-    userManager.currentUser?.templates = ["AcrylicPhoto"] // 보유 템플릿 ID 추가
-    
-    let viewModel = WorkshopViewModel(userManager: userManager)
-    
-    return WorkshopView(router: NavigationRouter<WorkshopRoute>(), viewModel: viewModel)
-        .environment(userManager)
-}
