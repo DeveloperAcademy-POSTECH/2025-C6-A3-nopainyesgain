@@ -1,5 +1,5 @@
 //
-//  CollectionView+Actions.swift
+//  CollectionView+Handlers.swift
 //  Keychy
 //
 //  Created by Jini on 11/12/25.

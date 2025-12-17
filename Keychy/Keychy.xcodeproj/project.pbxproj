@@ -30,7 +30,7 @@
 		3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5442EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift */; };
 		3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */; };
 		3828F5492EC4CCE400F1B040 /* CollectionView+SearchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5482EC4CCE400F1B040 /* CollectionView+SearchMode.swift */; };
-		3828F54B2EC4D0C500F1B040 /* CollectionView+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F54A2EC4D0C500F1B040 /* CollectionView+Actions.swift */; };
+		3828F54B2EC4D0C500F1B040 /* CollectionView+Handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F54A2EC4D0C500F1B040 /* CollectionView+Handlers.swift */; };
 		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */; };
 		385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */; };
@@ -413,7 +413,7 @@
 		3828F5442EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Filter.swift"; sourceTree = "<group>"; };
 		3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+NormalMode.swift"; sourceTree = "<group>"; };
 		3828F5482EC4CCE400F1B040 /* CollectionView+SearchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+SearchMode.swift"; sourceTree = "<group>"; };
-		3828F54A2EC4D0C500F1B040 /* CollectionView+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+Actions.swift"; sourceTree = "<group>"; };
+		3828F54A2EC4D0C500F1B040 /* CollectionView+Handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+Handlers.swift"; sourceTree = "<group>"; };
 		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Sort.swift"; sourceTree = "<group>"; };
 		385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
@@ -1424,7 +1424,7 @@
 				3828F5422EC4C80800F1B040 /* CollectionView+Alerts.swift */,
 				3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */,
 				3828F5482EC4CCE400F1B040 /* CollectionView+SearchMode.swift */,
-				3828F54A2EC4D0C500F1B040 /* CollectionView+Actions.swift */,
+				3828F54A2EC4D0C500F1B040 /* CollectionView+Handlers.swift */,
 				385425BD2EB2989400A06C02 /* CollectionCellView.swift */,
 				38C147BE2EB1502300A8E511 /* CollectionKeyringDetailView.swift */,
 				38C3C2872EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift */,
@@ -2228,7 +2228,7 @@
 				4C8426672ED377650050B6FE /* SpeechBubbleFramePreviewView.swift in Sources */,
 				4C8426682ED377650050B6FE /* SpeechBubbleFrameSelectorView.swift in Sources */,
 				4C07024C2ECF10760026D6DC /* EffectSyncManager.swift in Sources */,
-				3828F54B2EC4D0C500F1B040 /* CollectionView+Actions.swift in Sources */,
+				3828F54B2EC4D0C500F1B040 /* CollectionView+Handlers.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
 				AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */,
 				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,
