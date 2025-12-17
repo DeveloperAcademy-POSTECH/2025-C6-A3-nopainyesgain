@@ -45,44 +45,32 @@ struct BundleNameInputView<Route: BundleRoute>: View {
                 
                 Spacer()
             }
-            .padding(.top, 100)
-            .padding(.bottom, max(screenHeight/2 - keyboardHeight, 20))
-            .contentShape(Rectangle())
-            .onTapGesture {
-                isTextFieldFocused = false
-            }
+            .padding(.top, 60 + morePadding)
+            customNavigationBar
             
             if isUploading {
                 Color.black20
                     .ignoresSafeArea()
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 생성하고 있어요")
             }
-            customNavigationBar
-                .padding(.top, getTopPaddingBundle(34))
         }
+        .padding(.bottom, -keyboardHeight)
+        .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .scrollDismissesKeyboard(.never)
         .onAppear {
             // 키보드 자동 활성화
             isTextFieldFocused = true
-            //SE2,3를 위한 추가적인 패딩값
-            if getBottomPadding(0) == 0 {
-                morePadding = 20
-            }
+
             viewModel.hideTabBar()
-        }
-        .onChange(of: isTextFieldFocused) { _, newValue in
-            // 포커스가 해제되려고 하면 다시 활성화
-            if !newValue {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    isTextFieldFocused = true
-                }
+            
+            if getBottomPadding(34) == 0 {
+                morePadding = 40
             }
         }
-        .transaction { transaction in
-            transaction.animation = nil
-            transaction.disablesAnimations = true
+        .onTapGesture {
+            isTextFieldFocused = false
         }
         // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in

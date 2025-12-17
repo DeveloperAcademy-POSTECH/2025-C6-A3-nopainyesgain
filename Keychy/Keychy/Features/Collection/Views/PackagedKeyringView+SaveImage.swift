@@ -112,7 +112,13 @@ extension PackagedKeyringView {
                         .resizable()
                         .frame(width: 195, height: 300)
                         .rotationEffect(.degrees(10))
-                        .offset(y: -2)
+                        .offset(y: -5)
+                        .shadow(
+                            color: Color(hex: "#56522E").opacity(0.35),
+                            radius: 5,
+                            x: 4,
+                            y: 14
+                        )
                 }
             }
             
@@ -126,6 +132,7 @@ extension PackagedKeyringView {
                         .resizable()
                         .frame(width: 240, height: 301)
                         .blendMode(.darken)
+                        .opacity(0.55)
                         .offset(y: -2)
                 }
                 .frame(width: 240, height: 390)

@@ -21,9 +21,19 @@ class AlarmViewModel {
     /// 알림이 비어있는지 여부
     var isNotiEmpty: Bool = true
 
+    /// 푸시 알림이 꺼져있는지 여부
+    var isNotiOff: Bool = false
+
+    /// 알림 off 배너 표시 여부
+    var isNotiOffShown: Bool = true
+
+    /// 알림 권한 상태
+    var authorizationStatus: UNAuthorizationStatus = .notDetermined
+
     // MARK: - Private Properties
     private let db = Firestore.firestore()
     private var userManager = UserManager.shared
+    private let notificationManager = NotificationManager.shared
 
     // MARK: - Firestore 알림 관리
     /// Firestore에서 알림 가져오기
@@ -152,5 +162,32 @@ class AlarmViewModel {
         UNUserNotificationCenter.current().setBadgeCount(unreadCount)
 
         print("뱃지 업데이트: \(unreadCount)")
+    }
+
+    // MARK: - 알림 권한 관리
+
+    /// 알림 권한 체크
+    func checkNotificationPermission() {
+        notificationManager.getAuthorizationStatus { [weak self] status in
+            DispatchQueue.main.async { [weak self] in
+                self?.authorizationStatus = status
+                // authorized가 아니면 배너 표시 (notDetermined, denied 모두 포함)
+                self?.isNotiOff = (status != .authorized)
+            }
+        }
+    }
+
+    /// 알림 배너 탭 처리
+    func handleNotificationBannerTap() {
+        if authorizationStatus == .notDetermined {
+            // 아직 권한 요청 안한 경우 → 권한 요청 팝업 표시
+            notificationManager.requestPermission { [weak self] granted in
+                // 권한 요청 후 다시 체크
+                self?.checkNotificationPermission()
+            }
+        } else {
+            // 이미 거부된 경우 → 설정 앱으로 이동
+            notificationManager.openSettings()
+        }
     }
 }
