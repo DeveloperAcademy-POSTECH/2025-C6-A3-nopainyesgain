@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestore
+import Nuke
 
 /// 공방(Workshop) 관련 데이터를 앱 전역에서 공유하고 캐싱하는 Manager
 /// Singleton 패턴을 사용하여 Firestore 호출을 최소화하고 성능을 최적화
@@ -29,6 +30,8 @@ class WorkshopDataManager {
     var isLoading: Bool = false
     var errorMessage: String? = nil
     var workshopBannerURL: URL?
+    var workshopThumbnailURL: URL?
+    var workshopThumbnailImage: UIImage? // prefetch한 썸네일 이미지
 
     private init() {}
 
@@ -95,15 +98,38 @@ class WorkshopDataManager {
                 .collection("WorkshopBanner")
                 .document("default")
                 .getDocument(),
-            let data = snapshot.data(),
-            let urlString = data["imageURL"] as? String,
-            let url = URL(string: urlString)
+            let data = snapshot.data()
         else {
             return
         }
 
         await MainActor.run {
-            workshopBannerURL = url
+            // GIF URL
+            if let urlString = data["gif"] as? String,
+               let url = URL(string: urlString) {
+                workshopBannerURL = url
+            }
+
+            // 썸네일 URL
+            if let thumbnailString = data["thumbnail"] as? String,
+               let thumbnailURL = URL(string: thumbnailString) {
+                workshopThumbnailURL = thumbnailURL
+            }
+        }
+
+        // 썸네일 이미지 즉시 로드 (UIImage로 저장)
+        if let thumbnailURL = workshopThumbnailURL {
+            if let response = try? await ImagePipeline.shared.image(for: thumbnailURL) {
+                await MainActor.run {
+                    workshopThumbnailImage = response
+                }
+            }
+        }
+
+        // GIF는 prefetch만 (애니메이션이라 UIImage로 저장 불가)
+        if let gifURL = workshopBannerURL {
+            let prefetcher = ImagePrefetcher()
+            prefetcher.startPrefetching(with: [gifURL])
         }
     }
 
