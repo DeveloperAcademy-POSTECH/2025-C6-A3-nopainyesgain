@@ -56,28 +56,26 @@ extension WorkshopView {
     
     // MARK: - Workshop Banner Image
     private var workshopBannerImage: some View {
-        HStack(spacing: 0) {
-            ZStack {
-                // 로딩 중 or URL 없음 → 기본 썸네일
-                if viewModel.isWorkshopBannerLoading || viewModel.workshopBannerURL == nil {
-                    Image(.workshopBannerThumbnail)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 120)
-                }
-
-                // URL 있을 때만 GIF 렌더링
-                if let url = viewModel.workshopBannerURL {
-                    NukeAnimatedImageView(
-                        url: url,
-                        isLoading: $viewModel.isWorkshopBannerLoading,
-                        maxSize: CGSize(width: 1800, height: 1800)
-                    )
-                    .scaledToFit()
-                    .frame(height: 120)
-                }
+        ZStack {
+            // GIF (항상 렌더링 - 백그라운드에서 로드)
+            if let url = viewModel.workshopBannerURL {
+                NukeAnimatedImageView(
+                    url: url,
+                    isLoading: $viewModel.isWorkshopBannerLoading,
+                    maxSize: CGSize(width: 1800, height: 1800)
+                )
             }
+
+            // 썸네일 (로딩 중에만 GIF 위에 덮음 - 정지 상태)
+            if viewModel.isWorkshopBannerLoading, let thumbnailImage = viewModel.workshopThumbnailImage {
+                Image(uiImage: thumbnailImage)
+                    .resizable()
+                    .scaledToFit()
+            }
+
+            // TODO: 네트워크 연결 끊김 처리
         }
+        .frame(height: 120)
         .padding(.bottom, 10)
     }
 }
