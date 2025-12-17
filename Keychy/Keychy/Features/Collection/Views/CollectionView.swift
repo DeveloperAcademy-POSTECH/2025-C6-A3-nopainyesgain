@@ -42,6 +42,7 @@ struct CollectionView: View {
     @State var keyboardHeight: CGFloat = 0  // 키보드 높이 추적
     @FocusState var isSearchFieldFocused: Bool
     
+    // TODO: 1.1.0 Release 전 인기순 추가
     let sortOptions = ["최신순", "오래된순", "이름순"]
     
     let columns: [GridItem] = [
@@ -154,8 +155,7 @@ struct CollectionView: View {
                         title: sort,
                         isSelected: collectionViewModel.selectedSort == sort
                     ) {
-                        collectionViewModel.selectedSort = sort
-                        collectionViewModel.applySorting()
+                        collectionViewModel.updateSortOrder(sort)
                         
                         showSortSheet = false
                     }
