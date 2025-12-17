@@ -57,6 +57,7 @@ extension CollectionKeyringDetailView {
     
     // MARK: - 복사
     private func handleMenuCopy() {
+        isSheetPresented = false
         showMenu = false
         
         refreshCopyVoucher()
@@ -68,6 +69,7 @@ extension CollectionKeyringDetailView {
     
     // MARK: - 삭제
     private func handleMenuDelete() {
+        isSheetPresented = false
         showMenu = false
         
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
