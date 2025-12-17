@@ -202,6 +202,7 @@
 		4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */; };
 		4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */; };
 		4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0242EF11CD200317467 /* HomeViewModel.swift */; };
+		4CD45BD92EF277980015AF69 /* workshopBanner300.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4CD45BD82EF277980015AF69 /* workshopBanner300.gif */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -579,6 +580,7 @@
 		4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
 		4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationGiftViewModel.swift; sourceTree = "<group>"; };
 		4CC8D0242EF11CD200317467 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		4CD45BD82EF277980015AF69 /* workshopBanner300.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = workshopBanner300.gif; path = "../../../../Downloads/공방 배너/workshopBanner300.gif"; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1157,6 +1159,7 @@
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
+				4CD45BD82EF277980015AF69 /* workshopBanner300.gif */,
 				4CEC61C22EAE079C0099ECEE /* Keychy */,
 				4CC8D0162EF0395F00317467 /* WidgetKeychy */,
 				C665DDEA2EAF064500CE4495 /* Frameworks */,
@@ -2022,6 +2025,7 @@
 				38A4BED82EBA516000E0B603 /* GoogleService-Info.plist in Resources */,
 				C6C35EF82ED17228009642F4 /* RealStoreKit2.storekit in Resources */,
 				4C6622442EAF77AB001760B5 /* NanumSquareRoundOTFR.otf in Resources */,
+				4CD45BD92EF277980015AF69 /* workshopBanner300.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

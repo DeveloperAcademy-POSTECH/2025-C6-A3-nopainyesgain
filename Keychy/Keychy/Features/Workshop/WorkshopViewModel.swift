@@ -98,6 +98,7 @@ class WorkshopViewModel {
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var isWorkshopBannerLoading: Bool = true
 
     /// 보유 아이템 로딩 완료 여부 (templates가 로드되면 자동 계산 가능)
     var hasLoadedOwnedItems: Bool {
