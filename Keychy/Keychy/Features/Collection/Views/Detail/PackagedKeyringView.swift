@@ -14,10 +14,11 @@ struct PackagedKeyringView: View {
     let postOfficeId: String
     let shareLink: String
     let authorName: String
+    
     @Binding var isLoading: Bool
     @State var currentPage: Int = 0
     @State private var qrCodeImage: UIImage?
-    @State var capturedSceneImage: UIImage?
+    @State var cachedKeyringImage: UIImage?
     
     var onImageSaved: (() -> Void)?
     var onLinkCopied: (() -> Void)?
@@ -46,7 +47,7 @@ struct PackagedKeyringView: View {
         }
         .padding(.horizontal, 20)
         .onAppear {
-            captureSceneOnAppear()
+            loadCachedImage()
         }
         .onDisappear {
             cleanupImages()
@@ -60,40 +61,33 @@ struct PackagedKeyringView: View {
     }
     
     private func cleanupImages() {
-        capturedSceneImage = nil
+        cachedKeyringImage = nil
         qrCodeImage = nil
     }
     
-    // MARK: - 씬을 PNG로 미리 캡처
-    private func captureSceneOnAppear() {
-        Task { @MainActor in
-            let captureScene = KeyringCellScene(
-                ringType: ringType,
-                chainType: chainType,
-                bodyImage: keyring.bodyImage,
-                templateId: keyring.selectedTemplate,
-                targetSize: CGSize(width: 195, height: 300),
-                customBackgroundColor: .clear,
-                zoomScale: 1.6,
-                hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
-            )
-            
-            guard let pngData = await captureScene.captureToPNG(),
-                  let image = UIImage(data: pngData) else {
-                return
-            }
-            
-            self.capturedSceneImage = image
-            
+    // MARK: - 캐시된 이미지 로드
+    private func loadCachedImage() {
+        guard let keyringID = keyring.documentId else {
+            print("키링 ID 없음")
+            isLoading = false
+            return
+        }
+        
+        // 캐시에서 이미지 로드
+        if let imageData = KeyringImageCache.shared.load(for: keyringID),
+           let image = UIImage(data: imageData) {
+            self.cachedKeyringImage = image
             checkLoadingComplete()
+        } else {
+            print("캐시된 이미지 없음: \(keyringID)")
+            // 캐시가 없으면 임시로 빈 상태 표시하거나 다시 캡처
+            isLoading = false
         }
     }
     
     // 로딩 완료 체크
     private func checkLoadingComplete() {
-        // shareLink와 capturedSceneImage가 모두 준비되면 로딩 해제
-        if capturedSceneImage != nil {
+        if cachedKeyringImage != nil {
             withAnimation(.easeOut(duration: 0.3)) {
                 isLoading = false
             }
@@ -193,24 +187,27 @@ extension PackagedKeyringView {
                 .resizable()
                 .frame(width: 220, height: 270)
             
-            if let sceneImage = capturedSceneImage {
-                Image(uiImage: sceneImage)
-                    .resizable()
-                    .frame(width: 195, height: 300)
-                    .rotationEffect(.degrees(10))
-                    .offset(y: -5)
-                    .shadow(
-                        color: Color(hex: "#56522E").opacity(0.35),
-                        radius: 5,
-                        x: 4,
-                        y: 14
-                    )
-            } else {
-                // PNG 로딩 중
-                LoadingAlert(type: .short, message: nil)
-                    .frame(width: 195, height: 300)
-                    .scaleEffect(0.6)
-            }
+            // 캐시된 이미지 사용
+             if let cachedImage = cachedKeyringImage {
+                 Image(uiImage: cachedImage)
+                     .resizable()
+                     .scaledToFit()
+                     .frame(width: 195, height: 300)
+                     .scaleEffect(0.92)
+                     .rotationEffect(.degrees(10))
+                     .offset(y: -5)
+                     .shadow(
+                         color: Color(hex: "#56522E").opacity(0.35),
+                         radius: 5,
+                         x: 4,
+                         y: 14
+                     )
+             } else {
+                 // 이미지 로딩 중
+                 LoadingAlert(type: .short, message: nil)
+                     .frame(width: 195, height: 300)
+                     .scaleEffect(0.6)
+             }
         }
     }
     

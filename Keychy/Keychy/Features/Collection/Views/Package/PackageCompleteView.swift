@@ -17,13 +17,14 @@ struct PackageCompleteView: View {
     @State var authorName: String = ""
     @State private var scene: KeyringCellScene?
     @State private var isLoading: Bool = false
-    @State private var qrCodeImage: UIImage?
+    @State var qrCodeImage: UIImage?
     @State private var shareLink: String = ""
     @State private var showLinkCopied: Bool = false
     @State var showImageSaved: Bool = false
     
-    // 캡처용 씬 PNG 이미지
-    @State var capturedSceneImage: UIImage?
+    // 캐시된 키링 이미지
+    @State var cachedKeyringImage: UIImage?
+    
     @State var isCapturingScene: Bool = false
     
     private let totalPages = 2
@@ -86,23 +87,16 @@ struct PackageCompleteView: View {
             viewModel.hideTabBar()
             fetchAuthorName()
             loadShareLink()
-            captureSceneOnAppear()
+            loadCachedImage()
         }
         .onDisappear() {
             viewModel.showTabBar()
-            cleanupScene()
+            cleanupImages()
         }
     }
     
-    private func cleanupScene() {
-        scene?.removeAllChildren()
-        scene?.removeAllActions()
-        scene?.physicsWorld.removeAllJoints()
-        scene?.view?.presentScene(nil)
-        scene = nil
-        
-        // 캡처된 이미지도 정리
-        capturedSceneImage = nil
+    private func cleanupImages() {
+        cachedKeyringImage = nil
         qrCodeImage = nil
     }
     
@@ -114,27 +108,18 @@ struct PackageCompleteView: View {
         false
     }
     
-    // MARK: - 씬을 PNG로 미리 캡처
-    private func captureSceneOnAppear() {
-        Task { @MainActor in
-            // 씬 생성 및 PNG 캡처
-            let captureScene = KeyringCellScene(
-                ringType: ringType,
-                chainType: chainType,
-                bodyImage: keyring.bodyImage,
-                targetSize: CGSize(width: 195, height: 300),
-                customBackgroundColor: .clear,
-                zoomScale: 1.6,
-                hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
-            )
-            
-            guard let pngData = await captureScene.captureToPNG(),
-                  let image = UIImage(data: pngData) else {
-                return
-            }
-
-            self.capturedSceneImage = image
+    // MARK: - 캐시된 이미지 로드
+    private func loadCachedImage() {
+        guard let keyringID = keyring.documentId else {
+            print("키링 ID 없음")
+            return
+        }
+        
+        if let imageData = KeyringImageCache.shared.load(for: keyringID),
+           let image = UIImage(data: imageData) {
+            self.cachedKeyringImage = image
+        } else {
+            print("캐시된 이미지 없음: \(keyringID)")
         }
     }
     
@@ -182,84 +167,6 @@ struct PackageCompleteView: View {
                 self.generateQRCodeImage()
             }
     }
-    
-    // MARK: - 페이지 가로 스크롤
-    private var pageScrollView: some View {
-        GeometryReader { geometry in
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 38) {
-                    packagePreviewPage
-                        .frame(width: 240)
-                        .offset(x: -10)
-                    
-                    keyringOnlyPage
-                        .frame(width: 240)
-                        .offset(x: -10)
-                }
-                .padding(.horizontal, (geometry.size.width - 240) / 2)
-            }
-            .content.offset(x: -CGFloat(currentPage) * (240 + 38))
-            .padding(.leading, 10)
-            .frame(width: geometry.size.width, alignment: .leading)
-            .gesture(
-                DragGesture()
-                    .onEnded { value in
-                        handleSwipe(value: value)
-                    }
-            )
-        }
-        .frame(height: 460)
-    }
-    
-    // MARK: - 스와이프
-    private func handleSwipe(value: DragGesture.Value) {
-        let threshold: CGFloat = 38
-        if value.translation.width < -threshold && currentPage < totalPages - 1 {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                currentPage += 1
-            }
-        } else if value.translation.width > threshold && currentPage > 0 {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                currentPage -= 1
-            }
-        }
-    }
-    
-    // MARK: - 페이지 인디케이터
-    private var pageIndicator: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<totalPages, id: \.self) { index in
-                Circle()
-                    .fill(index == currentPage ? Color.black100 : Color.gray200)
-                    .frame(width: 8, height: 8)
-                    .animation(.easeInOut(duration: 0.3), value: currentPage)
-            }
-        }
-        .padding(.top, 8)
-    }
-    
-    // MARK: - 하단 이미지 저장 섹션
-    private var imageSaveSection: some View {
-        VStack(spacing: 9) {
-            ImageSaveButton
-            
-            Text("이미지 저장")
-                .typography(.suit13SB)
-                .foregroundColor(.black100)
-        }
-    }
-    
-    // MARK: - 팝업
-    private var linkCopiedAlert: some View {
-        LinkCopiedPopup(isPresented: $showLinkCopied)
-            .zIndex(101)
-    }
-    
-    private var imageSaveAlert: some View {
-        SavedPopup(isPresented: $showImageSaved, message: "이미지가 저장되었습니다.")
-            .zIndex(101)
-    }
-    
     
     private var packagedView: some View {
         GeometryReader { geometry in
@@ -319,178 +226,7 @@ struct PackageCompleteView: View {
             }
         }
     }
-    
-    // MARK: - 첫 번째 페이지 (포장 전체 뷰)
-    private var packagePreviewPage: some View {
-        VStack(spacing: 0) {
-            packageImageStack
-                .padding(.bottom, 30)
-            
-            copyLinkButton
-        }
-        .padding(.horizontal, 20)
-    }
-    
-    var packageImageStack: some View {
-        ZStack(alignment: .bottom) {
-            packageBackground
-            packageForeground
-        }
-    }
-    
-    private var packageBackground: some View {
-        ZStack {
-            Image(.packageBG)
-                .resizable()
-                .frame(width: 220, height: 270)
-            
-            // 항상 PNG 이미지 사용
-            if let sceneImage = capturedSceneImage {
-                Image(uiImage: sceneImage)
-                    .resizable()
-                    .frame(width: 195, height: 300)
-                    .rotationEffect(.degrees(10))
-                    .offset(y: -5)
-                    .shadow(
-                        color: Color(hex: "#56522E").opacity(0.35),
-                        radius: 5,
-                        x: 4,
-                        y: 14
-                    )
-            } else {
-                // PNG 로딩 중
-                LoadingAlert(type: .short, message: nil)
-                    .frame(width: 195, height: 300)
-                    .scaleEffect(0.6)
-            }
-        }
-    }
-    
-    var packageForeground: some View {
-        ZStack(alignment: .top) {
-            VStack(spacing: 0) {
-                Image(.packageFGT)
-                    .resizable()
-                    .frame(width: 240, height: 91)
-                
-                Image(.packageFGB)
-                    .resizable()
-                    .frame(width: 240, height: 301)
-                    .blendMode(.darken)
-                    .opacity(0.55)
-                    .offset(y: -2)
-            }
-            .frame(width: 240, height: 390)
-            
-            keyringInfoLabel
-        }
-    }
-    
-    private var keyringInfoLabel: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(keyring.name)
-                    .typography(.notosans15B)
-                    .foregroundColor(.white100)
-                
-                Text("@\(authorName)")
-                    .typography(.notosans10M)
-                    .foregroundColor(.white100)
-            }
-            
-            Spacer()
-        }
-        .padding(.leading, 18)
-        .offset(y: 40)
-    }
-    
-    private var copyLinkButton: some View {
-        Button(action: {
-            copyLink()
-        }) {
-            HStack {
-                Image(.linkSimple)
-                    .resizable()
-                    .frame(width: 18, height: 18)
-                
-                Text("탭하여 복사")
-                    .typography(.suit15M25)
-                    .foregroundColor(.black100)
-            }
-        }
-    }
-    
-    
-    // MARK: - 두 번째 페이지 (키링만 있는 뷰)
-    private var keyringOnlyPage: some View {
-        VStack(spacing: 0) {
-            qrCodeImageStack
-                .padding(.bottom, 30)
-            
-            Text("")
-                .typography(.suit15M25)
-                .foregroundColor(.black100)
-        }
-        .frame(width: 240, height: 390)
-        .padding(.horizontal, 20)
-    }
-    
-    var qrCodeImageStack: some View {
-        ZStack(alignment: .bottom) {
-            Image(.qrKeyring)
-                .resizable()
-                .frame(width: 240, height: 390)
-            
-            qrCodeContainer
-        }
-    }
-    
-    private var qrCodeContainer: some View {
-        ZStack {
-            if let qrCodeImage = qrCodeImage {
-                Image(uiImage: qrCodeImage)
-                    .resizable()
-                    .interpolation(.none)
-                    .scaledToFit()
-                    .frame(width: 205, height: 205)
-            } else {
-                LoadingAlert(type: .short, message: nil)
-                    .frame(width: 205, height: 205)
-                    .scaleEffect(0.6)
-            }
-        }
-        .offset(x: -3, y: -24)
-    }
-    
-    // MARK: - 하단 버튼
-    private var ImageSaveButton: some View {
-        Button(action: {
-            saveImage()
-        }) {
-            Image(.save)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 32, height: 32)
-        }
-        .frame(width: 65, height: 65)
-        .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
-    }
-    
-    
-    // MARK: - 링크 복사
-    private func copyLink() {
-        if shareLink.isEmpty {
-            return
-        }
-        
-        UIPasteboard.general.string = shareLink
-        
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            showLinkCopied = true
-        }
-    }
-    
+ 
     // MARK: - QR 코드 생성
     private func generateQRCodeImage() {
         if shareLink.isEmpty {
@@ -519,32 +255,9 @@ struct PackageCompleteView: View {
         
         return UIImage()
     }
-    
-    private func saveImage() {
-        captureAndSaveCurrentPage { success in
-            if success {
-                print("이미지 저장 완료")
-            } else {
-                print("이미지 저장 실패")
-            }
-        }
-    }
 }
 
 // MARK: - 툴바
-extension PackageCompleteView {
-    private var backToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                router.reset()
-            } label: {
-                Image(.dismiss)
-                    .foregroundColor(.primary)
-            }
-        }
-    }
-}
-
 extension PackageCompleteView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
