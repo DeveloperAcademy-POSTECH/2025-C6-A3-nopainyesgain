@@ -15,185 +15,17 @@ struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
     @Environment(IntroViewModel.self) private var introViewModel
     @Bindable var router: NavigationRouter<HomeRoute>
-
+    
     @State private var viewModel = MyPageViewModel()
-
+    
     // 타이틀 표시 여부
     @State private var showTitle = true
-
+    
     var body: some View {
         ZStack {
-            // 메인 컨텐츠
-            ScrollView {
-                VStack(alignment: .center, spacing: 30) {
-                    userInfo
-                    itemAndCharge
-                    VStack(spacing: 20) {
-                        managaAccount
-                        managaNotificaiton
-                        usingGuide
-                        termsOfService
-                        guitar
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 25)
-                .padding(.bottom, 30)
-                .adaptiveTopPaddingAlt()
-            }
-            .scrollIndicators(.never)
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 10)
-                    .onChanged { value in
-                        // 아래로 드래그 (스크롤 위로)
-                        if value.translation.height < -10 {
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                showTitle = false
-                            }
-                        }
-                        // 위로 드래그 (스크롤 아래로)
-                        else if value.translation.height > 10 {
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                showTitle = true
-                            }
-                        }
-                    }
-            )
-            .onAppear {
-                viewModel.checkNotificationPermission()
-                viewModel.isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
-
-                // Firestore에서 사용자 정보 새로 로드
-                if let uid = Auth.auth().currentUser?.uid {
-                    userManager.loadUserInfo(uid: uid) { _ in }
-                }
-            }
-            .onChange(of: userManager.currentUser?.marketingAgreed) { oldValue, newValue in
-                // UserManager의 marketingAgreed가 변경되면 토글 상태도 동기화
-                viewModel.isMarketingNotificationEnabled = newValue ?? false
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                viewModel.checkNotificationPermission()
-            }
-            .alert(viewModel.alertType.title, isPresented: $viewModel.showSettingsAlert) {
-                Button("취소", role: .cancel) {
-                    // 토글 원위치
-                    viewModel.checkNotificationPermission()
-                }
-                Button("설정으로 이동") {
-                    NotificationManager.shared.openSettings()
-                }
-            } message: {
-                Text(viewModel.alertType.message)
-            }
-            .alert("재인증 필요", isPresented: $viewModel.showReauthAlert) {
-                Button("재인증하기") {
-                    // Apple Sign In으로 재인증
-                    viewModel.startReauthentication(userManager: userManager, introViewModel: introViewModel)
-                }
-                Button("취소", role: .cancel) {}
-            } message: {
-                Text("보안을 위해 재인증이 필요합니다")
-            }
-            .allowsHitTesting(!viewModel.showLogoutAlert && !viewModel.showDeleteAccountAlert && !viewModel.showLoadingAlert)
-            
-            // 로그아웃 Alert
-            if viewModel.showLogoutAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
-                        }
-
-                    AccountAlert(
-                        checkmarkScale: viewModel.logoutAlertScale,
-                        title: "로그아웃",
-                        text: "로그아웃 하시겠습니까?",
-                        cancelText: "취소",
-                        confirmText: "로그아웃",
-                        confirmBtnColor: .main500,
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                viewModel.logoutAlertScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                viewModel.showLogoutAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                viewModel.logoutAlertScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                viewModel.showLogoutAlert = false
-                                viewModel.logout(userManager: userManager, introViewModel: introViewModel)
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 51)
-                    .padding(.bottom, 30)
-                }
-            }
-            
-            // 회원탈퇴 Alert
-            if viewModel.showDeleteAccountAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            // 배경 클릭 시 아무 동작 하지 않음 (상호작용 차단)
-                        }
-
-                    AccountAlert(
-                        checkmarkScale: viewModel.deleteAccountAlertScale,
-                        title: "회원 탈퇴",
-                        text: """
-                            탈퇴 시 보유중인 아이템과
-                            키링 및 계정 정보는 즉시 삭제되어
-                            복구가 불가해요.
-
-                            정말 탈퇴하시겠어요?
-                            """,
-                        cancelText: "취소",
-                        confirmText: "탈퇴하기",
-                        confirmBtnColor: .pink100,
-                        onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                viewModel.deleteAccountAlertScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                viewModel.showDeleteAccountAlert = false
-                            }
-                        },
-                        onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                viewModel.deleteAccountAlertScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                viewModel.showDeleteAccountAlert = false
-                                viewModel.deleteAccount(userManager: userManager, introViewModel: introViewModel)
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 51)
-                    .padding(.bottom, 30)
-                }
-            }
-
-            // 회원탈퇴 로딩 Alert
-            if viewModel.showLoadingAlert {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {}
-                    LoadingAlert(type: .short, message: nil)
-                }
-            }
-
-            // 커스텀 네비게이션 바
+            mainContent
+            alerts
             customNavigationBar
-                .opacity(viewModel.showSettingsAlert || viewModel.showDeleteAccountAlert || viewModel.showLogoutAlert || viewModel.showReauthAlert || viewModel.showLoadingAlert || viewModel.isShowingAppleSignIn ? 0 : 1)
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
@@ -202,71 +34,77 @@ struct MyPageView: View {
     }
 }
 
-// MARK: - 화면 이동
+// MARK: - UI Components
 extension MyPageView {
-    
-    // 버튼 종류
-    enum MyPageButtonType {
-        case charge
-        case changeName
-        case helloMaster
-        case termsAndPolicy
-        case deleteAccout
-        case logout
-        
-        var text: String {
-            switch self {
-            case .charge:
-                return "충전하기"
-            case .changeName:
-                return "닉네임 변경"
-            case .helloMaster:
-                return "Contact to 운영자"
-            case .termsAndPolicy:
-                return "개인정보 처리 방침 및 이용약관"
-            case .deleteAccout:
-                return "회원 탈퇴"
-            case .logout:
-                return "로그아웃"
+    /// 메인 컨텐츠
+    private var mainContent: some View {
+        ScrollView {
+            VStack(alignment: .center, spacing: 30) {
+                userInfo
+                itemAndCharge
+                VStack(spacing: 20) {
+                    manageAccount
+                    manageNotification
+                    usingGuide
+                    termsOfService
+                    miscellaneous
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 25)
+            .padding(.bottom, 30)
+            .adaptiveTopPaddingAlt()
+            .overlay(
+                GeometryReader { geo in
+                    Color.clear.preference(
+                        key: ScrollOffsetPreferenceKey.self,
+                        value: geo.frame(in: .named("scroll")).minY
+                    )
+                }
+            )
+        }
+        .coordinateSpace(name: "scroll")
+        .scrollIndicators(.never)
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            withAnimation(.easeOut(duration: 0.2)) {
+                showTitle = offset >= -10
             }
         }
-        
-        // MARK: - 루트 수정 필요
-        var route: HomeRoute? {
-            switch self {
-            case .charge:
-                return .coinCharge
-            case .changeName:
-                return .changeName
-            case .helloMaster:
-                return .coinCharge
-            case .termsAndPolicy:
-                return .termsAndPolicy
-            case .deleteAccout:
-                return .coinCharge
-            case .logout:
-                return .coinCharge
+        .onAppear {
+            viewModel.checkNotificationPermission()
+            viewModel.isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
+
+            if let uid = Auth.auth().currentUser?.uid {
+                userManager.loadUserInfo(uid: uid) { _ in }
             }
         }
-    }
-    
-    // 각 기능 버튼
-    private func myPageBtn(type: MyPageButtonType) -> some View {
-        Button {
-            guard let route = type.route else { return }
-            router.push(route)
-        } label: {
-            Text(type.text)
-                .typography(type == .charge ? .suit15M25 : .suit17M)
-                .foregroundStyle(type == .charge ? .gray500 : .black100)
+        .onChange(of: userManager.currentUser?.marketingAgreed) { oldValue, newValue in
+            viewModel.isMarketingNotificationEnabled = newValue ?? false
         }
-        .buttonStyle(.plain)
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            viewModel.checkNotificationPermission()
+        }
+        .alert(viewModel.alertType.title, isPresented: $viewModel.showSettingsAlert) {
+            Button("취소", role: .cancel) {
+                viewModel.checkNotificationPermission()
+            }
+            Button("설정으로 이동") {
+                NotificationManager.shared.openSettings()
+            }
+        } message: {
+            Text(viewModel.alertType.message)
+        }
+        .alert("재인증 필요", isPresented: $viewModel.showReauthAlert) {
+            Button("재인증하기") {
+                viewModel.startReauthentication(userManager: userManager, introViewModel: introViewModel)
+            }
+            Button("취소", role: .cancel) {}
+        } message: {
+            Text("보안을 위해 재인증이 필요합니다")
+        }
+        .allowsHitTesting(!viewModel.showLogoutAlert && !viewModel.showDeleteAccountAlert && !viewModel.showLoadingAlert)
     }
-}
-
-
-// MARK: - 내 정보 섹션
-extension MyPageView {
+    /// 내 정보 섹션
     private var userInfo: some View {
         VStack(alignment: .center, spacing: 6) {
             Text(userManager.currentUser?.nickname ?? "알 수 없음")
