@@ -83,35 +83,14 @@ struct PackageCompleteView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            hideTabBar()
+            viewModel.hideTabBar()
             fetchAuthorName()
             loadShareLink()
             captureSceneOnAppear()
         }
         .onDisappear() {
-            showTabBar()
+            viewModel.showTabBar()
             cleanupScene()
-        }
-    }
-    
-    // MARK: - 탭바 제어
-    private func hideTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = true
-            }
-        }
-    }
-    
-    func showTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = false
-            }
         }
     }
     

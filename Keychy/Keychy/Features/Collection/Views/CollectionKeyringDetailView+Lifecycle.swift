@@ -12,7 +12,7 @@ extension CollectionKeyringDetailView {
     func handleViewAppear() {
         isSheetPresented = false
         isNavigatingDeeper = false
-        hideTabBar()
+        viewModel.hideTabBar()
         fetchAuthorName()
         
         if keyring.senderId != nil {
@@ -23,31 +23,10 @@ extension CollectionKeyringDetailView {
     func handleViewDisappear() {
         isSheetPresented = false
         if !isNavigatingDeeper {
-            showTabBar()
+            viewModel.showTabBar()
         }
         
         cleanupDetailView()
-    }
-    
-    // MARK: - 탭바 제어
-    func hideTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = true
-            }
-        }
-    }
-    
-    func showTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = false
-            }
-        }
     }
   
     // MARK: - 정리

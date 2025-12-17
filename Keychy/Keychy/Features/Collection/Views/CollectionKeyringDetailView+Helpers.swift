@@ -7,24 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Helper Extensions
-extension UIViewController {
-    // UITabBarController 찾기 헬퍼 익스텐션
-    func findTabBarController() -> UITabBarController? {
-        if let tabBarController = self as? UITabBarController {
-            return tabBarController
-        }
-        
-        for child in children {
-            if let tabBarController = child.findTabBarController() {
-                return tabBarController
-            }
-        }
-        
-        return parent?.findTabBarController()
-    }
-}
-
 // MARK: - PreferenceKey
 struct MenuButtonPreferenceKey: PreferenceKey {
     static var defaultValue: CGRect = .zero

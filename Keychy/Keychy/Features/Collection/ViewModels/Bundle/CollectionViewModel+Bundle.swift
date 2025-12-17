@@ -708,25 +708,4 @@ extension CollectionViewModel {
             return false
         }
     }
-    
-    //MARK: - 탭바 처리
-    func hideTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = true
-            }
-        }
-    }
-    
-    func showTabBar() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let tabBarController = window.rootViewController?.findTabBarController() {
-            UIView.animate(withDuration: 0.3) {
-                tabBarController.tabBar.isHidden = false
-            }
-        }
-    }
 }
