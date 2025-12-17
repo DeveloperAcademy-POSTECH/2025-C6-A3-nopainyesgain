@@ -1398,13 +1398,6 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
-		4CEC62352EAE08DF0099ECEE /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		4CEC62382EAE08DF0099ECEE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -1461,7 +1454,6 @@
 		4CEC62412EAE08DF0099ECEE /* Collection */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62352EAE08DF0099ECEE /* Models */,
 				4CEC62382EAE08DF0099ECEE /* ViewModels */,
 				4CEC623F2EAE08DF0099ECEE /* Views */,
 			);
