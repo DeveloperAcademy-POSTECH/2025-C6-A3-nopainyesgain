@@ -1,5 +1,5 @@
 //
-//  CollectionView+Collection.swift
+//  CollectionView+NormalMode.swift
 //  Keychy
 //
 //  Created by Jini on 11/12/25.
@@ -31,19 +31,6 @@ extension CollectionView {
                 }
             }
         }
-    }
-    
-    private var normalCollectionSection: some View {
-        VStack(spacing: 0) {
-            collectionHeader
-            
-            if filteredKeyrings.isEmpty {
-                emptyView
-            } else {
-                collectionGridView(keyrings: filteredKeyrings)
-            }
-        }
-        .padding(.horizontal, Spacing.xs)
     }
     
     private var headerSection: some View {
@@ -125,41 +112,17 @@ extension CollectionView {
         .padding(.horizontal, 2)
     }
     
-    var emptyView: some View {
-        VStack {
-            Spacer().frame(height: 180)
+    private var normalCollectionSection: some View {
+        VStack(spacing: 0) {
+            collectionHeader
             
-            Image(.emptyViewIcon)
-                .resizable()
-                .frame(width: 124, height: 111)
-            
-            Text(selectedCategory == "전체" ? "공방에서 키링을 만들어봐요" : "해당 태그를 가진 키링이 없어요")
-                .typography(.suit15R)
-                .padding(.top, 15)
-            
-            Spacer()
+            if filteredKeyrings.isEmpty {
+                emptyView
+            } else {
+                collectionGridView(keyrings: filteredKeyrings)
+            }
         }
-        .padding(.top, 10)
-        .scrollIndicators(.hidden)
-    }
-    
-    var searchEmptyView: some View {
-        VStack {
-            Spacer()
-                .frame(height: 180)
-            
-            Image(.emptyViewIcon)
-                .resizable()
-                .frame(width: 124, height: 111)
-            
-            Text("검색 결과가 없어요.")
-                .typography(.suit15R)
-                .padding(.top, 15)
-            
-            Spacer()
-        }
-        .padding(.top, 10)
-        .scrollIndicators(.hidden)
+        .padding(.horizontal, Spacing.xs)
     }
     
     var collectionHeader: some View {
@@ -212,6 +175,25 @@ extension CollectionView {
         .buttonStyle(PlainButtonStyle())
     }
     
+    var emptyView: some View {
+        VStack {
+            Spacer()
+                .frame(height: 180)
+            
+            Image(.emptyViewIcon)
+                .resizable()
+                .frame(width: 124, height: 111)
+            
+            Text(selectedCategory == "전체" ? "공방에서 키링을 만들어봐요" : "해당 태그를 가진 키링이 없어요")
+                .typography(.suit15R)
+                .padding(.top, 15)
+            
+            Spacer()
+        }
+        .padding(.top, 10)
+        .scrollIndicators(.hidden)
+    }
+    
     func collectionGridView(keyrings: [Keyring]) -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 11) {
@@ -226,21 +208,20 @@ extension CollectionView {
         .scrollIndicators(.hidden)
         .simultaneousGesture(
             DragGesture().onChanged { _ in
-                if showSearchBar && !isSearching {
+                if showSearchBar {
                     isSearchFieldFocused = false
                     
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showSearchBar = false
+                    if !isSearching {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showSearchBar = false
+                        }
                     }
-                }
-                
-                if showSearchBar && isSearching {
-                    isSearchFieldFocused = false
                 }
             }
         )
     }
     
+    // MARK: - Cell
     func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
             // 검색 중일 때 키보드가 올라와 있으면 먼저 내리기

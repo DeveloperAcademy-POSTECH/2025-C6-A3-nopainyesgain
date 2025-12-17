@@ -1,5 +1,5 @@
 //
-//  CollectionView+Search.swift
+//  CollectionView+SearchMode.swift
 //  Keychy
 //
 //  Created by Jini on 11/12/25.
@@ -18,7 +18,7 @@ extension CollectionView {
             HStack {
                 Spacer()
                 
-                Text("\(searchedKeyrings.count)개 발견됨")
+                Text("\(filteredKeyrings.count)개 발견됨")
                     .typography(.suit14M)
                     .foregroundColor(.gray500)
                     .padding(.top, 22)
@@ -33,7 +33,7 @@ extension CollectionView {
                 
                 Spacer()
             }
-            .opacity(!searchedKeyrings.isEmpty ? 1 : 0)
+            .opacity(!filteredKeyrings.isEmpty ? 1 : 0)
             
             searchCollectionSection
                 .padding(.horizontal, Spacing.padding)
@@ -48,13 +48,32 @@ extension CollectionView {
     
     var searchCollectionSection: some View {
         VStack(spacing: 0) {
-            if searchedKeyrings.isEmpty {
+            if filteredKeyrings.isEmpty {
                 searchEmptyView
             } else {
-                collectionGridView(keyrings: searchedKeyrings)
+                collectionGridView(keyrings: filteredKeyrings)
             }
         }
         .padding(.horizontal, Spacing.xs)
+    }
+    
+    var searchEmptyView: some View {
+        VStack {
+            Spacer()
+                .frame(height: 180)
+            
+            Image(.emptyViewIcon)
+                .resizable()
+                .frame(width: 124, height: 111)
+            
+            Text("검색 결과가 없어요.")
+                .typography(.suit15R)
+                .padding(.top, 15)
+            
+            Spacer()
+        }
+        .padding(.top, 10)
+        .scrollIndicators(.hidden)
     }
     
     // 검색바 뷰 - 하단에 고정되며 키보드와 함께 움직임
@@ -106,19 +125,7 @@ extension CollectionView {
         .frame(height: 48)
     }
     
-    // MARK: - Search Logic
-    var categories: [String] {
-        collectionViewModel.getCategories()
-    }
-    
-    var filteredKeyrings: [Keyring] {
-        collectionViewModel.filterKeyrings(by: selectedCategory)
-    }
-    
-    var searchedKeyrings: [Keyring] {
-        collectionViewModel.searchKeyrings(keyword: searchText)
-    }
-    
+    // MARK: - 검색 키워드 Highlighted Text
     func highlightedText(text: String, keyword: String) -> AttributedString {
         var attributedString = AttributedString(text)
         

@@ -14,6 +14,7 @@ struct CollectionView: View {
     @Binding var shouldRefresh: Bool
     @State var userManager = UserManager.shared
     
+    // UI 상태
     @State var selectedCategory = "전체"
     @State var showSortSheet: Bool = false
     @State var showRenameAlert: Bool = false
@@ -28,7 +29,6 @@ struct CollectionView: View {
     @State var renamingCategory: String = ""
     @State var deletingCategory: String = ""
     @State var newCategoryName: String = ""
-
     @State var showingMenuFor: String?
     @State var menuPosition: CGRect = .zero
 
@@ -45,6 +45,19 @@ struct CollectionView: View {
     // TODO: 1.1.0 Release 전 인기순 추가
     let sortOptions = ["최신순", "오래된순", "이름순"]
     
+    // 카테고리 목록
+    var categories: [String] {
+        collectionViewModel.categories
+    }
+    
+    // 필터링된 키링 (카테고리 + 검색 통합)
+    var filteredKeyrings: [Keyring] {
+        collectionViewModel.getFilteredKeyrings(
+            category: selectedCategory,
+            searchText: isSearching ? searchText : ""
+        )
+    }
+    
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: Spacing.gap),
         GridItem(.flexible(), spacing: Spacing.gap)
@@ -52,18 +65,7 @@ struct CollectionView: View {
     
     var body: some View {
         ZStack {
-            VStack {
-                if isSearching {
-                    searchModeView
-                        .transition(.opacity)
-                } else {
-                    normalModeView
-                        .transition(.opacity)
-                }
-            }
-            .ignoresSafeArea()
-            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
-            .animation(.easeInOut(duration: 0.3), value: showPurchaseSuccessAlert)
+            mainContent
             
             // 검색바
             if showSearchBar {
@@ -103,7 +105,8 @@ struct CollectionView: View {
         .onChange(of: shouldRefresh) { oldValue, newValue in
             if newValue {
                 fetchUserData()
-                shouldRefresh = false            }
+                shouldRefresh = false
+            }
         }
         // 검색바 닫을 때 정리
         .onChange(of: showSearchBar) { oldValue, newValue in
@@ -122,6 +125,21 @@ struct CollectionView: View {
         .sheet(isPresented: $showCachedImagesDebug) {
             CachedImagesDebugView()
         }
+    }
+    
+    private var mainContent: some View {
+        VStack {
+            if isSearching {
+                searchModeView
+                    .transition(.opacity)
+            } else {
+                normalModeView
+                    .transition(.opacity)
+            }
+        }
+        .ignoresSafeArea()
+        .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+        .animation(.easeInOut(duration: 0.3), value: showPurchaseSuccessAlert)
     }
     
     // MARK: - 사용자 데이터 정렬 시트
@@ -156,7 +174,6 @@ struct CollectionView: View {
                         isSelected: collectionViewModel.selectedSort == sort
                     ) {
                         collectionViewModel.updateSortOrder(sort)
-                        
                         showSortSheet = false
                     }
                 }
