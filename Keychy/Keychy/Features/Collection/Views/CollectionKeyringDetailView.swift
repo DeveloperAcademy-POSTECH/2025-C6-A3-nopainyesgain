@@ -13,6 +13,7 @@ import Photos
 struct CollectionKeyringDetailView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @Bindable var viewModel: CollectionViewModel
+    
     @State var sheetDetent: PresentationDetent = .fraction(0.48)
     @State private var scene: KeyringDetailScene?
     @State private var isLoading: Bool = true
@@ -102,7 +103,6 @@ struct CollectionKeyringDetailView: View {
         }
         .swipeBackGesture(enabled: false)
         .ignoresSafeArea()
-        //.adaptiveBottomPadding()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
         .sheet(isPresented: $isSheetPresented) {
@@ -154,6 +154,47 @@ struct CollectionKeyringDetailView: View {
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     private var sceneYOffset: CGFloat {
         isSheetPresented == false ? 30 : -50
+    }
+}
+
+// MARK: - 툴바
+extension CollectionKeyringDetailView {
+    var customNavigationBar: some View {
+        CustomNavigationBar {
+            // Leading (왼쪽) - 뒤로가기 버튼
+            BackToolbarButton {
+                isSheetPresented = false
+                router.pop()
+            }
+            .opacity(showUIForCapture ? 1 : 0)
+        } center: {
+            // Center (중앙)
+            Text(showUIForCapture ? keyring.name : "")
+                .foregroundStyle(.gray600)
+        } trailing: {
+            // Trailing (오른쪽) - 다음/구매 버튼
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showMenu.toggle()
+                }
+            }) {
+                Image(.menuIcon)
+                    .resizable()
+                    .frame(width: 34, height: 34)
+                    .contentShape(Rectangle())
+                    .background(
+                        GeometryReader { geometry in
+                            Color.clear.preference(
+                                key: MenuButtonPreferenceKey.self,
+                                value: geometry.frame(in: .global)
+                            )
+                        }
+                    )
+            }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+            .opacity(showUIForCapture ? 1 : 0)
+        }
     }
 }
 
