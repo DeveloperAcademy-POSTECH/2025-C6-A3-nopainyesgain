@@ -217,7 +217,7 @@ class AlarmViewModel {
             }
             
             // 이미 캐시가 있으면 스킵
-            guard !KeyringImageCache.shared.exists(for: keyringId) else {
+            guard !KeyringImageCache.shared.exists(for: keyringId, type: .gift) else {
                 return
             }
             
@@ -287,7 +287,7 @@ class AlarmViewModel {
                 if let pngData = await scene.captureToPNG(),
                    !pngData.isEmpty,
                    UIImage(data: pngData) != nil {
-                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .gift)
                 }
 
                 continuation.resume()

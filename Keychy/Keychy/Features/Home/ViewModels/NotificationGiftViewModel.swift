@@ -120,7 +120,7 @@ class NotificationGiftViewModel {
         
         if let pngData = await scene.captureToPNG(),
            !pngData.isEmpty {
-            KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+            KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .gift)
         }
     }
 }

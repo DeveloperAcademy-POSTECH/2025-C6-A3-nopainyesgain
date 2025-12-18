@@ -171,9 +171,6 @@ struct NotificationGiftView: View {
                 .padding(.leading, 23)
                 .padding(.top, 42)
             }
-            
-
-
         }
     }
     
@@ -186,7 +183,7 @@ struct NotificationGiftView: View {
         }
         
         // 캐시에서 이미지 로드
-        if let imageData = KeyringImageCache.shared.load(for: keyringID),
+        if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .gift),
            let image = UIImage(data: imageData) {
             self.cachedKeyringImage = image
             withAnimation(.easeIn(duration: 0.3)) {

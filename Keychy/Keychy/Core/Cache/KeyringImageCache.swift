@@ -13,6 +13,26 @@ import WidgetKit
 class KeyringImageCache {
     static let shared = KeyringImageCache()
 
+    // MARK: - 이미지 타입 정의
+    enum ImageType {
+        case thumbnail  // 175*233 (보관함용)
+        case gift       // 304*490 (선물/알림용)
+        
+        var suffix: String {
+            switch self {
+            case .thumbnail: return "_thumb"
+            case .gift: return "_gift"
+            }
+        }
+        
+        var size: CGSize {
+            switch self {
+            case .thumbnail: return CGSize(width: 175, height: 233)
+            case .gift: return CGSize(width: 304, height: 490)
+            }
+        }
+    }
+    
     private let fileManager = FileManager.default
     private let appGroupIdentifier = "group.keychy.app"
     private let metadataFileName = "available_keyrings.json"
@@ -57,8 +77,9 @@ class KeyringImageCache {
     // MARK: - 저장
 
     /// PNG 데이터를 파일로 저장
-    func save(pngData: Data, for keyringID: String) {
-        let fileURL = cacheDirectory.appendingPathComponent("\(keyringID).png")
+    func save(pngData: Data, for keyringID: String, type: ImageType = .thumbnail) {
+        let fileName = "\(keyringID)\(type.suffix).png"
+        let fileURL = cacheDirectory.appendingPathComponent(fileName)
 
         do {
             try pngData.write(to: fileURL)
@@ -70,8 +91,9 @@ class KeyringImageCache {
     // MARK: - 불러오기
 
     /// 캐시된 PNG 데이터 로드
-    func load(for keyringID: String) -> Data? {
-        let fileURL = cacheDirectory.appendingPathComponent("\(keyringID).png")
+    func load(for keyringID: String, type: ImageType = .thumbnail) -> Data? {
+        let fileName = "\(keyringID)\(type.suffix).png"
+        let fileURL = cacheDirectory.appendingPathComponent(fileName)
 
         guard fileManager.fileExists(atPath: fileURL.path) else {
             return nil
@@ -89,8 +111,9 @@ class KeyringImageCache {
     // MARK: - 삭제
 
     /// 특정 키링 캐시 삭제
-    func delete(for keyringID: String) {
-        let fileURL = cacheDirectory.appendingPathComponent("\(keyringID).png")
+    func delete(for keyringID: String, type: ImageType = .thumbnail) {
+        let fileName = "\(keyringID)\(type.suffix).png"
+        let fileURL = cacheDirectory.appendingPathComponent(fileName)
 
         guard fileManager.fileExists(atPath: fileURL.path) else {
             return
@@ -101,6 +124,12 @@ class KeyringImageCache {
         } catch {
             print("[KeyringCache] 삭제 실패: \(keyringID) - \(error.localizedDescription)")
         }
+    }
+    
+    /// 특정 키링의 모든 타입 캐시 삭제
+    func deleteAll(for keyringID: String) {
+        delete(for: keyringID, type: .thumbnail)
+        delete(for: keyringID, type: .gift)
     }
 
     // MARK: - 전체 캐시 삭제
@@ -141,8 +170,9 @@ class KeyringImageCache {
     // MARK: - 캐시 존재 여부
 
     /// 캐시 파일이 존재하는지 확인 (조용히)
-    func exists(for keyringID: String) -> Bool {
-        let fileURL = cacheDirectory.appendingPathComponent("\(keyringID).png")
+    func exists(for keyringID: String, type: ImageType = .thumbnail) -> Bool {
+        let fileName = "\(keyringID)\(type.suffix).png"
+        let fileURL = cacheDirectory.appendingPathComponent(fileName)
         return fileManager.fileExists(atPath: fileURL.path)
     }
 
@@ -252,11 +282,11 @@ class KeyringImageCache {
     /// 키링 추가 또는 업데이트 (이미지 + 메타데이터)
     func syncKeyring(id: String, name: String, imageData: Data) {
         // 1. 이미지 저장
-        save(pngData: imageData, for: id)
+        save(pngData: imageData, for: id, type: .thumbnail)
 
         // 2. 메타데이터 업데이트
         var keyrings = loadAvailableKeyrings()
-        let imagePath = "\(id).png"
+        let imagePath = "\(id)_thumb.png"
 
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
             // 기존 키링 업데이트
@@ -275,7 +305,7 @@ class KeyringImageCache {
     /// 키링 삭제 (이미지 + 메타데이터)
     func removeKeyring(id: String) {
         // 1. 이미지 삭제
-        delete(for: id)
+        delete(for: id, type: .thumbnail)
 
         // 2. 메타데이터에서 제거
         var keyrings = loadAvailableKeyrings()
