@@ -41,7 +41,7 @@ extension MyPageView {
             VStack(alignment: .center, spacing: 30) {
                 userInfo
                 itemAndCharge
-                VStack(spacing: 20) {
+                VStack(spacing: 30) {
                     manageAccount
                     manageNotification
                     usingGuide
@@ -62,7 +62,7 @@ extension MyPageView {
                 userManager.loadUserInfo(uid: uid) { _ in }
             }
         }
-        .onChange(of: userManager.currentUser?.marketingAgreed) { oldValue, newValue in
+        .onChange(of: userManager.currentUser?.marketingAgreed) { _, newValue in
             viewModel.isMarketingNotificationEnabled = newValue ?? false
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
@@ -174,13 +174,13 @@ extension MyPageView {
                 router.push(.changeName)
             } label: {
                 Text("닉네임 변경")
-                    .typography(.suit17M)
+                    .typography(.suit16M)
                     .foregroundStyle(.black100)
             }
             .buttonStyle(.plain)
 
             Divider()
-                .padding(.top, 20)
+                .padding(.top, 30)
         }
     }
 
@@ -196,11 +196,11 @@ extension MyPageView {
                 Toggle("", isOn: $viewModel.isPushNotificationEnabled)
                     .labelsHidden()
                     .tint(.gray700)
-                    .onChange(of: viewModel.isPushNotificationEnabled) { oldValue, newValue in
+                    .onChange(of: viewModel.isPushNotificationEnabled) { _, newValue in
                         viewModel.handlePushNotificationToggle(newValue: newValue)
                     }
+                    .padding(.bottom, 30)
             }
-            .padding(.bottom, 15)
 
             // 마케팅 정보 알림
             HStack {
@@ -212,13 +212,13 @@ extension MyPageView {
                     .tint(.gray700)
                     .disabled(!viewModel.isPushNotificationEnabled)
                     .opacity(viewModel.isPushNotificationEnabled ? 1.0 : 0.3)
-                    .onChange(of: viewModel.isMarketingNotificationEnabled) { oldValue, newValue in
+                    .onChange(of: viewModel.isMarketingNotificationEnabled) { _, newValue in
                         viewModel.handleMarketingToggle(newValue: newValue, userManager: userManager)
                     }
+                    .padding(.bottom, 30)
             }
 
             Divider()
-                .padding(.top, 20)
         }
     }
 
@@ -227,7 +227,7 @@ extension MyPageView {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("이용 안내")
 
-            VStack(alignment: .leading, spacing: 15) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     menuItemText("앱 버전")
                         .padding(.trailing, 12)
@@ -239,13 +239,13 @@ extension MyPageView {
                     openInstagram(username: "keychy.app")
                 } label: {
                     Text("Contact to 운영자")
-                        .typography(.suit17M)
+                        .typography(.suit16M)
                         .foregroundStyle(.black100)
                 }
                 .buttonStyle(.plain)
             }
             Divider()
-                .padding(.top, 20)
+                .padding(.top, 30)
         }
     }
 
@@ -258,13 +258,13 @@ extension MyPageView {
                 router.push(.termsAndPolicy)
             } label: {
                 Text("개인정보 처리 방침 및 이용약관")
-                    .typography(.suit17M)
+                    .typography(.suit16M)
                     .foregroundStyle(.black100)
             }
             .buttonStyle(.plain)
 
             Divider()
-                .padding(.top, 20)
+                .padding(.top, 30)
         }
     }
 
@@ -272,13 +272,12 @@ extension MyPageView {
     private var miscellaneous: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("기타")
-            VStack(alignment: .leading, spacing: 15) {
-
+            VStack(alignment: .leading, spacing: 30) {
                 Button {
                     viewModel.showLogoutAlert = true
                 } label: {
                     Text("로그아웃")
-                        .typography(.suit17M)
+                        .typography(.suit16M)
                         .foregroundStyle(.black100)
                 }
                 .buttonStyle(.plain)
@@ -287,7 +286,7 @@ extension MyPageView {
                     viewModel.showDeleteAccountAlert = true
                 } label: {
                     Text("회원 탈퇴")
-                        .typography(.suit17M)
+                        .typography(.suit16M)
                         .foregroundStyle(.black100)
                 }
                 .buttonStyle(.plain)
@@ -299,19 +298,11 @@ extension MyPageView {
 
 // MARK: - Alerts
 extension MyPageView {
-    /// 로딩 Alert만 커스텀으로 유지
     private var alerts: some View {
         Group {
-            if viewModel.showLoadingAlert { loadingAlert }
-        }
-    }
-
-    private var loadingAlert: some View {
-        ZStack {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .onTapGesture {}
-            LoadingAlert(type: .short, message: nil)
+            if viewModel.showLoadingAlert {
+                LoadingAlert(type: .short, message: nil)
+            }
         }
     }
 }
@@ -320,21 +311,23 @@ extension MyPageView {
 extension MyPageView {
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
-            .typography(.suit15M25)
+            .typography(.suit14M)
             .foregroundStyle(.gray500)
-            .padding(.bottom, 12)
+            .padding(.bottom, 30)
     }
 
     private func menuItemText(_ text: String) -> some View {
         Text(text)
             .typography(.suit16M)
             .foregroundStyle(.black100)
+            .padding(.bottom, 30)
     }
 
     private func subText(_ text: String) -> some View {
         Text(text)
             .typography(.suit12M25)
             .foregroundStyle(.gray600)
+            .padding(.bottom, 30)
     }
 
     private func openInstagram(username: String) {
@@ -391,7 +384,6 @@ struct MyPageAlertsModifier: ViewModifier {
                 }
             } message: {
                 Text(viewModel.alertType.message)
-                    .multilineTextAlignment(.center)
             }
             // 재인증 Alert
             .alert("재인증 필요", isPresented: $viewModel.showReauthAlert) {
@@ -401,7 +393,6 @@ struct MyPageAlertsModifier: ViewModifier {
                 Button("취소", role: .cancel) {}
             } message: {
                 Text("보안을 위해 재인증이 필요합니다")
-                    .multilineTextAlignment(.center)
             }
             // 로그아웃 Alert
             .alert("로그아웃", isPresented: $viewModel.showLogoutAlert) {
@@ -412,14 +403,12 @@ struct MyPageAlertsModifier: ViewModifier {
             } message: {
                 Text("로그아웃 하시겠습니까?")
             }
-        
             // 회원탈퇴 Alert
             .alert("회원 탈퇴", isPresented: $viewModel.showDeleteAccountAlert) {
                 Button("취소", role: .cancel) {}
                 Button("탈퇴하기", role: .destructive) {
                     viewModel.deleteAccount(userManager: userManager, introViewModel: introViewModel)
                 }
-                
             } message: {
                 Text("탈퇴 시 보유중인 아이템과 키링 및 계정 정보는 즉시 삭제되어 복구가 불가해요.\n\n정말 탈퇴하시겠어요?")
             }
