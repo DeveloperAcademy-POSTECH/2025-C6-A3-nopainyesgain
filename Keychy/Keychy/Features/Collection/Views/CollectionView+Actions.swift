@@ -145,6 +145,33 @@ extension CollectionView {
         }
     }
     
+    private func prefetchKeyrings(startIndex: Int, count: Int = 10) {
+        let keyringsToFetch = Array(filteredKeyrings.dropFirst(startIndex).prefix(count))
+        
+        Task.detached(priority: .utility) {
+            for keyring in keyringsToFetch {
+                guard let keyringID = keyring.documentId,
+                      !KeyringImageCache.shared.exists(for: keyringID) else {
+                    continue
+                }
+                
+                // 백그라운드에서 미리 캡처
+                await self.collectionViewModel.prefetchKeyringImage(keyring: keyring)
+            }
+        }
+    }
+    
+    func precacheAllKeyrings() async {
+        let uncachedKeyrings = collectionViewModel.keyring.filter { keyring in
+            guard let id = keyring.documentId else { return false }
+            return !KeyringImageCache.shared.exists(for: id) && !keyring.isPackaged
+        }
+        
+        for keyring in uncachedKeyrings {
+            await collectionViewModel.prefetchKeyringImage(keyring: keyring)
+        }
+    }
+    
     // MARK: - 네비게이션
     func navigateToKeyringDetail(keyring: Keyring) {
         if keyring.isNew, let firestoreId = keyring.documentId {
