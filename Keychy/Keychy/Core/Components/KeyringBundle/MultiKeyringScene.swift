@@ -931,14 +931,14 @@ class MultiKeyringScene: SKScene {
         guard !isCleaningUp else { return }
         // 모든 키링이 성공적으로 로드되었을 때만
         guard loadedKeyringsSuccessCount == totalKeyringsToLoad else { return }
-        // 물리 안정화를 위한 짧은 지연 (1.0초)
+        // 물리 안정화를 위한 짧은 지연 (0.5초)
         readyCallbackWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self, !self.isCleaningUp else { return }
             self.onAllKeyringsReady?()
         }
         readyCallbackWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: workItem)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
 
     // MARK: - Touch Handling
