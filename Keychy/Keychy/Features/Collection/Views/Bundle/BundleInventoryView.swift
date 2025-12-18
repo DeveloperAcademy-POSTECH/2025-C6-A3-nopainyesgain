@@ -14,8 +14,8 @@ struct BundleInventoryView<Route: BundleRoute>: View {
     @State var isNavigatingDeeper: Bool = false
     
     let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: 12.5),
+        GridItem(.flexible(), spacing: 12.5)
     ]
     
     var body: some View {
@@ -78,7 +78,7 @@ extension BundleInventoryView {
         }
         return GeometryReader { geometry in
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 18) {
+                LazyVGrid(columns: columns, spacing: 11) {
                     ForEach(viewModel.sortedBundles, id: \.self) { bundle in
                         Button {
                             // 선택한 번들 설정

@@ -62,56 +62,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     private let sheetHeightRatio: CGFloat = 0.43
     private let screenSize = CGSize(width: 402, height: 874)
     
-    /// 키링 선택 시트용 정렬된 키링 리스트
-    /// 1순위: 현재 위치에 선택된 키링
-    /// 2순위: 일반 키링들 (선택되지 않고, published/packaged 아님)
-    /// 3순위: 다른 위치에 장착된 키링들
-    /// 4순위: published 또는 packaged 상태의 키링들 (맨 뒤)
-    private var sortedKeyringsForSelection: [Keyring] {
-        let selectedKeyring = selectedKeyrings[selectedPosition]
-        
-        return viewModel.keyring.sorted { keyring1, keyring2 in
-            let isKeyring1SelectedHere = keyring1.id == selectedKeyring?.id
-            let isKeyring2SelectedHere = keyring2.id == selectedKeyring?.id
-            
-            let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
-            let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
-            
-            let isKeyring1Unavailable = keyring1.status == .published || keyring1.status == .packaged
-            let isKeyring2Unavailable = keyring2.status == .published || keyring2.status == .packaged
-            
-            // 1순위: 현재 위치에 선택된 키링 - 맨 앞
-            if isKeyring1SelectedHere != isKeyring2SelectedHere {
-                return isKeyring1SelectedHere
-            }
-            
-            // 2순위: 일반 키링 vs 나머지 (elsewhere or unavailable)
-            let isKeyring1Normal = !isKeyring1SelectedElsewhere && !isKeyring1Unavailable
-            let isKeyring2Normal = !isKeyring2SelectedElsewhere && !isKeyring2Unavailable
-            
-            if isKeyring1Normal != isKeyring2Normal {
-                return isKeyring1Normal
-            }
-            
-            // 3순위: 다른 위치 장착 vs unavailable (다른 위치 장착이 먼저)
-            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
-                return isKeyring1SelectedElsewhere // elsewhere를 앞으로
-            }
-            
-            // 4순위: unavailable 키링들 (맨 뒤)
-            if isKeyring1Unavailable != isKeyring2Unavailable {
-                return isKeyring2Unavailable // unavailable을 맨 뒤로
-            }
-            
-            // 같은 그룹 내에서는 원래 순서 유지 (viewModel.keyringSorting 결과)
-            guard let index1 = viewModel.keyring.firstIndex(of: keyring1),
-                  let index2 = viewModel.keyring.firstIndex(of: keyring2) else {
-                return false
-            }
-            return index1 < index2
-        }
-    }
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             mainContentView
@@ -305,11 +255,12 @@ struct BundleEditView<Route: BundleRoute>: View {
             .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들
+            // - xPosPt : 현재 휴대폰 기기사이즈와 +버튼 위치를 맞췄던 기기의 포인트 차이를 계산합니다. se3는 2pt를 사용하고 있지만 16프로(기준 기기)는 3pt를 사용하고 있어 +버튼 위치에 차이가 있습니다.
             ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
                 let xPosPt = screenWidth / screenSize.width * carabiner.carabiner.keyringXPosition[index]
                 let xPos = round(xPosPt * screenScale) / screenScale
                 let yPosPt = screenHeight / screenSize.height * carabiner.carabiner.keyringYPosition[index]
-                let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(25) - getTopPadding(34)
+                let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(40) - getTopPadding(34)
                 CarabinerAddKeyringButton(
                     isSelected: selectedPosition == index,
                     action: {
@@ -321,7 +272,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 )
                 .position(x: xPos, y: yPos)
                 .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-                .zIndex(selectedPosition == index ? 50 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+                .zIndex(selectedPosition == index ? 100 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
                 .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
             }
         }
@@ -353,7 +304,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(sortedKeyringsForSelection, id: \.self) { keyring in
+                        ForEach(viewModel.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
                             keyringCell(keyring: keyring)
                         }
                     }
