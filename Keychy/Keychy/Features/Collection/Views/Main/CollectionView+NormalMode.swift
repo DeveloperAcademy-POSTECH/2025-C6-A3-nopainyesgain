@@ -60,11 +60,23 @@ extension CollectionView {
             #endif
             
             CircleGlassButton(imageName: "Widget",
-                              action: { router.push(.widgetSettingView) })
+                              action: {
+                isSearchFieldFocused = false
+                showSearchBar = false
+                
+                router.push(.widgetSettingView)
+            }
+            )
             .padding(.trailing, 10)
 
             CircleGlassButton(imageName: "BundleIcon",
-                              action: { router.push(.bundleInventoryView) })
+                              action: {
+                isSearchFieldFocused = false
+                showSearchBar = false
+                
+                router.push(.bundleInventoryView)
+            }
+            )
             .padding(.trailing, 10)
             
             CircleGlassButton(
@@ -125,6 +137,9 @@ extension CollectionView {
 
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isSearchFieldFocused = false
+                    showSearchBar = false
+                    
                     showInvenExpandAlert = true
                 }
             }) {

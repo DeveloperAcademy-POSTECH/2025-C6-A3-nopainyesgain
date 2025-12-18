@@ -194,7 +194,12 @@ struct CollectionView: View {
                     navigateToKeyringDetail(keyring: keyring)
                 }
             } else {
-                navigateToKeyringDetail(keyring: keyring)
+                isSearchFieldFocused = false
+                showSearchBar = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    navigateToKeyringDetail(keyring: keyring)
+                }
             }
         }) {
             VStack {
