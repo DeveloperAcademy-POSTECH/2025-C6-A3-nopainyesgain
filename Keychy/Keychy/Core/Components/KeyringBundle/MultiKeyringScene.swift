@@ -65,8 +65,14 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - 키링 로드 완료 추적
     private var totalKeyringsToLoad = 0  // 로드해야 할 총 키링 수
-    private var loadedKeyringsCount = 0  // 실제로 로드 완료된 키링 수
+    private var loadedKeyringsCount = 0  // 완료(성공/실패)된 키링 수
+    private var loadedKeyringsSuccessCount = 0  // 성공적으로 로드된 키링 수
     private var isPhysicsEnabled = false  // 물리 엔진 활성화 여부
+
+    // MARK: - 카라비너 로드 상태
+    private var carabinerBackReady = false
+    private var carabinerFrontReady = false
+    private var didStartKeyringSetup = false
 
     // MARK: - 씬 정리 상태
     private var isCleaningUp = false
@@ -149,7 +155,11 @@ class MultiKeyringScene: SKScene {
         // 추적 변수 초기화
         totalKeyringsToLoad = 0
         loadedKeyringsCount = 0
+        loadedKeyringsSuccessCount = 0
         isPhysicsEnabled = false
+        carabinerBackReady = false
+        carabinerFrontReady = false
+        didStartKeyringSetup = false
 
         // 모든 물리 조인트 제거
         physicsWorld.removeAllJoints()
@@ -167,6 +177,17 @@ class MultiKeyringScene: SKScene {
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
+        // 씬 사이즈가 아직 0일 수 있으므로 한 프레임 지연
+        if size.width == 0 || size.height == 0 {
+            DispatchQueue.main.async { [weak self] in
+                self?.beginLoading()
+            }
+        } else {
+            beginLoading()
+        }
+    }
+
+    private func beginLoading() {
         // 카라비너 이미지와 키링들을 로드
         Task {
             async let carabinerBackTask: Void = {
@@ -175,21 +196,23 @@ class MultiKeyringScene: SKScene {
                         await setupCarabinerBackImageAsync(url: carabinerBackURL)
                     }
                 }
+                await MainActor.run { self.carabinerBackReady = true }
             }()
 
             async let carabinerFrontTask: Void = {
                 if let carabinerFrontURL = await carabinerFrontImageURL {
                     await setupCarabinerFrontImageAsync(url: carabinerFrontURL)
                 }
+                await MainActor.run { self.carabinerFrontReady = true }
             }()
 
             // 카라비너 이미지 로드 병렬 실행
             await carabinerBackTask
             await carabinerFrontTask
 
-            // 키링 설정
+            // 키링 설정 (카라비너 준비 후)
             await MainActor.run {
-                self.setupKeyrings()
+                self.setupKeyringsIfNeeded()
             }
         }
     }
@@ -310,24 +333,25 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - Setup
 
+    private func setupKeyringsIfNeeded() {
+        guard !didStartKeyringSetup else { return }
+        // 카라비너가 준비된 뒤에만 시작
+        guard carabinerBackReady && carabinerFrontReady else { return }
+        didStartKeyringSetup = true
+        setupKeyrings()
+    }
+
     /// 모든 키링 설정
     private func setupKeyrings() {
         // 모든 키링이 동기적으로 생성될 때까지 카운터 사용
         totalKeyringsToLoad = keyringDataList.count
         loadedKeyringsCount = 0
+        loadedKeyringsSuccessCount = 0
 
         guard totalKeyringsToLoad > 0 else {
             // 키링이 없어도 물리 활성화 후 준비 완료 콜백 호출
             enablePhysics()
-            
-            // 짧은 지연 후 준비 완료 콜백 (UI 안정화)
-            let workItem = DispatchWorkItem { [weak self] in
-                guard let self = self, !self.isCleaningUp else { return }
-                self.onAllKeyringsReady?()
-            }
-            readyCallbackWorkItem = workItem
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem)
-            
+            scheduleReadyCallbackIfAllDone()
             return
         }
 
@@ -337,11 +361,14 @@ class MultiKeyringScene: SKScene {
                 
                 // 성공 여부와 관계없이 완료된 키링 수 증가
                 self.loadedKeyringsCount += 1
+                if success { self.loadedKeyringsSuccessCount += 1 }
                 
                 // 모든 키링 로드 완료 체크
                 if self.loadedKeyringsCount == self.totalKeyringsToLoad {
                     // 모든 키링 완성 후 물리 활성화
                     self.enablePhysics()
+                    // 성공한 경우에만 ready 콜백 예약
+                    self.scheduleReadyCallbackIfAllDone()
                 }
             }
         }
@@ -855,16 +882,21 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
         }
+    }
 
-        // 실제 물리 안정화를 위한 지연
-        // 물리 엔진이 안정화될 시간을 줌 (0.8초로 단축)
+    /// 모든 준비 조건이 충족되었을 때만 ready 콜백 예약
+    private func scheduleReadyCallbackIfAllDone() {
+        guard !isCleaningUp else { return }
+        // 모든 키링이 성공적으로 로드되었을 때만
+        guard loadedKeyringsSuccessCount == totalKeyringsToLoad else { return }
+        // 물리 안정화를 위한 짧은 지연 (1.0초)
+        readyCallbackWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self, !self.isCleaningUp else { return }
             self.onAllKeyringsReady?()
         }
         readyCallbackWorkItem = workItem
-        // 물리 안정화를 위한 짧은 지연 (0.8초)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: workItem)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: workItem)
     }
 
     // MARK: - Touch Handling
@@ -1037,3 +1069,4 @@ class MultiKeyringScene: SKScene {
         }
     }
 }
+
