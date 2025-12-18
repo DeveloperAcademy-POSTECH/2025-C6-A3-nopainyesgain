@@ -102,31 +102,31 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     
                     KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $isCapturing)
                         .zIndex(200)
-                    
-                    if let bundle = viewModel.selectedBundle {
-                        DeletePopup(
-                            title: "[\(bundle.name)]\n삭제하시겠어요?",
-                            message: "삭제한 뭉치는 복구할 수 없습니다.",
-                            onCancel: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showDeleteAlert = false
+
+                    if showDeleteAlert {
+                        if let bundle = viewModel.selectedBundle {
+                            DeletePopup(
+                                title: "[\(bundle.name)]\n삭제하시겠어요?",
+                                message: "삭제한 뭉치는 복구할 수 없습니다.",
+                                onCancel: {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showDeleteAlert = false
+                                    }
+                                },
+                                onConfirm: {
+                                    Task {
+                                        await deleteBundle()
+                                    }
                                 }
-                            },
-                            onConfirm: {
-                                Task {
-                                    await deleteBundle()
-                                }
-                            }
-                        )
-                        .opacity(showDeleteAlert ? 1 : 0)
-                        .position(x: screenWidth/2, y: screenHeight/2)
-                        .zIndex(200)
+                            )
+                            .position(x: screenWidth/2, y: screenHeight/2)
+                            .zIndex(200)
+                        }
+                    } else if showDeleteCompleteToast {
+                        DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
+                            .zIndex(200)
+                            .position(x: screenWidth/2, y: screenHeight/2)
                     }
-                    
-                    DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
-                        .opacity(showDeleteCompleteToast ? 1 : 0)
-                        .zIndex(200)
-                        .position(x: screenWidth/2, y: screenHeight/2)
                     
                     alreadyMainBundleToast
                         .zIndex(200)
@@ -248,8 +248,9 @@ extension BundleDetailView {
                 showDeleteAlert = false
             }
             
-            // 2. Alert 닫힘 애니메이션 완료 대기
-            try? await Task.sleep(nanoseconds: 400_000_000) // 0.4초
+            // 2. alert가 확실히 사라지면서 중첩되지 않도록 보장하는 아주 짧은 대기 시간을 줌
+            await Task.yield()
+            try? await Task.sleep(for: .seconds(0.25))
             
             let db = Firestore.firestore()
             
@@ -264,8 +265,8 @@ extension BundleDetailView {
                 showDeleteCompleteToast = true
             }
             
-            // 6. 2초 후 팝업 닫고 이전 화면으로 이동
-            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2초
+            // 6. 1초 후 팝업 닫고 이전 화면으로 이동
+            try? await Task.sleep(for: .seconds(1))
             
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 showDeleteCompleteToast = false
@@ -475,3 +476,4 @@ extension BundleDetailView {
             .transition(.scale.combined(with: .opacity))
     }
 }
+
