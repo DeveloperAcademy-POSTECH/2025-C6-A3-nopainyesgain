@@ -98,6 +98,20 @@ class WorkshopViewModel {
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var isWorkshopBannerLoading: Bool = true
+
+    // WorkshopDataManager의 값을 직접 참조 (중복 저장 방지)
+    var workshopBannerURL: URL? {
+        dataManager.workshopBannerURL
+    }
+
+    var workshopThumbnailURL: URL? {
+        dataManager.workshopThumbnailURL
+    }
+
+    var workshopThumbnailImage: UIImage? {
+        dataManager.workshopThumbnailImage
+    }
 
     /// 보유 아이템 로딩 완료 여부 (templates가 로드되면 자동 계산 가능)
     var hasLoadedOwnedItems: Bool {
@@ -162,10 +176,11 @@ class WorkshopViewModel {
 
     init(userManager: UserManager) {
         self.userManager = userManager
+        // isWorkshopBannerLoading은 항상 true로 시작
+        // NukeAnimatedImageView가 GIF 로드 완료 시 자동으로 false로 변경
     }
     
     // MARK: - Firebase Methods (통합)
-
     /// 특정 카테고리의 데이터만 가져오기
     func fetchDataForCategory(_ category: String) async {
         // 이미 로드된 카테고리는 스킵
@@ -239,7 +254,7 @@ class WorkshopViewModel {
         let carabinerTagSet = Set(carabiners.flatMap { $0.tags }.filter { !$0.isEmpty })
         availableCarabinerTags = Array(carabinerTagSet).sorted()
     }
-    
+
     // MARK: - Sorting Methods (통합)
 
     /// 통합 정렬 함수

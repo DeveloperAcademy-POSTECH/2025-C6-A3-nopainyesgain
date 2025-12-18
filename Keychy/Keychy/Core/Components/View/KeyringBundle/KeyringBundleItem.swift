@@ -19,18 +19,18 @@ struct KeyringBundleItem: View {
     // 고정 캡처 크기 (iPhone 16 기준)
     private let captureSize = CGSize(width: 393, height: 852)
     
-    // 실제로 걸린 키링 개수 (none과 빈 문자열 제외)
-    private var actualKeyringCount: Int {
-        bundle.keyrings.filter { $0 != "none" && !$0.isEmpty }.count
-    }
-    
     var body: some View {
-        VStack(spacing: 5) {
+        VStack(spacing: 10) {
             ZStack(alignment: .top) {
                 // 캐시된 번들 이미지 표시
                 bundleImageView
                     .frame(width: twoGrid5to7CellWidth, height: twoGrid5to7CellHeight)
                     .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(.gray50, lineWidth: 1)
+                            .frame(width: twoGrid5to7CellWidth, height: twoGrid5to7CellHeight)
+                    )
                 
                 if bundle.isMain {
                     HStack {
@@ -48,19 +48,8 @@ struct KeyringBundleItem: View {
             }
             HStack {
                 Text(bundle.name)
-                    .typography(.notosans15M)
+                    .typography(.notosans14M)
                     .foregroundStyle(.black100)
-                Spacer()
-            }
-            
-            HStack {
-                Text("걸린 키링")
-                    .typography(.suit12M)
-                    .foregroundStyle(.gray500)
-                Spacer()
-                Text("\(actualKeyringCount) / \(bundle.maxKeyrings) 개")
-                    .typography(.suit12M)
-                    .foregroundStyle(.main500)
             }
         } //: VSTACK
         .onAppear {

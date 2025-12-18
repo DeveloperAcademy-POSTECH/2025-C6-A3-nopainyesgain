@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
+import NukeUI
 
 // MARK: - MakingKeyring Section
 
 extension WorkshopView {
-
     var makingKeyringSection: some View {
         VStack(spacing: 0) {
             // 제목
@@ -21,17 +21,8 @@ extension WorkshopView {
                 .padding(.horizontal, 20)
                 .padding(.top, 13)
                 .padding(.bottom, 10)
-
-            // 키링 이미지들 (가로 배치) - GIF 애니메이션
-            HStack(spacing: 0) {
-                SimpleAnimatedImage(
-                    url: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Workshop%2FmakingKeyringTemp.gif?alt=media&token=144b0aff-5335-4e8c-b447-f9357118e513",
-                    maxSize: CGSize(width: 600, height: 600)
-                )
-                .frame(height: 120)
-                .scaledToFit()
-            }
-            .padding(.bottom, 10)
+            
+            workshopBannerImage
             
             // 키링 만들기 버튼
             Button {
@@ -43,7 +34,7 @@ extension WorkshopView {
                         .fill(Color.main400)
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
-
+                    
                     // 버튼 제목
                     Text("+ 키링 만들기")
                         .typography(.suit17B)
@@ -62,4 +53,31 @@ extension WorkshopView {
         .padding(.horizontal, 15)
         .padding(.bottom, 12)
     }
+    
+    // MARK: - Workshop Banner Image
+    private var workshopBannerImage: some View {
+        ZStack {
+            // GIF (항상 렌더링 - 백그라운드에서 로드)
+            if let url = viewModel.workshopBannerURL {
+                NukeAnimatedImageView(
+                    url: url,
+                    isLoading: $viewModel.isWorkshopBannerLoading,
+                    maxSize: CGSize(width: 1800, height: 1800)
+                )
+            }
+
+            // 썸네일 (로딩 중에만 GIF 위에 덮음 - 정지 상태)
+            if viewModel.isWorkshopBannerLoading, let thumbnailImage = viewModel.workshopThumbnailImage {
+                Image(uiImage: thumbnailImage)
+                    .resizable()
+                    .scaledToFit()
+            }
+
+            // TODO: 네트워크 연결 끊김 처리
+        }
+        .frame(height: 120)
+        .padding(.bottom, 10)
+    }
 }
+
+
