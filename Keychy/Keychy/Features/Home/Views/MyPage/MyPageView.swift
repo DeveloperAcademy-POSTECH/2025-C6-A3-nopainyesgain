@@ -11,24 +11,13 @@ import FirebaseFirestore
 import AuthenticationServices
 import CryptoKit
 
-// MARK: - ScrollOffsetPreferenceKey
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-
 struct MyPageView: View {
     @Environment(UserManager.self) private var userManager
     @Environment(IntroViewModel.self) private var introViewModel
     @Bindable var router: NavigationRouter<HomeRoute>
-    
+
     @State private var viewModel = MyPageViewModel()
-    
-    // 타이틀 표시 여부
-    @State private var showTitle = true
-    
+
     var body: some View {
         ZStack {
             mainContent
@@ -61,23 +50,8 @@ extension MyPageView {
             .padding(.horizontal, 20)
             .padding(.top, 25)
             .padding(.bottom, 30)
-            .adaptiveTopPaddingAlt()
-            .overlay(
-                GeometryReader { geo in
-                    Color.clear.preference(
-                        key: ScrollOffsetPreferenceKey.self,
-                        value: geo.frame(in: .named("scroll")).minY
-                    )
-                }
-            )
         }
-        .coordinateSpace(name: "scroll")
         .scrollIndicators(.never)
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            withAnimation(.easeOut(duration: 0.2)) {
-                showTitle = offset >= -10
-            }
-        }
         .onAppear {
             viewModel.checkNotificationPermission()
             viewModel.isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
