@@ -66,7 +66,7 @@ struct KeyringChainComponent {
 
     // MARK: - 단일 체인 링크 노드 생성
     // UIImage와 링크 정보로 SKSpriteNode 생성
-    private static func createChainLinkNode(
+    static func createChainLinkNode(
         image: UIImage,
         link: ChainType.ChainLink,
         position: CGPoint,

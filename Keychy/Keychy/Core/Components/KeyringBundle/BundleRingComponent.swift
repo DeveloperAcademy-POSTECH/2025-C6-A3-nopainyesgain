@@ -38,7 +38,7 @@ struct BundleRingComponent{
     //MARK: - 햄버거 타입 카라비너의 ring 노드 생성
     // UIImage와 RingType으로 SKspriteNode 생성
     // 카라비너 타입에 따른 분기처리
-    private static func createHamburgerRingNode(
+    static func createHamburgerRingNode(
         image: UIImage,
         ringType: RingType
     ) -> SKSpriteNode {
@@ -95,7 +95,7 @@ struct BundleRingComponent{
     
     //MARK: - plain 타입 카라비너의 ring 노드 생성
     // plain 카라비너의 ring은 고정점 역할 (static physics body)
-    private static func createPlainRingNode(
+    static func createPlainRingNode(
         image: UIImage,
         ringType: RingType
     ) -> SKSpriteNode {
