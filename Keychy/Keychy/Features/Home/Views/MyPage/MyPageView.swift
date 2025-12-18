@@ -22,12 +22,14 @@ struct MyPageView: View {
         ZStack {
             mainContent
             alerts
-            customNavigationBar
         }
-        .ignoresSafeArea()
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
-        .swipeBackGesture(enabled: true)
+        .toolbar {
+            backToolbarItem
+            customTitleToolbarItem
+        }
+        .tint(.black)
     }
 }
 
@@ -66,24 +68,11 @@ extension MyPageView {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             viewModel.checkNotificationPermission()
         }
-        .alert(viewModel.alertType.title, isPresented: $viewModel.showSettingsAlert) {
-            Button("취소", role: .cancel) {
-                viewModel.checkNotificationPermission()
-            }
-            Button("설정으로 이동") {
-                NotificationManager.shared.openSettings()
-            }
-        } message: {
-            Text(viewModel.alertType.message)
-        }
-        .alert("재인증 필요", isPresented: $viewModel.showReauthAlert) {
-            Button("재인증하기") {
-                viewModel.startReauthentication(userManager: userManager, introViewModel: introViewModel)
-            }
-            Button("취소", role: .cancel) {}
-        } message: {
-            Text("보안을 위해 재인증이 필요합니다")
-        }
+        .modifier(MyPageAlertsModifier(
+            viewModel: viewModel,
+            userManager: userManager,
+            introViewModel: introViewModel
+        ))
         .allowsHitTesting(!viewModel.showLogoutAlert && !viewModel.showDeleteAccountAlert && !viewModel.showLoadingAlert)
     }
     /// 내 정보 섹션
@@ -287,9 +276,6 @@ extension MyPageView {
 
                 Button {
                     viewModel.showLogoutAlert = true
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                        viewModel.logoutAlertScale = 1.0
-                    }
                 } label: {
                     Text("로그아웃")
                         .typography(.suit17M)
@@ -299,9 +285,6 @@ extension MyPageView {
 
                 Button {
                     viewModel.showDeleteAccountAlert = true
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                        viewModel.deleteAccountAlertScale = 1.0
-                    }
                 } label: {
                     Text("회원 탈퇴")
                         .typography(.suit17M)
@@ -316,90 +299,10 @@ extension MyPageView {
 
 // MARK: - Alerts
 extension MyPageView {
-    /// 모든 Alert
+    /// 로딩 Alert만 커스텀으로 유지
     private var alerts: some View {
         Group {
-            if viewModel.showLogoutAlert { logoutAlert }
-            if viewModel.showDeleteAccountAlert { deleteAccountAlert }
             if viewModel.showLoadingAlert { loadingAlert }
-        }
-    }
-
-    private var logoutAlert: some View {
-        ZStack {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .onTapGesture {}
-
-            AccountAlert(
-                checkmarkScale: viewModel.logoutAlertScale,
-                title: "로그아웃",
-                text: "로그아웃 하시겠습니까?",
-                cancelText: "취소",
-                confirmText: "로그아웃",
-                confirmBtnColor: .main500,
-                onCancel: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        viewModel.logoutAlertScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        viewModel.showLogoutAlert = false
-                    }
-                },
-                onConfirm: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        viewModel.logoutAlertScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        viewModel.showLogoutAlert = false
-                        viewModel.logout(userManager: userManager, introViewModel: introViewModel)
-                    }
-                }
-            )
-            .padding(.horizontal, 51)
-            .padding(.bottom, 30)
-        }
-    }
-
-    private var deleteAccountAlert: some View {
-        ZStack {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .onTapGesture {}
-
-            AccountAlert(
-                checkmarkScale: viewModel.deleteAccountAlertScale,
-                title: "회원 탈퇴",
-                text: """
-                    탈퇴 시 보유중인 아이템과
-                    키링 및 계정 정보는 즉시 삭제되어
-                    복구가 불가해요.
-
-                    정말 탈퇴하시겠어요?
-                    """,
-                cancelText: "취소",
-                confirmText: "탈퇴하기",
-                confirmBtnColor: .pink100,
-                onCancel: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        viewModel.deleteAccountAlertScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        viewModel.showDeleteAccountAlert = false
-                    }
-                },
-                onConfirm: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        viewModel.deleteAccountAlertScale = 0.3
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        viewModel.showDeleteAccountAlert = false
-                        viewModel.deleteAccount(userManager: userManager, introViewModel: introViewModel)
-                    }
-                }
-            )
-            .padding(.horizontal, 51)
-            .padding(.bottom, 30)
         }
     }
 
@@ -413,7 +316,7 @@ extension MyPageView {
     }
 }
 
-// MARK: - Reusable Components
+// MARK: - 글꼴 Components
 extension MyPageView {
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
@@ -446,20 +349,79 @@ extension MyPageView {
     }
 }
 
-// MARK: - Navigation
+// MARK: - Toolbar Items
 extension MyPageView {
-    private var customNavigationBar: some View {
-        CustomNavigationBar {
-            BackToolbarButton {
+    var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
                 router.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
-        } center: {
-            Text("마이페이지")
-                .opacity(showTitle ? 1 : 0)
-        } trailing: {
-            Spacer()
-                .frame(width: 44, height: 44)
         }
-        .opacity(viewModel.showSettingsAlert || viewModel.showDeleteAccountAlert || viewModel.showLogoutAlert || viewModel.showReauthAlert || viewModel.showLoadingAlert || viewModel.isShowingAppleSignIn ? 0 : 1)
+    }
+
+    // 커스텀 타이틀
+    var customTitleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("마이페이지")
+                .typography(.notosans17M)
+                .foregroundColor(.gray600)
+        }
+    }
+}
+
+// MARK: - Alert ViewModifier
+struct MyPageAlertsModifier: ViewModifier {
+    @Bindable var viewModel: MyPageViewModel
+    let userManager: UserManager
+    let introViewModel: IntroViewModel
+
+    func body(content: Content) -> some View {
+        content
+            // 설정 Alert
+            .alert(viewModel.alertType.title, isPresented: $viewModel.showSettingsAlert) {
+                Button("취소", role: .cancel) {
+                    viewModel.checkNotificationPermission()
+                }
+                Button("설정으로 이동") {
+                    NotificationManager.shared.openSettings()
+                }
+            } message: {
+                Text(viewModel.alertType.message)
+                    .multilineTextAlignment(.center)
+            }
+            // 재인증 Alert
+            .alert("재인증 필요", isPresented: $viewModel.showReauthAlert) {
+                Button("재인증하기") {
+                    viewModel.startReauthentication(userManager: userManager, introViewModel: introViewModel)
+                }
+                Button("취소", role: .cancel) {}
+            } message: {
+                Text("보안을 위해 재인증이 필요합니다")
+                    .multilineTextAlignment(.center)
+            }
+            // 로그아웃 Alert
+            .alert("로그아웃", isPresented: $viewModel.showLogoutAlert) {
+                Button("취소", role: .cancel) {}
+                Button("로그아웃", role: .destructive) {
+                    viewModel.logout(userManager: userManager, introViewModel: introViewModel)
+                }
+            } message: {
+                Text("로그아웃 하시겠습니까?")
+            }
+        
+            // 회원탈퇴 Alert
+            .alert("회원 탈퇴", isPresented: $viewModel.showDeleteAccountAlert) {
+                Button("취소", role: .cancel) {}
+                Button("탈퇴하기", role: .destructive) {
+                    viewModel.deleteAccount(userManager: userManager, introViewModel: introViewModel)
+                }
+                
+            } message: {
+                Text("탈퇴 시 보유중인 아이템과 키링 및 계정 정보는 즉시 삭제되어 복구가 불가해요.\n\n정말 탈퇴하시겠어요?")
+            }
     }
 }
