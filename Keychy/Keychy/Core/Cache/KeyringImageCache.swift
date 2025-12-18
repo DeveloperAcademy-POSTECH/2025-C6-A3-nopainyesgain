@@ -219,7 +219,6 @@ class KeyringImageCache {
             encoder.outputFormatting = .prettyPrinted
             let data = try encoder.encode(keyrings)
             try data.write(to: fileURL, options: .atomic)
-            print("✅ [KeyringCache] \(keyrings.count)개 키링 메타데이터 저장 완료")
         } catch {
             print("❌ [KeyringCache] 메타데이터 저장 실패: \(error.localizedDescription)")
         }
@@ -262,11 +261,9 @@ class KeyringImageCache {
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
             // 기존 키링 업데이트
             keyrings[index] = AvailableKeyring(id: id, name: name, imagePath: imagePath)
-            print("✅ [KeyringCache] 키링 업데이트: \(name)")
         } else {
             // 새 키링 추가
             keyrings.append(AvailableKeyring(id: id, name: name, imagePath: imagePath))
-            print("✅ [KeyringCache] 새 키링 추가: \(name)")
         }
 
         saveAvailableKeyrings(keyrings)
