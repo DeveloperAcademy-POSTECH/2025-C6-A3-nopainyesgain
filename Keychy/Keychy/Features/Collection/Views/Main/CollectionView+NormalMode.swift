@@ -20,7 +20,6 @@ extension CollectionView {
                 .padding(.horizontal, Spacing.xs)
             
             normalCollectionSection
-                .padding(.horizontal, Spacing.padding)
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -102,6 +101,7 @@ extension CollectionView {
     private var normalCollectionSection: some View {
         VStack(spacing: 0) {
             collectionHeader
+                .padding(.horizontal, Spacing.padding)
             
             if filteredKeyrings.isEmpty {
                 emptyView
@@ -109,7 +109,6 @@ extension CollectionView {
                 collectionGridView(keyrings: filteredKeyrings)
             }
         }
-        .padding(.horizontal, Spacing.xs)
     }
     
     var collectionHeader: some View {
