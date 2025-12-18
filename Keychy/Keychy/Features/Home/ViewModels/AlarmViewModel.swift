@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseFirestore
 import UserNotifications
+import SpriteKit
 
 @Observable
 class AlarmViewModel {
@@ -190,4 +191,109 @@ class AlarmViewModel {
             notificationManager.openSettings()
         }
     }
+    
+    // MARK: - 알림 키링 이미지 프리페치
+    func prefetchNotificationImages() {
+        Task(priority: .utility) {
+            for notification in notifications where !notification.isRead {
+                await prefetchSingleNotificationImage(postOfficeId: notification.postOfficeId)
+            }
+        }
+    }
+    
+    private func prefetchSingleNotificationImage(postOfficeId: String) async {
+        let db = Firestore.firestore()
+        
+        do {
+            // PostOffice에서 키링 ID 가져오기
+            let postOfficeDoc = try await db.collection("PostOffice")
+                .document(postOfficeId)
+                .getDocument()
+            
+            guard let data = postOfficeDoc.data(),
+                  let keyringId = data["keyringId"] as? String else {
+                print("PostOffice에서 키링 ID를 찾을 수 없음: \(postOfficeId)")
+                return
+            }
+            
+            // 이미 캐시가 있으면 스킵
+            guard !KeyringImageCache.shared.exists(for: keyringId) else {
+                return
+            }
+            
+            // 키링 데이터 가져오기
+            let keyringDoc = try await db.collection("Keyring")
+                .document(keyringId)
+                .getDocument()
+            
+            guard let keyringData = keyringDoc.data(),
+                  let keyring = Keyring(documentId: keyringId, data: keyringData) else {
+                print("키링 데이터를 불러올 수 없음: \(keyringId)")
+                return
+            }
+            
+            // 이미지 생성 및 캐시
+            await prefetchKeyringImage(keyring: keyring)
+            
+        } catch {
+            print("알림 이미지 프리페치 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    private func prefetchKeyringImage(keyring: Keyring) async {
+        guard let keyringID = keyring.documentId else { return }
+        
+        let ringType = RingType.fromID(keyring.selectedRing)
+        let chainType = ChainType.fromID(keyring.selectedChain)
+
+        await withCheckedContinuation { continuation in
+            var loadingCompleted = false
+
+            let scene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
+                targetSize: CGSize(width: 304, height: 490),
+                customBackgroundColor: .clear,
+                zoomScale: 1.9,
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength,
+                onLoadingComplete: {
+                    loadingCompleted = true
+                }
+            )
+            scene.scaleMode = .aspectFill
+            scene.backgroundColor = .clear
+
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+
+            Task {
+                var waitTime = 0.0
+                while !loadingCompleted && waitTime < 5.0 {
+                    try? await Task.sleep(for: .seconds(0.1))
+                    waitTime += 0.1
+                }
+
+                guard loadingCompleted else {
+                    continuation.resume()
+                    return
+                }
+
+                try? await Task.sleep(for: .seconds(0.2))
+
+                if let pngData = await scene.captureToPNG(),
+                   !pngData.isEmpty,
+                   UIImage(data: pngData) != nil {
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+                }
+
+                continuation.resume()
+            }
+        }
+    }
+    
+
 }
