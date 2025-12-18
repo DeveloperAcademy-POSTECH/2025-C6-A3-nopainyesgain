@@ -71,6 +71,7 @@ struct WorkshopView: View {
 
                 // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
                 await viewModel.fetchDataForCategory(viewModel.selectedCategory)
+                // Workshop 배너는 Home에서 이미 prefetch됨
 
                 // 2. 백그라운드에서 나머지 카테고리 프리페칭
                 Task.detached(priority: .background) {
@@ -143,23 +144,4 @@ extension WorkshopView {
             viewModel.applySorting()
         }
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    let userManager = UserManager.shared
-    
-    // 프리뷰용 더미 유저 생성
-    userManager.currentUser = KeychyUser(
-        id: "2FcoxDhMhGR4dZtaQSdqZWqQzEp2",
-        nickname: "런도",
-        email: "bbpwj8qhnc@privaterelay.appleid.com"
-    )
-    userManager.currentUser?.templates = ["AcrylicPhoto"] // 보유 템플릿 ID 추가
-    
-    let viewModel = WorkshopViewModel(userManager: userManager)
-    
-    return WorkshopView(router: NavigationRouter<WorkshopRoute>(), viewModel: viewModel)
-        .environment(userManager)
 }
