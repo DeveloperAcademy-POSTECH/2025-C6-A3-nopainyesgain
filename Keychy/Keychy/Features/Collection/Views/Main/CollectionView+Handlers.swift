@@ -1,5 +1,5 @@
 //
-//  CollectionView+Actions.swift
+//  CollectionView+Handlers.swift
 //  Keychy
 //
 //  Created by Jini on 11/12/25.
@@ -8,7 +8,8 @@
 import SwiftUI
 
 extension CollectionView {
-    // MARK: - 사용자 데이터 로드
+    // MARK: - 데이터 로드
+    // 사용자 데이터 로드
     func fetchUserData() {
         guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
             print("UID를 찾을 수 없습니다")
@@ -31,7 +32,7 @@ extension CollectionView {
         }
     }
     
-    // 사용자 기반 데이터 로드
+    // 사용자 정보 로드 (태그, 코인, 보관함 용량)
     func fetchUserCategories(uid: String, completion: @escaping () -> Void) {
         collectionViewModel.fetchUserCollectionData(uid: uid) { success in
             if success {
@@ -44,6 +45,7 @@ extension CollectionView {
     }
     
     // MARK: - 태그 관리
+    // 태그 이름 변경
     func renameCategory() {
         guard !newCategoryName.isEmpty else { return }
         
@@ -76,6 +78,7 @@ extension CollectionView {
         newCategoryName = ""
     }
     
+    // 태그 삭제
     func confirmDeleteCategory() {
         guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
             print("UID를 찾을 수 없습니다")
@@ -104,6 +107,7 @@ extension CollectionView {
         deletingCategory = ""
     }
     
+    // MARK: - 인벤토리 관리
     // 인벤 확장
     func expandInventory() {
         Task {
@@ -145,26 +149,14 @@ extension CollectionView {
         }
     }
     
-    private func prefetchKeyrings(startIndex: Int, count: Int = 10) {
-        let keyringsToFetch = Array(filteredKeyrings.dropFirst(startIndex).prefix(count))
-        
-        Task.detached(priority: .utility) {
-            for keyring in keyringsToFetch {
-                guard let keyringID = keyring.documentId,
-                      !KeyringImageCache.shared.exists(for: keyringID) else {
-                    continue
-                }
-                
-                // 백그라운드에서 미리 캡처
-                await self.collectionViewModel.prefetchKeyringImage(keyring: keyring)
-            }
-        }
-    }
-    
+    // MARK: - 캐시 프리페칭
+    // 캐시 없는 키링들 사전에 캡쳐
     func precacheAllKeyrings() async {
         let uncachedKeyrings = collectionViewModel.keyring.filter { keyring in
             guard let id = keyring.documentId else { return false }
-            return !KeyringImageCache.shared.exists(for: id) && !keyring.isPackaged
+            return !KeyringImageCache.shared.exists(for: id) &&
+                    !keyring.isPackaged &&
+                    !keyring.isPublished
         }
         
         for keyring in uncachedKeyrings {
@@ -173,7 +165,9 @@ extension CollectionView {
     }
     
     // MARK: - 네비게이션
+    // 키링 상세뷰로 이동
     func navigateToKeyringDetail(keyring: Keyring) {
+        // isNew 상태 업데이트
         if keyring.isNew, let firestoreId = keyring.documentId {
             collectionViewModel.markAsRead(keyringId: firestoreId) { success in
                 if success {
@@ -182,6 +176,7 @@ extension CollectionView {
             }
         }
         
+        // 화면 이동
         if keyring.isPackaged {
             router.push(.collectionKeyringPackageView(keyring))
         } else {
@@ -212,8 +207,16 @@ extension CollectionView {
     
     // 키보드 노티피케이션 제거
     func removeKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 }
 

@@ -106,11 +106,13 @@ extension PackagedKeyringView {
                     .resizable()
                     .frame(width: 220, height: 270)
                 
-                // 이미 캡처된 PNG 이미지 사용
-                if let sceneImage = capturedSceneImage {
-                    Image(uiImage: sceneImage)
+                // 캐시된 이미지 사용
+                if let cachedImage = cachedKeyringImage {
+                    Image(uiImage: cachedImage)
                         .resizable()
+                        .scaledToFit()
                         .frame(width: 195, height: 300)
+                        .scaleEffect(0.92)
                         .rotationEffect(.degrees(10))
                         .offset(y: -5)
                         .shadow(
