@@ -119,7 +119,7 @@ struct NotificationGiftView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 195, height: 300)
-                        .scaleEffect(1.16)
+                        .scaleEffect(1.05)
                         .rotationEffect(.degrees(10))
                         .offset(y: -22)
                         .shadow(

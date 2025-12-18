@@ -256,7 +256,7 @@ class Showcase25BoardViewModel {
         let imagePath = "Showcase/BodyImages/\(uid)/\(imageFileName)"
 
         // 1. 캐시에서 이미지 가져오기
-        if let cachedData = KeyringImageCache.shared.load(for: keyringId),
+        if let cachedData = KeyringImageCache.shared.load(for: keyringId, type: .thumbnail),
            let cachedImage = UIImage(data: cachedData) {
             print("✅ 캐시된 이미지 사용: \(keyringId)")
             return try await StorageManager.shared.uploadImage(cachedImage, path: imagePath)
