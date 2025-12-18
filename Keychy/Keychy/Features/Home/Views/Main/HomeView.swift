@@ -77,11 +77,13 @@ struct HomeView: View {
             userManager.startNotificationListener()
         }
         .task {
-            // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드
-            await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
+            // Workshop 배너 백그라운드 prefetch (메인 뭉치 로드를 블로킹하지 않음)
+            Task(priority: .background) {
+                await WorkshopDataManager.shared.fetchWorkshopBanner()
+            }
 
-            // Workshop 배너 미리 로드 (prefetch)
-            await WorkshopDataManager.shared.fetchWorkshopBanner()
+            // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드 (우선순위)
+            await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
         }
         .onChange(of: viewModel.keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
