@@ -374,14 +374,14 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    /// 단일 키링 설정
+    /// 단일 키링 설정 (이미지 먼저 다운로드하고 조립)
     private func setupSingleKeyring(data: KeyringData, order: Int, completion: @escaping (Bool) -> Void) {
         // 사운드 정보 저장
         soundIdsByKeyring[data.index] = data.soundId
         if let customURL = data.customSoundURL {
             customSoundURLsByKeyring[data.index] = customURL
         }
-
+        
         // 파티클 정보 저장
         particleIdsByKeyring[data.index] = data.particleId
 
@@ -404,241 +404,283 @@ class MultiKeyringScene: SKScene {
             return
         }
 
-        BundleRingComponent.createCarabinerRingNode(
-            carabinerType: carabinerType,
-            ringType: currentRingType
-        ) { [weak self] createdRing in
-            guard let self = self, let ring = createdRing else {
+        // 모든 이미지를 다운로드한 후에 조립
+        downloadImagesForKeyring(
+            bodyImageURL: data.bodyImageURL,
+            templateId: data.templateId,
+            chainLength: data.chainLength
+        ) { [weak self] result in
+            guard let self = self else {
                 completion(false)
                 return
             }
-            // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
-            if carabinerType == .hamburger {
-                ring.zPosition = -850  // 카라비너 뒷면(-900)과 앞면(-800) 사이
-            } else {
-                ring.zPosition = baseZPosition
+
+            switch result {
+            case .success(let images):
+                // 이미지 다운로드 완료 후 조립 시작
+                self.assembleKeyring(
+                    data: data,
+                    images: images,
+                    spriteKitPosition: spriteKitPosition,
+                    baseZPosition: baseZPosition,
+                    categoryBitMask: categoryBitMask,
+                    collisionBitMask: collisionBitMask,
+                    carabinerType: carabinerType,
+                    completion: completion
+                )
+
+            case .failure:
+                completion(false)
             }
-
-            let ringFrame = ring.calculateAccumulatedFrame()
-            let ringRadius = ringFrame.height / 2
-
-            // Ring 위치: Ring의 상단이 정확히 + 버튼 위치에 오도록 설정
-            let ringCenterX = spriteKitPosition.x
-            // 미세 조정: 필요시 오프셋 추가
-            let ringCenterY = spriteKitPosition.y - ringRadius  // +2pt 오프셋으로 조정
-            ring.position = CGPoint(x: ringCenterX, y: ringCenterY)
-
-            // Ring이 처음에는 물리 시뮬레이션 비활성화
-            ring.physicsBody?.isDynamic = false
-            ring.physicsBody?.categoryBitMask = categoryBitMask
-            ring.physicsBody?.collisionBitMask = collisionBitMask
-            ring.physicsBody?.contactTestBitMask = 0
-
-            self.addChild(ring)
-
-            // 수직 그림자 추가
-            self.addShadowToNode(ring, offsetX: 4, offsetY: -8)
-
-            // Ring 노드 저장
-            self.ringNodes[data.index] = ring
-            self.keyringNodes[data.index] = ring
-
-            // 2. Chain 생성
-            self.setupChain(
-                ring: ring,
-                centerX: spriteKitPosition.x,
-                bodyImageURL: data.bodyImageURL,
-                templateId: data.templateId,
-                hookOffsetY: data.hookOffsetY,
-                chainLength: data.chainLength,
-                index: data.index,
-                baseZPosition: baseZPosition,
-                carabinerType: carabinerType,
-                completion: completion
-            )
         }
     }
 
-    /// Chain 생성
-    private func setupChain(
-        ring: SKSpriteNode,
-        centerX: CGFloat,
+    // MARK: - 키링용 이미지 다운로드
+    struct KeyringDownloadImages {
+        let ring: UIImage
+        let chains: [Int: UIImage]
+        let chainLinks: [ChainType.ChainLink]
+        let body: UIImage?
+    }
+
+    private func downloadImagesForKeyring(
         bodyImageURL: String,
-        templateId: String? = nil,
-        hookOffsetY: CGFloat?,
+        templateId: String?,
         chainLength: Int,
-        index: Int,
+        completion: @escaping (Result<KeyringDownloadImages, Error>) -> Void
+    ) {
+        Task {
+            do {
+                // 1. Ring 이미지 다운로드
+                let ringImage = try await StorageManager.shared.getImage(
+                    path: (currentCarabinerType == .plain ? currentRingType.sideImageURL : currentRingType.imageURL)
+                )
+
+                // 2. Chain 링크 생성 및 이미지 다운로드
+                let chainLinks = currentChainType.createChainLinks(length: chainLength)
+                let chainImages = try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
+                    var images: [Int: UIImage] = [:]
+
+                    for (index, link) in chainLinks.enumerated() {
+                        group.addTask {
+                            let image = try await StorageManager.shared.getImage(path: link.imageURL)
+                            return (index, image)
+                        }
+                    }
+
+                    for try await (index, image) in group {
+                        images[index] = image
+                    }
+
+                    return images
+                }
+
+                // 3. Body 이미지 다운로드 (있으면)
+                var bodyImage: UIImage?
+                if !bodyImageURL.isEmpty {
+                    let downloaded = try await StorageManager.shared.getImage(path: bodyImageURL)
+                    bodyImage = downloaded.fixedOrientation()
+                }
+
+                await MainActor.run {
+                    let images = KeyringDownloadImages(
+                        ring: ringImage,
+                        chains: chainImages,
+                        chainLinks: chainLinks,
+                        body: bodyImage
+                    )
+                    completion(.success(images))
+                }
+
+            } catch {
+                await MainActor.run {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    // MARK: - 다운로드된 이미지로 키링 조립
+    private func assembleKeyring(
+        data: KeyringData,
+        images: KeyringDownloadImages,
+        spriteKitPosition: CGPoint,
         baseZPosition: CGFloat,
-        carabinerType: CarabinerType? = nil,
+        categoryBitMask: UInt32,
+        collisionBitMask: UInt32,
+        carabinerType: CarabinerType,
         completion: @escaping (Bool) -> Void
     ) {
+        guard !isCleaningUp else {
+            completion(false)
+            return
+        }
+
+        // 1. Ring 생성
+        let ring = (
+            carabinerType == .plain ? BundleRingComponent.createPlainRingNode(
+                image: images.ring,
+                ringType: currentRingType
+            ) : BundleRingComponent.createHamburgerRingNode(image: images.ring, ringType: currentRingType)
+        )
+        
+        // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
+        if carabinerType == .hamburger {
+            ring.zPosition = -850  // 카라비너 뒷면(-900)과 앞면(-800) 사이
+        } else {
+            ring.zPosition = baseZPosition
+        }
+
+        let ringFrame = ring.calculateAccumulatedFrame()
+        let ringRadius = ringFrame.height / 2
+        
+        // Ring 위치: Ring의 상단이 정확히 + 버튼 위치에 오도록 설정
+        let ringCenterX = spriteKitPosition.x
+        // 미세 조정: 필요시 오프셋 추가
+        let ringCenterY = spriteKitPosition.y - ringRadius  // +2pt 오프셋으로 조정
+        ring.position = CGPoint(x: ringCenterX, y: ringCenterY)
+        
+        //Ring이 처음에는 물리 시뮬레이션 비활성화
+        ring.physicsBody?.isDynamic = false
+        ring.physicsBody?.categoryBitMask = categoryBitMask
+        ring.physicsBody?.collisionBitMask = collisionBitMask
+        ring.physicsBody?.contactTestBitMask = 0
+        
+        addChild(ring)
+        
+        // 수직 그림자 추가
+        addShadowToNode(ring, offsetX: 4, offsetY: -8)
+        
+        // Ring 노드 저장
+        ringNodes[data.index] = ring
+        keyringNodes[data.index] = ring
+
+        // 2. Chain 생성
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY + 2
         let chainSpacing: CGFloat = 22
 
-        // chainLength를 기본으로 사용하되, 카라비너 타입에 따라 조정
-        let chainCount: Int = {
-            if let carabinerType = currentCarabinerType {
-                // 카라비너가 있으면 plain은 chainLength - 1, 그 외는 chainLength 사용
-                return carabinerType == .plain ? max(chainLength - 1, 1) : chainLength
-            }
-            return chainLength  // 전달받은 chainLength 사용
-        }()
-
-        // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
-        let chainBaseZPosition = baseZPosition
+        let chainCount: Int = (currentCarabinerType == .plain ? max(data.chainLength - 1, 1) : data.chainLength)
 
         KeyringChainComponent.createLinks(
             from: currentChainType,
             count: chainCount,
-            startPosition: CGPoint(x: centerX, y: chainStartY),
+            startPosition: CGPoint(x: ringCenterX, y: chainStartY),
             spacing: chainSpacing,
             carabinerType: currentCarabinerType,
-            baseZPosition: chainBaseZPosition
-        ) { [weak self] chains in
-            guard let self = self else {
-                return 
+            baseZPosition: baseZPosition
+        ) { [weak self] createdChains in
+            guard let self = self, !self.isCleaningUp else { return }
+
+            var chains: [SKSpriteNode] = []
+
+            for (_, chainNode) in createdChains.enumerated() {
+                // assembleKeyring 기존 초기 물리 설정 유지
+                chainNode.physicsBody?.isDynamic = false
+                chainNode.physicsBody?.categoryBitMask = categoryBitMask
+                chainNode.physicsBody?.collisionBitMask = collisionBitMask
+                chainNode.physicsBody?.contactTestBitMask = 0
+
+                self.addChild(chainNode)
+                self.addShadowToNode(chainNode, offsetX: 4, offsetY: -8)
+                chains.append(chainNode)
             }
-
-            // 각 체인에 고유한 물리 마스크 적용
-            let categoryBitMask: UInt32 = UInt32(1 << index)
-            let collisionBitMask: UInt32 = categoryBitMask
-
-            for (_, chain) in chains.enumerated() {
-                // zPosition은 KeyringChainComponent에서 이미 설정됨
-                // 체인도 처음에는 물리 비활성화
-                chain.physicsBody?.isDynamic = false
-                chain.physicsBody?.categoryBitMask = categoryBitMask
-                chain.physicsBody?.collisionBitMask = collisionBitMask
-                chain.physicsBody?.contactTestBitMask = 0
-
-                self.addChild(chain)
-
-                // 수직 그림자 추가
-                self.addShadowToNode(chain, offsetX: 4, offsetY: -8)
-            }
-
-            // Chain 노드 저장
-            self.chainNodesByKeyring[index] = chains
+            self.chainNodesByKeyring[data.index] = chains
 
             // 3. Body 생성
-            self.setupBody(
-                ring: ring,
-                chains: chains,
-                centerX: centerX,
-                chainStartY: chainStartY,
-                chainSpacing: chainSpacing,
-                bodyImageURL: bodyImageURL,
-                templateId: templateId,
-                hookOffsetY: hookOffsetY,
-                index: index,
-                baseZPosition: baseZPosition,
-                carabinerType: carabinerType,
-                completion: completion
-            )
-        }
-    }
-
-    /// Body 생성
-    private func setupBody(
-        ring: SKSpriteNode,
-        chains: [SKSpriteNode],
-        centerX: CGFloat,
-        chainStartY: CGFloat,
-        chainSpacing: CGFloat,
-        bodyImageURL: String,
-        templateId: String? = nil,
-        hookOffsetY: CGFloat?,
-        index: Int,
-        baseZPosition: CGFloat,
-        carabinerType: CarabinerType? = nil,
-        completion: @escaping (Bool) -> Void
-    ) {
-        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL, templateId: templateId) { [weak self] body in
-            guard let self = self, let body = body else {
-                completion(false)  // body 생성 실패
-                return
+            let body: SKNode
+            if let bodyImage = images.body {
+                body = self.createBodyNode(image: bodyImage)
+            } else {
+                body = self.createBasicBodyNode()
             }
-            self.positionAndConnectBody(
-                body: body,
-                ring: ring,
-                chains: chains,
-                centerX: centerX,
-                chainStartY: chainStartY,
-                chainSpacing: chainSpacing,
-                hookOffsetY: hookOffsetY,
-                index: index,
-                baseZPosition: baseZPosition,
-                carabinerType: carabinerType,
-                completion: completion
-            )
+
+            // Body 위치 계산
+            let bodyFrame = body.calculateAccumulatedFrame()
+            let bodyHalfHeight = bodyFrame.height / 2
+
+            let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
+            let lastChainBottomY = lastChainY - 15
+
+            let hookOffsetYRatio = data.hookOffsetY ?? 0.0
+            let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
+
+            let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4
+
+            body.position = CGPoint(x: spriteKitPosition.x, y: bodyCenterY)
+            body.zPosition = baseZPosition - 2
+            body.physicsBody?.isDynamic = false
+            body.physicsBody?.categoryBitMask = categoryBitMask
+            body.physicsBody?.collisionBitMask = collisionBitMask
+            body.physicsBody?.contactTestBitMask = 0
+
+            self.addChild(body)
+
+            if let spriteBody = body as? SKSpriteNode {
+                self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+            }
+
+            self.bodyNodes[data.index] = body
+
+            // 4. 조인트 연결
+            self.connectComponents(ring: ring, chains: chains, body: body)
+
+            // 키링 완성 완료 - 성공
+            completion(true)
         }
     }
 
-    /// Body 위치 설정 및 연결
-    private func positionAndConnectBody(
-        body: SKNode,
-        ring: SKSpriteNode,
-        chains: [SKSpriteNode],
-        centerX: CGFloat,
-        chainStartY: CGFloat,
-        chainSpacing: CGFloat,
-        hookOffsetY: CGFloat?,
-        index: Int,
-        baseZPosition: CGFloat,
-        carabinerType: CarabinerType? = nil,
-        completion: @escaping (Bool) -> Void
-    ) {
-        let bodyFrame = body.calculateAccumulatedFrame()
-        let bodyHalfHeight = bodyFrame.height / 2
+    private func createBodyNode(image: UIImage) -> SKSpriteNode {
+        let maxSize: CGFloat = 200
+        let originalSize = image.size
+        var displaySize = originalSize
 
-        // Body 위치 설정
-        // 마지막 체인의 "중심 Y": 첫 링크 시작점에서 (링크 수 - 1) * spacing 만큼 아래
-        let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
-
-        // 마지막 체인의 실제 높이를 기반으로 "아래 끝 Y" 계산 - 15: 체인길이의 절반
-        let lastChainBottomY = lastChainY - 15
-
-        // hookOffsetY를 사용한 정확한 연결 지점 계산
-        // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
-        // 0.0 = 이미지 상단, 1.0 = 이미지 하단
-        // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
-        let hookOffsetYRatio = hookOffsetY ?? 0.0
-        let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
-
-        // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
-        let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
-
-        body.position = CGPoint(x: centerX, y: bodyCenterY)
-
-        // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
-        body.zPosition = baseZPosition - 2  // Body는 체인 아래
-
-        // Body에 고유한 물리 마스크 적용
-        let categoryBitMask: UInt32 = UInt32(1 << index)
-        let collisionBitMask: UInt32 = categoryBitMask
-        // Body도 처음에는 물리 비활성화
-        body.physicsBody?.isDynamic = false
-        body.physicsBody?.categoryBitMask = categoryBitMask
-        body.physicsBody?.collisionBitMask = collisionBitMask
-        body.physicsBody?.contactTestBitMask = 0
-
-        addChild(body)
-
-        // 수직 그림자 추가 (SKSpriteNode인 경우에만)
-        if let spriteBody = body as? SKSpriteNode {
-            addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+        let maxDimension = max(originalSize.width, originalSize.height)
+        if maxDimension > maxSize {
+            let scale = maxSize / maxDimension
+            displaySize = CGSize(
+                width: originalSize.width * scale,
+                height: originalSize.height * scale
+            )
         }
 
-        // Body 노드 저장
-        bodyNodes[index] = body
+        let texture = SKTexture(image: image)
+        texture.filteringMode = .linear
+        let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
-        // 조인트 연결
-        connectComponents(ring: ring, chains: chains, body: body)
+        let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        physicsBody.mass = 2.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        spriteNode.physicsBody = physicsBody
 
-        // 키링 완성 완료 - 성공
-        completion(true)
+        return spriteNode
+    }
+
+    private func createBasicBodyNode() -> SKShapeNode {
+        let radius: CGFloat = 40
+        let path = CGPath(
+            ellipseIn: CGRect(x: -radius, y: -radius, width: radius * 2, height: radius * 2),
+            transform: nil
+        )
+
+        let node = SKShapeNode(path: path)
+        node.fillColor = .white
+        node.strokeColor = UIColor(white: 0.8, alpha: 0.4)
+        node.lineWidth = 1.0
+
+        let physicsBody = SKPhysicsBody(circleOfRadius: radius - 2)
+        physicsBody.mass = 2.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        node.physicsBody = physicsBody
+
+        return node
     }
 
     /// 키링 구성 요소들을 Joint로 연결
@@ -828,12 +870,12 @@ class MultiKeyringScene: SKScene {
     private func enablePhysics() {
         // 정리 중이면 중단
         guard !isCleaningUp else {
-            return 
+            return
         }
         
         // 이미 물리가 활성화된 경우 중복 실행 방지
         guard !isPhysicsEnabled else {
-            return 
+            return
         }
         isPhysicsEnabled = true
 
