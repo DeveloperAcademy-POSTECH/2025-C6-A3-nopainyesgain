@@ -16,16 +16,12 @@ struct NotificationGiftView: View {
 
     @State private var viewModel = NotificationGiftViewModel()
 
-    @State private var showContent = false
-    @State private var cachedKeyringImage: UIImage?
-    @State private var isCapturing = false
-
     var body: some View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
             
-            if viewModel.isLoading || isCapturing {
+            if viewModel.isLoading || viewModel.isCapturing {
                 LoadingAlert(type: .short, message: nil)
             } else if let error = viewModel.loadError {
                 VStack {
@@ -38,7 +34,7 @@ struct NotificationGiftView: View {
                 }
             } else {
                 contentView
-                    .opacity(showContent ? 1 : 0)
+                    .opacity(viewModel.showContent ? 1 : 0)
             }
             
             CustomNavigationBar {
@@ -61,16 +57,16 @@ struct NotificationGiftView: View {
             
             // 안전장치: 1.5초 후에도 showContent가 false면 강제로 표시
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                if !showContent {
-                    showContent = true
-                    isCapturing = false
+                if !viewModel.showContent {
+                    viewModel.showContent = true
+                    viewModel.isCapturing = false
                 }
             }
         }
         .onChange(of: viewModel.keyring) { oldValue, newValue in
             // 키링 데이터가 로드되면 캐시 이미지 확인
             if let keyring = newValue {
-                loadCachedImage(keyring: keyring)
+                viewModel.loadCachedImage(keyring: keyring)
             }
         }
     }
@@ -116,7 +112,7 @@ struct NotificationGiftView: View {
                     .offset(y: -24)
                 
                 // 캐시된 이미지가 있으면 사용, 없으면 생성
-                if let cachedImage = cachedKeyringImage {
+                if let cachedImage = viewModel.cachedKeyringImage {
                     Image(uiImage: cachedImage)
                         .resizable()
                         .scaledToFit()
@@ -158,111 +154,6 @@ struct NotificationGiftView: View {
                 }
                 .padding(.leading, 23)
                 .padding(.top, 42)
-            }
-        }
-    }
-    
-    // 캐시된 이미지 로드
-    private func loadCachedImage(keyring: Keyring) {
-        guard let keyringID = keyring.documentId else {
-            print("키링 ID 없음")
-            showContent = true
-            return
-        }
-        
-        // 1. 캐시에서 이미지 로드
-        if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .gift),
-           let image = UIImage(data: imageData) {
-            self.cachedKeyringImage = image
-            withAnimation(.easeIn(duration: 0.3)) {
-                self.showContent = true
-            }
-        } else {
-            // 2. 캐시가 없으면 백그라운드에서 이미지 생성
-            isCapturing = true
-            
-            Task.detached(priority: .userInitiated) {
-                await self.generateAndCacheImage(keyring: keyring)
-            }
-        }
-    }
-    
-    private func generateAndCacheImage(keyring: Keyring) async {
-        guard let keyringID = keyring.documentId else {
-            await MainActor.run {
-                showContent = true
-                isCapturing = false
-            }
-            return
-        }
-        
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-        
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            var loadingCompleted = false
-            
-            let scene = KeyringCellScene(
-                ringType: ringType,
-                chainType: chainType,
-                bodyImage: keyring.bodyImage,
-                targetSize: CGSize(width: 304, height: 490),
-                customBackgroundColor: .clear,
-                zoomScale: 1.9,
-                hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength,
-                onLoadingComplete: {
-                    loadingCompleted = true
-                }
-            )
-            scene.scaleMode = .aspectFill
-            scene.backgroundColor = .clear
-            
-            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
-            view.allowsTransparency = true
-            view.presentScene(scene)
-            
-            Task {
-                var waitTime = 0.0
-                while !loadingCompleted && waitTime < 5.0 {
-                    try? await Task.sleep(for: .seconds(0.1))
-                    waitTime += 0.1
-                }
-                
-                guard loadingCompleted else {
-                    await MainActor.run {
-                        showContent = true
-                        isCapturing = false
-                    }
-                    continuation.resume()
-                    return
-                }
-                
-                try? await Task.sleep(for: .seconds(0.2))
-                
-                if let pngData = await scene.captureToPNG(),
-                   !pngData.isEmpty,
-                   let image = UIImage(data: pngData) {
-                    // 캐시에 저장
-                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .gift)
-                    
-                    // UI 업데이트
-                    await MainActor.run {
-                        self.cachedKeyringImage = image
-                        withAnimation(.easeIn(duration: 0.3)) {
-                            self.showContent = true
-                            self.isCapturing = false
-                        }
-                    }
-                } else {
-                    print("PNG 캡처 실패: \(keyring.name)")
-                    await MainActor.run {
-                        showContent = true
-                        isCapturing = false
-                    }
-                }
-                
-                continuation.resume()
             }
         }
     }
