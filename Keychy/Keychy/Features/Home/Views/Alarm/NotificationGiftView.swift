@@ -18,13 +18,14 @@ struct NotificationGiftView: View {
 
     @State private var showContent = false
     @State private var cachedKeyringImage: UIImage?
+    @State private var isCapturing = false
 
     var body: some View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
-
-            if viewModel.isLoading {
+            
+            if viewModel.isLoading || isCapturing {
                 LoadingAlert(type: .short, message: nil)
             } else if let error = viewModel.loadError {
                 VStack {
@@ -62,6 +63,7 @@ struct NotificationGiftView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if !showContent {
                     showContent = true
+                    isCapturing = false
                 }
             }
         }
@@ -113,7 +115,7 @@ struct NotificationGiftView: View {
                     .frame(width: 280, height: 347)
                     .offset(y: -24)
                 
-                // 캐시된 이미지가 있으면 사용, 없으면 SpriteView
+                // 캐시된 이미지가 있으면 사용, 없으면 생성
                 if let cachedImage = cachedKeyringImage {
                     Image(uiImage: cachedImage)
                         .resizable()
@@ -128,20 +130,6 @@ struct NotificationGiftView: View {
                             x: 7,
                             y: 16
                         )
-                } else {
-                    SpriteView(
-                        scene: createMiniScene(keyring: keyring),
-                        options: [.allowsTransparency]
-                    )
-                    .frame(width: 195, height: 300)
-                    .rotationEffect(.degrees(10))
-                    .offset(y: -22)
-                    .shadow(
-                        color: Color(hex: "#56522E").opacity(0.35),
-                        radius: 6,
-                        x: 7,
-                        y: 16
-                    )
                 }
             }
             
@@ -182,7 +170,7 @@ struct NotificationGiftView: View {
             return
         }
         
-        // 캐시에서 이미지 로드
+        // 1. 캐시에서 이미지 로드
         if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .gift),
            let image = UIImage(data: imageData) {
             self.cachedKeyringImage = image
@@ -190,45 +178,93 @@ struct NotificationGiftView: View {
                 self.showContent = true
             }
         } else {
-            print("캐시된 이미지 없음, SpriteView 생성: \(keyring.name)")
+            // 2. 캐시가 없으면 백그라운드에서 이미지 생성
+            isCapturing = true
+            
+            Task.detached(priority: .userInitiated) {
+                await self.generateAndCacheImage(keyring: keyring)
+            }
         }
     }
     
-    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
+    private func generateAndCacheImage(keyring: Keyring) async {
+        guard let keyringID = keyring.documentId else {
+            await MainActor.run {
+                showContent = true
+                isCapturing = false
+            }
+            return
+        }
+        
         let ringType = RingType.fromID(keyring.selectedRing)
         let chainType = ChainType.fromID(keyring.selectedChain)
-
-        var scene: KeyringCellScene!
         
-        scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 304, height: 490),
-            customBackgroundColor: .clear,
-            zoomScale: 1.9,
-            hookOffsetY: keyring.hookOffsetY,
-            chainLength: keyring.chainLength,
-            onLoadingComplete: { [keyring] in
-                DispatchQueue.main.async {
-                    print("SpriteView 로딩 완료: \(keyring.name)")
-                    
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            var loadingCompleted = false
+            
+            let scene = KeyringCellScene(
+                ringType: ringType,
+                chainType: chainType,
+                bodyImage: keyring.bodyImage,
+                targetSize: CGSize(width: 304, height: 490),
+                customBackgroundColor: .clear,
+                zoomScale: 1.9,
+                hookOffsetY: keyring.hookOffsetY,
+                chainLength: keyring.chainLength,
+                onLoadingComplete: {
+                    loadingCompleted = true
+                }
+            )
+            scene.scaleMode = .aspectFill
+            scene.backgroundColor = .clear
+            
+            let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+            view.allowsTransparency = true
+            view.presentScene(scene)
+            
+            Task {
+                var waitTime = 0.0
+                while !loadingCompleted && waitTime < 5.0 {
+                    try? await Task.sleep(for: .seconds(0.1))
+                    waitTime += 0.1
+                }
+                
+                guard loadingCompleted else {
+                    await MainActor.run {
+                        showContent = true
+                        isCapturing = false
+                    }
+                    continuation.resume()
+                    return
+                }
+                
+                try? await Task.sleep(for: .seconds(0.2))
+                
+                if let pngData = await scene.captureToPNG(),
+                   !pngData.isEmpty,
+                   let image = UIImage(data: pngData) {
                     // 캐시에 저장
-                    Task {
-                        await viewModel.cacheKeyringImage(from: scene, keyring: keyring)
-                        
-                        await MainActor.run {
-                            withAnimation(.easeIn(duration: 0.3)) {
-                                self.showContent = true
-                            }
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .gift)
+                    
+                    // UI 업데이트
+                    await MainActor.run {
+                        self.cachedKeyringImage = image
+                        withAnimation(.easeIn(duration: 0.3)) {
+                            self.showContent = true
+                            self.isCapturing = false
                         }
                     }
+                } else {
+                    print("PNG 캡처 실패: \(keyring.name)")
+                    await MainActor.run {
+                        showContent = true
+                        isCapturing = false
+                    }
                 }
+                
+                continuation.resume()
             }
-        )
-        scene.scaleMode = .aspectFill
-        scene.backgroundColor = .clear
-        return scene
+        }
     }
     
     // 기기별 스케일 계산
