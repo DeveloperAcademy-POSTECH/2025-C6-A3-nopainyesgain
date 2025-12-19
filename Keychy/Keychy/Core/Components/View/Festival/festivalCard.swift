@@ -125,7 +125,7 @@ struct festivalCard: View {
                     enterAction()
                 }
             } label: {
-                Text(isAvailable ? "입장하기" : "Coming Soon")
+                Text(isAvailable ? "입장하기" : "Closed")
                     .typography(isAvailable ? .suit17B : .suit17M)
                     .foregroundStyle(isAvailable ? .white100 : .gray300)
                     .padding(.vertical, 13.5)
