@@ -24,7 +24,7 @@ struct CollectionCellView: View {
                 Color.gray50
                     .overlay {
                         LoadingAlert(type: .short, message: nil)
-                            .scaleEffect(0.5)
+                            .scaleEffect(0.7)
                     }
             }
 
