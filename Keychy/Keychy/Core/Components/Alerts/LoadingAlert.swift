@@ -29,7 +29,7 @@ enum LoadingType {
 
     var frameSize: CGFloat {
         switch self {
-        case .short: return 80
+        case .short: return 48
         case .longWithKeychy: return 122
         case .longWithPresent: return 122
         }
