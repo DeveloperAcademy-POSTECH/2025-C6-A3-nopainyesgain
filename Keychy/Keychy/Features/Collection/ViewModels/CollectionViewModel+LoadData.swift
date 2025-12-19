@@ -436,7 +436,7 @@ extension CollectionViewModel {
     
     func prefetchKeyringImage(keyring: Keyring) async {
         guard let keyringID = keyring.documentId,
-              !KeyringImageCache.shared.exists(for: keyringID) else {
+              !KeyringImageCache.shared.exists(for: keyringID, type: .thumbnail) else {
             return
         }
         
@@ -484,7 +484,7 @@ extension CollectionViewModel {
                 if let pngData = await scene.captureToPNG(),
                    !pngData.isEmpty,
                    UIImage(data: pngData) != nil {
-                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
                     
                     if !keyring.isPackaged && !keyring.isPublished {
                         KeyringImageCache.shared.syncKeyring(

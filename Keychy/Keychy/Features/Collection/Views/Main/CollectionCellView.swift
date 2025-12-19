@@ -75,7 +75,7 @@ struct CollectionCellView: View {
         syncWidgetMetadata(keyringID: keyringID)
         
         // 1. 캐시 확인
-        if let imageData = KeyringImageCache.shared.load(for: keyringID),
+        if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail),
            !imageData.isEmpty,
            let image = UIImage(data: imageData) {
             self.cachedImage = image
@@ -84,8 +84,8 @@ struct CollectionCellView: View {
         }
         
         // 2. 유효하지 않은, 손상된 캐시 삭제
-        if KeyringImageCache.shared.exists(for: keyringID) {
-            KeyringImageCache.shared.delete(for: keyringID)
+        if KeyringImageCache.shared.exists(for: keyringID, type: .thumbnail) {
+            KeyringImageCache.shared.delete(for: keyringID, type: .thumbnail)
         }
         
         // 3. 캐시 없으면 Scene 생성
@@ -163,7 +163,7 @@ struct CollectionCellView: View {
         
         if shouldBeInWidget && !isInMetadata {
             // 위젯에 있어야 하는데 없음 → 추가
-            if let imageData = KeyringImageCache.shared.load(for: keyringID) {
+            if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail) {
                 KeyringImageCache.shared.syncKeyring(
                     id: keyringID,
                     name: keyring.name,
@@ -252,7 +252,7 @@ struct CollectionCellView: View {
                    UIImage(data: pngData) != nil {
                     
                     // FileManager 캐시에 저장 (위젯에서 접근 가능)
-                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID)
+                    KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
 
                     if !keyring.isPackaged && !keyring.isPublished {
                         KeyringImageCache.shared.syncKeyring(

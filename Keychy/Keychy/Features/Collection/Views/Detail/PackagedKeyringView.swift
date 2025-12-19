@@ -74,7 +74,7 @@ struct PackagedKeyringView: View {
         }
         
         // 캐시에서 이미지 로드
-        if let imageData = KeyringImageCache.shared.load(for: keyringID),
+        if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail),
            let image = UIImage(data: imageData) {
             self.cachedKeyringImage = image
             checkLoadingComplete()

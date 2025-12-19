@@ -31,6 +31,12 @@ struct AlarmView: View {
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
+        .onChange(of: viewModel.notifications) { oldValue, newValue in
+            // 알림이 로드되면 이미지 프리페치 시작
+            if !newValue.isEmpty {
+                viewModel.prefetchNotificationImages()
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             // 설정 앱에서 돌아왔을 때 재체크
             viewModel.checkNotificationPermission()
