@@ -54,7 +54,7 @@ struct WidgetKeychyEntryView: View {
 
     var body: some View {
         if let selectedKeyring = entry.configuration.selectedKeyring,
-           let imageData = KeyringImageCache.shared.loadImageByPath("\(selectedKeyring.id).png"),
+           let imageData = KeyringImageCache.shared.loadImageByPath("\(selectedKeyring.id)_thumb.png"),
            let uiImage = UIImage(data: imageData) {
             // 선택된 키링 이미지 표시
             Image(uiImage: uiImage)

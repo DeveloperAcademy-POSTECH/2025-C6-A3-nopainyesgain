@@ -162,6 +162,7 @@ struct CollectionView: View {
                     collectionCell(keyring: keyring)
                 }
             }
+            .padding(.horizontal, Spacing.padding)
             .padding(.vertical, 4)
             .padding(.bottom, 90)
         }
@@ -193,7 +194,12 @@ struct CollectionView: View {
                     navigateToKeyringDetail(keyring: keyring)
                 }
             } else {
-                navigateToKeyringDetail(keyring: keyring)
+                isSearchFieldFocused = false
+                showSearchBar = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    navigateToKeyringDetail(keyring: keyring)
+                }
             }
         }) {
             VStack {

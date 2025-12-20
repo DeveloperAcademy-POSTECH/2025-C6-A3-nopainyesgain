@@ -110,4 +110,17 @@ class NotificationGiftViewModel {
             }
         }
     }
+    
+    /// 씬을 캡처해서 캐시에 저장
+    func cacheKeyringImage(from scene: KeyringCellScene, keyring: Keyring) async {
+        guard let keyringID = keyring.documentId else { return }
+        
+        // 렌더링 완료 대기
+        try? await Task.sleep(for: .seconds(0.2))
+        
+        if let pngData = await scene.captureToPNG(),
+           !pngData.isEmpty {
+            KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .gift)
+        }
+    }
 }

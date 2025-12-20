@@ -52,6 +52,9 @@ extension CollectionView {
                     renamingCategory = menuCategory
                     newCategoryName = menuCategory
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isSearchFieldFocused = false
+                        showSearchBar = false
+                        
                         showRenameAlert = true
                     }
                 },
@@ -59,6 +62,9 @@ extension CollectionView {
                     showingMenuFor = nil
                     deletingCategory = menuCategory
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isSearchFieldFocused = false
+                        showSearchBar = false
+                        
                         showDeleteAlert = true
                     }
                 },

@@ -154,7 +154,7 @@ extension CollectionView {
     func precacheAllKeyrings() async {
         let uncachedKeyrings = collectionViewModel.keyring.filter { keyring in
             guard let id = keyring.documentId else { return false }
-            return !KeyringImageCache.shared.exists(for: id) &&
+            return !KeyringImageCache.shared.exists(for: id, type: .thumbnail) &&
                     !keyring.isPackaged &&
                     !keyring.isPublished
         }

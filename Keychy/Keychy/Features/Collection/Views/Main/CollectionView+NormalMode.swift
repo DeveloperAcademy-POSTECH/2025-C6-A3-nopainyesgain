@@ -20,7 +20,6 @@ extension CollectionView {
                 .padding(.horizontal, Spacing.xs)
             
             normalCollectionSection
-                .padding(.horizontal, Spacing.padding)
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -61,11 +60,23 @@ extension CollectionView {
             #endif
             
             CircleGlassButton(imageName: "Widget",
-                              action: { router.push(.widgetSettingView) })
+                              action: {
+                isSearchFieldFocused = false
+                showSearchBar = false
+                
+                router.push(.widgetSettingView)
+            }
+            )
             .padding(.trailing, 10)
 
             CircleGlassButton(imageName: "BundleIcon",
-                              action: { router.push(.bundleInventoryView) })
+                              action: {
+                isSearchFieldFocused = false
+                showSearchBar = false
+                
+                router.push(.bundleInventoryView)
+            }
+            )
             .padding(.trailing, 10)
             
             CircleGlassButton(
@@ -102,6 +113,7 @@ extension CollectionView {
     private var normalCollectionSection: some View {
         VStack(spacing: 0) {
             collectionHeader
+                .padding(.horizontal, Spacing.padding)
             
             if filteredKeyrings.isEmpty {
                 emptyView
@@ -109,7 +121,6 @@ extension CollectionView {
                 collectionGridView(keyrings: filteredKeyrings)
             }
         }
-        .padding(.horizontal, Spacing.xs)
     }
     
     var collectionHeader: some View {
@@ -126,6 +137,9 @@ extension CollectionView {
 
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isSearchFieldFocused = false
+                    showSearchBar = false
+                    
                     showInvenExpandAlert = true
                 }
             }) {
