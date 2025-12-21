@@ -58,6 +58,14 @@ struct CoinChargeView<Route: Hashable>: View {
             }
             .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
 
+            customNavigationBar
+
+            // Alert 딤 처리
+            if showPurchaseSuccessAlert || showPurchaseFailAlert {
+                Color.black.opacity(0.2)
+                    .ignoresSafeArea()
+            }
+
             // 구매 성공 Alert - KeychyAlert 사용
             if showPurchaseSuccessAlert {
                 KeychyAlert(
@@ -80,8 +88,6 @@ struct CoinChargeView<Route: Hashable>: View {
             if isCoinPurchasing {
                 LoadingAlert(type: .short, message: nil)
             }
-            
-            customNavigationBar
         }
         .ignoresSafeArea()
     }
@@ -377,7 +383,6 @@ extension CoinChargeView {
             BackToolbarButton {
                 router.pop()
             }
-            .opacity(showPurchaseSuccessAlert || showPurchaseFailAlert ? 0 : 1)
         } center: {
             // Center (중앙)
             Text("충전하기")
