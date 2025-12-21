@@ -16,15 +16,12 @@ struct NotificationGiftView: View {
 
     @State private var viewModel = NotificationGiftViewModel()
 
-    @State private var showContent = false
-    @State private var cachedKeyringImage: UIImage?
-
     var body: some View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
-
-            if viewModel.isLoading {
+            
+            if viewModel.isLoading || viewModel.isCapturing {
                 LoadingAlert(type: .short, message: nil)
             } else if let error = viewModel.loadError {
                 VStack {
@@ -37,7 +34,7 @@ struct NotificationGiftView: View {
                 }
             } else {
                 contentView
-                    .opacity(showContent ? 1 : 0)
+                    .opacity(viewModel.showContent ? 1 : 0)
             }
             
             CustomNavigationBar {
@@ -60,15 +57,16 @@ struct NotificationGiftView: View {
             
             // 안전장치: 1.5초 후에도 showContent가 false면 강제로 표시
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                if !showContent {
-                    showContent = true
+                if !viewModel.showContent {
+                    viewModel.showContent = true
+                    viewModel.isCapturing = false
                 }
             }
         }
         .onChange(of: viewModel.keyring) { oldValue, newValue in
             // 키링 데이터가 로드되면 캐시 이미지 확인
             if let keyring = newValue {
-                loadCachedImage(keyring: keyring)
+                viewModel.loadCachedImage(keyring: keyring)
             }
         }
     }
@@ -113,8 +111,8 @@ struct NotificationGiftView: View {
                     .frame(width: 280, height: 347)
                     .offset(y: -24)
                 
-                // 캐시된 이미지가 있으면 사용, 없으면 SpriteView
-                if let cachedImage = cachedKeyringImage {
+                // 캐시된 이미지가 있으면 사용, 없으면 생성
+                if let cachedImage = viewModel.cachedKeyringImage {
                     Image(uiImage: cachedImage)
                         .resizable()
                         .scaledToFit()
@@ -128,20 +126,6 @@ struct NotificationGiftView: View {
                             x: 7,
                             y: 16
                         )
-                } else {
-                    SpriteView(
-                        scene: createMiniScene(keyring: keyring),
-                        options: [.allowsTransparency]
-                    )
-                    .frame(width: 195, height: 300)
-                    .rotationEffect(.degrees(10))
-                    .offset(y: -22)
-                    .shadow(
-                        color: Color(hex: "#56522E").opacity(0.35),
-                        radius: 6,
-                        x: 7,
-                        y: 16
-                    )
                 }
             }
             
@@ -172,63 +156,6 @@ struct NotificationGiftView: View {
                 .padding(.top, 42)
             }
         }
-    }
-    
-    // 캐시된 이미지 로드
-    private func loadCachedImage(keyring: Keyring) {
-        guard let keyringID = keyring.documentId else {
-            print("키링 ID 없음")
-            showContent = true
-            return
-        }
-        
-        // 캐시에서 이미지 로드
-        if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .gift),
-           let image = UIImage(data: imageData) {
-            self.cachedKeyringImage = image
-            withAnimation(.easeIn(duration: 0.3)) {
-                self.showContent = true
-            }
-        } else {
-            print("캐시된 이미지 없음, SpriteView 생성: \(keyring.name)")
-        }
-    }
-    
-    private func createMiniScene(keyring: Keyring) -> KeyringCellScene {
-        let ringType = RingType.fromID(keyring.selectedRing)
-        let chainType = ChainType.fromID(keyring.selectedChain)
-
-        var scene: KeyringCellScene!
-        
-        scene = KeyringCellScene(
-            ringType: ringType,
-            chainType: chainType,
-            bodyImage: keyring.bodyImage,
-            targetSize: CGSize(width: 304, height: 490),
-            customBackgroundColor: .clear,
-            zoomScale: 1.9,
-            hookOffsetY: keyring.hookOffsetY,
-            chainLength: keyring.chainLength,
-            onLoadingComplete: { [keyring] in
-                DispatchQueue.main.async {
-                    print("SpriteView 로딩 완료: \(keyring.name)")
-                    
-                    // 캐시에 저장
-                    Task {
-                        await viewModel.cacheKeyringImage(from: scene, keyring: keyring)
-                        
-                        await MainActor.run {
-                            withAnimation(.easeIn(duration: 0.3)) {
-                                self.showContent = true
-                            }
-                        }
-                    }
-                }
-            }
-        )
-        scene.scaleMode = .aspectFill
-        scene.backgroundColor = .clear
-        return scene
     }
     
     // 기기별 스케일 계산

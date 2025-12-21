@@ -195,7 +195,7 @@ class AlarmViewModel {
     // MARK: - 알림 키링 이미지 프리페치
     func prefetchNotificationImages() {
         Task(priority: .utility) {
-            for notification in notifications where !notification.isRead {
+            for notification in notifications {
                 await prefetchSingleNotificationImage(postOfficeId: notification.postOfficeId)
             }
         }
