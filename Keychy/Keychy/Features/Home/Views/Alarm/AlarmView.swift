@@ -48,35 +48,19 @@ struct AlarmView: View {
 
 // MARK: - UI Components
 extension AlarmView {
-    /// 메인 콘텐츠 영역
-    private var contentArea: some View {
-        ZStack {
-            // 알림이 없을 때만 빈 화면 표시
-            if viewModel.isNotiEmpty {
-                emptyImageView
-            }
-
-            // 푸시 알림 off 배너 (최상단)
-            VStack(spacing: 0) {
-                if viewModel.isNotiOff && viewModel.isNotiOffShown {
-                    pushNotiOffView
-                }
-
-                // 알림이 있을 때만 리스트 표시
-                if !viewModel.isNotiEmpty {
-                    notificationListView
-                }
-
-                Spacer()
-            }
-            .adaptiveTopPaddingAlt()
-            .padding(.top, 20)
-        }
-    }
-
     /// 알림 리스트 뷰
     private var notificationListView: some View {
         List {
+            // 푸시 알림 off 배너
+            if viewModel.isNotiOff && viewModel.isNotiOffShown {
+                pushNotiOffView
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .padding(.top, 10)
+                    .padding(.bottom, 20)
+            }
+            
             ForEach(viewModel.notifications) { notification in
                 NotificationItemView(
                     notification: notification,
@@ -98,9 +82,8 @@ extension AlarmView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .padding(.top, viewModel.isNotiOff && viewModel.isNotiOffShown ? 8 : 0)
     }
-
+    
     /// 알림이 없을 때 나오는 뷰
     private var emptyImageView: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -121,7 +104,7 @@ extension AlarmView {
                 Image(.alarmIconFill)
                     .padding(.vertical, 3.5)
                     .padding(.trailing, 12)
-
+                
                 /// 알림 off 텍스트
                 VStack(alignment: .leading ,spacing: 8) {
                     HStack {
