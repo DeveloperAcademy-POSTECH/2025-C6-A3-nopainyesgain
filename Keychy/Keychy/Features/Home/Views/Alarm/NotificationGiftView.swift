@@ -54,7 +54,8 @@ struct NotificationGiftView: View {
         .swipeBackGesture(enabled: true)
         .onAppear {
             viewModel.fetchGiftData(postOfficeId: postOfficeId, viewModel: collectionViewModel)
-            
+            viewModel.markNotificationAsRead(postOfficeId: postOfficeId)
+
             // 안전장치: 1.5초 후에도 showContent가 false면 강제로 표시
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if !viewModel.showContent {
