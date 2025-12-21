@@ -199,12 +199,6 @@ class HomeViewModel {
 
     /// 모든 키링 준비 완료 처리
     func handleAllKeyringsReady() {
-        
-        // 데이터가 로드되지 않았으면 준비 완료하지 않음
-        guard isDataLoaded else {
-            return
-        }
-        
         // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
         Task {
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초
