@@ -151,17 +151,24 @@ extension AlarmView {
         .buttonStyle(.plain)
     }
     
-    /// 커스텀 네비
-    private var customNavigation: some View {
-        CustomNavigationBar {
-            BackToolbarButton {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
                 router.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
-        } center: {
+        }
+    }
+    
+    // 커스텀 타이틀
+    private var customTitleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
             Text("알림")
-        } trailing: {
-            Spacer()
-                .frame(width: 44, height: 44)
+                .typography(.notosans17M)
+                .foregroundColor(.gray600)
         }
     }
 }
@@ -172,7 +179,7 @@ extension AlarmView {
     private func handleNotificationTap(_ notification: KeychyNotification) {
         // 1. 읽음 처리
         viewModel.markNotificationAsRead(notification)
-
+        
         // 2. 선물 완료 화면으로 이동
         router.push(.notificationGiftView(postOfficeId: notification.postOfficeId))
     }
