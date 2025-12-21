@@ -10,28 +10,34 @@ import FirebaseFirestore
 
 struct AlarmView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
-
+    
     @State private var viewModel = AlarmViewModel()
-
+    
     init(router: NavigationRouter<HomeRoute>) {
         self.router = router
     }
-
+    
     var body: some View {
-        ZStack {
-            contentArea
-            customNavigation
+        Group {
+            if viewModel.isNotiEmpty {
+                emptyImageView
+            } else {
+                notificationListView
+            }
         }
-        .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .toolbar {
+            backToolbarItem
+            customTitleToolbarItem
+        }
         .swipeBackGesture(enabled: true)
         .onAppear {
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
-        .onChange(of: viewModel.notifications) { oldValue, newValue in
+        .onChange(of: viewModel.notifications) { _, newValue in
             // 알림이 로드되면 이미지 프리페치 시작
             if !newValue.isEmpty {
                 viewModel.prefetchNotificationImages()
@@ -42,7 +48,6 @@ struct AlarmView: View {
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
-        .swipeBackGesture(enabled: true)
     }
 }
 
