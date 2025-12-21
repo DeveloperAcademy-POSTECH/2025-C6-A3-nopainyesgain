@@ -63,6 +63,10 @@ struct MainTabView: View {
         .tabBarMinimizeBehavior(.onScrollDown)
         .onAppear(perform: handleAppear)
         .onChange(of: deepLinkManager.pendingPostOfficeId, handleDeepLinkChange)
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            // 앱이 포그라운드로 복귀할 때 배지 카운트 동기화
+            userManager.updateBadgeCount()
+        }
     }
     
     private var homeTab: some View {
@@ -151,6 +155,9 @@ struct MainTabView: View {
     }
     
     private func handleAppear() {
+        // 앱 진입 시 배지 카운트 동기화 (예전 사용자 대응)
+        userManager.updateBadgeCount()
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             checkPendingDeepLink()
         }
