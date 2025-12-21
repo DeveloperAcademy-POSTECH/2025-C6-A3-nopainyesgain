@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import AuthenticationServices
 import CryptoKit
+import UserNotifications
 
 @Observable
 class UserManager {
@@ -599,7 +600,19 @@ extension UserManager {
         notificationListener?.remove()
         notificationListener = nil
     }
-    
+
+    /// 앱 아이콘 뱃지를 읽지 않은 알림 개수로 업데이트
+    func updateBadgeCount() {
+        // 1. 먼저 뱃지를 0으로 초기화 (기존의 잘못된 숫자 제거)
+        UNUserNotificationCenter.current().setBadgeCount(0)
+
+        // 2. 읽지 않은 알림 개수를 다시 세서 설정
+        let unreadCount = notifications.filter { !$0.isRead }.count
+        UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+
+        print("뱃지 업데이트: \(unreadCount)")
+    }
+
     // MARK: - 사용자 데이터 새로고침
     
     /// Firestore에서 최신 사용자 데이터를 가져와 currentUser를 업데이트

@@ -99,7 +99,7 @@ class AlarmViewModel {
                 } else {
                     print("알림 읽음 처리 완료: \(notificationId)")
                     Task { @MainActor in
-                        self.updateBadgeCount()
+                        UserManager.shared.updateBadgeCount()
                     }
                 }
             }
@@ -149,20 +149,8 @@ class AlarmViewModel {
 
         // 5. 뱃지 업데이트
         Task { @MainActor in
-            updateBadgeCount()
+            UserManager.shared.updateBadgeCount()
         }
-    }
-
-    /// 앱 아이콘 뱃지를 읽지 않은 알림 개수로 업데이트
-    func updateBadgeCount() {
-        // 1. 먼저 뱃지를 0으로 초기화 (기존의 잘못된 숫자 제거)
-        UNUserNotificationCenter.current().setBadgeCount(0)
-
-        // 2. 읽지 않은 알림 개수를 다시 세서 설정
-        let unreadCount = notifications.filter { !$0.isRead }.count
-        UNUserNotificationCenter.current().setBadgeCount(unreadCount)
-
-        print("뱃지 업데이트: \(unreadCount)")
     }
 
     // MARK: - 알림 권한 관리
