@@ -24,17 +24,12 @@ struct TermsView: View {
         }
         .navigationTitle(isEnglish ? "Privacy Policy & Terms" : "개인정보 처리 방침 및 이용약관")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isEnglish.toggle()
-                } label: {
-                    Text(isEnglish ? "KOR" : "ENG")
-                        .typography(.suit14B)
-                        .foregroundStyle(.main500)
-                }
-            }
+            backToolbarItem
+            engToggleToolbarItem
         }
     }
 
@@ -338,6 +333,33 @@ extension TermsView {
                 .typography(.suit14M)
                 .lineSpacing(6)
                 .foregroundColor(.black80)
+        }
+    }
+}
+
+// MARK: - Toolbar Items
+extension TermsView {
+    var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router?.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
+            }
+        }
+    }
+    
+    var engToggleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                isEnglish.toggle()
+            } label: {
+                Text(isEnglish ? "KOR" : "ENG")
+                    .typography(.suit14B)
+                    .foregroundStyle(.main500)
+            }
         }
     }
 }

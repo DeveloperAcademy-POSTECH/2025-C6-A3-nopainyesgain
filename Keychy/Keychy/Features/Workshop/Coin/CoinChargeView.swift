@@ -32,26 +32,24 @@ struct CoinChargeView<Route: Hashable>: View {
 
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: 37) {
-                    
-                    // 내 아이템들 현황판
-                    CurrentItemsCard()
-                    
-                    // 코인 구매 섹션
-                    coinSection
-                    
-                    // 기타 아이템 섹션
-                    otherItemsSection
-                }
-                .blur(radius: shouldApplyBlur ? 15 : 0)
-                .animation(.easeInOut(duration: 0.2), value: shouldApplyBlur)
-                .padding(.horizontal, 20)
-                .padding(.top, 25)
-                .padding(.bottom, 30)
+            VStack(spacing: 37) {
+                // 내 아이템들 현황판
+                CurrentItemsCard()
+
+                // 코인 구매 섹션
+                coinSection
+
+                // 기타 아이템 섹션
+                otherItemsSection
+
+                Spacer()
             }
+            .blur(radius: shouldApplyBlur ? 15 : 0)
+            .animation(.easeInOut(duration: 0.2), value: shouldApplyBlur)
+            .padding(.horizontal, 20)
+            .padding(.top, 25)
+            .padding(.bottom, 30)
             .adaptiveTopPaddingAlt()
-            .scrollIndicators(.never)
             .navigationBarBackButtonHidden()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
@@ -59,6 +57,14 @@ struct CoinChargeView<Route: Hashable>: View {
                 purchaseSheet
             }
             .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
+
+            customNavigationBar
+
+            // Alert 딤 처리
+            if showPurchaseSuccessAlert || showPurchaseFailAlert {
+                Color.black.opacity(0.2)
+                    .ignoresSafeArea()
+            }
 
             // 구매 성공 Alert - KeychyAlert 사용
             if showPurchaseSuccessAlert {
@@ -82,8 +88,6 @@ struct CoinChargeView<Route: Hashable>: View {
             if isCoinPurchasing {
                 LoadingAlert(type: .short, message: nil)
             }
-            
-            customNavigationBar
         }
         .ignoresSafeArea()
     }
@@ -379,7 +383,6 @@ extension CoinChargeView {
             BackToolbarButton {
                 router.pop()
             }
-            .opacity(showPurchaseSuccessAlert || showPurchaseFailAlert ? 0 : 1)
         } center: {
             // Center (중앙)
             Text("충전하기")
