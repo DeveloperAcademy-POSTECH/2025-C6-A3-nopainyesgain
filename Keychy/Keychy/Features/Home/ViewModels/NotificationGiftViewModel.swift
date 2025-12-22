@@ -61,6 +61,46 @@ class NotificationGiftViewModel {
 
     // MARK: - Methods
 
+    /// 알림을 읽음 처리 (postOfficeId로 조회)
+    func markNotificationAsRead(postOfficeId: String) {
+        db.collection("Notifications")
+            .whereField("postOfficeId", isEqualTo: postOfficeId)
+            .limit(to: 1)
+            .getDocuments { [weak self] snapshot, error in
+                guard let self = self else { return }
+
+                if let error = error {
+                    print("알림 조회 실패: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let document = snapshot?.documents.first else {
+                    print("알림을 찾을 수 없음: \(postOfficeId)")
+                    return
+                }
+
+                // 이미 읽음 상태면 스킵
+                if let isRead = document.data()["isRead"] as? Bool, isRead {
+                    return
+                }
+
+                // 읽음 처리
+                self.db.collection("Notifications")
+                    .document(document.documentID)
+                    .updateData(["isRead": true]) { error in
+                        if let error = error {
+                            print("알림 읽음 처리 실패: \(error.localizedDescription)")
+                        } else {
+                            print("알림 읽음 처리 완료: \(document.documentID)")
+                            // UserManager의 updateBadgeCount 호출
+                            Task { @MainActor in
+                                UserManager.shared.updateBadgeCount()
+                            }
+                        }
+                    }
+            }
+    }
+
     /// 선물 데이터 가져오기
     func fetchGiftData(postOfficeId: String, viewModel: CollectionViewModel) {
         isLoading = true
