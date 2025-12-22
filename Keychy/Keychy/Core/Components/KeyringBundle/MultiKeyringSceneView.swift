@@ -83,12 +83,17 @@ struct MultiKeyringSceneView: View {
                 setupScene()
             }
         }
-        .onChange(of: keyringDataList) { _, _ in
+        .onChange(of: keyringDataList) { oldValue, newValue in
+            // 데이터가 실제로 변경된 경우에만 씬 재생성
+            if oldValue != newValue {
+                loadBackgroundImage()
+                setupScene()
+            }
+        }
+        .onChange(of: backgroundImageURL) { _, _ in
             loadBackgroundImage()
-            setupScene()
         }
         .onChange(of: currentCarabinerType) { _, _ in
-            loadBackgroundImage()
             setupScene()
         }
     }

@@ -17,6 +17,9 @@ class HomeViewModel {
 
     /// 씬 준비 완료 여부
     var isSceneReady = false
+    
+    /// 데이터 로드 완료 여부
+    var isDataLoaded = false
 
     // MARK: - Private Properties
 
@@ -95,6 +98,9 @@ class HomeViewModel {
         // 5. 키링 데이터 생성
         guard let carabiner = collectionViewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        
+        // 데이터 로드 완료 표시
+        isDataLoaded = true
     }
 
     /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
@@ -179,9 +185,8 @@ class HomeViewModel {
             try await db.collection("KeyringBundle").document(documentId).updateData([
                 "selectedBackground": backgroundId
             ])
-            print("번들 배경 업데이트 완료: \(backgroundId)")
         } catch {
-            print("번들 배경 업데이트 실패: \(error.localizedDescription)")
+            print("[HomeView] 뭉치 배경 업데이트 실패: \(error.localizedDescription)")
         }
     }
 
@@ -194,8 +199,16 @@ class HomeViewModel {
 
     /// 모든 키링 준비 완료 처리
     func handleAllKeyringsReady() {
-        withAnimation(.easeOut(duration: 0.3)) {
-            isSceneReady = true
+        // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
+        Task {
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초
+            
+            await MainActor.run {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    isSceneReady = true
+                }
+            }
         }
     }
+
 }

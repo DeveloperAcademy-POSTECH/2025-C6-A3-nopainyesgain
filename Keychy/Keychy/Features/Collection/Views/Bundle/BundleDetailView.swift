@@ -26,6 +26,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var isNavigatingDeeper: Bool = true
     @State private var menuPosition: CGRect = .zero
     @State private var dismissTask: Task<Void, Never>?
+    @State private var readyDelayTask: Task<Void, Never>?
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -33,8 +34,10 @@ struct BundleDetailView<Route: BundleRoute>: View {
     /// 씬 준비 완료 여부
     @State private var isSceneReady = false
     
-    /// 마지막으로 로드된 번들의 키링 배열 (변경 감지용)
+    /// 마지막으로 로드된 번들의 상태 (변경 감지용)
     @State private var lastLoadedKeyrings: [String] = []
+    @State private var lastLoadedBackground: String = ""
+    @State private var lastLoadedCarabiner: String = ""
     
     // MARK: - Body
     var body: some View {
@@ -58,15 +61,27 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             carabinerWidth: carabiner.carabinerWidth,
                             currentCarabinerType: carabiner.type,
                             onAllKeyringsReady: {
-                                withAnimation(.easeOut(duration: 0.3)) {
-                                    isSceneReady = true
+                                print("[BundleDetail] 씬 준비 완료 콜백 호출됨")
+                                // 기존 딜레이 작업 취소
+                                readyDelayTask?.cancel()
+                                
+                                // 0.5초 딜레이 후 준비 완료로 설정 (물리 엔진 안정화 대기)
+                                readyDelayTask = Task {
+                                    try? await Task.sleep(for: .seconds(0.5)) // 0.5초 대기
+                                    if !Task.isCancelled {
+                                        await MainActor.run {
+                                            withAnimation(.easeOut(duration: 0.3)) {
+                                                isSceneReady = true
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         )
                         .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                         /// 씬 재생성 조건을 위한 ID 설정
                         /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                        .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map(\.index).sorted())")
+                        .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))")
                         
                         // 하단 섹션을 ZStack 안에서 직접 배치
                         VStack {
@@ -154,6 +169,17 @@ struct BundleDetailView<Route: BundleRoute>: View {
             showMenu = false
             viewModel.hideTabBar()
             getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
+            
+            // 씬 준비 상태 초기화 및 진행 중인 딜레이 작업 취소
+            isSceneReady = false
+            readyDelayTask?.cancel()
+            
+            // 데이터 재로드를 위한 상태 초기화
+            if viewModel.selectedBundle != nil {
+                lastLoadedKeyrings = []
+                lastLoadedBackground = ""
+                lastLoadedCarabiner = ""
+            }
         }
         .onDisappear {
             // Alert/Toast 상태 초기화
@@ -163,33 +189,43 @@ struct BundleDetailView<Route: BundleRoute>: View {
             isMainBundleChange = false
             showDeleteAlert = false
             showMenu = false
+            
+            // 진행 중인 작업들 취소
+            readyDelayTask?.cancel()
+            dismissTask?.cancel()
         }
-        .task(id: viewModel.selectedBundle?.keyrings) {
+        .task(id: "\(viewModel.selectedBundle?.keyrings ?? [])_\(viewModel.selectedBundle?.selectedBackground ?? "")_\(viewModel.selectedBundle?.selectedCarabiner ?? "")") {
             guard let bundle = viewModel.selectedBundle else {
                 return
             }
             
-            // 번들의 키링 배열이 변경되었는지 확인
-            let hasChanged = bundle.keyrings != lastLoadedKeyrings
+            // 키링, 배경, 카라비너가 변경되었는지 확인
+            let hasKeyringChanged = bundle.keyrings != lastLoadedKeyrings
+            let hasBackgroundChanged = bundle.selectedBackground != lastLoadedBackground
+            let hasCarabinerChanged = bundle.selectedCarabiner != lastLoadedCarabiner
+            let hasChanged = hasKeyringChanged || hasBackgroundChanged || hasCarabinerChanged
             
             // 최초 로드이거나 데이터가 변경된 경우에만 로드
             if (keyringDataList.isEmpty || hasChanged) {
+                // 씬 준비 상태를 false로 설정하고 기존 딜레이 작업 취소
+                await MainActor.run {
+                    isSceneReady = false
+                    readyDelayTask?.cancel()
+                }
+                
                 await loadBundleData()
                 
                 // 로드 완료 후 마지막 상태 저장
                 await MainActor.run {
                     lastLoadedKeyrings = bundle.keyrings
+                    lastLoadedBackground = bundle.selectedBackground
+                    lastLoadedCarabiner = bundle.selectedCarabiner
                 }
             }
         }
-        .onChange(of: keyringDataList) { oldValue, newValue in
-            
-            // 최초 로드 시에만 초기화 (빈 배열 → 데이터 있음)
-            if oldValue.isEmpty && !newValue.isEmpty {
-                withAnimation(.easeIn(duration: 0.2)) {
-                    isSceneReady = false
-                }
-            } else if !oldValue.isEmpty && !newValue.isEmpty {
+        .onChange(of: keyringDataList) { oldValue, newValue in            
+            // 데이터가 실제로 변경된 경우에만 씬 준비 상태를 false로 설정
+            if oldValue != newValue {
                 withAnimation(.easeIn(duration: 0.2)) {
                     isSceneReady = false
                 }
@@ -220,17 +256,29 @@ extension BundleDetailView {
     /// 3. 선택된 뭉치의 키링들을 Firestore에서 가져와 KeyringData 리스트 생성
     @MainActor
     private func loadBundleData() async {
+        print("[BundleDetail] 데이터 로드 시작")
+        
         // 1. 배경 및 카라비너 데이터 로드
         await viewModel.loadBackgroundsAndCarabiners()
         
         // 2. 선택된 뭉치의 배경과 카라비너 설정
-        guard let bundle = viewModel.selectedBundle else { return }
+        guard let bundle = viewModel.selectedBundle else { 
+            print("[BundleDetail] 선택된 번들이 없음")
+            return 
+        }
         viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
         viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
         
         // 3. 키링 데이터 생성
-        guard let carabiner = viewModel.selectedCarabiner else { return }
-        keyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        guard let carabiner = viewModel.selectedCarabiner else { 
+            print("[BundleDetail] 카라비너 데이터가 없음")
+            return 
+        }
+        
+        let newKeyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        print("[BundleDetail] 생성된 키링 데이터 수: \(newKeyringDataList.count)")
+        
+        keyringDataList = newKeyringDataList
     }
     
     /// 뭉치 삭제
