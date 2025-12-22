@@ -227,7 +227,7 @@ extension CollectionKeyringDetailView {
     // 하단 버튼 섹션 - 이미지 저장, 포장
     private var bottomSection: some View {
         HStack {
-            downloadImageButton
+            packageButton
             
             Spacer()
             
@@ -252,7 +252,7 @@ extension CollectionKeyringDetailView {
             
             Spacer()
             
-            packageButton
+            downloadImageButton
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
         .adaptiveBottomPadding()

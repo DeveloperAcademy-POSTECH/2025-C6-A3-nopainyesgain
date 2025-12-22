@@ -69,9 +69,12 @@ extension CollectionKeyringDetailView {
     private var topSection: some View {
         HStack {
             Button(action: {
-                captureAndSaveImage()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isSheetPresented = false
+                    showPackageAlert = true
+                }
             }) {
-                Image(.save)
+                Image(.present)
                     .resizable()
                     .frame(width: 28, height: 28)
             }
@@ -85,12 +88,9 @@ extension CollectionKeyringDetailView {
             Spacer()
             
             Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    isSheetPresented = false
-                    showPackageAlert = true
-                }
+                captureAndSaveImage()
             }) {
-                Image(.present)
+                Image(.save)
                     .resizable()
                     .frame(width: 28, height: 28)
             }
