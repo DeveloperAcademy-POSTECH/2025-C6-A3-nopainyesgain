@@ -10,28 +10,34 @@ import FirebaseFirestore
 
 struct AlarmView: View {
     @Bindable var router: NavigationRouter<HomeRoute>
-
+    
     @State private var viewModel = AlarmViewModel()
-
+    
     init(router: NavigationRouter<HomeRoute>) {
         self.router = router
     }
-
+    
     var body: some View {
-        ZStack {
-            contentArea
-            customNavigation
+        Group {
+            if viewModel.isNotiEmpty {
+                emptyImageView
+            } else {
+                notificationListView
+            }
         }
-        .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .toolbar {
+            backToolbarItem
+            customTitleToolbarItem
+        }
         .swipeBackGesture(enabled: true)
         .onAppear {
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
-        .onChange(of: viewModel.notifications) { oldValue, newValue in
+        .onChange(of: viewModel.notifications) { _, newValue in
             // 알림이 로드되면 이미지 프리페치 시작
             if !newValue.isEmpty {
                 viewModel.prefetchNotificationImages()
@@ -42,41 +48,24 @@ struct AlarmView: View {
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
-        .swipeBackGesture(enabled: true)
     }
 }
 
 // MARK: - UI Components
 extension AlarmView {
-    /// 메인 콘텐츠 영역
-    private var contentArea: some View {
-        ZStack {
-            // 알림이 없을 때만 빈 화면 표시
-            if viewModel.isNotiEmpty {
-                emptyImageView
-            }
-
-            // 푸시 알림 off 배너 (최상단)
-            VStack(spacing: 0) {
-                if viewModel.isNotiOff && viewModel.isNotiOffShown {
-                    pushNotiOffView
-                }
-
-                // 알림이 있을 때만 리스트 표시
-                if !viewModel.isNotiEmpty {
-                    notificationListView
-                }
-
-                Spacer()
-            }
-            .adaptiveTopPaddingAlt()
-            .padding(.top, 20)
-        }
-    }
-
     /// 알림 리스트 뷰
     private var notificationListView: some View {
         List {
+            // 푸시 알림 off 배너
+            if viewModel.isNotiOff && viewModel.isNotiOffShown {
+                pushNotiOffView
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .padding(.top, 10)
+                    .padding(.bottom, 20)
+            }
+            
             ForEach(viewModel.notifications) { notification in
                 NotificationItemView(
                     notification: notification,
@@ -98,9 +87,8 @@ extension AlarmView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .padding(.top, viewModel.isNotiOff && viewModel.isNotiOffShown ? 8 : 0)
     }
-
+    
     /// 알림이 없을 때 나오는 뷰
     private var emptyImageView: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -121,7 +109,7 @@ extension AlarmView {
                 Image(.alarmIconFill)
                     .padding(.vertical, 3.5)
                     .padding(.trailing, 12)
-
+                
                 /// 알림 off 텍스트
                 VStack(alignment: .leading ,spacing: 8) {
                     HStack {
@@ -151,17 +139,24 @@ extension AlarmView {
         .buttonStyle(.plain)
     }
     
-    /// 커스텀 네비
-    private var customNavigation: some View {
-        CustomNavigationBar {
-            BackToolbarButton {
+    private var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
                 router.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
-        } center: {
+        }
+    }
+    
+    // 커스텀 타이틀
+    private var customTitleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
             Text("알림")
-        } trailing: {
-            Spacer()
-                .frame(width: 44, height: 44)
+                .typography(.notosans17M)
+                .foregroundColor(.gray600)
         }
     }
 }
@@ -172,7 +167,7 @@ extension AlarmView {
     private func handleNotificationTap(_ notification: KeychyNotification) {
         // 1. 읽음 처리
         viewModel.markNotificationAsRead(notification)
-
+        
         // 2. 선물 완료 화면으로 이동
         router.push(.notificationGiftView(postOfficeId: notification.postOfficeId))
     }
