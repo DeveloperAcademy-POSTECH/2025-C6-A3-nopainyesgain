@@ -34,7 +34,26 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
-    // MARK: - 푸시 알림 설정
+    // MARK: - UI Configuration
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithDefaultBackground()
+
+        // 폰트 설정
+        let selectedFont = UIFont(name: "NanumSquareRoundOTFEB", size: 10) ?? UIFont.systemFont(ofSize: 10)
+        let deselectedFont = UIFont(name: "NanumSquareRoundOTFB", size: 10) ?? UIFont.systemFont(ofSize: 10)
+
+        let selectedAttributes: [NSAttributedString.Key: Any] = [.font: selectedFont]
+        let deselectedAttributes: [NSAttributedString.Key: Any] = [.font: deselectedFont]
+
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
+    // MARK: - Push Notification Setup
     private func setupPushNotifications(_ application: UIApplication) {
         // UNUserNotificationCenter delegate 설정
         UNUserNotificationCenter.current().delegate = self
