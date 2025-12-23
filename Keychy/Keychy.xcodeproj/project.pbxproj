@@ -207,10 +207,11 @@
 		4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14A2EFAA52F00CF53E2 /* DeepLinkHandler.swift */; };
 		4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */; };
 		4CEBB1552EFACFA900CF53E2 /* HomeTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1512EFACFA900CF53E2 /* HomeTab.swift */; };
-		4CEBB1562EFACFA900CF53E2 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1522EFACFA900CF53E2 /* MainTabView.swift */; };
 		4CEBB1572EFACFA900CF53E2 /* CollectionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14F2EFACFA900CF53E2 /* CollectionTab.swift */; };
 		4CEBB1582EFACFA900CF53E2 /* FestivalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1502EFACFA900CF53E2 /* FestivalTab.swift */; };
 		4CEBB1592EFACFA900CF53E2 /* WorkshopTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */; };
+		4CEBB15F2EFAD3D600CF53E2 /* MainTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */; };
+		4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -590,8 +591,9 @@
 		4CEBB14F2EFACFA900CF53E2 /* CollectionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionTab.swift; sourceTree = "<group>"; };
 		4CEBB1502EFACFA900CF53E2 /* FestivalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalTab.swift; sourceTree = "<group>"; };
 		4CEBB1512EFACFA900CF53E2 /* HomeTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTab.swift; sourceTree = "<group>"; };
-		4CEBB1522EFACFA900CF53E2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTab.swift; sourceTree = "<group>"; };
+		4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewModel.swift; sourceTree = "<group>"; };
+		4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1218,13 +1220,30 @@
 		4CEBB1542EFACFA900CF53E2 /* Tab */ = {
 			isa = PBXGroup;
 			children = (
-				4CEBB1522EFACFA900CF53E2 /* MainTabView.swift */,
+				4CEBB15D2EFAD2E900CF53E2 /* ViewModels */,
+				4CEBB15C2EFAD2E900CF53E2 /* Views */,
+			);
+			path = Tab;
+			sourceTree = "<group>";
+		};
+		4CEBB15C2EFAD2E900CF53E2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */,
 				4CEBB1512EFACFA900CF53E2 /* HomeTab.swift */,
 				4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */,
 				4CEBB14F2EFACFA900CF53E2 /* CollectionTab.swift */,
 				4CEBB1502EFACFA900CF53E2 /* FestivalTab.swift */,
 			);
-			path = Tab;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4CEBB15D2EFAD2E900CF53E2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		4CEC61A82EAE071B0099ECEE = {
@@ -2149,6 +2168,7 @@
 				38C3C2882EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift in Sources */,
 				4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */,
 				3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */,
+				4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */,
 				4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */,
 				38A5967A2EAFA94E0003D712 /* IntroView.swift in Sources */,
 				38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */,
@@ -2210,6 +2230,7 @@
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
 				4C6530402EBA6F46000F8154 /* KeyringCompleteView+SaveImage.swift in Sources */,
 				386B17522ECCDFBA00CCCC23 /* KeyringCollectView.swift in Sources */,
+				4CEBB15F2EFAD3D600CF53E2 /* MainTabViewModel.swift in Sources */,
 				4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */,
 				C6830F082EB8E96D0059379A /* MyItemsView.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
@@ -2295,7 +2316,6 @@
 				38C3C2962EC20B1E003C5DE1 /* PackagedKeyringView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
 				4CEBB1552EFACFA900CF53E2 /* HomeTab.swift in Sources */,
-				4CEBB1562EFACFA900CF53E2 /* MainTabView.swift in Sources */,
 				4CEBB1572EFACFA900CF53E2 /* CollectionTab.swift in Sources */,
 				4CEBB1582EFACFA900CF53E2 /* FestivalTab.swift in Sources */,
 				4CEBB1592EFACFA900CF53E2 /* WorkshopTab.swift in Sources */,
