@@ -11,9 +11,18 @@ import FirebaseAuth
 import FirebaseMessaging
 import UserNotifications
 
+/// UIKit AppDelegate를 SwiftUI 앱에 통합
+/// - Firebase 초기화 (FirebaseApp.configure)
+/// - 푸시 알림 설정 (APNs 토큰 등록, FCM 연동)
+/// - TabBar 커스텀 폰트 설정 (NanumSquareRound)
+/// - 포그라운드 알림 처리 및 딥링크 라우팅
 class AppDelegate: NSObject, UIApplicationDelegate {
+    // MARK: - Lifecycle
+
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        // Firebase 초기화
         FirebaseApp.configure()
 
         // TabBar 외형 설정
@@ -37,46 +46,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         application.registerForRemoteNotifications()
     }
 
-    // MARK: - APNs 토큰 등록 성공
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // FCM에 APNs 토큰 전달
         Messaging.messaging().apnsToken = deviceToken
     }
 
-    // MARK: - APNs 토큰 등록 실패
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("[APNs] 디바이스 토큰 등록 실패: \(error.localizedDescription)")
     }
-
-    private func configureTabBarAppearance() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-
-        // 폰트 설정
-        let selectedFont = UIFont(name: "NanumSquareRoundOTFEB", size: 10) ?? UIFont.systemFont(ofSize: 10)
-        let deselectedFont = UIFont(name: "NanumSquareRoundOTFB", size: 10) ?? UIFont.systemFont(ofSize: 10)
-
-
-        let selectedAttributes: [NSAttributedString.Key: Any] = [.font: selectedFont]
-        let deselectedAttributes: [NSAttributedString.Key: Any] = [.font: deselectedFont]
-
-
-
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
-        appearance.inlineLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
-        appearance.inlineLayoutAppearance.selected.titleTextAttributes = selectedAttributes
-        appearance.compactInlineLayoutAppearance.normal.titleTextAttributes = deselectedAttributes
-        appearance.compactInlineLayoutAppearance.selected.titleTextAttributes = selectedAttributes
-
-        UITabBar.appearance().standardAppearance = appearance
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = appearance
-        }
-    }
 }
 
-// MARK: - UNUserNotificationCenterDelegate (포그라운드 알림)
+// MARK: - UNUserNotificationCenterDelegate
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // 앱이 포그라운드에 있을 때 알림 표시
     func userNotificationCenter(
@@ -105,7 +85,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 }
 
-// MARK: - MessagingDelegate (FCM 토큰)
+// MARK: - MessagingDelegate
+
 extension AppDelegate: MessagingDelegate {
     // FCM 토큰 받았을 때
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
