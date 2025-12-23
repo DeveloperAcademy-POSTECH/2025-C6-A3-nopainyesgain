@@ -25,7 +25,6 @@
 		38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */; };
 		38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A802EBF511C00BE45A5 /* PackagePopup.swift */; };
 		38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */; };
-		38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38283A842EBF794500BE45A5 /* DeepLinkManager.swift */; };
 		3828F5432EC4C80800F1B040 /* CollectionView+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5422EC4C80800F1B040 /* CollectionView+Alerts.swift */; };
 		3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5442EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift */; };
 		3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */; };
@@ -203,9 +202,10 @@
 		4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */; };
 		4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */; };
 		4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0242EF11CD200317467 /* HomeViewModel.swift */; };
-		4CEBB1472EFA93D000CF53E2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1452EFA93D000CF53E2 /* DeepLinkHandler.swift */; };
 		4CEBB1482EFA93D000CF53E2 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1462EFA93D000CF53E2 /* RootView.swift */; };
 		4CEBB1492EFA93D000CF53E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */; };
+		4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14A2EFAA52F00CF53E2 /* DeepLinkHandler.swift */; };
+		4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -412,7 +412,6 @@
 		38283A7E2EBD3E8400BE45A5 /* PackageCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageCompleteView.swift; sourceTree = "<group>"; };
 		38283A802EBF511C00BE45A5 /* PackagePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackagePopup.swift; sourceTree = "<group>"; };
 		38283A822EBF554E00BE45A5 /* KeyringReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringReceiveView.swift; sourceTree = "<group>"; };
-		38283A842EBF794500BE45A5 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		3828F5422EC4C80800F1B040 /* CollectionView+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+Alerts.swift"; sourceTree = "<group>"; };
 		3828F5442EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Filter.swift"; sourceTree = "<group>"; };
 		3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+NormalMode.swift"; sourceTree = "<group>"; };
@@ -585,8 +584,9 @@
 		4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationGiftViewModel.swift; sourceTree = "<group>"; };
 		4CC8D0242EF11CD200317467 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4CEBB1452EFA93D000CF53E2 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		4CEBB1462EFA93D000CF53E2 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		4CEBB14A2EFAA52F00CF53E2 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
+		4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1208,6 +1208,15 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
+		4CEBB14C2EFAA52F00CF53E2 /* DeepLink */ = {
+			isa = PBXGroup;
+			children = (
+				4CEBB14A2EFAA52F00CF53E2 /* DeepLinkHandler.swift */,
+				4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */,
+			);
+			path = DeepLink;
+			sourceTree = "<group>";
+		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
@@ -1292,7 +1301,6 @@
 			children = (
 				4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */,
 				4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */,
-				4CEBB1452EFA93D000CF53E2 /* DeepLinkHandler.swift */,
 				4CEBB1462EFA93D000CF53E2 /* RootView.swift */,
 				4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */,
 			);
@@ -1442,6 +1450,7 @@
 		4CEC62192EAE08DA0099ECEE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				4CEBB14C2EFAA52F00CF53E2 /* DeepLink */,
 				C6B56F222EC0341B0049F969 /* Cache */,
 				4C3687F92EBFC0FB00C64E75 /* Notification */,
 				C68931CD2EB7B94B00C5F083 /* FileManagers */,
@@ -1824,7 +1833,6 @@
 			children = (
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
 				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
-				38283A842EBF794500BE45A5 /* DeepLinkManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
 			);
 			path = FileManagers;
@@ -2088,10 +2096,11 @@
 				388E72942EF341F200AE1F1B /* CollectionViewModel+UserData.swift in Sources */,
 				C6B56F1C2EBF2A960049F969 /* NeonSignVM+Effect.swift in Sources */,
 				4C84265D2ED357E10050B6FE /* SpeechBubbleVM+Customizing.swift in Sources */,
+				4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */,
+				4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */,
 				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
-				4CEBB1472EFA93D000CF53E2 /* DeepLinkHandler.swift in Sources */,
 				4CEBB1482EFA93D000CF53E2 /* RootView.swift in Sources */,
 				4CEBB1492EFA93D000CF53E2 /* AppDelegate.swift in Sources */,
 				4C6530482EBA8886000F8154 /* EffectItem.swift in Sources */,
@@ -2278,7 +2287,6 @@
 				4CC8D00B2EEFC36900317467 /* AlarmViewModel.swift in Sources */,
 				4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */,
 				38C3C2822EC0CB6E003C5DE1 /* SavedPopup.swift in Sources */,
-				38283A852EBF794500BE45A5 /* DeepLinkManager.swift in Sources */,
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
 				38C3C2962EC20B1E003C5DE1 /* PackagedKeyringView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
