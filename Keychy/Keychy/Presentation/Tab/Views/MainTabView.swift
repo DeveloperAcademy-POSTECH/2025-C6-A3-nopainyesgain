@@ -24,10 +24,20 @@ struct MainTabView: View {
                 splashOverlay
             }
         }
-        .fullScreenCover(isPresented: $viewModel.showReceiveSheet, onDismiss: viewModel.handleReceiveDismiss) {
+        .fullScreenCover(isPresented: $viewModel.showReceiveSheet, onDismiss: {
+            if viewModel.receivedPostOfficeId != nil {
+                viewModel.shouldRefreshCollection = true
+            }
+            viewModel.receivedPostOfficeId = nil
+        }) {
             receiveSheetContent
         }
-        .fullScreenCover(isPresented: $viewModel.showCollectSheet, onDismiss: viewModel.handleCollectDismiss) {
+        .fullScreenCover(isPresented: $viewModel.showCollectSheet, onDismiss: {
+            if viewModel.collectedPostOfficeId != nil {
+                viewModel.shouldRefreshCollection = true
+            }
+            viewModel.collectedPostOfficeId = nil
+        }) {
             collectSheetContent
         }
     }
@@ -45,10 +55,10 @@ extension MainTabView {
         .tint(.main500)
         .tabBarMinimizeBehavior(.onScrollDown)
         .onAppear(perform: viewModel.handleAppear)
-        .onChange(of: viewModel.deepLinkManagerInstance.pendingPostOfficeId, viewModel.handleDeepLinkChange)
+        .onChange(of: viewModel.deepLinkManager.pendingPostOfficeId, viewModel.handleDeepLinkChange)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             // 앱이 포그라운드로 복귀할 때 배지 카운트 동기화
-            viewModel.updateBadgeCount()
+            viewModel.userManager.updateBadgeCount()
         }
     }
 
@@ -70,7 +80,7 @@ extension MainTabView {
     private var homeTab: some View {
         HomeTab(
             router: viewModel.homeRouter,
-            userManager: viewModel.userManagerInstance,
+            userManager: viewModel.userManager,
             onBackgroundLoaded: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + MainTabViewModel.Delay.splashAnimation) {
                     withAnimation(.easeOut(duration: 0.5)) {

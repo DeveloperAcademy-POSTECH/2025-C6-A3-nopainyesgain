@@ -11,6 +11,7 @@ import SwiftUI
 @Observable
 class MainTabViewModel {
     // MARK: - Constants
+    /// 탭 인덱스
     enum TabIndex: Int {
         case home = 0
         case workshop = 1
@@ -18,6 +19,7 @@ class MainTabViewModel {
         case festival = 3
     }
 
+    /// 화면 전환 시 딜레이 시간
     enum Delay {
         static let splashAnimation: TimeInterval = 0.3
         static let deepLinkCheck: TimeInterval = 0.1
@@ -27,104 +29,81 @@ class MainTabViewModel {
     }
 
     // MARK: - Properties
-    // 탭 관련
+    // Tab
     var selectedTab = TabIndex.home.rawValue
 
-    // 라우터들
+    // Routers
     var homeRouter = NavigationRouter<HomeRoute>()
     var collectionRouter = NavigationRouter<CollectionRoute>()
     var workshopRouter = NavigationRouter<WorkshopRoute>()
     var festivalRouter = NavigationRouter<FestivalRoute>()
 
-    // Sheet 관련
+    // Sheets
     var showReceiveSheet = false
     var showCollectSheet = false
     var receivedPostOfficeId: String?
     var collectedPostOfficeId: String?
     var shouldRefreshCollection = false
 
-    // 스플래시
+    // Splash
     var showSplash = true
 
-    // 다른 ViewModel들
+    // ViewModels
     let collectionViewModel = CollectionViewModel()
     let festivalViewModel = Showcase25BoardViewModel()
 
-    // 매니저들
-    private let userManager = UserManager.shared
-    private let deepLinkManager = DeepLinkManager.shared
-
-    // MARK: - Computed Properties
-    var userManagerInstance: UserManager {
-        userManager
-    }
-
-    var deepLinkManagerInstance: DeepLinkManager {
-        deepLinkManager
-    }
+    // Managers
+    let userManager = UserManager.shared
+    let deepLinkManager = DeepLinkManager.shared
 
     // MARK: - Lifecycle Methods
+    /// 탭 뷰가 화면에 나타날 때 호출 - 배지 카운트 동기화 및 딥링크 체크
     func handleAppear() {
-        // 앱 진입 시 배지 카운트 동기화
         userManager.updateBadgeCount()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + Delay.deepLinkCheck) {
-            self.checkPendingDeepLink()
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(Delay.deepLinkCheck))
+            checkPendingDeepLink()
         }
     }
 
-    func handleDeepLinkChange(oldValue: String?, newValue: String?) {
+    /// 딥링크 매니저의 pendingPostOfficeId 변경 감지 시 호출
+    func handleDeepLinkChange(_: String?, newValue: String?) {
         if newValue != nil {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Delay.deepLinkChange) {
-                self.checkPendingDeepLink()
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(Delay.deepLinkChange))
+                checkPendingDeepLink()
             }
         }
     }
 
-    func updateBadgeCount() {
-        userManager.updateBadgeCount()
+    // MARK: - Public Methods
+    /// Festival 탭에서 Workshop 탭으로 전환하고 특정 라우트로 이동
+    /// - Parameter route: 이동할 WorkshopRoute
+    func handleSwitchToWorkshop(_ route: WorkshopRoute) {
+        setupFestivalReturnCallback()
+
+        selectedTab = TabIndex.workshop.rawValue
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(Delay.tabSwitchAnimation))
+            workshopRouter.push(route)
+        }
     }
 
-    // MARK: - Action Handlers
-    func handleSwitchToWorkshop(_ route: WorkshopRoute) {
-        // Festival에서 Workshop으로 갈 때 플래그 설정
+    // MARK: - Private Methods
+    /// Festival → Workshop 이동 시 완료 후 복귀 콜백 설정
+    private func setupFestivalReturnCallback() {
         festivalViewModel.isFromFestivalTab = true
         festivalViewModel.onKeyringCompleteFromFestival = { [weak self] router in
             guard let self = self else { return }
-            // 키링 완료 후 Workshop navigation stack 초기화
             router.reset()
-
-            // Festival 탭으로 복귀
             self.selectedTab = TabIndex.festival.rawValue
-
-            // 플래그 초기화
             self.festivalViewModel.isFromFestivalTab = false
         }
-
-        // 탭을 공방으로 전환
-        selectedTab = TabIndex.workshop.rawValue
-        // 약간의 딜레이 후 라우팅 (탭 전환 애니메이션 완료 대기)
-        DispatchQueue.main.asyncAfter(deadline: .now() + Delay.tabSwitchAnimation) {
-            self.workshopRouter.push(route)
-        }
     }
 
-    func handleReceiveDismiss() {
-        if receivedPostOfficeId != nil {
-            shouldRefreshCollection = true
-        }
-        receivedPostOfficeId = nil
-    }
-
-    func handleCollectDismiss() {
-        if collectedPostOfficeId != nil {
-            shouldRefreshCollection = true
-        }
-        collectedPostOfficeId = nil
-    }
-
-    // MARK: - DeepLink Handling
-    func checkPendingDeepLink() {
+    /// 대기 중인 딥링크가 있는지 확인하고 처리
+    private func checkPendingDeepLink() {
         if let (postOfficeId, type) = deepLinkManager.consumePendingDeepLink() {
             handleDeepLink(postOfficeId: postOfficeId, type: type)
         }
