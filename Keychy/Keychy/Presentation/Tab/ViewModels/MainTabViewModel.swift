@@ -109,7 +109,11 @@ class MainTabViewModel {
         }
     }
 
-    func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
+    /// 딥링크 타입에 따라 적절한 화면으로 라우팅
+    /// - Parameters:
+    ///   - postOfficeId: 우체국 ID
+    ///   - type: 딥링크 타입 (receive, collect, notification)
+    private func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
         switch type {
         case .receive:
             handleSheetDeepLink(postOfficeId: postOfficeId, isReceive: true)
@@ -117,24 +121,32 @@ class MainTabViewModel {
             handleSheetDeepLink(postOfficeId: postOfficeId, isReceive: false)
         case .notification:
             selectedTab = TabIndex.home.rawValue
-            DispatchQueue.main.asyncAfter(deadline: .now() + Delay.sheetPresentation) {
-                self.homeRouter.push(.notificationGiftView(postOfficeId: postOfficeId))
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(Delay.sheetPresentation))
+                homeRouter.push(.notificationGiftView(postOfficeId: postOfficeId))
             }
         }
     }
 
+    /// Collection 탭으로 전환하고 받기/모으기 Sheet 표시
+    /// - Parameters:
+    ///   - postOfficeId: 우체국 ID
+    ///   - isReceive: true면 받기 Sheet, false면 모으기 Sheet
     private func handleSheetDeepLink(postOfficeId: String, isReceive: Bool) {
         selectedTab = TabIndex.collection.rawValue
 
         if isReceive {
             receivedPostOfficeId = postOfficeId
-            DispatchQueue.main.asyncAfter(deadline: .now() + Delay.sheetPresentation) {
-                self.showReceiveSheet = true
-            }
         } else {
             collectedPostOfficeId = postOfficeId
-            DispatchQueue.main.asyncAfter(deadline: .now() + Delay.sheetPresentation) {
-                self.showCollectSheet = true
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(Delay.sheetPresentation))
+            if isReceive {
+                showReceiveSheet = true
+            } else {
+                showCollectSheet = true
             }
         }
     }
