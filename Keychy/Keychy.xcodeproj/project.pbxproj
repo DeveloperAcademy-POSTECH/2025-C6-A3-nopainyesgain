@@ -206,6 +206,11 @@
 		4CEBB1492EFA93D000CF53E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */; };
 		4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14A2EFAA52F00CF53E2 /* DeepLinkHandler.swift */; };
 		4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */; };
+		4CEBB1552EFACFA900CF53E2 /* HomeTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1512EFACFA900CF53E2 /* HomeTab.swift */; };
+		4CEBB1562EFACFA900CF53E2 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1522EFACFA900CF53E2 /* MainTabView.swift */; };
+		4CEBB1572EFACFA900CF53E2 /* CollectionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB14F2EFACFA900CF53E2 /* CollectionTab.swift */; };
+		4CEBB1582EFACFA900CF53E2 /* FestivalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1502EFACFA900CF53E2 /* FestivalTab.swift */; };
+		4CEBB1592EFACFA900CF53E2 /* WorkshopTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -213,7 +218,6 @@
 		4CEC61EA2EAE08C00099ECEE /* RingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E02EAE08C00099ECEE /* RingType.swift */; };
 		4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E22EAE08C00099ECEE /* BodyType.swift */; };
 		4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */; };
-		4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */; };
 		4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F92EAE08DA0099ECEE /* KeyringScene.swift */; };
 		4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FC2EAE08DA0099ECEE /* KeyringScene+Touch.swift */; };
 		4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */; };
@@ -239,12 +243,9 @@
 		4CEC62332EAE08DA0099ECEE /* KeyringBundleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */; };
 		4CEC62342EAE08DA0099ECEE /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62142EAE08DA0099ECEE /* Spacing.swift */; };
 		4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625E2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift */; };
-		4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */; };
 		4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62442EAE08DF0099ECEE /* FestivalView.swift */; };
-		4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */; };
 		4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62622EAE08DF0099ECEE /* AcrylicPhotoCropView.swift */; };
 		4CEC62702EAE08DF0099ECEE /* KeyringInfoInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62542EAE08DF0099ECEE /* KeyringInfoInputView.swift */; };
-		4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */; };
 		4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625A2EAE08DF0099ECEE /* AcrylicPhotoVM.swift */; };
 		4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625D2EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift */; };
 		4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625F2EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift */; };
@@ -256,7 +257,6 @@
 		4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */; };
 		4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */; };
 		4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */; };
-		4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */; };
 		4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62552EAE08DF0099ECEE /* KeyringCustomizingView.swift */; };
 		4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC625C2EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift */; };
 		4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CEC62872EAE08F70099ECEE /* Assets.xcassets */; };
@@ -587,6 +587,11 @@
 		4CEBB1462EFA93D000CF53E2 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		4CEBB14A2EFAA52F00CF53E2 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
+		4CEBB14F2EFACFA900CF53E2 /* CollectionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionTab.swift; sourceTree = "<group>"; };
+		4CEBB1502EFACFA900CF53E2 /* FestivalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalTab.swift; sourceTree = "<group>"; };
+		4CEBB1512EFACFA900CF53E2 /* HomeTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTab.swift; sourceTree = "<group>"; };
+		4CEBB1522EFACFA900CF53E2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTab.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -595,7 +600,6 @@
 		4CEC61E12EAE08C00099ECEE /* ChainType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainType.swift; sourceTree = "<group>"; };
 		4CEC61E22EAE08C00099ECEE /* BodyType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyType.swift; sourceTree = "<group>"; };
 		4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychyApp.swift; sourceTree = "<group>"; };
-		4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCellScene.swift; sourceTree = "<group>"; };
 		4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCellScene+Setup.swift"; sourceTree = "<group>"; };
 		4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundleItem.swift; sourceTree = "<group>"; };
@@ -621,12 +625,8 @@
 		4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		4CEC62172EAE08DA0099ECEE /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
-		4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionTab.swift; sourceTree = "<group>"; };
 		4CEC62442EAE08DF0099ECEE /* FestivalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalView.swift; sourceTree = "<group>"; };
-		4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalTab.swift; sourceTree = "<group>"; };
 		4CEC624B2EAE08DF0099ECEE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTab.swift; sourceTree = "<group>"; };
-		4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTab.swift; sourceTree = "<group>"; };
 		4CEC62502EAE08DF0099ECEE /* WorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopView.swift; sourceTree = "<group>"; };
 		4CEC62512EAE08DF0099ECEE /* KeyringViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringViewModelProtocol.swift; sourceTree = "<group>"; };
 		4CEC62532EAE08DF0099ECEE /* KeyringCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCompleteView.swift; sourceTree = "<group>"; };
@@ -843,7 +843,6 @@
 		388E72962EF34ECC00AE1F1B /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC62402EAE08DF0099ECEE /* CollectionTab.swift */,
 				4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */,
 				3828F5422EC4C80800F1B040 /* CollectionView+Alerts.swift */,
 				3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */,
@@ -1202,7 +1201,6 @@
 		4CC8D0232EF1135100317467 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				4CEC624D2EAE08DF0099ECEE /* HomeTab.swift */,
 				4CEC624B2EAE08DF0099ECEE /* HomeView.swift */,
 			);
 			path = Main;
@@ -1215,6 +1213,18 @@
 				4CEBB14B2EFAA52F00CF53E2 /* DeepLinkManager.swift */,
 			);
 			path = DeepLink;
+			sourceTree = "<group>";
+		};
+		4CEBB1542EFACFA900CF53E2 /* Tab */ = {
+			isa = PBXGroup;
+			children = (
+				4CEBB1522EFACFA900CF53E2 /* MainTabView.swift */,
+				4CEBB1512EFACFA900CF53E2 /* HomeTab.swift */,
+				4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */,
+				4CEBB14F2EFACFA900CF53E2 /* CollectionTab.swift */,
+				4CEBB1502EFACFA900CF53E2 /* FestivalTab.swift */,
+			);
+			path = Tab;
 			sourceTree = "<group>";
 		};
 		4CEC61A82EAE071B0099ECEE = {
@@ -1302,7 +1312,6 @@
 				4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */,
 				4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */,
 				4CEBB1462EFA93D000CF53E2 /* RootView.swift */,
-				4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -1523,7 +1532,6 @@
 			isa = PBXGroup;
 			children = (
 				C6C35F402ED2B6E6009642F4 /* Models */,
-				4CEC62462EAE08DF0099ECEE /* FestivalTab.swift */,
 				C6C35F362ED2A3A7009642F4 /* ViewModels */,
 				4CEC62452EAE08DF0099ECEE /* Views */,
 			);
@@ -1668,7 +1676,6 @@
 			children = (
 				4C6530472EBA8886000F8154 /* EffectItem.swift */,
 				C6830F072EB8E96D0059379A /* MyItemsView.swift */,
-				4CEC624F2EAE08DF0099ECEE /* WorkshopTab.swift */,
 				C6C402A02EB3F3A9006B58DF /* WorkshopComponents.swift */,
 				C6C4029E2EB30163006B58DF /* WorkshopViewModel.swift */,
 				C68931D12EB850BC00C5F083 /* WorkshopMain */,
@@ -1682,6 +1689,7 @@
 		4CEC62692EAE08DF0099ECEE /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				4CEBB1542EFACFA900CF53E2 /* Tab */,
 				38A596702EAFA8880003D712 /* Intro */,
 				4CEC624E2EAE08DF0099ECEE /* Home */,
 				4CEC62682EAE08DF0099ECEE /* Workshop */,
@@ -2105,7 +2113,6 @@
 				4CEBB1492EFA93D000CF53E2 /* AppDelegate.swift in Sources */,
 				4C6530482EBA8886000F8154 /* EffectItem.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
-				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
 				C6B56F2B2EC039D30049F969 /* KeyringCellScene+Capture.swift in Sources */,
 				4CBBEF2A2EB7DB9800252590 /* RecordingSheet.swift in Sources */,
 				4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */,
@@ -2210,10 +2217,8 @@
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
 				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
 				C6C361E62ED4B289009642F4 /* ShowcaseConfirmPopup.swift in Sources */,
-				4CEC626B2EAE08DF0099ECEE /* FestivalTab.swift in Sources */,
 				AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */,
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
-				4CEC626D2EAE08DF0099ECEE /* WorkshopTab.swift in Sources */,
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
 				C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */,
 				C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */,
@@ -2233,7 +2238,6 @@
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
 				4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */,
 				4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */,
-				4CEC62712EAE08DF0099ECEE /* HomeTab.swift in Sources */,
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
 				C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */,
 				AA6298522EC233D2001576C0 /* BundleEditView.swift in Sources */,
@@ -2290,6 +2294,11 @@
 				4CEC627B2EAE08DF0099ECEE /* AcrylicPhotoPreView.swift in Sources */,
 				38C3C2962EC20B1E003C5DE1 /* PackagedKeyringView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
+				4CEBB1552EFACFA900CF53E2 /* HomeTab.swift in Sources */,
+				4CEBB1562EFACFA900CF53E2 /* MainTabView.swift in Sources */,
+				4CEBB1572EFACFA900CF53E2 /* CollectionTab.swift in Sources */,
+				4CEBB1582EFACFA900CF53E2 /* FestivalTab.swift in Sources */,
+				4CEBB1592EFACFA900CF53E2 /* WorkshopTab.swift in Sources */,
 				38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */,
 				4CEC627C2EAE08DF0099ECEE /* WorkshopView.swift in Sources */,
 				38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */,
@@ -2302,7 +2311,6 @@
 				38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */,
 				4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */,
 				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
-				4CEC62802EAE08DF0099ECEE /* CollectionTab.swift in Sources */,
 				C6B56F182EBF28170049F969 /* NeonSignVM.swift in Sources */,
 				C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */,
 				38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */,
