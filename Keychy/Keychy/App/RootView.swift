@@ -9,59 +9,75 @@ import SwiftUI
 import FirebaseAuth
 
 struct RootView: View {
+    // MARK: - Constants
+    private enum UserDefaultsKey {
+        static let hasLaunchedBefore = "hasLaunchedBefore"
+    }
+
+    private enum Delay {
+        static let minimumSplash: TimeInterval = 1.5
+    }
+
+    // MARK: - Properties
     @State private var introViewModel = IntroViewModel()
     @State private var userManager = UserManager.shared
     @State private var purchaseManager = PurchaseManager.shared
     @State private var isCheckingAuth = true
 
+    // MARK: - Body
     var body: some View {
         Group {
             if isCheckingAuth {
                 SplashView()
                     .onAppear {
-                        // 스플래시 표시하면서 유저 확인
                         checkAuthAndNavigate()
                     }
             } else {
-                // 유저 상태에 따라 화면 전환
-                if introViewModel.showAppGuiding {
-                    // 앱 가이드 화면
-                    IntroAppGuidingView(viewModel: introViewModel)
-                } else if introViewModel.showProfileComplete {
-                    // 프로필 완료 화면
-                    ProfileSetupCompleteView(viewModel: introViewModel)
-                } else if introViewModel.needsProfileSetup {
-                    // 프로필 설정 필요
-                    ProfileSetupView(viewModel: introViewModel)
-                } else if introViewModel.isLoggedIn {
-                    // 로그인 완료 → 메인 화면
-                    MainTabView()
-                        .environment(userManager)
-                        .environment(introViewModel)
-                } else {
-                    // 로그인 필요 → 로그인 화면
-                    IntroView(viewModel: introViewModel)
-                }
+                currentView
             }
         }
         .background(.gray800)
     }
 
+    // MARK: - Views
+    @ViewBuilder
+    private var currentView: some View {
+        if introViewModel.showAppGuiding {
+            IntroAppGuidingView(viewModel: introViewModel)
+        } else if introViewModel.showProfileComplete {
+            ProfileSetupCompleteView(viewModel: introViewModel)
+        } else if introViewModel.needsProfileSetup {
+            ProfileSetupView(viewModel: introViewModel)
+        } else if introViewModel.isLoggedIn {
+            MainTabView()
+                .environment(userManager)
+                .environment(introViewModel)
+        } else {
+            IntroView(viewModel: introViewModel)
+        }
+    }
+
+    // MARK: - Methods
+    /// 인증 상태 확인 및 적절한 화면으로 라우팅
+    /// - 최소 스플래시 시간 보장
+    /// - Firebase 인증 세션 확인
+    /// - 프로필 존재 여부에 따라 화면 분기
     private func checkAuthAndNavigate() {
-        let minimumSplashTime: TimeInterval = 1.5 // 최소 1.5초 스플래시 표시
         let startTime = Date()
 
         // 첫 설치 여부 확인
-        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
+        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: UserDefaultsKey.hasLaunchedBefore)
 
         if let user = Auth.auth().currentUser, hasLaunchedBefore {
             // 기존 사용자 + 로그인 세션 있음 → 자동 로그인
             // Firebase에서 유저 프로필 확인
             UserManager.shared.loadUserInfo(uid: user.uid) { hasProfile in
                 let elapsed = Date().timeIntervalSince(startTime)
-                let remainingTime = max(0, minimumSplashTime - elapsed)
+                let remainingTime = max(0, Delay.minimumSplash - elapsed)
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(remainingTime))
+
                     if hasProfile {
                         // 프로필 있음 → 메인 화면
                         introViewModel.isLoggedIn = true
@@ -85,12 +101,14 @@ struct RootView: View {
         } else {
             // 첫 설치 또는 로그인 세션 없음 → 로그인 화면
             let elapsed = Date().timeIntervalSince(startTime)
-            let remainingTime = max(0, minimumSplashTime - elapsed)
+            let remainingTime = max(0, Delay.minimumSplash - elapsed)
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(remainingTime))
+
                 // 첫 실행 플래그 저장 (이후부턴 자동 로그인 가능)
                 if !hasLaunchedBefore {
-                    UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+                    UserDefaults.standard.set(true, forKey: UserDefaultsKey.hasLaunchedBefore)
                 }
 
                 introViewModel.isLoggedIn = false
