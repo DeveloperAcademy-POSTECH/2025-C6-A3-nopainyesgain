@@ -1246,7 +1246,7 @@
 				4CEC61F02EAE08C40099ECEE /* App */,
 				4CEC61E42EAE08C00099ECEE /* CommonModels */,
 				4CEC62192EAE08DA0099ECEE /* Core */,
-				4CEC62692EAE08DF0099ECEE /* Features */,
+				4CEC62692EAE08DF0099ECEE /* Presentation */,
 				4CEC62912EAE08F70099ECEE /* Resources */,
 			);
 			path = Keychy;
@@ -1679,7 +1679,7 @@
 			path = Workshop;
 			sourceTree = "<group>";
 		};
-		4CEC62692EAE08DF0099ECEE /* Features */ = {
+		4CEC62692EAE08DF0099ECEE /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
 				38A596702EAFA8880003D712 /* Intro */,
@@ -1688,7 +1688,7 @@
 				4CEC62412EAE08DF0099ECEE /* Collection */,
 				4CEC62472EAE08DF0099ECEE /* Festival */,
 			);
-			path = Features;
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		4CEC628A2EAE08F70099ECEE /* Lotties */ = {
