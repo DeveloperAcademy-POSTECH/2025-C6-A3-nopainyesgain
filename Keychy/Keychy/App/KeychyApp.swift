@@ -7,22 +7,32 @@
 
 import SwiftUI
 
+/// Keychy 앱의 진입점
+/// - AppDelegate를 통해 Firebase, Push 알림 등의 초기 설정 수행
+/// - DeepLinkHandler를 통해 Custom URL Scheme 및 Universal Link 처리
 @main
 struct KeychyApp: App {
-    // 파이어베이스 setup
+    // MARK: - Properties
+    /// AppDelegate 연결: Firebase 초기화, 푸시 알림 설정, TabBar 스타일 설정 등을 처리
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+    
+    // MARK: - Body
     var body: some Scene {
         WindowGroup {
             RootView()
+                // 다크모드 미지원 - 추후 디자인시스템 추가될 예정
                 .preferredColorScheme(.light)
-                .onOpenURL { url in
-                    DeepLinkHandler.shared.handle(url)
-                }
+            
+                // Universal Link
                 .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { userActivity in
                     if let url = userActivity.webpageURL {
                         DeepLinkHandler.shared.handle(url)
                     }
+                }
+        
+                // Custom URL Scheme
+                .onOpenURL { url in
+                    DeepLinkHandler.shared.handle(url)
                 }
         }
     }
