@@ -16,6 +16,27 @@ import UserNotifications
 /// - 푸시 알림 설정 (APNs 토큰 등록, FCM 연동)
 /// - TabBar 커스텀 폰트 설정 (NanumSquareRound)
 /// - 포그라운드 알림 처리 및 딥링크 라우팅
+
+/*
+ 앱 시작
+     ↓
+   "토큰 주세요" (registerForRemoteNotifications)
+     ↓
+   Apple이 APNs 토큰 발급
+     ↓
+   APNs 토큰을 Firebase에 전달
+     ↓
+   Firebase가 FCM 토큰 생성
+     ↓
+   FCM 토큰을 Firestore에 저장
+     ↓
+   알림 보낼 때: FCM 토큰 사용
+ */
+
+/// FCM 토큰 => 기기의 주소
+/// APNs 토큰 => Apple이 발급한 기기의 진짜 주소. iOS에서 푸시 알림 받으려면 필수
+/// 토큰은 최초 실행, 앱 재설치, 기기 복원, 토큰만료/변경 시에 발행된다.
+
 class AppDelegate: NSObject, UIApplicationDelegate {
     // MARK: - Lifecycle
 
@@ -105,9 +126,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 // MARK: - MessagingDelegate
-
 extension AppDelegate: MessagingDelegate {
-    // FCM 토큰 받았을 때
+    // FCM 토큰 받았을 때.
+    // Firebase가 FCM 토큰을 만들어주면, 그걸 받아서 Firestore에 저장하는 함수
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let fcmToken = fcmToken else { return }
 
