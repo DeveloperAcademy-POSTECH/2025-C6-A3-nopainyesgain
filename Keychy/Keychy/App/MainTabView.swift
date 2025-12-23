@@ -210,14 +210,11 @@ struct MainTabView: View {
     private func checkPendingDeepLink() {
         // 저장된 딥링크가 있는지 확인
         if let (postOfficeId, type) = deepLinkManager.consumePendingDeepLink() {
-            print("저장된 딥링크 처리: \(postOfficeId), 타입: \(type)")
             handleDeepLink(postOfficeId: postOfficeId, type: type)
         }
     }
-    
-    private func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
-        print("키링 수신 처리 시작: \(postOfficeId)")
 
+    private func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
         switch type {
         case .receive:
             selectedTab = 2  // 보관함 탭

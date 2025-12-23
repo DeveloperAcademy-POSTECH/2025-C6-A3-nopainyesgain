@@ -203,6 +203,9 @@
 		4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */; };
 		4CC8D0222EF110A300317467 /* NotificationGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */; };
 		4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC8D0242EF11CD200317467 /* HomeViewModel.swift */; };
+		4CEBB1472EFA93D000CF53E2 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1452EFA93D000CF53E2 /* DeepLinkHandler.swift */; };
+		4CEBB1482EFA93D000CF53E2 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1462EFA93D000CF53E2 /* RootView.swift */; };
+		4CEBB1492EFA93D000CF53E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -581,6 +584,9 @@
 		4CC8D01E2EF0447100317467 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
 		4CC8D0212EF110A300317467 /* NotificationGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationGiftViewModel.swift; sourceTree = "<group>"; };
 		4CC8D0242EF11CD200317467 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4CEBB1452EFA93D000CF53E2 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
+		4CEBB1462EFA93D000CF53E2 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1285,6 +1291,9 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */,
+				4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */,
+				4CEBB1452EFA93D000CF53E2 /* DeepLinkHandler.swift */,
+				4CEBB1462EFA93D000CF53E2 /* RootView.swift */,
 				4CEC61EF2EAE08C40099ECEE /* MainTabView.swift */,
 			);
 			path = App;
@@ -2082,6 +2091,9 @@
 				C68931D92EB8527C00C5F083 /* WorkshopTopBannerSection.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
+				4CEBB1472EFA93D000CF53E2 /* DeepLinkHandler.swift in Sources */,
+				4CEBB1482EFA93D000CF53E2 /* RootView.swift in Sources */,
+				4CEBB1492EFA93D000CF53E2 /* AppDelegate.swift in Sources */,
 				4C6530482EBA8886000F8154 /* EffectItem.swift in Sources */,
 				4C6622152EAE70BF001760B5 /* Gradient+Keychy.swift in Sources */,
 				4CEC61F22EAE08C40099ECEE /* MainTabView.swift in Sources */,
