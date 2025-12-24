@@ -26,7 +26,7 @@ class RootViewModel {
     }
 
     private enum Delay {
-        static let minimumSplash: TimeInterval = 1.5
+        static let minimumSplash: TimeInterval = 0.5
     }
 
     // MARK: - Properties
