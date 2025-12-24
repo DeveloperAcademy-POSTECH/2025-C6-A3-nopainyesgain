@@ -212,6 +212,7 @@
 		4CEBB1592EFACFA900CF53E2 /* WorkshopTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */; };
 		4CEBB15F2EFAD3D600CF53E2 /* MainTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */; };
 		4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */; };
+		4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -594,6 +595,7 @@
 		4CEBB1532EFACFA900CF53E2 /* WorkshopTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTab.swift; sourceTree = "<group>"; };
 		4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewModel.swift; sourceTree = "<group>"; };
 		4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -890,6 +892,7 @@
 		38A596762EAFA9340003D712 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4CEBB1462EFA93D000CF53E2 /* RootView.swift */,
 				38A596772EAFA9430003D712 /* SplashView.swift */,
 				38A596792EAFA94E0003D712 /* IntroView.swift */,
 				38A596832EAFEAA20003D712 /* ProfileSetupView.swift */,
@@ -1078,13 +1081,14 @@
 		4C77753D2EB1343600981C3E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */,
+				4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */,
 				4C7775392EB1343600981C3E /* IntroViewModel.swift */,
 				4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */,
 				4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */,
 				4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */,
 				4CC3D36C2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift */,
 				4CC3D3C42EC701610009D376 /* IntroViewModel+Bundle.swift */,
+				4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1330,7 +1334,6 @@
 			children = (
 				4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */,
 				4CEBB1442EFA93D000CF53E2 /* AppDelegate.swift */,
-				4CEBB1462EFA93D000CF53E2 /* RootView.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -2269,6 +2272,7 @@
 				4C0702822ED1DFA20026D6DC /* PixelDrawView.swift in Sources */,
 				4C0702832ED1DFA20026D6DC /* PixelPreviewView.swift in Sources */,
 				386B17642ECD142600CCCC23 /* String+Extension.swift in Sources */,
+				4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */,
 				4CEC62722EAE08DF0099ECEE /* AcrylicPhotoVM.swift in Sources */,
 				C6B56F1A2EBF284F0049F969 /* TemplatePreviewComponents.swift in Sources */,
 				4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */,
