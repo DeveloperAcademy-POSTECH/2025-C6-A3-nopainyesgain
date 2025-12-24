@@ -16,6 +16,11 @@ struct KeychyApp: App {
     /// AppDelegate 연결: Firebase 초기화, 푸시 알림 설정, TabBar 스타일 설정 등을 처리
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    init() {
+        // 네트워크 모니터링 시작
+        NetworkManager.shared.startMonitoring()
+    }
+    
     // MARK: - Body
     var body: some Scene {
         WindowGroup {
