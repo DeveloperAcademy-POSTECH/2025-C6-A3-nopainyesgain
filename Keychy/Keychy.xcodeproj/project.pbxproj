@@ -213,6 +213,7 @@
 		4CEBB15F2EFAD3D600CF53E2 /* MainTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */; };
 		4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */; };
 		4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */; };
+		4CEBB1692EFBDCE900CF53E2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -596,6 +597,7 @@
 		4CEBB15E2EFAD3D600CF53E2 /* MainTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabViewModel.swift; sourceTree = "<group>"; };
 		4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
+		4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1250,6 +1252,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		4CEBB1662EFBDCCD00CF53E2 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
@@ -1481,6 +1491,7 @@
 		4CEC62192EAE08DA0099ECEE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				4CEBB1662EFBDCCD00CF53E2 /* Network */,
 				4CEBB14C2EFAA52F00CF53E2 /* DeepLink */,
 				C6B56F222EC0341B0049F969 /* Cache */,
 				4C3687F92EBFC0FB00C64E75 /* Notification */,
@@ -2311,6 +2322,7 @@
 				AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */,
 				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
+				4CEBB1692EFBDCE900CF53E2 /* NetworkManager.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */,
 				4CC8D00B2EEFC36900317467 /* AlarmViewModel.swift in Sources */,
