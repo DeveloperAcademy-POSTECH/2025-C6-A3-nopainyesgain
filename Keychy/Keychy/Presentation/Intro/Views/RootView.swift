@@ -30,17 +30,18 @@ struct RootView: View {
     // MARK: - Views
     @ViewBuilder
     private var currentView: some View {
-        if viewModel.introViewModel.showAppGuiding {
+        switch viewModel.currentState {
+        case .appGuiding:
             IntroAppGuidingView(viewModel: viewModel.introViewModel)
-        } else if viewModel.introViewModel.showProfileComplete {
+        case .profileComplete:
             ProfileSetupCompleteView(viewModel: viewModel.introViewModel)
-        } else if viewModel.introViewModel.needsProfileSetup {
+        case .profileSetup:
             ProfileSetupView(viewModel: viewModel.introViewModel)
-        } else if viewModel.introViewModel.isLoggedIn {
+        case .main:
             MainTabView()
                 .environment(viewModel.userManager)
                 .environment(viewModel.introViewModel)
-        } else {
+        case .login:
             IntroView(viewModel: viewModel.introViewModel)
         }
     }
