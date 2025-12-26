@@ -42,7 +42,7 @@ class DeepLinkManager {
     }
     
     static func createTestReceiveLink(postOfficeId: String) -> URL? {
-        return URL(string: "keychy://receive?keyringId=\(postOfficeId)")
+        return URL(string: "keychy://receive?postOfficeId=\(postOfficeId)")
     }
     
     static func createTestCollectLink(postOfficeId: String) -> URL? {
