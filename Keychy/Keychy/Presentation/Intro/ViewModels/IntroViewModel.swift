@@ -168,6 +168,12 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
 
     // MARK: - Apple 로그인 시작 (커스텀 버튼용)
     func startAppleSignIn() {
+        // 1차 검증: 네트워크 연결 확인
+        guard NetworkManager.shared.isConnected else {
+            handleSignInFailure()
+            return
+        }
+
         let nonce = randomNonceString()
         currentNonce = nonce
 
@@ -190,10 +196,9 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     }
 
     // MARK: - 로그인 실패 처리
-    func handleSignInFailure(_ error: Error) {
-        // TODO: 이후 로그인 화면 나오면 UI & 로직 수정 필요
-        errorMessage = "로그인에 실패했습니다. 다시 시도해주세요."
+    func handleSignInFailure(_ error: Error? = nil, message: String? = nil) {
         isLoading = false
+        errorMessage = message ?? "로그인에 실패했습니다. 다시 시도해주세요."
     }
     
     // MARK: - 보안용 Nonce 생성

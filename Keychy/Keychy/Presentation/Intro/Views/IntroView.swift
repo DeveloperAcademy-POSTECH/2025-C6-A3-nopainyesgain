@@ -48,7 +48,7 @@ struct IntroView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.gray800)
+        .background(.white100)
         .onAppear {
             withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
                 showButton = true
@@ -62,7 +62,7 @@ extension IntroView {
     /// 로고
     private var logoSection: some View {
         VStack(spacing: 20) {
-            Image(.introIcon)
+            Image(.introIconBordered)
             Image(.introTypo)
         }
     }
@@ -72,13 +72,13 @@ extension IntroView {
         VStack(spacing: 20) {
             if viewModel.isLoading {
                 ProgressView("로그인 중")
-                    .typography(.suit13M)
-                    .foregroundStyle(.white)
+                    .typography(.suit15R)
+                    .foregroundStyle(.gray900)
             }
             if viewModel.errorMessage != nil {
                 Text("로그인에 실패했습니다. 다시 시도해주세요.")
-                    .typography(.suit14M)
-                    .foregroundColor(.white100)
+                    .typography(.suit15R)
+                    .foregroundStyle(.gray900)
                     
             }
         }
@@ -102,8 +102,8 @@ extension IntroView {
             .cornerRadius(24)
         }
         .buttonStyle(.glassProminent)
-        .tint(.white)
-        .foregroundStyle(.black)
+        .tint(.black)
+        .foregroundStyle(.white100)
     }
     
     /// 이용약관 동의 시트

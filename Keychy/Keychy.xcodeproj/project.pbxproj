@@ -214,6 +214,8 @@
 		4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */; };
 		4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */; };
 		4CEBB1692EFBDCE900CF53E2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */; };
+		4CEBB16F2EFCFC5600CF53E2 /* NoInternetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB16E2EFCFC5600CF53E2 /* NoInternetView.swift */; };
+		4CEBB1702EFCFC5600CF53E2 /* NoInternetToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB16D2EFCFC5600CF53E2 /* NoInternetToast.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -598,6 +600,8 @@
 		4CEBB1602EFAD3F800CF53E2 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
 		4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		4CEBB16D2EFCFC5600CF53E2 /* NoInternetToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetToast.swift; sourceTree = "<group>"; };
+		4CEBB16E2EFCFC5600CF53E2 /* NoInternetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetView.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1260,6 +1264,15 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		4CEBB16C2EFCFB9C00CF53E2 /* NetworkError */ = {
+			isa = PBXGroup;
+			children = (
+				4CEBB16D2EFCFC5600CF53E2 /* NoInternetToast.swift */,
+				4CEBB16E2EFCFC5600CF53E2 /* NoInternetView.swift */,
+			);
+			path = NetworkError;
+			sourceTree = "<group>";
+		};
 		4CEC61A82EAE071B0099ECEE = {
 			isa = PBXGroup;
 			children = (
@@ -1410,6 +1423,7 @@
 		4CEC62062EAE08DA0099ECEE /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4CEBB16C2EFCFB9C00CF53E2 /* NetworkError */,
 				4CA9C6A52EC9D11600CA546B /* Navigation */,
 				4C65303C2EBA5FF3000F8154 /* Alerts */,
 				AADD2AB52EB3AF520051478E /* KeyringBundle */,
@@ -2151,6 +2165,8 @@
 				4CBBEF2B2EB7DB9800252590 /* AudioRecorderManager.swift in Sources */,
 				386B17542ECCE8EC00CCCC23 /* CollectionViewModel+Distribution.swift in Sources */,
 				3822DDC62EBBE252003125BE /* LackPopup.swift in Sources */,
+				4CEBB16F2EFCFC5600CF53E2 /* NoInternetView.swift in Sources */,
+				4CEBB1702EFCFC5600CF53E2 /* NoInternetToast.swift in Sources */,
 				C67B75582ECD4C6F00D6E3FA /* PolaroidVM.swift in Sources */,
 				C67B75592ECD4C6F00D6E3FA /* PolaroidVM+Effect.swift in Sources */,
 				C67B755A2ECD4C6F00D6E3FA /* FrameSelectorView.swift in Sources */,
