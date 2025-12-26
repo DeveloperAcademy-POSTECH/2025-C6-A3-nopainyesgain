@@ -49,7 +49,6 @@ struct IntroView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white100)
-        .withToast()
         .onAppear {
             withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
                 showButton = true
