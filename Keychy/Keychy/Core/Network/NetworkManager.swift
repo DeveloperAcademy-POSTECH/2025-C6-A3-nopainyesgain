@@ -30,9 +30,17 @@ final class NetworkManager {
     func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
             let connected = (path.status == .satisfied)
-            
+
             Task { @MainActor in
+                // 이전 연결 상태 저장
+                let wasConnected = self?.isConnected ?? true
                 self?.isConnected = connected
+
+                // 연결 → 끊김 감지 시 토스트 표시
+                if wasConnected && !connected {
+                    ToastManager.shared.show()
+                }
+
                 print("[Network] 상태 변경: \(connected ? "온라인" : "오프라인")")
             }
         }
