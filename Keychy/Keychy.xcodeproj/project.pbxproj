@@ -216,6 +216,7 @@
 		4CEBB1692EFBDCE900CF53E2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */; };
 		4CEBB16F2EFCFC5600CF53E2 /* NoInternetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB16E2EFCFC5600CF53E2 /* NoInternetView.swift */; };
 		4CEBB1702EFCFC5600CF53E2 /* NoInternetToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB16D2EFCFC5600CF53E2 /* NoInternetToast.swift */; };
+		4CEBB1722EFE66CF00CF53E2 /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBB1712EFE66CF00CF53E2 /* ToastManager.swift */; };
 		4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */; };
 		4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61DF2EAE08C00099ECEE /* Keyring.swift */; };
 		4CEC61E82EAE08C00099ECEE /* ChainType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61E12EAE08C00099ECEE /* ChainType.swift */; };
@@ -602,6 +603,7 @@
 		4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		4CEBB16D2EFCFC5600CF53E2 /* NoInternetToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetToast.swift; sourceTree = "<group>"; };
 		4CEBB16E2EFCFC5600CF53E2 /* NoInternetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetView.swift; sourceTree = "<group>"; };
+		4CEBB1712EFE66CF00CF53E2 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
 		4CEC61B12EAE071B0099ECEE /* Keychy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keychy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CEC61D82EAE08C00099ECEE /* KeyringBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundle.swift; sourceTree = "<group>"; };
 		4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTemplate.swift; sourceTree = "<group>"; };
@@ -1259,6 +1261,7 @@
 		4CEBB1662EFBDCCD00CF53E2 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				4CEBB1712EFE66CF00CF53E2 /* ToastManager.swift */,
 				4CEBB1682EFBDCE900CF53E2 /* NetworkManager.swift */,
 			);
 			path = Network;
@@ -2290,6 +2293,7 @@
 				4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */,
 				4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */,
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
+				4CEBB1722EFE66CF00CF53E2 /* ToastManager.swift in Sources */,
 				C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */,
 				AA6298522EC233D2001576C0 /* BundleEditView.swift in Sources */,
 				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,

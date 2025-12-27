@@ -36,6 +36,17 @@ extension View {
         // safeAreaInsets.bottom이 0이면 직각형 기기임!
         return window.safeAreaInsets.bottom == 0 ? defaultPadding : 0
     }
+
+    /// 하단 SafeArea 값 직접 반환 (토스트 위치 계산용)
+    func getBottomSafeArea() -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 0
+        }
+        return window.safeAreaInsets.bottom
+    }
     
     // MARK: - 다음 머지에서 검색해서 안쓰면 삭제
     /// 상단 safeArea 값 반환
