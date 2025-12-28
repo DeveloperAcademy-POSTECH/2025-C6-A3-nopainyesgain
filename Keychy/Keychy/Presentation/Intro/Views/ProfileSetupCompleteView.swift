@@ -47,6 +47,7 @@ struct ProfileSetupCompleteView: View {
         .task {
             await preloadResources()
         }
+        .withToast(position: .button)
     }
 }
 

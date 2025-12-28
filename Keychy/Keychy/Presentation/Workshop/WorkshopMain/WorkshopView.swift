@@ -81,14 +81,14 @@ struct WorkshopView: View {
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
             viewModel.resetFilters()
-            
+
             // 카테고리 전환 시 해당 카테고리가 로드되지 않았다면 로드
             Task {
                 await viewModel.fetchDataForCategory(newValue)
             }
         }
     }
-    
+
     // MARK: Main Content
     
     /// 메인 스크롤 콘텐츠

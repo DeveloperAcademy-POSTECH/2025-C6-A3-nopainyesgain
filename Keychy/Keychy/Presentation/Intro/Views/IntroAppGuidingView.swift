@@ -38,6 +38,7 @@ struct IntroAppGuidingView: View {
                     nextBtn
                 }
                 .background(.white100)
+                .withToast(position: .button)
             }
         }
     }

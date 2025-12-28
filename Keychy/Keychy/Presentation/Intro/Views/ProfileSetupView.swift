@@ -29,6 +29,7 @@ struct ProfileSetupView: View {
         .dismissKeyboardOnTap()
         .ignoresSafeArea(.keyboard)
         .background(.white100)
+        .withToast(position: .button)
     }
 }
 

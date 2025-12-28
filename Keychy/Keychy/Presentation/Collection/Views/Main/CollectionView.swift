@@ -137,7 +137,7 @@ struct CollectionView: View {
             CachedImagesDebugView()
         }
     }
-    
+
     private var mainContent: some View {
         VStack {
             if isSearching {
