@@ -16,7 +16,7 @@ enum ToastPosition {
     var additionalPadding: CGFloat {
         switch self {
         case .default: return 50
-        case .tabbar: return 49 + 8   // 탭바 높이(49) + 간격(8)
+        case .tabbar: return 20
         case .button: return 20
         }
     }
@@ -83,8 +83,6 @@ extension View {
     /// 토스트 알림 기능 추가
     /// - Parameter position: 토스트 위치 (default: .default)
     func withToast(position: ToastPosition = .default) -> some View {
-        let safeArea = getBottomSafeArea()
-        let totalPadding = safeArea + position.additionalPadding
-        return modifier(ToastModifier(bottomPadding: totalPadding))
+        modifier(ToastModifier(bottomPadding: position.additionalPadding))
     }
 }
