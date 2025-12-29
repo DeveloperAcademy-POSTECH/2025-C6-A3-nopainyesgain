@@ -217,15 +217,8 @@ class HomeViewModel {
     /// 네트워크 에러 후 재시도
     @MainActor
     func retryLoadMainBundle(collectionViewModel: CollectionViewModel, onBackgroundLoaded: (() -> Void)?) async {
-        // 여전히 연결 안되어 있으면 리턴
-        guard NetworkManager.shared.isConnected else {
-            return
-        }
-
-        // 에러 상태 해제
+        guard NetworkManager.shared.isConnected else { return }
         hasNetworkError = false
-
-        // 다시 로드
         await loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
     }
 

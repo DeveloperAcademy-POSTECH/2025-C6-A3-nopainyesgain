@@ -26,24 +26,11 @@ struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     
     // MARK: - Body
-    
     var body: some View {
         ZStack(alignment: .top) {
             // 조건부: 네트워크 에러 화면 또는 정상 콘텐츠
             if viewModel.hasNetworkError {
-                // 네트워크 에러 화면
-                NoInternetView(onRetry: {
-                    Task {
-                        await viewModel.retryLoadMainBundle(
-                            collectionViewModel: collectionViewModel,
-                            onBackgroundLoaded: onBackgroundLoaded
-                        )
-                    }
-                })
-                .ignoresSafeArea()
-                .border(.red)
-
-                // 네비게이션 버튼 (블러 없음)
+                networkErrorView
                 navigationButtons
             } else {
                 // 블러 영역
@@ -118,6 +105,19 @@ struct HomeView: View {
 
 // MARK: - View Components
 extension HomeView {
+    /// 네트워크 에러 화면
+    private var networkErrorView: some View {
+        NoInternetView(onRetry: {
+            Task {
+                await viewModel.retryLoadMainBundle(
+                    collectionViewModel: collectionViewModel,
+                    onBackgroundLoaded: onBackgroundLoaded
+                )
+            }
+        })
+        .ignoresSafeArea()
+    }
+
     /// 상단 네비게이션 버튼들
     private var navigationButtons: some View {
         HStack(spacing: 10) {
