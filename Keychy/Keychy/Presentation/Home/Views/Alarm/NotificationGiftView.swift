@@ -20,8 +20,10 @@ struct NotificationGiftView: View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
-            
-            if viewModel.isLoading || viewModel.isCapturing {
+
+            if viewModel.hasNetworkError {
+                networkErrorView
+            } else if viewModel.isLoading || viewModel.isCapturing {
                 LoadingAlert(type: .short, message: nil)
             } else if let error = viewModel.loadError {
                 VStack {
@@ -53,6 +55,12 @@ struct NotificationGiftView: View {
         .navigationBarBackButtonHidden(true)
         .swipeBackGesture(enabled: true)
         .onAppear {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                viewModel.hasNetworkError = true
+                return
+            }
+
             viewModel.fetchGiftData(postOfficeId: postOfficeId, viewModel: collectionViewModel)
             viewModel.markNotificationAsRead(postOfficeId: postOfficeId)
 
@@ -70,6 +78,16 @@ struct NotificationGiftView: View {
                 viewModel.loadCachedImage(keyring: keyring)
             }
         }
+    }
+
+    // MARK: - View Components
+
+    /// 네트워크 에러 화면
+    private var networkErrorView: some View {
+        NoInternetView(onRetry: {
+            viewModel.retryFetchGiftData(postOfficeId: postOfficeId, viewModel: collectionViewModel)
+        })
+        .ignoresSafeArea()
     }
 
     private var contentView: some View {

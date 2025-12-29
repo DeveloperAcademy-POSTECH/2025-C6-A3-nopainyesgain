@@ -46,6 +46,9 @@ class NotificationGiftViewModel {
     /// 이미지 보여줄지 여부
     var showContent: Bool = false
 
+    /// 네트워크 에러 발생 여부
+    var hasNetworkError: Bool = false
+
     // MARK: - Private Properties
 
     private let db = Firestore.firestore()
@@ -99,6 +102,13 @@ class NotificationGiftViewModel {
                         }
                     }
             }
+    }
+
+    /// 네트워크 에러 후 재시도
+    func retryFetchGiftData(postOfficeId: String, viewModel: CollectionViewModel) {
+        guard NetworkManager.shared.isConnected else { return }
+        hasNetworkError = false
+        fetchGiftData(postOfficeId: postOfficeId, viewModel: viewModel)
     }
 
     /// 선물 데이터 가져오기
