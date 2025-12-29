@@ -41,11 +41,10 @@ struct NoInternetView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 13.5)
                     .foregroundStyle(.black)
-                    .background(.white)
+                    .background(.gray50)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
             }
             .padding(.horizontal, 34)
-            .padding(.bottom, 50)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
