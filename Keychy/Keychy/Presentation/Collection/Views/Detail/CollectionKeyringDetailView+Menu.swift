@@ -48,10 +48,17 @@ extension CollectionKeyringDetailView {
 // MARK: - 메뉴 액션들
     // MARK: - 편집
     private func handleMenuEdit() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            showMenu = false
+            ToastManager.shared.show()
+            return
+        }
+
         isSheetPresented = false
         isNavigatingDeeper = true
         showMenu = false
-        
+
         router.push(.keyringEditView(keyring))
     }
     
