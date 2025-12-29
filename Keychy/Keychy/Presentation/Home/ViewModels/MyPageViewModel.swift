@@ -167,6 +167,12 @@ class MyPageViewModel {
 
     /// 로그아웃
     func logout(userManager: UserManager, introViewModel: IntroViewModel) {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+
         do {
             // 1. Firebase Auth 로그아웃
             try Auth.auth().signOut()
@@ -187,6 +193,12 @@ class MyPageViewModel {
 
     /// 회원탈퇴
     func deleteAccount(userManager: UserManager, introViewModel: IntroViewModel) {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+
         guard let user = Auth.auth().currentUser else {
             return
         }
