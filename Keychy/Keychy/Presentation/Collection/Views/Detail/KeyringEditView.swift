@@ -115,6 +115,7 @@ struct KeyringEditView: View {
         .navigationTitle("정보 수정")
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .withToast(position: .default)
         .toolbar {
             backToolbarItem
             completeToolbarItem
@@ -145,6 +146,12 @@ extension KeyringEditView {
         ToolbarItem(placement: .topBarTrailing) {
             if isCompleteEnabled {
                 Button(role: .confirm, action: {
+                    // 네트워크 체크
+                    guard NetworkManager.shared.isConnected else {
+                        ToastManager.shared.show()
+                        return
+                    }
+
                     viewModel.updateKeyring(
                         keyring: keyring,
                         name: editedName,

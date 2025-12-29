@@ -10,8 +10,9 @@ import SwiftUI
 struct BundleInventoryView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
-    
+
     @State var isNavigatingDeeper: Bool = false
+    @State private var hasNetworkError: Bool = false
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 12.5),
@@ -19,25 +20,51 @@ struct BundleInventoryView<Route: BundleRoute>: View {
     ]
     
     var body: some View {
-        ZStack(alignment: .top) {
-            bundleGrid()
-            
-            customNavigationBar
+        Group {
+            if hasNetworkError {
+                // 네트워크 에러: 오버레이 형태
+                ZStack(alignment: .top) {
+                    Color.white
+                        .ignoresSafeArea()
+
+                    NoInternetView(onRetry: {
+                        Task {
+                            await retryFetchData()
+                        }
+                    })
+                    .ignoresSafeArea()
+
+                    VStack {
+                        customNavigationBar
+                        Spacer()
+                    }
+                    .background(Color.white)
+                }
+            } else {
+                // 정상 상태: 기존 ZStack 형태
+                ZStack(alignment: .top) {
+                    bundleGrid()
+
+                    customNavigationBar
+                }
+            }
         }
         .ignoresSafeArea()
         .toolbar(.hidden, for: .tabBar)
+        .withToast(position: .default)
         .onAppear {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                hasNetworkError = true
+                isNavigatingDeeper = false
+                viewModel.hideTabBar()
+                return
+            }
+
+            hasNetworkError = false
             isNavigatingDeeper = false
             viewModel.hideTabBar()
-        }
-        .onDisappear {
-            if !isNavigatingDeeper {
-                viewModel.showTabBar()
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .scrollIndicators(.hidden)
-        .onAppear {
+
             // 현재 로그인된 유저의 뭉치 로드
             let uid = UserManager.shared.userUID
             guard !uid.isEmpty else { return }
@@ -47,6 +74,13 @@ struct BundleInventoryView<Route: BundleRoute>: View {
                 }
             }
         }
+        .onDisappear {
+            if !isNavigatingDeeper {
+                viewModel.showTabBar()
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .scrollIndicators(.hidden)
     }
 }
 
@@ -81,12 +115,18 @@ extension BundleInventoryView {
                 LazyVGrid(columns: columns, spacing: 11) {
                     ForEach(viewModel.sortedBundles, id: \.self) { bundle in
                         Button {
+                            // 네트워크 체크
+                            guard NetworkManager.shared.isConnected else {
+                                ToastManager.shared.show()
+                                return
+                            }
+
                             // 선택한 번들 설정
                             viewModel.selectedBundle = bundle
                             // 번들에 저장된 id(String)를 실제 모델로 해석하여 선택 상태에 반영
                             viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
                             viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-                            
+
                             // 상세 화면으로 이동
                             isNavigatingDeeper = true
                             router.push(.bundleDetailView)
@@ -109,10 +149,31 @@ extension BundleInventoryView {
         isNavigatingDeeper = false
         viewModel.hideTabBar()
     }
-    
+
     func handleViewDisappear() {
         if !isNavigatingDeeper {
             viewModel.showTabBar()
+        }
+    }
+
+    // MARK: - 네트워크 재시도
+    func retryFetchData() async {
+        await MainActor.run {
+            // 네트워크 재체크
+            guard NetworkManager.shared.isConnected else {
+                return
+            }
+
+            hasNetworkError = false
+
+            // 현재 로그인된 유저의 뭉치 로드
+            let uid = UserManager.shared.userUID
+            guard !uid.isEmpty else { return }
+            viewModel.fetchAllBundles(uid: uid) { success in
+                if !success {
+                    print("뭉치 로드 실패")
+                }
+            }
         }
     }
 }

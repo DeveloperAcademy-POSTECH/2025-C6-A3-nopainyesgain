@@ -86,6 +86,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
         .navigationBarBackButtonHidden()
         .toolbar(.hidden, for: .tabBar)
+        .withToast(position: .default)
         .task {
             // 화면 전환 중이면 초기화 건너뛰기
             guard !isNavigatingAway else {
@@ -808,17 +809,23 @@ extension BundleEditView {
                 }
             } else {
                 TextToolbarButton(title: "완료") {
+                    // 네트워크 체크
+                    guard NetworkManager.shared.isConnected else {
+                        ToastManager.shared.show()
+                        return
+                    }
+
                     Task {
                         await MainActor.run {
                             // 화면 전환 시작을 표시
                             // isSceneReady는 건드리지 않음 (현재 상태 유지)
                             isNavigatingAway = true
                         }
-                        
+
                         // 상태 변경이 UI에 반영되도록 짧은 대기
                         try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
                         await saveBundleChanges()
-                        
+
                         await MainActor.run {
                             router.pop()
                         }
