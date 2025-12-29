@@ -94,6 +94,7 @@ struct WorkshopPreview: View {
         .swipeBackGesture(enabled: true)
         .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
         .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
+        .withToast(position: .button)
         .overlay {
             ZStack(alignment: .center) {
                 // 구매 확인 팝업
@@ -304,6 +305,12 @@ extension WorkshopPreview {
             item: item,
             isOwned: isOwned,
             onPurchase: {
+                // 네트워크 체크
+                guard NetworkManager.shared.isConnected else {
+                    ToastManager.shared.show()
+                    return
+                }
+
                 showPurchaseSheet = true
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
                     purchasePopupScale = 1.0
