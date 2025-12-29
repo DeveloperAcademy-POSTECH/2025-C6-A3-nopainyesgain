@@ -29,46 +29,63 @@ struct HomeView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            // 블러 영역
-            ZStack(alignment: .top) {
-                if let bundle = collectionViewModel.selectedBundle,
-                   let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                   let background = collectionViewModel.selectedBackground {
-                    MultiKeyringSceneView(
-                        keyringDataList: viewModel.keyringDataList,
-                        ringType: .basic,
-                        chainType: .basic,
-                        backgroundColor: .clear,
-                        backgroundImageURL: background.backgroundImage,
-                        carabinerBackImageURL: carabiner.backImageURL,
-                        carabinerFrontImageURL: carabiner.frontImageURL,
-                        carabinerX: carabiner.carabinerX,
-                        carabinerY: carabiner.carabinerY,
-                        carabinerWidth: carabiner.carabinerWidth,
-                        currentCarabinerType: carabiner.type,
-                        onBackgroundLoaded: onBackgroundLoaded,
-                        onAllKeyringsReady: {
-                            viewModel.handleAllKeyringsReady()
-                        }
-                    )
-                    .ignoresSafeArea()
-                    /// 씬 재생성 조건을 위한 ID 설정
-                    /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                    .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(viewModel.keyringDataList.map(\.index).sorted())")
-                } else {
-                    // 데이터 로딩 중
-                    Color.clear.ignoresSafeArea()
-                }
+            // 조건부: 네트워크 에러 화면 또는 정상 콘텐츠
+            if viewModel.hasNetworkError {
+                // 네트워크 에러 화면
+                NoInternetView(onRetry: {
+                    Task {
+                        await viewModel.retryLoadMainBundle(
+                            collectionViewModel: collectionViewModel,
+                            onBackgroundLoaded: onBackgroundLoaded
+                        )
+                    }
+                })
+                .ignoresSafeArea()
+                .border(.red)
 
-                // 상단 네비게이션 버튼들
+                // 네비게이션 버튼 (블러 없음)
                 navigationButtons
-            }
-            .blur(radius: viewModel.isSceneReady ? 0 : 15)
+            } else {
+                // 블러 영역
+                ZStack(alignment: .top) {
+                    if let bundle = collectionViewModel.selectedBundle,
+                       let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+                       let background = collectionViewModel.selectedBackground {
+                        MultiKeyringSceneView(
+                            keyringDataList: viewModel.keyringDataList,
+                            ringType: .basic,
+                            chainType: .basic,
+                            backgroundColor: .clear,
+                            backgroundImageURL: background.backgroundImage,
+                            carabinerBackImageURL: carabiner.backImageURL,
+                            carabinerFrontImageURL: carabiner.frontImageURL,
+                            carabinerX: carabiner.carabinerX,
+                            carabinerY: carabiner.carabinerY,
+                            carabinerWidth: carabiner.carabinerWidth,
+                            currentCarabinerType: carabiner.type,
+                            onBackgroundLoaded: onBackgroundLoaded,
+                            onAllKeyringsReady: {
+                                viewModel.handleAllKeyringsReady()
+                            }
+                        )
+                        .ignoresSafeArea()
+                        /// 씬 재생성 조건을 위한 ID 설정
+                        /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
+                        .id("\(background.id ?? "")_\(carabiner.id ?? "")_\(viewModel.keyringDataList.map(\.index).sorted())")
+                    } else {
+                        // 데이터 로딩 중
+                        Color.clear.ignoresSafeArea()
+                    }
 
-            // 로딩 알림 (씬 준비 전까지 표시)
-            if !viewModel.isSceneReady {
-                // 로딩 알림
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    // 네비게이션 버튼 (블러 적용됨)
+                    navigationButtons
+                }
+                .blur(radius: viewModel.isSceneReady ? 0 : 15)
+
+                // 로딩 알림 (씬 준비 전까지 표시)
+                if !viewModel.isSceneReady {
+                    LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -82,6 +99,12 @@ struct HomeView: View {
                 await WorkshopDataManager.shared.fetchWorkshopBanner()
             }
 
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                viewModel.hasNetworkError = true
+                return
+            }
+
             // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드 (우선순위)
             await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
         }
@@ -89,6 +112,7 @@ struct HomeView: View {
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
             viewModel.handleKeyringDataChange()
         }
+        .withToast(position: .tabbar)
     }
 }
 
