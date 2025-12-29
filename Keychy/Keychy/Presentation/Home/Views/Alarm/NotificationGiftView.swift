@@ -51,6 +51,7 @@ struct NotificationGiftView: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
         .swipeBackGesture(enabled: true)
         .onAppear {
             viewModel.fetchGiftData(postOfficeId: postOfficeId, viewModel: collectionViewModel)
