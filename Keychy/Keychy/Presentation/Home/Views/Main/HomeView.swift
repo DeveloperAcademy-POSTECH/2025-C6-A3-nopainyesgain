@@ -99,6 +99,17 @@ struct HomeView: View {
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
             viewModel.handleKeyringDataChange()
         }
+        .onChange(of: NetworkManager.shared.isConnected) { oldValue, newValue in
+              // 네트워크가 복구되고, 에러 상태였다면 자동 재시도
+              if !oldValue && newValue && viewModel.hasNetworkError {
+                  Task {
+                      await viewModel.retryLoadMainBundle(
+                          collectionViewModel: collectionViewModel,
+                          onBackgroundLoaded: onBackgroundLoaded
+                      )
+                  }
+              }
+          }
         .withToast(position: .tabbar)
     }
 }
