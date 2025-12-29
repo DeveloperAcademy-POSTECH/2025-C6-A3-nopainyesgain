@@ -20,6 +20,9 @@ class HomeViewModel {
     
     /// 데이터 로드 완료 여부
     var isDataLoaded = false
+    
+    /// 네트워크 에러 발생 여부
+    var hasNetworkError: Bool = false
 
     // MARK: - Private Properties
 
@@ -202,13 +205,28 @@ class HomeViewModel {
         // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
         Task {
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초
-            
+
             await MainActor.run {
                 withAnimation(.easeOut(duration: 0.3)) {
                     isSceneReady = true
                 }
             }
         }
+    }
+
+    /// 네트워크 에러 후 재시도
+    @MainActor
+    func retryLoadMainBundle(collectionViewModel: CollectionViewModel, onBackgroundLoaded: (() -> Void)?) async {
+        // 여전히 연결 안되어 있으면 리턴
+        guard NetworkManager.shared.isConnected else {
+            return
+        }
+
+        // 에러 상태 해제
+        hasNetworkError = false
+
+        // 다시 로드
+        await loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
     }
 
 }
