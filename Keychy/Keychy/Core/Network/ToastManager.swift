@@ -17,7 +17,7 @@ enum ToastPosition {
         switch self {
         case .default: return 50
         case .tabbar: return 20
-        case .button: return 20
+        case .button: return 70
         }
     }
 }
