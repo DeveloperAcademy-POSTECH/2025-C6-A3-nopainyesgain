@@ -30,6 +30,7 @@ struct MyPageView: View {
             customTitleToolbarItem
         }
         .tint(.black)
+        .withToast(position: .default)
     }
 }
 

@@ -19,7 +19,9 @@ struct AlarmView: View {
     
     var body: some View {
         Group {
-            if viewModel.isNotiEmpty {
+            if viewModel.hasNetworkError {
+                networkErrorView
+            } else if viewModel.isNotiEmpty {
                 emptyImageView
             } else {
                 notificationListView
@@ -34,6 +36,12 @@ struct AlarmView: View {
         }
         .swipeBackGesture(enabled: true)
         .onAppear {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                viewModel.hasNetworkError = true
+                return
+            }
+
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
@@ -48,11 +56,20 @@ struct AlarmView: View {
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
+        .withToast(position: .default)
     }
 }
 
 // MARK: - UI Components
 extension AlarmView {
+    /// 네트워크 에러 화면
+    private var networkErrorView: some View {
+        NoInternetView(onRetry: {
+            viewModel.retryFetchNotifications()
+        })
+        .ignoresSafeArea()
+    }
+
     /// 알림 리스트 뷰
     private var notificationListView: some View {
         List {
