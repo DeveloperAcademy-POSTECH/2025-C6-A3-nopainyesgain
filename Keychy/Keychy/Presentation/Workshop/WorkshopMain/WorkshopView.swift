@@ -27,43 +27,55 @@ struct WorkshopView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            // 메인 스크롤 콘텐츠
-            mainScrollContent
-            
-            // 스크롤 시 나타나는 상단 타이틀 바
-            topTitleBar
-            
-            // 스티키 헤더 (카테고리 탭 + 필터)
-            stickyHeaderSection
-            
-            // 상단 그라데이션 블러 오버레이
-            VStack {
-                LinearGradient(
-                    colors: [
-                        Color.white.opacity(0.8),
-                        Color.white.opacity(0.6),
-                        Color.white.opacity(0.3),
-                        Color.clear
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
+            if viewModel.hasNetworkError {
+                networkErrorView
+            } else {
+                ZStack(alignment: .top) {
+                    // 메인 스크롤 콘텐츠
+                    mainScrollContent
+
+                    // 스크롤 시 나타나는 상단 타이틀 바
+                    topTitleBar
+
+                    // 스티키 헤더 (카테고리 탭 + 필터)
+                    stickyHeaderSection
+
+                    // 상단 그라데이션 블러 오버레이
+                    VStack {
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.8),
+                                Color.white.opacity(0.6),
+                                Color.white.opacity(0.3),
+                                Color.clear
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 100)
+                        .ignoresSafeArea(edges: .top)
+                        Spacer()
+                    }
+                    .allowsHitTesting(false)
+                }
+                .background(
+                    Image(.back)
+                        .resizable()
+                        .scaledToFill()
                 )
-                .frame(height: 100)
-                .ignoresSafeArea(edges: .top)
-                Spacer()
             }
-            .allowsHitTesting(false)
         }
-        .background(
-            Image(.back)
-                .resizable()
-                .scaledToFill()
-        )
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
         }
         .task {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                viewModel.hasNetworkError = true
+                return
+            }
+
             // 최초 한 번만 초기화
             if !hasInitialized {
                 viewModel = WorkshopViewModel(userManager: userManager)
@@ -87,6 +99,7 @@ struct WorkshopView: View {
                 await viewModel.fetchDataForCategory(newValue)
             }
         }
+        .withToast(position: .tabbar)
     }
 
     // MARK: Main Content
@@ -142,6 +155,33 @@ extension WorkshopView {
         )
         .onChange(of: viewModel.sortOrder) { oldValue, newValue in
             viewModel.applySorting()
+        }
+    }
+}
+
+// MARK: - Network Error
+
+extension WorkshopView {
+    /// 네트워크 에러 화면
+    private var networkErrorView: some View {
+        ZStack(alignment: .top) {
+            NoInternetView(onRetry: {
+                Task {
+                    await viewModel.retryFetchAllData()
+                }
+            })
+            .ignoresSafeArea()
+
+            // 고정 타이틀 바 (항상 표시)
+            HStack {
+                titleView
+                Spacer()
+                myItemBtn
+            }
+            .padding(.top, 60)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 24)
+            .background(Color.white100)
         }
     }
 }
