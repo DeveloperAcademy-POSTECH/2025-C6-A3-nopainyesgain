@@ -11,37 +11,89 @@ import SwiftUI
 extension CollectionView {
     // MARK: - Search Mode View
     var searchModeView: some View {
-        VStack(spacing: 10) {
-            Spacer()
-                .frame(height: 60)
-            
-            HStack {
-                Spacer()
-                
-                Text("\(filteredKeyrings.count)개 발견됨")
-                    .typography(.suit14M)
-                    .foregroundColor(.gray500)
-                    .padding(.top, 22)
-                    .padding(.trailing, 22)
-            }
-            
-            HStack {
-                Text("키링")
-                    .typography(.suit16B)
-                    .foregroundColor(.gray500)
-                    .padding(.leading, 20)
-                
-                Spacer()
-            }
-            .opacity(!filteredKeyrings.isEmpty ? 1 : 0)
-            
-            searchCollectionSection
-                .padding(.horizontal, Spacing.padding)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if isSearchFieldFocused {
-                isSearchFieldFocused = false
+        Group {
+            if collectionViewModel.hasNetworkError {
+                // 네트워크 에러: 오버레이 형태
+                ZStack(alignment: .top) {
+                    Color.white
+                        .ignoresSafeArea()
+
+                    NoInternetView(onRetry: {
+                        Task {
+                            guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                                print("UID를 찾을 수 없습니다")
+                                return
+                            }
+                            await collectionViewModel.retryFetchData(userId: uid)
+                        }
+                    })
+                    .ignoresSafeArea()
+
+                    VStack(spacing: 10) {
+                        VStack(spacing: 10) {
+                            Spacer()
+                                .frame(height: 60)
+
+                            HStack {
+                                Spacer()
+
+                                Text("\(filteredKeyrings.count)개 발견됨")
+                                    .typography(.suit14M)
+                                    .foregroundColor(.gray500)
+                                    .padding(.top, 22)
+                                    .padding(.trailing, 22)
+                            }
+
+                            HStack {
+                                Text("키링")
+                                    .typography(.suit16B)
+                                    .foregroundColor(.gray500)
+                                    .padding(.leading, 20)
+
+                                Spacer()
+                            }
+                            .opacity(!filteredKeyrings.isEmpty ? 1 : 0)
+                        }
+                        .background(Color.white)
+
+                        Spacer()
+                    }
+                }
+            } else {
+                // 정상 상태: 기존 VStack 형태
+                VStack(spacing: 10) {
+                    Spacer()
+                        .frame(height: 60)
+
+                    HStack {
+                        Spacer()
+
+                        Text("\(filteredKeyrings.count)개 발견됨")
+                            .typography(.suit14M)
+                            .foregroundColor(.gray500)
+                            .padding(.top, 22)
+                            .padding(.trailing, 22)
+                    }
+
+                    HStack {
+                        Text("키링")
+                            .typography(.suit16B)
+                            .foregroundColor(.gray500)
+                            .padding(.leading, 20)
+
+                        Spacer()
+                    }
+                    .opacity(!filteredKeyrings.isEmpty ? 1 : 0)
+
+                    searchCollectionSection
+                        .padding(.horizontal, Spacing.padding)
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if isSearchFieldFocused {
+                        isSearchFieldFocused = false
+                    }
+                }
             }
         }
     }

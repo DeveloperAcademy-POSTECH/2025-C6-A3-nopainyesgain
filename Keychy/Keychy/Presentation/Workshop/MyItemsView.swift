@@ -13,7 +13,6 @@ struct MyItemsView: View {
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
-    @State private var headerHeight: CGFloat = 0
 
     private let categories = ["템플릿", "카라비너", "이펙트", "배경"]
     
@@ -26,53 +25,55 @@ struct MyItemsView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            VStack(spacing: -headerHeight) {
-                // 상단 고정 영역 (카테고리 바 + 필터바)
+            // 배경
+            Color.white
+                .ignoresSafeArea()
+
+            // 메인 콘텐츠 (전체 화면)
+            if viewModel.hasNetworkError {
+                NoInternetView(onRetry: {
+                    Task {
+                        await viewModel.retryFetchAllData()
+                    }
+                })
+                .ignoresSafeArea()
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        // 메인 콘텐츠 (그리드)
+                        mainContentSection
+                            .background(
+                                GeometryReader { geo in
+                                    let minY = geo.frame(in: .global).minY
+                                    Color.clear
+                                        .onAppear {
+                                            viewModel.mainContentOffset = minY
+                                        }
+                                        .onChange(of: minY) { oldValue, newValue in
+                                            viewModel.mainContentOffset = newValue
+                                        }
+                                }
+                            )
+                    }
+                }
+                .adaptiveTopPaddingAlt()
+                .padding(.top, 20)
+            }
+
+            // 헤더 오버레이 (항상 표시)
+            VStack(spacing: 0) {
                 VStack(spacing: 0) {
                     CategoryTabBar(
                         categories: categories,
                         selectedCategory: $viewModel.selectedCategory
                     )
 
-                    // 필터바
                     filterBar
+                        .padding(.bottom, 10)
                 }
-                .background(
-                    GeometryReader { geo in
-                        Color(UIColor.systemBackground)
-                            .onAppear {
-                                headerHeight = geo.size.height
-                            }
-                            .onChange(of: geo.size.height) { _, newHeight in
-                                headerHeight = newHeight
-                            }
-                    }
-                )
-                .zIndex(1)
+                .background(Color.white)
 
-                // 스크롤 영역 또는 NoInternetView
-                if viewModel.hasNetworkError {
-                    networkErrorView
-                } else {
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 0) {
-                            // 메인 콘텐츠 (그리드)
-                            mainContentSection
-                                .background(
-                                    GeometryReader { geo in
-                                        let minY = geo.frame(in: .global).minY
-                                        Color.clear
-                                            .onAppear {
-                                                viewModel.mainContentOffset = minY
-                                            }
-                                            .onChange(of: minY) { oldValue, newValue in
-                                                viewModel.mainContentOffset = newValue
-                                            }
-                                    }
-                                )
-                        }
-                    }
-                }
+                Spacer()
             }
             .adaptiveTopPaddingAlt()
             .padding(.top, 20)
@@ -332,15 +333,6 @@ struct MyItemsView: View {
         }
     }
 
-    /// 네트워크 에러 화면
-    private var networkErrorView: some View {
-        NoInternetView(onRetry: {
-            Task {
-                await viewModel.retryFetchAllData()
-            }
-        })
-        .ignoresSafeArea()
-    }
 }
 
 /// Safe Area Top 계산

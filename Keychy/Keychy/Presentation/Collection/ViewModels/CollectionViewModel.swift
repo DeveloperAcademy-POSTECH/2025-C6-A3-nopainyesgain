@@ -25,6 +25,7 @@ class CollectionViewModel {
     var coin: Int = 0
     var copyVoucher: Int = 0
     var selectedKeyrings: [Keyring] = []
+    var hasNetworkError: Bool = false
     
     // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
     var keyringDocumentIdByLocalId: [UUID: String] = [:]
@@ -74,6 +75,24 @@ class CollectionViewModel {
     func loadBackgroundsAndCarabiners() async {
         await dataManager.fetchBackgroundsIfNeeded()
         await dataManager.fetchCarabinersIfNeeded()
+    }
+
+    /// 네트워크 에러 후 재시도
+    func retryFetchData(userId: String) async {
+        guard NetworkManager.shared.isConnected else { return }
+        hasNetworkError = false
+
+        await withCheckedContinuation { continuation in
+            fetchUserCollectionData(uid: userId) { success in
+                if success {
+                    self.fetchUserKeyrings(uid: userId) { _ in
+                        continuation.resume()
+                    }
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
     }
 }
 
