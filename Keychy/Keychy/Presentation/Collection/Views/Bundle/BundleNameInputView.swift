@@ -199,6 +199,9 @@ extension BundleNameInputView {
         // 번들 이름을 미리 캡처 (async 작업 전)
         let bundleNameToSave = bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
 
+        // 키보드를 내린 후 로딩 알럿이 띄워지도록 함
+        isTextFieldFocused = false
+
         isUploading = true
 
         viewModel.createBundle(
