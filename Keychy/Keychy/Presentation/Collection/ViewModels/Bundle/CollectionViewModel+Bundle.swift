@@ -709,6 +709,21 @@ extension CollectionViewModel {
         }
     }
     
+    /// 뷰모델에 저장된 뭉치 이미지를 BundleImageCache에 저장
+    func saveBundleImageToCache(
+        bundleId: String,
+        bundleName: String
+    ) {
+        guard let imageData = bundleCapturedImage else {
+            return
+        }
+        BundleImageCache.shared.syncBundle(
+            id: bundleId,
+            name: bundleName,
+            imageData: imageData
+        )
+    }
+    
     // MARK: - 키링 선택 시트 키링 정렬
     
     /// 키링 선택 시트용 정렬된 키링 리스트

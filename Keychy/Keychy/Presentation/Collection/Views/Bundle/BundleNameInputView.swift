@@ -215,7 +215,7 @@ extension BundleNameInputView {
         ) { success, bundleId in
             if success, let bundleId = bundleId {
                 // Firebase 저장 성공 후 ViewModel의 이미지를 캐시에 저장
-                saveBundleImageToCache(
+                viewModel.saveBundleImageToCache(
                     bundleId: bundleId,
                     bundleName: bundleNameToSave
                 )
@@ -235,25 +235,5 @@ extension BundleNameInputView {
                 uploadError = "뭉치 저장에 실패했어요. 잠시 후 다시 시도해 주세요."
             }
         }
-    }
-}
-
-// MARK: - 번들 이미지 캐싱
-extension BundleNameInputView {
-    /// ViewModel에 저장된 번들 이미지를 BundleImageCache에 저장
-    private func saveBundleImageToCache(
-        bundleId: String,
-        bundleName: String
-    ) {
-        guard let imageData = viewModel.bundleCapturedImage else {
-            return
-        }
-
-        // BundleImageCache에 저장
-        BundleImageCache.shared.syncBundle(
-            id: bundleId,
-            name: bundleName,
-            imageData: imageData
-        )
     }
 }
