@@ -39,6 +39,88 @@ extension CollectionViewModel {
         set { _carabinerViewData = newValue }
     }
     
+    // MARK: - 이전 화면에서 전달된 구성 id 저장소
+    // BundleEditView/BundleNameEditView에서 pop 직전 세팅
+    var returnBackgroundId: String? {
+        get { _returnBackgroundId }
+        set { _returnBackgroundId = newValue }
+    }
+    var returnCarabinerId: String? {
+        get { _returnCarabinerId }
+        set { _returnCarabinerId = newValue }
+    }
+    var returnKeyringsId: String? {
+        get { _returnKeyringsId }
+        set { _returnKeyringsId = newValue }
+    }
+    
+    // MARK: - Detail에서 마지막으로 로드한 구성 id (Detail <-> ViewModel 공유)
+    // BundleDetailView가 로드 완료 시점에 저장하고, 다음 진입 시 동일 구성 여부 판단에 사용
+    var lastBackgroundIdForDetail: String {
+        get { _lastBackgroundIdForDetail ?? "" }
+        set { _lastBackgroundIdForDetail = newValue }
+    }
+    var lastCarabinerIdForDetail: String {
+        get { _lastCarabinerIdForDetail ?? "" }
+        set { _lastCarabinerIdForDetail = newValue }
+    }
+    var lastKeyringsIdForDetail: String {
+        get { _lastKeyringsIdForDetail ?? "" }
+        set { _lastKeyringsIdForDetail = newValue }
+    }
+    
+    // MARK: - 구성 id 생성 헬퍼 (BundleDetailView의 로직과 동일한 규칙)
+    func makeBackgroundId(_ bg: Background?) -> String {
+        guard let bg else { return "" }
+        return bg.id ?? ""
+    }
+    
+    func makeCarabinerId(_ cb: Carabiner?) -> String {
+        guard let cb else { return "" }
+        return "\(cb.id ?? "")|\(cb.carabinerX)|\(cb.carabinerY)|\(cb.carabinerWidth)"
+    }
+    
+    func makeKeyringsId(_ list: [MultiKeyringScene.KeyringData]) -> String {
+        list
+            .sorted(by: { $0.index < $1.index })
+            .map { item in
+                "\(item.index)|\(item.bodyImageURL)|\((item.templateId ?? ""))|\(item.soundId)|\(item.particleId)|\((item.hookOffsetY ?? 0))|\(item.chainLength)"
+            }
+            .joined(separator: ";")
+    }
+    
+    // MARK: - 씬 리로드 스킵 판단/최신 구성 저장 로직
+    /// 이전 화면에서 전달된 구성 id(return~)가 있고, Detail이 마지막으로 로드한 구성(last~)과 모두 동일하면 true
+    /// - true: 동일 구성 -> Detail은 씬 재구성/false 스킵 (View에서 필요 시 isSceneReady를 즉시 true로 복구)
+    /// - false: 동일하지 않음 -> 정상 로드 진행
+    /// 호출 후 return~Id는 비워짐
+    func shouldSkipReloadForReturnedConfig() -> Bool {
+        guard let rBG = returnBackgroundId,
+              let rCB = returnCarabinerId,
+              let rKR = returnKeyringsId else {
+            return false
+        }
+        let same = (rBG == lastBackgroundIdForDetail) &&
+                   (rCB == lastCarabinerIdForDetail) &&
+                   (rKR == lastKeyringsIdForDetail)
+        // 한 번 사용 후 비움
+        returnBackgroundId = nil
+        returnCarabinerId = nil
+        returnKeyringsId = nil
+        return same
+    }
+    
+    /// Detail이 로드를 마친 후 현재 구성 id를 last~ForDetail로 저장
+    func updateLastConfigIds(
+        background: Background?,
+        carabiner: Carabiner?,
+        keyringDataList: [MultiKeyringScene.KeyringData]
+    ) {
+        lastBackgroundIdForDetail = makeBackgroundId(background)
+        lastCarabinerIdForDetail = makeCarabinerId(carabiner)
+        lastKeyringsIdForDetail = makeKeyringsId(keyringDataList)
+    }
+    
     //MARK: - 새 뭉치 생성 및 파베에 업로드
     func createBundle(
         userId: String,

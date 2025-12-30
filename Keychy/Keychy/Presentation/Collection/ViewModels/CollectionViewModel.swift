@@ -36,6 +36,12 @@ class CollectionViewModel {
     var bundlePreviewScene: MultiKeyringScene?
     var bundleCapturedImage: Data? // 캡처된 번들 이미지 (PNG 데이터)
     var selectedBundle: KeyringBundle?
+    var _returnBackgroundId: String?
+    var _returnCarabinerId: String?
+    var _returnKeyringsId: String?
+    var _lastBackgroundIdForDetail: String?
+    var _lastCarabinerIdForDetail: String?
+    var _lastKeyringsIdForDetail: String?
 
     // MARK: - Shared Data
     let dataManager = WorkshopDataManager.shared
