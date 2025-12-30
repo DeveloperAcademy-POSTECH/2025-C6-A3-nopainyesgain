@@ -105,6 +105,7 @@ struct CollectionKeyringDetailView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
+        .withToast(position: .default)
         .sheet(isPresented: $isSheetPresented) {
             infoSheet
                 .presentationDetents([.fraction(0.48), .fraction(0.93)], selection: $sheetDetent)

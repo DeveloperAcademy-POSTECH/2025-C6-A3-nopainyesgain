@@ -79,6 +79,7 @@ struct TemplatePreviewBody: View {
         .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
         .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
         .toolbar(.hidden, for: .tabBar)
+        .withToast(position: .button)
         .task {
             await fetchTemplate()
         }
@@ -209,6 +210,12 @@ extension TemplatePreviewBody {
                     isOwned: isOwned,
                     onMake: checkInventoryAndMake,
                     onPurchase: onPurchase ?? {
+                        // 네트워크 체크
+                        guard NetworkManager.shared.isConnected else {
+                            ToastManager.shared.show()
+                            return
+                        }
+
                         showPurchaseSheet = true
                         withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
                             purchasePopupScale = 1.0
@@ -275,8 +282,14 @@ extension TemplatePreviewBody {
     
     /// 보관함 용량 체크 후 만들기 실행
     private func checkInventoryAndMake() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+
         guard let userId = userManager.currentUser?.id else { return }
-        
+
         // CollectionViewModel의 용량 체크 메서드 사용
         let collectionVM = CollectionViewModel()
         collectionVM.checkInventoryCapacity(userId: userId) { hasSpace in

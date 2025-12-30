@@ -40,6 +40,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .withToast(position: .default)
         .scrollDismissesKeyboard(.never)
         .onAppear {
             if let bundle = viewModel.selectedBundle {
@@ -155,8 +156,14 @@ extension BundleNameEditView {
     }
     
     private func handleCheckButtonTap() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+
         guard let bundle = viewModel.selectedBundle else { return }
-        
+
         isUpdating = true
         viewModel.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
             DispatchQueue.main.async {

@@ -200,6 +200,12 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
 
     /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
     private func handleTap() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+
         guard let router = router else { return }
 
         // 키링일 경우 바로 해당 키링 Preview로 이동

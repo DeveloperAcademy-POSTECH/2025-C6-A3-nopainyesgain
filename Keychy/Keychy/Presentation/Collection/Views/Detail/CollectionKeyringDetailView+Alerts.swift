@@ -60,6 +60,13 @@ extension CollectionKeyringDetailView {
     }
     
     func handleDeleteConfirm() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            showDeleteAlert = false
+            ToastManager.shared.show()
+            return
+        }
+
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showDeleteAlert = false
         }
@@ -156,6 +163,13 @@ extension CollectionKeyringDetailView {
     }
     
     func handleCopyConfirm() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            showCopyAlert = false
+            ToastManager.shared.show()
+            return
+        }
+
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             showCopyAlert = false
         }
@@ -253,10 +267,17 @@ extension CollectionKeyringDetailView {
     }
     
     func handlePackageConfirm() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            showPackageAlert = false
+            ToastManager.shared.show()
+            return
+        }
+
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showPackageAlert = false
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                 print("UID를 찾을 수 없습니다")

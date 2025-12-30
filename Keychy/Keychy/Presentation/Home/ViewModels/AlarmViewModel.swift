@@ -31,6 +31,9 @@ class AlarmViewModel {
     /// 알림 권한 상태
     var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
+    /// 네트워크 에러 발생 여부
+    var hasNetworkError: Bool = false
+
     // MARK: - Private Properties
     private let db = Firestore.firestore()
     private var userManager = UserManager.shared
@@ -180,6 +183,13 @@ class AlarmViewModel {
         }
     }
     
+    /// 네트워크 에러 후 재시도
+    func retryFetchNotifications() {
+        guard NetworkManager.shared.isConnected else { return }
+        hasNetworkError = false
+        fetchNotifications()
+    }
+
     // MARK: - 알림 키링 이미지 프리페치
     func prefetchNotificationImages() {
         Task(priority: .utility) {

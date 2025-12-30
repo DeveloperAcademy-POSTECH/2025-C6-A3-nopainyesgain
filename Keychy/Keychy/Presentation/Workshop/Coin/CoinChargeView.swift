@@ -12,18 +12,21 @@ struct CoinChargeView<Route: Hashable>: View {
     @Bindable var router: NavigationRouter<Route>
     @State private var manager = PurchaseManager.shared
     @State private var userManager = UserManager.shared
-    
+
     // 구매 시트 프로필
     @State var showPurchaseSheet = false
     @State var purchaseSheetHeight: CGFloat = 400
     @State var selectedItem: OtherItem?
-    
+
     // 성공/실패 Alert
     @State var showPurchaseSuccessAlert = false
     @State var showPurchaseFailAlert = false
 
     // 코인 구매 진행 중 상태
     @State var isCoinPurchasing = false
+
+    // 네트워크 에러 상태
+    @State private var hasNetworkError = false
 
     // Alert 표시 시 blur 적용 여부
     private var shouldApplyBlur: Bool {
@@ -32,31 +35,35 @@ struct CoinChargeView<Route: Hashable>: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: 37) {
-                // 내 아이템들 현황판
-                CurrentItemsCard()
+            if hasNetworkError {
+                networkErrorView
+            } else {
+                VStack(spacing: 37) {
+                    // 내 아이템들 현황판
+                    CurrentItemsCard()
 
-                // 코인 구매 섹션
-                coinSection
+                    // 코인 구매 섹션
+                    coinSection
 
-                // 기타 아이템 섹션
-                otherItemsSection
+                    // 기타 아이템 섹션
+                    otherItemsSection
 
-                Spacer()
+                    Spacer()
+                }
+                .blur(radius: shouldApplyBlur ? 15 : 0)
+                .animation(.easeInOut(duration: 0.2), value: shouldApplyBlur)
+                .padding(.horizontal, 20)
+                .padding(.top, 25)
+                .padding(.bottom, 30)
+                .adaptiveTopPaddingAlt()
+                .navigationBarBackButtonHidden()
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(.hidden, for: .tabBar)
+                .sheet(isPresented: $showPurchaseSheet) {
+                    purchaseSheet
+                }
+                .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
             }
-            .blur(radius: shouldApplyBlur ? 15 : 0)
-            .animation(.easeInOut(duration: 0.2), value: shouldApplyBlur)
-            .padding(.horizontal, 20)
-            .padding(.top, 25)
-            .padding(.bottom, 30)
-            .adaptiveTopPaddingAlt()
-            .navigationBarBackButtonHidden()
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar(.hidden, for: .tabBar)
-            .sheet(isPresented: $showPurchaseSheet) {
-                purchaseSheet
-            }
-            .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
 
             customNavigationBar
 
@@ -90,6 +97,14 @@ struct CoinChargeView<Route: Hashable>: View {
             }
         }
         .ignoresSafeArea()
+        .task {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                hasNetworkError = true
+                return
+            }
+        }
+        .withToast(position: .default)
     }
 }
 
@@ -306,13 +321,20 @@ extension CoinChargeView {
     
     private var purchaseButton: some View {
         Button {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                showPurchaseSheet = false
+                ToastManager.shared.show()
+                return
+            }
+
             Task {
                 await handlePurchase()
             }
         } label: {
             HStack(spacing: 5) {
                 Image(.purchaseSheet)
-                
+
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)
             }
@@ -391,6 +413,25 @@ extension CoinChargeView {
             Spacer()
                 .frame(width: 44, height: 44)
         }
+    }
+}
+
+// MARK: - Network Error
+extension CoinChargeView {
+    /// 네트워크 에러 화면
+    private var networkErrorView: some View {
+        NoInternetView(onRetry: {
+            Task {
+                await retryFetch()
+            }
+        })
+        .ignoresSafeArea()
+    }
+
+    /// 네트워크 에러 후 재시도
+    private func retryFetch() async {
+        guard NetworkManager.shared.isConnected else { return }
+        hasNetworkError = false
     }
 }
 

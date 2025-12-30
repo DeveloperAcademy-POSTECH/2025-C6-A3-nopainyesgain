@@ -11,23 +11,59 @@ import SwiftUI
 extension CollectionView {
     // MARK: - Normal Mode View
     var normalModeView: some View {
-        VStack {
-            headerSection
-                .padding(.horizontal, Spacing.margin)
-                .padding(.top, 2)
-            
-            tagSection
-                .padding(.horizontal, Spacing.xs)
-            
-            normalCollectionSection
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if showSearchBar && !isSearching {
-                isSearchFieldFocused = false
-                
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showSearchBar = false
+        Group {
+            if collectionViewModel.hasNetworkError {
+                // 네트워크 에러: 오버레이 형태
+                ZStack(alignment: .top) {
+                    Color.white
+                        .ignoresSafeArea()
+
+                    NoInternetView(onRetry: {
+                        Task {
+                            guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
+                                print("UID를 찾을 수 없습니다")
+                                return
+                            }
+                            await collectionViewModel.retryFetchData(userId: uid)
+                        }
+                    })
+                    .ignoresSafeArea()
+
+                    VStack {
+                        VStack {
+                            headerSection
+                                .padding(.horizontal, Spacing.margin)
+                                .padding(.top, 2)
+
+                            tagSection
+                                .padding(.horizontal, Spacing.xs)
+                        }
+                        .background(Color.white)
+
+                        Spacer()
+                    }
+                }
+            } else {
+                // 정상 상태: 기존 VStack 형태
+                VStack {
+                    headerSection
+                        .padding(.horizontal, Spacing.margin)
+                        .padding(.top, 2)
+
+                    tagSection
+                        .padding(.horizontal, Spacing.xs)
+
+                    normalCollectionSection
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if showSearchBar && !isSearching {
+                        isSearchFieldFocused = false
+
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showSearchBar = false
+                        }
+                    }
                 }
             }
         }
@@ -109,12 +145,12 @@ extension CollectionView {
         .padding(.top, Spacing.xs)
         .padding(.horizontal, 2)
     }
-    
+
     private var normalCollectionSection: some View {
         VStack(spacing: 0) {
             collectionHeader
                 .padding(.horizontal, Spacing.padding)
-            
+
             if filteredKeyrings.isEmpty {
                 emptyView
             } else {
@@ -122,7 +158,7 @@ extension CollectionView {
             }
         }
     }
-    
+
     var collectionHeader: some View {
         HStack(spacing: 0) {
             sortButton

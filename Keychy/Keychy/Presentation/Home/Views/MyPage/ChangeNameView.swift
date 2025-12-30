@@ -43,6 +43,7 @@ struct ChangeNameView: View {
                 .ignoresSafeArea()
         }
         .swipeBackGesture(enabled: true)
+        .withToast(position: .button)
     }
 }
 
@@ -190,6 +191,12 @@ extension ChangeNameView {
 
     /// 닉네임 업데이트 처리
     private func handleUpdateNickname() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+
         guard let currentUser = userManager.currentUser else { return }
 
         viewModel.updateNickname(

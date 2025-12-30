@@ -99,6 +99,7 @@ class WorkshopViewModel {
     var isLoading: Bool = false
     var errorMessage: String? = nil
     var isWorkshopBannerLoading: Bool = true
+    var hasNetworkError: Bool = false
 
     // WorkshopDataManager의 값을 직접 참조 (중복 저장 방지)
     var workshopBannerURL: URL? {
@@ -242,6 +243,13 @@ class WorkshopViewModel {
 
         // 정렬 적용
         applySorting()
+    }
+
+    /// 네트워크 에러 후 재시도
+    func retryFetchAllData() async {
+        guard NetworkManager.shared.isConnected else { return }
+        hasNetworkError = false
+        await fetchAllData()
     }
 
     /// 배경과 카라비너에서 사용 가능한 태그를 추출

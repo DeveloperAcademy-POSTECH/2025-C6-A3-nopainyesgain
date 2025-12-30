@@ -92,7 +92,7 @@ struct FestivalView: View {
             locationManager.stopTracking()
         }
     }
-    
+
     // MARK: - Helpers
     // 임시로 설정해두었습니다
     private var currentLocationAddress: String {

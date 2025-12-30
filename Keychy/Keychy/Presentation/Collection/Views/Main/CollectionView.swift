@@ -100,10 +100,17 @@ struct CollectionView: View {
         .sheet(isPresented: $showSortSheet) {
             sortSheet
         }
+        .task {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                collectionViewModel.hasNetworkError = true
+                return
+            }
+        }
         .onAppear {
             fetchUserData()
             setupKeyboardNotifications()
-            
+
             // 백그라운드에서 캐시 없는 키링들 사전 캡처
             Task(priority: .utility) {
                 try? await Task.sleep(for: .seconds(1))
@@ -136,8 +143,9 @@ struct CollectionView: View {
         .sheet(isPresented: $showCachedImagesDebug) {
             CachedImagesDebugView()
         }
+        .withToast(position: .tabbar)
     }
-    
+
     private var mainContent: some View {
         VStack {
             if isSearching {
@@ -186,6 +194,12 @@ struct CollectionView: View {
     // 키링 Cell
     func collectionCell(keyring: Keyring) -> some View {
         Button(action: {
+            // 네트워크 체크
+            guard NetworkManager.shared.isConnected else {
+                ToastManager.shared.show()
+                return
+            }
+
             // 검색 중일 때 키보드가 올라와 있으면 먼저 내리기
             if isSearching && isSearchFieldFocused {
                 isSearchFieldFocused = false
@@ -196,7 +210,7 @@ struct CollectionView: View {
             } else {
                 isSearchFieldFocused = false
                 showSearchBar = false
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     navigateToKeyringDetail(keyring: keyring)
                 }

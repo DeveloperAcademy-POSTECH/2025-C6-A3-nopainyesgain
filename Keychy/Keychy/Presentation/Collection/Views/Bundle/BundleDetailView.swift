@@ -154,6 +154,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
+        .withToast(position: .default)
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             if frame != .zero {
                 menuPosition = frame
@@ -284,6 +285,13 @@ extension BundleDetailView {
     /// 뭉치 삭제
     @MainActor
     private func deleteBundle() async {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            showDeleteAlert = false
+            ToastManager.shared.show()
+            return
+        }
+
         guard let bundle = viewModel.selectedBundle,
               let documentId = bundle.documentId else {
             showDeleteAlert = false
@@ -373,16 +381,37 @@ extension BundleDetailView {
                 BundleMenu(
                     position: menuPosition,
                     onNameEdit: {
+                        // 네트워크 체크
+                        guard NetworkManager.shared.isConnected else {
+                            showMenu = false
+                            ToastManager.shared.show()
+                            return
+                        }
+
                         showMenu = false
                         isNavigatingDeeper = true
                         router.push(.bundleNameEditView)
                     },
                     onEdit: {
+                        // 네트워크 체크
+                        guard NetworkManager.shared.isConnected else {
+                            showMenu = false
+                            ToastManager.shared.show()
+                            return
+                        }
+
                         showMenu = false
                         isNavigatingDeeper = true
                         router.push(.bundleEditView)
                     },
                     onDelete: {
+                        // 네트워크 체크
+                        guard NetworkManager.shared.isConnected else {
+                            showMenu = false
+                            ToastManager.shared.show()
+                            return
+                        }
+
                         showMenu = false
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showDeleteAlert = true
@@ -453,6 +482,12 @@ extension BundleDetailView {
                 } else {
                     // 메인으로 설정되지 않은 경우 버튼으로 표시
                     Button(action: {
+                        // 네트워크 체크
+                        guard NetworkManager.shared.isConnected else {
+                            ToastManager.shared.show()
+                            return
+                        }
+
                         showChangeMainBundleAlert = true
                     }) {
                         Image(.star)
@@ -495,6 +530,13 @@ extension BundleDetailView {
                 .tint(.black10)
                 
                 Button {
+                    // 네트워크 체크
+                    guard NetworkManager.shared.isConnected else {
+                        showChangeMainBundleAlert = false
+                        ToastManager.shared.show()
+                        return
+                    }
+
                     viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
                     showChangeMainBundleAlert = false
                     isMainBundleChange = true
