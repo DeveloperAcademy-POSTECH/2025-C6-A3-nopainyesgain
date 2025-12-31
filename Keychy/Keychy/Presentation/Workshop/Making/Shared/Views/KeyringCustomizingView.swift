@@ -159,6 +159,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
         .navigationBarBackButtonHidden(true)
         .swipeBackGesture(enabled: false)
         .interactiveDismissDisabled(true)
+        .withToast(position: .default)
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {
