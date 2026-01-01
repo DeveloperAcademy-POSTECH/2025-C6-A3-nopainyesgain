@@ -321,6 +321,28 @@ extension WorkshopPreview {
 
     /// 구매 처리
     private func handlePurchase() async {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            await MainActor.run {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    purchasePopupScale = 0.3
+                }
+            }
+
+            try? await Task.sleep(for: .seconds(0.2))
+
+            await MainActor.run {
+                showPurchaseSheet = false
+            }
+
+            try? await Task.sleep(for: .seconds(0.1))
+
+            await MainActor.run {
+                ToastManager.shared.show()
+            }
+            return
+        }
+
         // 팝업 닫기 애니메이션
         await MainActor.run {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {

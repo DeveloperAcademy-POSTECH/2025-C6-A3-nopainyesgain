@@ -55,6 +55,12 @@ extension KeyringInfoInputView {
         } trailing: {
             // Trailing (오른쪽)
             Button {
+                // 네트워크 체크
+                guard NetworkManager.shared.isConnected else {
+                    ToastManager.shared.show()
+                    return
+                }
+
                 // 1. 키보드 닫기 & 시트 내리기
                 dismissKeyboard()
                 showSheet = false
