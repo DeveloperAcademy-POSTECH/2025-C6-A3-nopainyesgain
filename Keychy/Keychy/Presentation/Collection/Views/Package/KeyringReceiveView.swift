@@ -323,6 +323,7 @@ struct KeyringReceiveView: View {
             ringType: ringType,
             chainType: chainType,
             bodyImage: keyring.bodyImage,
+            templateId: keyring.selectedTemplate,
             targetSize: CGSize(width: 304, height: 490),
             customBackgroundColor: .clear,
             zoomScale: 1.9,
