@@ -63,7 +63,7 @@ struct SelectCarabinerGridItem: View {
                             .padding(.vertical, 4)
                             .background(Color.black.opacity(0.6))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .opacity(carabiner.isOwned ? 1 : 0)
+                            .opacity((carabiner.isOwned && !carabiner.carabiner.isFree) ? 1 : 0)
                     }
                     Spacer()
                 }
