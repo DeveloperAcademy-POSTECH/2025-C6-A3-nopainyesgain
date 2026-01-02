@@ -13,6 +13,14 @@ import SwiftUI
 extension KeyringCustomizingView {
     /// 구매 처리
     func handlePurchase() async {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            await MainActor.run {
+                ToastManager.shared.show()
+            }
+            return
+        }
+
         // 1. 현재 유저 정보 확인
         guard let userId = UserManager.shared.currentUser?.id,
               let userCoins = UserManager.shared.currentUser?.coin else {

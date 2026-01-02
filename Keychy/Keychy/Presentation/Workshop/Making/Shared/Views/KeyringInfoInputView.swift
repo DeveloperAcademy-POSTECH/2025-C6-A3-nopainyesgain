@@ -104,6 +104,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
             }
             .blur(radius: isSavingToFirebase ? 15 : 0)
             .dismissKeyboardOnTap()
+            .withToast(position: .default)
 
             // Alert overlay
             if showAddTagAlert {
