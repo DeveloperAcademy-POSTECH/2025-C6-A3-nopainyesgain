@@ -94,15 +94,17 @@ extension CollectionViewModel {
     /// - true: 동일 구성 -> Detail은 씬 재구성/false 스킵 (View에서 필요 시 isSceneReady를 즉시 true로 복구)
     /// - false: 동일하지 않음 -> 정상 로드 진행
     /// 호출 후 return~Id는 비워짐
+    /// return ... Id : 이전 뭉치 상세 화면에서 전달 받은 구성(배경, 카라비너, 키링)들의 id
     func shouldSkipReloadForReturnedConfig() -> Bool {
-        guard let rBG = returnBackgroundId,
-              let rCB = returnCarabinerId,
-              let rKR = returnKeyringsId else {
+        guard let returnBGId = returnBackgroundId,
+              let returnCBId = returnCarabinerId,
+              let returnKRId = returnKeyringsId else {
             return false
         }
-        let same = (rBG == lastBackgroundIdForDetail) &&
-                   (rCB == lastCarabinerIdForDetail) &&
-                   (rKR == lastKeyringsIdForDetail)
+        // same: 배경, 카라비너, 키링의 id가 변경 된 것이 없으면 true, 변경된 것이 있으면 false를 반환
+        let same = (returnBGId == lastBackgroundIdForDetail) &&
+                   (returnCBId == lastCarabinerIdForDetail) &&
+                   (returnKRId == lastKeyringsIdForDetail)
         // 한 번 사용 후 비움
         returnBackgroundId = nil
         returnCarabinerId = nil
