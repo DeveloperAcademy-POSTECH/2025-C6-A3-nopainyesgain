@@ -165,6 +165,31 @@ extension BundleNameEditView {
         guard let bundle = viewModel.selectedBundle else { return }
 
         isUpdating = true
+        
+        // pop 전에 현재 구성 id를 ViewModel에 저장
+        // 현재 번들의 배경/카라비너 resolve
+        let bg = viewModel.resolveBackground(from: bundle.selectedBackground)
+        let cb = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        
+        // BundleDetailView와 동일 규칙으로 id 생성
+        let bgId = viewModel.makeBackgroundId(bg)
+        let cbId = viewModel.makeCarabinerId(cb)
+        
+        // keyringsId는 현재 번들의 구성 기반으로 재구성
+        Task {
+            var krList: [MultiKeyringScene.KeyringData] = []
+            if let carabiner = cb {
+                krList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+            }
+            let krId = viewModel.makeKeyringsId(krList)
+            
+            await MainActor.run {
+                viewModel.returnBackgroundId = bgId
+                viewModel.returnCarabinerId = cbId
+                viewModel.returnKeyringsId = krId
+            }
+        }
+        
         viewModel.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
             DispatchQueue.main.async {
                 self.isUpdating = false
