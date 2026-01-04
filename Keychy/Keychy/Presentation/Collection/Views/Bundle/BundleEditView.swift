@@ -817,8 +817,19 @@ extension BundleEditView {
 
                     Task {
                         await MainActor.run {
-                            // 화면 전환 시작을 표시
-                            // isSceneReady는 건드리지 않음 (현재 상태 유지)
+                            // pop 전에 현재 구성 id를 ViewModel에 저장
+                            let bgId = viewModel.makeBackgroundId(newSelectedBackground?.background ?? viewModel.resolveBackground(from: viewModel.selectedBundle?.selectedBackground ?? ""))
+                            let cbId = viewModel.makeCarabinerId(newSelectedCarabiner?.carabiner ?? viewModel.resolveCarabiner(from: viewModel.selectedBundle?.selectedCarabiner ?? ""))
+                            
+                            // 편집 중 키링 데이터 기준으로 keyringsId 생성
+                            let currentKeyringDataList = keyringDataList
+                            let krId = viewModel.makeKeyringsId(currentKeyringDataList)
+                            
+                            viewModel.returnBackgroundId = bgId
+                            viewModel.returnCarabinerId = cbId
+                            viewModel.returnKeyringsId = krId
+                            
+                            // 화면 전환 시작 플래그
                             isNavigatingAway = true
                         }
 
