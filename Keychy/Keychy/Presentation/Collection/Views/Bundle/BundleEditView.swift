@@ -54,6 +54,9 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var sceneRefreshId = UUID()
     @State private var isNavigatingAway = false // 화면 전환 중인지 추적
     
+    // 캡쳐 상태
+    @State private var isCapturing: Bool = false
+    
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -80,7 +83,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
                 .position(x: screenWidth / 2, y: screenHeight / 2)
-            
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -207,6 +209,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                     .ignoresSafeArea()
                     .zIndex(100)
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            if isCapturing {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 수정하고 있어요")
                     .zIndex(101)
             }
         }
@@ -763,6 +772,10 @@ struct BundleEditView<Route: BundleRoute>: View {
                 // 캐시 삭제, BundleInventoryView로 접근했을 때 썸네일 업데이트 하도록 함
                 BundleImageCache.shared.delete(for: documentId)
             }
+            
+            // 저장 성공 후 썸네일 재캡쳐 + 캐시 저장
+            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
+            
         } catch {
             print("❌ Firebase 업데이트 실패: \(error.localizedDescription)")
             if let firestoreError = error as NSError? {
@@ -804,6 +817,69 @@ struct BundleEditView<Route: BundleRoute>: View {
                 newSelectedCarabiner = restoredCarabiner
                 // 복원 후 삭제
                 UserDefaults.standard.removeObject(forKey: "tempSelectedCarabinerId")
+            }
+        }
+    }
+    
+    // MARK: - 썸네일 재캡쳐 & 캐시 저장
+    private func recaptureAndCacheBundleThumbnail(bundleId: String, bundleName: String) async {
+        // 편집 중 상태로 캡쳐
+        guard let bg = newSelectedBackground?.background,
+              let cb = newSelectedCarabiner?.carabiner else {
+            return
+        }
+        
+        await MainActor.run {
+            isCapturing = true
+        }
+        
+        // 캡쳐용 키링 데이터 생성 (편집 중 keyringDataList -> 캡쳐용으로 변환)
+        let captureKeyrings: [MultiKeyringCaptureScene.KeyringData] = keyringDataList.map { item in
+            MultiKeyringCaptureScene.KeyringData(
+                index: item.index,
+                position: item.position,
+                bodyImageURL: item.bodyImageURL,
+                hookOffsetY: item.hookOffsetY,
+                chainLength: item.chainLength
+            )
+        }
+        
+        // 카라비너 타입 및 이미지 URL
+        let carabinerType = cb.type
+        let carabinerBackURL: String?
+        let carabinerFrontURL: String?
+        if carabinerType == .hamburger {
+            carabinerBackURL = cb.carabinerImage[1]
+            carabinerFrontURL = cb.carabinerImage[2]
+        } else {
+            carabinerBackURL = cb.carabinerImage[0]
+            carabinerFrontURL = nil
+        }
+        
+        // 캡쳐
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+            keyringDataList: captureKeyrings,
+            backgroundImageURL: bg.backgroundImage,
+            carabinerBackImageURL: carabinerBackURL,
+            carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,
+            carabinerX: cb.carabinerX,
+            carabinerY: cb.carabinerY,
+            carabinerWidth: cb.carabinerWidth
+        ) {
+            // 캐시 저장
+            BundleImageCache.shared.syncBundle(
+                id: bundleId,
+                name: bundleName,
+                imageData: pngData
+            )
+            await MainActor.run {
+                viewModel.bundleCapturedImage = pngData
+                isCapturing = false
+            }
+        } else {
+            await MainActor.run {
+                isCapturing = false
             }
         }
     }
