@@ -9,31 +9,27 @@
 
 import SwiftUI
 
-// MARK: - Scroll Offset PreferenceKey
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-
 struct PullToRefreshModifier: ViewModifier {
     let onRefresh: () async -> Void
 
     @State private var initialOffset: CGFloat = 0
     @State private var currentOffset: CGFloat = 0
-    @State private var maxDistanceDuringDrag: CGFloat = 0
     @State private var isDragging: Bool = false
     @State private var isRefreshing: Bool = false
     @State private var hasSetInitialOffset: Bool = false
     @State private var hasReachedThreshold: Bool = false
-    private let threshold: CGFloat = 80
+    @State private var shouldHoldIndicator: Bool = false
+    @State private var holdHeight: CGFloat = 0
+    @State private var lastHapticDistance: CGFloat = 0
 
+    private let holdTarget: CGFloat = 80
+    private let threshold: CGFloat = 100
+    private let hapticInterval: CGFloat = 4
+    
     private var pullDistance: CGFloat {
-        max(currentOffset - initialOffset, 0)  // Only positive distances
+        max(currentOffset - initialOffset, 0)
     }
-
+    
     func body(content: Content) -> some View {
         ScrollView(showsIndicators: false) {
             ZStack(alignment: .top) {
@@ -53,15 +49,25 @@ struct PullToRefreshModifier: ViewModifier {
                                 let distance = max(currentOffset - initialOffset, 0)
                                 let isPullingDown = new > old
 
-                                // 드래그 중일 때만 maxDistance 업데이트
-                                if isDragging {
-                                    maxDistanceDuringDrag = max(maxDistanceDuringDrag, distance)
+                                // 연속 햅틱 (4px 간격)
+                                if isPullingDown && distance > 0 && !isRefreshing {
+                                    if distance > lastHapticDistance + hapticInterval {
+                                        
+                                        // 거의 끝까지 .soft로 가볍게, 마지막에만 .light
+                                        let style: UIImpactFeedbackGenerator.FeedbackStyle
+                                        if distance < 95 {
+                                            style = .soft
+                                        } else {
+                                            style = .light
+                                        }
+
+                                        Haptic.impact(style: style)
+                                        lastHapticDistance = distance
+                                    }
                                 }
 
-                                // Threshold를 처음 넘는 순간 햅틱 (pull down 중일 때만)
-                                if distance > threshold && !hasReachedThreshold && !isRefreshing && isPullingDown {
+                                if distance > threshold && !hasReachedThreshold {
                                     hasReachedThreshold = true
-                                    Haptic.impact(style: .light)
                                 } else if distance <= threshold {
                                     hasReachedThreshold = false
                                 }
@@ -70,15 +76,20 @@ struct PullToRefreshModifier: ViewModifier {
                     }
                     .frame(height: 1)
 
+                    Spacer()
+                        .frame(height: holdHeight)
+                    
                     content
                 }
-
+                
                 // Indicator를 content와 같은 ZStack에 배치
                 PullToRefreshIndicator(
                     opacity: calculateOpacity(),
                     isRefreshing: isRefreshing
                 )
-                .padding(.top, 20)
+                .offset(y: holdHeight)
+                .allowsHitTesting(false)
+                .padding(.top, 40)
             }
         }
         .simultaneousGesture(
@@ -86,40 +97,56 @@ struct PullToRefreshModifier: ViewModifier {
                 .onChanged { _ in
                     if !isDragging {
                         isDragging = true
-                        maxDistanceDuringDrag = 0
+                        lastHapticDistance = 0
                         hasReachedThreshold = false
                     }
                 }
                 .onEnded { _ in
                     isDragging = false
+                    
+                    // 드래그 종료 시 리셋
+                    lastHapticDistance = 0
 
-                    // 딱 손 뗐을 때만 refresh
-                    if maxDistanceDuringDrag > threshold && !isRefreshing {
+                    if pullDistance > threshold && !isRefreshing {
+                        shouldHoldIndicator = true
                         triggerRefresh()
                     }
 
-                    // 상태 정리
-                    maxDistanceDuringDrag = 0
                     hasReachedThreshold = false
                 }
         )
-
     }
-
+    
     private func calculateOpacity() -> Double {
+        if isRefreshing || shouldHoldIndicator { return 1 }
         guard pullDistance > 0 else { return 0 }
         return min(pullDistance / threshold, 1.0)
     }
 
     private func triggerRefresh() {
+        guard !isRefreshing else { return }
+
         isRefreshing = true
+        shouldHoldIndicator = true
+
         Haptic.impact(style: .medium)
 
+        withAnimation(.spring(response: 0.6, dampingFraction: 1.0)) {
+            holdHeight = holdTarget
+        }
+        
         Task {
             await onRefresh()
             await MainActor.run {
-                isRefreshing = false
-                currentOffset = initialOffset
+
+                withAnimation(.spring(response: 0.7, dampingFraction: 1.0)) {
+                    holdHeight = 0
+                    isRefreshing = false
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    shouldHoldIndicator = false
+                }
             }
         }
     }
