@@ -19,14 +19,17 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var selectedCategory: String = ""
     @State private var selectedKeyringPosition: Int = 0
     @State private var newSelectedBackground: BackgroundViewData?
-    // 선택한 카라비너 -> 알럿창 확인 눌러야 뉴선택 카라비너로 바뀜
+    // 선택한 카라비너는 확인 알럿 후에만 바뀜
     @State private var selectCarabiner: CarabinerViewData?
     @State private var newSelectedCarabiner: CarabinerViewData?
     
+    // 배경, 카라비너 선택 시트 활성화/비활성화
     @State private var showBackgroundSheet: Bool = false
     @State private var showCarabinerSheet: Bool = false
+    // 카라비너 변경 확인 알러트 ('카라비너 변경 시 키링은 모두 초기화됩니다')
     @State private var showChangeCarabinerAlert: Bool = false
-    @State private var sheetHeight: CGFloat = 360 // 시트 높이 (화면의 약 43%에 해당)
+    // 시트 높이 (화면의 약 43%에 해당)
+    @State private var sheetHeight: CGFloat = 360
     
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -58,7 +61,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         GridItem(.flexible(), spacing: 10)
     ]
     
-    //임시 초기값
+    // 임시 초기값
     private let sheetHeightRatio: CGFloat = 0.43
     private let screenSize = CGSize(width: 402, height: 874)
     
@@ -69,10 +72,11 @@ struct BundleEditView<Route: BundleRoute>: View {
             
             loadingOverlay
             
+            // 키링 선택 시트
             keyringSheetOverlay
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
-            // 배경/카라비너 시트들
+            // 배경, 카라비너 선택 시트
             sheetContent()
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
@@ -109,6 +113,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             isNavigatingAway = false
         }
         .ignoresSafeArea()
+        // 배경 시트와 카라비너 시트는 동시에 열릴 수 없음 (하나가 열리면 다른 하나는 자동으로 닫힘)
         .onChange(of: showBackgroundSheet) { oldValue, newValue in
             if newValue {
                 showCarabinerSheet = false
@@ -129,6 +134,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
         }
+        // 키링 선택 시트 활성화 시 배경, 카라비너 선택 시트의 높이를 낮춤
         .onChange(of: showSelectKeyringSheet) { _, newValue in
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 if newValue {
