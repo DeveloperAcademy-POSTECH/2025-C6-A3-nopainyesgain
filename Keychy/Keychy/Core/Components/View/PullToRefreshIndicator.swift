@@ -14,13 +14,11 @@ struct PullToRefreshIndicator: View {
     let isRefreshing: Bool
 
     var body: some View {
-        VStack {
-            AnimatedGIFView(
-                source: .local("pullToRefresh"),
-                size: CGSize(width: 100, height: 30)
-            )
-            .opacity(isRefreshing ? 1.0 : opacity)
-        }
+        AnimatedGIFView(
+            source: .local("pullToRefresh"),
+            size: CGSize(width: 100, height: 30),
+            opacity: isRefreshing ? 1.0 : opacity
+        )
     }
 }
 
