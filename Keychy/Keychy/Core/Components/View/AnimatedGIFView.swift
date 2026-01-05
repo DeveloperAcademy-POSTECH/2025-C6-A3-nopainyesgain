@@ -59,7 +59,9 @@ private struct LocalGIFView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIImageView, context: Context) {
-        uiView.alpha = opacity
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+            uiView.alpha = opacity
+        }
     }
 }
 

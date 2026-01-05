@@ -10,119 +10,134 @@
 import SwiftUI
 
 struct PullToRefreshModifier: ViewModifier {
+    let topPadding: CGFloat
     let onRefresh: () async -> Void
 
+    // 스크롤 위치 추적
     @State private var initialOffset: CGFloat = 0
     @State private var currentOffset: CGFloat = 0
+    @State private var hasSetInitialOffset: Bool = false
+
+    // 제스처 & Refresh 상태
     @State private var isDragging: Bool = false
     @State private var isRefreshing: Bool = false
-    @State private var hasSetInitialOffset: Bool = false
-    @State private var hasReachedThreshold: Bool = false
     @State private var shouldHoldIndicator: Bool = false
-    @State private var holdHeight: CGFloat = 0
+
+    // 시각적 상태
+    @State private var indicatorOpacity: Double = 0
     @State private var lastHapticDistance: CGFloat = 0
 
-    private let holdTarget: CGFloat = 80
-    private let threshold: CGFloat = 100
-    private let hapticInterval: CGFloat = 4
-    
+    // 상수 값
+    private let threshold: CGFloat = 100        // Refresh가 트리거되는 최소 pull 거리
+    private let hapticInterval: CGFloat = 4     // 햅틱 피드백 간격 (px)
+
+    /// Pull 거리 계산
     private var pullDistance: CGFloat {
         max(currentOffset - initialOffset, 0)
     }
-    
+
+    // MARK: - Body
     func body(content: Content) -> some View {
         ScrollView(showsIndicators: false) {
             ZStack(alignment: .top) {
-                VStack(spacing: 0) {
-                    GeometryReader { geo in
-                        let minY = geo.frame(in: .global).minY
-                        Color.clear
-                            .onChange(of: minY) { old, new in
-                                if !hasSetInitialOffset {
-                                    initialOffset = new
-                                    currentOffset = new
-                                    hasSetInitialOffset = true
-                                    return
-                                }
-
-                                currentOffset = new
-                                let distance = max(currentOffset - initialOffset, 0)
-                                let isPullingDown = new > old
-
-                                // 연속 햅틱 (4px 간격)
-                                if isPullingDown && distance > 0 && !isRefreshing {
-                                    if distance > lastHapticDistance + hapticInterval {
-                                        
-                                        // 거의 끝까지 .soft로 가볍게, 마지막에만 .light
-                                        let style: UIImpactFeedbackGenerator.FeedbackStyle
-                                        if distance < 95 {
-                                            style = .soft
-                                        } else {
-                                            style = .light
-                                        }
-
-                                        Haptic.impact(style: style)
-                                        lastHapticDistance = distance
-                                    }
-                                }
-
-                                if distance > threshold && !hasReachedThreshold {
-                                    hasReachedThreshold = true
-                                } else if distance <= threshold {
-                                    hasReachedThreshold = false
-                                }
-                            }
-
-                    }
-                    .frame(height: 1)
-
-                    Spacer()
-                        .frame(height: holdHeight)
-                    
-                    content
-                }
-                
-                // Indicator를 content와 같은 ZStack에 배치
-                PullToRefreshIndicator(
-                    opacity: calculateOpacity(),
-                    isRefreshing: isRefreshing
-                )
-                .offset(y: holdHeight)
-                .allowsHitTesting(false)
-                .padding(.top, 40)
+                scrollContent(content)
+                indicator
             }
         }
-        .simultaneousGesture(
-            DragGesture()
-                .onChanged { _ in
-                    if !isDragging {
-                        isDragging = true
-                        lastHapticDistance = 0
-                        hasReachedThreshold = false
-                    }
-                }
-                .onEnded { _ in
-                    isDragging = false
-                    
-                    // 드래그 종료 시 리셋
-                    lastHapticDistance = 0
+        .simultaneousGesture(dragGesture)
+    }
 
-                    if pullDistance > threshold && !isRefreshing {
-                        shouldHoldIndicator = true
-                        triggerRefresh()
-                    }
+    // MARK: - Subviews
+    /// 스크롤 콘텐츠 (offset reader + spacer + content)
+    private func scrollContent(_ content: Content) -> some View {
+        VStack(spacing: 0) {
+            scrollOffsetReader
+            contentSpacer
+            content
+        }
+    }
 
-                    hasReachedThreshold = false
+    /// 스크롤 offset 추적용 GeometryReader
+    private var scrollOffsetReader: some View {
+        GeometryReader { geo in
+            Color.clear
+                .onChange(of: geo.frame(in: .global).minY) { old, new in
+                    handleScrollOffsetChange(old: old, new: new)
                 }
+        }
+        .frame(height: 1)
+    }
+
+    /// Refresh 중 content를 밀어내는 Spacer
+    private var contentSpacer: some View {
+        Spacer()
+            .frame(height: shouldHoldIndicator ? 60 : min(pullDistance * 0.3, 60))
+    }
+
+    /// Pull to Refresh Indicator
+    private var indicator: some View {
+        PullToRefreshIndicator(
+            opacity: indicatorOpacity,
+            isRefreshing: isRefreshing
         )
-    }
-    
-    private func calculateOpacity() -> Double {
-        if isRefreshing || shouldHoldIndicator { return 1 }
-        guard pullDistance > 0 else { return 0 }
-        return min(pullDistance / threshold, 1.0)
+        .allowsHitTesting(false)
+        .padding(.top, shouldHoldIndicator ? topPadding + 50 : topPadding)
     }
 
+    /// 드래그 제스처
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .onChanged { _ in
+                if !isDragging {
+                    isDragging = true
+                    lastHapticDistance = 0
+                }
+            }
+            .onEnded { _ in
+                isDragging = false
+                lastHapticDistance = 0
+
+                if pullDistance > threshold && !isRefreshing {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                        shouldHoldIndicator = true
+                        indicatorOpacity = 1
+                    }
+                    triggerRefresh()
+                }
+            }
+    }
+
+    // MARK: - Private Methods
+    /// 스크롤 offset 변경 처리
+    private func handleScrollOffsetChange(old: CGFloat, new: CGFloat) {
+        // 초기 offset 설정
+        if !hasSetInitialOffset {
+            initialOffset = new
+            currentOffset = new
+            hasSetInitialOffset = true
+            return
+        }
+
+        currentOffset = new
+        let distance = max(currentOffset - initialOffset, 0)
+        let isPullingDown = new > old
+
+        // Pull 중 indicator opacity 업데이트
+        if !isRefreshing && !shouldHoldIndicator {
+            indicatorOpacity = min(distance / (threshold * 1.5), 1.0)
+        }
+
+        // 연속 햅틱 피드백 (4px 간격)
+        if isPullingDown && distance > 0 && !isRefreshing {
+            if distance > lastHapticDistance + hapticInterval {
+                let style: UIImpactFeedbackGenerator.FeedbackStyle = distance < 95 ? .soft : .light
+                Haptic.impact(style: style)
+                lastHapticDistance = distance
+            }
+        }
+    }
+
+    /// Refresh 트리거
     private func triggerRefresh() {
         guard !isRefreshing else { return }
 
@@ -131,21 +146,18 @@ struct PullToRefreshModifier: ViewModifier {
 
         Haptic.impact(style: .medium)
 
-        withAnimation(.spring(response: 0.6, dampingFraction: 1.0)) {
-            holdHeight = holdTarget
-        }
-        
         Task {
             await onRefresh()
             await MainActor.run {
-
-                withAnimation(.spring(response: 0.7, dampingFraction: 1.0)) {
-                    holdHeight = 0
+                withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                     isRefreshing = false
                 }
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                    shouldHoldIndicator = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                        shouldHoldIndicator = false
+                        indicatorOpacity = 0
+                    }
                 }
             }
         }
@@ -153,7 +165,10 @@ struct PullToRefreshModifier: ViewModifier {
 }
 
 extension View {
-    func pullToRefresh(onRefresh: @escaping () async -> Void) -> some View {
-        modifier(PullToRefreshModifier(onRefresh: onRefresh))
+    func pullToRefresh(
+        topPadding: CGFloat = 0,
+        onRefresh: @escaping () async -> Void
+    ) -> some View {
+        modifier(PullToRefreshModifier(topPadding: topPadding, onRefresh: onRefresh))
     }
 }
