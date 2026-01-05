@@ -270,6 +270,8 @@
 		4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */; };
 		4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */; };
 		4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62A62EAE0C130099ECEE /* LottieView.swift */; };
+		4CF2A9662F0B8C5800BA9FDA /* PullToRefreshIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */; };
+		4CF2A9682F0B91F300BA9FDA /* AnimatedGIFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
 		AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B62EC053E4007B5413 /* CarabinerType.swift */; };
 		AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */; };
@@ -658,6 +660,8 @@
 		4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleInventoryView.swift; sourceTree = "<group>"; };
 		4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Bundle.swift"; sourceTree = "<group>"; };
 		4CEC62A62EAE0C130099ECEE /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
+		4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullToRefreshIndicator.swift; sourceTree = "<group>"; };
+		4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedGIFView.swift; sourceTree = "<group>"; };
 		AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameInputView.swift; sourceTree = "<group>"; };
 		AA0A54B62EC053E4007B5413 /* CarabinerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerType.swift; sourceTree = "<group>"; };
 		AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleRingComponent.swift; sourceTree = "<group>"; };
@@ -1392,6 +1396,8 @@
 				AA9B2E902EB081750004D31C /* ItemDetailView.swift */,
 				4CEC61F72EAE08DA0099ECEE /* KeyringBundle */,
 				4C8426632ED375840050B6FE /* ColorPalette.swift */,
+				4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */,
+				4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2290,6 +2296,7 @@
 				4CA9C6F92ECBA5EF00CA546B /* NotificationItemView.swift in Sources */,
 				C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */,
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
+				4CF2A9662F0B8C5800BA9FDA /* PullToRefreshIndicator.swift in Sources */,
 				4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */,
 				4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */,
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
@@ -2385,6 +2392,7 @@
 				389497172ED32405008340FA /* ClearSketchDrawingCanvasView.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
 				4CA9C6F72ECBA45200CA546B /* KeychyNotification.swift in Sources */,
+				4CF2A9682F0B91F300BA9FDA /* AnimatedGIFView.swift in Sources */,
 				4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */,
 				4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
