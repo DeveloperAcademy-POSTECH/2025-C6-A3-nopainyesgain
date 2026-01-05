@@ -57,6 +57,9 @@ struct BundleEditView<Route: BundleRoute>: View {
     // 캡쳐 상태
     @State private var isCapturing: Bool = false
     
+    // 키링 시트 로딩 상태
+    @State private var isKeyringSheetLoading: Bool = true
+    
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -315,7 +318,18 @@ struct BundleEditView<Route: BundleRoute>: View {
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
             
-            if viewModel.keyring.isEmpty {
+            if isKeyringSheetLoading {
+                VStack {
+                    LoadingAlert(type: .short, message: nil)
+                        .padding(.vertical, 24)
+                    Text("키링을 불러오고 있어요")
+                        .typography(.suit15R)
+                        .foregroundStyle(.black100)
+                        .padding(.vertical, 15)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: screenHeight * (sheetHeightRatio - 0.08)) // 버튼 영역 제외한 대략 높이
+            } else if viewModel.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
                         .resizable()
@@ -632,6 +646,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                         await self.initializeSelectedKeyringsFromFirebase()
                         // 이후부터는 완전히 로컬 데이터만 사용
                         self.updateKeyringDataList()
+                        isKeyringSheetLoading = false
                     }
                     
                     continuation.resume()
