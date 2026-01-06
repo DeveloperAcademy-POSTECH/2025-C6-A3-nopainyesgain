@@ -248,6 +248,9 @@ class WorkshopViewModel {
     /// 네트워크 에러 후 재시도
     func retryFetchAllData() async {
         guard NetworkManager.shared.isConnected else { return }
+        
+        try? await Task.sleep(for: .seconds(1))
+        
         hasNetworkError = false
         await fetchAllData()
     }

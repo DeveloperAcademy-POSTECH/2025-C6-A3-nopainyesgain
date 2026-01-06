@@ -38,23 +38,24 @@ struct MyItemsView: View {
                 })
                 .ignoresSafeArea()
             } else {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        // 메인 콘텐츠 (그리드)
-                        mainContentSection
-                            .background(
-                                GeometryReader { geo in
-                                    let minY = geo.frame(in: .global).minY
-                                    Color.clear
-                                        .onAppear {
-                                            viewModel.mainContentOffset = minY
-                                        }
-                                        .onChange(of: minY) { oldValue, newValue in
-                                            viewModel.mainContentOffset = newValue
-                                        }
-                                }
-                            )
-                    }
+                VStack(spacing: 0) {
+                    // 메인 콘텐츠 (그리드)
+                    mainContentSection
+                        .background(
+                            GeometryReader { geo in
+                                let minY = geo.frame(in: .global).minY
+                                Color.clear
+                                    .onAppear {
+                                        viewModel.mainContentOffset = minY
+                                    }
+                                    .onChange(of: minY) { oldValue, newValue in
+                                        viewModel.mainContentOffset = newValue
+                                    }
+                            }
+                        )
+                }
+                .pullToRefresh(topPadding: 50) {
+                    await viewModel.retryFetchAllData()
                 }
                 .adaptiveTopPaddingAlt()
                 .padding(.top, 20)
