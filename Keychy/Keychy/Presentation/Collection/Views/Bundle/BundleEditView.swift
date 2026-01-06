@@ -207,7 +207,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 로딩 오버레이
     private var loadingOverlay: some View {
         Group {
-            if !isSceneReady && !isNavigatingAway {
+            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩이 모두 끝나야 사라짐
+            if (!isSceneReady || isKeyringSheetLoading) && !isNavigatingAway {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(100)
@@ -609,6 +610,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 데이터를 새로 로드하므로 씬도 새로 로드됨
         await MainActor.run {
             isSceneReady = false
+            isKeyringSheetLoading = true
         }
         
         // 사용자 키링 데이터 로드
@@ -646,7 +648,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                         await self.initializeSelectedKeyringsFromFirebase()
                         // 이후부터는 완전히 로컬 데이터만 사용
                         self.updateKeyringDataList()
+                        
                         isKeyringSheetLoading = false
+                        
+                        // 씬 재구성 조건 설정
+                        if !keyringDataList.isEmpty {
+                            sceneRefreshId = UUID()
+                        }
                     }
                     
                     continuation.resume()
@@ -1223,4 +1231,3 @@ extension BundleEditView {
         }
     }
 }
-
