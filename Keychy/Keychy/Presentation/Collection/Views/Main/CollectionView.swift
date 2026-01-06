@@ -164,31 +164,14 @@ struct CollectionView: View {
     // MARK: - 공통 UI 컴포넌트 (Normal, Search 공통 사용)
     // 키링 그리드뷰
     func collectionGridView(keyrings: [Keyring]) -> some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 11) {
-                ForEach(keyrings, id: \.id) { keyring in
-                    collectionCell(keyring: keyring)
-                }
+        LazyVGrid(columns: columns, spacing: 11) {
+            ForEach(keyrings, id: \.id) { keyring in
+                collectionCell(keyring: keyring)
             }
-            .padding(.horizontal, Spacing.padding)
-            .padding(.vertical, 4)
-            .padding(.bottom, 90)
         }
-        .padding(.top, 10)
-        .scrollIndicators(.hidden)
-        .simultaneousGesture(
-            DragGesture().onChanged { _ in
-                if showSearchBar {
-                    isSearchFieldFocused = false
-                    
-                    if !isSearching {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showSearchBar = false
-                        }
-                    }
-                }
-            }
-        )
+        .padding(.horizontal, Spacing.padding)
+        .padding(.vertical, 4)
+        .padding(.bottom, 90)
     }
     
     // 키링 Cell

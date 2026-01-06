@@ -147,7 +147,7 @@ extension CollectionView {
     }
 
     private var normalCollectionSection: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             collectionHeader
                 .padding(.horizontal, Spacing.padding)
 
@@ -155,6 +155,10 @@ extension CollectionView {
                 emptyView
             } else {
                 collectionGridView(keyrings: filteredKeyrings)
+                    .pullToRefresh(topPadding: 0) {
+                        try? await Task.sleep(for: .seconds(1))
+                        fetchUserData()
+                    }
             }
         }
     }
