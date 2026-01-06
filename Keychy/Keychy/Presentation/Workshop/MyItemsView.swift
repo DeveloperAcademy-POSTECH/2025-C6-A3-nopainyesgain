@@ -54,7 +54,7 @@ struct MyItemsView: View {
                             }
                         )
                 }
-                .pullToRefresh(topPadding: 50) {
+                .pullToRefresh(topPadding: 60) {
                     await viewModel.retryFetchAllData()
                 }
                 .adaptiveTopPaddingAlt()

@@ -10,6 +10,8 @@
 import SwiftUI
 
 struct PullToRefreshModifier: ViewModifier {
+    
+    // Indicator를 오버레이 헤더 아래에 위치시키기 위한 상단 여백 (0이면 헤더 없음)
     let topPadding: CGFloat
     let onRefresh: () async -> Void
 
@@ -27,9 +29,11 @@ struct PullToRefreshModifier: ViewModifier {
     @State private var indicatorOpacity: Double = 0
     @State private var lastHapticDistance: CGFloat = 0
 
-    // 상수 값
-    private let threshold: CGFloat = 100        // Refresh가 트리거되는 최소 pull 거리
-    private let hapticInterval: CGFloat = 4     // 햅틱 피드백 간격 (px)
+    // Refresh가 트리거되는 최소 pull 거리
+    private let threshold: CGFloat = 100
+    
+    // 햅틱 피드백 간격
+    private let hapticInterval: CGFloat = 4
 
     /// Pull 거리 계산
     private var pullDistance: CGFloat {
@@ -69,19 +73,24 @@ struct PullToRefreshModifier: ViewModifier {
     }
 
     /// Refresh 중 content를 밀어내는 Spacer
+    /// - Refresh 중: topPadding이 있으면 topPadding, 없으면 60px (일정한 간격 유지)
     private var contentSpacer: some View {
         Spacer()
-            .frame(height: shouldHoldIndicator ? 60 : min(pullDistance * 0.3, 60))
+            .frame(height: shouldHoldIndicator ? max(topPadding, 60) : min(pullDistance * 0.3, 60))
     }
 
     /// Pull to Refresh Indicator
+    /// - Pull 중: topPadding - 40
+    /// - 모디파이어 설명처럼, 오버레이된 헤더가 있는 경우가 있어서 대응
+    /// - 왜냐면, PtR은 뷰 위쪽 숨겨진 영역에서 내려와야 자연스러움!
+    /// - Refresh 중: topPadding이 0이면 20px, 아니면 topPadding + 40 (헤더 아래 배치)
     private var indicator: some View {
         PullToRefreshIndicator(
             opacity: indicatorOpacity,
             isRefreshing: isRefreshing
         )
         .allowsHitTesting(false)
-        .padding(.top, shouldHoldIndicator ? topPadding + 50 : topPadding)
+        .padding(.top, shouldHoldIndicator ? (topPadding == 0 ? 20 : topPadding + 40) : topPadding - 40)
     }
 
     /// 드래그 제스처
@@ -165,6 +174,10 @@ struct PullToRefreshModifier: ViewModifier {
 }
 
 extension View {
+    /// Pull to Refresh 기능 추가
+    /// - Parameters:
+    ///   - topPadding: 오버레이 헤더가 있을 경우 헤더 높이 지정 (기본값: 0)
+    ///   - onRefresh: 새로고침 시 실행할 비동기 작업
     func pullToRefresh(
         topPadding: CGFloat = 0,
         onRefresh: @escaping () async -> Void
