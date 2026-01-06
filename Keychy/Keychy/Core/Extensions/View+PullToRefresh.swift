@@ -107,7 +107,7 @@ struct PullToRefreshModifier: ViewModifier {
                 lastHapticDistance = 0
 
                 if pullDistance > threshold && !isRefreshing {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                    withAnimation(.easeOut(duration: 0.3)) {
                         shouldHoldIndicator = true
                         indicatorOpacity = 1
                     }
@@ -158,12 +158,12 @@ struct PullToRefreshModifier: ViewModifier {
         Task {
             await onRefresh()
             await MainActor.run {
-                withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                withAnimation(.easeOut(duration: 0.3)) {
                     isRefreshing = false
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 1.0)) {
                         shouldHoldIndicator = false
                         indicatorOpacity = 0
                     }
