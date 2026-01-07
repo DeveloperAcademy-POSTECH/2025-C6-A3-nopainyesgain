@@ -18,7 +18,7 @@ extension CollectionView {
                     Color.white
                         .ignoresSafeArea()
 
-                    NoInternetView(onRetry: {
+                    NoInternetView(topPadding: getSafeAreaTop() + 90, onRetry: {
                         Task {
                             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                                 print("UID를 찾을 수 없습니다")
@@ -147,7 +147,7 @@ extension CollectionView {
     }
 
     private var normalCollectionSection: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             collectionHeader
                 .padding(.horizontal, Spacing.padding)
 
@@ -155,6 +155,23 @@ extension CollectionView {
                 emptyView
             } else {
                 collectionGridView(keyrings: filteredKeyrings)
+                    .pullToRefresh(topPadding: 0) {
+                        try? await Task.sleep(for: .seconds(1))
+                        fetchUserData()
+                    }
+                    .simultaneousGesture(
+                                DragGesture().onChanged { _ in
+                                    if showSearchBar {
+                                        isSearchFieldFocused = false
+
+                                        if !isSearching {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                                showSearchBar = false
+                                            }
+                                        }
+                                    }
+                                }
+                            )
             }
         }
     }

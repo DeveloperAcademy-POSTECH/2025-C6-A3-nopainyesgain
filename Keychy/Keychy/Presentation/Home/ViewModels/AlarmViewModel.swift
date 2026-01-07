@@ -46,7 +46,7 @@ class AlarmViewModel {
             print("사용자 ID를 찾을 수 없습니다")
             return
         }
-
+        
         isLoadingNotifications = true
 
         db.collection("Notifications")

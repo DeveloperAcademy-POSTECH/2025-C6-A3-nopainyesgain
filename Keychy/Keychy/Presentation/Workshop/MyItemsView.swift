@@ -31,7 +31,7 @@ struct MyItemsView: View {
 
             // 메인 콘텐츠 (전체 화면)
             if viewModel.hasNetworkError {
-                NoInternetView(onRetry: {
+                NoInternetView(topPadding: getSafeAreaTop() + 120, onRetry: {
                     Task {
                         await viewModel.retryFetchAllData()
                     }
@@ -54,7 +54,7 @@ struct MyItemsView: View {
                             }
                         )
                 }
-                .pullToRefresh(topPadding: 50) {
+                .pullToRefresh(topPadding: 60) {
                     await viewModel.retryFetchAllData()
                 }
                 .adaptiveTopPaddingAlt()

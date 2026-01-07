@@ -64,7 +64,7 @@ struct AlarmView: View {
 extension AlarmView {
     /// 네트워크 에러 화면
     private var networkErrorView: some View {
-        NoInternetView(onRetry: {
+        NoInternetView(topPadding: getSafeAreaTop() + 10, onRetry: {
             viewModel.retryFetchNotifications()
         })
         .ignoresSafeArea()
@@ -72,17 +72,14 @@ extension AlarmView {
 
     /// 알림 리스트 뷰
     private var notificationListView: some View {
-        List {
+        LazyVStack(spacing: 0) {
             // 푸시 알림 off 배너
             if viewModel.isNotiOff && viewModel.isNotiOffShown {
                 pushNotiOffView
-                    .listRowInsets(EdgeInsets())
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
                     .padding(.top, 10)
                     .padding(.bottom, 20)
             }
-            
+
             ForEach(viewModel.notifications) { notification in
                 NotificationItemView(
                     notification: notification,
@@ -90,20 +87,13 @@ extension AlarmView {
                         handleNotificationTap(notification)
                     }
                 )
-                .listRowInsets(EdgeInsets())
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
-                .swipeActions(edge: .trailing) {
-                    Button(role: .destructive) {
-                        viewModel.deleteNotification(notification)
-                    } label: {
-                        Label("삭제", systemImage: "trash")
-                    }
-                }
             }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
+        .ignoresSafeArea()
+        .pullToRefresh {
+            try? await Task.sleep(for: .seconds(1))
+            viewModel.fetchNotifications()
+        }
     }
     
     /// 알림이 없을 때 나오는 뷰
@@ -114,6 +104,7 @@ extension AlarmView {
                 .typography(.suit15R)
                 .padding(15)
         }
+
     }
     
     /// 기기 푸쉬 알림이 off일 때 나오는 상단뷰
