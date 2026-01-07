@@ -77,6 +77,7 @@ extension CollectionViewModel {
                     
                     // 4. PostOffice 문서 생성
                     let postOfficeData: [String: Any] = [
+                        "type": "receive",
                         "senderId": uid,
                         "keyringId": documentId,
                         "shareLink": shareLink.absoluteString,
