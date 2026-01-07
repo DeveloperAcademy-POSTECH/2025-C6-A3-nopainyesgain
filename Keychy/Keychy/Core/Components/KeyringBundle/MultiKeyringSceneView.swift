@@ -36,6 +36,7 @@ struct MultiKeyringSceneView: View {
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
     @State private var backgroundImage: UIImage?
+    @State private var visibleKeyringCount = 0
 
     // 기본 화면 크기 (iPhone 16 Pro 기준)
     private let defaultSceneSize = CGSize(width: 402, height: 874)
@@ -95,6 +96,11 @@ struct MultiKeyringSceneView: View {
         }
         .onChange(of: currentCarabinerType) { _, _ in
             setupScene()
+        }
+        .onChange(of: visibleKeyringCount) { _, count in
+            if count == keyringDataList.count {
+                onAllKeyringsReady?()
+            }
         }
     }
 }
@@ -188,8 +194,9 @@ extension MultiKeyringSceneView {
         newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
-        newScene.onAllKeyringsReady = onAllKeyringsReady
-
+        newScene.onKeyringVisualReady = {
+            visibleKeyringCount += 1
+        }
         scene = newScene
     }
 
@@ -206,7 +213,6 @@ extension MultiKeyringSceneView {
 
         // 파티클 효과 정리
         particleEffects.removeAll()
-        
     }
 
     /// 파티클 효과 재생 처리

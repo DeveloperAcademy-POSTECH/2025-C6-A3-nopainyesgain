@@ -204,7 +204,7 @@ class HomeViewModel {
     func handleAllKeyringsReady() {
         // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
         Task {
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초
+            try? await Task.sleep(for: .seconds(0.5)) // 0.5초
 
             await MainActor.run {
                 withAnimation(.easeOut(duration: 0.3)) {

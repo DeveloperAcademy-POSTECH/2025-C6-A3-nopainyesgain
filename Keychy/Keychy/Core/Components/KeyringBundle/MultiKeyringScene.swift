@@ -17,14 +17,14 @@ class MultiKeyringScene: SKScene {
     /// 키링 데이터 구조체
     struct KeyringData: Equatable {
         let index: Int
-        let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계)
+        let position: CGPoint       // 절대 좌표 (SwiftUI 좌표계)
         let bodyImageURL: String
-        let templateId: String?  // 템플릿 ID (옵션)
-        let soundId: String  // 사운드 ID
-        let customSoundURL: URL?  // 커스텀 녹음 파일 URL
-        let particleId: String  // 파티클 ID
-        let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
-        let chainLength: Int  // 체인 길이 (기본값 5)
+        let templateId: String?     // 템플릿 ID (옵션)
+        let soundId: String         // 사운드 ID
+        let customSoundURL: URL?    // 커스텀 녹음 파일 URL
+        let particleId: String      // 파티클 ID
+        let hookOffsetY: CGFloat?   // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+        let chainLength: Int        // 체인 길이 (기본값 5)
 
         init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
             self.index = index
@@ -58,11 +58,8 @@ class MultiKeyringScene: SKScene {
     var onPlayParticleEffect: ((Int, String, CGPoint) -> Void)?  // (keyringIndex, effectName, position)
 
     // MARK: - 씬 준비 완료 콜백
-    var onAllKeyringsReady: (() -> Void)?  // 모든 키링 안정화 완료 콜백
-
-    // MARK: - 예약된 작업 관리
-    private var readyCallbackWorkItem: DispatchWorkItem?
-
+    var onEngineReady: (() -> Void)? // 엔진 준비 완료 콜백
+    var onKeyringVisualReady: (() -> Void)? // 키링이 진짜 시각적으로 보이는지 콜백
     // MARK: - 키링 로드 완료 추적
     private var totalKeyringsToLoad = 0  // 로드해야 할 총 키링 수
     private var loadedKeyringsCount = 0  // 완료(성공/실패)된 키링 수
@@ -126,30 +123,24 @@ class MultiKeyringScene: SKScene {
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
-
+        
         super.init(size: .zero)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-
+    
     deinit {
         cleanup()
     }
-
+    
     /// 씬 정리 (메모리 해제 전 호출)
     func cleanup() {
         guard !isCleaningUp else { return }
         isCleaningUp = true
         
-
-        // 예약된 콜백 취소
-        readyCallbackWorkItem?.cancel()
-        readyCallbackWorkItem = nil
-
         // 콜백 무효화
-        onAllKeyringsReady = nil
         onPlayParticleEffect = nil
         
         // 추적 변수 초기화
@@ -340,21 +331,20 @@ class MultiKeyringScene: SKScene {
         didStartKeyringSetup = true
         setupKeyrings()
     }
-
+    
     /// 모든 키링 설정
     private func setupKeyrings() {
         // 모든 키링이 동기적으로 생성될 때까지 카운터 사용
         totalKeyringsToLoad = keyringDataList.count
         loadedKeyringsCount = 0
         loadedKeyringsSuccessCount = 0
-
+        
         guard totalKeyringsToLoad > 0 else {
             // 키링이 없어도 물리 활성화 후 준비 완료 콜백 호출
             enablePhysics()
-            scheduleReadyCallbackIfAllDone()
             return
         }
-
+        
         for (order, data) in keyringDataList.enumerated() {
             setupSingleKeyring(data: data, order: order) { [weak self] success in
                 guard let self = self else { return }
@@ -367,13 +357,11 @@ class MultiKeyringScene: SKScene {
                 if self.loadedKeyringsCount == self.totalKeyringsToLoad {
                     // 모든 키링 완성 후 물리 활성화
                     self.enablePhysics()
-                    // 성공한 경우에만 ready 콜백 예약
-                    self.scheduleReadyCallbackIfAllDone()
                 }
             }
         }
     }
-
+    
     /// 단일 키링 설정 (이미지 먼저 다운로드하고 조립)
     private func setupSingleKeyring(data: KeyringData, order: Int, completion: @escaping (Bool) -> Void) {
         // 사운드 정보 저장
@@ -616,7 +604,7 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.contactTestBitMask = 0
 
             self.addChild(body)
-
+            onKeyringVisualReady?()
             if let spriteBody = body as? SKSpriteNode {
                 self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
             }
@@ -924,21 +912,6 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
         }
-    }
-
-    /// 모든 준비 조건이 충족되었을 때만 ready 콜백 예약
-    private func scheduleReadyCallbackIfAllDone() {
-        guard !isCleaningUp else { return }
-        // 모든 키링이 성공적으로 로드되었을 때만
-        guard loadedKeyringsSuccessCount == totalKeyringsToLoad else { return }
-        // 물리 안정화를 위한 짧은 지연 (0.5초)
-        readyCallbackWorkItem?.cancel()
-        let workItem = DispatchWorkItem { [weak self] in
-            guard let self = self, !self.isCleaningUp else { return }
-            self.onAllKeyringsReady?()
-        }
-        readyCallbackWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
 
     // MARK: - Touch Handling
