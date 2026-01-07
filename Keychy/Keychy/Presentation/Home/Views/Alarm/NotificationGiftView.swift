@@ -85,7 +85,7 @@ struct NotificationGiftView: View {
 
     /// 네트워크 에러 화면
     private var networkErrorView: some View {
-        NoInternetView(onRetry: {
+        NoInternetView(topPadding: getSafeAreaTop() + 10, onRetry: {
             viewModel.retryFetchGiftData(postOfficeId: postOfficeId, viewModel: collectionViewModel)
         })
         .ignoresSafeArea()

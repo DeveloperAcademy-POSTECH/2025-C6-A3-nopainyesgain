@@ -27,10 +27,8 @@ struct BundleInventoryView<Route: BundleRoute>: View {
                     Color.white
                         .ignoresSafeArea()
 
-                    NoInternetView(onRetry: {
-                        Task {
-                            await retryFetchData()
-                        }
+                    NoInternetView(topPadding: getSafeAreaTop() + 10, onRetry: {
+                        await retryFetchData()
                     })
                     .ignoresSafeArea()
 
@@ -38,7 +36,6 @@ struct BundleInventoryView<Route: BundleRoute>: View {
                         customNavigationBar
                         Spacer()
                     }
-                    .background(Color.white)
                 }
             } else {
                 // 정상 상태: 기존 ZStack 형태

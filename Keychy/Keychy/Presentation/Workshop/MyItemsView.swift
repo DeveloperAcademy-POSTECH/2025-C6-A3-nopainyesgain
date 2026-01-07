@@ -31,7 +31,7 @@ struct MyItemsView: View {
 
             // 메인 콘텐츠 (전체 화면)
             if viewModel.hasNetworkError {
-                NoInternetView(onRetry: {
+                NoInternetView(topPadding: getSafeAreaTop() + 120, onRetry: {
                     Task {
                         await viewModel.retryFetchAllData()
                     }
