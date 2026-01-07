@@ -29,9 +29,6 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10)
     ]
-    
-    //임시 초기값
-    private let screenSize = CGSize(width: 402, height: 874)
     private let sheetHeightRatio: CGFloat = 0.43
     
     // MARK: - Body
@@ -129,27 +126,42 @@ extension BundleAddKeyringView {
     }
     
     /// 키링 추가 버튼들
-    /// - xPosPt : 현재 휴대폰 기기사이즈와 +버튼 위치를 맞췄던 기기의 포인트 차이를 계산합니다. se3는 2pt를 사용하고 있지만 16프로(기준 기기)는 3pt를 사용하고 있어 +버튼 위치에 차이가 있습니다.
     private func keyringButtons(carabiner: Carabiner) -> some View {
-        // 키링 추가 버튼들
-        ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
-            let xPosPt = screenWidth / screenSize.width * carabiner.keyringXPosition[index]
-            let xPos = round(xPosPt * screenScale) / screenScale
-            let yPosPt = screenHeight / screenSize.height * carabiner.keyringYPosition[index]
-            let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(40) - getTopPadding(34)
-            CarabinerAddKeyringButton(
-                isSelected: selectedPosition == index,
-                action: {
-                    selectedPosition = index
-                    withAnimation(.easeInOut) {
-                        showSelectKeyringSheet = true
+        GeometryReader { geometry in
+            let sceneWidth: CGFloat = 402
+            let sceneHeight: CGFloat = 874
+            // 실제 화면 크기에 맞게 씬을 스케일링하는 비율 계산
+            let scale = max(geometry.size.width / sceneWidth, geometry.size.height / sceneHeight)
+            
+            // 스케일 적용 후 콘텐츠 크기
+            let contentW = sceneWidth * scale
+            let contentH = sceneHeight * scale
+            
+            // 씬을 화면 중앙에 배치하기 위한 오프셋 (실제 뷰 크기와 스케일된 씬의 크기 차이를 균등하게 배분)
+            let dx = (geometry.size.width - contentW) / 2
+            let dy = (geometry.size.height - contentH) / 2
+            
+            // 키링 추가 버튼들
+            ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
+                // 씬 좌표를 실제 화면 좌표로 변환 (오프셋 + 스케일 적용)
+                let viewX = dx + carabiner.keyringXPosition[index] * scale
+                let viewY = dy + carabiner.keyringYPosition[index] * scale
+                
+                CarabinerAddKeyringButton(
+                    isSelected: selectedPosition == index,
+                    action: {
+                        selectedPosition = index
+                        withAnimation(.easeInOut) {
+                            showSelectKeyringSheet = true
+                        }
                     }
-                }
-            )
-            .position(x: xPos, y: yPos)
-            .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-            .zIndex(selectedPosition == index ? 100 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+                )
+                .position(x: viewX, y: viewY)
+                .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
+                .zIndex(selectedPosition == index ? 100 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+            }
         }
+        .ignoresSafeArea()
     }
     
     /// 키링 선택 시트

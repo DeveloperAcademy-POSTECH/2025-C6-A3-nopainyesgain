@@ -113,7 +113,7 @@ extension BundleInventoryView {
         return GeometryReader { geometry in
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 11) {
-                    ForEach(viewModel.sortedBundles, id: \.self) { bundle in
+                    ForEach(viewModel.sortedBundles, id: \.documentId) { bundle in
                         Button {
                             // 네트워크 체크
                             guard NetworkManager.shared.isConnected else {

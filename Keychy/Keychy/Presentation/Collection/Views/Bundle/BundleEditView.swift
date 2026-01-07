@@ -19,14 +19,17 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var selectedCategory: String = ""
     @State private var selectedKeyringPosition: Int = 0
     @State private var newSelectedBackground: BackgroundViewData?
-    // 선택한 카라비너 -> 알럿창 확인 눌러야 뉴선택 카라비너로 바뀜
+    // 선택한 카라비너는 확인 알럿 후에만 바뀜
     @State private var selectCarabiner: CarabinerViewData?
     @State private var newSelectedCarabiner: CarabinerViewData?
     
+    // 배경, 카라비너 선택 시트 활성화/비활성화
     @State private var showBackgroundSheet: Bool = false
     @State private var showCarabinerSheet: Bool = false
+    // 카라비너 변경 확인 알러트 ('카라비너 변경 시 키링은 모두 초기화됩니다')
     @State private var showChangeCarabinerAlert: Bool = false
-    @State private var sheetHeight: CGFloat = 360 // 시트 높이 (화면의 약 43%에 해당)
+    // 시트 높이 (화면의 약 43%에 해당)
+    @State private var sheetHeight: CGFloat = 360
     
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -51,16 +54,19 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State private var sceneRefreshId = UUID()
     @State private var isNavigatingAway = false // 화면 전환 중인지 추적
     
+    // 캡쳐 상태
+    @State private var isCapturing: Bool = false
+    
+    // 키링 시트 로딩 상태
+    @State private var isKeyringSheetLoading: Bool = true
+    
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10)
     ]
-    
-    //임시 초기값
     private let sheetHeightRatio: CGFloat = 0.43
-    private let screenSize = CGSize(width: 402, height: 874)
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -69,17 +75,17 @@ struct BundleEditView<Route: BundleRoute>: View {
             
             loadingOverlay
             
+            // 키링 선택 시트
             keyringSheetOverlay
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
-            // 배경/카라비너 시트들
+            // 배경, 카라비너 선택 시트
             sheetContent()
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
                 .position(x: screenWidth / 2, y: screenHeight / 2)
-            
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -109,6 +115,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             isNavigatingAway = false
         }
         .ignoresSafeArea()
+        // 배경 시트와 카라비너 시트는 동시에 열릴 수 없음 (하나가 열리면 다른 하나는 자동으로 닫힘)
         .onChange(of: showBackgroundSheet) { oldValue, newValue in
             if newValue {
                 showCarabinerSheet = false
@@ -129,6 +136,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
         }
+        // 키링 선택 시트 활성화 시 배경, 카라비너 선택 시트의 높이를 낮춤
         .onChange(of: showSelectKeyringSheet) { _, newValue in
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 if newValue {
@@ -199,11 +207,19 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 로딩 오버레이
     private var loadingOverlay: some View {
         Group {
-            if !isSceneReady && !isNavigatingAway {
+            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩이 모두 끝나야 사라짐
+            if (!isSceneReady || isKeyringSheetLoading) && !isNavigatingAway {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(100)
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            if isCapturing {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 수정하고 있어요")
                     .zIndex(101)
             }
         }
@@ -256,26 +272,42 @@ struct BundleEditView<Route: BundleRoute>: View {
             .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들
-            // - xPosPt : 현재 휴대폰 기기사이즈와 +버튼 위치를 맞췄던 기기의 포인트 차이를 계산합니다. se3는 2pt를 사용하고 있지만 16프로(기준 기기)는 3pt를 사용하고 있어 +버튼 위치에 차이가 있습니다.
-            ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
-                let xPosPt = screenWidth / screenSize.width * carabiner.carabiner.keyringXPosition[index]
-                let xPos = round(xPosPt * screenScale) / screenScale
-                let yPosPt = screenHeight / screenSize.height * carabiner.carabiner.keyringYPosition[index]
-                let yPos = round(yPosPt * screenScale) / screenScale - getBottomPadding(40) - getTopPadding(34)
-                CarabinerAddKeyringButton(
-                    isSelected: selectedPosition == index,
-                    action: {
-                        selectedPosition = index
-                        withAnimation(.easeInOut) {
-                            showSelectKeyringSheet = true
+            GeometryReader { geometry in
+                let sceneWidth: CGFloat = 402
+                let sceneHeight: CGFloat = 874
+                
+                // 실제 화면 크기에 맞게 씬을 스케일링 하는 비율 계산
+                let scale = max(geometry.size.width / sceneWidth, geometry.size.height / sceneHeight)
+                
+                // 스케일 적용 후 콘텐츠 크기
+                let contentW = sceneWidth * scale
+                let contentH = sceneHeight * scale
+                
+                // 씬을 화면 중앙에 배치하기 위한 오프셋 (실제 뷰 크기와 스케일 된 씬의 크기 차이를 균등하게 배분)
+                let dx = (geometry.size.width - contentW) / 2
+                let dy = (geometry.size.height - contentH) / 2
+                
+                ForEach(0..<carabiner.carabiner.maxKeyringCount, id: \.self) { index in
+                    // 씬 좌표를 실제 화면 좌표로 변환 (오프셋 + 스케일 적용)
+                    let viewX = dx + carabiner.carabiner.keyringXPosition[index] * scale
+                    let viewY = dy + carabiner.carabiner.keyringYPosition[index] * scale
+                    
+                    CarabinerAddKeyringButton(
+                        isSelected: selectedPosition == index,
+                        action: {
+                            selectedPosition = index
+                            withAnimation(.easeInOut) {
+                                showSelectKeyringSheet = true
+                            }
                         }
-                    }
-                )
-                .position(x: xPos, y: yPos)
-                .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
-                .zIndex(selectedPosition == index ? 100 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
-                .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
+                    )
+                    .position(x: viewX, y: viewY)
+                    .opacity(showSelectKeyringSheet && selectedPosition != index ? 0.3 : 1.0)
+                    .zIndex(selectedPosition == index ? 100 : 1) // 선택된 버튼이 dim 오버레이(zIndex 1) 위로 오도록
+                    .opacity(isSceneReady ? 1.0 : 0.0) // LoadingAlert가 표시될 때는 버튼 숨김
+                }
             }
+            .ignoresSafeArea()
         }
         .ignoresSafeArea()
     }
@@ -287,7 +319,18 @@ struct BundleEditView<Route: BundleRoute>: View {
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
             
-            if viewModel.keyring.isEmpty {
+            if isKeyringSheetLoading {
+                VStack {
+                    LoadingAlert(type: .short, message: nil)
+                        .padding(.vertical, 24)
+                    Text("키링을 불러오고 있어요")
+                        .typography(.suit15R)
+                        .foregroundStyle(.black100)
+                        .padding(.vertical, 15)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: screenHeight * (sheetHeightRatio - 0.08)) // 버튼 영역 제외한 대략 높이
+            } else if viewModel.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
                         .resizable()
@@ -567,6 +610,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 데이터를 새로 로드하므로 씬도 새로 로드됨
         await MainActor.run {
             isSceneReady = false
+            isKeyringSheetLoading = true
         }
         
         // 사용자 키링 데이터 로드
@@ -604,6 +648,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                         await self.initializeSelectedKeyringsFromFirebase()
                         // 이후부터는 완전히 로컬 데이터만 사용
                         self.updateKeyringDataList()
+                        
+                        isKeyringSheetLoading = false
+                        
+                        // 씬 재구성 조건 설정
+                        if !keyringDataList.isEmpty {
+                            sceneRefreshId = UUID()
+                        }
                     }
                     
                     continuation.resume()
@@ -744,6 +795,10 @@ struct BundleEditView<Route: BundleRoute>: View {
                 // 캐시 삭제, BundleInventoryView로 접근했을 때 썸네일 업데이트 하도록 함
                 BundleImageCache.shared.delete(for: documentId)
             }
+            
+            // 저장 성공 후 썸네일 재캡쳐 + 캐시 저장
+            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
+            
         } catch {
             print("❌ Firebase 업데이트 실패: \(error.localizedDescription)")
             if let firestoreError = error as NSError? {
@@ -785,6 +840,69 @@ struct BundleEditView<Route: BundleRoute>: View {
                 newSelectedCarabiner = restoredCarabiner
                 // 복원 후 삭제
                 UserDefaults.standard.removeObject(forKey: "tempSelectedCarabinerId")
+            }
+        }
+    }
+    
+    // MARK: - 썸네일 재캡쳐 & 캐시 저장
+    private func recaptureAndCacheBundleThumbnail(bundleId: String, bundleName: String) async {
+        // 편집 중 상태로 캡쳐
+        guard let bg = newSelectedBackground?.background,
+              let cb = newSelectedCarabiner?.carabiner else {
+            return
+        }
+        
+        await MainActor.run {
+            isCapturing = true
+        }
+        
+        // 캡쳐용 키링 데이터 생성 (편집 중 keyringDataList -> 캡쳐용으로 변환)
+        let captureKeyrings: [MultiKeyringCaptureScene.KeyringData] = keyringDataList.map { item in
+            MultiKeyringCaptureScene.KeyringData(
+                index: item.index,
+                position: item.position,
+                bodyImageURL: item.bodyImageURL,
+                hookOffsetY: item.hookOffsetY,
+                chainLength: item.chainLength
+            )
+        }
+        
+        // 카라비너 타입 및 이미지 URL
+        let carabinerType = cb.type
+        let carabinerBackURL: String?
+        let carabinerFrontURL: String?
+        if carabinerType == .hamburger {
+            carabinerBackURL = cb.carabinerImage[1]
+            carabinerFrontURL = cb.carabinerImage[2]
+        } else {
+            carabinerBackURL = cb.carabinerImage[0]
+            carabinerFrontURL = nil
+        }
+        
+        // 캡쳐
+        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+            keyringDataList: captureKeyrings,
+            backgroundImageURL: bg.backgroundImage,
+            carabinerBackImageURL: carabinerBackURL,
+            carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,
+            carabinerX: cb.carabinerX,
+            carabinerY: cb.carabinerY,
+            carabinerWidth: cb.carabinerWidth
+        ) {
+            // 캐시 저장
+            BundleImageCache.shared.syncBundle(
+                id: bundleId,
+                name: bundleName,
+                imageData: pngData
+            )
+            await MainActor.run {
+                viewModel.bundleCapturedImage = pngData
+                isCapturing = false
+            }
+        } else {
+            await MainActor.run {
+                isCapturing = false
             }
         }
     }
@@ -1113,4 +1231,3 @@ extension BundleEditView {
         }
     }
 }
-
