@@ -55,9 +55,9 @@ struct SelectBackgroundGridItem: View {
                             .foregroundStyle(.white100)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.black.opacity(0.6))
+                            .background(.black60)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .opacity(background.isOwned ? 1 : 0)
+                            .opacity((background.isOwned && !background.background.isFree) ? 1 : 0)
                     }
                     Spacer()
                 }
