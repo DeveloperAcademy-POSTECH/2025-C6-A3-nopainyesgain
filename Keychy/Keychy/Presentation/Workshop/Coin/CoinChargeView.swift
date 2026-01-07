@@ -55,17 +55,20 @@ struct CoinChargeView<Route: Hashable>: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 25)
                 .padding(.bottom, 30)
-                .adaptiveTopPaddingAlt()
                 .navigationBarBackButtonHidden()
                 .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("충전하기")
                 .toolbar(.hidden, for: .tabBar)
+                .toolbar {
+                    backToolbarItem
+                }
+                .tint(.black)
                 .sheet(isPresented: $showPurchaseSheet) {
                     purchaseSheet
                 }
                 .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
+                .swipeBackGesture(enabled: true)
             }
-
-            customNavigationBar
 
             // Alert 딤 처리
             if showPurchaseSuccessAlert || showPurchaseFailAlert {
@@ -96,7 +99,6 @@ struct CoinChargeView<Route: Hashable>: View {
                 LoadingAlert(type: .short, message: nil)
             }
         }
-        .ignoresSafeArea()
         .task {
             // 네트워크 체크
             guard NetworkManager.shared.isConnected else {
@@ -397,22 +399,22 @@ extension CoinChargeView {
     
 }
 
-// MARK: - 커스텀네비
+// MARK: - Toolbar Items
 extension CoinChargeView {
-    private var customNavigationBar: some View {
-        CustomNavigationBar {
-            // Leading (왼쪽)
-            BackToolbarButton {
+    var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
                 router.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
-        } center: {
-            // Center (중앙)
-            Text("충전하기")
-        } trailing: {
-            // Trailing (오른쪽) - 빈 공간
-            Spacer()
-                .frame(width: 44, height: 44)
+            .frame(width: 32, height: 32)
+            .opacity(showPurchaseFailAlert || showPurchaseSuccessAlert ? 0 : 1)
+            .allowsHitTesting(!showPurchaseFailAlert && !showPurchaseSuccessAlert)
         }
+        .sharedBackgroundVisibility(showPurchaseFailAlert || showPurchaseSuccessAlert ? .hidden : .visible)
     }
 }
 
