@@ -17,8 +17,6 @@ struct NoInternetView: View {
             VStack(spacing: 0) {
                 // 아이콘
                 Image(.noInternetBangMark)
-                    .font(.system(size: 60, weight: .semibold))
-                    .foregroundStyle(.main500)
                     .padding(.bottom, 25)
 
                 // 제목
