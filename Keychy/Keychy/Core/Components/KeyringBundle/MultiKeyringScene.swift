@@ -17,14 +17,14 @@ class MultiKeyringScene: SKScene {
     /// 키링 데이터 구조체
     struct KeyringData: Equatable {
         let index: Int
-        let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계)
+        let position: CGPoint       // 절대 좌표 (SwiftUI 좌표계)
         let bodyImageURL: String
-        let templateId: String?  // 템플릿 ID (옵션)
-        let soundId: String  // 사운드 ID
-        let customSoundURL: URL?  // 커스텀 녹음 파일 URL
-        let particleId: String  // 파티클 ID
-        let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
-        let chainLength: Int  // 체인 길이 (기본값 5)
+        let templateId: String?     // 템플릿 ID (옵션)
+        let soundId: String         // 사운드 ID
+        let customSoundURL: URL?    // 커스텀 녹음 파일 URL
+        let particleId: String      // 파티클 ID
+        let hookOffsetY: CGFloat?   // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+        let chainLength: Int        // 체인 길이 (기본값 5)
 
         init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
             self.index = index
