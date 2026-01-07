@@ -27,20 +27,22 @@ struct ChangeNameView: View {
             .padding(.horizontal, 20)
             .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("닉네임 변경")
+            .toolbar {
+                backToolbarItem
+            }
+            .tint(.black)
             .dismissKeyboardOnTap()
             .ignoresSafeArea(.keyboard)
             .blur(radius: (viewModel.showSuccessAlert || viewModel.isUpdating) ? 10 : 0)
             .animation(.easeInOut(duration: 0.3), value: (viewModel.showSuccessAlert || viewModel.isUpdating))
-            .adaptiveTopPaddingAlt()
             .onAppear {
                 // 현재 닉네임으로 초기화
                 viewModel.initialize(currentNickname: userManager.currentUser?.nickname ?? "")
             }
 
             alerts
-
-            customNavigationBar
-                .ignoresSafeArea()
         }
         .swipeBackGesture(enabled: true)
         .withToast(position: .button)
@@ -138,21 +140,21 @@ extension ChangeNameView {
         }
     }
 
-    /// 커스텀 네비게이션 바
-    private var customNavigationBar: some View {
-        CustomNavigationBar {
-            // Leading (왼쪽)
-            BackToolbarButton {
+    /// Toolbar Items
+    var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
                 router.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
-        } center: {
-            // Center (중앙)
-            Text("닉네임 변경")
-        } trailing: {
-            // Trailing (오른쪽) - 빈 공간
-            Spacer()
-                .frame(width: 44, height: 44)
+            .frame(width: 32, height: 32)
+            .opacity(viewModel.showSuccessAlert || viewModel.isUpdating ? 0 : 1)
+            .allowsHitTesting(!viewModel.showSuccessAlert && !viewModel.isUpdating)
         }
+        .sharedBackgroundVisibility(viewModel.showSuccessAlert || viewModel.isUpdating ? .hidden : .visible)
     }
 }
 
