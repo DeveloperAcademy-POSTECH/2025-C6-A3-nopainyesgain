@@ -33,6 +33,7 @@ class RootViewModel {
     var introViewModel = IntroViewModel()
     var userManager = UserManager.shared
     var purchaseManager = PurchaseManager.shared
+    var updateManager = AppUpdateManager()
     var isCheckingAuth = true
 
     // MARK: - Computed Properties
@@ -46,15 +47,26 @@ class RootViewModel {
     }
 
     // MARK: - Methods
-    /// 사용자 인증 상태를 확인하고 적절한 화면으로 라우팅
+    /// 앱 업데이트 체크 후 사용자 인증 상태를 확인하고 적절한 화면으로 라우팅
     func checkAuthAndNavigate() {
-        let startTime = Date()
-        let hasLaunchedBefore = UserDefaults.standard.bool(forKey: UserDefaultsKey.hasLaunchedBefore)
+        Task {
+            // 1. 앱 업데이트 체크
+            await updateManager.checkForUpdate()
 
-        if let user = Auth.auth().currentUser, hasLaunchedBefore {
-            handleReturningUser(user, startTime: startTime)
-        } else {
-            handleFirstVisit(hasLaunchedBefore, startTime: startTime)
+            // 2. 업데이트가 필요한 경우 여기서 중단 (사용자가 업데이트할 때까지 앱 진입 차단)
+            if updateManager.showUpdateAlert {
+                return
+            }
+
+            // 3. 인증 상태 확인 및 화면 라우팅
+            let startTime = Date()
+            let hasLaunchedBefore = UserDefaults.standard.bool(forKey: UserDefaultsKey.hasLaunchedBefore)
+
+            if let user = Auth.auth().currentUser, hasLaunchedBefore {
+                handleReturningUser(user, startTime: startTime)
+            } else {
+                handleFirstVisit(hasLaunchedBefore, startTime: startTime)
+            }
         }
     }
 
