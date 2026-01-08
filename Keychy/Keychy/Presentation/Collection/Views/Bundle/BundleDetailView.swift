@@ -15,12 +15,12 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State var viewModel: CollectionViewModel
     
     // MARK: - State Management
-    @State private var showMenu: Bool = false
-    @State private var showDeleteAlert: Bool = false
-    @State private var showDeleteCompleteToast: Bool = false
-    @State private var showAlreadyMainBundleToast: Bool = false
-    @State private var showChangeMainBundleAlert: Bool = false
-    @State private var isMainBundleChange: Bool = false
+    @State var showMenu: Bool = false
+    @State var showDeleteAlert: Bool = false
+    @State var showDeleteCompleteToast: Bool = false
+    @State var showAlreadyMainBundleToast: Bool = false
+    @State var showChangeMainBundleAlert: Bool = false
+    @State var isMainBundleChange: Bool = false
     @State var isCapturing: Bool = false
     @State var getlessPadding: CGFloat = 0
     @State private var isNavigatingDeeper: Bool = true
@@ -32,7 +32,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
     
     /// 씬 준비 완료 여부
-    @State private var isSceneReady = false
+    @State var isSceneReady = false
     
     // MARK: - Body
     var body: some View {
@@ -97,57 +97,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 // 메뉴 오버레이 (최상위 ZStack으로 이동)
                 if showMenu {
                     menuOverlay
-                }
-                
-                if !isSceneReady || showChangeMainBundleAlert || isMainBundleChange || isCapturing || showDeleteAlert || showDeleteCompleteToast || showAlreadyMainBundleToast {
-                    Color.black20
-                        .ignoresSafeArea()
-                    
-                    LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
-                        .zIndex(200)
-                        .opacity(isSceneReady ? 0 : 1)
-                    
-                    changeMainBundleAlert
-                        .opacity(showChangeMainBundleAlert ? 1 : 0)
-                        .padding(.horizontal, 51)
-                        .position(x: screenWidth/2, y: screenHeight/2)
-                    
-                    KeychyAlert(type: .checkmark, message: "대표 뭉치가 변경되었어요!", isPresented: $isMainBundleChange)
-                        .zIndex(200)
-                    
-                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $isCapturing)
-                        .zIndex(200)
-
-                    if showDeleteAlert {
-                        if let bundle = viewModel.selectedBundle {
-                            DeletePopup(
-                                title: "[\(bundle.name)]\n삭제하시겠어요?",
-                                message: "삭제한 뭉치는 복구할 수 없습니다.",
-                                onCancel: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showDeleteAlert = false
-                                    }
-                                },
-                                onConfirm: {
-                                    Task {
-                                        await deleteBundle()
-                                    }
-                                }
-                            )
-                            .position(x: screenWidth/2, y: screenHeight/2)
-                            .zIndex(200)
-                        }
-                    } else if showDeleteCompleteToast {
-                        DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
-                            .zIndex(200)
-                            .position(x: screenWidth/2, y: screenHeight/2)
-                    }
-                    
-                    alreadyMainBundleToast
-                        .zIndex(200)
-                        .opacity(showAlreadyMainBundleToast ? 1 : 0)
-                        .padding(.horizontal, 51)
-                        .position(x: screenWidth/2, y: screenHeight/2)
                 }
             }
         }
@@ -288,7 +237,7 @@ extension BundleDetailView {
     
     /// 뭉치 삭제
     @MainActor
-    private func deleteBundle() async {
+    func deleteBundle() async {
         // 네트워크 체크
         guard NetworkManager.shared.isConnected else {
             showDeleteAlert = false
@@ -501,73 +450,6 @@ extension BundleDetailView {
                 }
             }
         }
-    }
-    
-    //MARK: - 알럿창, 토스트 창
-    private var changeMainBundleAlert: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 10) {
-                Image(.bangMark)
-                    .padding(.vertical, 4)
-                
-                Text("대표 뭉치를 변경할까요?")
-                    .typography(.suit20B)
-                    .foregroundStyle(.black100)
-                Text("선택한 뭉치가 홈에 걸려요.")
-                    .typography(.suit15R)
-                    .foregroundStyle(.black100)
-            }
-            .padding(8)
-            
-            // 버튼 영역
-            HStack(spacing: 16) {
-                Button {
-                    showChangeMainBundleAlert = false
-                } label: {
-                    Text("취소")
-                        .typography(.suit17SB)
-                        .foregroundStyle(.black100)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(.black10)
-                
-                Button {
-                    // 네트워크 체크
-                    guard NetworkManager.shared.isConnected else {
-                        showChangeMainBundleAlert = false
-                        ToastManager.shared.show()
-                        return
-                    }
-
-                    viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
-                    showChangeMainBundleAlert = false
-                    isMainBundleChange = true
-                } label: {
-                    Text("확인")
-                        .typography(.suit17SB)
-                        .foregroundStyle(.white100)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(.main500)
-            }
-        }
-        .padding(14)
-        .glassEffect(in: .rect(cornerRadius: 34))
-        .frame(maxWidth: .infinity)
-    }
-    
-    private var alreadyMainBundleToast: some View {
-        Text("이미 대표 뭉치로 설정되어 있어요")
-            .typography(.suit17SB)
-            .foregroundColor(.black100)
-            .frame(maxWidth: .infinity)
-            .frame(height: 73)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-            .transition(.scale.combined(with: .opacity))
     }
 }
 
