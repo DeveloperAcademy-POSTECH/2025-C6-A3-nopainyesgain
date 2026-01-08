@@ -10,6 +10,7 @@ import SwiftUI
 extension BundleDetailView {
     @ViewBuilder
     
+    // 우측 상단 ... 버튼 눌렀을 때 뜨는 메뉴 시트
     var menuOverlay: some View {
         ZStack {
             Color.clear
