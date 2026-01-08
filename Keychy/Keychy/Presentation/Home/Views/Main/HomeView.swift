@@ -118,7 +118,7 @@ struct HomeView: View {
 extension HomeView {
     /// 네트워크 에러 화면
     private var networkErrorView: some View {
-        NoInternetView(onRetry: {
+        NoInternetView(topPadding: getSafeAreaTop() + 10, onRetry: {
             Task {
                 await viewModel.retryLoadMainBundle(
                     collectionViewModel: collectionViewModel,

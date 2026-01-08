@@ -165,7 +165,7 @@ extension WorkshopView {
     /// 네트워크 에러 화면
     private var networkErrorView: some View {
         ZStack(alignment: .top) {
-            NoInternetView(onRetry: {
+            NoInternetView(topPadding: getSafeAreaTop() + 40, onRetry: {
                 Task {
                     await viewModel.retryFetchAllData()
                 }

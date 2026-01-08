@@ -27,10 +27,8 @@ struct BundleInventoryView<Route: BundleRoute>: View {
                     Color.white
                         .ignoresSafeArea()
 
-                    NoInternetView(onRetry: {
-                        Task {
-                            await retryFetchData()
-                        }
+                    NoInternetView(topPadding: getSafeAreaTop() + 10, onRetry: {
+                        await retryFetchData()
                     })
                     .ignoresSafeArea()
 
@@ -38,7 +36,6 @@ struct BundleInventoryView<Route: BundleRoute>: View {
                         customNavigationBar
                         Spacer()
                     }
-                    .background(Color.white)
                 }
             } else {
                 // 정상 상태: 기존 ZStack 형태
@@ -113,7 +110,7 @@ extension BundleInventoryView {
         return GeometryReader { geometry in
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 11) {
-                    ForEach(viewModel.sortedBundles, id: \.self) { bundle in
+                    ForEach(viewModel.sortedBundles, id: \.documentId) { bundle in
                         Button {
                             // 네트워크 체크
                             guard NetworkManager.shared.isConnected else {

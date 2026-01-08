@@ -18,7 +18,7 @@ extension CollectionView {
                     Color.white
                         .ignoresSafeArea()
 
-                    NoInternetView(onRetry: {
+                    NoInternetView(topPadding: getSafeAreaTop() + 90, onRetry: {
                         Task {
                             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
                                 print("UID를 찾을 수 없습니다")
