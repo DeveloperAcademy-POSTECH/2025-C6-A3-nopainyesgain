@@ -94,7 +94,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 }
                 .blur(radius: (isSceneReady && !uiState.isMainBundleChange && !uiState.isCapturing) ? 0 : 15)
                 .ignoresSafeArea()
-                // 메뉴 오버레이
                 
                 alertOverlays
             }
