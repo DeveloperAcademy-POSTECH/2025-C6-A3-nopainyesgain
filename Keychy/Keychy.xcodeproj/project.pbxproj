@@ -286,6 +286,7 @@
 		AA6298562EC3AD16001576C0 /* BundleItemCustomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */; };
 		AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */; };
 		AA8C9B8C2F0F349500A352D2 /* BundleDetailView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */; };
+		AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */; };
 		AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */; };
@@ -678,6 +679,7 @@
 		AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleItemCustomSheet.swift; sourceTree = "<group>"; };
 		AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerChangePopup.swift; sourceTree = "<group>"; };
 		AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Alert.swift"; sourceTree = "<group>"; };
+		AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Menu.swift"; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerGridItem.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -1797,6 +1799,7 @@
 				4CEC61F72EAE08DA0099ECEE /* Component */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
+				AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */,
 				AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */,
 				AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */,
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
@@ -2289,6 +2292,7 @@
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
 				C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */,
 				C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */,
+				AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */,
 				4C8426622ED372650050B6FE /* SpeechBubblePreview.swift in Sources */,
 				4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */,

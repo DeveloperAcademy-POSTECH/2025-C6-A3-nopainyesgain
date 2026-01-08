@@ -23,8 +23,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State var isMainBundleChange: Bool = false
     @State var isCapturing: Bool = false
     @State var getlessPadding: CGFloat = 0
-    @State private var isNavigatingDeeper: Bool = true
-    @State private var menuPosition: CGRect = .zero
+    @State var menuPosition: CGRect = .zero
+    @State var isNavigatingDeeper: Bool = true
     @State private var dismissTask: Task<Void, Never>?
     @State private var readyDelayTask: Task<Void, Never>?
     
@@ -314,67 +314,6 @@ extension BundleDetailView {
             }
         }
         
-    }
-}
-
-// MARK: - 메뉴 오버레이
-extension BundleDetailView {
-    var menuOverlay: some View {
-        ZStack {
-            Color.clear
-                .ignoresSafeArea()
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showMenu = false
-                    }
-                }
-            
-            if let bundle = viewModel.selectedBundle {
-                BundleMenu(
-                    position: menuPosition,
-                    onNameEdit: {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            showMenu = false
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showMenu = false
-                        isNavigatingDeeper = true
-                        router.push(.bundleNameEditView)
-                    },
-                    onEdit: {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            showMenu = false
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showMenu = false
-                        isNavigatingDeeper = true
-                        router.push(.bundleEditView)
-                    },
-                    onDelete: {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            showMenu = false
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showMenu = false
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showDeleteAlert = true
-                        }
-                    },
-                    isMain: bundle.isMain
-                )
-                .zIndex(50)
-            }
-        }
     }
 }
 
