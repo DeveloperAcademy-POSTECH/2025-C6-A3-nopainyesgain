@@ -297,7 +297,6 @@ extension BundleDetailView {
 extension BundleDetailView {
     private var customnavigationBar: some View {
         CustomNavigationBar {
-            //Leading(왼쪽)
             BackToolbarButton {
                 router.pop()
             }
@@ -306,14 +305,12 @@ extension BundleDetailView {
                 Text("\(bundle.name)")
             }
         } trailing: {
-            // Trailing (오른쪽)
             MenuToolbarButton {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     showMenu.toggle()
                 }
             }
         }
-        
     }
 }
 
@@ -325,38 +322,28 @@ extension BundleDetailView {
             Spacer()
             HStack {
                 pinButton
+                
                 Spacer()
+                
                 if let bundle = viewModel.selectedBundle {
                     if bundle.isMain {
                         Text("대표 뭉치 설정 중")
                             .typography(.suit16M)
                             .foregroundStyle(.white100)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 8)
+                            .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
                             .background(
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.main500)
                             )
                     }
                 }
+                
                 Spacer()
+                
                 downloadImageButton
             }
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
-    }
-    
-    private var downloadImageButton: some View {
-        Button(action: {
-            Task {
-                await captureAndSaveScene()
-            }
-        }) {
-            Image(.imageDownload)
-        }
-        .disabled(isCapturing)
-        .frame(width: 48, height: 48)
-        .glassEffect(in: .circle)
     }
     
     /// 핀 버튼 - 메인 뭉치 설정/해제
@@ -390,21 +377,24 @@ extension BundleDetailView {
             }
         }
     }
+    
+    /// 이미지 다운로드 버튼
+    private var downloadImageButton: some View {
+        Button(action: {
+            Task {
+                await captureAndSaveScene()
+            }
+        }) {
+            Image(.imageDownload)
+        }
+        .disabled(isCapturing)
+        .frame(width: 48, height: 48)
+        .glassEffect(in: .circle)
+    }
 }
 
 // MARK: - 구성 id 생성 헬퍼
 extension BundleDetailView {
-    private func makeBackgroundId(_ bg: Background?) -> String {
-        guard let bg else { return "" }
-        return bg.id ?? ""
-    }
-    
-    private func makeCarabinerId(_ cb: Carabiner?) -> String {
-        guard let cb else { return "" }
-        // id만으로도 충분하지만, 안전하게 타입/좌표/폭 포함은 필요 시 확장
-        return "\(cb.id ?? "")|\(cb.carabinerX)|\(cb.carabinerY)|\(cb.carabinerWidth)"
-    }
-    
     private func makeKeyringsId(_ list: [MultiKeyringScene.KeyringData]) -> String {
         list
             .sorted(by: { $0.index < $1.index })
