@@ -15,13 +15,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State var viewModel: CollectionViewModel
     
     // MARK: - State Management
-    @State var showMenu: Bool = false
-    @State var showDeleteAlert: Bool = false
-    @State var showDeleteCompleteToast: Bool = false
-    @State var showAlreadyMainBundleToast: Bool = false
-    @State var showChangeMainBundleAlert: Bool = false
-    @State var isMainBundleChange: Bool = false
-    @State var isCapturing: Bool = false
+    @State var uiState = BundleDetailUIState()
     @State var getlessPadding: CGFloat = 0
     @State var menuPosition: CGRect = .zero
     @State var isNavigatingDeeper: Bool = true
@@ -186,7 +180,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 }
             }
         }
-        .onChange(of: showAlreadyMainBundleToast) { oldValue, newValue in
+        .onChange(of: uiState.showAlreadyMainBundleToast) { oldValue, newValue in
             if newValue {
                 dismissTask?.cancel()
                 
@@ -194,7 +188,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     try? await Task.sleep(for: .seconds(1))
                     if !Task.isCancelled {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showAlreadyMainBundleToast = false
+                            uiState.showAlreadyMainBundleToast = false
                         }
                     }
                 }
@@ -240,21 +234,21 @@ extension BundleDetailView {
     func deleteBundle() async {
         // 네트워크 체크
         guard NetworkManager.shared.isConnected else {
-            showDeleteAlert = false
+            uiState.showDeleteAlert = false
             ToastManager.shared.show()
             return
         }
-
+        
         guard let bundle = viewModel.selectedBundle,
               let documentId = bundle.documentId else {
-            showDeleteAlert = false
+            uiState.showDeleteAlert = false
             return
         }
         
         do {
             // 1. 삭제 확인 Alert 닫기
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteAlert = false
+                uiState.showDeleteAlert = false
             }
             
             // 2. alert가 확실히 사라지면서 중첩되지 않도록 보장하는 아주 짧은 대기 시간을 줌
@@ -271,14 +265,14 @@ extension BundleDetailView {
             
             // 5. 삭제 완료 팝업 표시
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteCompleteToast = true
+                uiState.showDeleteCompleteToast = true
             }
             
             // 6. 1초 후 팝업 닫고 이전 화면으로 이동
             try? await Task.sleep(for: .seconds(1))
             
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteCompleteToast = false
+                uiState.showDeleteCompleteToast = false
             }
             
             // 7. 애니메이션 완료 대기 후 화면 이동
@@ -307,7 +301,7 @@ extension BundleDetailView {
         } trailing: {
             MenuToolbarButton {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showMenu.toggle()
+                    uiState.showMenu.toggle()
                 }
             }
         }
@@ -352,7 +346,7 @@ extension BundleDetailView {
             if let bundle = viewModel.selectedBundle {
                 if bundle.isMain {
                     Button {
-                        showAlreadyMainBundleToast = true
+                        uiState.showAlreadyMainBundleToast = true
                     } label: {
                         Image(.starFill)
                     }
@@ -366,8 +360,8 @@ extension BundleDetailView {
                             ToastManager.shared.show()
                             return
                         }
-
-                        showChangeMainBundleAlert = true
+                        
+                        uiState.showChangeMainBundleAlert = true
                     }) {
                         Image(.star)
                     }
@@ -387,7 +381,7 @@ extension BundleDetailView {
         }) {
             Image(.imageDownload)
         }
-        .disabled(isCapturing)
+        .disabled(uiState.isCapturing)
         .frame(width: 48, height: 48)
         .glassEffect(in: .circle)
     }
