@@ -250,10 +250,10 @@ extension BundleDetailView {
         // 동일 구성인지 확인(+변경 감지)
         if viewModel.shouldSkipReloadForReturnedConfig() {
             restoreSceneIfNeeded(bundle)
+            isSceneReady = true
             return
         }
         
-        // 스킵이 아니면 항상 로드
         isSceneReady = false
         readyDelayTask?.cancel()
         readyDelayTask = nil
