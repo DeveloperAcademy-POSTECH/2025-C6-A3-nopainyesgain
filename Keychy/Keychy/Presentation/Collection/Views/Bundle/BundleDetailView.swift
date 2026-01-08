@@ -125,15 +125,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
         .task {
             await handleBundleChange()
         }
-        .onChange(of: keyringDataList) { oldValue, newValue in
-            let oldId = makeKeyringsIdForCheckBundleChanged(oldValue)
-            let newId = makeKeyringsIdForCheckBundleChanged(newValue)
-            if oldId != newId {
-                withAnimation(.easeIn(duration: 0.3)) {
-                    isSceneReady = false
-                }
-            }
-        }
         
         .onChange(of: uiState.showAlreadyMainBundleToast) { oldValue, newValue in
             if newValue {
@@ -260,7 +251,6 @@ extension BundleDetailView {
             isSceneReady = true
             return
         }
-        
         isSceneReady = false
         readyDelayTask?.cancel()
         readyDelayTask = nil
