@@ -1370,7 +1370,7 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		4CEC61F72EAE08DA0099ECEE /* KeyringBundle */ = {
+		4CEC61F72EAE08DA0099ECEE /* Component */ = {
 			isa = PBXGroup;
 			children = (
 				4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */,
@@ -1383,7 +1383,7 @@
 				AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */,
 				AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */,
 			);
-			path = KeyringBundle;
+			path = Component;
 			sourceTree = "<group>";
 		};
 		4CEC61F82EAE08DA0099ECEE /* View */ = {
@@ -1396,7 +1396,6 @@
 				38C147B92EB13B2100A8E511 /* Button */,
 				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
 				AA9B2E902EB081750004D31C /* ItemDetailView.swift */,
-				4CEC61F72EAE08DA0099ECEE /* KeyringBundle */,
 				4C8426632ED375840050B6FE /* ColorPalette.swift */,
 				4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */,
 				4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */,
@@ -1793,6 +1792,7 @@
 		4CEC629D2EAE09990099ECEE /* Bundle */ = {
 			isa = PBXGroup;
 			children = (
+				4CEC61F72EAE08DA0099ECEE /* Component */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */,
