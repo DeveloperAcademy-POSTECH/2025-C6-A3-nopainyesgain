@@ -36,7 +36,7 @@ extension BundleDetailView {
             requestPhotoLibraryPermission { [self] granted in
                 guard granted else {
                     Task { @MainActor in
-                        isCapturing = false
+                        uiState.isCapturing = false
                     }
                     continuation.resume()
                     return
@@ -53,7 +53,7 @@ extension BundleDetailView {
                         }
                         
                         // 캡처 상태 해제
-                        self.isCapturing = false
+                        uiState.isCapturing = false
                     }
                     continuation.resume()
                 }
@@ -68,7 +68,7 @@ extension BundleDetailView {
         
         // 캡쳐 시작
         await MainActor.run {
-            isCapturing = true
+            uiState.isCapturing = true
         }
         
         // 배경 및 카라비너 로드
@@ -76,7 +76,7 @@ extension BundleDetailView {
               let bg = WorkshopDataManager.shared.backgrounds.first(where: { $0.id == bundle.selectedBackground }) else {
             await MainActor.run {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    isCapturing = false
+                    uiState.isCapturing = false
                 }
             }
             return
@@ -136,7 +136,7 @@ extension BundleDetailView {
             carabinerWidth: cb.carabinerWidth
         ) else {
             await MainActor.run {
-                isCapturing = false
+                uiState.isCapturing = false
             }
             return
         }
@@ -159,7 +159,7 @@ extension BundleDetailView {
         // PNG 데이터를 UIImage로 변환하여 포토 라이브러리에 저장
         guard let image = UIImage(data: pngData) else {
             await MainActor.run {
-                isCapturing = false
+                uiState.isCapturing = false
             }
             return
         }

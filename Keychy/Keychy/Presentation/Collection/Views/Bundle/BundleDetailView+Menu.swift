@@ -18,7 +18,7 @@ extension BundleDetailView {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showMenu = false
+                        uiState.showMenu = false
                     }
                 }
             
@@ -28,38 +28,43 @@ extension BundleDetailView {
                     onNameEdit: {
                         // 네트워크 체크
                         guard NetworkManager.shared.isConnected else {
-                            showMenu = false
+                            uiState.showMenu = false
                             ToastManager.shared.show()
                             return
                         }
                         
-                        showMenu = false
+                        uiState.showMenu = false
                         isNavigatingDeeper = true
                         router.push(.bundleNameEditView)
                     },
                     onEdit: {
                         // 네트워크 체크
                         guard NetworkManager.shared.isConnected else {
-                            showMenu = false
+                            uiState.showMenu = false
                             ToastManager.shared.show()
                             return
                         }
                         
-                        showMenu = false
+                        uiState.showMenu = false
                         isNavigatingDeeper = true
+                        viewModel.lastBackgroundIdForDetail = bundle.selectedBackground
+                        viewModel.lastCarabinerIdForDetail = bundle.selectedCarabiner
+                        viewModel.lastKeyringsIdForDetail = bundle.keyrings
+                            .sorted()
+                            .joined(separator: "|")
                         router.push(.bundleEditView)
                     },
                     onDelete: {
                         // 네트워크 체크
                         guard NetworkManager.shared.isConnected else {
-                            showMenu = false
+                            uiState.showMenu = false
                             ToastManager.shared.show()
                             return
                         }
                         
-                        showMenu = false
+                        uiState.showMenu = false
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showDeleteAlert = true
+                            uiState.showDeleteAlert = true
                         }
                     },
                     isMain: bundle.isMain
