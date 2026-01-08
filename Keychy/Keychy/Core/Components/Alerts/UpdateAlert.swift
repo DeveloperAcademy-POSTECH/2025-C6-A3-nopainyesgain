@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// 앱 업데이트 안내 Alert
+/// 새로운 버전이 출시되었을 때 사용자에게 업데이트를 유도
 struct UpdateAlert: View {
     let appStoreURL: String
 
@@ -42,15 +44,13 @@ struct UpdateAlert: View {
         .padding(.horizontal, 51)
     }
 
+    /// App Store 앱 페이지 열기
     private func openAppStore() {
         guard let url = URL(string: appStoreURL) else { return }
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
+        UIApplication.shared.open(url)
     }
 }
 
 #Preview {
-    UpdateAlert()
+    UpdateAlert(appStoreURL: "https://apps.apple.com/app/id123456789")
 }
