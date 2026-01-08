@@ -114,22 +114,19 @@ struct BundleDetailView<Route: BundleRoute>: View {
             readyDelayTask?.cancel()
             dismissTask?.cancel()
         }
-        .task(id: bundleTaskId) {
-            guard let bundle = viewModel.selectedBundle else {
-                return
-            }
-            
+        .task {
             await handleBundleChange()
         }
         .onChange(of: keyringDataList) { oldValue, newValue in
-            let oldId = viewModel.makeKeyringsId(oldValue)
-            let newId = viewModel.makeKeyringsId(newValue)
+            let oldId = makeKeyringsIdForCheckBundleChanged(oldValue)
+            let newId = makeKeyringsIdForCheckBundleChanged(newValue)
             if oldId != newId {
-                withAnimation(.easeIn(duration: 0.2)) {
+                withAnimation(.easeIn(duration: 0.3)) {
                     isSceneReady = false
                 }
             }
         }
+        
         .onChange(of: uiState.showAlreadyMainBundleToast) { oldValue, newValue in
             if newValue {
                 dismissTask?.cancel()
@@ -273,16 +270,34 @@ extension BundleDetailView {
         if viewModel.selectedCarabiner == nil {
             viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
         }
-        
+        readyDelayTask?.cancel()
+        readyDelayTask = nil
         isSceneReady = true
     }
 }
+
+
+// MARK: - 구성 id 생성 헬퍼
+extension BundleDetailView {
+    private func makeKeyringsIdForCheckBundleChanged(_ list: [MultiKeyringScene.KeyringData]) -> String {
+        list
+            .sorted(by: { $0.index < $1.index })
+            .map { item in
+                "\(item.index)|\(item.bodyImageURL)|\((item.templateId ?? ""))|\(item.soundId)|\(item.particleId)"
+            }
+            .joined(separator: ";")
+    }
+}
+
 
 // MARK: - 커스텀 네비게이션 바
 extension BundleDetailView {
     private var customnavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                viewModel.lastKeyringsIdForDetail = ""
+                viewModel.lastCarabinerIdForDetail = ""
+                viewModel.lastBackgroundIdForDetail = ""
                 router.pop()
             }
         } center: {
