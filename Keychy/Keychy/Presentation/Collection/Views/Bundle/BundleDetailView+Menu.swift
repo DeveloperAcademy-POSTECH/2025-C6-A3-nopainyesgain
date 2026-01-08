@@ -72,6 +72,7 @@ extension BundleDetailView {
                 .zIndex(50)
             }
         }
+        .opacity(uiState.showMenu ? 1 : 0)
     }
     
 }

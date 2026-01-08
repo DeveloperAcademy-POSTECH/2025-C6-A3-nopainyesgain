@@ -89,7 +89,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         }
                     }
                     menuOverlay
-                        .opacity(uiState.showMenu ? 1 : 0)
                     
                     customnavigationBar
                 }
