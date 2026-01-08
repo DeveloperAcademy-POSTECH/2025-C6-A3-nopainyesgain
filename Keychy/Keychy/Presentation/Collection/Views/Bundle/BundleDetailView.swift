@@ -181,6 +181,11 @@ extension BundleDetailView {
 
         let newKeyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         keyringDataList = newKeyringDataList
+        
+        // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
+        if newKeyringDataList.isEmpty {
+            isSceneReady = true
+        }
     }
     
     /// 뭉치 삭제
