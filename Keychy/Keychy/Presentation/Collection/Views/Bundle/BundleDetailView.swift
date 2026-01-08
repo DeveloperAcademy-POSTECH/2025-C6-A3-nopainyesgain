@@ -75,6 +75,13 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                         /// 씬 재생성 조건을 위한 ID 설정 -> 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                         .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))")
+                        .onAppear {
+                            viewModel.returnBackgroundId = bundle.selectedBackground
+                            viewModel.returnCarabinerId = bundle.selectedCarabiner
+                            viewModel.returnKeyringsId = bundle.keyrings
+                                .sorted()
+                                .joined(separator: "|")
+                        }
                         
                         VStack {
                             Spacer()
