@@ -81,15 +81,16 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             bottomSection
                         }
                     }
+                    menuOverlay
+                        .opacity(uiState.showMenu ? 1 : 0)
                     
                     customnavigationBar
                 }
                 .blur(radius: (isSceneReady && !uiState.isMainBundleChange && !uiState.isCapturing) ? 0 : 15)
                 .ignoresSafeArea()
-                
                 // 메뉴 오버레이
-                menuOverlay
-                    .opacity(uiState.showMenu ? 1 : 0)
+                
+                alertOverlays
             }
         }
         .ignoresSafeArea()
