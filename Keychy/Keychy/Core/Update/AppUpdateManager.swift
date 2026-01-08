@@ -6,41 +6,46 @@
 //
 
 import Foundation
+import SwiftUI
 
+/// 앱 업데이트 관리
+/// iTunes Search API를 통해 App Store의 최신 버전을 확인하고, 업데이트가 필요한 경우 Alert를 표시
+@Observable
 @MainActor
-class AppUpdateManager: ObservableObject {
-    @Published var showUpdateAlert = false
-    @Published var appStoreURL = ""
+class AppUpdateManager {
+    var showUpdateAlert = false
+    var appStoreURL = ""
 
-    // App Store ID (App Store Connect에서 확인)
     private let appStoreID = "6738383686"
 
     /// 앱 업데이트 체크
     func checkForUpdate() async {
-        guard let currentVersion = getCurrentAppVersion() else {
-            print("현재 앱 버전을 가져올 수 없습니다.")
+        #if DEBUG
+        // 디버그 빌드에서는 업데이트 체크 안 함
+        return
+        #endif
+
+        guard let currentVersion = getCurrentAppVersion(),
+              let appStoreVersion = await fetchAppStoreVersion() else {
             return
         }
 
-        guard let appStoreVersion = await fetchAppStoreVersion() else {
-            print("App Store 버전을 가져올 수 없습니다.")
-            return
-        }
-
-        print("현재 버전: \(currentVersion), App Store 버전: \(appStoreVersion)")
-
+        // 업데이트가 필요한 경우 Alert 표시
         if isUpdateAvailable(current: currentVersion, appStore: appStoreVersion) {
             appStoreURL = "https://apps.apple.com/app/id\(appStoreID)"
-            showUpdateAlert = true
+
+            withAnimation {
+                showUpdateAlert = true
+            }
         }
     }
 
-    /// 현재 앱 버전 가져오기
+    /// Info.plist에서 현재 앱 버전 가져오기
     private func getCurrentAppVersion() -> String? {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
 
-    /// App Store 최신 버전 가져오기
+    /// iTunes Search API를 통해 App Store의 최신 버전 가져오기
     private func fetchAppStoreVersion() async -> String? {
         guard let bundleID = Bundle.main.bundleIdentifier,
               let url = URL(string: "https://itunes.apple.com/lookup?bundleId=\(bundleID)") else {
@@ -56,17 +61,20 @@ class AppUpdateManager: ObservableObject {
                 return appStoreVersion
             }
         } catch {
-            print("iTunes API 호출 실패: \(error.localizedDescription)")
+            return nil
         }
 
         return nil
     }
 
-    /// 버전 비교 (업데이트 필요 여부)
+    /// 버전 비교하여 업데이트 필요 여부 확인
+    /// - Parameters:
+    ///   - current: 현재 앱 버전 (예: "1.0.0")
+    ///   - appStore: App Store 버전 (예: "1.1.0")
+    /// - Returns: App Store 버전이 더 높으면 true
     private func isUpdateAvailable(current: String, appStore: String) -> Bool {
         let currentComponents = current.split(separator: ".").compactMap { Int($0) }
         let appStoreComponents = appStore.split(separator: ".").compactMap { Int($0) }
-
         let maxLength = max(currentComponents.count, appStoreComponents.count)
 
         for i in 0..<maxLength {
@@ -74,12 +82,12 @@ class AppUpdateManager: ObservableObject {
             let appStoreNum = i < appStoreComponents.count ? appStoreComponents[i] : 0
 
             if appStoreNum > currentNum {
-                return true  // 업데이트 필요
+                return true
             } else if appStoreNum < currentNum {
-                return false  // 현재 버전이 더 높음
+                return false
             }
         }
 
-        return false  // 버전 동일
+        return false
     }
 }
