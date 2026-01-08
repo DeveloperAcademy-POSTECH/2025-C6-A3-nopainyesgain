@@ -178,8 +178,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
             await loadBundleData()
         }
         .onChange(of: keyringDataList) { oldValue, newValue in
-            let oldId = makeKeyringsId(oldValue)
-            let newId = makeKeyringsId(newValue)
+            let oldId = viewModel.makeKeyringsId(oldValue)
+            let newId = viewModel.makeKeyringsId(newValue)
             if oldId != newId {
                 withAnimation(.easeIn(duration: 0.2)) {
                     isSceneReady = false
@@ -390,17 +390,5 @@ extension BundleDetailView {
         .disabled(isCapturing)
         .frame(width: 48, height: 48)
         .glassEffect(in: .circle)
-    }
-}
-
-// MARK: - 구성 id 생성 헬퍼
-extension BundleDetailView {
-    private func makeKeyringsId(_ list: [MultiKeyringScene.KeyringData]) -> String {
-        list
-            .sorted(by: { $0.index < $1.index })
-            .map { item in
-                "\(item.index)|\(item.bodyImageURL)|\((item.templateId ?? ""))|\(item.soundId)|\(item.particleId)|\((item.hookOffsetY ?? 0))|\(item.chainLength)"
-            }
-            .joined(separator: ";")
     }
 }
