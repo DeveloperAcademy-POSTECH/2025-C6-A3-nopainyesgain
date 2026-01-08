@@ -70,28 +70,26 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                         }
                                     }
                                 }
-                            }
+                            } //: onAllKeyringsReady
                         )
                         .animation(.easeInOut(duration: 0.3), value: isSceneReady)
-                        /// 씬 재생성 조건을 위한 ID 설정
-                        /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
+                        /// 씬 재생성 조건을 위한 ID 설정 -> 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                         .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))")
                         
-                        // 하단 섹션을 ZStack 안에서 직접 배치
                         VStack {
                             Spacer()
                             bottomSection
                         }
                     }
+                    
                     customnavigationBar
                 }
-                .blur(radius: (isSceneReady && !isMainBundleChange && !isCapturing) ? 0 : 15)
+                .blur(radius: (isSceneReady && !uiState.isMainBundleChange && !uiState.isCapturing) ? 0 : 15)
                 .ignoresSafeArea()
                 
-                // 메뉴 오버레이 (최상위 ZStack으로 이동)
-                if showMenu {
-                    menuOverlay
-                }
+                // 메뉴 오버레이
+                menuOverlay
+                    .opacity(uiState.showMenu ? 1 : 0)
             }
         }
         .ignoresSafeArea()
@@ -103,73 +101,25 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 menuPosition = frame
             }
         }
-        // 변경: 이전 화면에서 전달된 구성 id를 뷰모델에게 확인하여 동일 구성이라면 즉시 준비 완료 복구
-        .task {
-            let skip = viewModel.shouldSkipReloadForReturnedConfig()
-            if skip {
-                // 동일 구성 스킵 시, Scene이 바로 그려질 수 있도록 최소 resolve 보장
-                if viewModel.selectedBackground == nil, let b = viewModel.selectedBundle {
-                    viewModel.selectedBackground = viewModel.resolveBackground(from: b.selectedBackground)
-                }
-                if viewModel.selectedCarabiner == nil, let b = viewModel.selectedBundle {
-                    viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: b.selectedCarabiner)
-                }
-                if !isSceneReady {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        isSceneReady = true
-                    }
-                }
-            }
-        }
         .onAppear {
             isNavigatingDeeper = false
-            showDeleteCompleteToast = false
-            showAlreadyMainBundleToast = false
-            showChangeMainBundleAlert = false
-            isMainBundleChange = false
-            showDeleteAlert = false
-            showMenu = false
+            uiState.resetOverlays()
             viewModel.hideTabBar()
             getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
         }
         .onDisappear {
-            // Alert/Toast 상태 초기화
-            showDeleteCompleteToast = false
-            showAlreadyMainBundleToast = false
-            showChangeMainBundleAlert = false
-            isMainBundleChange = false
-            showDeleteAlert = false
-            showMenu = false
+            uiState.resetOverlays()
             
             // 진행 중인 작업들 취소
             readyDelayTask?.cancel()
             dismissTask?.cancel()
         }
-        .task(id: "\(viewModel.selectedBundle?.keyrings ?? [])_\(viewModel.selectedBundle?.selectedBackground ?? "")_\(viewModel.selectedBundle?.selectedCarabiner ?? "")") {
+        .task(id: bundleTaskId) {
             guard let bundle = viewModel.selectedBundle else {
                 return
             }
-
-            // 1) 동일 구성인지 먼저 확인(+변경 감지)
-            let skip = viewModel.shouldSkipReloadForReturnedConfig()
-            if skip {
-                // 동일 구성: 리로드 스킵 및 필요 시 즉시 준비 완료 복구
-                // Scene이 바로 그려질 수 있도록 최소 resolve 보장
-                if viewModel.selectedBackground == nil {
-                    viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
-                }
-                if viewModel.selectedCarabiner == nil {
-                    viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-                }
-                return
-            }
-            // 스킵이 아니면 항상 로드 (최초/변경 모두 커버)
-            await MainActor.run {
-                isSceneReady = true
-                readyDelayTask?.cancel()
-            }
             
-            await loadBundleData()
+            await handleBundleChange()
         }
         .onChange(of: keyringDataList) { oldValue, newValue in
             let oldId = viewModel.makeKeyringsId(oldValue)
@@ -199,6 +149,10 @@ struct BundleDetailView<Route: BundleRoute>: View {
 
 // MARK: - Data Loading
 extension BundleDetailView {
+    private var bundleTaskId: String {
+        "\(viewModel.selectedBundle?.keyrings ?? [])_\(viewModel.selectedBundle?.selectedBackground ?? "")_\(viewModel.selectedBundle?.selectedCarabiner ?? "")"
+    }
+    
     /// 선택된 뭉치 데이터를 로드하고 뷰 상태를 초기화
     /// 1. 배경 및 카라비너 데이터 로드
     /// 2. 선택된 뭉치의 배경과 카라비너 설정
@@ -282,8 +236,40 @@ extension BundleDetailView {
             
         } catch {
             print("[BundleDetail] 뭉치 삭제 실패: \(error.localizedDescription)")
-            showDeleteAlert = false
+            uiState.showDeleteAlert = false
         }
+    }
+    
+    // 뭉치 상태 변경 확인 및 처리 함수
+    @MainActor
+    private func handleBundleChange() async {
+        guard let bundle = viewModel.selectedBundle else { return }
+        // 동일 구성인지 확인(+변경 감지)
+        if viewModel.shouldSkipReloadForReturnedConfig() {
+            restoreSceneIfNeeded(bundle)
+            return
+        }
+        
+        // 스킵이 아니면 항상 로드
+        isSceneReady = false
+        readyDelayTask?.cancel()
+        readyDelayTask = nil
+        
+        await loadBundleData()
+    }
+    
+    @MainActor
+    private func restoreSceneIfNeeded(_ bundle: KeyringBundle) {
+        // 동일 구성일 때 리로드 스킵 및 필요 시 즉시 준비 완료 복구
+        // Scene이 바로 그려질 수 있도록 최소 resolve 보장
+        if viewModel.selectedBackground == nil {
+            viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
+        }
+        if viewModel.selectedCarabiner == nil {
+            viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        }
+        
+        isSceneReady = true
     }
 }
 
