@@ -205,7 +205,7 @@ class HomeViewModel {
         }
     }
 
-    /// 모든 키링 준비 완료 처리
+    /// 모든 키링 준비 완료되면 0.5초 대기 후 로딩을 삭제함
     func handleAllKeyringsReady() {
         // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
         Task {
