@@ -10,21 +10,34 @@ import SwiftUI
 import NukeUI
 import FirebaseFirestore
 
+struct BundleDetailUIState {
+    var showMenu = false
+    var showDeleteAlert = false
+    var showDeleteCompleteToast = false
+    var showAlreadyMainBundleToast = false
+    var showChangeMainBundleAlert = false
+    var isMainBundleChange = false
+    var isCapturing = false
+    
+    mutating func resetOverlays() {
+        showMenu = false
+        showDeleteAlert = false
+        showDeleteCompleteToast = false
+        showAlreadyMainBundleToast = false
+        showChangeMainBundleAlert = false
+        isMainBundleChange = false
+    }
+}
+
 struct BundleDetailView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var viewModel: CollectionViewModel
     
     // MARK: - State Management
-    @State private var showMenu: Bool = false
-    @State private var showDeleteAlert: Bool = false
-    @State private var showDeleteCompleteToast: Bool = false
-    @State private var showAlreadyMainBundleToast: Bool = false
-    @State private var showChangeMainBundleAlert: Bool = false
-    @State private var isMainBundleChange: Bool = false
-    @State var isCapturing: Bool = false
+    @State var uiState = BundleDetailUIState()
     @State var getlessPadding: CGFloat = 0
-    @State private var isNavigatingDeeper: Bool = true
-    @State private var menuPosition: CGRect = .zero
+    @State var menuPosition: CGRect = .zero
+    @State var isNavigatingDeeper: Bool = true
     @State private var dismissTask: Task<Void, Never>?
     @State private var readyDelayTask: Task<Void, Never>?
     
@@ -32,7 +45,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
     
     /// 씬 준비 완료 여부
-    @State private var isSceneReady = false
+    @State var isSceneReady = false
     
     // MARK: - Body
     var body: some View {
@@ -76,79 +89,32 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                         }
                                     }
                                 }
-                            }
+                            } //: onAllKeyringsReady
                         )
                         .animation(.easeInOut(duration: 0.3), value: isSceneReady)
-                        /// 씬 재생성 조건을 위한 ID 설정
-                        /// 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
+                        /// 씬 재생성 조건을 위한 ID 설정 -> 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                         .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))")
+                        .onAppear {
+                            viewModel.returnBackgroundId = bundle.selectedBackground
+                            viewModel.returnCarabinerId = bundle.selectedCarabiner
+                            viewModel.returnKeyringsId = bundle.keyrings
+                                .sorted()
+                                .joined(separator: "|")
+                        }
                         
-                        // 하단 섹션을 ZStack 안에서 직접 배치
                         VStack {
                             Spacer()
                             bottomSection
                         }
                     }
+                    menuOverlay
+                    
                     customnavigationBar
                 }
-                .blur(radius: (isSceneReady && !isMainBundleChange && !isCapturing) ? 0 : 15)
+                .blur(radius: (isSceneReady && !uiState.isMainBundleChange && !uiState.isCapturing) ? 0 : 15)
                 .ignoresSafeArea()
                 
-                // 메뉴 오버레이 (최상위 ZStack으로 이동)
-                if showMenu {
-                    menuOverlay
-                }
-                
-                if !isSceneReady || showChangeMainBundleAlert || isMainBundleChange || isCapturing || showDeleteAlert || showDeleteCompleteToast || showAlreadyMainBundleToast {
-                    Color.black20
-                        .ignoresSafeArea()
-                    
-                    LoadingAlert(type: .longWithKeychy, message: "뭉치를 불러오고 있어요")
-                        .zIndex(200)
-                        .opacity(isSceneReady ? 0 : 1)
-                    
-                    changeMainBundleAlert
-                        .opacity(showChangeMainBundleAlert ? 1 : 0)
-                        .padding(.horizontal, 51)
-                        .position(x: screenWidth/2, y: screenHeight/2)
-                    
-                    KeychyAlert(type: .checkmark, message: "대표 뭉치가 변경되었어요!", isPresented: $isMainBundleChange)
-                        .zIndex(200)
-                    
-                    KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $isCapturing)
-                        .zIndex(200)
-
-                    if showDeleteAlert {
-                        if let bundle = viewModel.selectedBundle {
-                            DeletePopup(
-                                title: "[\(bundle.name)]\n삭제하시겠어요?",
-                                message: "삭제한 뭉치는 복구할 수 없습니다.",
-                                onCancel: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showDeleteAlert = false
-                                    }
-                                },
-                                onConfirm: {
-                                    Task {
-                                        await deleteBundle()
-                                    }
-                                }
-                            )
-                            .position(x: screenWidth/2, y: screenHeight/2)
-                            .zIndex(200)
-                        }
-                    } else if showDeleteCompleteToast {
-                        DeleteCompletePopup(isPresented: $showDeleteCompleteToast)
-                            .zIndex(200)
-                            .position(x: screenWidth/2, y: screenHeight/2)
-                    }
-                    
-                    alreadyMainBundleToast
-                        .zIndex(200)
-                        .opacity(showAlreadyMainBundleToast ? 1 : 0)
-                        .padding(.horizontal, 51)
-                        .position(x: screenWidth/2, y: screenHeight/2)
-                }
+                alertOverlays
             }
         }
         .ignoresSafeArea()
@@ -160,84 +126,24 @@ struct BundleDetailView<Route: BundleRoute>: View {
                 menuPosition = frame
             }
         }
-        // 변경: 이전 화면에서 전달된 구성 id를 뷰모델에게 확인하여 동일 구성이라면 즉시 준비 완료 복구
-        .task {
-            let skip = viewModel.shouldSkipReloadForReturnedConfig()
-            if skip {
-                // 동일 구성 스킵 시, Scene이 바로 그려질 수 있도록 최소 resolve 보장
-                if viewModel.selectedBackground == nil, let b = viewModel.selectedBundle {
-                    viewModel.selectedBackground = viewModel.resolveBackground(from: b.selectedBackground)
-                }
-                if viewModel.selectedCarabiner == nil, let b = viewModel.selectedBundle {
-                    viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: b.selectedCarabiner)
-                }
-                if !isSceneReady {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        isSceneReady = true
-                    }
-                }
-            }
-        }
         .onAppear {
             isNavigatingDeeper = false
-            showDeleteCompleteToast = false
-            showAlreadyMainBundleToast = false
-            showChangeMainBundleAlert = false
-            isMainBundleChange = false
-            showDeleteAlert = false
-            showMenu = false
+            uiState.resetOverlays()
             viewModel.hideTabBar()
             getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
         }
         .onDisappear {
-            // Alert/Toast 상태 초기화
-            showDeleteCompleteToast = false
-            showAlreadyMainBundleToast = false
-            showChangeMainBundleAlert = false
-            isMainBundleChange = false
-            showDeleteAlert = false
-            showMenu = false
+            uiState.resetOverlays()
             
             // 진행 중인 작업들 취소
             readyDelayTask?.cancel()
             dismissTask?.cancel()
         }
-        .task(id: "\(viewModel.selectedBundle?.keyrings ?? [])_\(viewModel.selectedBundle?.selectedBackground ?? "")_\(viewModel.selectedBundle?.selectedCarabiner ?? "")") {
-            guard let bundle = viewModel.selectedBundle else {
-                return
-            }
-
-            // 1) 동일 구성인지 먼저 확인(+변경 감지)
-            let skip = viewModel.shouldSkipReloadForReturnedConfig()
-            if skip {
-                // 동일 구성: 리로드 스킵 및 필요 시 즉시 준비 완료 복구
-                // Scene이 바로 그려질 수 있도록 최소 resolve 보장
-                if viewModel.selectedBackground == nil {
-                    viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
-                }
-                if viewModel.selectedCarabiner == nil {
-                    viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-                }
-                return
-            }
-            // 스킵이 아니면 항상 로드 (최초/변경 모두 커버)
-            await MainActor.run {
-                isSceneReady = true
-                readyDelayTask?.cancel()
-            }
-            
-            await loadBundleData()
+        .task {
+            await handleBundleChange()
         }
-        .onChange(of: keyringDataList) { oldValue, newValue in
-            let oldId = makeKeyringsId(oldValue)
-            let newId = makeKeyringsId(newValue)
-            if oldId != newId {
-                withAnimation(.easeIn(duration: 0.2)) {
-                    isSceneReady = false
-                }
-            }
-        }
-        .onChange(of: showAlreadyMainBundleToast) { oldValue, newValue in
+        
+        .onChange(of: uiState.showAlreadyMainBundleToast) { oldValue, newValue in
             if newValue {
                 dismissTask?.cancel()
                 
@@ -245,7 +151,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     try? await Task.sleep(for: .seconds(1))
                     if !Task.isCancelled {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showAlreadyMainBundleToast = false
+                            uiState.showAlreadyMainBundleToast = false
                         }
                     }
                 }
@@ -256,6 +162,10 @@ struct BundleDetailView<Route: BundleRoute>: View {
 
 // MARK: - Data Loading
 extension BundleDetailView {
+    private var bundleTaskId: String {
+        "\(viewModel.selectedBundle?.keyrings ?? [])_\(viewModel.selectedBundle?.selectedBackground ?? "")_\(viewModel.selectedBundle?.selectedCarabiner ?? "")"
+    }
+    
     /// 선택된 뭉치 데이터를 로드하고 뷰 상태를 초기화
     /// 1. 배경 및 카라비너 데이터 로드
     /// 2. 선택된 뭉치의 배경과 카라비너 설정
@@ -284,28 +194,33 @@ extension BundleDetailView {
 
         let newKeyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         keyringDataList = newKeyringDataList
+        
+        // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
+        if newKeyringDataList.isEmpty {
+            isSceneReady = true
+        }
     }
     
     /// 뭉치 삭제
     @MainActor
-    private func deleteBundle() async {
+    func deleteBundle() async {
         // 네트워크 체크
         guard NetworkManager.shared.isConnected else {
-            showDeleteAlert = false
+            uiState.showDeleteAlert = false
             ToastManager.shared.show()
             return
         }
-
+        
         guard let bundle = viewModel.selectedBundle,
               let documentId = bundle.documentId else {
-            showDeleteAlert = false
+            uiState.showDeleteAlert = false
             return
         }
         
         do {
             // 1. 삭제 확인 Alert 닫기
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteAlert = false
+                uiState.showDeleteAlert = false
             }
             
             // 2. alert가 확실히 사라지면서 중첩되지 않도록 보장하는 아주 짧은 대기 시간을 줌
@@ -322,14 +237,14 @@ extension BundleDetailView {
             
             // 5. 삭제 완료 팝업 표시
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteCompleteToast = true
+                uiState.showDeleteCompleteToast = true
             }
             
             // 6. 1초 후 팝업 닫고 이전 화면으로 이동
             try? await Task.sleep(for: .seconds(1))
             
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showDeleteCompleteToast = false
+                uiState.showDeleteCompleteToast = false
             }
             
             // 7. 애니메이션 완료 대기 후 화면 이동
@@ -339,17 +254,65 @@ extension BundleDetailView {
             
         } catch {
             print("[BundleDetail] 뭉치 삭제 실패: \(error.localizedDescription)")
-            showDeleteAlert = false
+            uiState.showDeleteAlert = false
         }
     }
+    
+    // 뭉치 상태 변경 확인 및 처리 함수
+    @MainActor
+    private func handleBundleChange() async {
+        guard let bundle = viewModel.selectedBundle else { return }
+        // 동일 구성인지 확인(+변경 감지)
+        if viewModel.shouldSkipReloadForReturnedConfig() {
+            restoreSceneIfNeeded(bundle)
+            isSceneReady = true
+            return
+        }
+        isSceneReady = false
+        readyDelayTask?.cancel()
+        readyDelayTask = nil
+        
+        await loadBundleData()
+    }
+    
+    @MainActor
+    private func restoreSceneIfNeeded(_ bundle: KeyringBundle) {
+        // 동일 구성일 때 리로드 스킵 및 필요 시 즉시 준비 완료 복구
+        // Scene이 바로 그려질 수 있도록 최소 resolve 보장
+        if viewModel.selectedBackground == nil {
+            viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
+        }
+        if viewModel.selectedCarabiner == nil {
+            viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        }
+        readyDelayTask?.cancel()
+        readyDelayTask = nil
+        isSceneReady = true
+    }
 }
+
+
+// MARK: - 구성 id 생성 헬퍼
+extension BundleDetailView {
+    private func makeKeyringsIdForCheckBundleChanged(_ list: [MultiKeyringScene.KeyringData]) -> String {
+        list
+            .sorted(by: { $0.index < $1.index })
+            .map { item in
+                "\(item.index)|\(item.bodyImageURL)|\((item.templateId ?? ""))|\(item.soundId)|\(item.particleId)"
+            }
+            .joined(separator: ";")
+    }
+}
+
 
 // MARK: - 커스텀 네비게이션 바
 extension BundleDetailView {
     private var customnavigationBar: some View {
         CustomNavigationBar {
-            //Leading(왼쪽)
             BackToolbarButton {
+                viewModel.lastKeyringsIdForDetail = ""
+                viewModel.lastCarabinerIdForDetail = ""
+                viewModel.lastBackgroundIdForDetail = ""
                 router.pop()
             }
         } center: {
@@ -357,73 +320,10 @@ extension BundleDetailView {
                 Text("\(bundle.name)")
             }
         } trailing: {
-            // Trailing (오른쪽)
             MenuToolbarButton {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showMenu.toggle()
+                    uiState.showMenu.toggle()
                 }
-            }
-        }
-        
-    }
-}
-
-// MARK: - 메뉴 오버레이
-extension BundleDetailView {
-    var menuOverlay: some View {
-        ZStack {
-            Color.clear
-                .ignoresSafeArea()
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showMenu = false
-                    }
-                }
-            
-            if let bundle = viewModel.selectedBundle {
-                BundleMenu(
-                    position: menuPosition,
-                    onNameEdit: {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            showMenu = false
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showMenu = false
-                        isNavigatingDeeper = true
-                        router.push(.bundleNameEditView)
-                    },
-                    onEdit: {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            showMenu = false
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showMenu = false
-                        isNavigatingDeeper = true
-                        router.push(.bundleEditView)
-                    },
-                    onDelete: {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            showMenu = false
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showMenu = false
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showDeleteAlert = true
-                        }
-                    },
-                    isMain: bundle.isMain
-                )
-                .zIndex(50)
             }
         }
     }
@@ -437,38 +337,28 @@ extension BundleDetailView {
             Spacer()
             HStack {
                 pinButton
+                
                 Spacer()
+                
                 if let bundle = viewModel.selectedBundle {
                     if bundle.isMain {
                         Text("대표 뭉치 설정 중")
                             .typography(.suit16M)
                             .foregroundStyle(.white100)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 8)
+                            .padding(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
                             .background(
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.main500)
                             )
                     }
                 }
+                
                 Spacer()
+                
                 downloadImageButton
             }
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
-    }
-    
-    private var downloadImageButton: some View {
-        Button(action: {
-            Task {
-                await captureAndSaveScene()
-            }
-        }) {
-            Image(.imageDownload)
-        }
-        .disabled(isCapturing)
-        .frame(width: 48, height: 48)
-        .glassEffect(in: .circle)
     }
     
     /// 핀 버튼 - 메인 뭉치 설정/해제
@@ -477,7 +367,7 @@ extension BundleDetailView {
             if let bundle = viewModel.selectedBundle {
                 if bundle.isMain {
                     Button {
-                        showAlreadyMainBundleToast = true
+                        uiState.showAlreadyMainBundleToast = true
                     } label: {
                         Image(.starFill)
                     }
@@ -491,8 +381,8 @@ extension BundleDetailView {
                             ToastManager.shared.show()
                             return
                         }
-
-                        showChangeMainBundleAlert = true
+                        
+                        uiState.showChangeMainBundleAlert = true
                     }) {
                         Image(.star)
                     }
@@ -503,93 +393,17 @@ extension BundleDetailView {
         }
     }
     
-    //MARK: - 알럿창, 토스트 창
-    private var changeMainBundleAlert: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 10) {
-                Image(.bangMark)
-                    .padding(.vertical, 4)
-                
-                Text("대표 뭉치를 변경할까요?")
-                    .typography(.suit20B)
-                    .foregroundStyle(.black100)
-                Text("선택한 뭉치가 홈에 걸려요.")
-                    .typography(.suit15R)
-                    .foregroundStyle(.black100)
+    /// 이미지 다운로드 버튼
+    private var downloadImageButton: some View {
+        Button(action: {
+            Task {
+                await captureAndSaveScene()
             }
-            .padding(8)
-            
-            // 버튼 영역
-            HStack(spacing: 16) {
-                Button {
-                    showChangeMainBundleAlert = false
-                } label: {
-                    Text("취소")
-                        .typography(.suit17SB)
-                        .foregroundStyle(.black100)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(.black10)
-                
-                Button {
-                    // 네트워크 체크
-                    guard NetworkManager.shared.isConnected else {
-                        showChangeMainBundleAlert = false
-                        ToastManager.shared.show()
-                        return
-                    }
-
-                    viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
-                    showChangeMainBundleAlert = false
-                    isMainBundleChange = true
-                } label: {
-                    Text("확인")
-                        .typography(.suit17SB)
-                        .foregroundStyle(.white100)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(.main500)
-            }
+        }) {
+            Image(.imageDownload)
         }
-        .padding(14)
-        .glassEffect(in: .rect(cornerRadius: 34))
-        .frame(maxWidth: .infinity)
-    }
-    
-    private var alreadyMainBundleToast: some View {
-        Text("이미 대표 뭉치로 설정되어 있어요")
-            .typography(.suit17SB)
-            .foregroundColor(.black100)
-            .frame(maxWidth: .infinity)
-            .frame(height: 73)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-            .transition(.scale.combined(with: .opacity))
-    }
-}
-
-// MARK: - 구성 id 생성 헬퍼
-extension BundleDetailView {
-    private func makeBackgroundId(_ bg: Background?) -> String {
-        guard let bg else { return "" }
-        return bg.id ?? ""
-    }
-    
-    private func makeCarabinerId(_ cb: Carabiner?) -> String {
-        guard let cb else { return "" }
-        // id만으로도 충분하지만, 안전하게 타입/좌표/폭 포함은 필요 시 확장
-        return "\(cb.id ?? "")|\(cb.carabinerX)|\(cb.carabinerY)|\(cb.carabinerWidth)"
-    }
-    
-    private func makeKeyringsId(_ list: [MultiKeyringScene.KeyringData]) -> String {
-        list
-            .sorted(by: { $0.index < $1.index })
-            .map { item in
-                "\(item.index)|\(item.bodyImageURL)|\((item.templateId ?? ""))|\(item.soundId)|\(item.particleId)|\((item.hookOffsetY ?? 0))|\(item.chainLength)"
-            }
-            .joined(separator: ";")
+        .disabled(uiState.isCapturing)
+        .frame(width: 48, height: 48)
+        .glassEffect(in: .circle)
     }
 }
