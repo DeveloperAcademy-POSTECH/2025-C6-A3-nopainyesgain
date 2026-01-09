@@ -184,9 +184,10 @@ extension CollectionView {
         }
     }
     
-    // MARK: - 키보드 노티피케이션
-    // 키보드 노티피케이션 설정 (키보드 높이를 감지해서 검색바 위치 조정)
-    func setupKeyboardNotifications() {
+    // MARK: - 노티피케이션 관리
+    // 노티피케이션 설정
+    func setupNotifications() {
+        // 키보드 노티피케이션 설정 (키보드 높이를 감지해서 검색바 위치 조정)
         NotificationCenter.default.addObserver(
             forName: UIResponder.keyboardWillShowNotification,
             object: nil,
@@ -203,10 +204,20 @@ extension CollectionView {
         ) { _ in
             keyboardHeight = 0
         }
+        
+        // 포그라운드 복귀
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            // 포그라운드로 복귀하면 실패한 캐시들 재시도
+            self.retryFailedCaches()
+        }
     }
     
-    // 키보드 노티피케이션 제거
-    func removeKeyboardNotifications() {
+    // 노티피케이션 제거
+    func removeNotifications() {
         NotificationCenter.default.removeObserver(
             self,
             name: UIResponder.keyboardWillShowNotification,
@@ -217,6 +228,21 @@ extension CollectionView {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
+        
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    // MARK: - 캐시 이미지
+    private func retryFailedCaches() {
+        Task(priority: .utility) {
+            await KeyringCacheManager.shared.retryFailedCaches(
+                keyrings: collectionViewModel.keyring
+            )
+        }
     }
 }
 
