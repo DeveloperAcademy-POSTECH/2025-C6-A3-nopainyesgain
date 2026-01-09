@@ -287,7 +287,6 @@
 		AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */; };
 		AA8C9B8C2F0F349500A352D2 /* BundleDetailView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */; };
 		AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */; };
-		AA8C9B922F0F4C9400A352D2 /* BundleDetailUIState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B912F0F4C9400A352D2 /* BundleDetailUIState.swift */; };
 		AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */; };
@@ -681,7 +680,6 @@
 		AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerChangePopup.swift; sourceTree = "<group>"; };
 		AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Alert.swift"; sourceTree = "<group>"; };
 		AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Menu.swift"; sourceTree = "<group>"; };
-		AA8C9B912F0F4C9400A352D2 /* BundleDetailUIState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDetailUIState.swift; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerGridItem.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -1800,7 +1798,6 @@
 			children = (
 				4CEC61F72EAE08DA0099ECEE /* Component */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
-				AA8C9B912F0F4C9400A352D2 /* BundleDetailUIState.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
 				AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */,
 				AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */,
@@ -2320,7 +2317,6 @@
 				C68931D02EB835E800C5F083 /* WorkshopPreview.swift in Sources */,
 				4C07027F2ED1DFA20026D6DC /* PixelVM+Effect.swift in Sources */,
 				4C0702802ED1DFA20026D6DC /* PixelVM+ImageConversion.swift in Sources */,
-				AA8C9B922F0F4C9400A352D2 /* BundleDetailUIState.swift in Sources */,
 				4C0702812ED1DFA20026D6DC /* PixelVM.swift in Sources */,
 				4C0702822ED1DFA20026D6DC /* PixelDrawView.swift in Sources */,
 				4C0702832ED1DFA20026D6DC /* PixelPreviewView.swift in Sources */,
