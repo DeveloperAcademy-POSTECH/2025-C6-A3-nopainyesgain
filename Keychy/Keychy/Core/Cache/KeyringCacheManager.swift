@@ -43,7 +43,7 @@ class KeyringCacheManager {
             task.cancel()
         }
         activeTasks.removeAll()
-        print("🔴 모든 캡처 Task 취소됨 (\(activeTasks.count)개)")
+        print("모든 캡처 Task 취소됨 (\(activeTasks.count)개)")
     }
     
     func cancelTask(for keyringID: String) {
@@ -55,13 +55,18 @@ class KeyringCacheManager {
     func requestCapture(keyring: Keyring) async {
         guard let keyringID = keyring.documentId else { return }
         
+        // 이미 캐시 있으면 스킵
+        if KeyringImageCache.shared.exists(for: keyringID, type: .thumbnail) {
+            return
+        }
+        
         // 이미 캡처 중이면 무시
         if activeTasks[keyringID] != nil { return }
         
         // 실패 횟수 확인
         let attempts = failedAttempts[keyringID] ?? 0
         if attempts >= maxRetries {
-            print("⚠️ 최대 재시도 초과: \(keyringID)")
+            print("최대 재시도 초과: \(keyringID)")
             return
         }
         
@@ -77,9 +82,7 @@ class KeyringCacheManager {
         guard let keyringID = keyring.documentId else { return }
         
         defer {
-            Task { @MainActor in
-                self.activeTasks.removeValue(forKey: keyringID)
-            }
+            activeTasks.removeValue(forKey: keyringID)
         }
         
         let ringType = RingType.fromID(keyring.selectedRing)
@@ -111,7 +114,7 @@ class KeyringCacheManager {
             Task {
                 var waitTime = 0.0
                 let checkInterval = 0.15
-                let maxWaitTime = 3.0
+                let maxWaitTime = 5.0
                 
                 while !loadingCompleted && waitTime < maxWaitTime {
                     if Task.isCancelled {
@@ -125,7 +128,7 @@ class KeyringCacheManager {
                 }
                 
                 if !loadingCompleted {
-                    print("❌ [Cache] 타임아웃: \(keyringID)")
+                    print("[Cache] 타임아웃: \(keyringID)")
                     await self.recordFailure(keyringID: keyringID)
                     await self.cleanupScene(scene: scene, view: view)
                     continuation.resume()
@@ -170,9 +173,9 @@ class KeyringCacheManager {
                     }
                     
                     await self.clearFailureRecord(keyringID: keyringID)
-                    print("✅ [Cache] 성공: \(keyring.name)")
+                    print("[Cache] 성공: \(keyring.name)")
                 } else {
-                    print("❌ [Cache] 빈 이미지: \(keyringID)")
+                    print("[Cache] 빈 이미지: \(keyringID)")
                     await self.recordFailure(keyringID: keyringID)
                 }
                 
@@ -185,10 +188,18 @@ class KeyringCacheManager {
     // MARK: - Scene Cleanup
     private func cleanupScene(scene: KeyringCellScene, view: SKView) async {
         await MainActor.run {
+            // 1. Scene 정리
             scene.removeAllChildren()
             scene.removeAllActions()
+            scene.removeFromParent()
+            
+            // 2. Physics 정리
             scene.physicsWorld.removeAllJoints()
+            scene.physicsWorld.speed = 0
+            
+            // 3. View 정리
             view.presentScene(nil)
+            view.removeFromSuperview()
         }
     }
     
@@ -201,7 +212,7 @@ class KeyringCacheManager {
         failedAttempts.removeValue(forKey: keyringID)
     }
     
-    // MARK: - 포그라운드 복귀 재시도
+    // MARK: - 포그라운드 복귀 시 실패 캐시에 대한 재시도
     func retryFailedCaches(keyrings: [Keyring]) async {
         let uncachedKeyrings = keyrings.filter { keyring in
             guard let id = keyring.documentId else { return false }
@@ -235,31 +246,9 @@ class KeyringCacheManager {
 // MARK: - 이미지 유효성 검증
 enum ImageValidator {
     static func isBlankImage(_ image: UIImage) -> Bool {
-        guard let cgImage = image.cgImage,
-              let dataProvider = cgImage.dataProvider,
-              let data = dataProvider.data,
-              let bytes = CFDataGetBytePtr(data) else {
-            return true
-        }
+        // TODO: 유효성 검증 로직 구상 중
         
-        let length = CFDataGetLength(data)
-        let sampleCount = min(10, length / 4)
-        var nonZeroCount = 0
-        
-        for i in 0..<sampleCount {
-            let offset = (i * length / sampleCount)
-            if offset + 3 < length {
-                let r = bytes[offset]
-                let g = bytes[offset + 1]
-                let b = bytes[offset + 2]
-                let a = bytes[offset + 3]
-                
-                if a > 10 && (r > 10 || g > 10 || b > 10) {
-                    nonZeroCount += 1
-                }
-            }
-        }
-        
-        return Double(nonZeroCount) / Double(sampleCount) < 0.3
+        /// 모두 유효 처리 (임시)
+        return false
     }
 }

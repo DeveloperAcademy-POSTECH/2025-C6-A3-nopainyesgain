@@ -1923,7 +1923,6 @@
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
 				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
-				386102492F1129FA0045C529 /* KeyringCacheManager.swift */,
 			);
 			path = FileManagers;
 			sourceTree = "<group>";
@@ -1957,6 +1956,7 @@
 			children = (
 				C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */,
 				C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */,
+				386102492F1129FA0045C529 /* KeyringCacheManager.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
