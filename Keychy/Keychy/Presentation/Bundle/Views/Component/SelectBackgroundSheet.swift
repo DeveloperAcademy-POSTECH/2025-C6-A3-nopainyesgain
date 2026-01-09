@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SelectBackgroundSheet: View {
-    let viewModel: CollectionViewModel
+    let viewModel: BundleViewModel
     let selectedBG: BackgroundViewData?
     let onBackgroundTap: (BackgroundViewData) -> Void
     
