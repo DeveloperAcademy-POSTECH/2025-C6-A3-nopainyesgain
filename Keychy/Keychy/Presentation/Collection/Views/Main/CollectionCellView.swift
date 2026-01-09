@@ -13,8 +13,6 @@ struct CollectionCellView: View {
     @State private var isLoading: Bool = true
     @State private var cachedImage: UIImage?
     @State private var scene: KeyringCellScene?
-    @State private var captureTask: Task<Void, Never>?
-    @State private var backgroundObserver: NSObjectProtocol?
 
     var body: some View {
         ZStack {
@@ -40,9 +38,7 @@ struct CollectionCellView: View {
         }
         .onDisappear {
             if let keyringID = keyring.documentId {
-                Task {
-                    await KeyringCacheManager.shared.cancelTask(for: keyringID)
-                }
+                KeyringCacheManager.shared.cancelTask(for: keyringID)
             }
             cleanupScene()
         }
@@ -93,6 +89,14 @@ struct CollectionCellView: View {
         
         // 2. 유효하지 않은, 손상된 캐시 삭제
         if KeyringImageCache.shared.exists(for: keyringID, type: .thumbnail) {
+            if let data = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail),
+               let image = UIImage(data: data),
+               !ImageValidator.isBlankImage(image) {
+                // 유효한 캐시는 삭제하지 않음
+                return
+            }
+            
+            // 적절하지 않은 캐시만 삭제
             KeyringImageCache.shared.delete(for: keyringID, type: .thumbnail)
         }
         
@@ -133,11 +137,13 @@ struct CollectionCellView: View {
     }
     
     private func cleanupScene() {
-        scene?.removeAllChildren()
-        scene?.removeAllActions()
-        scene?.physicsWorld.removeAllJoints()
-        scene?.view?.presentScene(nil)
-        scene = nil
+        guard let scene = scene else { return }
+        
+        scene.removeAllChildren()
+        scene.removeAllActions()
+        scene.physicsWorld.removeAllJoints()
+        scene.view?.presentScene(nil)
+        self.scene = nil
     }
     
     // MARK: - 상태 오버레이
