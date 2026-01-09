@@ -24,8 +24,6 @@ class KeyringReceiveViewModel {
     var showAcceptCompleteAlert: Bool = false
     var showInvenFullAlert: Bool = false
     var showAlreadyAcceptedAlert: Bool = false
-    var showErrorAlert: Bool = false
-    var errorMessage: String = ""
     
     private let collectionViewModel: CollectionViewModel
     private let postOfficeId: String
@@ -158,6 +156,7 @@ class KeyringReceiveViewModel {
         }
     }
     
+    // MARK: - 성공/실패 Handlers
     private func handleAcceptSuccess() {
         self.isAccepted = true
         
@@ -187,6 +186,7 @@ class KeyringReceiveViewModel {
         }
     }
     
+    // MARK: - Helpers
     //  블러 적용 여부
     var shouldApplyBlur: Bool {
         isAccepting ||
