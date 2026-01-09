@@ -8,9 +8,20 @@
 import SwiftUI
 
 extension BundleDetailView {
+    
+    private var shouldShowAlertOverlay: Bool {
+        !isSceneReady
+        || uiState.showChangeMainBundleAlert
+        || uiState.isMainBundleChange
+        || uiState.isCapturing
+        || uiState.showDeleteAlert
+        || uiState.showDeleteCompleteToast
+        || uiState.showAlreadyMainBundleToast
+    }
+    
     @ViewBuilder
     var alertOverlays: some View {
-        if !isSceneReady || uiState.showChangeMainBundleAlert || uiState.isMainBundleChange || uiState.isCapturing || uiState.showDeleteAlert || uiState.showDeleteCompleteToast || uiState.showAlreadyMainBundleToast {
+        if shouldShowAlertOverlay {
             Color.black20
                 .ignoresSafeArea()
             
@@ -29,6 +40,7 @@ extension BundleDetailView {
             KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $uiState.isCapturing)
                 .zIndex(200)
             
+            // 뭉치 삭제 알럿
             if uiState.showDeleteAlert {
                 if let bundle = viewModel.selectedBundle {
                     DeletePopup(
@@ -48,12 +60,15 @@ extension BundleDetailView {
                     .position(x: screenWidth/2, y: screenHeight/2)
                     .zIndex(200)
                 }
-            } else if uiState.showDeleteCompleteToast {
+            }
+            // 뭉치 삭제 완료 토스트
+            else if uiState.showDeleteCompleteToast {
                 DeleteCompletePopup(isPresented: $uiState.showDeleteCompleteToast)
                     .zIndex(200)
                     .position(x: screenWidth/2, y: screenHeight/2)
             }
             
+            // 이미 대표 뭉치로 설정 되었다는 토스트 - 대표뭉치 아이콘 한 번 더 클릭 시 뜸
             alreadyMainBundleToast
                 .zIndex(200)
                 .opacity(uiState.showAlreadyMainBundleToast ? 1 : 0)
