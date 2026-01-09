@@ -469,6 +469,13 @@ extension CollectionViewModel {
             Task {
                 var waitTime = 0.0
                 while !loadingCompleted && waitTime < 5.0 {
+                    // 테스크 취소 체크
+                    if Task.isCancelled {
+                        print("[Prefetch] 취소됨: \(keyring.name)")
+                        continuation.resume()
+                        return
+                    }
+                    
                     try? await Task.sleep(for: .seconds(0.1))
                     waitTime += 0.1
                 }
@@ -479,7 +486,21 @@ extension CollectionViewModel {
                     return
                 }
 
+                // 테스크 취소 체크
+                guard !Task.isCancelled else {
+                    print("[Prefetch] 취소됨 (캡처 직전): \(keyring.name)")
+                    continuation.resume()
+                    return
+                }
+                
                 try? await Task.sleep(for: .seconds(0.2))
+                
+                // 테스크 취소 체크
+                guard !Task.isCancelled else {
+                    print("[Prefetch] 취소됨 (캡처 직전): \(keyring.name)")
+                    continuation.resume()
+                    return
+                }
 
                 if let pngData = await scene.captureToPNG(),
                    !pngData.isEmpty,
