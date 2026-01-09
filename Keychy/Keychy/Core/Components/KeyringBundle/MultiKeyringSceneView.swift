@@ -177,6 +177,9 @@ extension MultiKeyringSceneView {
             cleanupScene()
         }
         
+        // 키링 준비 카운터 리셋
+        visibleKeyringCount = 0
+        
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,

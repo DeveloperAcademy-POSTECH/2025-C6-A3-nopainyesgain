@@ -148,7 +148,12 @@ class HomeViewModel {
             )
             dataList.append(data)
         }
-
+        
+        // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
+        if dataList.isEmpty {
+            isSceneReady = true
+        }
+        
         return dataList
     }
 
@@ -200,7 +205,7 @@ class HomeViewModel {
         }
     }
 
-    /// 모든 키링 준비 완료 처리
+    /// 모든 키링 준비 완료되면 0.5초 대기 후 로딩을 삭제함
     func handleAllKeyringsReady() {
         // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
         Task {

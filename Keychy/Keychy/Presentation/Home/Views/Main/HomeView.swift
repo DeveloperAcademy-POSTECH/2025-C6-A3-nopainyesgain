@@ -98,6 +98,9 @@ struct HomeView: View {
         .onChange(of: viewModel.keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
             viewModel.handleKeyringDataChange()
+            Task {
+                await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
+            }
         }
         .onChange(of: NetworkManager.shared.isConnected) { oldValue, newValue in
               // 네트워크가 복구되고, 에러 상태였다면 자동 재시도

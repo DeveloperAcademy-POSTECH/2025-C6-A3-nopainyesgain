@@ -7,24 +7,31 @@
 
 import SwiftUI
 
-/// 앱의 최상위 뷰 - 인증 상태에 따라 적절한 화면을 표시
+/// 앱의 최상위 뷰
+/// 업데이트 체크, 인증 상태 확인 후 적절한 화면을 표시
 struct RootView: View {
-    // MARK: - Properties
     @State private var viewModel = RootViewModel()
 
-    // MARK: - Body
     var body: some View {
-        Group {
-            if viewModel.isCheckingAuth {
-                SplashView()
-                    .onAppear {
-                        viewModel.checkAuthAndNavigate()
-                    }
-            } else {
-                currentView
+        ZStack {
+            // 인증 상태에 따른 화면 분기
+            Group {
+                if viewModel.isCheckingAuth {
+                    SplashView()
+                        .onAppear {
+                            viewModel.checkAuthAndNavigate()
+                        }
+                } else {
+                    currentView
+                }
+            }
+            .background(.gray800)
+
+            // 업데이트 Alert 오버레이
+            if viewModel.updateManager.showUpdateAlert {
+                updateAlertOverlay
             }
         }
-        .background(.gray800)
     }
 
     // MARK: - Views
@@ -44,5 +51,17 @@ struct RootView: View {
         case .login:
             IntroView(viewModel: viewModel.introViewModel)
         }
+    }
+
+    /// 업데이트 Alert 오버레이
+    private var updateAlertOverlay: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+
+            UpdateAlert(appStoreURL: viewModel.updateManager.appStoreURL)
+                .transition(.scale(scale: 0.3).combined(with: .opacity))
+        }
+        .zIndex(999)
     }
 }

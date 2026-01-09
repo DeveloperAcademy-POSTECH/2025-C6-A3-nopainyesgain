@@ -277,6 +277,8 @@
 		4CF2A9662F0B8C5800BA9FDA /* PullToRefreshIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */; };
 		4CF2A9682F0B91F300BA9FDA /* AnimatedGIFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */; };
 		4CF2A96A2F0B94EA00BA9FDA /* View+PullToRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A9692F0B94EA00BA9FDA /* View+PullToRefresh.swift */; };
+		4CF2A96D2F0F969300BA9FDA /* UpdateAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A96C2F0F969300BA9FDA /* UpdateAlert.swift */; };
+		4CF2A9702F0FB2E100BA9FDA /* AppUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF2A96E2F0FB2E100BA9FDA /* AppUpdateManager.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
 		AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B62EC053E4007B5413 /* CarabinerType.swift */; };
 		AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */; };
@@ -289,6 +291,8 @@
 		AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298532EC39065001576C0 /* BundleCreateView.swift */; };
 		AA6298562EC3AD16001576C0 /* BundleItemCustomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */; };
 		AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */; };
+		AA8C9B8C2F0F349500A352D2 /* BundleDetailView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */; };
+		AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */; };
 		AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */; };
@@ -672,6 +676,8 @@
 		4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullToRefreshIndicator.swift; sourceTree = "<group>"; };
 		4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedGIFView.swift; sourceTree = "<group>"; };
 		4CF2A9692F0B94EA00BA9FDA /* View+PullToRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+PullToRefresh.swift"; sourceTree = "<group>"; };
+		4CF2A96C2F0F969300BA9FDA /* UpdateAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAlert.swift; sourceTree = "<group>"; };
+		4CF2A96E2F0FB2E100BA9FDA /* AppUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateManager.swift; sourceTree = "<group>"; };
 		AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameInputView.swift; sourceTree = "<group>"; };
 		AA0A54B62EC053E4007B5413 /* CarabinerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerType.swift; sourceTree = "<group>"; };
 		AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleRingComponent.swift; sourceTree = "<group>"; };
@@ -684,6 +690,8 @@
 		AA6298532EC39065001576C0 /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
 		AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleItemCustomSheet.swift; sourceTree = "<group>"; };
 		AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerChangePopup.swift; sourceTree = "<group>"; };
+		AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Alert.swift"; sourceTree = "<group>"; };
+		AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Menu.swift"; sourceTree = "<group>"; };
 		AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerGridItem.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -1048,6 +1056,7 @@
 				4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */,
 				4C6530452EBA80DA000F8154 /* PurchaseFailAlert.swift */,
 				4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */,
+				4CF2A96C2F0F969300BA9FDA /* UpdateAlert.swift */,
 			);
 			path = Alerts;
 			sourceTree = "<group>";
@@ -1380,7 +1389,7 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		4CEC61F72EAE08DA0099ECEE /* KeyringBundle */ = {
+		4CEC61F72EAE08DA0099ECEE /* Component */ = {
 			isa = PBXGroup;
 			children = (
 				4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */,
@@ -1393,7 +1402,7 @@
 				AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */,
 				AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */,
 			);
-			path = KeyringBundle;
+			path = Component;
 			sourceTree = "<group>";
 		};
 		4CEC61F82EAE08DA0099ECEE /* View */ = {
@@ -1406,7 +1415,6 @@
 				38C147B92EB13B2100A8E511 /* Button */,
 				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
 				AA9B2E902EB081750004D31C /* ItemDetailView.swift */,
-				4CEC61F72EAE08DA0099ECEE /* KeyringBundle */,
 				4C8426632ED375840050B6FE /* ColorPalette.swift */,
 				4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */,
 				4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */,
@@ -1527,6 +1535,7 @@
 		4CEC62192EAE08DA0099ECEE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				4CF2A96F2F0FB2E100BA9FDA /* Update */,
 				4CEBB1662EFBDCCD00CF53E2 /* Network */,
 				4CEBB14C2EFAA52F00CF53E2 /* DeepLink */,
 				C6B56F222EC0341B0049F969 /* Cache */,
@@ -1805,8 +1814,11 @@
 		4CEC629D2EAE09990099ECEE /* Bundle */ = {
 			isa = PBXGroup;
 			children = (
+				4CEC61F72EAE08DA0099ECEE /* Component */,
 				4CEC629B2EAE09990099ECEE /* BundleInventoryView.swift */,
 				4CEC629A2EAE09990099ECEE /* BundleDetailView.swift */,
+				AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */,
+				AA8C9B8B2F0F349500A352D2 /* BundleDetailView+Alert.swift */,
 				AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */,
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
 				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
@@ -1824,6 +1836,14 @@
 				4CEC62A32EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift */,
 			);
 			path = Bundle;
+			sourceTree = "<group>";
+		};
+		4CF2A96F2F0FB2E100BA9FDA /* Update */ = {
+			isa = PBXGroup;
+			children = (
+				4CF2A96E2F0FB2E100BA9FDA /* AppUpdateManager.swift */,
+			);
+			path = Update;
 			sourceTree = "<group>";
 		};
 		AABA4DBB2ED2D6B800A7D062 /* Festival */ = {
@@ -2250,6 +2270,7 @@
 				4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */,
 				4C7775342EB0EF8800981C3E /* ItemDetailInfoSection.swift in Sources */,
 				4CC3D3992EC4C16B0009D376 /* ToolbarButtons.swift in Sources */,
+				AA8C9B8C2F0F349500A352D2 /* BundleDetailView+Alert.swift in Sources */,
 				C67B754F2ECD373200D6E3FA /* NeonSignVM+Drawing.swift in Sources */,
 				4CEC62A52EAE0BA30099ECEE /* CollectionViewModel+Bundle.swift in Sources */,
 				4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */,
@@ -2299,6 +2320,7 @@
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
 				C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */,
 				C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */,
+				AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */,
 				4C8426622ED372650050B6FE /* SpeechBubblePreview.swift in Sources */,
 				4CBBEF1E2EB260BE00252590 /* CameraPicker.swift in Sources */,
 				4CEC626E2EAE08DF0099ECEE /* AcrylicPhotoCropView.swift in Sources */,
@@ -2350,10 +2372,12 @@
 				4CC3D3CD2EC8AE030009D376 /* KeychyAlert.swift in Sources */,
 				4CEC62762EAE08DF0099ECEE /* AcrylicPhotoEditedView.swift in Sources */,
 				4CEC62772EAE08DF0099ECEE /* CropModels.swift in Sources */,
+				4CF2A9702F0FB2E100BA9FDA /* AppUpdateManager.swift in Sources */,
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,
 				4CEC62782EAE08DF0099ECEE /* KeyringCompleteView.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
 				AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */,
+				4CF2A96D2F0F969300BA9FDA /* UpdateAlert.swift in Sources */,
 				C6C4029F2EB30163006B58DF /* WorkshopViewModel.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* ItemDetailImage.swift in Sources */,
 				38CE39D22ECE5F9300168E4B /* ClearSketchVM+Effect.swift in Sources */,

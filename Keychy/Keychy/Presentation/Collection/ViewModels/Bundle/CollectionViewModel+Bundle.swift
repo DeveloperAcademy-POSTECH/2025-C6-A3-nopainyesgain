@@ -101,14 +101,17 @@ extension CollectionViewModel {
               let returnKRId = returnKeyringsId else {
             return false
         }
+        
         // same: 배경, 카라비너, 키링의 id가 변경 된 것이 없으면 true, 변경된 것이 있으면 false를 반환
         let same = (returnBGId == lastBackgroundIdForDetail) &&
                    (returnCBId == lastCarabinerIdForDetail) &&
                    (returnKRId == lastKeyringsIdForDetail)
         // 한 번 사용 후 비움
-        returnBackgroundId = nil
-        returnCarabinerId = nil
-        returnKeyringsId = nil
+        if same {
+            returnBackgroundId = nil
+            returnCarabinerId = nil
+            returnKeyringsId = nil
+        }
         return same
     }
     
