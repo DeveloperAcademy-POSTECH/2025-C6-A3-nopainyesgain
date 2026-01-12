@@ -194,39 +194,6 @@ extension CollectionViewModel {
             }
     }
     
-    // MARK: - PostOffice에서 키링 정보 가져오기
-    func fetchKeyringFromPostOffice(postOfficeId: String, completion: @escaping (Keyring?, String?) -> Void) {
-        print("PostOffice 정보 로드 시작 - ID: \(postOfficeId)")
-        
-        let db = Firestore.firestore()
-        
-        db.collection("PostOffice")
-            .document(postOfficeId)
-            .getDocument { snapshot, error in
-                if let error = error {
-                    print("PostOffice 로드 에러: \(error.localizedDescription)")
-                    completion(nil, nil)
-                    return
-                }
-                
-                guard let document = snapshot,
-                      document.exists,
-                      let data = document.data(),
-                      let keyringId = data["keyringId"] as? String else {
-                    print("PostOffice 문서가 존재하지 않거나 keyringId 없음")
-                    completion(nil, nil)
-                    return
-                }
-                
-                print("PostOffice에서 keyringId 추출: \(keyringId)")
-                
-                // keyringId로 실제 키링 데이터 가져오기
-                self.fetchKeyringById(keyringId: keyringId) { keyring in
-                    completion(keyring, keyringId)
-                }
-            }
-    }
-    
     // MARK: - PostOffice 데이터 가져오기
     func fetchPostOfficeData(postOfficeId: String, completion: @escaping ([String: Any]?) -> Void) {
         print("PostOffice 데이터 로드 - ID: \(postOfficeId)")
