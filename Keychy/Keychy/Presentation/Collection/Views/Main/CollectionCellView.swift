@@ -37,6 +37,9 @@ struct CollectionCellView: View {
             loadContent()
         }
         .onDisappear {
+            if let keyringID = keyring.documentId {
+                KeyringCacheManager.shared.cancelTask(for: keyringID)
+            }
             cleanupScene()
         }
     }
@@ -77,7 +80,8 @@ struct CollectionCellView: View {
         // 1. 캐시 확인
         if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail),
            !imageData.isEmpty,
-           let image = UIImage(data: imageData) {
+           let image = UIImage(data: imageData),
+           !ImageValidator.isBlankImage(image) {
             self.cachedImage = image
             self.isLoading = false
             return
@@ -85,15 +89,23 @@ struct CollectionCellView: View {
         
         // 2. 유효하지 않은, 손상된 캐시 삭제
         if KeyringImageCache.shared.exists(for: keyringID, type: .thumbnail) {
+            if let data = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail),
+               let image = UIImage(data: data),
+               !ImageValidator.isBlankImage(image) {
+                // 유효한 캐시는 삭제하지 않음
+                return
+            }
+            
+            // 적절하지 않은 캐시만 삭제
             KeyringImageCache.shared.delete(for: keyringID, type: .thumbnail)
         }
         
         // 3. 캐시 없으면 Scene 생성
         createSceneIfNeeded()
         
-        // 4. 백그라운드 캡처
-        Task.detached(priority: .userInitiated) {
-            await captureAndCache(keyringID: keyringID)
+        // 4. 캡처
+        Task {
+            await KeyringCacheManager.shared.requestCapture(keyring: keyring)
         }
     }
     
@@ -125,11 +137,13 @@ struct CollectionCellView: View {
     }
     
     private func cleanupScene() {
-        scene?.removeAllChildren()
-        scene?.removeAllActions()
-        scene?.physicsWorld.removeAllJoints()
-        scene?.view?.presentScene(nil)
-        scene = nil
+        guard let scene = scene else { return }
+        
+        scene.removeAllChildren()
+        scene.removeAllActions()
+        scene.physicsWorld.removeAllJoints()
+        scene.view?.presentScene(nil)
+        self.scene = nil
     }
     
     // MARK: - 상태 오버레이
@@ -218,8 +232,16 @@ struct CollectionCellView: View {
                 var waitTime = 0.0
                 let checkInterval = 0.1 // 100ms마다 체크
                 let maxWaitTime = 5.0   // 최대 5초
-
+                
+                // Task 취소 체크
                 while !loadingCompleted && waitTime < maxWaitTime {
+                    // 취소되었으면 즉시 종료
+                    if Task.isCancelled {
+                        print("취소됨 (로딩 중): \(keyringID)")
+                        continuation.resume()
+                        return
+                    }
+                    
                     try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
                     waitTime += checkInterval
                 }
@@ -243,13 +265,37 @@ struct CollectionCellView: View {
                     return
                 }
                 
+                // 캡처 전 테스크 취소 체크
+                if Task.isCancelled {
+                    print("취소됨 (캡처 직전): \(keyringID)")
+                    continuation.resume()
+                    return
+                }
+                
                 // 로딩 완료 후 추가 렌더링 대기 (200ms)
                 try? await Task.sleep(for: .seconds(0.2))
-
+                
+                // PNG 캡처 전 최종 취소 체크
+                guard !Task.isCancelled else {
+                    print("취소됨 (렌더링 대기 후): \(keyringID)")
+                    continuation.resume()
+                    return
+                }
+                
                 // PNG 캡처
                 if let pngData = await scene.captureToPNG(),
                    !pngData.isEmpty,
-                   UIImage(data: pngData) != nil {
+                   let image = UIImage(data: pngData),
+                   image.size.width > 0,
+                   image.size.height > 0,
+                   !ImageValidator.isBlankImage(image) {
+                    
+                    // 저장 직전 취소 체크
+                    guard !Task.isCancelled else {
+                        print("취소됨 (저장 직전): \(keyringID)")
+                        continuation.resume()
+                        return
+                    }
                     
                     // FileManager 캐시에 저장 (위젯에서 접근 가능)
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
