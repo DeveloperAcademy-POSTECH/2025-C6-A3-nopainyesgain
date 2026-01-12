@@ -191,12 +191,11 @@ extension BundleNameEditView {
             }
         }
         
-        bundleVM.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak bundleVM] success in
+        bundleVM.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { success in
             DispatchQueue.main.async {
                 self.isUpdating = false
-                // TODO: 여기 옵셔널로 다 빼지 말고 guard문으로 처리
                 if success {
-                    bundleVM?.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    bundleVM.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
                     router.pop()
                 }
             }

@@ -187,7 +187,6 @@ extension BundleNameInputView {
         // 인덱스에 키링이 없으면 "none"을 저장
         let keyringIds: [String] = (0..<carabiner.maxKeyringCount).map { idx in
             if let kr = bundleVM.selectedKeyringsForBundle[idx],
-               // MARK: 여기 collectionVM이랑 bundleVM이랑 각자의 로직이 있을 필요?
                let docId = collectionVM.keyringDocumentIdByLocalId[kr.id] {
                 return docId
             } else {
