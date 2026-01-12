@@ -23,8 +23,15 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State var showImageSaved = false
     @State var isCapturingImage = false
 
+    // 영상 생성
+    @State var isGeneratingVideo = false
+    @State var showVideoSaved = false
+
     // 씬 인터랙션
     @State var isInteractionEnabled = false
+
+    // 비디오 생성기
+    let videoGenerator = KeyringVideoGenerator()
     
     var body: some View {
         GeometryReader { geometry in
@@ -72,6 +79,39 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     message: "이미지가 저장되었어요!",
                     isPresented: $showImageSaved
                 )
+
+                /// 영상 저장 완료 alert
+                KeychyAlert(
+                    type: .imageSave,
+                    message: "영상이 저장되었어요!",
+                    isPresented: $showVideoSaved
+                )
+
+                /// 영상 생성 중 로딩
+                if isGeneratingVideo {
+                    ZStack {
+                        Color.black20
+                            .ignoresSafeArea()
+
+                        VStack(spacing: 20) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(.white)
+
+                            Text("영상 생성 중...")
+                                .typography(.suit17SB)
+                                .foregroundColor(.white)
+
+                            Text("5~10초 소요")
+                                .typography(.suit14M)
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                        .padding(40)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(20)
+                    }
+                    .zIndex(999)
+                }
 
                 // 커스텀 네비게이션 바
                 customNavigationBar
@@ -167,23 +207,50 @@ extension KeyringCompleteView {
 // MARK: - 저장 버튼
 extension KeyringCompleteView {
     private var saveButton: some View {
-        VStack(spacing: 9) {
-            
-            Button(action: {
-                captureAndSaveImage()
-            }) {
-                Image(.imageDownload)
+        HStack(spacing: 20) {
+            // 이미지 저장 버튼
+            VStack(spacing: 9) {
+                Button(action: {
+                    captureAndSaveImage()
+                }) {
+                    Image(.imageDownload)
+                }
+                .frame(
+                    width: getBottomPadding(0) == 0 ? 55 : 65,
+                    height: getBottomPadding(0) == 0 ? 55 : 65
+                )
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive(), in: .circle)
+
+                Text("이미지 저장")
+                    .typography(.suit13SB)
+                    .foregroundStyle(.black100)
             }
-            .frame(
-                width: getBottomPadding(0) == 0 ? 55 : 65,
-                height: getBottomPadding(0) == 0 ? 55 : 65
-            )
-            .buttonStyle(.plain)
-            .glassEffect(.regular.interactive(), in: .circle)
-            
-            Text("이미지 저장")
-                .typography(.suit13SB)
-                .foregroundStyle(.black100)
+
+            // 영상 생성 버튼
+            VStack(spacing: 9) {
+                Button(action: {
+                    Task {
+                        await generateAndSaveVideo()
+                    }
+                }) {
+                    Image(systemName: "video.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(.black100)
+                }
+                .frame(
+                    width: getBottomPadding(0) == 0 ? 55 : 65,
+                    height: getBottomPadding(0) == 0 ? 55 : 65
+                )
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive(), in: .circle)
+                .disabled(isGeneratingVideo)
+
+                Text("영상 생성")
+                    .typography(.suit13SB)
+                    .foregroundStyle(.black100)
+            }
+            .opacity(isGeneratingVideo ? 0.5 : 1)
         }
     }
 }
