@@ -391,6 +391,7 @@ extension BundleAddKeyringView {
             if success {
                 collectionVM.fetchUserKeyrings(uid: uid) { success in
                     if success {
+                        bundleVM.keyring = collectionVM.keyring
                         print("데이터 가져오기 성공")
                     }
                 }

@@ -618,6 +618,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
             collectionVM.fetchUserKeyrings(uid: uid) { success in
+                bundleVM.keyring = collectionVM.keyring
                 continuation.resume()
             }
         }
@@ -700,6 +701,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
             collectionVM.fetchUserKeyrings(uid: uid) { success in
+                bundleVM.keyring = collectionVM.keyring
                 continuation.resume()
             }
         }
