@@ -67,9 +67,6 @@ class BundleViewModel {
     var keyring: [Keyring] = []
     var isLoading = false
     
-    // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
-    var keyringDocumentIdByLocalId: [UUID: String] = [:]
-    
     // MARK: - 화면 표시용 배열
     var _backgroundViewData: [BackgroundViewData] = []
     var _carabinerViewData: [CarabinerViewData] = []
@@ -359,15 +356,6 @@ class BundleViewModel {
     
     func resolveBackground(from id: String) -> Background? {
         backgrounds.first { $0.id == id }
-    }
-    
-    // 현재 사용하지는 않지만 남겨둠
-    /// Firestore 문서 id -> Keyring 모델 해석
-    func resolveKeyring(from documentId: String) -> Keyring? {
-        let result = keyring.first { kr in
-            keyringDocumentIdByLocalId[kr.id] == documentId
-        }
-        return result
     }
     
     /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
