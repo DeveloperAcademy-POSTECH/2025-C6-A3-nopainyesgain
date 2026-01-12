@@ -1225,7 +1225,7 @@ extension BundleEditView {
         }
         
         // 기존 방식으로도 로드 (Firebase에서 직접)
-        let firebaseData = await collectionVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        let firebaseData = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         
         await MainActor.run {
             // selectedKeyrings 방식으로도 업데이트

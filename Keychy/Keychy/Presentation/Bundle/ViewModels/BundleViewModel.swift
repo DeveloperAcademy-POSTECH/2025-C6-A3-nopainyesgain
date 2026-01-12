@@ -35,6 +35,7 @@ struct KeyringInfo {
     let chainLength: Int
 }
 
+@Observable
 class BundleViewModel {
     private var db: Firestore {
         Firestore.firestore()

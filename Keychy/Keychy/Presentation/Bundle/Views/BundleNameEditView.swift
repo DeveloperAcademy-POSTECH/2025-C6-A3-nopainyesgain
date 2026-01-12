@@ -180,7 +180,7 @@ extension BundleNameEditView {
         Task {
             var krList: [MultiKeyringScene.KeyringData] = []
             if let carabiner = cb {
-                krList = await collectionVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+                krList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
             }
             let krId = bundleVM.makeKeyringsId(krList)
             

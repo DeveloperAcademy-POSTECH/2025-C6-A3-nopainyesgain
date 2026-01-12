@@ -94,7 +94,7 @@ extension BundleDetailView {
             }
             
             // Firebase에서 키링 정보 가져오기
-            guard let keyringInfo = await collectionVM.fetchKeyringInfo(keyringId: keyringId) else {
+            guard let keyringInfo = await bundleVM.fetchKeyringInfo(keyringId: keyringId) else {
                 continue
             }
             

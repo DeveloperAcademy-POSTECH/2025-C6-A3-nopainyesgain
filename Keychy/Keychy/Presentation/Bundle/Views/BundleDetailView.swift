@@ -193,7 +193,7 @@ extension BundleDetailView {
             return
         }
 
-        let newKeyringDataList = await collectionVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        let newKeyringDataList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         keyringDataList = newKeyringDataList
         
         // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
