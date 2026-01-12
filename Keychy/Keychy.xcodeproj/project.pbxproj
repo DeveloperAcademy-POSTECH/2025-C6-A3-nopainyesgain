@@ -1851,11 +1851,11 @@
 			isa = PBXGroup;
 			children = (
 				AA8C9B972F10E6D500A352D2 /* BundleViewModel.swift */,
-				AA69DD292F14C71900C0A41C /* BundleViewModel+Cache.swift */,
+				AA69DD232F14C56F00C0A41C /* BundleViewModel+CRUD.swift */,
 				AA69DD212F14C41300C0A41C /* BundleViewModel+LoadData.swift */,
 				AA69DD2D2F14C87900C0A41C /* BundleViewModel+LoadImage.swift */,
-				AA69DD232F14C56F00C0A41C /* BundleViewModel+CRUD.swift */,
 				AA69DD252F14C60000C0A41C /* BundleViewModel+Edit.swift */,
+				AA69DD292F14C71900C0A41C /* BundleViewModel+Cache.swift */,
 				AA69DD2B2F14C80900C0A41C /* BundleViewModel+CaptureScene.swift */,
 				AA69DD272F14C64B00C0A41C /* BundleViewModel+Sort.swift */,
 				AA8C9B992F14C35200A352D2 /* BundleViewModel+ReloadDecision.swift */,
