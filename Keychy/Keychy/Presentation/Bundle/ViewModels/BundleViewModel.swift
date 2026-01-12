@@ -24,6 +24,17 @@ struct CarabinerViewData: Identifiable, Equatable, Hashable {
     let isOwned: Bool
 }
 
+/// Firestore에서 가져온 키링 정보를 담는 구조체
+struct KeyringInfo {
+    let id: String
+    let bodyImage: String
+    let selectedTemplate: String?
+    let soundId: String
+    let particleId: String
+    let hookOffsetY: CGFloat?
+    let chainLength: Int
+}
+
 class BundleViewModel {
     private var db: Firestore {
         Firestore.firestore()
@@ -102,6 +113,16 @@ class BundleViewModel {
         set { _lastKeyringsIdForDetail = newValue }
     }
     
+    // 정렬된 뭉치 (메인 뭉치 우선 정렬)
+    var sortedBundles: [KeyringBundle] {
+        bundles.sorted { a, b in
+            if a.isMain != b.isMain {
+                return a.isMain
+            }
+            return a.createdAt > b.createdAt
+        }
+    }
+    
     // MARK: - 구성 id 생성 헬퍼 (BundleDetailView의 로직과 동일한 규칙)
     func makeBackgroundId(_ bg: Background?) -> String {
         guard let bg else { return "" }
@@ -148,7 +169,7 @@ class BundleViewModel {
         return same
     }
     
-    /// Detail이 로드를 마친 후 현재 구성 id를 last~ForDetail로 저장
+    /// BundleDetailView가 뭉치 로드를 마친 후 현재 구성 id를 last~ForDetail로 저장
     func updateLastConfigIds(
         background: Background?,
         carabiner: Carabiner?,
@@ -214,6 +235,7 @@ class BundleViewModel {
         }
     }
 
+    /// 배경, 카라비너의 사용 횟수를 증가시키는 메서드
     private func incrementUseCount(
         carabinerId: String?,
         backgroundId: String?
@@ -339,6 +361,7 @@ class BundleViewModel {
         backgrounds.first { $0.id == id }
     }
     
+    // 현재 사용하지는 않지만 남겨둠
     /// Firestore 문서 id -> Keyring 모델 해석
     func resolveKeyring(from documentId: String) -> Keyring? {
         let result = keyring.first { kr in
@@ -347,54 +370,76 @@ class BundleViewModel {
         return result
     }
     
-    func createKeyringDataList(carabiner: Carabiner, geometry: CGSize) -> [MultiKeyringScene.KeyringData] {
+    /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
+    func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-
-        guard let bundle = selectedBundle else {
-            return dataList
-        }
-
-        // bundle.keyrings 배열을 순회 (각 인덱스는 카라비너 위치)
-        for index in 0..<carabiner.maxKeyringCount {
-            // 번들에 저장된 문서 id (없으면 "none")
-            let docId = bundle.keyrings[index]
-
-            if docId == "none" || docId.isEmpty {
-                continue
-            }
-
-            guard let keyring = resolveKeyring(from: docId) else {
-                continue
-            }
+        
+        for (index, keyringId) in bundle.keyrings.enumerated() {
+            // 유효하지 않은 키링 ID 필터링
+            guard index < carabiner.maxKeyringCount,
+                  keyringId != "none",
+                  !keyringId.isEmpty else { continue }
             
-            let soundId = keyring.soundId
+            // Firebase에서 키링 정보 가져오기
+            guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
             
+            // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
             let customSoundURL: URL? = {
-                if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
-                    return URL(string: soundId)
+                if keyringInfo.soundId.hasPrefix("https://") || keyringInfo.soundId.hasPrefix("http://") {
+                    return URL(string: keyringInfo.soundId)
                 }
                 return nil
             }()
             
-            let relativePosition = CGPoint(
-                x: carabiner.keyringXPosition[index],
-                y: carabiner.keyringYPosition[index]
-            )
-
+            // KeyringData 생성
             let data = MultiKeyringScene.KeyringData(
-                index: index, // 카라비너 위치 인덱스
-                position: relativePosition,
-                bodyImageURL: keyring.bodyImage,
-                soundId: soundId,
+                index: index,
+                position: CGPoint(
+                    x: carabiner.keyringXPosition[index],
+                    y: carabiner.keyringYPosition[index]
+                ),
+                bodyImageURL: keyringInfo.bodyImage,
+                templateId: keyringInfo.selectedTemplate,
+                soundId: keyringInfo.soundId,
                 customSoundURL: customSoundURL,
-                particleId: keyring.particleId,
-                hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
+                particleId: keyringInfo.particleId,
+                hookOffsetY: keyringInfo.hookOffsetY,
+                chainLength: keyringInfo.chainLength
             )
             dataList.append(data)
         }
         
         return dataList
+    }
+    
+    /// Firestore에서 키링 정보를 가져옴
+    func fetchKeyringInfo(keyringId: String) async -> KeyringInfo? {
+        do {
+            let document = try await db.collection("Keyring").document(keyringId).getDocument()
+
+            guard let data = document.data(),
+                  let bodyImage = data["bodyImage"] as? String,
+                  let soundId = data["soundId"] as? String,
+                  let particleId = data["particleId"] as? String else {
+                return nil
+            }
+
+            let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
+            let chainLength = data["chainLength"] as? Int ?? 5
+            let selectedTemplate = data["selectedTemplate"] as? String
+
+            return KeyringInfo(
+                id: keyringId,
+                bodyImage: bodyImage,
+                selectedTemplate: selectedTemplate,
+                soundId: soundId,
+                particleId: particleId,
+                hookOffsetY: hookOffsetY,
+                chainLength: chainLength
+            )
+        } catch {
+            return nil
+        }
     }
     
     //MARK: - 메인 번들 업데이트 (기존 메인 해제 포함)
@@ -594,6 +639,7 @@ class BundleViewModel {
         }
     }
     
+    // MARK: - 카라비너 URL을 통해 이미지를 가져오는 메서드
     /// 뒷 카라비너 이미지 (또는 단일 카라비너 이미지)
     func backCarabinerImage(carabiner: Carabiner) -> some View {
         LazyImage(url: URL(string: carabiner.backImageURL)) { state in
@@ -773,7 +819,7 @@ class BundleViewModel {
         return CGPoint(x: centerX, y: centerY)
     }
     
-    // 캡쳐한 씬을 보여주는 메서드
+    /// 캡쳐한 씬을 보여주는 메서드
     // BundleNameInputView, BundleNameEditView에서 사용하는 미리보기 씬
     @ViewBuilder
     func keyringSceneView() -> some View {

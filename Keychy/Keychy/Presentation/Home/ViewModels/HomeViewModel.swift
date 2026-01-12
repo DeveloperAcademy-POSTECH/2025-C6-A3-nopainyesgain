@@ -35,17 +35,6 @@ class HomeViewModel {
     /// 2. 메인으로 설정된 뭉치를 찾아 선택
     /// 3. 선택된 뭉치의 키링들을 Firestore에서 가져와 KeyringData 리스트 생성
     
-    /// Firestore에서 가져온 키링 정보를 담는 구조체
-    struct KeyringInfo {
-        let id: String
-        let bodyImage: String
-        let selectedTemplate: String?
-        let soundId: String
-        let particleId: String
-        let hookOffsetY: CGFloat?
-        let chainLength: Int
-    }
-    
     @MainActor
     func loadMainBundle(collectionViewModel: CollectionViewModel, onBackgroundLoaded: (() -> Void)?) async {
         let uid = UserManager.shared.userUID

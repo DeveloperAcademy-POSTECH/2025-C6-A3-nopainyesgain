@@ -10,7 +10,8 @@ import SpriteKit
 
 struct BundleNameInputView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
     
     /// 번들 이름 입력용 State
     @State private var bundleName: String = ""
@@ -31,13 +32,13 @@ struct BundleNameInputView<Route: BundleRoute>: View {
     
     // 선택된 키링들을 ViewModel에서 가져옴
     private var selectedKeyrings: [Int: Keyring] {
-        viewModel.selectedKeyringsForBundle
+        bundleVM.selectedKeyringsForBundle
     }
     
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 20) {
-                viewModel.keyringSceneView()
+                bundleVM.keyringSceneView()
                 
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
@@ -63,7 +64,7 @@ struct BundleNameInputView<Route: BundleRoute>: View {
             // 키보드 자동 활성화
             isTextFieldFocused = true
 
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
             
             if getBottomPadding(34) == 0 {
                 morePadding = 40
@@ -103,8 +104,8 @@ extension BundleNameInputView {
                     let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
                     var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: NSString.CompareOptions.regularExpression)
 
-                    if sanitized.count > viewModel.maxBundleNameCount {
-                        sanitized = String(sanitized.prefix(viewModel.maxBundleNameCount))
+                    if sanitized.count > bundleVM.maxBundleNameCount {
+                        sanitized = String(sanitized.prefix(bundleVM.maxBundleNameCount))
                     }
 
                     if sanitized != bundleName {
@@ -129,7 +130,7 @@ extension BundleNameInputView {
                     }
                 }
                 Spacer()
-                Text("\(bundleName.count) / \(viewModel.maxBundleNameCount)")
+                Text("\(bundleName.count) / \(bundleVM.maxBundleNameCount)")
                     .typography(.suit13M)
             }
             .padding(.vertical, 14)
@@ -174,9 +175,9 @@ extension BundleNameInputView {
     private func handleNextButtonTap() {
         // 필수 값 안전 확인
         guard
-            let backgroundId = viewModel.selectedBackground?.id,
-            let carabinerId = viewModel.selectedCarabiner?.id,
-            let carabiner = viewModel.selectedCarabiner
+            let backgroundId = bundleVM.selectedBackground?.id,
+            let carabinerId = bundleVM.selectedCarabiner?.id,
+            let carabiner = bundleVM.selectedCarabiner
         else {
             // 값이 없으면 조용히 리턴하거나 에러 상태 표시
             return
@@ -185,8 +186,9 @@ extension BundleNameInputView {
         // 선택된 키링들을 카라비너의 최대 개수 길이에 맞춰 직렬화
         // 인덱스에 키링이 없으면 "none"을 저장
         let keyringIds: [String] = (0..<carabiner.maxKeyringCount).map { idx in
-            if let kr = viewModel.selectedKeyringsForBundle[idx],
-               let docId = viewModel.keyringDocumentIdByLocalId[kr.id] {
+            if let kr = bundleVM.selectedKeyringsForBundle[idx],
+               // MARK: 여기 collectionVM이랑 bundleVM이랑 각자의 로직이 있을 필요?
+               let docId = collectionVM.keyringDocumentIdByLocalId[kr.id] {
                 return docId
             } else {
                 return "none"
@@ -194,7 +196,7 @@ extension BundleNameInputView {
         }
         
         let maxKeyrings = carabiner.maxKeyringCount
-        let isMain = viewModel.bundles.isEmpty
+        let isMain = bundleVM.bundles.isEmpty
         
         // 번들 이름을 미리 캡처 (async 작업 전)
         let bundleNameToSave = bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -204,7 +206,7 @@ extension BundleNameInputView {
 
         isUploading = true
 
-        viewModel.createBundle(
+        bundleVM.createBundle(
             userId: UserManager.shared.userUID,
             name: bundleNameToSave,
             selectedBackground: backgroundId,
@@ -215,7 +217,7 @@ extension BundleNameInputView {
         ) { success, bundleId in
             if success, let bundleId = bundleId {
                 // Firebase 저장 성공 후 ViewModel의 이미지를 캐시에 저장
-                viewModel.saveBundleImageToCache(
+                bundleVM.saveBundleImageToCache(
                     bundleId: bundleId,
                     bundleName: bundleNameToSave
                 )
@@ -224,7 +226,7 @@ extension BundleNameInputView {
                 
                 // 생성된 번들을 selectedBundle에 할당
                 // createBundle의 completion이 배열 업데이트 후 호출되므로 안전
-                viewModel.selectedBundle = viewModel.bundles.first { $0.documentId == bundleId }
+                bundleVM.selectedBundle = bundleVM.bundles.first { $0.documentId == bundleId }
                 router.reset()
                 router.push(.bundleInventoryView)
                 // 네비게이션: 상세 페이지로 이동

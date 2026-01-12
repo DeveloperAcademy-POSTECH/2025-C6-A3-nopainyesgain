@@ -22,7 +22,7 @@ extension BundleDetailView {
                     }
                 }
             
-            if let bundle = viewModel.selectedBundle {
+            if let bundle = bundleVM.selectedBundle {
                 BundleMenu(
                     position: menuPosition,
                     onNameEdit: {
@@ -47,9 +47,9 @@ extension BundleDetailView {
                         
                         uiState.showMenu = false
                         isNavigatingDeeper = true
-                        viewModel.lastBackgroundIdForDetail = bundle.selectedBackground
-                        viewModel.lastCarabinerIdForDetail = bundle.selectedCarabiner
-                        viewModel.lastKeyringsIdForDetail = bundle.keyrings
+                        bundleVM.lastBackgroundIdForDetail = bundle.selectedBackground
+                        bundleVM.lastCarabinerIdForDetail = bundle.selectedCarabiner
+                        bundleVM.lastKeyringsIdForDetail = bundle.keyrings
                             .sorted()
                             .joined(separator: "|")
                         router.push(.bundleEditView)

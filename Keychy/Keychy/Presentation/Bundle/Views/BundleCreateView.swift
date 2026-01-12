@@ -14,7 +14,8 @@ struct BundleCreateView<Route: BundleRoute>: View {
     
     //MARK: - 프로퍼티들
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
     
     /// 선택한 카테고리 : "Background" 또는 "Carabiner"
     @State private var selectedCategory: String = ""
@@ -113,7 +114,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
             Task {
                 await refreshData()
             }
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
@@ -133,12 +134,12 @@ struct BundleCreateView<Route: BundleRoute>: View {
         // 선택한 배경과 카라비너를 ViewModel과 자동 동기화
         .onChange(of: selectedBackground) { _, newValue in
             if let bg = newValue {
-                viewModel.selectedBackground = bg.background
+                bundleVM.selectedBackground = bg.background
             }
         }
         .onChange(of: selectedCarabiner) { _, newValue in
             if let cb = newValue {
-                viewModel.selectedCarabiner = cb.carabiner
+                bundleVM.selectedCarabiner = cb.carabiner
             }
         }
     }
@@ -160,10 +161,10 @@ extension BundleCreateView {
             } else {
                 NextToolbarButton {
                     if let bg = selectedBackground {
-                        viewModel.selectedBackground = bg.background
+                        bundleVM.selectedBackground = bg.background
                     }
                     if let cb = selectedCarabiner {
-                        viewModel.selectedCarabiner = cb.carabiner
+                        bundleVM.selectedCarabiner = cb.carabiner
                     }
                     router.push(.bundleAddKeyringView)
                 }
@@ -191,7 +192,7 @@ extension BundleCreateView {
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectBackgroundSheet(
-                            viewModel: viewModel,
+                            viewModel: bundleVM,
                             selectedBG: selectedBackground,
                             onBackgroundTap: { bg in
                                 selectedBackground = bg
@@ -215,7 +216,7 @@ extension BundleCreateView {
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectCarabinerSheet(
-                            viewModel: viewModel,
+                            viewModel: bundleVM,
                             selectedCarabiner: selectedCarabiner,
                             onCarabinerTap: { carabiner in
                                 selectedCarabiner = carabiner
@@ -251,10 +252,10 @@ extension BundleCreateView {
         
         // 배경 데이터 새로고침
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllBackgrounds { _ in
+            bundleVM.fetchAllBackgrounds { _ in
                 // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let bgId = currentBackgroundId {
-                    self.selectedBackground = viewModel.backgroundViewData.first { $0.background.id == bgId }
+                    self.selectedBackground = bundleVM.backgroundViewData.first { $0.background.id == bgId }
                 }
                 continuation.resume()
             }
@@ -262,10 +263,10 @@ extension BundleCreateView {
         
         // 카라비너 데이터 새로고침
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllCarabiners { _ in
+            bundleVM.fetchAllCarabiners { _ in
                 // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let cbId = currentCarabinerId {
-                    self.selectedCarabiner = viewModel.carabinerViewData.first { $0.carabiner.id == cbId }
+                    self.selectedCarabiner = bundleVM.carabinerViewData.first { $0.carabiner.id == cbId }
                 }
                 continuation.resume()
             }
@@ -280,12 +281,12 @@ extension BundleCreateView {
         
         // 배경 데이터 로드
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllBackgrounds { _ in
+            bundleVM.fetchAllBackgrounds { _ in
                 // "키치 배경"을 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedBackground == nil {
-                    self.selectedBackground = viewModel.backgroundViewData.first { bg in
+                    self.selectedBackground = bundleVM.backgroundViewData.first { bg in
                         bg.background.backgroundName == "키치 배경"
-                    } ?? viewModel.backgroundViewData.first
+                    } ?? bundleVM.backgroundViewData.first
                 }
                 
                 continuation.resume()
@@ -294,12 +295,12 @@ extension BundleCreateView {
         
         // 카라비너 데이터 로드
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllCarabiners { _ in
+            bundleVM.fetchAllCarabiners { _ in
                 // "키치 카라비너"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedCarabiner == nil {
-                    self.selectedCarabiner = viewModel.carabinerViewData.first { cb in
+                    self.selectedCarabiner = bundleVM.carabinerViewData.first { cb in
                         cb.carabiner.carabinerName == "키치 카라비너"
-                    } ?? viewModel.carabinerViewData.first
+                    } ?? bundleVM.carabinerViewData.first
                 }
                 
                 continuation.resume()
@@ -515,10 +516,10 @@ extension BundleCreateView {
             
             await MainActor.run {
                 if let bg = selectedBackground {
-                    viewModel.selectedBackground = bg.background
+                    bundleVM.selectedBackground = bg.background
                 }
                 if let cb = selectedCarabiner {
-                    viewModel.selectedCarabiner = cb.carabiner
+                    bundleVM.selectedCarabiner = cb.carabiner
                 }
                 
                 isPurchasing = false

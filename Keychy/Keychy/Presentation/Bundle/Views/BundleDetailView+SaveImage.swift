@@ -62,8 +62,8 @@ extension BundleDetailView {
     }
     
     func captureAndSaveScene() async {
-        guard let bundle = viewModel.selectedBundle else {
-            return 
+        guard let bundle = bundleVM.selectedBundle else {
+            return
         }
         
         // 캡쳐 시작
@@ -72,7 +72,7 @@ extension BundleDetailView {
         }
         
         // 배경 및 카라비너 로드
-        guard let cb = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+        guard let cb = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner),
               let bg = WorkshopDataManager.shared.backgrounds.first(where: { $0.id == bundle.selectedBackground }) else {
             await MainActor.run {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -94,7 +94,7 @@ extension BundleDetailView {
             }
             
             // Firebase에서 키링 정보 가져오기
-            guard let keyringInfo = await viewModel.fetchKeyringInfo(keyringId: keyringId) else {
+            guard let keyringInfo = await collectionVM.fetchKeyringInfo(keyringId: keyringId) else {
                 continue
             }
             
@@ -143,7 +143,7 @@ extension BundleDetailView {
         
         // viewModel에 캡쳐된 이미지 저장
         await MainActor.run {
-            viewModel.bundleCapturedImage = pngData
+            bundleVM.bundleCapturedImage = pngData
         }
         
         if let documentId = bundle.documentId,

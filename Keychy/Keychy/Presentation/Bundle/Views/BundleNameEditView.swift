@@ -9,7 +9,8 @@ import SwiftUI
 
 struct BundleNameEditView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
     
     @State private var bundleName: String = ""
     @FocusState private var isTextFieldFocused: Bool
@@ -25,7 +26,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 20) {
-                viewModel.keyringSceneView()
+                bundleVM.keyringSceneView()
                 
                 bundleNameTextField
                     .padding(.horizontal, 20)
@@ -43,9 +44,9 @@ struct BundleNameEditView<Route: BundleRoute>: View {
         .withToast(position: .default)
         .scrollDismissesKeyboard(.never)
         .onAppear {
-            if let bundle = viewModel.selectedBundle {
+            if let bundle = bundleVM.selectedBundle {
                 bundleName = bundle.name
-                viewModel.loadBundleImageFromCache(bundle: bundle)
+                bundleVM.loadBundleImageFromCache(bundle: bundle)
             }
             isTextFieldFocused = true
             
@@ -53,7 +54,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
             if getBottomPadding(34) == 0 {
                 morePadding = 40
             }
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -84,8 +85,8 @@ extension BundleNameEditView {
                     let regexString = "[^가-힣\\u3131-\\u314E\\u314F-\\u3163a-zA-Z0-9\\s]+"
                     var sanitized = newValue.replacingOccurrences(of: regexString, with: "", options: NSString.CompareOptions.regularExpression)
 
-                    if sanitized.count > viewModel.maxBundleNameCount {
-                        sanitized = String(sanitized.prefix(viewModel.maxBundleNameCount))
+                    if sanitized.count > bundleVM.maxBundleNameCount {
+                        sanitized = String(sanitized.prefix(bundleVM.maxBundleNameCount))
                     }
 
                     if sanitized != bundleName {
@@ -115,7 +116,7 @@ extension BundleNameEditView {
 
                 Spacer()
 
-                Text("\(bundleName.count) / \(viewModel.maxBundleNameCount)")
+                Text("\(bundleName.count) / \(bundleVM.maxBundleNameCount)")
                     .typography(.suit13M)
                     .foregroundStyle(.gray300)
             }
@@ -162,39 +163,40 @@ extension BundleNameEditView {
             return
         }
 
-        guard let bundle = viewModel.selectedBundle else { return }
+        guard let bundle = bundleVM.selectedBundle else { return }
 
         isUpdating = true
         
         // pop 전에 현재 구성 id를 ViewModel에 저장
         // 현재 번들의 배경/카라비너 resolve
-        let bg = viewModel.resolveBackground(from: bundle.selectedBackground)
-        let cb = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        let bg = bundleVM.resolveBackground(from: bundle.selectedBackground)
+        let cb = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner)
         
         // BundleDetailView와 동일 규칙으로 id 생성
-        let bgId = viewModel.makeBackgroundId(bg)
-        let cbId = viewModel.makeCarabinerId(cb)
+        let bgId = bundleVM.makeBackgroundId(bg)
+        let cbId = bundleVM.makeCarabinerId(cb)
         
         // keyringsId는 현재 번들의 구성 기반으로 재구성
         Task {
             var krList: [MultiKeyringScene.KeyringData] = []
             if let carabiner = cb {
-                krList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+                krList = await collectionVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
             }
-            let krId = viewModel.makeKeyringsId(krList)
+            let krId = bundleVM.makeKeyringsId(krList)
             
             await MainActor.run {
-                viewModel.returnBackgroundId = bgId
-                viewModel.returnCarabinerId = cbId
-                viewModel.returnKeyringsId = krId
+                bundleVM.returnBackgroundId = bgId
+                bundleVM.returnCarabinerId = cbId
+                bundleVM.returnKeyringsId = krId
             }
         }
         
-        viewModel.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak viewModel] success in
+        bundleVM.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak bundleVM] success in
             DispatchQueue.main.async {
                 self.isUpdating = false
+                // TODO: 여기 옵셔널로 다 빼지 말고 guard문으로 처리
                 if success {
-                    viewModel?.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+                    bundleVM?.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
                     router.pop()
                 }
             }

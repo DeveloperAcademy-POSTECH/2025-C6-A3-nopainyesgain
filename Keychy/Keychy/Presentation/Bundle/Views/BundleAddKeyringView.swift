@@ -14,7 +14,8 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
     // MARK: - Properties
     
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
     
     @State private var showSelectKeyringSheet = false
     @State private var selectedKeyrings: [Int: Keyring] = [:]
@@ -37,8 +38,8 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         ZStack(alignment: .bottom) {
             // 배경 + 카라비너 + 키링 씬
             ZStack(alignment: .top) {
-                if let carabiner = viewModel.selectedCarabiner,
-                   let background = viewModel.selectedBackground {
+                if let carabiner = bundleVM.selectedCarabiner,
+                   let background = bundleVM.selectedBackground {
                     keyringEditSceneView(background: background, carabiner: carabiner)
                 }
                 customNavigationBar
@@ -71,7 +72,7 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         .ignoresSafeArea()
         .onAppear {
             fetchData()
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
@@ -171,7 +172,7 @@ extension BundleAddKeyringView {
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
             
-            if viewModel.keyring.isEmpty {
+            if collectionVM.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
                         .resizable()
@@ -189,7 +190,7 @@ extension BundleAddKeyringView {
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(viewModel.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
+                        ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
                             keyringCell(keyring: keyring)
                         }
                     }
@@ -303,15 +304,15 @@ extension BundleAddKeyringView {
 extension BundleAddKeyringView {
     /// 씬 캡처 및 저장
     private func captureAndSaveScene() async {
-        guard let carabiner = viewModel.selectedCarabiner,
-              let background = viewModel.selectedBackground else {
+        guard let carabiner = bundleVM.selectedCarabiner,
+              let background = bundleVM.selectedBackground else {
             return
         }
         
         // 캡처 시작
         await MainActor.run {
             isCapturing = true
-            viewModel.selectedKeyringsForBundle = selectedKeyrings
+            bundleVM.selectedKeyringsForBundle = selectedKeyrings
         }
         
         // 배경 이미지 미리 로드
@@ -365,7 +366,7 @@ extension BundleAddKeyringView {
             carabinerWidth: carabiner.carabinerWidth,
         ) {
             await MainActor.run {
-                viewModel.bundleCapturedImage = pngData
+                bundleVM.bundleCapturedImage = pngData
             }
         } else {
             print("❌ [BundleAddKeyring] 캡처 실패")
@@ -386,9 +387,9 @@ extension BundleAddKeyringView {
     private func fetchData() {
         let uid = UserManager.shared.userUID
         
-        viewModel.fetchUserCollectionData(uid: uid) { success in
+        collectionVM.fetchUserCollectionData(uid: uid) { success in
             if success {
-                viewModel.fetchUserKeyrings(uid: uid) { success in
+                collectionVM.fetchUserKeyrings(uid: uid) { success in
                     if success {
                         print("데이터 가져오기 성공")
                     }
