@@ -37,6 +37,7 @@
 		385425C82EB3C3F300A06C02 /* KeyringDetailSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C72EB3C3F300A06C02 /* KeyringDetailSceneView.swift */; };
 		385425CA2EB3C79A00A06C02 /* KeyringDetailScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C92EB3C79A00A06C02 /* KeyringDetailScene.swift */; };
 		385425CC2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425CB2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift */; };
+		3861024A2F1129FA0045C529 /* KeyringCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386102492F1129FA0045C529 /* KeyringCacheManager.swift */; };
 		386102422F0F7C8C0045C529 /* KeyringReceiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386102412F0F7C8C0045C529 /* KeyringReceiveViewModel.swift */; };
 		386102442F0F7C980045C529 /* KeyringCollectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386102432F0F7C980045C529 /* KeyringCollectViewModel.swift */; };
 		386102462F10F9CE0045C529 /* KeyringReceiveView+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386102452F10F9CE0045C529 /* KeyringReceiveView+Alerts.swift */; };
@@ -440,6 +441,7 @@
 		385425C72EB3C3F300A06C02 /* KeyringDetailSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringDetailSceneView.swift; sourceTree = "<group>"; };
 		385425C92EB3C79A00A06C02 /* KeyringDetailScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringDetailScene.swift; sourceTree = "<group>"; };
 		385425CB2EB3C7CC00A06C02 /* KeyringDetailScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringDetailScene+Setup.swift"; sourceTree = "<group>"; };
+		386102492F1129FA0045C529 /* KeyringCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCacheManager.swift; sourceTree = "<group>"; };
 		386102412F0F7C8C0045C529 /* KeyringReceiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringReceiveViewModel.swift; sourceTree = "<group>"; };
 		386102432F0F7C980045C529 /* KeyringCollectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCollectViewModel.swift; sourceTree = "<group>"; };
 		386102452F10F9CE0045C529 /* KeyringReceiveView+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringReceiveView+Alerts.swift"; sourceTree = "<group>"; };
@@ -1966,6 +1968,7 @@
 			children = (
 				C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */,
 				C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */,
+				386102492F1129FA0045C529 /* KeyringCacheManager.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -2410,6 +2413,7 @@
 				4CEC627D2EAE08DF0099ECEE /* KeyringViewModelProtocol.swift in Sources */,
 				C64EE7952ECD733300E8450F /* PolaroidVM+Frame.swift in Sources */,
 				4C65304E2EBA88FB000F8154 /* KeyringCustomizingView+Cart.swift in Sources */,
+				3861024A2F1129FA0045C529 /* KeyringCacheManager.swift in Sources */,
 				4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */,
 				AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */,
 				AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */,
