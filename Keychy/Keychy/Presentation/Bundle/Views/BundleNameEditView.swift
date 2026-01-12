@@ -26,7 +26,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 20) {
-                bundleVM.keyringSceneView()
+                bundleVM.bundleCaptureSceneView()
                 
                 bundleNameTextField
                     .padding(.horizontal, 20)

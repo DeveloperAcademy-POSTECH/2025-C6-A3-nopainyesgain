@@ -38,7 +38,7 @@ struct BundleNameInputView<Route: BundleRoute>: View {
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 20) {
-                bundleVM.keyringSceneView()
+                bundleVM.bundleCaptureSceneView()
                 
                 // 번들 이름 입력 섹션
                 bundleNameTextField()
