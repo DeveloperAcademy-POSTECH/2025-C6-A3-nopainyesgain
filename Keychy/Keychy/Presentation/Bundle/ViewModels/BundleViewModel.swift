@@ -50,38 +50,24 @@ class BundleViewModel {
     var carabiners: [Carabiner] { dataManager.carabiners }
     var selectedCarabiner: Carabiner?
     
+    // 뭉치 이름 최대 글자 수
     var maxBundleNameCount: Int = 9
-    var selectedKeyringsForBundle: [Int: Keyring] = [:] // 번들 생성용 선택된 키링들
-    var bundlePreviewScene: MultiKeyringScene?
-    var bundleCapturedImage: Data? // 캡처된 번들 이미지 (PNG 데이터)
+    
+    // 뭉치 생성 시 선택 된 키링들을 저장
+    var selectedKeyringsForBundle: [Int: Keyring] = [:]
+    
+    // 뭉치 캡쳐 이미지 (png 데이터)
+    var bundleCapturedImage: Data?
+    
+    // 현재 선택 된 뭉치 - 뭉치 상세뷰 접근 시 데이터 할당 됨
     var selectedBundle: KeyringBundle?
+    
+    // MARK: - 이전 화면에서 전달된 구성 id 저장소
+    // 이전 화면에서 pop 직전에 넘겨받은 구성 id를 임시 저장하는 내부 저장소
     var _returnBackgroundId: String?
     var _returnCarabinerId: String?
     var _returnKeyringsId: String?
-    var _lastBackgroundIdForDetail: String?
-    var _lastCarabinerIdForDetail: String?
-    var _lastKeyringsIdForDetail: String?
     
-    // MARK: - 데이터
-    var bundles: [KeyringBundle] = []
-    var keyring: [Keyring] = []
-    var isLoading = false
-    
-    // MARK: - 화면 표시용 배열
-    var _backgroundViewData: [BackgroundViewData] = []
-    var _carabinerViewData: [CarabinerViewData] = []
-    
-    var backgroundViewData: [BackgroundViewData] {
-        get { _backgroundViewData }
-        set { _backgroundViewData = newValue }
-    }
-    var carabinerViewData: [CarabinerViewData] {
-        get { _carabinerViewData }
-        set { _carabinerViewData = newValue }
-    }
-    
-    // MARK: - 이전 화면에서 전달된 구성 id 저장소
-    // BundleEditView/BundleNameEditView에서 pop 직전 세팅
     var returnBackgroundId: String? {
         get { _returnBackgroundId }
         set { _returnBackgroundId = newValue }
@@ -96,7 +82,11 @@ class BundleViewModel {
     }
     
     // MARK: - Detail에서 마지막으로 로드한 구성 id (Detail <-> ViewModel 공유)
-    // BundleDetailView가 로드 완료 시점에 저장하고, 다음 진입 시 동일 구성 여부 판단에 사용
+    // BundleDetailView가 마지막으로 로드 완료한 구성 id를 저장, 다음 진입 때 return~id와 비교해 동일 구성 여부 판단에 사용
+    var _lastBackgroundIdForDetail: String?
+    var _lastCarabinerIdForDetail: String?
+    var _lastKeyringsIdForDetail: String?
+
     var lastBackgroundIdForDetail: String {
         get { _lastBackgroundIdForDetail ?? "" }
         set { _lastBackgroundIdForDetail = newValue }
@@ -108,6 +98,25 @@ class BundleViewModel {
     var lastKeyringsIdForDetail: String {
         get { _lastKeyringsIdForDetail ?? "" }
         set { _lastKeyringsIdForDetail = newValue }
+    }
+    
+    // MARK: - 사용자의 뭉치, 키링 정보를 저장하는 프로퍼티
+    var bundles: [KeyringBundle] = []
+    var keyring: [Keyring] = []
+    
+    var isLoading = false
+    
+    // MARK: - 화면 표시용 배열
+    var _backgroundViewData: [BackgroundViewData] = []
+    var _carabinerViewData: [CarabinerViewData] = []
+    
+    var backgroundViewData: [BackgroundViewData] {
+        get { _backgroundViewData }
+        set { _backgroundViewData = newValue }
+    }
+    var carabinerViewData: [CarabinerViewData] {
+        get { _carabinerViewData }
+        set { _carabinerViewData = newValue }
     }
     
     // 정렬된 뭉치 (메인 뭉치 우선 정렬)
