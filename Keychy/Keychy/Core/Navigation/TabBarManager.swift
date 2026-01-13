@@ -19,7 +19,9 @@ enum TabBarManager {
     /// 탭바 보이기
     static func show() {
         guard let tabBarController = findTabBarController() else { return }
-        tabBarController.tabBar.isHidden = false
+        UIView.animate(withDuration: 0.3) {
+            tabBarController.tabBar.isHidden = false
+        }
     }
 
     /// TabBarController 찾기
