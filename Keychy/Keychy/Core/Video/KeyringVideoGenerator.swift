@@ -49,7 +49,7 @@ class KeyringVideoGenerator {
     let height = 1920
 
     /// 프레임레이트
-    let fps = 60
+    let fps = 30
 
     /// 영상 길이 (초)
     let duration = 5.0
@@ -61,13 +61,13 @@ class KeyringVideoGenerator {
 
     // MARK: - Event Timing
     /// 스와이프 이벤트 발생 프레임 (0.5초)
-    let swipeEventFrame = 30
+    let swipeEventFrame = 15
 
     /// 스와이프 강도
     let swipeVelocity: CGFloat = 7500
 
     /// 파티클 지속 프레임 수 (1.5초)
-    let particleDuration = 90
+    let particleDuration = 45
 
     // MARK: - Properties
 
