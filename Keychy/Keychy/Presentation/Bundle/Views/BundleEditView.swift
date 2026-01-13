@@ -147,17 +147,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 메인 콘텐츠 영역 (배경, 씬, 네비게이션 바)
     private var mainContentView: some View {
         ZStack {
-            sceneContentView
-            
-            // navigationBar
-            customNavigationBar
-        }
-        .blur(radius: isSceneReady ? 0 : 15)
-    }
-    
-    /// 씬 콘텐츠 (MultiKeyringScene 또는 placeholder 이미지)
-    private var sceneContentView: some View {
-        Group {
             if let bundle = bundleVM.selectedBundle,
                let background = bundleVM.newSelectedBackground,
                let carabiner = bundleVM.newSelectedCarabiner {
@@ -165,39 +154,38 @@ struct BundleEditView<Route: BundleRoute>: View {
                 keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
                 
             } else {
-                placeholderImageView
-            }
-        }
-    }
-    
-    /// Placeholder 이미지 뷰 (데이터 로드 전)
-    private var placeholderImageView: some View {
-        ZStack {
-            if let bg = bundleVM.newSelectedBackground {
-                LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } else if state.isLoading {
-                        Color.black20
-                            .ignoresSafeArea()
-                    }
-                }
-            }
-            if let cb = bundleVM.newSelectedCarabiner {
-                VStack {
-                    LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFit()
+                ZStack {
+                    if let bg = bundleVM.newSelectedBackground {
+                        LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            } else if state.isLoading {
+                                Color.black20
+                                    .ignoresSafeArea()
+                            }
                         }
                     }
-                    Spacer()
+                    if let cb = bundleVM.newSelectedCarabiner {
+                        VStack {
+                            LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
+                                if let image = state.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+                            }
+                            Spacer()
+                        }
+                    }
                 }
             }
+            
+            // navigationBar
+            customNavigationBar
         }
+        .blur(radius: isSceneReady ? 0 : 15)
     }
     
     // MARK: - 키링 편집 뷰 컴포넌트들
