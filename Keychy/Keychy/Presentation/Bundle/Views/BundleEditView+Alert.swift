@@ -8,6 +8,8 @@
 import SwiftUI
 
 extension BundleEditView {
+    
+    // MARK: - Alert Contents
     var alertContent: some View {
         Group {
             if showChangeCarabinerAlert {
@@ -99,6 +101,27 @@ extension BundleEditView {
                     }
                 )
                 .padding(.horizontal, 51)
+            }
+        }
+    }
+    
+    // MARK: - 로딩 오버레이
+    var loadingOverlay: some View {
+        Group {
+            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩이 모두 끝나야 사라짐
+            if (!isSceneReady || isKeyringSheetLoading) && !isNavigatingAway {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            if isCapturing {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 수정하고 있어요")
+                    .zIndex(101)
             }
         }
     }

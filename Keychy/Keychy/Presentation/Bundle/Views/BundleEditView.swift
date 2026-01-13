@@ -15,7 +15,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var collectionVM: CollectionViewModel
     @State var bundleVM: BundleViewModel
     
-    @State private var isSceneReady = false
+    @State var isSceneReady = false
     
     @State var selectedCategory: String = ""
     @State var selectedKeyringPosition: Int = 0
@@ -201,27 +201,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                     }
                     Spacer()
                 }
-            }
-        }
-    }
-    
-    /// 로딩 오버레이
-    private var loadingOverlay: some View {
-        Group {
-            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩이 모두 끝나야 사라짐
-            if (!isSceneReady || isKeyringSheetLoading) && !isNavigatingAway {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(100)
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
-                    .zIndex(101)
-            }
-            if isCapturing {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(100)
-                LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 수정하고 있어요")
-                    .zIndex(101)
             }
         }
     }
