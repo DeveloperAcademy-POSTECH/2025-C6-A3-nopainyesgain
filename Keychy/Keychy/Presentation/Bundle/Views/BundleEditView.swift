@@ -14,7 +14,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var collectionVM: CollectionViewModel
     @State var bundleVM: BundleViewModel
-
+    
     @State var selectedCategory: String = ""
     @State var selectCarabiner: CarabinerViewData?
     
@@ -30,7 +30,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var showCarabinerSheet: Bool = false
     @State var showPurchaseSheet = false
     @State var showSelectKeyringSheet = false
-
+    
     // MARK: - Alert
     @State var showChangeCarabinerAlert: Bool = false
     
@@ -57,22 +57,25 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var purchaseFailScale: CGFloat = 0.3
     let sheetHeightRatio: CGFloat = 0.43
     
+    var shouldApplyBlur: Bool {
+        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || isPurchasing || isKeyringSheetLoading
+    }
+    
     var body: some View {
-        ZStack(alignment: .bottom) {
-            mainContentView
-                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
+        ZStack {
+            ZStack(alignment: .bottom) {
+                mainContentView
+                
+                // 키링 선택 시트
+                keyringSheetOverlay
+                
+                // 배경, 카라비너 선택 시트
+                selectItemSheetContent
+            }
+            .blur(radius: shouldApplyBlur ? 15 : 0)
             
             loadingOverlay
             
-            // 키링 선택 시트
-            keyringSheetOverlay
-                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
-            
-            // 배경, 카라비너 선택 시트
-            selectItemSheetContent
-                .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
-            
-            // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
             alertContent
                 .position(x: screenWidth / 2, y: screenHeight / 2)
         }
@@ -178,7 +181,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             // navigationBar
             customNavigationBar
         }
-        .blur(radius: isSceneReady ? 0 : 15)
     }
     
     // MARK: - 키링 편집 씬 뷰
@@ -204,7 +206,6 @@ struct BundleEditView<Route: BundleRoute>: View {
                 }
             )
             .ignoresSafeArea()
-            .blur(radius: isSceneReady ? 0 : 10)
             .animation(.easeInOut(duration: 0.3), value: isSceneReady)
             .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
             
