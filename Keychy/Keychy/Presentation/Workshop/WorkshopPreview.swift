@@ -80,6 +80,7 @@ struct WorkshopPreview: View {
             
             CustomNavigationBar {
                 BackToolbarButton {
+                    TabBarManager.show()
                     router.pop()
                 }
             } center: {
@@ -90,8 +91,10 @@ struct WorkshopPreview: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .swipeBackGesture(enabled: true)
+        .onAppear {
+            TabBarManager.hide()
+        }
         .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
         .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
         .withToast(position: .button)

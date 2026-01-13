@@ -48,9 +48,9 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             }
         }
         .ignoresSafeArea()
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .onAppear {
+            TabBarManager.hide()
             // 네트워크 체크
             guard NetworkManager.shared.isConnected else {
                 hasNetworkError = true
@@ -87,6 +87,7 @@ extension BundleInventoryView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                TabBarManager.show()
                 router.pop()
             }
         } center : {

@@ -65,6 +65,7 @@ struct TemplatePreviewBody: View {
             
             CustomNavigationBar {
                 BackToolbarButton {
+                    TabBarManager.show()
                     router?.pop()
                 }
             } center: {
@@ -78,8 +79,10 @@ struct TemplatePreviewBody: View {
         .navigationBarBackButtonHidden(true)
         .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
         .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .button)
+        .onAppear {
+            TabBarManager.hide()
+        }
         .task {
             await fetchTemplate()
         }

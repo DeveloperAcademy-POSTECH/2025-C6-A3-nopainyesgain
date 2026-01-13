@@ -24,13 +24,15 @@ struct MyPageView: View {
             alerts
         }
         .navigationBarBackButtonHidden()
-        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             backToolbarItem
             customTitleToolbarItem
         }
         .tint(.black)
         .withToast(position: .default)
+        .onAppear {
+            TabBarManager.hide()
+        }
     }
 }
 
@@ -348,6 +350,7 @@ extension MyPageView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                TabBarManager.show()
                 router.pop()
             } label: {
                 Image(.backIcon)

@@ -213,6 +213,7 @@ struct WorkshopTemplatesView: View {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                TabBarManager.show()
                 router.pop()
             }
         } center: {
