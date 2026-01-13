@@ -370,88 +370,37 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     /// 키링 셀 (체크 토글 + 시트 유지)
     private func keyringCell(keyring: Keyring) -> some View {
-        // 현재 선택된 위치에 이 키링이 선택되어 있는지
-        let isSelectedHere: Bool = selectedKeyrings[selectedPosition]?.id == keyring.id
-        // 다른 위치에 이미 선택된 키링인지 체크
-        let isSelectedElsewhere: Bool = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
-        
-        return Button {
-            // 토글
-            if isSelectedHere {
+    let isSelectedHere: Bool = selectedKeyrings[selectedPosition]?.id == keyring.id
+    let isSelectedElsewhere: Bool = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
 
-                // 해제
-                selectedKeyrings[selectedPosition] = nil
+    return KeyringSelectableCell(
+        keyring: keyring,
+        isSelectedHere: isSelectedHere,
+        isSelectedElsewhere: isSelectedElsewhere,
+        width: threeGridCellWidth,
+        height: threeGridCellHeight,
+        onTapSelect: {
+            // 기존 있으면 순서 제거 후 교체
+            if selectedKeyrings[selectedPosition] != nil {
                 keyringOrder.removeAll { $0 == selectedPosition }
-                withAnimation(.easeInOut) {
-                    showSelectKeyringSheet = false
-                }
-            } else if !isSelectedElsewhere {
-                // 중복이 아닐 때만 선택 가능
-                // 기존 있으면 순서 제거 후 교체
-                if selectedKeyrings[selectedPosition] != nil {
-                    keyringOrder.removeAll { $0 == selectedPosition }
-                }
-                selectedKeyrings[selectedPosition] = keyring
-                keyringOrder.append(selectedPosition)
-                withAnimation(.easeInOut) {
-                    showSelectKeyringSheet = false
-                }
             }
-            // 중복인 경우 아무것도 하지 않음 (선택되지 않음)
+            selectedKeyrings[selectedPosition] = keyring
+            keyringOrder.append(selectedPosition)
+            withAnimation(.easeInOut) {
+                showSelectKeyringSheet = false
+            }
             updateKeyringDataList()
-        } label: {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 10) {
-                    ZStack {
-                        CollectionCellView(keyring: keyring)
-                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                            .cornerRadius(10)
-                        
-                        // 외곽선을 별도 레이어로 그리기
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
-                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        
-                        // 다른 위치에 장착된 경우 오버레이
-                        if isSelectedElsewhere {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black50)
-                                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        }
-                    }
-                    
-                    Text("\(keyring.name)")
-                        .typography(isSelectedHere ? .notosans14SB : .notosans14M)
-                        .foregroundStyle(isSelectedHere ? .main500 :  .black100)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                }
-                
-                // 장착 중 아이콘
-                if isSelectedElsewhere || isSelectedHere {
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Text("장착 중")
-                                .foregroundStyle(.white100)
-                                .typography(.suit13M)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .fill(.mainOpacity80)
-                                )
-                        }
-                        Spacer()
-                    }
-                    .padding(.top, 5)
-                    .padding(.trailing, 5)
-                }
+        },
+        onTapDeselect: {
+            selectedKeyrings[selectedPosition] = nil
+            keyringOrder.removeAll { $0 == selectedPosition }
+            withAnimation(.easeInOut) {
+                showSelectKeyringSheet = false
             }
+            updateKeyringDataList()
         }
-        .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
-        .opacity(1.0) // 강제로 투명도 1.0 유지
-    }
+    )
+}
     
     /// 배경/카라비너 시트 컨텐츠
     private func sheetContent() -> some View {
