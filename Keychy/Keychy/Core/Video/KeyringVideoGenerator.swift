@@ -23,10 +23,10 @@ import Lottie
 /// 3. **Renderer 설정** - SKRenderer를 Metal 디바이스와 연결
 /// 4. **Writer 설정** - AVAssetWriter로 H.264 비디오 인코딩 준비 (1080x1920, 60fps)
 /// 5. **프레임 렌더링** - 300 프레임(5초, 60fps)을 GPU로 렌더링하여 비디오에 추가
-///    - 0.5초(30 프레임): 스와이프 임팩트 + 파티클 효과
-///    - 2.5초(150 프레임): 탭 사운드 이벤트
+///    - 0.5초(30 프레임): 스와이프 임팩트 + 파티클 효과 + 사운드
 ///    - 각 프레임: Scene 업데이트 → GPU 렌더링 → PixelBuffer 생성 → 비디오 추가
-/// 6. **완성** - 비디오 저장 완료 및 URL 반환
+/// 6. **사운드 합성** - soundEvents 기반으로 비디오에 사운드 트랙 추가
+/// 7. **완성** - 비디오 저장 완료 및 URL 반환
 ///
 /// # 스케일 조정 방식
 /// SKRenderer는 Scene을 렌더링 영역 크기에 맞춰서 자동으로 늘려서 렌더링함
@@ -62,9 +62,6 @@ class KeyringVideoGenerator {
     // MARK: - Event Timing
     /// 스와이프 이벤트 발생 프레임 (0.5초)
     let swipeEventFrame = 30
-
-    /// 탭 사운드 이벤트 발생 프레임 (2.5초)
-    let tapSoundEventFrame = 150
 
     /// 스와이프 강도
     let swipeVelocity: CGFloat = 7500
@@ -175,12 +172,15 @@ class KeyringVideoGenerator {
         try await renderFrames()
 
         // 비디오 완성
-        let outputURL = try await finishWriting()
+        let videoURL = try await finishWriting()
+
+        // 사운드 합성
+        let finalURL = try await addSoundToVideo(videoURL: videoURL)
 
         // 정리
         cleanup()
 
-        return outputURL
+        return finalURL
     }
 
     // MARK: - Cleanup
@@ -200,5 +200,7 @@ class KeyringVideoGenerator {
         videoWriter = nil
         writerInput = nil
         pixelBufferAdaptor = nil
+
+        soundEvents.removeAll()
     }
 }
