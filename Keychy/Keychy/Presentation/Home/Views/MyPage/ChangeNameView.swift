@@ -24,8 +24,9 @@ struct ChangeNameView: View {
 
                 submitButton
             }
+            .frame(maxHeight: .infinity)
+            .padding(.top, 22)
             .padding(.horizontal, 20)
-            .toolbar(.hidden, for: .tabBar)
             .navigationBarBackButtonHidden()
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("닉네임 변경")
@@ -38,14 +39,20 @@ struct ChangeNameView: View {
             .blur(radius: (viewModel.showSuccessAlert || viewModel.isUpdating) ? 10 : 0)
             .animation(.easeInOut(duration: 0.3), value: (viewModel.showSuccessAlert || viewModel.isUpdating))
             .onAppear {
+                TabBarManager.hide()
                 // 현재 닉네임으로 초기화
                 viewModel.initialize(currentNickname: userManager.currentUser?.nickname ?? "")
             }
 
             alerts
         }
+        .ignoresSafeArea(.keyboard)
         .swipeBackGesture(enabled: true)
         .withToast(position: .button)
+        .task {
+            // 초기 레이아웃 즉시 안정화
+            try? await Task.sleep(for: .milliseconds(1))
+        }
     }
 }
 
