@@ -38,7 +38,6 @@ extension FestivalKeyringDetailView {
             }
             .scrollDisabled(true)
         }
-        .toolbar(.hidden, for: .tabBar)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white100)
         .shadow(
