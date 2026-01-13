@@ -38,11 +38,11 @@ extension BundleEditView {
                                 
                                 // 2) 키링 데이터와 선택 목록을 즉시 비우기
                                 keyringDataList = []
-                                selectedKeyrings.removeAll()
-                                keyringOrder.removeAll()
+                                bundleVM.selectedKeyrings.removeAll()
+                                bundleVM.keyringOrder.removeAll()
                                 
                                 // 3) 새 카라비너 적용
-                                newSelectedCarabiner = selectCarabiner
+                                bundleVM.newSelectedCarabiner = selectCarabiner
                                 
                                 // 4) 빈 상태를 씬/리스트에 반영
                                 updateKeyringDataList()
@@ -66,7 +66,7 @@ extension BundleEditView {
                     .ignoresSafeArea()
                     .onTapGesture {
                         Task {
-                            await saveBundleChanges()
+                            await bundleVM.saveBundleChanges()
                             await MainActor.run {
                                 showPurchaseSuccessAlert = false
                                 purchasesSuccessScale = 0.3
