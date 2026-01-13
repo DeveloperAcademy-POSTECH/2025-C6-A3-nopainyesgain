@@ -24,9 +24,9 @@ extension BundleEditView {
                     sheetHeight: $sheetHeight,
                     content: SelectBackgroundSheet(
                         viewModel: bundleVM,
-                        selectedBG: newSelectedBackground,
+                        selectedBG: bundleVM.newSelectedBackground,
                         onBackgroundTap: { bg in
-                            newSelectedBackground = bg
+                            bundleVM.newSelectedBackground = bg
                         }
                     )
                 )
@@ -47,7 +47,7 @@ extension BundleEditView {
                     sheetHeight: $sheetHeight,
                     content: SelectCarabinerSheet(
                         viewModel: bundleVM,
-                        selectedCarabiner: newSelectedCarabiner,
+                        selectedCarabiner: bundleVM.newSelectedCarabiner,
                         onCarabinerTap: { carabiner in
                             selectCarabiner = carabiner
                             showChangeCarabinerAlert = true
@@ -107,28 +107,28 @@ extension BundleEditView {
                     } else {
                         ScrollView {
                             LazyVGrid(columns: gridColumns, spacing: 10) {
-                                ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
+                                ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: bundleVM.selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
                                     KeyringSelectableCell(
                                         keyring: keyring,
-                                        isSelectedHere: selectedKeyrings[selectedPosition]?.id == keyring.id,
-                                        isSelectedElsewhere: selectedKeyrings.values.contains { $0.id == keyring.id } && !(selectedKeyrings[selectedPosition]?.id == keyring.id),
+                                        isSelectedHere: bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id,
+                                        isSelectedElsewhere: bundleVM.selectedKeyrings.values.contains { $0.id == keyring.id } && !(bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id),
                                         width: threeGridCellWidth,
                                         height: threeGridCellHeight,
                                         onTapSelect: {
                                             // 기존 있으면 순서 제거 후 교체
-                                            if selectedKeyrings[selectedPosition] != nil {
-                                                keyringOrder.removeAll { $0 == selectedPosition }
+                                            if bundleVM.selectedKeyrings[selectedPosition] != nil {
+                                                bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
                                             }
-                                            selectedKeyrings[selectedPosition] = keyring
-                                            keyringOrder.append(selectedPosition)
+                                            bundleVM.selectedKeyrings[selectedPosition] = keyring
+                                            bundleVM.keyringOrder.append(selectedPosition)
                                             withAnimation(.easeInOut) {
                                                 showSelectKeyringSheet = false
                                             }
                                             updateKeyringDataList()
                                         },
                                         onTapDeselect: {
-                                            selectedKeyrings[selectedPosition] = nil
-                                            keyringOrder.removeAll { $0 == selectedPosition }
+                                            bundleVM.selectedKeyrings[selectedPosition] = nil
+                                            bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
                                             withAnimation(.easeInOut) {
                                                 showSelectKeyringSheet = false
                                             }
