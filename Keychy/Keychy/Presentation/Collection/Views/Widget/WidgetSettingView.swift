@@ -26,16 +26,12 @@ struct WidgetSettingView: View {
         .swipeBackGesture(enabled: true)
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
-        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             backToolbarItem
             customTitleToolbarItem
         }
         .onAppear {
             TabBarManager.hide()
-        }
-        .onDisappear {
-            TabBarManager.show()
         }
     }
 }
@@ -44,6 +40,7 @@ extension WidgetSettingView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                TabBarManager.show()
                 router.pop()
             } label: {
                 Image(.backIcon)

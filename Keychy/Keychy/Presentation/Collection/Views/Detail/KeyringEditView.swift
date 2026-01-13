@@ -114,7 +114,6 @@ struct KeyringEditView: View {
         }
         .navigationTitle("정보 수정")
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .toolbar {
             backToolbarItem

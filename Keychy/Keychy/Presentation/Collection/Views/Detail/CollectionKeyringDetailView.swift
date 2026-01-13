@@ -165,6 +165,9 @@ extension CollectionKeyringDetailView {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
                 isSheetPresented = false
+                if !isNavigatingDeeper {
+                    TabBarManager.show()
+                }
                 router.pop()
             }
             .opacity(showUIForCapture ? 1 : 0)

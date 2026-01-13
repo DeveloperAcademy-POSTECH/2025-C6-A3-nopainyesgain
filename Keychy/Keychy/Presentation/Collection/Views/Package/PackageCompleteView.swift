@@ -90,7 +90,6 @@ struct PackageCompleteView: View {
             loadCachedImage()
         }
         .onDisappear() {
-            TabBarManager.show()
             cleanupImages()
         }
     }
@@ -263,6 +262,7 @@ extension PackageCompleteView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             Button {
+                TabBarManager.show()
                 router.reset()
             } label: {
                 Image(.dismiss)

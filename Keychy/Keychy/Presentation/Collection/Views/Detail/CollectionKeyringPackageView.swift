@@ -138,9 +138,6 @@ struct CollectionKeyringPackageView: View {
             TabBarManager.hide()
             loadPackagedKeyringInfo()
         }
-        .onDisappear {
-            TabBarManager.show()
-        }
     }
     
     private var shouldApplyBlur: Bool {
@@ -168,6 +165,7 @@ extension CollectionKeyringPackageView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
+                TabBarManager.show()
                 router.pop()
             }
         } center: {
