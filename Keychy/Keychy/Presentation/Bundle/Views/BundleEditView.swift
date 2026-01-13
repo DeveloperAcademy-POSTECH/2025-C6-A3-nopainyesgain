@@ -14,47 +14,35 @@ struct BundleEditView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
     @State var collectionVM: CollectionViewModel
     @State var bundleVM: BundleViewModel
-    
-    @State var isSceneReady = false
-    
+
     @State var selectedCategory: String = ""
-    // 선택한 카라비너는 확인 알럿 후에만 바뀜
     @State var selectCarabiner: CarabinerViewData?
     
-    // 배경, 카라비너 선택 시트 활성화/비활성화
-    @State var showBackgroundSheet: Bool = false
-    @State var showCarabinerSheet: Bool = false
-    // 카라비너 변경 확인 알러트 ('카라비너 변경 시 키링은 모두 초기화됩니다')
-    @State var showChangeCarabinerAlert: Bool = false
-    // 시트 높이 (화면의 약 43%에 해당)
-    @State var sheetHeight: CGFloat = 360
-    
-    // 구매 시트
-    @State var showPurchaseSheet = false
-    
-    // 구매 처리 상태
+    // MARK: - Loading
+    @State var isSceneReady = false
     @State var isPurchasing = false
-    
-    // 구매 Alert 애니메이션
-    @State var showPurchaseSuccessAlert = false
-    @State var purchasesSuccessScale: CGFloat = 0.3
-    @State var showPurchaseFailAlert = false
-    @State var purchaseFailScale: CGFloat = 0.3
-    
-    /// MultiKeyringScene에 전달할 키링 데이터 리스트
-    @State var keyringDataList: [MultiKeyringScene.KeyringData] = []
-    
-    // 키링 편집 관련 상태
-    @State var showSelectKeyringSheet = false
-    @State var selectedPosition = 0
-    @State var sceneRefreshId = UUID()
     @State var isNavigatingAway = false // 화면 전환 중인지 추적
-    
-    // 캡쳐 상태
+    @State var isKeyringSheetLoading: Bool = true
     @State var isCapturing: Bool = false
     
-    // 키링 시트 로딩 상태
-    @State var isKeyringSheetLoading: Bool = true
+    // MARK: - Sheet
+    @State var showBackgroundSheet: Bool = false
+    @State var showCarabinerSheet: Bool = false
+    @State var showPurchaseSheet = false
+    @State var showSelectKeyringSheet = false
+
+    // MARK: - Alert
+    @State var showChangeCarabinerAlert: Bool = false
+    
+    // 구매 관련
+    @State var showPurchaseSuccessAlert = false
+    @State var showPurchaseFailAlert = false
+    
+    // MultiKeyringScene에 전달할 키링 데이터 리스트
+    @State var keyringDataList: [MultiKeyringScene.KeyringData] = []
+    
+    @State var selectedPosition = 0
+    @State var sceneRefreshId = UUID()
     
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     let gridColumns: [GridItem] = [
@@ -62,6 +50,11 @@ struct BundleEditView<Route: BundleRoute>: View {
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10)
     ]
+    
+    // 시트 높이 (화면의 약 43%에 해당)
+    @State var sheetHeight: CGFloat = 360
+    @State var purchasesSuccessScale: CGFloat = 0.3
+    @State var purchaseFailScale: CGFloat = 0.3
     let sheetHeightRatio: CGFloat = 0.43
     
     var body: some View {
@@ -188,9 +181,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         .blur(radius: isSceneReady ? 0 : 15)
     }
     
-    // MARK: - 키링 편집 뷰 컴포넌트들
-    
-    /// 키링 편집 씬 뷰
+    // MARK: - 키링 편집 씬 뷰
     private func keyringEditSceneView(bundle: KeyringBundle, background: BackgroundViewData, carabiner: CarabinerViewData) -> some View {
         ZStack(alignment: .top) {
             // MultiKeyringScene
@@ -257,8 +248,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
     }
-    
-    // MARK: - 데이터 로딩 및 초기화
     
     /// 키링 데이터 리스트 업데이트
     func updateKeyringDataList() {

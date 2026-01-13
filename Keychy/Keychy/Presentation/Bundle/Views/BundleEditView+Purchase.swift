@@ -30,10 +30,10 @@ extension BundleEditView {
             // 구매할 아이템 목록
             ScrollView {
                 VStack(spacing: 20) {
-                    if let bg = newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
+                    if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
                         cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
                     }
-                    if let cb = newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+                    if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
                         cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
                     }
                 }
@@ -117,14 +117,14 @@ extension BundleEditView {
     }
     
     var payableItemsCount: Int {
-        let backgroundCount = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0
-        let carabinerCount = (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0
+        let backgroundCount = (bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) ? 1 : 0
+        let carabinerCount = (bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0
         return backgroundCount + carabinerCount
     }
     
     var totalCartPrice: Int {
-        let backgroundPrice = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? newSelectedBackground!.background.price : 0
-        let carabinerPrice = (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? newSelectedCarabiner!.carabiner.price : 0
+        let backgroundPrice = (bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) ? bundleVM.newSelectedBackground!.background.price : 0
+        let carabinerPrice = (bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0) ? bundleVM.newSelectedCarabiner!.carabiner.price : 0
         return backgroundPrice + carabinerPrice
     }
     
@@ -135,7 +135,7 @@ extension BundleEditView {
         var allSuccess = true
         
         // 선택된 배경이 유료인 경우 구매
-        if let bg = newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
+        if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
             let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(bg.background, userManager: UserManager.shared)
             
             switch result {
@@ -147,7 +147,7 @@ extension BundleEditView {
         }
         
         // 선택된 카라비너가 유료이고 이전 구매가 성공한 경우에만 구매
-        if allSuccess, let cb = newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+        if allSuccess, let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
             let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(cb.carabiner, userManager: UserManager.shared)
             
             switch result {
@@ -170,12 +170,12 @@ extension BundleEditView {
                 }
             }
             
-            await refreshEditData()
+            await bundleVM.refreshEditData()
             
             // 1초 후 알럿 자동 닫기 및 저장 후 화면 이동
             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
             
-            await saveBundleChanges()
+            await bundleVM.saveBundleChanges()
             await MainActor.run {
                 showPurchaseSuccessAlert = false
                 purchasesSuccessScale = 0.3
