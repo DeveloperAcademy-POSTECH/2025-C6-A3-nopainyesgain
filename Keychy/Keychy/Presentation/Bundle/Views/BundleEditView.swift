@@ -30,7 +30,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     // 카라비너 변경 확인 알러트 ('카라비너 변경 시 키링은 모두 초기화됩니다')
     @State var showChangeCarabinerAlert: Bool = false
     // 시트 높이 (화면의 약 43%에 해당)
-    @State private var sheetHeight: CGFloat = 360
+    @State var sheetHeight: CGFloat = 360
     
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -62,12 +62,12 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isKeyringSheetLoading: Bool = true
     
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
-    private let gridColumns: [GridItem] = [
+    let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10)
     ]
-    private let sheetHeightRatio: CGFloat = 0.43
+    let sheetHeightRatio: CGFloat = 0.43
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -81,7 +81,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
             // 배경, 카라비너 선택 시트
-            sheetContent()
+            selectItemSheetContent
                 .blur(radius: showPurchaseSuccessAlert ? 15 : 0)
             
             // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
@@ -226,23 +226,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
     }
     
-    /// 키링 선택 시트 오버레이
-    private var keyringSheetOverlay: some View {
-        Group {
-            if showSelectKeyringSheet {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(1)
-                    .onTapGesture {
-                        withAnimation(.easeInOut) {
-                            showSelectKeyringSheet = false
-                        }
-                    }
-                keyringSelectionSheet()
-            }
-        }
-    }
-    
     // MARK: - 키링 편집 뷰 컴포넌트들
     
     /// 키링 편집 씬 뷰
@@ -311,149 +294,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             .ignoresSafeArea()
         }
         .ignoresSafeArea()
-    }
-    
-    /// 키링 선택 시트
-    private func keyringSelectionSheet() -> some View {
-        VStack(spacing: 18) {
-            Text("키링 선택")
-                .typography(.suit16B)
-                .foregroundStyle(.black100)
-            
-            if isKeyringSheetLoading {
-                VStack {
-                    LoadingAlert(type: .short, message: nil)
-                        .padding(.vertical, 24)
-                    Text("키링을 불러오고 있어요")
-                        .typography(.suit15R)
-                        .foregroundStyle(.black100)
-                        .padding(.vertical, 15)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: screenHeight * (sheetHeightRatio - 0.08)) // 버튼 영역 제외한 대략 높이
-            } else if collectionVM.keyring.isEmpty {
-                VStack {
-                    Image(.emptyViewIcon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 77)
-                    Text("공방에서 키링을 만들 수 있어요")
-                        .typography(.suit15R)
-                        .foregroundStyle(.black100)
-                        .padding(.vertical, 15)
-                }
-                .padding(.bottom, 77)
-                .padding(.top, 62)
-                .frame(maxWidth: .infinity)
-                
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
-                            keyringCell(keyring: keyring)
-                        }
-                    }
-                }
-            }
-            
-        }
-        .padding(EdgeInsets(top: 30, leading: 20, bottom: 0, trailing: 20))
-        .frame(maxWidth: .infinity)
-        .frame(height: screenHeight * sheetHeightRatio)
-        .glassEffect(.regular, in: .rect)
-        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
-        .shadow(radius: 10)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .transition(.move(edge: .bottom))
-        .zIndex(2)
-    }
-    
-    /// 키링 셀 (체크 토글 + 시트 유지)
-    private func keyringCell(keyring: Keyring) -> some View {
-    let isSelectedHere: Bool = selectedKeyrings[selectedPosition]?.id == keyring.id
-    let isSelectedElsewhere: Bool = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
-
-    return KeyringSelectableCell(
-        keyring: keyring,
-        isSelectedHere: isSelectedHere,
-        isSelectedElsewhere: isSelectedElsewhere,
-        width: threeGridCellWidth,
-        height: threeGridCellHeight,
-        onTapSelect: {
-            // 기존 있으면 순서 제거 후 교체
-            if selectedKeyrings[selectedPosition] != nil {
-                keyringOrder.removeAll { $0 == selectedPosition }
-            }
-            selectedKeyrings[selectedPosition] = keyring
-            keyringOrder.append(selectedPosition)
-            withAnimation(.easeInOut) {
-                showSelectKeyringSheet = false
-            }
-            updateKeyringDataList()
-        },
-        onTapDeselect: {
-            selectedKeyrings[selectedPosition] = nil
-            keyringOrder.removeAll { $0 == selectedPosition }
-            withAnimation(.easeInOut) {
-                showSelectKeyringSheet = false
-            }
-            updateKeyringDataList()
-        }
-    )
-}
-    
-    /// 배경/카라비너 시트 컨텐츠
-    private func sheetContent() -> some View {
-        Group {
-            // 배경 시트
-            if showBackgroundSheet {
-                VStack(spacing: 0) {
-                    Spacer()
-                    HStack(spacing: 8) {
-                        editBackgroundButton
-                        editCarabinerButton
-                        Spacer()
-                    }
-                    .padding(.leading, 18)
-                    .padding(.bottom, 10)
-                    BundleItemCustomSheet(
-                        sheetHeight: $sheetHeight,
-                        content: SelectBackgroundSheet(
-                            viewModel: bundleVM,
-                            selectedBG: newSelectedBackground,
-                            onBackgroundTap: { bg in
-                                newSelectedBackground = bg
-                            }
-                        )
-                    )
-                }
-            }
-            
-            // 카라비너 시트
-            if showCarabinerSheet {
-                VStack(spacing: 0) {
-                    Spacer()
-                    HStack(spacing: 8) {
-                        editBackgroundButton
-                        editCarabinerButton
-                        Spacer()
-                    }
-                    .padding(.leading, 18)
-                    .padding(.bottom, 10)
-                    BundleItemCustomSheet(
-                        sheetHeight: $sheetHeight,
-                        content: SelectCarabinerSheet(
-                            viewModel: bundleVM,
-                            selectedCarabiner: newSelectedCarabiner,
-                            onCarabinerTap: { carabiner in
-                                selectCarabiner = carabiner
-                                showChangeCarabinerAlert = true
-                            }
-                        )
-                    )
-                }
-            }
-        }
     }
     
     // MARK: - 데이터 로딩 및 초기화
@@ -792,7 +632,7 @@ extension BundleEditView {
                         ToastManager.shared.show()
                         return
                     }
-
+                    
                     Task {
                         await MainActor.run {
                             // pop 전에 현재 구성 id를 ViewModel에 저장
@@ -810,11 +650,11 @@ extension BundleEditView {
                             // 화면 전환 시작 플래그
                             isNavigatingAway = true
                         }
-
+                        
                         // 상태 변경이 UI에 반영되도록 짧은 대기
                         try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
                         await saveBundleChanges()
-
+                        
                         await MainActor.run {
                             router.pop()
                         }
@@ -822,49 +662,6 @@ extension BundleEditView {
                 }
             }
         }
-    }
-}
-
-//MARK: - 배경, 카라비너 시트 여는 버튼
-extension BundleEditView {
-    private var editBackgroundButton: some View {
-        Button {
-            // 배경 시트 열기
-            showBackgroundSheet = true
-        } label: {
-            VStack(spacing: 0) {
-                Image(showBackgroundSheet ? .backgroundIconWhite100 : .backgroundIconGray600)
-                Text("배경")
-                    .typography(.suit9SB)
-                    .foregroundStyle(showBackgroundSheet ? .white100 : .gray600)
-            }
-            .frame(width: 46, height: 46)
-            .background(
-                RoundedRectangle(cornerRadius: 14.38)
-                    .fill(showBackgroundSheet ? .main500 : .white100)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    
-    private var editCarabinerButton: some View {
-        Button {
-            // 카라비너 시트 열기
-            showCarabinerSheet = true
-        } label: {
-            VStack(spacing: 0) {
-                Image(showCarabinerSheet ? .carabinerIconWhite100 : .carabinerIconGray600)
-                Text("카라비너")
-                    .typography(.suit9SB)
-                    .foregroundStyle(showCarabinerSheet ? .white100 : .gray600)
-            }
-            .frame(width: 46, height: 46)
-            .background(
-                RoundedRectangle(cornerRadius: 14.38)
-                    .fill(showCarabinerSheet ? .main500 : .white100)
-            )
-        }
-        .buttonStyle(.plain)
     }
 }
 
