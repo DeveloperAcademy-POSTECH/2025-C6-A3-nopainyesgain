@@ -643,30 +643,3 @@ extension BundleEditView {
         }
     }
 }
-
-// MARK: - 키링 데이터 로딩
-extension BundleEditView {
-    /// 키링 데이터를 로드하여 MultiKeyringScene에서 사용할 수 있도록 준비
-    private func loadKeyringData() async {
-        guard let bundle = bundleVM.selectedBundle,
-              let carabiner = newSelectedCarabiner?.carabiner else {
-            await MainActor.run {
-                keyringDataList = []
-            }
-            return
-        }
-        
-        // 기존 방식으로도 로드 (Firebase에서 직접)
-        let firebaseData = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
-        
-        await MainActor.run {
-            // selectedKeyrings 방식으로도 업데이트
-            updateKeyringDataList()
-            
-            // 두 방식 중 더 많은 데이터를 가진 것 사용
-            if firebaseData.count > keyringDataList.count {
-                keyringDataList = firebaseData
-            }
-        }
-    }
-}
