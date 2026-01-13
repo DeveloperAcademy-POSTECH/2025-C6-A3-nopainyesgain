@@ -18,11 +18,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isSceneReady = false
     
     @State var selectedCategory: String = ""
-    @State var selectedKeyringPosition: Int = 0
-    @State var newSelectedBackground: BackgroundViewData?
     // 선택한 카라비너는 확인 알럿 후에만 바뀜
     @State var selectCarabiner: CarabinerViewData?
-    @State var newSelectedCarabiner: CarabinerViewData?
     
     // 배경, 카라비너 선택 시트 활성화/비활성화
     @State var showBackgroundSheet: Bool = false
@@ -49,8 +46,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     // 키링 편집 관련 상태
     @State var showSelectKeyringSheet = false
-    @State var selectedKeyrings: [Int: Keyring] = [:]
-    @State var keyringOrder: [Int] = []
     @State var selectedPosition = 0
     @State var sceneRefreshId = UUID()
     @State var isNavigatingAway = false // 화면 전환 중인지 추적
@@ -104,7 +99,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         .onAppear {
             // 화면이 나타날 때마다 데이터 새로고침
             Task {
-                await refreshEditData()
+                await bundleVM.refreshEditData()
             }
             collectionVM.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
@@ -127,12 +122,12 @@ struct BundleEditView<Route: BundleRoute>: View {
                 showBackgroundSheet = false
             }
         }
-        .onChange(of: newSelectedBackground) { _, newBackground in
+        .onChange(of: bundleVM.newSelectedBackground) { _, newBackground in
             guard newBackground != nil else { return }
             // 배경 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
         }
-        .onChange(of: newSelectedCarabiner) { _, newCarabiner in
+        .onChange(of: bundleVM.newSelectedCarabiner) { _, newCarabiner in
             guard newCarabiner != nil else { return }
             // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
@@ -164,8 +159,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     private var sceneContentView: some View {
         Group {
             if let bundle = bundleVM.selectedBundle,
-               let background = newSelectedBackground,
-               let carabiner = newSelectedCarabiner {
+               let background = bundleVM.newSelectedBackground,
+               let carabiner = bundleVM.newSelectedCarabiner {
                 
                 keyringEditSceneView(bundle: bundle, background: background, carabiner: carabiner)
                 
@@ -178,7 +173,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// Placeholder 이미지 뷰 (데이터 로드 전)
     private var placeholderImageView: some View {
         ZStack {
-            if let bg = newSelectedBackground {
+            if let bg = bundleVM.newSelectedBackground {
                 LazyImage(url: URL(string: bg.background.backgroundImage)) { state in
                     if let image = state.image {
                         image
@@ -190,7 +185,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                     }
                 }
             }
-            if let cb = newSelectedCarabiner {
+            if let cb = bundleVM.newSelectedCarabiner {
                 VStack {
                     LazyImage(url: URL(string: cb.carabiner.carabinerImage[0])) { state in
                         if let image = state.image {
@@ -299,8 +294,8 @@ struct BundleEditView<Route: BundleRoute>: View {
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllBackgrounds { _ in
                 if let selectedBundle = bundleVM.selectedBundle {
-                    if self.newSelectedBackground == nil {
-                        self.newSelectedBackground = bundleVM.backgroundViewData.first { bgData in
+                    if bundleVM.newSelectedBackground == nil {
+                        bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bgData in
                             bgData.background.id == selectedBundle.selectedBackground
                         }
                     }
@@ -309,8 +304,8 @@ struct BundleEditView<Route: BundleRoute>: View {
                 
                 bundleVM.fetchAllCarabiners { _ in
                     if let selectedBundle = bundleVM.selectedBundle {
-                        if self.newSelectedCarabiner == nil {
-                            self.newSelectedCarabiner = bundleVM.carabinerViewData.first { cbData in
+                        if bundleVM.newSelectedCarabiner == nil {
+                            bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cbData in
                                 cbData.carabiner.id == selectedBundle.selectedCarabiner
                             }
                         }
@@ -341,44 +336,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
     }
     
-    /// 화면이 다시 나타날 때 데이터 새로고침 (구매 상태 업데이트)
-    func refreshEditData() async {
-        // 현재 선택된 아이템의 ID 저장
-        let currentBackgroundId = newSelectedBackground?.background.id
-        let currentCarabinerId = newSelectedCarabiner?.carabiner.id
-        
-        // 배경 데이터 새로고침
-        await withCheckedContinuation { continuation in
-            bundleVM.fetchAllBackgrounds { _ in
-                // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
-                if let bgId = currentBackgroundId {
-                    self.newSelectedBackground = bundleVM.backgroundViewData.first { $0.background.id == bgId }
-                }
-                continuation.resume()
-            }
-        }
-        
-        // 카라비너 데이터 새로고침
-        await withCheckedContinuation { continuation in
-            bundleVM.fetchAllCarabiners { _ in
-                // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
-                if let cbId = currentCarabinerId {
-                    self.newSelectedCarabiner = bundleVM.carabinerViewData.first { $0.carabiner.id == cbId }
-                }
-                continuation.resume()
-            }
-        }
-        
-        // 키링 데이터도 새로고침
-        let uid = UserManager.shared.userUID
-        await withCheckedContinuation { continuation in
-            collectionVM.fetchUserKeyrings(uid: uid) { success in
-                bundleVM.keyring = collectionVM.keyring
-                continuation.resume()
-            }
-        }
-    }
-    
     /// Firebase 데이터를 로컬 상태로 한 번만 초기화
     private func initializeSelectedKeyringsFromFirebase() async {
         guard let bundle = bundleVM.selectedBundle else {
@@ -386,20 +343,20 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
         
         let result = await bundleVM.convertBundleToSelectedKeyrings(bundle: bundle)
-        selectedKeyrings = result.0
-        keyringOrder = result.1
+        bundleVM.selectedKeyrings = result.0
+        bundleVM.keyringOrder = result.1
     }
     
     /// 키링 데이터 리스트 업데이트
     func updateKeyringDataList() {
-        guard let carabiner = newSelectedCarabiner?.carabiner else {
+        guard let carabiner = bundleVM.newSelectedCarabiner?.carabiner else {
             keyringDataList = []
             return
         }
         
         let newData = bundleVM.createKeyringDataListFromSelected(
-            selectedKeyrings: selectedKeyrings,
-            keyringOrder: keyringOrder,
+            selectedKeyrings: bundleVM.selectedKeyrings,
+            keyringOrder: bundleVM.keyringOrder,
             carabiner: carabiner
         )
         
@@ -414,86 +371,12 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
     }
     
-    /// 최종 뭉치 변경사항을 Firebase에 저장
-    func saveBundleChanges() async {
-        
-        guard let bundle = bundleVM.selectedBundle,
-              let documentId = bundle.documentId,
-              let background = newSelectedBackground,
-              let carabiner = newSelectedCarabiner else {
-            return
-        }
-        
-        // ID 안전성 체크
-        guard let backgroundId = background.background.id,
-              let carabinerId = carabiner.carabiner.id else {
-            return
-        }
-        
-        // 변경사항 체크: 원본 번들과 현재 선택된 항목 비교
-        let isBackgroundChanged = bundle.selectedBackground != backgroundId
-        let isCarabinerChanged = bundle.selectedCarabiner != carabinerId
-        
-        // 키링 변경사항 체크
-        let currentKeyrings = bundleVM.convertSelectedKeyringsToBundleFormat(
-            selectedKeyrings: selectedKeyrings,
-            maxKeyringCount: carabiner.carabiner.maxKeyringCount
-        ).map { $0.isEmpty ? "none" : $0 }
-        
-        let isKeyringsChanged = bundle.keyrings != currentKeyrings
-        
-        // 변경사항이 전혀 없으면 저장하지 않고 즉시 리턴
-        if !isBackgroundChanged && !isCarabinerChanged && !isKeyringsChanged {
-            return
-        }
-        
-        do {
-            let db = FirebaseFirestore.Firestore.firestore()
-            let updateData: [String: Any] = [
-                "keyrings": currentKeyrings,
-                "selectedBackground": backgroundId,
-                "selectedCarabiner": carabinerId
-            ]
-            try await db.collection("KeyringBundle").document(documentId).updateData(updateData)
-            
-            // 로컬 상태도 업데이트
-            await MainActor.run {
-                if let index = bundleVM.bundles.firstIndex(where: { $0.documentId == documentId }) {
-                    bundleVM.bundles[index].keyrings = currentKeyrings
-                    bundleVM.bundles[index].selectedBackground = backgroundId
-                    bundleVM.bundles[index].selectedCarabiner = carabinerId
-                }
-                
-                // selectedBundle도 업데이트
-                if bundleVM.selectedBundle?.documentId == documentId {
-                    bundleVM.selectedBundle?.keyrings = currentKeyrings
-                    bundleVM.selectedBundle?.selectedBackground = backgroundId
-                    bundleVM.selectedBundle?.selectedCarabiner = carabinerId
-                }
-                
-                // 캐시 삭제, BundleInventoryView로 접근했을 때 썸네일 업데이트 하도록 함
-                BundleImageCache.shared.delete(for: documentId)
-            }
-            
-            // 저장 성공 후 썸네일 재캡쳐 + 캐시 저장
-            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
-            
-        } catch {
-            print("❌ Firebase 업데이트 실패: \(error.localizedDescription)")
-            if let firestoreError = error as NSError? {
-                print("Firebase 에러 코드: \(firestoreError.code)")
-                print("Firebase 에러 도메인: \(firestoreError.domain)")
-                print("Firebase 에러 상세: \(firestoreError.userInfo)")
-            }
-        }
-    }
-    
     // MARK: - 선택 상태 저장/복원
     func saveCurrentSelection() {
-        if let bg = newSelectedBackground {
+        if let bg = bundleVM.newSelectedBackground {
             UserDefaults.standard.set(bg.background.id, forKey: "tempSelectedBackgroundId")
         }
-        if let cb = newSelectedCarabiner {
+        if let cb = bundleVM.newSelectedCarabiner {
             UserDefaults.standard.set(cb.carabiner.id, forKey: "tempSelectedCarabinerId")
         }
     }
@@ -506,7 +389,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     func restoreBackgroundSelection() {
         if let savedBackgroundId = UserDefaults.standard.string(forKey: "tempSelectedBackgroundId") {
             if let restoredBackground = bundleVM.backgroundViewData.first(where: { $0.background.id == savedBackgroundId }) {
-                newSelectedBackground = restoredBackground
+                bundleVM.newSelectedBackground = restoredBackground
                 // 복원 후 삭제
                 UserDefaults.standard.removeObject(forKey: "tempSelectedBackgroundId")
             }
@@ -516,7 +399,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     func restoreCarabinerSelection() {
         if let savedCarbinerId = UserDefaults.standard.string(forKey: "tempSelectedCarabinerId") {
             if let restoredCarabiner = bundleVM.carabinerViewData.first(where: { $0.carabiner.id == savedCarbinerId }) {
-                newSelectedCarabiner = restoredCarabiner
+                bundleVM.newSelectedCarabiner = restoredCarabiner
                 // 복원 후 삭제
                 UserDefaults.standard.removeObject(forKey: "tempSelectedCarabinerId")
             }
@@ -526,8 +409,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     // MARK: - 썸네일 재캡쳐 & 캐시 저장
     private func recaptureAndCacheBundleThumbnail(bundleId: String, bundleName: String) async {
         // 편집 중 상태로 캡쳐
-        guard let bg = newSelectedBackground?.background,
-              let cb = newSelectedCarabiner?.carabiner else {
+        guard let bg = bundleVM.newSelectedBackground?.background,
+              let cb = bundleVM.newSelectedCarabiner?.carabiner else {
             return
         }
         
@@ -587,7 +470,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
 }
 
-//MARK: - 툴바
+// MARK: - 툴바
 extension BundleEditView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
@@ -597,10 +480,10 @@ extension BundleEditView {
             }
         } center: {
         } trailing: {
-            let hasPayableItems = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) || (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0)
+            let hasPayableItems = (bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) || (bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0)
             
             if hasPayableItems {
-                let payableCount = ((newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0) + ((newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
+                let payableCount = ((bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) ? 1 : 0) + ((bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
                 PurchaseToolbarButton(title: "구매 \(payableCount)") {
                     showPurchaseSheet = true
                 }
@@ -615,8 +498,8 @@ extension BundleEditView {
                     Task {
                         await MainActor.run {
                             // pop 전에 현재 구성 id를 ViewModel에 저장
-                            let bgId = bundleVM.makeBackgroundId(newSelectedBackground?.background ?? bundleVM.resolveBackground(from: bundleVM.selectedBundle?.selectedBackground ?? ""))
-                            let cbId = bundleVM.makeCarabinerId(newSelectedCarabiner?.carabiner ?? bundleVM.resolveCarabiner(from: bundleVM.selectedBundle?.selectedCarabiner ?? ""))
+                            let bgId = bundleVM.makeBackgroundId(bundleVM.newSelectedBackground?.background ?? bundleVM.resolveBackground(from: bundleVM.selectedBundle?.selectedBackground ?? ""))
+                            let cbId = bundleVM.makeCarabinerId(bundleVM.newSelectedCarabiner?.carabiner ?? bundleVM.resolveCarabiner(from: bundleVM.selectedBundle?.selectedCarabiner ?? ""))
                             
                             // 편집 중 키링 데이터 기준으로 keyringsId 생성
                             let currentKeyringDataList = keyringDataList
@@ -632,7 +515,12 @@ extension BundleEditView {
                         
                         // 상태 변경이 UI에 반영되도록 짧은 대기
                         try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
-                        await saveBundleChanges()
+                        await bundleVM.saveBundleChanges()
+                        
+                        // 저장 후 썸네일 재캡쳐, 캐시 저장
+                        if let bundle = bundleVM.selectedBundle, let documentId = bundleVM.selectedBundle?.documentId {
+                            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
+                        }
                         
                         await MainActor.run {
                             router.pop()
