@@ -286,6 +286,7 @@
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
 		AA2146B52F15D8490048D40E /* KeyringSelectableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringSelectableCell.swift */; };
 		AA2146B72F15E5B60048D40E /* BundleEditView+SelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */; };
+		AA2146B92F160E2B0048D40E /* BundleEditView+RestoreSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */; };
 		AA3908F82EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */; };
 		AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */; };
 		AA39098E2ECA061700D87EEC /* GridItemSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */; };
@@ -696,6 +697,7 @@
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
 		AA2146B42F15D8490048D40E /* KeyringSelectableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSelectableCell.swift; sourceTree = "<group>"; };
 		AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+SelectSheet.swift"; sourceTree = "<group>"; };
+		AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+RestoreSelection.swift"; sourceTree = "<group>"; };
 		AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridItemSpacing.swift; sourceTree = "<group>"; };
@@ -1887,6 +1889,7 @@
 				AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */,
 				AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */,
 				AA6298512EC233D2001576C0 /* BundleEditView.swift */,
+				AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */,
 				AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */,
 				AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */,
 				AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */,
@@ -2537,6 +2540,7 @@
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */,
 				C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */,
+				AA2146B92F160E2B0048D40E /* BundleEditView+RestoreSelection.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,
 				4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,
