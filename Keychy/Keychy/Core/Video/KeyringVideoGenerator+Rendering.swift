@@ -9,6 +9,7 @@ import Foundation
 import AVFoundation
 import CoreMedia
 import SpriteKit
+import Lottie
 
 // MARK: - Rendering
 
@@ -28,39 +29,31 @@ extension KeyringVideoGenerator {
         for frameIndex in 0..<targetFrames {
             let currentTime = Double(frameIndex) / Double(fps)
 
-            // 이벤트 트리거
             triggerEventsIfNeeded(at: frameIndex, currentTime: currentTime)
-
-            // Scene 업데이트 (물리 시뮬레이션)
+            updateParticleTexture(at: frameIndex, scene: scene)
             scene.update(currentTime)
 
-            // PixelBuffer 생성
             guard let pixelBuffer = createPixelBuffer() else {
                 throw VideoError.renderFailed
             }
 
-            // Command Buffer 생성
             guard let commandBuffer = commandQueue.makeCommandBuffer() else {
                 throw VideoError.renderFailed
             }
 
-            // SKRenderer로 GPU 렌더링
             renderer.render(
                 withViewport: CGRect(x: 0, y: 0, width: width, height: height),
                 commandBuffer: commandBuffer,
                 renderPassDescriptor: createRenderPassDescriptor(for: pixelBuffer)
             )
 
-            // Command Buffer 커밋 및 완료 대기
             commandBuffer.commit()
             await commandBuffer.completed()
 
-            // writerInput이 준비될 때까지 대기
             while !writerInput.isReadyForMoreMediaData {
                 try await Task.sleep(for: .seconds(0.01))
             }
 
-            // 비디오에 프레임 추가
             let presentationTime = CMTime(
                 value: CMTimeValue(frameIndex),
                 timescale: CMTimeScale(fps)
@@ -70,7 +63,6 @@ extension KeyringVideoGenerator {
                 throw VideoError.renderFailed
             }
 
-            // 프레임 간 대기 (실시간 물리 시뮬레이션)
             try await Task.sleep(for: .seconds(0.0167))
         }
     }
@@ -81,7 +73,6 @@ extension KeyringVideoGenerator {
     func triggerEventsIfNeeded(at frameIndex: Int, currentTime: Double) {
         guard let scene = scene else { return }
 
-        // 0.5초: 스와이프 임팩트
         if frameIndex == swipeEventFrame {
             let velocity = CGVector(dx: swipeVelocity, dy: 0)
             scene.applySwipeForceToNearbyChains(
@@ -92,10 +83,7 @@ extension KeyringVideoGenerator {
                 velocity: velocity
             )
 
-            // 파티클 효과
-            scene.applyParticleEffect(particleId: scene.currentParticleId)
-
-            // 사운드 이벤트 기록 (TODO: 오디오 합성)
+            // TODO: 오디오 합성
             if scene.currentSoundId != "none" {
                 soundEvents.append(SoundEvent(
                     time: 0.5,
@@ -104,7 +92,6 @@ extension KeyringVideoGenerator {
             }
         }
 
-        // 2.5초: 탭 사운드
         if frameIndex == tapSoundEventFrame {
             if scene.currentSoundId != "none" {
                 soundEvents.append(SoundEvent(
@@ -113,5 +100,84 @@ extension KeyringVideoGenerator {
                 ))
             }
         }
+    }
+
+    /// 파티클 텍스처 실시간 업데이트
+    /// Lottie 애니메이션을 매 프레임마다 이미지로 캡처하여 SKTexture로 변환
+    func updateParticleTexture(at frameIndex: Int, scene: KeyringScene) {
+        let particleId = scene.currentParticleId
+        guard particleId != "none" else { return }
+
+        if frameIndex == swipeEventFrame {
+            guard let animation = findParticleAnimation(particleId: particleId) else {
+                return
+            }
+
+            particleAnimation = animation
+
+            // Main Thread 렌더링 엔진 사용 (오프스크린 렌더링 필수)
+            let config = LottieConfiguration(renderingEngine: .mainThread)
+            let lottieView = LottieAnimationView(animation: animation, configuration: config)
+
+            lottieView.frame = CGRect(origin: .zero, size: CGSize(width: scene.size.width, height: scene.size.height))
+            lottieView.contentMode = .scaleAspectFit
+            lottieView.backgroundBehavior = .pauseAndRestore
+
+            lottieView.setNeedsLayout()
+            lottieView.layoutIfNeeded()
+
+            particleLottieView = lottieView
+            particleWindow = nil
+
+            let sprite = SKSpriteNode()
+            sprite.size = CGSize(width: scene.size.width, height: scene.size.height)
+            sprite.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
+            sprite.zPosition = 100
+
+            scene.addChild(sprite)
+            particleSpriteNode = sprite
+        }
+
+        let particleEndFrame = swipeEventFrame + particleDuration
+        if frameIndex >= swipeEventFrame && frameIndex < particleEndFrame,
+           let animation = particleAnimation,
+           let lottieView = particleLottieView,
+           let sprite = particleSpriteNode {
+
+            let offset = frameIndex - swipeEventFrame
+            let progress = CGFloat(offset) / CGFloat(particleDuration)
+            let targetFrame = animation.startFrame + (animation.endFrame - animation.startFrame) * progress
+
+            lottieView.currentFrame = AnimationFrameTime(targetFrame)
+            lottieView.setNeedsDisplay()
+            lottieView.layer.displayIfNeeded()
+            CATransaction.flush()
+
+            let renderer = UIGraphicsImageRenderer(bounds: lottieView.bounds)
+            let image = renderer.image { context in
+                lottieView.layer.render(in: context.cgContext)
+            }
+
+            sprite.texture = SKTexture(image: image)
+        }
+
+        if frameIndex == particleEndFrame {
+            particleSpriteNode?.removeFromParent()
+            particleSpriteNode = nil
+            particleLottieView = nil
+            particleWindow = nil
+        }
+    }
+
+    /// 파티클 애니메이션 파일 찾기 (Firebase 캐시에서)
+    private func findParticleAnimation(particleId: String) -> LottieAnimation? {
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
+
+        guard FileManager.default.fileExists(atPath: cachedURL.path) else {
+            return nil
+        }
+
+        return LottieAnimation.filepath(cachedURL.path)
     }
 }
