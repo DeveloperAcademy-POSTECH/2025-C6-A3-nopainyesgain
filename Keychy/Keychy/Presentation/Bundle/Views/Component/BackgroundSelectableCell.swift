@@ -8,7 +8,7 @@
 import SwiftUI
 import NukeUI
 
-struct SelectBackgroundGridItem: View {
+struct BackgroundSelectableCell: View {
     let background: BackgroundViewData
     let isSelected: Bool
     

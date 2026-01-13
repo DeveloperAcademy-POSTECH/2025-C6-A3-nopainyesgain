@@ -8,9 +8,9 @@
 import SwiftUI
 import NukeUI
 
-struct SelectCarabinerGridItem: View {
-    var isSelected: Bool
+struct CarabinerSelectableCell: View {
     var carabiner: CarabinerViewData
+    var isSelected: Bool
 
     var body: some View {
         VStack(spacing: 10) {

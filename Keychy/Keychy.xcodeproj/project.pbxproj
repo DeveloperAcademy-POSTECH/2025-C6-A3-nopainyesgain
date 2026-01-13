@@ -312,7 +312,6 @@
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
 		AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift */; };
 		AAA446822EC6519700080AB1 /* SelectCarabinerSheetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446812EC6519700080AB1 /* SelectCarabinerSheetContent.swift */; };
-		AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */; };
 		AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */; };
 		AABA4DBD2ED2D6CA00A7D062 /* festivalCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */; };
 		AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */; };
@@ -722,7 +721,6 @@
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 		AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectBackgroundSheetContent.swift; sourceTree = "<group>"; };
 		AAA446812EC6519700080AB1 /* SelectCarabinerSheetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerSheetContent.swift; sourceTree = "<group>"; };
-		AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionGridSheet.swift; sourceTree = "<group>"; };
 		AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cardPagerView.swift; sourceTree = "<group>"; };
 		AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = festivalCard.swift; sourceTree = "<group>"; };
 		AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleMenu.swift; sourceTree = "<group>"; };
@@ -1418,11 +1416,10 @@
 				4CEC61F62EAE08DA0099ECEE /* BackgroundSelectableCell.swift */,
 				AA9115072EB126A60026E9BC /* CarabinerSelectableCell.swift */,
 				AA2146B42F15D8490048D40E /* KeyringSelectableCell.swift */,
-				AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */,
-				AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */,
 				AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift */,
 				AAA446812EC6519700080AB1 /* SelectCarabinerSheetContent.swift */,
-				AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */,
+				AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */,
+				AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */,
 				AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */,
 			);
 			path = Component;
@@ -1602,7 +1599,6 @@
 				388E72952EF34DA200AE1F1B /* Detail */,
 				388E72972EF34F4A00AE1F1B /* Package */,
 				385425C12EB2C34D00A06C02 /* Widget */,
-				4CEC629D2EAE09990099ECEE /* Bundle */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1832,13 +1828,6 @@
 				4CEC62902EAE08F70099ECEE /* Fonts */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		4CEC629D2EAE09990099ECEE /* Bundle */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Bundle;
 			sourceTree = "<group>";
 		};
 		4CF2A96F2F0FB2E100BA9FDA /* Update */ = {
@@ -2487,7 +2476,6 @@
 				C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */,
 				38CE39B22ECD995D00168E4B /* ClearSketchPreview.swift in Sources */,
 				4CEC62812EAE08DF0099ECEE /* KeyringCustomizingView.swift in Sources */,
-				AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */,
 				4CEC62842EAE08DF0099ECEE /* AcrylicPhotoVM+Crop.swift in Sources */,
 				3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift in Sources */,
 				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
