@@ -231,7 +231,7 @@
 		4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61EE2EAE08C40099ECEE /* KeychyApp.swift */; };
 		4CEC621A2EAE08DA0099ECEE /* KeyringScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F92EAE08DA0099ECEE /* KeyringScene.swift */; };
 		4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FC2EAE08DA0099ECEE /* KeyringScene+Touch.swift */; };
-		4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */; };
+		4CEC621C2EAE08DA0099ECEE /* BackgroundSelectableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61F62EAE08DA0099ECEE /* BackgroundSelectableCell.swift */; };
 		4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */; };
 		4CEC621E2EAE08DA0099ECEE /* KeyringChainComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC61FF2EAE08DA0099ECEE /* KeyringChainComponent.swift */; };
 		4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62002EAE08DA0099ECEE /* KeyringBodyComponent.swift */; };
@@ -284,6 +284,7 @@
 		AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */; };
 		AA2146AF2F15D0160048D40E /* BundleEditView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */; };
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
+		AA2146B52F15D8490048D40E /* KeyringSelectableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringSelectableCell.swift */; };
 		AA3908F82EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */; };
 		AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */; };
 		AA39098E2ECA061700D87EEC /* GridItemSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */; };
@@ -303,14 +304,14 @@
 		AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */; };
 		AA8C9B982F10E6D500A352D2 /* BundleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B972F10E6D500A352D2 /* BundleViewModel.swift */; };
 		AA8C9B9A2F14C35200A352D2 /* BundleViewModel+ReloadDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C9B992F14C35200A352D2 /* BundleViewModel+ReloadDecision.swift */; };
-		AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */; };
+		AA9115082EB126A60026E9BC /* CarabinerSelectableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115072EB126A60026E9BC /* CarabinerSelectableCell.swift */; };
 		AA91150A2EB1B7930026E9BC /* CarabinerAddKeyringButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */; };
 		AA9123AF2ED4BC490070A9F9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */; };
 		AA9B2E892EB001AA0004D31C /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E882EB001AA0004D31C /* Background.swift */; };
 		AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E8A2EB001B70004D31C /* Carabiner.swift */; };
 		AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B2E902EB081750004D31C /* ItemDetailView.swift */; };
-		AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheet.swift */; };
-		AAA446822EC6519700080AB1 /* SelectCarabinerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */; };
+		AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift */; };
+		AAA446822EC6519700080AB1 /* SelectCarabinerSheetContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446812EC6519700080AB1 /* SelectCarabinerSheetContent.swift */; };
 		AAA446842EC651B500080AB1 /* SelectionGridSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */; };
 		AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */; };
 		AABA4DBD2ED2D6CA00A7D062 /* festivalCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */; };
@@ -641,7 +642,7 @@
 		4CEC61F32EAE08DA0099ECEE /* KeyringCellScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCellScene.swift; sourceTree = "<group>"; };
 		4CEC61F42EAE08DA0099ECEE /* KeyringCellScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCellScene+Setup.swift"; sourceTree = "<group>"; };
 		4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBundleItem.swift; sourceTree = "<group>"; };
-		4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectBackgroundGridItem.swift; sourceTree = "<group>"; };
+		4CEC61F62EAE08DA0099ECEE /* BackgroundSelectableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSelectableCell.swift; sourceTree = "<group>"; };
 		4CEC61F92EAE08DA0099ECEE /* KeyringScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringScene.swift; sourceTree = "<group>"; };
 		4CEC61FA2EAE08DA0099ECEE /* KeyringScene+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Effects.swift"; sourceTree = "<group>"; };
 		4CEC61FB2EAE08DA0099ECEE /* KeyringScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Setup.swift"; sourceTree = "<group>"; };
@@ -693,6 +694,7 @@
 		AA0A54B82EC05C41007B5413 /* BundleRingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleRingComponent.swift; sourceTree = "<group>"; };
 		AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Purchase.swift"; sourceTree = "<group>"; };
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
+		AA2146B42F15D8490048D40E /* KeyringSelectableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSelectableCell.swift; sourceTree = "<group>"; };
 		AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridItemSpacing.swift; sourceTree = "<group>"; };
@@ -712,14 +714,14 @@
 		AA8C9B8D2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+Menu.swift"; sourceTree = "<group>"; };
 		AA8C9B972F10E6D500A352D2 /* BundleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleViewModel.swift; sourceTree = "<group>"; };
 		AA8C9B992F14C35200A352D2 /* BundleViewModel+ReloadDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleViewModel+ReloadDecision.swift"; sourceTree = "<group>"; };
-		AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerGridItem.swift; sourceTree = "<group>"; };
+		AA9115072EB126A60026E9BC /* CarabinerSelectableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerSelectableCell.swift; sourceTree = "<group>"; };
 		AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerAddKeyringButton.swift; sourceTree = "<group>"; };
 		AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AA9B2E882EB001AA0004D31C /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		AA9B2E8A2EB001B70004D31C /* Carabiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carabiner.swift; sourceTree = "<group>"; };
 		AA9B2E902EB081750004D31C /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
-		AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectBackgroundSheet.swift; sourceTree = "<group>"; };
-		AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerSheet.swift; sourceTree = "<group>"; };
+		AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectBackgroundSheetContent.swift; sourceTree = "<group>"; };
+		AAA446812EC6519700080AB1 /* SelectCarabinerSheetContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCarabinerSheetContent.swift; sourceTree = "<group>"; };
 		AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionGridSheet.swift; sourceTree = "<group>"; };
 		AABA4DAB2ED2D4C700A7D062 /* cardPagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cardPagerView.swift; sourceTree = "<group>"; };
 		AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = festivalCard.swift; sourceTree = "<group>"; };
@@ -1413,14 +1415,15 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61F52EAE08DA0099ECEE /* KeyringBundleItem.swift */,
-				4CEC61F62EAE08DA0099ECEE /* SelectBackgroundGridItem.swift */,
-				AA9115072EB126A60026E9BC /* SelectCarabinerGridItem.swift */,
+				4CEC61F62EAE08DA0099ECEE /* BackgroundSelectableCell.swift */,
+				AA9115072EB126A60026E9BC /* CarabinerSelectableCell.swift */,
+				AA2146B42F15D8490048D40E /* KeyringSelectableCell.swift */,
 				AA9115092EB1B7930026E9BC /* CarabinerAddKeyringButton.swift */,
-				AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */,
 				AA6298572EC457DF001576C0 /* CarabinerChangePopup.swift */,
-				AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheet.swift */,
-				AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */,
+				AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift */,
+				AAA446812EC6519700080AB1 /* SelectCarabinerSheetContent.swift */,
 				AAA446832EC651B500080AB1 /* SelectionGridSheet.swift */,
+				AA6298552EC3AD16001576C0 /* BundleItemCustomSheet.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -2279,7 +2282,7 @@
 				385425C62EB3BD7C00A06C02 /* AcrylicPhotoGuiding.swift in Sources */,
 				4C77753F2EB1343600981C3E /* IntroViewModel+Login.swift in Sources */,
 				4C7775402EB1343600981C3E /* IntroViewModel+Signup.swift in Sources */,
-				AAA446822EC6519700080AB1 /* SelectCarabinerSheet.swift in Sources */,
+				AAA446822EC6519700080AB1 /* SelectCarabinerSheetContent.swift in Sources */,
 				4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */,
 				AA6298562EC3AD16001576C0 /* BundleItemCustomSheet.swift in Sources */,
 				4CEC61E92EAE08C00099ECEE /* KeyringTemplate.swift in Sources */,
@@ -2299,7 +2302,7 @@
 				4C84265B2ED3572F0050B6FE /* SpeechBubbleVM+Frame.swift in Sources */,
 				4CEC621B2EAE08DA0099ECEE /* KeyringScene+Touch.swift in Sources */,
 				38C3C2882EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift in Sources */,
-				4CEC621C2EAE08DA0099ECEE /* SelectBackgroundGridItem.swift in Sources */,
+				4CEC621C2EAE08DA0099ECEE /* BackgroundSelectableCell.swift in Sources */,
 				3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */,
 				4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */,
 				386102482F1104EB0045C529 /* KeyringCollectView+Alerts.swift in Sources */,
@@ -2339,7 +2342,7 @@
 				3828F5492EC4CCE400F1B040 /* CollectionView+SearchMode.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
 				AA6298582EC457DF001576C0 /* CarabinerChangePopup.swift in Sources */,
-				AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheet.swift in Sources */,
+				AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheetContent.swift in Sources */,
 				4CBBEF2D2EB7E92900252590 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				38C3C2842EC0D081003C5DE1 /* LinkCopiedPopup.swift in Sources */,
 				C6C35F3E2ED2AB71009642F4 /* ZoomableScrollView.swift in Sources */,
@@ -2379,6 +2382,7 @@
 				4CEC626C2EAE08DF0099ECEE /* FestivalView.swift in Sources */,
 				4C7775382EB0EFD800981C3E /* ItemDetailMakingBtn.swift in Sources */,
 				C6830F042EB8A4000059379A /* WorkshopDataManager.swift in Sources */,
+				AA2146B52F15D8490048D40E /* KeyringSelectableCell.swift in Sources */,
 				C6EE7AD72EB445F6002B5669 /* MyPageView.swift in Sources */,
 				AA8C9B8E2F0F3E5E00A352D2 /* BundleDetailView+Menu.swift in Sources */,
 				4C8426622ED372650050B6FE /* SpeechBubblePreview.swift in Sources */,
@@ -2475,7 +2479,7 @@
 				3861024A2F1129FA0045C529 /* KeyringCacheManager.swift in Sources */,
 				4C65304C2EBA88EF000F8154 /* KeyringCustomizingView+Purchase.swift in Sources */,
 				AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */,
-				AA9115082EB126A60026E9BC /* SelectCarabinerGridItem.swift in Sources */,
+				AA9115082EB126A60026E9BC /* CarabinerSelectableCell.swift in Sources */,
 				38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */,
 				4CEC627F2EAE08DF0099ECEE /* CollectionView.swift in Sources */,
 				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
