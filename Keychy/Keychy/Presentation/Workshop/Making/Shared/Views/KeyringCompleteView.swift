@@ -111,12 +111,13 @@ extension KeyringCompleteView {
             // Leading (왼쪽)
             CloseToolbarButton {
                 viewModel.resetAll()
-                
+
                 // Festival에서 온 경우 콜백 실행
                 if let onCloseFromFestival = onCloseFromFestival {
                     onCloseFromFestival(router)
                 } else {
                     // 일반적인 경우 router reset
+                    TabBarManager.show()
                     router.reset()
                 }
             }
