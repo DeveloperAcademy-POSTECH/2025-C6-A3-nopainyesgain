@@ -75,7 +75,6 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
             TabBarManager.hide()
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
     }
 }
 

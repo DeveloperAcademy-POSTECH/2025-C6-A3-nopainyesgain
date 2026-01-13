@@ -120,7 +120,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             if frame != .zero {

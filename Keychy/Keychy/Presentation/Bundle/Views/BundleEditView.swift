@@ -92,7 +92,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             purchaseSheetView
         }
         .navigationBarBackButtonHidden()
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .task {
             // 화면 전환 중이면 초기화 건너뛰기

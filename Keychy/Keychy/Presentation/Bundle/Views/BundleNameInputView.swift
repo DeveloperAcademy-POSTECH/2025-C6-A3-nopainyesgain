@@ -58,7 +58,6 @@ struct BundleNameInputView<Route: BundleRoute>: View {
         .padding(.bottom, -keyboardHeight)
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .scrollDismissesKeyboard(.never)
         .onAppear {
             // 키보드 자동 활성화

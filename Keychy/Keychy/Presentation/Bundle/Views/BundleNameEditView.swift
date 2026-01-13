@@ -40,7 +40,6 @@ struct BundleNameEditView<Route: BundleRoute>: View {
         .padding(.bottom, -keyboardHeight)
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .scrollDismissesKeyboard(.never)
         .onAppear {

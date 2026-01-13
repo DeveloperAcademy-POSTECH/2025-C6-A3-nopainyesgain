@@ -105,7 +105,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
-        .toolbar(.hidden, for: .tabBar)
         .task {
             await initializeData()
         }
