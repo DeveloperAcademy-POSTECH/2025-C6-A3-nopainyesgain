@@ -12,6 +12,7 @@ import AVFoundation
 import Photos
 import Metal
 import MetalKit
+import Lottie
 
 /// 키링 영상 생성기
 /// SKRenderer로 GPU 메모리에서 직접 렌더링
@@ -68,6 +69,9 @@ class KeyringVideoGenerator {
     /// 스와이프 강도
     let swipeVelocity: CGFloat = 7500
 
+    /// 파티클 지속 프레임 수 (1.5초)
+    let particleDuration = 90
+
     // MARK: - Properties
 
     var scene: KeyringScene?
@@ -83,6 +87,12 @@ class KeyringVideoGenerator {
 
     var backgroundImage: UIImage?
     var keyringScale: CGFloat = 1.0
+
+    // MARK: - Particle Properties
+    var particleSpriteNode: SKSpriteNode?
+    var particleAnimation: LottieAnimation?  // 애니메이션 데이터 보관
+    var particleLottieView: LottieAnimationView?
+    var particleWindow: UIWindow?
 
     // MARK: - Nested Types
 
@@ -177,6 +187,12 @@ class KeyringVideoGenerator {
 
     /// 메모리 정리
     private func cleanup() {
+        particleSpriteNode?.removeFromParent()
+        particleSpriteNode = nil
+        particleAnimation = nil
+        particleLottieView = nil
+        particleWindow = nil
+
         scene = nil
         renderer = nil
         metalDevice = nil
