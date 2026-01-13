@@ -208,7 +208,7 @@ extension KeyringBundleItem {
     }
 
     /// Firestore에서 키링 정보 가져오기
-    private func fetchKeyringFromFirestore(keyringId: String) async -> KeyringInfo? {
+    private func fetchKeyringFromFirestore(keyringId: String) async -> KeyringCaptureInfo? {
         do {
             let db = FirebaseFirestore.Firestore.firestore()
             let document = try await db.collection("Keyring").document(keyringId).getDocument()
@@ -221,7 +221,7 @@ extension KeyringBundleItem {
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
 
-            return KeyringInfo(id: keyringId, bodyImage: bodyImage, hookOffsetY: hookOffsetY, chainLength: chainLength)
+            return KeyringCaptureInfo(id: keyringId, bodyImage: bodyImage, hookOffsetY: hookOffsetY, chainLength: chainLength)
         } catch {
             print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
@@ -230,7 +230,7 @@ extension KeyringBundleItem {
 }
 
 /// 키링 정보 구조체 (최소 정보만)
-struct KeyringInfo {
+struct KeyringCaptureInfo {
     let id: String
     let bodyImage: String
     let hookOffsetY: CGFloat?

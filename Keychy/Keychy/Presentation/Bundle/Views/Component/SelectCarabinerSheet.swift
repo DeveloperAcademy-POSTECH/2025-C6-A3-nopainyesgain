@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SelectCarabinerSheet: View {
-    let viewModel: CollectionViewModel
+    let viewModel: BundleViewModel
     let selectedCarabiner: CarabinerViewData?
     let onCarabinerTap: (CarabinerViewData) -> Void
     

@@ -16,6 +16,7 @@ struct HomeView: View {
     @Bindable var userManager: UserManager
 
     @State var collectionViewModel: CollectionViewModel
+    @State var bundleViewModel: BundleViewModel
 
     /// 배경 로드 완료 콜백
     var onBackgroundLoaded: (() -> Void)? = nil
@@ -35,9 +36,9 @@ struct HomeView: View {
             } else {
                 // 블러 영역
                 ZStack(alignment: .top) {
-                    if let bundle = collectionViewModel.selectedBundle,
-                       let carabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                       let background = collectionViewModel.selectedBackground {
+                    if let bundle = bundleViewModel.selectedBundle,
+                       let carabiner = bundleViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+                       let background = bundleViewModel.selectedBackground {
                         MultiKeyringSceneView(
                             keyringDataList: viewModel.keyringDataList,
                             ringType: .basic,
@@ -93,13 +94,13 @@ struct HomeView: View {
             }
 
             // 최초 뷰가 나타날 때 메인 뭉치 데이터 로드 (우선순위)
-            await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
+            await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel, onBackgroundLoaded: onBackgroundLoaded)
         }
         .onChange(of: viewModel.keyringDataList) { _, _ in
             // 키링 데이터가 변경되면 씬 준비 상태 초기화
             viewModel.handleKeyringDataChange()
             Task {
-                await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
+                await viewModel.loadMainBundle(collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel, onBackgroundLoaded: onBackgroundLoaded)
             }
         }
         .onChange(of: NetworkManager.shared.isConnected) { oldValue, newValue in
@@ -107,7 +108,7 @@ struct HomeView: View {
               if !oldValue && newValue && viewModel.hasNetworkError {
                   Task {
                       await viewModel.retryLoadMainBundle(
-                          collectionViewModel: collectionViewModel,
+                        collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel,
                           onBackgroundLoaded: onBackgroundLoaded
                       )
                   }
@@ -124,7 +125,7 @@ extension HomeView {
         NoInternetView(topPadding: getSafeAreaTop() + 10, onRetry: {
             Task {
                 await viewModel.retryLoadMainBundle(
-                    collectionViewModel: collectionViewModel,
+                    collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel,
                     onBackgroundLoaded: onBackgroundLoaded
                 )
             }

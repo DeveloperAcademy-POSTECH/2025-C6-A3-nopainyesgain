@@ -11,6 +11,7 @@ struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var userManager: UserManager
     @State private var collectionViewModel = CollectionViewModel()
+    @State private var bundleViewModel = BundleViewModel()
     @Bindable private var introViewModel = IntroViewModel()
 
     /// 배경 로드 완료 콜백
@@ -21,26 +22,26 @@ struct HomeTab: View {
             HomeView(
                 router: router,
                 userManager: userManager,
-                collectionViewModel: collectionViewModel,
+                collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel,
                 onBackgroundLoaded: onBackgroundLoaded
             )
                 .navigationDestination(for: HomeRoute.self) {route in
                     switch route {
                         //키링 뭉치함
                     case .bundleInventoryView:
-                        BundleInventoryView(router: router, viewModel: collectionViewModel)
+                        BundleInventoryView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleDetailView:
-                        BundleDetailView(router: router, viewModel: collectionViewModel)
+                        BundleDetailView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleCreateView:
-                        BundleCreateView(router: router, viewModel: collectionViewModel)
+                        BundleCreateView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleAddKeyringView:
-                        BundleAddKeyringView(router: router, viewModel: collectionViewModel)
+                        BundleAddKeyringView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleNameInputView:
-                        BundleNameInputView(router: router, viewModel: collectionViewModel)
+                        BundleNameInputView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleNameEditView:
-                        BundleNameEditView(router: router, viewModel: collectionViewModel)
+                        BundleNameEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleEditView:
-                        BundleEditView(router: router, viewModel: collectionViewModel)
+                        BundleEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)

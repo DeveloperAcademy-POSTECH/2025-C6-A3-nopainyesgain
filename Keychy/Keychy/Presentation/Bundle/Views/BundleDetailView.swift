@@ -31,7 +31,8 @@ struct BundleDetailUIState {
 
 struct BundleDetailView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
     
     // MARK: - State Management
     @State var uiState = BundleDetailUIState()
@@ -52,9 +53,9 @@ struct BundleDetailView<Route: BundleRoute>: View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
                 ZStack(alignment: .top) {
-                    if let bundle = viewModel.selectedBundle,
-                       let carabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner),
-                       let background = viewModel.selectedBackground {
+                    if let bundle = bundleVM.selectedBundle,
+                       let carabiner = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner),
+                       let background = bundleVM.selectedBackground {
                         
                         MultiKeyringSceneView(
                             keyringDataList: keyringDataList,
@@ -81,9 +82,9 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                                 isSceneReady = true
                                             }
                                             // 마지막으로 로드한 구성 id를 뷰모델에 저장 (뷰모델이 다음 진입 시 동일 구성 판정)
-                                            viewModel.updateLastConfigIds(
-                                                background: viewModel.selectedBackground,
-                                                carabiner: viewModel.selectedCarabiner,
+                                            bundleVM.updateLastConfigIds(
+                                                background: bundleVM.selectedBackground,
+                                                carabiner: bundleVM.selectedCarabiner,
                                                 keyringDataList: keyringDataList
                                             )
                                         }
@@ -95,9 +96,9 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         /// 씬 재생성 조건을 위한 ID 설정 -> 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
                         .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))")
                         .onAppear {
-                            viewModel.returnBackgroundId = bundle.selectedBackground
-                            viewModel.returnCarabinerId = bundle.selectedCarabiner
-                            viewModel.returnKeyringsId = bundle.keyrings
+                            bundleVM.returnBackgroundId = bundle.selectedBackground
+                            bundleVM.returnCarabinerId = bundle.selectedCarabiner
+                            bundleVM.returnKeyringsId = bundle.keyrings
                                 .sorted()
                                 .joined(separator: "|")
                         }
@@ -129,7 +130,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
         .onAppear {
             isNavigatingDeeper = false
             uiState.resetOverlays()
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
             getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
         }
         .onDisappear {
@@ -163,7 +164,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
 // MARK: - Data Loading
 extension BundleDetailView {
     private var bundleTaskId: String {
-        "\(viewModel.selectedBundle?.keyrings ?? [])_\(viewModel.selectedBundle?.selectedBackground ?? "")_\(viewModel.selectedBundle?.selectedCarabiner ?? "")"
+        "\(bundleVM.selectedBundle?.keyrings ?? [])_\(bundleVM.selectedBundle?.selectedBackground ?? "")_\(bundleVM.selectedBundle?.selectedCarabiner ?? "")"
     }
     
     /// 선택된 뭉치 데이터를 로드하고 뷰 상태를 초기화
@@ -174,25 +175,25 @@ extension BundleDetailView {
     private func loadBundleData() async {
         
         // 1. 배경 및 카라비너 데이터 로드
-        await viewModel.loadBackgroundsAndCarabiners()
+        await collectionVM.loadBackgroundsAndCarabiners()
         
         // 2. 선택된 뭉치의 배경과 카라비너 설정
-        guard let bundle = viewModel.selectedBundle else {
+        guard let bundle = bundleVM.selectedBundle else {
             // 데이터가 없으면 오버레이가 영원히 남지 않도록 최소 복구
             isSceneReady = true
             return
         }
-        viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
-        viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        bundleVM.selectedBackground = bundleVM.resolveBackground(from: bundle.selectedBackground)
+        bundleVM.selectedCarabiner = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner)
         
         // 3. 키링 데이터 생성
-        guard let carabiner = viewModel.selectedCarabiner else {
+        guard let carabiner = bundleVM.selectedCarabiner else {
             // 카라비너 resolve 실패 시에도 최소 복구
             isSceneReady = true
             return
         }
 
-        let newKeyringDataList = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        let newKeyringDataList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         keyringDataList = newKeyringDataList
         
         // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
@@ -211,7 +212,7 @@ extension BundleDetailView {
             return
         }
         
-        guard let bundle = viewModel.selectedBundle,
+        guard let bundle = bundleVM.selectedBundle,
               let documentId = bundle.documentId else {
             uiState.showDeleteAlert = false
             return
@@ -233,7 +234,7 @@ extension BundleDetailView {
             try await db.collection("KeyringBundle").document(documentId).delete()
             
             // 4. 로컬 배열에서도 제거
-            viewModel.bundles.removeAll { $0.documentId == documentId }
+            bundleVM.bundles.removeAll { $0.documentId == documentId }
             
             // 5. 삭제 완료 팝업 표시
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -261,9 +262,9 @@ extension BundleDetailView {
     // 뭉치 상태 변경 확인 및 처리 함수
     @MainActor
     private func handleBundleChange() async {
-        guard let bundle = viewModel.selectedBundle else { return }
+        guard let bundle = bundleVM.selectedBundle else { return }
         // 동일 구성인지 확인(+변경 감지)
-        if viewModel.shouldSkipReloadForReturnedConfig() {
+        if bundleVM.shouldSkipReloadForReturnedConfig() {
             restoreSceneIfNeeded(bundle)
             isSceneReady = true
             return
@@ -279,11 +280,11 @@ extension BundleDetailView {
     private func restoreSceneIfNeeded(_ bundle: KeyringBundle) {
         // 동일 구성일 때 리로드 스킵 및 필요 시 즉시 준비 완료 복구
         // Scene이 바로 그려질 수 있도록 최소 resolve 보장
-        if viewModel.selectedBackground == nil {
-            viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
+        if bundleVM.selectedBackground == nil {
+            bundleVM.selectedBackground = bundleVM.resolveBackground(from: bundle.selectedBackground)
         }
-        if viewModel.selectedCarabiner == nil {
-            viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        if bundleVM.selectedCarabiner == nil {
+            bundleVM.selectedCarabiner = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner)
         }
         readyDelayTask?.cancel()
         readyDelayTask = nil
@@ -310,13 +311,13 @@ extension BundleDetailView {
     private var customnavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                viewModel.lastKeyringsIdForDetail = ""
-                viewModel.lastCarabinerIdForDetail = ""
-                viewModel.lastBackgroundIdForDetail = ""
+                bundleVM.lastKeyringsIdForDetail = ""
+                bundleVM.lastCarabinerIdForDetail = ""
+                bundleVM.lastBackgroundIdForDetail = ""
                 router.pop()
             }
         } center: {
-            if let bundle = viewModel.selectedBundle {
+            if let bundle = bundleVM.selectedBundle {
                 Text("\(bundle.name)")
             }
         } trailing: {
@@ -340,7 +341,7 @@ extension BundleDetailView {
                 
                 Spacer()
                 
-                if let bundle = viewModel.selectedBundle {
+                if let bundle = bundleVM.selectedBundle {
                     if bundle.isMain {
                         Text("대표 뭉치 설정 중")
                             .typography(.suit16M)
@@ -364,7 +365,7 @@ extension BundleDetailView {
     /// 핀 버튼 - 메인 뭉치 설정/해제
     private var pinButton: some View {
         Group {
-            if let bundle = viewModel.selectedBundle {
+            if let bundle = bundleVM.selectedBundle {
                 if bundle.isMain {
                     Button {
                         uiState.showAlreadyMainBundleToast = true
