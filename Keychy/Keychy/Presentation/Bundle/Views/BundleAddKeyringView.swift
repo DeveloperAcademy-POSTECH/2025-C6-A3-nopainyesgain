@@ -72,7 +72,7 @@ struct BundleAddKeyringView<Route: BundleRoute>: View {
         .ignoresSafeArea()
         .onAppear {
             fetchData()
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)

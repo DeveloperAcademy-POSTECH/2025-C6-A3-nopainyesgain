@@ -84,13 +84,13 @@ struct PackageCompleteView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            viewModel.hideTabBar()
+            TabBarManager.hide()
             fetchAuthorName()
             loadShareLink()
             loadCachedImage()
         }
         .onDisappear() {
-            viewModel.showTabBar()
+            TabBarManager.show()
             cleanupImages()
         }
     }

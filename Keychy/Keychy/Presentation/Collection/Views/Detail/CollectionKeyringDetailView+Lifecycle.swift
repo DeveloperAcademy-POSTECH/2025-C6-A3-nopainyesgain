@@ -12,7 +12,7 @@ extension CollectionKeyringDetailView {
     func handleViewAppear() {
         isSheetPresented = false
         isNavigatingDeeper = false
-        viewModel.hideTabBar()
+        TabBarManager.hide()
         fetchAuthorName()
         
         if keyring.senderId != nil {
@@ -23,9 +23,9 @@ extension CollectionKeyringDetailView {
     func handleViewDisappear() {
         isSheetPresented = false
         if !isNavigatingDeeper {
-            viewModel.showTabBar()
+            TabBarManager.show()
         }
-        
+
         cleanupDetailView()
     }
   

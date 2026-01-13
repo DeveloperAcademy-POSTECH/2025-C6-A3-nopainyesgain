@@ -160,7 +160,7 @@ extension KeyringEditView {
                     ) { success in
                         if success {
                             router.reset()
-                            viewModel.showTabBar()
+                            TabBarManager.show()
                         }
                     }
                 }) {

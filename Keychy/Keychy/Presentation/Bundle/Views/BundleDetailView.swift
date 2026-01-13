@@ -130,7 +130,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
         .onAppear {
             isNavigatingDeeper = false
             uiState.resetOverlays()
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
             getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
         }
         .onDisappear {

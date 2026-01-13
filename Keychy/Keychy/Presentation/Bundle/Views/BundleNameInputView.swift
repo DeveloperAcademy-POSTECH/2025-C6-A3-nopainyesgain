@@ -64,7 +64,7 @@ struct BundleNameInputView<Route: BundleRoute>: View {
             // 키보드 자동 활성화
             isTextFieldFocused = true
 
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
             
             if getBottomPadding(34) == 0 {
                 morePadding = 40

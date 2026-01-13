@@ -135,11 +135,11 @@ struct CollectionKeyringPackageView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            viewModel.hideTabBar()
+            TabBarManager.hide()
             loadPackagedKeyringInfo()
         }
         .onDisappear {
-            viewModel.showTabBar()
+            TabBarManager.show()
         }
     }
     
