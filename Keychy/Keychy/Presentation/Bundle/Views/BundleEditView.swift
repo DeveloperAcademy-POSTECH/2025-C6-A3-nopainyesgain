@@ -45,21 +45,21 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var purchaseFailScale: CGFloat = 0.3
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
-    @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
+    @State var keyringDataList: [MultiKeyringScene.KeyringData] = []
     
     // 키링 편집 관련 상태
-    @State private var showSelectKeyringSheet = false
-    @State private var selectedKeyrings: [Int: Keyring] = [:]
-    @State private var keyringOrder: [Int] = []
-    @State private var selectedPosition = 0
-    @State private var sceneRefreshId = UUID()
-    @State private var isNavigatingAway = false // 화면 전환 중인지 추적
+    @State var showSelectKeyringSheet = false
+    @State var selectedKeyrings: [Int: Keyring] = [:]
+    @State var keyringOrder: [Int] = []
+    @State var selectedPosition = 0
+    @State var sceneRefreshId = UUID()
+    @State var isNavigatingAway = false // 화면 전환 중인지 추적
     
     // 캡쳐 상태
-    @State private var isCapturing: Bool = false
+    @State var isCapturing: Bool = false
     
     // 키링 시트 로딩 상태
-    @State private var isKeyringSheetLoading: Bool = true
+    @State var isKeyringSheetLoading: Bool = true
     
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     private let gridColumns: [GridItem] = [
@@ -507,102 +507,6 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
     }
     
-    /// Alert 컨텐츠들
-    private var alertContent: some View {
-        Group {
-            if showChangeCarabinerAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            showChangeCarabinerAlert = false
-                        }
-                    }
-                VStack {
-                    Spacer()
-                    CarabinerChangePopup(
-                        title: "카라비너를 변경하시겠어요?",
-                        message: "새 카라비너로 변경하면\n현재 뭉치에 걸린 키링들이 모두 해제돼요.",
-                        onCancel: {
-                            selectCarabiner = nil
-                            showChangeCarabinerAlert = false
-                        },
-                        onConfirm: {
-                            Task { @MainActor in
-                                // 편집 중 로컬 상태만 변경 (Firestore에 쓰지 않음)
-                                
-                                // 1) UI 오버레이/선택 상태 초기화
-                                selectedPosition = 0
-                                
-                                // 2) 키링 데이터와 선택 목록을 즉시 비우기
-                                keyringDataList = []
-                                selectedKeyrings.removeAll()
-                                keyringOrder.removeAll()
-                                
-                                // 3) 새 카라비너 적용
-                                newSelectedCarabiner = selectCarabiner
-                                
-                                // 4) 빈 상태를 씬/리스트에 반영
-                                updateKeyringDataList()
-                                
-                                // 5) 씬 강제 리프레시로 남은 잔상 제거
-                                sceneRefreshId = UUID()
-                                
-                                // 6) 알럿 닫기
-                                showChangeCarabinerAlert = false
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 51)
-                    Spacer()
-                }
-            }
-            
-            // 구매 성공 Alert
-            if showPurchaseSuccessAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        Task {
-                            await saveBundleChanges()
-                            await MainActor.run {
-                                showPurchaseSuccessAlert = false
-                                purchasesSuccessScale = 0.3
-                            }
-                        }
-                    }
-                
-                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSuccessAlert)
-                    .zIndex(101)
-            }
-            
-            // 구매 실패 Alert
-            if showPurchaseFailAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        showPurchaseFailAlert = false
-                        purchaseFailScale = 0.3
-                    }
-                
-                PurchaseFailAlert(
-                    checkmarkScale: purchaseFailScale,
-                    onCancel: {
-                        showPurchaseFailAlert = false
-                        purchaseFailScale = 0.3
-                    },
-                    onCharge: {
-                        showPurchaseFailAlert = false
-                        purchaseFailScale = 0.3
-                        saveCurrentSelection()
-                        router.push(.coinCharge)
-                    }
-                )
-                .padding(.horizontal, 51)
-            }
-        }
-    }
-    
     // MARK: - 데이터 로딩 및 초기화
     
     /// 초기 데이터 로딩
@@ -719,7 +623,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
     
     /// 키링 데이터 리스트 업데이트
-    private func updateKeyringDataList() {
+    func updateKeyringDataList() {
         guard let carabiner = newSelectedCarabiner?.carabiner else {
             keyringDataList = []
             return
@@ -817,7 +721,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
     
     // MARK: - 선택 상태 저장/복원
-    private func saveCurrentSelection() {
+    func saveCurrentSelection() {
         if let bg = newSelectedBackground {
             UserDefaults.standard.set(bg.background.id, forKey: "tempSelectedBackgroundId")
         }
@@ -826,12 +730,12 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
     }
     
-    private func restoreSelection() {
+    func restoreSelection() {
         restoreBackgroundSelection()
         restoreCarabinerSelection()
     }
     
-    private func restoreBackgroundSelection() {
+    func restoreBackgroundSelection() {
         if let savedBackgroundId = UserDefaults.standard.string(forKey: "tempSelectedBackgroundId") {
             if let restoredBackground = bundleVM.backgroundViewData.first(where: { $0.background.id == savedBackgroundId }) {
                 newSelectedBackground = restoredBackground
@@ -841,7 +745,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
     }
     
-    private func restoreCarabinerSelection() {
+    func restoreCarabinerSelection() {
         if let savedCarbinerId = UserDefaults.standard.string(forKey: "tempSelectedCarabinerId") {
             if let restoredCarabiner = bundleVM.carabinerViewData.first(where: { $0.carabiner.id == savedCarbinerId }) {
                 newSelectedCarabiner = restoredCarabiner
