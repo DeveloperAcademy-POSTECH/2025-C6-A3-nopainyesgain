@@ -38,24 +38,17 @@ struct NotificationGiftView: View {
                 contentView
                     .opacity(viewModel.showContent ? 1 : 0)
             }
-            
-            CustomNavigationBar {
-                BackToolbarButton {
-                    router.pop()
-                }
-            } center: {
-                Text("키링 선물 완료")
-            } trailing: {
-                Spacer()
-                    .frame(width: 44, height: 44)
-            }
         }
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
+        .toolbar {
+            backToolbarItem
+            titleToolbarItem
+        }
         .swipeBackGesture(enabled: true)
         .onAppear {
+            TabBarManager.hide()
             // 네트워크 체크
             guard NetworkManager.shared.isConnected else {
                 viewModel.hasNetworkError = true
@@ -78,6 +71,28 @@ struct NotificationGiftView: View {
             if let keyring = newValue {
                 viewModel.loadCachedImage(keyring: keyring)
             }
+        }
+    }
+
+    // MARK: - Toolbar Items
+
+    var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                router.pop()
+            } label: {
+                Image(.backIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
+            }
+        }
+    }
+
+    var titleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("키링 선물 완료")
+                .typography(.suit16M)
+                .foregroundColor(.gray600)
         }
     }
 
