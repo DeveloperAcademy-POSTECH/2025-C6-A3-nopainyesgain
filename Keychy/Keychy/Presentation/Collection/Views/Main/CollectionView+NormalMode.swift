@@ -158,22 +158,21 @@ extension CollectionView {
                     .pullToRefresh(topPadding: 0) {
                         try? await Task.sleep(for: .seconds(1))
                         fetchUserData()
-                        
                         retryFailedCaches()
                     }
                     .simultaneousGesture(
-                                DragGesture().onChanged { _ in
-                                    if showSearchBar {
-                                        isSearchFieldFocused = false
+                        DragGesture().onChanged { _ in
+                            if showSearchBar {
+                                isSearchFieldFocused = false
 
-                                        if !isSearching {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                                showSearchBar = false
-                                            }
-                                        }
+                                if !isSearching {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        showSearchBar = false
                                     }
                                 }
-                            )
+                            }
+                        }
+                    )
             }
         }
     }

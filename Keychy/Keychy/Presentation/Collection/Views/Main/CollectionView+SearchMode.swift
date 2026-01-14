@@ -106,7 +106,20 @@ extension CollectionView {
             }
             .padding(.horizontal, Spacing.xs)
         }
-        .padding(.horizontal, Spacing.xs)
+        .scrollIndicators(.hidden)
+        .simultaneousGesture(
+            DragGesture().onChanged { _ in
+                if showSearchBar {
+                    isSearchFieldFocused = false
+
+                    if !isSearching {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showSearchBar = false
+                        }
+                    }
+                }
+            }
+        )
     }
     
     var searchEmptyView: some View {
