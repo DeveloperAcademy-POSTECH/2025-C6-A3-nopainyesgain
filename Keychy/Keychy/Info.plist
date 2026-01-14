@@ -44,5 +44,7 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>키링 영상을 사진 앨범에 저장하기 위해 권한이 필요합니다.</string>
 </dict>
 </plist>
