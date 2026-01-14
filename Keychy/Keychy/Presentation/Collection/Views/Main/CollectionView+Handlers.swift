@@ -159,8 +159,16 @@ extension CollectionView {
                     !keyring.isPublished
         }
         
-        for keyring in uncachedKeyrings {
-            await collectionViewModel.prefetchKeyringImage(keyring: keyring)
+        // 배치 처리
+        let batchSize = 10
+        for i in stride(from: 0, to: uncachedKeyrings.count, by: batchSize) {
+            let batch = Array(uncachedKeyrings[i..<min(i + batchSize, uncachedKeyrings.count)])
+            
+            for keyring in batch {
+                await KeyringCacheManager.shared.requestCapture(keyring: keyring)
+            }
+            
+            try? await Task.sleep(for: .seconds(0.5))
         }
     }
     
