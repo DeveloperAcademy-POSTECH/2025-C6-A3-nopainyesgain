@@ -1,45 +1,51 @@
 //
-//  SelectBackgroundGridItem.swift
-//  KeytschPrototype
+//  CarabinerSelectItemTile.swift
+//  Keychy
 //
-//  Created by 김서현 on 10/26/25.
+//  Created by 김서현 on 10/29/25.
 //
 
 import SwiftUI
 import NukeUI
 
-struct SelectBackgroundGridItem: View {
-    let background: BackgroundViewData
-    let isSelected: Bool
-    
+struct CarabinerSelectableCell: View {
+    var carabiner: CarabinerViewData
+    var isSelected: Bool
+
     var body: some View {
         VStack(spacing: 10) {
-            ZStack(alignment: .top) {
-                // 배경 이미지
-                LazyImage(url: URL(string: background.background.backgroundImage)) { state in
+            ZStack(alignment: .topLeading) {
+                // 카라비너 이미지
+                LazyImage(url: URL(string: carabiner.carabiner.carabinerImage[0])) { state in
                     if let image = state.image {
                         image
                             .resizable()
-                            .scaledToFill()
+                            .scaledToFit()
                             .clipped()
                     } else if state.isLoading {
                         LoadingAlert(type: .short, message: nil)
                             .scaleEffect(0.5)
+                    } else {
+                        Color.clear
+                            .aspectRatio(1, contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
+                .padding(3.55)
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(isSelected ? .mainOpacity80 : .clear, lineWidth: 1.8)
                     
                 )
+                
+                // 유료 재화 표시
                 VStack {
                     HStack {
                         // 유료 아이콘
                         Image(.paidIcon)
                             .padding(.top, 3)
-                            .opacity(background.background.isFree ? 0 : 1)
+                            .opacity(carabiner.carabiner.isFree ? 0 : 1)
                         Spacer()
                     }
                     Spacer()
@@ -57,15 +63,15 @@ struct SelectBackgroundGridItem: View {
                             .padding(.vertical, 4)
                             .background(.black60)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .opacity((background.isOwned && !background.background.isFree) ? 1 : 0)
+                            .opacity((carabiner.isOwned && !carabiner.carabiner.isFree) ? 1 : 0)
                     }
                     Spacer()
                 }
                 .padding(.top, 5)
                 .padding(.trailing, 7)
-            }
-            // 이름 라벨
-            Text(background.background.backgroundName)
+            } //: ZSTACK
+            .clipped()
+            Text(carabiner.carabiner.carabinerName)
                 .typography(isSelected ? .notosans14SB : .notosans14M)
                 .foregroundStyle(isSelected ? .main500 : .black100)
         }

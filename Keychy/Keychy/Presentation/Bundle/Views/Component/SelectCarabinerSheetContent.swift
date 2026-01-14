@@ -12,6 +12,13 @@ struct SelectCarabinerSheet: View {
     let selectedCarabiner: CarabinerViewData?
     let onCarabinerTap: (CarabinerViewData) -> Void
     
+    /// 3열 그리드 컬럼 설정
+    private let gridColumns: [GridItem] = [
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
+    ]
+    
     /// "키치 카라비너"를 맨 앞으로 정렬
     private var sortedCarabiners: [CarabinerViewData] {
         viewModel.carabinerViewData.sorted { cb1, cb2 in
@@ -29,25 +36,20 @@ struct SelectCarabinerSheet: View {
     }
     
     var body: some View {
-        SelectionGridSheet(
-            items: sortedCarabiners,
-            selectedItem: selectedCarabiner,
-            onItemTap: { carabiner in
-                onCarabinerTap(carabiner)
-                
-                // 무료 카라비너인 경우만 바로 추가
-                if !carabiner.isOwned && carabiner.carabiner.isFree {
-                    Task {
-                        await viewModel.addCarabinerToUser(carabinerName: carabiner.carabiner.carabinerName, userManager: UserManager.shared)
+        LazyVGrid(columns: gridColumns, spacing: 10) {
+            ForEach(sortedCarabiners) { cb in
+                CarabinerSelectableCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
+                    .onTapGesture {
+                        onCarabinerTap(cb)
+                        
+                        if !cb.isOwned && cb.carabiner.isFree {
+                            Task {
+                                await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
+                            }
+                        }
                     }
-                }
-            },
-            gridItemView: { carabiner, isSelected in
-                SelectCarabinerGridItem(
-                    isSelected: isSelected,
-                    carabiner: carabiner
-                )
             }
-        )
+        }
+        .padding(.horizontal, 20)
     }
 }
