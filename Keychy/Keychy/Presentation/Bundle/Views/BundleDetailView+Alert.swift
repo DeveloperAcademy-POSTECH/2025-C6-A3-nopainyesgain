@@ -42,7 +42,7 @@ extension BundleDetailView {
             
             // 뭉치 삭제 알럿
             if uiState.showDeleteAlert {
-                if let bundle = viewModel.selectedBundle {
+                if let bundle = bundleVM.selectedBundle {
                     DeletePopup(
                         title: "[\(bundle.name)]\n삭제하시겠어요?",
                         message: "삭제한 뭉치는 복구할 수 없습니다.",
@@ -115,7 +115,7 @@ extension BundleDetailView {
                         return
                     }
                     
-                    viewModel.updateBundleMainStatus(bundle: viewModel.selectedBundle!, isMain: true) { _ in }
+                    bundleVM.updateBundleMainStatus(bundle: bundleVM.selectedBundle!, isMain: true) { _ in }
                     uiState.showChangeMainBundleAlert = false
                     uiState.isMainBundleChange = true
                 } label: {

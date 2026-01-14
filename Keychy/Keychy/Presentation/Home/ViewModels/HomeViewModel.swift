@@ -35,19 +35,8 @@ class HomeViewModel {
     /// 2. 메인으로 설정된 뭉치를 찾아 선택
     /// 3. 선택된 뭉치의 키링들을 Firestore에서 가져와 KeyringData 리스트 생성
     
-    /// Firestore에서 가져온 키링 정보를 담는 구조체
-    struct KeyringInfo {
-        let id: String
-        let bodyImage: String
-        let selectedTemplate: String?
-        let soundId: String
-        let particleId: String
-        let hookOffsetY: CGFloat?
-        let chainLength: Int
-    }
-    
     @MainActor
-    func loadMainBundle(collectionViewModel: CollectionViewModel, onBackgroundLoaded: (() -> Void)?) async {
+    func loadMainBundle(collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel, onBackgroundLoaded: (() -> Void)?) async {
         let uid = UserManager.shared.userUID
         guard !uid.isEmpty else { return }
 
@@ -56,16 +45,16 @@ class HomeViewModel {
 
         // 2. 번들 목록 로드
         await withCheckedContinuation { continuation in
-            collectionViewModel.fetchAllBundles(uid: uid) { _ in
+            bundleViewModel.fetchAllBundles(uid: uid) { _ in
                 continuation.resume()
             }
         }
 
         // 3. 메인 뭉치 설정 (isMain == true인 뭉치, 없으면 첫 번째 뭉치)
-        if let mainBundle = collectionViewModel.sortedBundles.first(where: { $0.isMain }) {
-            collectionViewModel.selectedBundle = mainBundle
-        } else if let firstBundle = collectionViewModel.sortedBundles.first {
-            collectionViewModel.selectedBundle = firstBundle
+        if let mainBundle = bundleViewModel.sortedBundles.first(where: { $0.isMain }) {
+            bundleViewModel.selectedBundle = mainBundle
+        } else if let firstBundle = bundleViewModel.sortedBundles.first {
+            bundleViewModel.selectedBundle = firstBundle
         } else {
             // 번들이 하나도 없는 경우 - 스플래시 즉시 종료
             onBackgroundLoaded?()
@@ -73,13 +62,13 @@ class HomeViewModel {
         }
 
         // 4. 선택된 뭉치의 배경과 카라비너 설정
-        guard var bundle = collectionViewModel.selectedBundle else { return }
+        guard var bundle = bundleViewModel.selectedBundle else { return }
 
         // 배경 resolve 시도
-        var resolvedBackground = collectionViewModel.resolveBackground(from: bundle.selectedBackground)
+        var resolvedBackground = bundleViewModel.resolveBackground(from: bundle.selectedBackground)
 
         // 배경이 없으면 첫 번째 배경으로 업데이트
-        if resolvedBackground == nil, let firstBackground = collectionViewModel.backgrounds.first {
+        if resolvedBackground == nil, let firstBackground = bundleViewModel.backgrounds.first {
             resolvedBackground = firstBackground
 
             // Firebase에 번들의 배경 업데이트
@@ -88,18 +77,18 @@ class HomeViewModel {
 
                 // 로컬 상태도 업데이트
                 bundle.selectedBackground = backgroundId
-                collectionViewModel.selectedBundle?.selectedBackground = backgroundId
-                if let index = collectionViewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
-                    collectionViewModel.bundles[index].selectedBackground = backgroundId
+                bundleViewModel.selectedBundle?.selectedBackground = backgroundId
+                if let index = bundleViewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
+                    bundleViewModel.bundles[index].selectedBackground = backgroundId
                 }
             }
         }
 
-        collectionViewModel.selectedBackground = resolvedBackground
-        collectionViewModel.selectedCarabiner = collectionViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+        bundleViewModel.selectedBackground = resolvedBackground
+        bundleViewModel.selectedCarabiner = bundleViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
 
         // 5. 키링 데이터 생성
-        guard let carabiner = collectionViewModel.selectedCarabiner else { return }
+        guard let carabiner = bundleViewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
         
         // 데이터 로드 완료 표시
@@ -221,10 +210,10 @@ class HomeViewModel {
 
     /// 네트워크 에러 후 재시도
     @MainActor
-    func retryLoadMainBundle(collectionViewModel: CollectionViewModel, onBackgroundLoaded: (() -> Void)?) async {
+    func retryLoadMainBundle(collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel, onBackgroundLoaded: (() -> Void)?) async {
         guard NetworkManager.shared.isConnected else { return }
         hasNetworkError = false
-        await loadMainBundle(collectionViewModel: collectionViewModel, onBackgroundLoaded: onBackgroundLoaded)
+        await loadMainBundle(collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel, onBackgroundLoaded: onBackgroundLoaded)
     }
 
 }

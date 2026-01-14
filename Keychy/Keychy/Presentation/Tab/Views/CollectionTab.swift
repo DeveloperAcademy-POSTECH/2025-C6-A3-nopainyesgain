@@ -10,6 +10,7 @@ import SwiftUI
 struct CollectionTab: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State private var collectionViewModel = CollectionViewModel()
+    @State private var bundleViewModel = BundleViewModel()
     @Binding var shouldRefresh: Bool
     
     var body: some View {
@@ -25,19 +26,19 @@ struct CollectionTab: View {
                     case .keyringEditView(let keyring):
                         KeyringEditView(router: router, viewModel: collectionViewModel, keyring: keyring)
                     case .bundleInventoryView:
-                        BundleInventoryView(router: router, viewModel: collectionViewModel)
+                        BundleInventoryView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleDetailView:
-                        BundleDetailView(router: router, viewModel: collectionViewModel)
+                        BundleDetailView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleCreateView:
-                        BundleCreateView(router: router, viewModel: collectionViewModel)
+                        BundleCreateView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleAddKeyringView:
-                        BundleAddKeyringView(router: router, viewModel: collectionViewModel)
+                        BundleAddKeyringView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleNameInputView:
-                        BundleNameInputView(router: router, viewModel: collectionViewModel)
+                        BundleNameInputView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleNameEditView:
-                        BundleNameEditView(router: router, viewModel: collectionViewModel)
+                        BundleNameEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleEditView:
-                        BundleEditView(router: router, viewModel: collectionViewModel)
+                        BundleEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
                     case .packageCompleteView(let keyring, let postOfficeId):

@@ -40,8 +40,8 @@ extension IntroViewModel {
             keyrings[1] = welcomeKeyringId
 
             // CollectionViewModel 사용해서 번들 생성
-            let collectionVM = CollectionViewModel()
-            collectionVM.createBundle(
+            let bundleVM = BundleViewModel()
+            bundleVM.createBundle(
                 userId: userId,
                 name: "웰컴뭉치",
                 selectedBackground: "PurpleKeychy",
@@ -49,8 +49,8 @@ extension IntroViewModel {
                 keyrings: keyrings,
                 maxKeyrings: maxKeyrings,
                 isMain: true
-            ) { [collectionVM] success, bundleId in
-                _ = collectionVM  // 비동기 작업 끝날 때까지 유지
+            ) { [bundleVM] success, bundleId in
+                _ = bundleVM  // 비동기 작업 끝날 때까지 유지
                 completion(success, bundleId)
             }
         }

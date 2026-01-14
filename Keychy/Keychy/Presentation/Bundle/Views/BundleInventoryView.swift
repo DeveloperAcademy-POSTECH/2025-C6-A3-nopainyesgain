@@ -9,7 +9,8 @@ import SwiftUI
 
 struct BundleInventoryView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
 
     @State var isNavigatingDeeper: Bool = false
     @State private var hasNetworkError: Bool = false
@@ -54,18 +55,18 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             guard NetworkManager.shared.isConnected else {
                 hasNetworkError = true
                 isNavigatingDeeper = false
-                viewModel.hideTabBar()
+                collectionVM.hideTabBar()
                 return
             }
 
             hasNetworkError = false
             isNavigatingDeeper = false
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
 
             // 현재 로그인된 유저의 뭉치 로드
             let uid = UserManager.shared.userUID
             guard !uid.isEmpty else { return }
-            viewModel.fetchAllBundles(uid: uid) { success in
+            bundleVM.fetchAllBundles(uid: uid) { success in
                 if !success {
                     print("뭉치 로드 실패")
                 }
@@ -73,7 +74,7 @@ struct BundleInventoryView<Route: BundleRoute>: View {
         }
         .onDisappear {
             if !isNavigatingDeeper {
-                viewModel.showTabBar()
+                collectionVM.showTabBar()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -110,7 +111,7 @@ extension BundleInventoryView {
         return GeometryReader { geometry in
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 11) {
-                    ForEach(viewModel.sortedBundles, id: \.documentId) { bundle in
+                    ForEach(bundleVM.sortedBundles, id: \.documentId) { bundle in
                         Button {
                             // 네트워크 체크
                             guard NetworkManager.shared.isConnected else {
@@ -119,10 +120,10 @@ extension BundleInventoryView {
                             }
 
                             // 선택한 번들 설정
-                            viewModel.selectedBundle = bundle
+                            bundleVM.selectedBundle = bundle
                             // 번들에 저장된 id(String)를 실제 모델로 해석하여 선택 상태에 반영
-                            viewModel.selectedBackground = viewModel.resolveBackground(from: bundle.selectedBackground)
-                            viewModel.selectedCarabiner = viewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+                            bundleVM.selectedBackground = bundleVM.resolveBackground(from: bundle.selectedBackground)
+                            bundleVM.selectedCarabiner = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner)
 
                             // 상세 화면으로 이동
                             isNavigatingDeeper = true
@@ -144,12 +145,12 @@ extension BundleInventoryView {
 extension BundleInventoryView {
     func handleViewAppear() {
         isNavigatingDeeper = false
-        viewModel.hideTabBar()
+        collectionVM.hideTabBar()
     }
 
     func handleViewDisappear() {
         if !isNavigatingDeeper {
-            viewModel.showTabBar()
+            collectionVM.showTabBar()
         }
     }
 
@@ -166,7 +167,7 @@ extension BundleInventoryView {
             // 현재 로그인된 유저의 뭉치 로드
             let uid = UserManager.shared.userUID
             guard !uid.isEmpty else { return }
-            viewModel.fetchAllBundles(uid: uid) { success in
+            bundleVM.fetchAllBundles(uid: uid) { success in
                 if !success {
                     print("뭉치 로드 실패")
                 }

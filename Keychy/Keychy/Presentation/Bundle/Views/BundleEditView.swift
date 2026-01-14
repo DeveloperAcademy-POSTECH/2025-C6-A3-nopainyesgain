@@ -12,7 +12,8 @@ import FirebaseFirestore
 
 struct BundleEditView<Route: BundleRoute>: View {
     @Bindable var router: NavigationRouter<Route>
-    @State var viewModel: CollectionViewModel
+    @State var collectionVM: CollectionViewModel
+    @State var bundleVM: BundleViewModel
     
     @State private var isSceneReady = false
     
@@ -105,7 +106,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             Task {
                 await refreshEditData()
             }
-            viewModel.hideTabBar()
+            collectionVM.hideTabBar()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
@@ -162,7 +163,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 씬 콘텐츠 (MultiKeyringScene 또는 placeholder 이미지)
     private var sceneContentView: some View {
         Group {
-            if let bundle = viewModel.selectedBundle,
+            if let bundle = bundleVM.selectedBundle,
                let background = newSelectedBackground,
                let carabiner = newSelectedCarabiner {
                 
@@ -330,7 +331,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: screenHeight * (sheetHeightRatio - 0.08)) // 버튼 영역 제외한 대략 높이
-            } else if viewModel.keyring.isEmpty {
+            } else if collectionVM.keyring.isEmpty {
                 VStack {
                     Image(.emptyViewIcon)
                         .resizable()
@@ -348,7 +349,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(viewModel.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
+                        ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
                             keyringCell(keyring: keyring)
                         }
                     }
@@ -469,7 +470,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectBackgroundSheet(
-                            viewModel: viewModel,
+                            viewModel: bundleVM,
                             selectedBG: newSelectedBackground,
                             onBackgroundTap: { bg in
                                 newSelectedBackground = bg
@@ -493,7 +494,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                     BundleItemCustomSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectCarabinerSheet(
-                            viewModel: viewModel,
+                            viewModel: bundleVM,
                             selectedCarabiner: newSelectedCarabiner,
                             onCarabinerTap: { carabiner in
                                 selectCarabiner = carabiner
@@ -616,27 +617,28 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 사용자 키링 데이터 로드
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
-            viewModel.fetchUserKeyrings(uid: uid) { success in
+            collectionVM.fetchUserKeyrings(uid: uid) { success in
+                bundleVM.keyring = collectionVM.keyring
                 continuation.resume()
             }
         }
         
         // 배경/카라비너 데이터 로드
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllBackgrounds { _ in
-                if let selectedBundle = viewModel.selectedBundle {
+            bundleVM.fetchAllBackgrounds { _ in
+                if let selectedBundle = bundleVM.selectedBundle {
                     if self.newSelectedBackground == nil {
-                        self.newSelectedBackground = viewModel.backgroundViewData.first { bgData in
+                        self.newSelectedBackground = bundleVM.backgroundViewData.first { bgData in
                             bgData.background.id == selectedBundle.selectedBackground
                         }
                     }
                 }
                 self.restoreBackgroundSelection()
                 
-                viewModel.fetchAllCarabiners { _ in
-                    if let selectedBundle = viewModel.selectedBundle {
+                bundleVM.fetchAllCarabiners { _ in
+                    if let selectedBundle = bundleVM.selectedBundle {
                         if self.newSelectedCarabiner == nil {
-                            self.newSelectedCarabiner = viewModel.carabinerViewData.first { cbData in
+                            self.newSelectedCarabiner = bundleVM.carabinerViewData.first { cbData in
                                 cbData.carabiner.id == selectedBundle.selectedCarabiner
                             }
                         }
@@ -675,10 +677,10 @@ struct BundleEditView<Route: BundleRoute>: View {
         
         // 배경 데이터 새로고침
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllBackgrounds { _ in
+            bundleVM.fetchAllBackgrounds { _ in
                 // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let bgId = currentBackgroundId {
-                    self.newSelectedBackground = viewModel.backgroundViewData.first { $0.background.id == bgId }
+                    self.newSelectedBackground = bundleVM.backgroundViewData.first { $0.background.id == bgId }
                 }
                 continuation.resume()
             }
@@ -686,10 +688,10 @@ struct BundleEditView<Route: BundleRoute>: View {
         
         // 카라비너 데이터 새로고침
         await withCheckedContinuation { continuation in
-            viewModel.fetchAllCarabiners { _ in
+            bundleVM.fetchAllCarabiners { _ in
                 // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let cbId = currentCarabinerId {
-                    self.newSelectedCarabiner = viewModel.carabinerViewData.first { $0.carabiner.id == cbId }
+                    self.newSelectedCarabiner = bundleVM.carabinerViewData.first { $0.carabiner.id == cbId }
                 }
                 continuation.resume()
             }
@@ -698,7 +700,8 @@ struct BundleEditView<Route: BundleRoute>: View {
         // 키링 데이터도 새로고침
         let uid = UserManager.shared.userUID
         await withCheckedContinuation { continuation in
-            viewModel.fetchUserKeyrings(uid: uid) { success in
+            collectionVM.fetchUserKeyrings(uid: uid) { success in
+                bundleVM.keyring = collectionVM.keyring
                 continuation.resume()
             }
         }
@@ -706,11 +709,11 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     /// Firebase 데이터를 로컬 상태로 한 번만 초기화
     private func initializeSelectedKeyringsFromFirebase() async {
-        guard let bundle = viewModel.selectedBundle else {
+        guard let bundle = bundleVM.selectedBundle else {
             return
         }
         
-        let result = await viewModel.convertBundleToSelectedKeyrings(bundle: bundle)
+        let result = await bundleVM.convertBundleToSelectedKeyrings(bundle: bundle)
         selectedKeyrings = result.0
         keyringOrder = result.1
     }
@@ -722,7 +725,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             return
         }
         
-        let newData = viewModel.createKeyringDataListFromSelected(
+        let newData = bundleVM.createKeyringDataListFromSelected(
             selectedKeyrings: selectedKeyrings,
             keyringOrder: keyringOrder,
             carabiner: carabiner
@@ -742,7 +745,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     /// 최종 뭉치 변경사항을 Firebase에 저장
     private func saveBundleChanges() async {
         
-        guard let bundle = viewModel.selectedBundle,
+        guard let bundle = bundleVM.selectedBundle,
               let documentId = bundle.documentId,
               let background = newSelectedBackground,
               let carabiner = newSelectedCarabiner else {
@@ -760,7 +763,7 @@ struct BundleEditView<Route: BundleRoute>: View {
         let isCarabinerChanged = bundle.selectedCarabiner != carabinerId
         
         // 키링 변경사항 체크
-        let currentKeyrings = viewModel.convertSelectedKeyringsToBundleFormat(
+        let currentKeyrings = bundleVM.convertSelectedKeyringsToBundleFormat(
             selectedKeyrings: selectedKeyrings,
             maxKeyringCount: carabiner.carabiner.maxKeyringCount
         ).map { $0.isEmpty ? "none" : $0 }
@@ -783,17 +786,17 @@ struct BundleEditView<Route: BundleRoute>: View {
             
             // 로컬 상태도 업데이트
             await MainActor.run {
-                if let index = viewModel.bundles.firstIndex(where: { $0.documentId == documentId }) {
-                    viewModel.bundles[index].keyrings = currentKeyrings
-                    viewModel.bundles[index].selectedBackground = backgroundId
-                    viewModel.bundles[index].selectedCarabiner = carabinerId
+                if let index = bundleVM.bundles.firstIndex(where: { $0.documentId == documentId }) {
+                    bundleVM.bundles[index].keyrings = currentKeyrings
+                    bundleVM.bundles[index].selectedBackground = backgroundId
+                    bundleVM.bundles[index].selectedCarabiner = carabinerId
                 }
                 
                 // selectedBundle도 업데이트
-                if viewModel.selectedBundle?.documentId == documentId {
-                    viewModel.selectedBundle?.keyrings = currentKeyrings
-                    viewModel.selectedBundle?.selectedBackground = backgroundId
-                    viewModel.selectedBundle?.selectedCarabiner = carabinerId
+                if bundleVM.selectedBundle?.documentId == documentId {
+                    bundleVM.selectedBundle?.keyrings = currentKeyrings
+                    bundleVM.selectedBundle?.selectedBackground = backgroundId
+                    bundleVM.selectedBundle?.selectedCarabiner = carabinerId
                 }
                 
                 // 캐시 삭제, BundleInventoryView로 접근했을 때 썸네일 업데이트 하도록 함
@@ -830,7 +833,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     private func restoreBackgroundSelection() {
         if let savedBackgroundId = UserDefaults.standard.string(forKey: "tempSelectedBackgroundId") {
-            if let restoredBackground = viewModel.backgroundViewData.first(where: { $0.background.id == savedBackgroundId }) {
+            if let restoredBackground = bundleVM.backgroundViewData.first(where: { $0.background.id == savedBackgroundId }) {
                 newSelectedBackground = restoredBackground
                 // 복원 후 삭제
                 UserDefaults.standard.removeObject(forKey: "tempSelectedBackgroundId")
@@ -840,7 +843,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     private func restoreCarabinerSelection() {
         if let savedCarbinerId = UserDefaults.standard.string(forKey: "tempSelectedCarabinerId") {
-            if let restoredCarabiner = viewModel.carabinerViewData.first(where: { $0.carabiner.id == savedCarbinerId }) {
+            if let restoredCarabiner = bundleVM.carabinerViewData.first(where: { $0.carabiner.id == savedCarbinerId }) {
                 newSelectedCarabiner = restoredCarabiner
                 // 복원 후 삭제
                 UserDefaults.standard.removeObject(forKey: "tempSelectedCarabinerId")
@@ -901,7 +904,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 imageData: pngData
             )
             await MainActor.run {
-                viewModel.bundleCapturedImage = pngData
+                bundleVM.bundleCapturedImage = pngData
                 isCapturing = false
             }
         } else {
@@ -940,16 +943,16 @@ extension BundleEditView {
                     Task {
                         await MainActor.run {
                             // pop 전에 현재 구성 id를 ViewModel에 저장
-                            let bgId = viewModel.makeBackgroundId(newSelectedBackground?.background ?? viewModel.resolveBackground(from: viewModel.selectedBundle?.selectedBackground ?? ""))
-                            let cbId = viewModel.makeCarabinerId(newSelectedCarabiner?.carabiner ?? viewModel.resolveCarabiner(from: viewModel.selectedBundle?.selectedCarabiner ?? ""))
+                            let bgId = bundleVM.makeBackgroundId(newSelectedBackground?.background ?? bundleVM.resolveBackground(from: bundleVM.selectedBundle?.selectedBackground ?? ""))
+                            let cbId = bundleVM.makeCarabinerId(newSelectedCarabiner?.carabiner ?? bundleVM.resolveCarabiner(from: bundleVM.selectedBundle?.selectedCarabiner ?? ""))
                             
                             // 편집 중 키링 데이터 기준으로 keyringsId 생성
                             let currentKeyringDataList = keyringDataList
-                            let krId = viewModel.makeKeyringsId(currentKeyringDataList)
+                            let krId = bundleVM.makeKeyringsId(currentKeyringDataList)
                             
-                            viewModel.returnBackgroundId = bgId
-                            viewModel.returnCarabinerId = cbId
-                            viewModel.returnKeyringsId = krId
+                            bundleVM.returnBackgroundId = bgId
+                            bundleVM.returnCarabinerId = cbId
+                            bundleVM.returnKeyringsId = krId
                             
                             // 화면 전환 시작 플래그
                             isNavigatingAway = true
@@ -1213,7 +1216,7 @@ extension BundleEditView {
 extension BundleEditView {
     /// 키링 데이터를 로드하여 MultiKeyringScene에서 사용할 수 있도록 준비
     private func loadKeyringData() async {
-        guard let bundle = viewModel.selectedBundle,
+        guard let bundle = bundleVM.selectedBundle,
               let carabiner = newSelectedCarabiner?.carabiner else {
             await MainActor.run {
                 keyringDataList = []
@@ -1222,7 +1225,7 @@ extension BundleEditView {
         }
         
         // 기존 방식으로도 로드 (Firebase에서 직접)
-        let firebaseData = await viewModel.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+        let firebaseData = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         
         await MainActor.run {
             // selectedKeyrings 방식으로도 업데이트
