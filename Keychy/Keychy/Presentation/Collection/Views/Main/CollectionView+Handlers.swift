@@ -204,16 +204,6 @@ extension CollectionView {
         ) { _ in
             keyboardHeight = 0
         }
-        
-        // 포그라운드 복귀
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            // 포그라운드로 복귀하면 실패한 캐시들 재시도
-            self.retryFailedCaches()
-        }
     }
     
     // 노티피케이션 제거
@@ -226,12 +216,6 @@ extension CollectionView {
         NotificationCenter.default.removeObserver(
             self,
             name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-        
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
     }
