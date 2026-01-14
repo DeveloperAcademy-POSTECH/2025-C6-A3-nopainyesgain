@@ -317,6 +317,7 @@ struct MyItemsView: View {
             // 네비바 (trailing 없이)
             CustomNavigationBar {
                 BackToolbarButton {
+                    TabBarManager.show()
                     router.pop()
                 }
             } center: {

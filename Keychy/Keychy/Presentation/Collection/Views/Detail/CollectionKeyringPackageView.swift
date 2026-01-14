@@ -135,11 +135,8 @@ struct CollectionKeyringPackageView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            viewModel.hideTabBar()
+            TabBarManager.hide()
             loadPackagedKeyringInfo()
-        }
-        .onDisappear {
-            viewModel.showTabBar()
         }
     }
     
@@ -168,6 +165,7 @@ extension CollectionKeyringPackageView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
+                TabBarManager.show()
                 router.pop()
             }
         } center: {

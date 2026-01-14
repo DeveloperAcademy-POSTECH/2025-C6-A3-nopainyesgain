@@ -58,13 +58,12 @@ struct BundleNameInputView<Route: BundleRoute>: View {
         .padding(.bottom, -keyboardHeight)
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .scrollDismissesKeyboard(.never)
         .onAppear {
             // 키보드 자동 활성화
             isTextFieldFocused = true
 
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
             
             if getBottomPadding(34) == 0 {
                 morePadding = 40

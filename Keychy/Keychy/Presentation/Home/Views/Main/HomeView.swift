@@ -25,7 +25,8 @@ struct HomeView: View {
     @Namespace private var unionNamespace
 
     @State private var viewModel = HomeViewModel()
-    
+    @State private var isTabBarVisible = true
+
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
@@ -77,6 +78,7 @@ struct HomeView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .toolbar(isTabBarVisible ? .visible : .hidden, for: .tabBar)
         .onAppear {
             // 알림 리스너 시작
             userManager.startNotificationListener()

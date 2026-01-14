@@ -120,7 +120,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             if frame != .zero {
@@ -130,7 +129,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
         .onAppear {
             isNavigatingDeeper = false
             uiState.resetOverlays()
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
             getlessPadding = (getBottomPadding(0) == 0) ? 25 : 0
         }
         .onDisappear {

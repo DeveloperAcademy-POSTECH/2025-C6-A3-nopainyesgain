@@ -105,7 +105,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
-        .toolbar(.hidden, for: .tabBar)
         .task {
             await initializeData()
         }
@@ -114,7 +113,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
             Task {
                 await refreshData()
             }
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true

@@ -58,7 +58,6 @@ struct CoinChargeView<Route: Hashable>: View {
                 .navigationBarBackButtonHidden()
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("충전하기")
-                .toolbar(.hidden, for: .tabBar)
                 .toolbar {
                     backToolbarItem
                 }
@@ -68,6 +67,9 @@ struct CoinChargeView<Route: Hashable>: View {
                 }
                 .allowsHitTesting(!showPurchaseSuccessAlert && !showPurchaseFailAlert)
                 .swipeBackGesture(enabled: true)
+                .onAppear {
+                    TabBarManager.hide()
+                }
             }
 
             // Alert 딤 처리
@@ -404,6 +406,7 @@ extension CoinChargeView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                TabBarManager.show()
                 router.pop()
             } label: {
                 Image(.backIcon)

@@ -16,6 +16,7 @@ struct WorkshopView: View {
     @Environment(UserManager.self) var userManager
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
+    @State private var isTabBarVisible = true
     
     let categories = ["템플릿", "카라비너", "이펙트", "배경"]
     
@@ -66,6 +67,7 @@ struct WorkshopView: View {
             }
         }
         .ignoresSafeArea()
+        .toolbar(isTabBarVisible ? .visible : .hidden, for: .tabBar)
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
         }

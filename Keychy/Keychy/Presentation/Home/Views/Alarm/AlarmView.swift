@@ -29,13 +29,13 @@ struct AlarmView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             backToolbarItem
             customTitleToolbarItem
         }
         .swipeBackGesture(enabled: true)
         .onAppear {
+            TabBarManager.hide()
             // 네트워크 체크
             guard NetworkManager.shared.isConnected else {
                 viewModel.hasNetworkError = true
@@ -150,6 +150,7 @@ extension AlarmView {
     private var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                TabBarManager.show()
                 router.pop()
             } label: {
                 Image(.backIcon)

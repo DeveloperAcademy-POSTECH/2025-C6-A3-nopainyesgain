@@ -12,45 +12,66 @@ import FirebaseFirestore
 struct ChangeNameView: View {
     @Environment(UserManager.self) private var userManager
     @Bindable var router: NavigationRouter<HomeRoute>
+    @Bindable var toastManager = ToastManager.shared
 
     @State private var viewModel = ChangeNameViewModel()
 
     var body: some View {
         ZStack {
-            VStack(alignment: .leading) {
-                nicknameInputSection
+            Color.clear.ignoresSafeArea()
 
-                Spacer()
-
-                submitButton
-            }
-            .padding(.horizontal, 20)
-            .toolbar(.hidden, for: .tabBar)
-            .navigationBarBackButtonHidden()
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("닉네임 변경")
-            .toolbar {
-                backToolbarItem
-            }
-            .tint(.black)
-            .dismissKeyboardOnTap()
-            .ignoresSafeArea(.keyboard)
-            .blur(radius: (viewModel.showSuccessAlert || viewModel.isUpdating) ? 10 : 0)
-            .animation(.easeInOut(duration: 0.3), value: (viewModel.showSuccessAlert || viewModel.isUpdating))
-            .onAppear {
-                // 현재 닉네임으로 초기화
-                viewModel.initialize(currentNickname: userManager.currentUser?.nickname ?? "")
-            }
-
+            mainContent
             alerts
+            toastOverlay
         }
+        .ignoresSafeArea(.container, edges: .bottom)
+        .toolbar {
+            backToolbarItem
+        }
+        .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("닉네임 변경")
+        .tint(.black)
+        .dismissKeyboardOnTap()
         .swipeBackGesture(enabled: true)
-        .withToast(position: .button)
+        .onAppear {
+            TabBarManager.hide()
+            viewModel.initialize(currentNickname: userManager.currentUser?.nickname ?? "")
+        }
     }
 }
 
 // MARK: - UI Components
 extension ChangeNameView {
+    /// 메인 컨텐츠
+    private var mainContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            nicknameInputSection
+                .padding(.top, 22)
+
+            Spacer()
+
+            submitButton
+        }
+        .padding(.horizontal, 20)
+        .blur(radius: (viewModel.showSuccessAlert || viewModel.isUpdating) ? 10 : 0)
+        .animation(.easeInOut(duration: 0.3), value: (viewModel.showSuccessAlert || viewModel.isUpdating))
+    }
+
+    /// 토스트 오버레이
+    @ViewBuilder
+    private var toastOverlay: some View {
+        if toastManager.showToast {
+            VStack {
+                Spacer()
+                NoInternetToast()
+                    .padding(.bottom, 104)
+                    .opacity(toastManager.opacity)
+            }
+            .transition(.opacity.combined(with: .move(edge: .bottom)))
+        }
+    }
+
     /// 닉네임 입력 섹션
     private var nicknameInputSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -118,7 +139,7 @@ extension ChangeNameView {
         .foregroundStyle(viewModel.isNicknameValid ? .white100 : .black40)
         .disabled(!viewModel.isNicknameValid)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isNicknameValid)
-        .adaptiveBottomPadding()
+        .padding(.bottom, 34)
     }
 
     /// Alert들
@@ -144,6 +165,7 @@ extension ChangeNameView {
     var backToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                TabBarManager.show()
                 router.pop()
             } label: {
                 Image(.backIcon)

@@ -25,11 +25,12 @@ struct TermsView: View {
         .navigationTitle(isEnglish ? "Privacy Policy & Terms" : "개인정보 처리 방침 및 이용약관")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        
         .toolbar {
             backToolbarItem
             engToggleToolbarItem
+        }
+        .onAppear {
+            TabBarManager.hide()
         }
     }
 

@@ -84,13 +84,12 @@ struct PackageCompleteView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            viewModel.hideTabBar()
+            TabBarManager.hide()
             fetchAuthorName()
             loadShareLink()
             loadCachedImage()
         }
         .onDisappear() {
-            viewModel.showTabBar()
             cleanupImages()
         }
     }
@@ -263,6 +262,7 @@ extension PackageCompleteView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             Button {
+                TabBarManager.show()
                 router.reset()
             } label: {
                 Image(.dismiss)

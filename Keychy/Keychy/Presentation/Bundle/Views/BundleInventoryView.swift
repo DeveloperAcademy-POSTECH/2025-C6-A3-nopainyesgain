@@ -48,20 +48,20 @@ struct BundleInventoryView<Route: BundleRoute>: View {
             }
         }
         .ignoresSafeArea()
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .onAppear {
+            TabBarManager.hide()
             // 네트워크 체크
             guard NetworkManager.shared.isConnected else {
                 hasNetworkError = true
                 isNavigatingDeeper = false
-                collectionVM.hideTabBar()
+                TabBarManager.hide()
                 return
             }
 
             hasNetworkError = false
             isNavigatingDeeper = false
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
 
             // 현재 로그인된 유저의 뭉치 로드
             let uid = UserManager.shared.userUID
@@ -74,7 +74,7 @@ struct BundleInventoryView<Route: BundleRoute>: View {
         }
         .onDisappear {
             if !isNavigatingDeeper {
-                collectionVM.showTabBar()
+                TabBarManager.show()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -87,6 +87,7 @@ extension BundleInventoryView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                TabBarManager.show()
                 router.pop()
             }
         } center : {
@@ -143,6 +144,18 @@ extension BundleInventoryView {
 
 // MARK: - 네트워크 재시도
 extension BundleInventoryView {
+    func handleViewAppear() {
+        isNavigatingDeeper = false
+        TabBarManager.hide()
+    }
+
+    func handleViewDisappear() {
+        if !isNavigatingDeeper {
+            TabBarManager.show()
+        }
+    }
+
+    // MARK: - 네트워크 재시도
     func retryFetchData() async {
         await MainActor.run {
             // 네트워크 재체크

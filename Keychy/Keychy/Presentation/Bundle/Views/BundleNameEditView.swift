@@ -40,7 +40,6 @@ struct BundleNameEditView<Route: BundleRoute>: View {
         .padding(.bottom, -keyboardHeight)
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .scrollDismissesKeyboard(.never)
         .onAppear {
@@ -54,7 +53,7 @@ struct BundleNameEditView<Route: BundleRoute>: View {
             if getBottomPadding(34) == 0 {
                 morePadding = 40
             }
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {

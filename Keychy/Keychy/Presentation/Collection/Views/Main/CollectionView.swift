@@ -108,6 +108,7 @@ struct CollectionView: View {
             }
         }
         .onAppear {
+            TabBarManager.show()
             fetchUserData()
             setupNotifications()
 

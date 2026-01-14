@@ -83,7 +83,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             purchaseSheetView
         }
         .navigationBarBackButtonHidden()
-        .toolbar(.hidden, for: .tabBar)
         .withToast(position: .default)
         .task {
             // 화면 전환 중이면 초기화 건너뛰기
@@ -97,7 +96,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             Task {
                 await bundleVM.refreshEditData()
             }
-            collectionVM.hideTabBar()
+            TabBarManager.hide()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showBackgroundSheet && !showCarabinerSheet {
                 showBackgroundSheet = true
