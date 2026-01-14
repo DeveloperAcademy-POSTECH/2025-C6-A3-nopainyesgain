@@ -184,8 +184,7 @@ class KeyringCacheManager {
                     waitTime += checkInterval
                 }
                 
-                if !loadingCompleted {
-                    print("[Cache] 타임아웃: \(keyringID)")
+                if !loadingCompleted || scene.isFallback {
                     await self.recordFailure(keyringID: keyringID)
                     await self.cleanupScene(scene: scene, view: view)
                     continuation.resume()

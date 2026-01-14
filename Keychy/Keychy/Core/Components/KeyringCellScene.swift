@@ -28,6 +28,9 @@ class KeyringCellScene: SKScene {
     
     var customBackgroundColor: UIColor = .gray50
     
+    // Fallback 상태 플래그
+    var isFallback: Bool = false
+    
     // MARK: - Init / Deinit
     // zoomScale : 확대 비율
     init(
