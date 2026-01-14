@@ -142,7 +142,7 @@ extension BundleInventoryView {
     }
 }
 
-//MARK: - 뷰 lifeCycle 관리
+// MARK: - 네트워크 재시도
 extension BundleInventoryView {
     func handleViewAppear() {
         isNavigatingDeeper = false

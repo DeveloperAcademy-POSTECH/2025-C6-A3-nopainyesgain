@@ -68,6 +68,13 @@ class BundleViewModel {
     
     var isLoading = false
     
+    // MARK: - 뭉치 편집뷰 용 데이터
+    var newSelectedBackground: BackgroundViewData?
+    var newSelectedCarabiner: CarabinerViewData?
+    var selectedKeyringPosition: Int = 0
+    var keyringOrder: [Int] = []
+    var selectedKeyrings: [Int: Keyring] = [:]
+    
     // MARK: - 화면 표시용 배열
     var _backgroundViewData: [BackgroundViewData] = []
     var _carabinerViewData: [CarabinerViewData] = []
