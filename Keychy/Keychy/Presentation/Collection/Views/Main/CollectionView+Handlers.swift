@@ -26,6 +26,9 @@ extension CollectionView {
         collectionViewModel.fetchUserKeyrings(uid: uid) { success in
             if success {
                 print("키링 로드 완료: \(collectionViewModel.keyring.count)개")
+                
+                // 키링 로드 완료 후 실패한 캐시 재시도
+                self.retryFailedCaches()
             } else {
                 print("키링 로드 실패")
             }
@@ -159,6 +162,8 @@ extension CollectionView {
                     !keyring.isPublished
         }
         
+        guard !uncachedKeyrings.isEmpty else { return }
+        
         // 배치 처리
         let batchSize = 10
         for i in stride(from: 0, to: uncachedKeyrings.count, by: batchSize) {
@@ -229,8 +234,11 @@ extension CollectionView {
     }
     
     // MARK: - 캐시 이미지
-    private func retryFailedCaches() {
+    func retryFailedCaches() {
         Task(priority: .utility) {
+            // 짧은 지연 후 실행 (UI 렌더링 우선)
+            try? await Task.sleep(for: .seconds(0.3))
+            
             await KeyringCacheManager.shared.retryFailedCaches(
                 keyrings: collectionViewModel.keyring
             )

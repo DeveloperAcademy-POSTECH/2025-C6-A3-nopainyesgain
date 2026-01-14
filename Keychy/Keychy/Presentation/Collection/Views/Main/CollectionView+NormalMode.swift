@@ -158,6 +158,8 @@ extension CollectionView {
                     .pullToRefresh(topPadding: 0) {
                         try? await Task.sleep(for: .seconds(1))
                         fetchUserData()
+                        
+                        retryFailedCaches()
                     }
                     .simultaneousGesture(
                                 DragGesture().onChanged { _ in
