@@ -189,8 +189,11 @@ extension KeyringCellScene {
             }
             return
         }
-        // Fallback시 기본 키링 생성
         
+        // Fallback 플래그 설정
+        self.isFallback = true
+        
+        // Fallback시 기본 키링 생성
         let centerX: CGFloat = 0
         let topY = originalSize.height * 0.67 - (originalSize.height / 2)
         
@@ -211,7 +214,7 @@ extension KeyringCellScene {
         body.position = CGPoint(x: centerX, y: topY - 200)
         containerNode.addChild(body)
         
-        self.onLoadingComplete?()
+        // onLoadingComplete 호출 x
     }
     
     // MARK: - Ring 노드 생성

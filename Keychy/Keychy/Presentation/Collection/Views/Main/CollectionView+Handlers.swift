@@ -26,6 +26,9 @@ extension CollectionView {
         collectionViewModel.fetchUserKeyrings(uid: uid) { success in
             if success {
                 print("키링 로드 완료: \(collectionViewModel.keyring.count)개")
+                
+                // 키링 로드 완료 후 실패한 캐시 재시도
+                self.retryFailedCaches()
             } else {
                 print("키링 로드 실패")
             }
@@ -159,8 +162,18 @@ extension CollectionView {
                     !keyring.isPublished
         }
         
-        for keyring in uncachedKeyrings {
-            await collectionViewModel.prefetchKeyringImage(keyring: keyring)
+        guard !uncachedKeyrings.isEmpty else { return }
+        
+        // 배치 처리
+        let batchSize = 10
+        for i in stride(from: 0, to: uncachedKeyrings.count, by: batchSize) {
+            let batch = Array(uncachedKeyrings[i..<min(i + batchSize, uncachedKeyrings.count)])
+            
+            for keyring in batch {
+                await KeyringCacheManager.shared.requestCapture(keyring: keyring)
+            }
+            
+            try? await Task.sleep(for: .seconds(0.5))
         }
     }
     
@@ -204,16 +217,6 @@ extension CollectionView {
         ) { _ in
             keyboardHeight = 0
         }
-        
-        // 포그라운드 복귀
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            // 포그라운드로 복귀하면 실패한 캐시들 재시도
-            self.retryFailedCaches()
-        }
     }
     
     // 노티피케이션 제거
@@ -228,17 +231,14 @@ extension CollectionView {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
-        
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
     }
     
     // MARK: - 캐시 이미지
-    private func retryFailedCaches() {
+    func retryFailedCaches() {
         Task(priority: .utility) {
+            // 짧은 지연 후 실행 (UI 렌더링 우선)
+            try? await Task.sleep(for: .seconds(0.3))
+            
             await KeyringCacheManager.shared.retryFailedCaches(
                 keyrings: collectionViewModel.keyring
             )

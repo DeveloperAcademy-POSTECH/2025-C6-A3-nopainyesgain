@@ -116,6 +116,10 @@ struct CollectionView: View {
             Task(priority: .utility) {
                 try? await Task.sleep(for: .seconds(1))
                 await precacheAllKeyrings()
+                
+                // 실패한 캐시 재시도
+                try? await Task.sleep(for: .seconds(0.5))
+                retryFailedCaches()
             }
         }
         .onDisappear {
@@ -125,6 +129,8 @@ struct CollectionView: View {
             if newValue {
                 fetchUserData()
                 shouldRefresh = false
+                
+                retryFailedCaches()
             }
         }
         // 검색바 닫을 때 정리
