@@ -155,6 +155,7 @@ extension CollectionView {
                 emptyView
             } else {
                 collectionGridView(keyrings: filteredKeyrings)
+                    .padding(.horizontal, Spacing.xs)
                     .pullToRefresh(topPadding: 0) {
                         try? await Task.sleep(for: .seconds(1))
                         fetchUserData()

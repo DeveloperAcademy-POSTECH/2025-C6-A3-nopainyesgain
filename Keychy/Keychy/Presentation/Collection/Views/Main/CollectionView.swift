@@ -176,7 +176,7 @@ struct CollectionView: View {
                 collectionCell(keyring: keyring)
             }
         }
-        .padding(.horizontal, Spacing.padding)
+        .padding(.horizontal, Spacing.gap)
         .padding(.vertical, 4)
         .padding(.bottom, 90)
     }
