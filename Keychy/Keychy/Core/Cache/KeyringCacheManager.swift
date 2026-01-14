@@ -327,9 +327,61 @@ class KeyringCacheManager {
 // MARK: - 이미지 유효성 검증
 enum ImageValidator {
     static func isBlankImage(_ image: UIImage) -> Bool {
-        // TODO: 유효성 검증 로직 구상 중
+        guard let cgImage = image.cgImage else {
+            return true
+        }
         
-        /// 모두 유효 처리 (임시)
-        return false
+        // 1. 이미지 크기 확인 (예상 크기와 비교)
+        let width = cgImage.width
+        let height = cgImage.height
+        
+        guard width >= 150, height >= 200 else {
+            print("[Validator] 크기 부족: \(width)x\(height)")
+            return true
+        }
+        
+        // 2. 픽셀 데이터 검사 (중요)
+        guard let dataProvider = cgImage.dataProvider,
+              let pixelData = dataProvider.data,
+              let bytes = CFDataGetBytePtr(pixelData) else {
+            print("[Validator] 픽셀 데이터 없음")
+            return true
+        }
+        
+        let length = CFDataGetLength(pixelData)
+        let totalPixels = width * height
+        
+        // 3. 샘플링으로 유효 픽셀 비율 계산
+        let sampleCount = min(200, totalPixels / 100)  // 전체의 1% 샘플링
+        var nonTransparentCount = 0
+        
+        for i in 0..<sampleCount {
+            let pixelIndex = (i * totalPixels / sampleCount)
+            let offset = pixelIndex * 4  // RGBA = 4 bytes
+            
+            guard offset + 3 < length else { continue }
+            
+            let r = bytes[offset]
+            let g = bytes[offset + 1]
+            let b = bytes[offset + 2]
+            let a = bytes[offset + 3]
+            
+            // 알파가 있고, 색상이 있으면 유효 픽셀
+            if a > 10 && (r > 10 || g > 10 || b > 10) {
+                nonTransparentCount += 1
+            }
+        }
+        
+        // 4. 유효 픽셀 비율 계산
+        let validRatio = Double(nonTransparentCount) / Double(sampleCount)
+        
+        // 5% 미만이면 빈 이미지로 판정
+        let isBlank = validRatio < 0.05
+        
+        if isBlank {
+            print("[Validator] 빈 이미지: 유효 픽셀 \(String(format: "%.1f%%", validRatio * 100))")
+        }
+        
+        return isBlank
     }
 }
