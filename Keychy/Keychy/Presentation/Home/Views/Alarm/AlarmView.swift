@@ -72,7 +72,7 @@ extension AlarmView {
 
     /// 알림 리스트 뷰
     private var notificationListView: some View {
-        LazyVStack(spacing: 0) {
+        List {
             // 푸시 알림 off 배너
             if viewModel.isNotiOff && viewModel.isNotiOffShown {
                 pushNotiOffView
@@ -87,13 +87,20 @@ extension AlarmView {
                         handleNotificationTap(notification)
                     }
                 )
+                .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        viewModel.deleteNotification(notification)
+                    } label: {
+                        Label("삭제", systemImage: "trash")
+                    }
+                }
             }
         }
-        .ignoresSafeArea()
-        .pullToRefresh {
-            try? await Task.sleep(for: .seconds(1))
-            viewModel.fetchNotifications()
-        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
     }
     
     /// 알림이 없을 때 나오는 뷰
