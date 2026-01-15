@@ -9,11 +9,13 @@ import SwiftUI
 
 extension BundleDetailView {
     
-    private var shouldShowAlertOverlay: Bool {
+    var shouldShowAlertOverlay: Bool {
         !isSceneReady
         || uiState.showChangeMainBundleAlert
         || uiState.isMainBundleChange
         || uiState.isCapturing
+        || uiState.isGeneratingVideo
+        || uiState.showVideoSaved
         || uiState.showDeleteAlert
         || uiState.showDeleteCompleteToast
         || uiState.showAlreadyMainBundleToast
@@ -39,7 +41,26 @@ extension BundleDetailView {
             
             KeychyAlert(type: .imageSave, message: "이미지가 저장되었어요!", isPresented: $uiState.isCapturing)
                 .zIndex(200)
-            
+
+            // 영상 저장 완료 alert
+            KeychyAlert(type: .imageSave, message: "영상이 저장되었어요!", isPresented: $uiState.showVideoSaved)
+                .zIndex(200)
+
+            // 영상 생성 중 로딩
+            if uiState.isGeneratingVideo {
+                VStack(spacing: 20) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .tint(.white)
+
+                    Text("영상 생성 중...")
+                        .typography(.suit17SB)
+                        .foregroundStyle(.white)
+                }
+                .position(x: screenWidth/2, y: screenHeight/2)
+                .zIndex(200)
+            }
+
             // 뭉치 삭제 알럿
             if uiState.showDeleteAlert {
                 if let bundle = bundleVM.selectedBundle {
