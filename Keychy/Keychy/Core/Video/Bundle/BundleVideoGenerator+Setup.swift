@@ -14,7 +14,6 @@ import AVFoundation
 extension BundleVideoGenerator {
 
     /// MultiKeyringScene 생성
-    /// Scene 크기를 bundleScale로 나눠서 작게 만들고, Viewport에 렌더링하면 자동 확대
     func createScene(
         keyringDataList: [MultiKeyringScene.KeyringData],
         backgroundImageURL: String?,
@@ -26,15 +25,11 @@ extension BundleVideoGenerator {
         carabinerType: CarabinerType?,
         setupComplete: @escaping () -> Void
     ) -> MultiKeyringScene {
-        // Scene 크기를 스케일로 나눔
         let sceneWidth = CGFloat(width) / bundleScale
         let sceneHeight = CGFloat(height) / bundleScale
 
-        // 위치 offset 추가 (중앙 정렬)
-        let offsetX: CGFloat = 20   // 우측으로 조금 이동
-        let offsetY: CGFloat = -30  // 아래로 이동 (음수 = 아래)
-
-        // 키링 위치에 offset 적용
+        let offsetX: CGFloat = 15
+        let offsetY: CGFloat = -30
         let adjustedKeyringDataList = keyringDataList.map { data in
             MultiKeyringScene.KeyringData(
                 index: data.index,
@@ -68,7 +63,6 @@ extension BundleVideoGenerator {
         scene.scaleMode = .aspectFill
         scene.size = CGSize(width: sceneWidth, height: sceneHeight)
 
-        // 배경 이미지 추가
         if let bgImage = backgroundImage {
             let backgroundNode = SKSpriteNode(texture: SKTexture(image: bgImage))
             backgroundNode.size = CGSize(width: sceneWidth, height: sceneHeight)
@@ -77,7 +71,6 @@ extension BundleVideoGenerator {
             scene.addChild(backgroundNode)
         }
 
-        // Setup 완료 콜백 설정
         scene.onSetupComplete = {
             setupComplete()
         }
@@ -86,21 +79,21 @@ extension BundleVideoGenerator {
     }
 
     /// AVAssetWriter 설정
-    /// H.264 코덱으로 1080x1920 비디오 인코딩
     func setupVideoWriter() throws {
         let outputURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("bundle_video_\(UUID()).mp4")
 
         let writer = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
 
-        // 비디오 설정
         let videoSettings: [String: Any] = [
             AVVideoCodecKey: AVVideoCodecType.h264,
             AVVideoWidthKey: width,
             AVVideoHeightKey: height,
             AVVideoCompressionPropertiesKey: [
                 AVVideoAverageBitRateKey: 6_000_000,
-                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel
+                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                AVVideoExpectedSourceFrameRateKey: fps,
+                AVVideoMaxKeyFrameIntervalKey: fps
             ]
         ]
 
@@ -110,7 +103,6 @@ extension BundleVideoGenerator {
         )
         input.expectsMediaDataInRealTime = false
 
-        // PixelBuffer 설정
         let pixelBufferAttributes: [String: Any] = [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
             kCVPixelBufferWidthKey as String: width,
@@ -132,7 +124,7 @@ extension BundleVideoGenerator {
         self.pixelBufferAdaptor = adaptor
     }
 
-    /// 비디오 작성 완료 및 URL 반환
+    /// 비디오 완성
     func finishWriting() async throws -> URL {
         writerInput?.markAsFinished()
 
