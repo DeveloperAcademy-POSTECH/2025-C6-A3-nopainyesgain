@@ -108,6 +108,8 @@
 		4C004FAB2F177C7200D9063E /* KeyringVideoGenerator+Metal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FAA2F177C7200D9063E /* KeyringVideoGenerator+Metal.swift */; };
 		4C004FAD2F177F2600D9063E /* BundleDetailView+VideoGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FAC2F177F2600D9063E /* BundleDetailView+VideoGen.swift */; };
 		4C004FAF2F17C41E00D9063E /* BundleVideoGenerator+Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FAE2F17C41E00D9063E /* BundleVideoGenerator+Particle.swift */; };
+		4C004FB12F187CFC00D9063E /* CollectionKeyringDetailView+VideoGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FB02F187CFC00D9063E /* CollectionKeyringDetailView+VideoGen.swift */; };
+		4C004FB32F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FB22F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift */; };
 		4C07024C2ECF10760026D6DC /* EffectSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */; };
 		4C07027F2ED1DFA20026D6DC /* PixelVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0702782ED1DFA20026D6DC /* PixelVM+Effect.swift */; };
 		4C0702802ED1DFA20026D6DC /* PixelVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0702792ED1DFA20026D6DC /* PixelVM+ImageConversion.swift */; };
@@ -531,6 +533,8 @@
 		4C004FAA2F177C7200D9063E /* KeyringVideoGenerator+Metal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringVideoGenerator+Metal.swift"; sourceTree = "<group>"; };
 		4C004FAC2F177F2600D9063E /* BundleDetailView+VideoGen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+VideoGen.swift"; sourceTree = "<group>"; };
 		4C004FAE2F17C41E00D9063E /* BundleVideoGenerator+Particle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleVideoGenerator+Particle.swift"; sourceTree = "<group>"; };
+		4C004FB02F187CFC00D9063E /* CollectionKeyringDetailView+VideoGen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionKeyringDetailView+VideoGen.swift"; sourceTree = "<group>"; };
+		4C004FB22F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringVideoGenerator+Keyring.swift"; sourceTree = "<group>"; };
 		4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSyncManager.swift; sourceTree = "<group>"; };
 		4C0702772ED1DFA20026D6DC /* PixelVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelVM.swift; sourceTree = "<group>"; };
 		4C0702782ED1DFA20026D6DC /* PixelVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PixelVM+Effect.swift"; sourceTree = "<group>"; };
@@ -917,6 +921,7 @@
 				38C3C2912EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift */,
 				38C3C2932EC1F81C003C5DE1 /* CollectionKeyringDetailView+Helpers.swift */,
 				4CAF11AA2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift */,
+				4C004FB02F187CFC00D9063E /* CollectionKeyringDetailView+VideoGen.swift */,
 				38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */,
 				38C3C2952EC20B1E003C5DE1 /* PackagedKeyringView.swift */,
 				38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */,
@@ -1049,6 +1054,7 @@
 				4C004FAA2F177C7200D9063E /* KeyringVideoGenerator+Metal.swift */,
 				4C004F9C2F177C4600D9063E /* KeyringVideoGenerator+Particle.swift */,
 				4C004F9F2F177C4600D9063E /* KeyringVideoGenerator+Sound.swift */,
+				4C004FB22F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift */,
 			);
 			path = Keyring;
 			sourceTree = "<group>";
@@ -2441,6 +2447,7 @@
 				AA69DD2C2F14C80900C0A41C /* BundleViewModel+CaptureScene.swift in Sources */,
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
 				4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */,
+				4C004FB12F187CFC00D9063E /* CollectionKeyringDetailView+VideoGen.swift in Sources */,
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
 				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
 				AA69DD2E2F14C87900C0A41C /* BundleViewModel+Image.swift in Sources */,
@@ -2500,6 +2507,7 @@
 				38C3C2802EC0C94D003C5DE1 /* InvenLackPopup.swift in Sources */,
 				38C147BF2EB1502300A8E511 /* CollectionKeyringDetailView.swift in Sources */,
 				38173D082EB8AD3900E36F7E /* CollectionViewModel+Tags.swift in Sources */,
+				4C004FB32F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift in Sources */,
 				4CEC62732EAE08DF0099ECEE /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4CEC62742EAE08DF0099ECEE /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
 				38F832CF2EC914C900D3A248 /* InvenExpandPopup.swift in Sources */,

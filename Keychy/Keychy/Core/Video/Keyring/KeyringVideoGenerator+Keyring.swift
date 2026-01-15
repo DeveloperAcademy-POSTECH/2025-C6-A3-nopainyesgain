@@ -2,7 +2,7 @@
 //  KeyringVideoGenerator+Keyring.swift
 //  Keychy
 //
-//  Created by Claude Code on 1/15/26.
+//  Created by 길지훈 on 1/15/26.
 //
 
 import Foundation

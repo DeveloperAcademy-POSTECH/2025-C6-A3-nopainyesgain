@@ -2,7 +2,7 @@
 //  BundleVideoGenerator+Metal.swift
 //  Keychy
 //
-//  Created by Claude Code on 1/14/26.
+//  Created by 길지훈 on 1/14/26.
 //
 
 import Foundation
