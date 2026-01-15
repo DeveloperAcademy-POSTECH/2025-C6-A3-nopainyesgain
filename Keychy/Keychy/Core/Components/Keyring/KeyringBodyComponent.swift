@@ -107,16 +107,26 @@ struct KeyringBodyComponent {
 
     // MARK: - Image Body
     private static func createImageBody(image: UIImage) -> SKNode {
-        let displaySize = image.size
+        // 최대 크기 제한 (aspect fit)
+        let maxSize = CGSize(width: 210, height: 210)
+        let originalSize = image.size
+
+        let widthRatio = maxSize.width / originalSize.width
+        let heightRatio = maxSize.height / originalSize.height
+        let scale = min(widthRatio, heightRatio, 1.0)  // 1.0 이하로만 축소
+
+        let displaySize = CGSize(
+            width: originalSize.width * scale,
+            height: originalSize.height * scale
+        )
 
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
         spriteNode.zPosition = -1  // Body는 체인 아래
 
-        // 물리 바디 설정 (원본 크기에 맞게)
+        // 물리 바디 설정
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
-        // 기본값은 움직이게+중력 적용 설정, 나중에 씬에서 조정 가능.
         physicsBody.isDynamic = true
         physicsBody.affectedByGravity = true
         physicsBody.mass = 6.0

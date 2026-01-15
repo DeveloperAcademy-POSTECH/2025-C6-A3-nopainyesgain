@@ -14,17 +14,25 @@ extension CollectionKeyringDetailView {
         if showDeleteAlert || showDeleteCompleteAlert {
             deleteAlertOverlay
         }
-        
+
         if showCopyAlert || showCopyingAlert || showCopyCompleteAlert || showCopyLackAlert || showInvenFullAlert {
             copyAlertOverlay
         }
-        
+
         if showPackageAlert || showPackingAlert {
             packageAlertOverlay
         }
-        
+
         if showImageSaved {
             imageSaveAlert
+        }
+
+        if showVideoSaved {
+            videoSaveAlert
+        }
+
+        if isGeneratingVideo {
+            videoGeneratingAlert
         }
     }
     
@@ -326,5 +334,42 @@ extension CollectionKeyringDetailView {
             isPresented: $showImageSaved
         )
             .zIndex(101)
+    }
+
+    // MARK: - Video Save Alert
+    private var videoSaveAlert: some View {
+        KeychyAlert(
+            type: .imageSave,
+            message: "영상이 저장되었어요!",
+            isPresented: $showVideoSaved
+        )
+            .zIndex(101)
+    }
+
+    // MARK: - Video Generating Alert
+    private var videoGeneratingAlert: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            VStack(spacing: 20) {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .tint(.white)
+
+                Text("영상 생성 중...")
+                    .typography(.suit17SB)
+                    .foregroundColor(.white)
+
+                Text("5~10초 소요")
+                    .typography(.suit14M)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(40)
+            .background(.ultraThinMaterial)
+            .cornerRadius(20)
+            .zIndex(100)
+        }
     }
 }
