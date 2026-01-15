@@ -60,6 +60,7 @@ class MultiKeyringScene: SKScene {
     // MARK: - 씬 준비 완료 콜백
     var onEngineReady: (() -> Void)? // 엔진 준비 완료 콜백
     var onKeyringVisualReady: (() -> Void)? // 키링이 진짜 시각적으로 보이는지 콜백
+    var onSetupComplete: (() -> Void)? // 모든 키링 로드 완료 및 물리 활성화 완료 콜백
     // MARK: - 키링 로드 완료 추적
     private var totalKeyringsToLoad = 0  // 로드해야 할 총 키링 수
     private var loadedKeyringsCount = 0  // 완료(성공/실패)된 키링 수
@@ -142,6 +143,7 @@ class MultiKeyringScene: SKScene {
         
         // 콜백 무효화
         onPlayParticleEffect = nil
+        onSetupComplete = nil
         
         // 추적 변수 초기화
         totalKeyringsToLoad = 0
@@ -738,7 +740,7 @@ class MultiKeyringScene: SKScene {
                     anchorB: CGPoint.zero
                 )
                 limitJoint.maxLength = distance * 1.05
-                
+
                 guard !isCleaningUp else { return }
                 physicsWorld.add(limitJoint)
             }
@@ -788,7 +790,7 @@ class MultiKeyringScene: SKScene {
                 anchorB: CGPoint.zero
             )
             limitJoint.maxLength = distance * 1.05
-            
+
             guard !isCleaningUp else { return }
             physicsWorld.add(limitJoint)
 
@@ -833,7 +835,7 @@ class MultiKeyringScene: SKScene {
                 anchorB: CGPoint.zero
             )
             limitJoint.maxLength = distance * 1.05
-            
+
             guard !isCleaningUp else { return }
             physicsWorld.add(limitJoint)
 
@@ -912,6 +914,9 @@ class MultiKeyringScene: SKScene {
             body.physicsBody?.linearDamping = 0.5
             body.physicsBody?.angularDamping = 0.5
         }
+
+        // Setup 완료 콜백 호출
+        onSetupComplete?()
     }
 
     // MARK: - Touch Handling
@@ -1082,6 +1087,42 @@ class MultiKeyringScene: SKScene {
                 body.physicsBody?.applyImpulse(force)
             }
         }
+    }
+
+    /// 특정 키링에만 스와이프 힘 적용 (영상 생성용)
+    /// - Parameters:
+    ///   - index: 키링 인덱스
+    ///   - velocity: 스와이프 속도 벡터
+    func applySwipeForceToKeyring(index: Int, velocity: CGVector) {
+        guard !isCleaningUp else { return }
+        guard let chains = chainNodesByKeyring[index],
+              let body = bodyNodes[index] else { return }
+
+        let force = CGVector(
+            dx: velocity.dx * 0.3,
+            dy: velocity.dy * 0.3
+        )
+
+        // Plain 타입일 때는 Ring과 체인이 모두 찰랑거림
+        if let carabinerType = currentCarabinerType, carabinerType == .plain {
+            // Ring도 체인처럼 부드럽게 힘 적용
+            if let ring = ringNodes[index] {
+                ring.physicsBody?.applyImpulse(CGVector(dx: force.dx * 0.4, dy: force.dy * 0.4))
+            }
+
+            // 모든 체인에도 힘 적용
+            for chain in chains {
+                chain.physicsBody?.applyImpulse(force)
+            }
+        } else {
+            // Hamburger 타입: 모든 체인에 힘 적용
+            for chain in chains {
+                chain.physicsBody?.applyImpulse(force)
+            }
+        }
+
+        // Body에도 힘 적용
+        body.physicsBody?.applyImpulse(force)
     }
 }
 

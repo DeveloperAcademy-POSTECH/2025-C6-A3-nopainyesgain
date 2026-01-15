@@ -18,7 +18,9 @@ struct BundleDetailUIState {
     var showChangeMainBundleAlert = false
     var isMainBundleChange = false
     var isCapturing = false
-    
+    var isGeneratingVideo = false
+    var showVideoSaved = false
+
     mutating func resetOverlays() {
         showMenu = false
         showDeleteAlert = false
@@ -43,10 +45,13 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State private var readyDelayTask: Task<Void, Never>?
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
-    @State private var keyringDataList: [MultiKeyringScene.KeyringData] = []
-    
+    @State var keyringDataList: [MultiKeyringScene.KeyringData] = []
+
     /// 씬 준비 완료 여부
     @State var isSceneReady = false
+
+    /// 영상 생성기
+    @State var videoGenerator = BundleVideoGenerator()
     
     // MARK: - Body
     var body: some View {
@@ -107,14 +112,25 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             Spacer()
                             bottomSection
                         }
+
+                        // 영상 저장 버튼 - 이미지 저장 버튼 바로 위
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                downloadVideoButton
+                            }
+                            .padding(.trailing, 16)
+                            .padding(.bottom, 36 + 48 + 12) // bottomSection padding + button height + spacing
+                        }
                     }
                     menuOverlay
-                    
+
                     customnavigationBar
                 }
-                .blur(radius: (isSceneReady && !uiState.isMainBundleChange && !uiState.isCapturing) ? 0 : 15)
+                .blur(radius: shouldShowAlertOverlay ? 15 : 0)
                 .ignoresSafeArea()
-                
+
                 alertOverlays
             }
         }
@@ -354,7 +370,7 @@ extension BundleDetailView {
                 }
                 
                 Spacer()
-                
+
                 downloadImageButton
             }
         }
@@ -393,6 +409,22 @@ extension BundleDetailView {
         }
     }
     
+    /// 영상 다운로드 버튼
+    private var downloadVideoButton: some View {
+        Button(action: {
+            Task {
+                await generateAndSaveVideo()
+            }
+        }) {
+            Image(systemName: "video.fill")
+                .foregroundStyle(.black)
+        }
+        .disabled(uiState.isGeneratingVideo || uiState.isCapturing)
+        .frame(width: 48, height: 48)
+        .glassEffect(in: .circle)
+        .opacity((uiState.isGeneratingVideo || uiState.isCapturing) ? 0.5 : 1)
+    }
+
     /// 이미지 다운로드 버튼
     private var downloadImageButton: some View {
         Button(action: {
@@ -402,8 +434,9 @@ extension BundleDetailView {
         }) {
             Image(.imageDownload)
         }
-        .disabled(uiState.isCapturing)
+        .disabled(uiState.isCapturing || uiState.isGeneratingVideo)
         .frame(width: 48, height: 48)
         .glassEffect(in: .circle)
+        .opacity((uiState.isCapturing || uiState.isGeneratingVideo) ? 0.5 : 1)
     }
 }

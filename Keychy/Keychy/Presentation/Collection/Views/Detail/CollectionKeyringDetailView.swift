@@ -39,7 +39,12 @@ struct CollectionKeyringDetailView: View {
     @State var checkmarkScale: CGFloat = 0.0
     @State var checkmarkOpacity: Double = 0.0
     @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
-    
+
+    // 영상 생성 관련
+    @State var isGeneratingVideo: Bool = false
+    @State var showVideoSaved: Bool = false
+    @State var videoGenerator = KeyringVideoGenerator()
+
     // 포장 관련
     @State var postOfficeId: String = ""
 
@@ -61,20 +66,35 @@ struct CollectionKeyringDetailView: View {
                 
                 VStack(spacing: 0) {
                     Spacer()
-                    
+
                     ZStack(alignment: .center) {
                         keyringScene
                             .frame(height: geometry.size.height * 0.8)
                             .position(x: geometry.size.width / 2, y: geometry.size.height * 0.4)
                             .blur(radius: shouldApplyBlur ? 10 : 0)
                             .animation(.easeInOut(duration: 0.3), value: shouldApplyBlur)
-                        
+
                         bottomSection
                             .position(x: geometry.size.width / 2, y: geometry.size.height * 0.942)
                             .opacity(showUIForCapture ? 1 : 0)
                             .blur(radius: shouldApplyBlur ? 15 : 0)
                     }
                 }
+
+                // 영상 저장 버튼 - 이미지 저장 버튼 바로 위
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        downloadVideoButton
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 36 + 48 + 12)
+                    .adaptiveBottomPadding()
+                }
+                .opacity(showUIForCapture && !isSheetPresented ? 1 : 0)
+                .blur(radius: shouldApplyBlur ? 15 : 0)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
                 
                 if showMenu {
                     menuOverlay
@@ -135,6 +155,8 @@ struct CollectionKeyringDetailView: View {
         showCopyingAlert ||
         showPackingAlert ||
         showImageSaved ||
+        isGeneratingVideo ||
+        showVideoSaved ||
         false
     }
     
@@ -228,13 +250,13 @@ extension CollectionKeyringDetailView {
 
 // MARK: - 하단 영역
 extension CollectionKeyringDetailView {
-    // 하단 버튼 섹션 - 이미지 저장, 포장
+    // 하단 버튼 섹션 - 포장, 정보 보기, 이미지 저장
     private var bottomSection: some View {
         HStack {
             packageButton
-            
+
             Spacer()
-            
+
             Button {
                 // 정보 시트 열기
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.5)) {
@@ -253,9 +275,9 @@ extension CollectionKeyringDetailView {
                     .fill(.main500)
             )
             .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 20))
-            
+
             Spacer()
-            
+
             downloadImageButton
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
@@ -263,15 +285,32 @@ extension CollectionKeyringDetailView {
         .opacity(isSheetPresented ? 0 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
     }
-    
+
+    private var downloadVideoButton: some View {
+        Button(action: {
+            Task {
+                await generateAndSaveVideo()
+            }
+        }) {
+            Image(systemName: "video.fill")
+                .foregroundStyle(.black)
+        }
+        .disabled(isGeneratingVideo || showUIForCapture == false)
+        .frame(width: 48, height: 48)
+        .glassEffect(.regular.interactive(), in: .circle)
+        .opacity((isGeneratingVideo || showUIForCapture == false) ? 0.5 : 1)
+    }
+
     private var downloadImageButton: some View {
         Button(action: {
             captureAndSaveImage()
         }) {
             Image(.imageDownload)
         }
+        .disabled(isGeneratingVideo || showUIForCapture == false)
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
+        .opacity((isGeneratingVideo || showUIForCapture == false) ? 0.5 : 1)
     }
     
     private var packageButton: some View {
