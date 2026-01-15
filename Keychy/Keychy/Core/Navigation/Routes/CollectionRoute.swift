@@ -9,8 +9,8 @@
 enum CollectionRoute: Hashable, BundleRoute {
 
     // 키링 상세보기
-    case collectionKeyringDetailView(Keyring) // 평소
-    case collectionKeyringPackageView(Keyring) // 포장된 상태
+    case collectionKeyringDetailView(Keyring, isSearchMode: Bool) // 평소
+    case collectionKeyringPackageView(Keyring, isSearchMode: Bool) // 포장된 상태
     
     // 키링 수정하기
     case keyringEditView(Keyring)

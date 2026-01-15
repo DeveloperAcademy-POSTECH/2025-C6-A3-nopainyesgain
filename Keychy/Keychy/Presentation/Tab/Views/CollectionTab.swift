@@ -19,10 +19,10 @@ struct CollectionTab: View {
                 .navigationDestination(for: CollectionRoute.self) { route in
                     switch route {
                         
-                    case .collectionKeyringDetailView(let keyring):
-                        CollectionKeyringDetailView(router: router, viewModel: collectionViewModel, keyring: keyring)
-                    case .collectionKeyringPackageView(let keyring):
-                        CollectionKeyringPackageView(router: router, viewModel: collectionViewModel, keyring: keyring)
+                    case .collectionKeyringDetailView(let keyring, let isSearchMode):
+                        CollectionKeyringDetailView(router: router, viewModel: collectionViewModel, isSearchMode: isSearchMode, keyring: keyring)
+                    case .collectionKeyringPackageView(let keyring, let isSearchMode):
+                        CollectionKeyringPackageView(router: router, viewModel: collectionViewModel, isSearchMode: isSearchMode, keyring: keyring)
                     case .keyringEditView(let keyring):
                         KeyringEditView(router: router, viewModel: collectionViewModel, keyring: keyring)
                     case .bundleInventoryView:
