@@ -108,7 +108,10 @@ struct CollectionView: View {
             }
         }
         .onAppear {
-            TabBarManager.show()
+            // 검색 모드가 아닐 때만 TabBar 표시
+            if !isSearching && !showSearchBar {
+                TabBarManager.show()
+            }
             fetchUserData()
             setupNotifications()
 
@@ -190,9 +193,12 @@ struct CollectionView: View {
                 return
             }
 
-            // 검색 중일 때 키보드가 올라와 있으면 먼저 내리기
-            if isSearching && isSearchFieldFocused {
-                isSearchFieldFocused = false
+            // 검색 중일 때
+            if isSearching {
+                // 키보드만 내림
+                if isSearchFieldFocused {
+                    isSearchFieldFocused = false
+                }
                 // 키보드가 내려간 후 네비게이션
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     navigateToKeyringDetail(keyring: keyring)

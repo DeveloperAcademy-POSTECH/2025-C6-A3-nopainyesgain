@@ -48,6 +48,8 @@ struct CollectionKeyringDetailView: View {
     // 포장 관련
     @State var postOfficeId: String = ""
 
+    let isSearchMode: Bool  // 검색모드 여부
+    
     let keyring: Keyring
     
     var body: some View {
@@ -187,9 +189,7 @@ extension CollectionKeyringDetailView {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
                 isSheetPresented = false
-                if !isNavigatingDeeper {
-                    TabBarManager.show()
-                }
+
                 router.pop()
             }
             .opacity(showUIForCapture ? 1 : 0)

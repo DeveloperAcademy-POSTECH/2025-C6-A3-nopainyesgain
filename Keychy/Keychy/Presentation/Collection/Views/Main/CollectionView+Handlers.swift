@@ -189,11 +189,14 @@ extension CollectionView {
             }
         }
         
+        // 검색 모드 여부 전달
+        let isSearchMode = isSearching
+        
         // 화면 이동
         if keyring.isPackaged {
-            router.push(.collectionKeyringPackageView(keyring))
+            router.push(.collectionKeyringPackageView(keyring, isSearchMode: isSearchMode))
         } else {
-            router.push(.collectionKeyringDetailView(keyring))
+            router.push(.collectionKeyringDetailView(keyring, isSearchMode: isSearchMode))
         }
     }
     
