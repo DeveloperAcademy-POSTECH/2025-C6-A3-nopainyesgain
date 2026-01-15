@@ -94,7 +94,7 @@ extension AlarmView {
                     Button(role: .destructive) {
                         viewModel.deleteNotification(notification)
                     } label: {
-                        Label("삭제", systemImage: "trash")
+                        Label("삭제", image: .alarmTrash)
                     }
                 }
             }
