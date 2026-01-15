@@ -17,7 +17,7 @@ extension CollectionView {
                 ZStack(alignment: .top) {
                     Color.white
                         .ignoresSafeArea()
-
+                    
                     NoInternetView(topPadding: getSafeAreaTop() + 90, onRetry: {
                         Task {
                             guard let uid = UserDefaults.standard.string(forKey: "userUID") else {
@@ -28,34 +28,34 @@ extension CollectionView {
                         }
                     })
                     .ignoresSafeArea()
-
+                    
                     VStack(spacing: 10) {
                         VStack(spacing: 10) {
                             Spacer()
                                 .frame(height: 60)
-
+                            
                             HStack {
                                 Spacer()
-
+                                
                                 Text("\(filteredKeyrings.count)개 발견됨")
                                     .typography(.suit14M)
                                     .foregroundColor(.gray500)
                                     .padding(.top, 22)
                                     .padding(.trailing, 22)
                             }
-
+                            
                             HStack {
                                 Text("키링")
                                     .typography(.suit16B)
                                     .foregroundColor(.gray500)
                                     .padding(.leading, 20)
-
+                                
                                 Spacer()
                             }
                             .opacity(!filteredKeyrings.isEmpty ? 1 : 0)
                         }
                         .background(Color.white)
-
+                        
                         Spacer()
                     }
                 }
@@ -86,7 +86,6 @@ extension CollectionView {
                     .opacity(!filteredKeyrings.isEmpty ? 1 : 0)
 
                     searchCollectionSection
-                        .padding(.horizontal, Spacing.padding)
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
@@ -96,17 +95,34 @@ extension CollectionView {
                 }
             }
         }
+
     }
     
     var searchCollectionSection: some View {
-        VStack(spacing: 0) {
-            if filteredKeyrings.isEmpty {
-                searchEmptyView
-            } else {
-                collectionGridView(keyrings: filteredKeyrings)
+        ScrollView {
+            VStack(spacing: 0) {
+                if filteredKeyrings.isEmpty {
+                    searchEmptyView
+                } else {
+                    collectionGridView(keyrings: filteredKeyrings)
+                }
             }
+            .padding(.horizontal, Spacing.xs)
         }
-        .padding(.horizontal, Spacing.xs)
+        .scrollIndicators(.hidden)
+        .simultaneousGesture(
+            DragGesture().onChanged { _ in
+                if showSearchBar {
+                    isSearchFieldFocused = false
+
+                    if !isSearching {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showSearchBar = false
+                        }
+                    }
+                }
+            }
+        )
     }
     
     var searchEmptyView: some View {
