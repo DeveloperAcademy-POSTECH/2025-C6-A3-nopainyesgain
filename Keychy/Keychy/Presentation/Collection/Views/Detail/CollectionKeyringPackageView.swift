@@ -29,6 +29,8 @@ struct CollectionKeyringPackageView: View {
     @State var checkmarkOpacity: Double = 0.0
     @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
     
+    let isSearchMode: Bool   // 검색모드 여부
+    
     let keyring: Keyring
     
     var body: some View {
@@ -165,7 +167,6 @@ extension CollectionKeyringPackageView {
         CustomNavigationBar {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
-                TabBarManager.show()
                 router.pop()
             }
         } center: {

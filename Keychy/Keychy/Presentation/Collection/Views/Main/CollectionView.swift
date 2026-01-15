@@ -108,7 +108,10 @@ struct CollectionView: View {
             }
         }
         .onAppear {
-            TabBarManager.show()
+            // 검색 모드가 아닐 때만 TabBar 표시
+            if !isSearching && !showSearchBar {
+                TabBarManager.show()
+            }
             fetchUserData()
             setupNotifications()
 

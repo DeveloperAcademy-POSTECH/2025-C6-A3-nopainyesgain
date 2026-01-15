@@ -22,9 +22,6 @@ extension CollectionKeyringDetailView {
     
     func handleViewDisappear() {
         isSheetPresented = false
-        if !isNavigatingDeeper {
-            TabBarManager.show()
-        }
 
         cleanupDetailView()
     }
