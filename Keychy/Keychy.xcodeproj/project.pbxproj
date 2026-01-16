@@ -112,6 +112,7 @@
 		4C004FB32F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FB22F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift */; };
 		4C004FB52F18D98C00D9063E /* ReviewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FB42F18D98C00D9063E /* ReviewManager.swift */; };
 		4C004FB92F19C27700D9063E /* KeyringCompleteView+ReviewCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FB82F19C27700D9063E /* KeyringCompleteView+ReviewCheck.swift */; };
+		4C004FBB2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FBA2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift */; };
 		4C07024C2ECF10760026D6DC /* EffectSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */; };
 		4C07027F2ED1DFA20026D6DC /* PixelVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0702782ED1DFA20026D6DC /* PixelVM+Effect.swift */; };
 		4C0702802ED1DFA20026D6DC /* PixelVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0702792ED1DFA20026D6DC /* PixelVM+ImageConversion.swift */; };
@@ -539,6 +540,7 @@
 		4C004FB22F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringVideoGenerator+Keyring.swift"; sourceTree = "<group>"; };
 		4C004FB42F18D98C00D9063E /* ReviewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewManager.swift; sourceTree = "<group>"; };
 		4C004FB82F19C27700D9063E /* KeyringCompleteView+ReviewCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringCompleteView+ReviewCheck.swift"; sourceTree = "<group>"; };
+		4C004FBA2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootViewModel+ReviewCheck.swift"; sourceTree = "<group>"; };
 		4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSyncManager.swift; sourceTree = "<group>"; };
 		4C0702772ED1DFA20026D6DC /* PixelVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelVM.swift; sourceTree = "<group>"; };
 		4C0702782ED1DFA20026D6DC /* PixelVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PixelVM+Effect.swift"; sourceTree = "<group>"; };
@@ -1203,6 +1205,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEBB1642EFBA54200CF53E2 /* RootViewModel.swift */,
+				4C004FBA2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift */,
 				4C7775392EB1343600981C3E /* IntroViewModel.swift */,
 				4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */,
 				4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */,
@@ -2456,6 +2459,7 @@
 				4CEC626A2EAE08DF0099ECEE /* AcrylicPhotoVM+Effect.swift in Sources */,
 				4CBBEF332EB919CC00252590 /* CinematicAppearanceModifier.swift in Sources */,
 				4C004FB12F187CFC00D9063E /* CollectionKeyringDetailView+VideoGen.swift in Sources */,
+				4C004FBB2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift in Sources */,
 				C6B56F112EBD96110049F969 /* CoinChargeView+Purchase.swift in Sources */,
 				382800D12EC05D4E005F1332 /* PostOffice.swift in Sources */,
 				AA69DD2E2F14C87900C0A41C /* BundleViewModel+Image.swift in Sources */,
