@@ -57,6 +57,10 @@ extension BundleViewModel {
                     backgroundId: selectedBackground
                 )
 
+                // 첫 뭉치 생성 체크 (기본 1개 → 사용자가 만든 첫 뭉치는 2개일 때)
+                let isFirstUserBundle = self.bundles.count == 2
+                ReviewManager.shared.checkFirstBundle(isFirstBundle: isFirstUserBundle)
+
                 print("뭉치 생성 완료: \(bundleId)")
                 completion(true, bundleId)
             }
