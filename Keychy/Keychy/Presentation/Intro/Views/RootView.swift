@@ -48,6 +48,9 @@ struct RootView: View {
             MainTabView()
                 .environment(viewModel.userManager)
                 .environment(viewModel.introViewModel)
+                .onAppear {
+                    viewModel.checkActiveReview()
+                }
         case .login:
             IntroView(viewModel: viewModel.introViewModel)
         }
