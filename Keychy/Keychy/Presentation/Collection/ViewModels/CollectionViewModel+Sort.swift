@@ -31,7 +31,11 @@ extension CollectionViewModel {
         func sort(_ items: [Keyring]) -> [Keyring] {
             switch selectedSort {
             case "최신순":
-                return items.sorted { $0.createdAt > $1.createdAt }
+                return items.sorted {
+                    let date1 = $0.receivedAt ?? $0.createdAt
+                    let date2 = $1.receivedAt ?? $1.createdAt
+                    return date1 > date2
+                }
             case "오래된순":
                 return items.sorted { $0.createdAt < $1.createdAt }
             case "이름순":
