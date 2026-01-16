@@ -8,13 +8,15 @@
 
 import SwiftUI
 import SpriteKit
+import FirebaseFirestore
 
 struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: VM
     let navigationTitle: String
-    
+
     var userManager: UserManager = UserManager.shared
+    var reviewManager: ReviewManager = ReviewManager.shared
     
     // Festival에서 왔을 때 처리용 옵셔널 콜백
     var onCloseFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
@@ -122,6 +124,9 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            checkReviewTriggers()
+        }
     }
 }
 

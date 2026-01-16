@@ -22,9 +22,7 @@ class AppUpdateManager {
     func checkForUpdate() async {
         #if DEBUG
         // 디버그 빌드에서는 업데이트 체크 안 함
-        return
-        #endif
-
+        #else
         guard let currentVersion = getCurrentAppVersion(),
               let appStoreVersion = await fetchAppStoreVersion() else {
             return
@@ -38,6 +36,7 @@ class AppUpdateManager {
                 showUpdateAlert = true
             }
         }
+        #endif
     }
 
     /// Info.plist에서 현재 앱 버전 가져오기
