@@ -3,6 +3,11 @@
 </div>
 
 <div align="center">
+  <b>팀 오거니제이션으로 이사했어요! (26.01.16.)</b>
+  
+</div>
+
+<div align="center">
   <img width="400" src="https://github.com/user-attachments/assets/36f85f4a-4545-425d-91e7-761b56320658" />
 </div>
 <div align="center">
