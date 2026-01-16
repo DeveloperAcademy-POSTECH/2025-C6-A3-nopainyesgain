@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 /// 키치 알림 모델
 /// - 키링 선물 수락 시 발신자에게 전송되는 알림
-struct KeychyNotification: Identifiable {
+struct KeychyNotification: Identifiable, Equatable {
     let id = UUID()  // 로컬용 ID
     var documentId: String?  // Firestore 문서 ID
 

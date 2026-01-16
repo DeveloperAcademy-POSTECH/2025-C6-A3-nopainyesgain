@@ -9,12 +9,12 @@ import SwiftUI
 
 extension View {
     // 직각형 기기(SE2, 3? 더 있나)에서만 패딩 추가합니다.
-
+    
     /// 하단
     func adaptiveBottomPadding(_ defaultPadding: CGFloat = 34) -> some View {
         self.padding(.bottom, getBottomPadding(defaultPadding))
     }
-
+    
     /// 상단 - 기본 (safeAreaInsets.top == 0 체크)
     func adaptiveTopPadding(_ defaultPadding: CGFloat = 20) -> some View {
         self.padding(.top, getTopPadding(defaultPadding))
@@ -24,7 +24,7 @@ extension View {
     func adaptiveTopPaddingAlt(_ defaultPadding: CGFloat = 39) -> some View {
         self.padding(.top, getTopPaddingAlt(defaultPadding))
     }
-
+    
     /// 하단 safeArea 값 반환
     func getBottomPadding(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
@@ -35,6 +35,27 @@ extension View {
         }
         // safeAreaInsets.bottom이 0이면 직각형 기기임!
         return window.safeAreaInsets.bottom == 0 ? defaultPadding : 0
+    }
+    
+    /// 하단 SafeArea 값 직접 반환 (토스트 위치 계산용)
+    func getBottomSafeArea() -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 0
+        }
+        return window.safeAreaInsets.bottom
+    }
+    
+    func getSafeAreaTop() -> CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 0
+        }
+        return window.safeAreaInsets.top
     }
     
     // MARK: - 다음 머지에서 검색해서 안쓰면 삭제
@@ -51,7 +72,7 @@ extension View {
         return window.safeAreaInsets.top == 0 ? defaultPadding : 0
     }
     
-
+    
     // 번들에서 사용하는 safeAreaTop 함수
     func getTopPaddingBundle(_ defaultPadding: CGFloat) -> CGFloat {
         guard let window = UIApplication.shared.connectedScenes
@@ -60,7 +81,7 @@ extension View {
             .first(where: { $0.isKeyWindow }) else {
             return defaultPadding
         }
-
+        
         // 실제 safeArea top 값 + 추가 패딩
         return window.safeAreaInsets.bottom == 0 ? window.safeAreaInsets.top + defaultPadding : 0
     }
@@ -73,7 +94,7 @@ extension View {
             .first(where: { $0.isKeyWindow }) else {
             return defaultPadding
         }
-
+        
         // 실제 safeArea top 값 + 추가 패딩
         return window.safeAreaInsets.top + defaultPadding
     }
