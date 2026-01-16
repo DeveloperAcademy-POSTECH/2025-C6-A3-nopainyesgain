@@ -20,7 +20,7 @@ class CollectionViewModel {
     // MARK: - 공통 상태
     var isLoading = false
     var selectedSort: String = "최신순" // 기본값
-    var maxKeyringCount: Int = 50 // 기본값
+    var maxKeyringCount: Int = 100 // 기본값
     var coin: Int = 0
     var copyVoucher: Int = 0
     var selectedKeyrings: [Keyring] = []
